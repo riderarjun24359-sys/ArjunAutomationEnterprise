@@ -18,3 +18,22 @@ export interface AuthSession {
     expiresAt: string;
     provider: AuthProvider;
 }
+
+export interface SignInInput {
+    email: string;
+    password: string;
+}
+
+export interface SignUpInput {
+    email: string;
+    password: string;
+    fullName?: string | null;
+}
+
+export interface ResetPasswordInput {
+    email: string;
+}
+
+export interface NewPasswordInput {
+    password: string;
+}

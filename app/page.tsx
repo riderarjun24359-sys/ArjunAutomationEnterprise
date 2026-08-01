@@ -2,6 +2,7 @@ import Link from "next/link";
 import { appConfig, appFeatures } from "@/src/config/app";
 import { ROUTES } from "@/src/constants/routes";
 import { USER_ROLES } from "@/src/constants/roles";
+import { AuthStatus } from "@/src/modules/auth/components/AuthStatus";
 
 const foundationAreas = [
   {
@@ -22,6 +23,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <section className="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 py-24 lg:px-8">
+        <div className="mb-8 flex justify-end">
+          <AuthStatus />
+        </div>
         <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-slate-200 backdrop-blur">
