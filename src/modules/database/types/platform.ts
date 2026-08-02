@@ -177,3 +177,124 @@ export interface DbPermission {
     created_at: string;
     updated_at: string;
 }
+
+export interface DbTaxRate {
+    id: string;
+    organization_id: string;
+    name: string;
+    rate_percent: number;
+    is_default: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEstimate {
+    id: string;
+    organization_id: string;
+    client_id?: string | null;
+    project_id?: string | null;
+    number: string;
+    status: string;
+    issue_date: string;
+    valid_until?: string | null;
+    subtotal: number;
+    tax_amount: number;
+    total: number;
+    currency: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEstimateLineItem {
+    id: string;
+    estimate_id: string;
+    description: string;
+    quantity: number;
+    unit_price: number;
+    tax_rate_id?: string | null;
+    amount: number;
+    sort_order: number;
+    created_at: string;
+}
+
+export interface DbInvoice {
+    id: string;
+    organization_id: string;
+    client_id?: string | null;
+    project_id?: string | null;
+    estimate_id?: string | null;
+    number: string;
+    status: string;
+    issue_date: string;
+    due_date?: string | null;
+    paid_at?: string | null;
+    subtotal: number;
+    tax_amount: number;
+    total: number;
+    amount_paid: number;
+    currency: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbInvoiceLineItem {
+    id: string;
+    invoice_id: string;
+    description: string;
+    quantity: number;
+    unit_price: number;
+    tax_rate_id?: string | null;
+    amount: number;
+    sort_order: number;
+    created_at: string;
+}
+
+export interface DbPayment {
+    id: string;
+    organization_id: string;
+    invoice_id: string;
+    client_id?: string | null;
+    amount: number;
+    payment_date: string;
+    method: string;
+    reference: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbExpense {
+    id: string;
+    organization_id: string;
+    project_id?: string | null;
+    client_id?: string | null;
+    category: string;
+    description: string;
+    amount: number;
+    expense_date: string;
+    status: string;
+    submitted_by: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRecurringInvoice {
+    id: string;
+    organization_id: string;
+    client_id: string;
+    project_id?: string | null;
+    title: string;
+    frequency: string;
+    next_run_date: string;
+    end_date?: string | null;
+    subtotal: number;
+    tax_amount: number;
+    total: number;
+    currency: string;
+    is_active: boolean;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}

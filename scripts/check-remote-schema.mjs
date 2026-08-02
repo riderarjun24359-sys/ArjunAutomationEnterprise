@@ -17,6 +17,12 @@ const requiredTables = [
     "projects",
     "tasks",
     "audit_logs",
+    "tax_rates",
+    "estimates",
+    "invoices",
+    "payments",
+    "expenses",
+    "recurring_invoices",
 ];
 
 const supabase = createClient(url, anonKey);

@@ -8,6 +8,14 @@ import { ActivityLogRepository } from "@/src/modules/database/repositories/activ
 import { ProjectRepository } from "@/src/modules/database/repositories/project-repository";
 import { TaskRepository } from "@/src/modules/database/repositories/task-repository";
 import { ContactRepository } from "@/src/modules/database/repositories/contact-repository";
+import {
+    EstimateRepository,
+    ExpenseRepository,
+    InvoiceRepository,
+    PaymentRepository,
+    RecurringInvoiceRepository,
+    TaxRateRepository,
+} from "@/src/modules/database/repositories/finance-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -20,6 +28,12 @@ export class DatabaseAccessLayer {
     readonly projects: ProjectRepository;
     readonly tasks: TaskRepository;
     readonly contacts: ContactRepository;
+    readonly taxRates: TaxRateRepository;
+    readonly invoices: InvoiceRepository;
+    readonly estimates: EstimateRepository;
+    readonly payments: PaymentRepository;
+    readonly expenses: ExpenseRepository;
+    readonly recurringInvoices: RecurringInvoiceRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -32,6 +46,12 @@ export class DatabaseAccessLayer {
         this.projects = new ProjectRepository();
         this.tasks = new TaskRepository();
         this.contacts = new ContactRepository();
+        this.taxRates = new TaxRateRepository();
+        this.invoices = new InvoiceRepository();
+        this.estimates = new EstimateRepository();
+        this.payments = new PaymentRepository();
+        this.expenses = new ExpenseRepository();
+        this.recurringInvoices = new RecurringInvoiceRepository();
     }
 }
 

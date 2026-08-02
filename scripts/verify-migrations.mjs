@@ -23,6 +23,14 @@ const requiredTables = [
     "notifications",
     "activity_logs",
     "audit_logs",
+    "tax_rates",
+    "estimates",
+    "estimate_line_items",
+    "invoices",
+    "invoice_line_items",
+    "payments",
+    "expenses",
+    "recurring_invoices",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
