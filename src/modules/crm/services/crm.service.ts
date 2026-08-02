@@ -1,116 +1,110 @@
+import {
+    buildCrmDashboardStats,
+    mapActivitySummary,
+    mapClientDetail,
+    mapClientSummary,
+    mapCrmTaskSummary,
+    mapDealSummary,
+    mapLeadSummary,
+} from "@/src/modules/database/lib/crm-mappers";
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
+import { databaseService } from "@/src/modules/database/services/database-service";
 import type { ActivitySummary, ClientDetail, ClientSummary, CrmDashboardStats, DealSummary, LeadSummary, TaskSummary } from "@/src/modules/crm/types";
 
-const clients: ClientSummary[] = [
-    {
-        id: "client-1",
-        name: "Northstar Labs",
-        status: "active",
-        industry: "saas",
-        contactEmail: "ops@northstarlabs.com",
-        manager: "Mina Park",
-        revenue: "$248k",
-        updatedAt: "2h ago",
-    },
-    {
-        id: "client-2",
-        name: "Apex Commerce",
-        status: "at_risk",
-        industry: "retail",
-        contactEmail: "vp@apexcommerce.com",
-        manager: "Drew Hsu",
-        revenue: "$96k",
-        updatedAt: "1d ago",
-    },
-];
-
-const clientDetails: Record<string, ClientDetail> = {
-    "client-1": {
-        id: "client-1",
-        name: "Northstar Labs",
-        status: "active",
-        industry: "saas",
-        contactEmail: "ops@northstarlabs.com",
-        manager: "Mina Park",
-        revenue: "$248k",
-        updatedAt: "2h ago",
-        phone: "+1 415 555 0148",
-        website: "https://northstarlabs.com",
-        address: "450 Market Street, San Francisco, CA",
-        description: "Series B SaaS company focused on workflow automation.",
-    },
-    "client-2": {
-        id: "client-2",
-        name: "Apex Commerce",
-        status: "at_risk",
-        industry: "retail",
-        contactEmail: "vp@apexcommerce.com",
-        manager: "Drew Hsu",
-        revenue: "$96k",
-        updatedAt: "1d ago",
-        phone: "+1 212 555 0149",
-        website: "https://apexcommerce.com",
-        address: "21 Mercer Street, New York, NY",
-        description: "Omnichannel retail group expanding into B2B services.",
-    },
-};
-
-const leads: LeadSummary[] = [
-    { id: "lead-1", company: "Helio Health", contact: "Sara Kim", stage: "qualified", score: 82, value: "$48k", assignedTo: "Lina Ortiz" },
-    { id: "lead-2", company: "Summit Retail", contact: "Tom Reed", stage: "proposal", score: 71, value: "$67k", assignedTo: "Jordan Lee" },
-];
-
-const deals: DealSummary[] = [
-    { id: "deal-1", client: "Northstar Labs", value: "$124k", closeDate: "2026-08-28", stage: "negotiation", probability: 74, revenueMetric: "+$18k ARR" },
-    { id: "deal-2", client: "Apex Commerce", value: "$84k", closeDate: "2026-09-14", stage: "proposal", probability: 61, revenueMetric: "+$12k ARR" },
-];
-
-const activities: ActivitySummary[] = [
-    { id: "activity-1", type: "call", title: "Discovery call completed", detail: "Discussed implementation timeline", dueAt: "10 mins ago" },
-    { id: "activity-2", type: "meeting", title: "Executive review", detail: "Shared revenue projection", dueAt: "1 hr ago" },
-    { id: "activity-3", type: "email", title: "Proposal sent", detail: "Follow-up scheduled for Friday", dueAt: "Today" },
-];
-
-const tasks: TaskSummary[] = [
-    { id: "task-1", title: "Prepare onboarding checklist", assignee: "Mina Park", dueDate: "2026-08-04", priority: "high", status: "pending" },
-    { id: "task-2", title: "Review contract terms", assignee: "Drew Hsu", dueDate: "2026-08-06", priority: "medium", status: "in_progress" },
-];
-
-const dashboardStats: CrmDashboardStats = {
-    totalClients: 24,
-    activeDeals: 8,
-    monthlyRevenue: "$312k",
-    newLeads: 16,
-    conversionRate: "68%",
-    recentActivities: activities,
-};
-
 export class CrmService {
-    async getClients(): Promise<ClientSummary[]> {
-        return clients;
+    private async getContext(authUserId: string, email: string, fullName?: string | null) {
+        return resolveOrganizationContext(authUserId, email, fullName);
     }
 
-    async getClient(id: string): Promise<ClientDetail | undefined> {
-        return clientDetails[id];
+    async getClients(authUserId: string, email: string, fullName?: string | null): Promise<ClientSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return [];
+        }
+
+        const records = await databaseService.clients.listByOrganization(context.organizationId);
+        return records.filter((record) => record.lifecycle_stage === "client").map(mapClientSummary);
     }
 
-    async getLeads(): Promise<LeadSummary[]> {
-        return leads;
+    async getClient(authUserId: string, email: string, id: string, fullName?: string | null): Promise<ClientDetail | undefined> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return undefined;
+        }
+
+        const record = await databaseService.clients.getById(id);
+        return record ? mapClientDetail(record) : undefined;
     }
 
-    async getDeals(): Promise<DealSummary[]> {
-        return deals;
+    async getLeads(authUserId: string, email: string, fullName?: string | null): Promise<LeadSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return [];
+        }
+
+        const records = await databaseService.clients.listLeads(context.organizationId);
+        return records.map(mapLeadSummary);
     }
 
-    async getActivities(): Promise<ActivitySummary[]> {
-        return activities;
+    async getDeals(authUserId: string, email: string, fullName?: string | null): Promise<DealSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return [];
+        }
+
+        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
+            filters: { entity_type: "deal" },
+        });
+
+        return records.map(mapDealSummary);
     }
 
-    async getTasks(): Promise<TaskSummary[]> {
-        return tasks;
+    async getActivities(authUserId: string, email: string, fullName?: string | null): Promise<ActivitySummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return [];
+        }
+
+        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
+            filters: { entity_type: "activity" },
+        });
+
+        return records.map(mapActivitySummary);
     }
 
-    async getDashboardStats(): Promise<CrmDashboardStats> {
-        return dashboardStats;
+    async getTasks(authUserId: string, email: string, fullName?: string | null): Promise<TaskSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return [];
+        }
+
+        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
+            filters: { entity_type: "crm_task" },
+        });
+
+        return records.map(mapCrmTaskSummary);
+    }
+
+    async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<CrmDashboardStats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return {
+                totalClients: 0,
+                activeDeals: 0,
+                monthlyRevenue: "$0",
+                newLeads: 0,
+                conversionRate: "0%",
+                recentActivities: [],
+            };
+        }
+
+        const [clients, deals, activities] = await Promise.all([
+            databaseService.clients.listByOrganization(context.organizationId),
+            databaseService.activityLogs.listByOrganization(context.organizationId, { filters: { entity_type: "deal" } }),
+            databaseService.activityLogs.listByOrganization(context.organizationId, { filters: { entity_type: "activity" }, limit: 5 }),
+        ]);
+
+        return buildCrmDashboardStats({ clients, deals, activities });
     }
 }
 

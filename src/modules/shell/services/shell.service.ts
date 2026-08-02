@@ -1,31 +1,30 @@
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import type { ShellContext } from "@/src/modules/shell/types";
 
 export const shellService = {
     async getContext(authUserId: string, email: string, fullName?: string | null): Promise<ShellContext> {
-        let profile = await databaseService.profiles.getByAuthUser(authUserId);
+        const context = await resolveOrganizationContext(authUserId, email, fullName);
 
-        if (!profile) {
-            profile = await databaseService.profiles.upsertForAuthUser({
-                authUserId,
-                email,
-                fullName,
-            });
+        if (!context) {
+            return {
+                profile: null,
+                organization: null,
+                memberships: [],
+                recentActivity: [],
+            };
         }
 
-        const organizations = await databaseService.organizations.list({ limit: 1 });
-        const memberships = profile ? await databaseService.memberships.getByUser(profile.id) : [];
-        const organizationId = memberships[0]?.organization_id ?? organizations[0]?.id ?? null;
-        const organization = organizationId ? await databaseService.organizations.getById(organizationId) : organizations[0] ?? null;
+        const profile = await databaseService.profiles.getById(context.profileId);
+        const organization = await databaseService.organizations.getById(context.organizationId);
+        const memberships = await databaseService.memberships.getByUser(context.profileId);
 
-        const recentActivity = organization
-            ? await databaseService.audits.list({
-                  limit: 8,
-                  orderBy: "created_at",
-                  orderDirection: "desc",
-                  filters: { organization_id: organization.id },
-              })
-            : await databaseService.audits.list({ limit: 8, orderBy: "created_at", orderDirection: "desc" });
+        const recentActivity = await databaseService.audits.list({
+            limit: 8,
+            orderBy: "created_at",
+            orderDirection: "desc",
+            filters: { organization_id: context.organizationId },
+        });
 
         return {
             profile,

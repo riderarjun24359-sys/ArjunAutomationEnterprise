@@ -6,4 +6,8 @@ export const databaseService = {
     memberships: databaseAccess.memberships,
     audits: databaseAccess.audits,
     storage: databaseAccess.storage,
+    clients: databaseAccess.clients,
+    activityLogs: databaseAccess.activityLogs,
+    projects: databaseAccess.projects,
+    tasks: databaseAccess.tasks,
 };

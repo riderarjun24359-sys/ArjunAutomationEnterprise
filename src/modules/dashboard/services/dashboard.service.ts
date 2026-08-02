@@ -1,5 +1,5 @@
 import { databaseService } from "@/src/modules/database/services/database-service";
-import { taskService } from "@/src/modules/tasks/services/task.service";
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import type { DashboardOverview, DashboardOverviewInput } from "@/src/modules/dashboard/types";
 
 const formatRelativeTime = (isoDate: string): string => {
@@ -25,7 +25,7 @@ const formatRelativeTime = (isoDate: string): string => {
 
 const buildOverview = (input: DashboardOverviewInput): DashboardOverview => {
     const { organization, membershipsCount, auditLogs, taskCount = 0, openTasks = 0 } = input;
-    const hasSupabaseData = Boolean(organization || auditLogs.length > 0 || membershipsCount > 0);
+    const hasSupabaseData = Boolean(organization || auditLogs.length > 0 || membershipsCount > 0 || taskCount > 0);
 
     const activities = auditLogs.length
         ? auditLogs.map((log) => ({
@@ -78,27 +78,29 @@ const buildOverview = (input: DashboardOverviewInput): DashboardOverview => {
 
 export const dashboardService = {
     async getOverview(authUserId: string, email: string, fullName?: string | null): Promise<DashboardOverview> {
-        let profile = await databaseService.profiles.getByAuthUser(authUserId);
+        const context = await resolveOrganizationContext(authUserId, email, fullName);
 
-        if (!profile) {
-            profile = await databaseService.profiles.upsertForAuthUser({ authUserId, email, fullName });
+        if (!context) {
+            return buildOverview({
+                organization: null,
+                membershipsCount: 0,
+                auditLogs: [],
+                taskCount: 0,
+                openTasks: 0,
+            });
         }
 
-        const organizations = await databaseService.organizations.list({ limit: 1 });
-        const memberships = profile ? await databaseService.memberships.getByUser(profile.id) : [];
-        const organizationId = memberships[0]?.organization_id ?? organizations[0]?.id ?? null;
-        const organization = organizationId ? await databaseService.organizations.getById(organizationId) : organizations[0] ?? null;
+        const organization = await databaseService.organizations.getById(context.organizationId);
+        const memberships = await databaseService.memberships.getByUser(context.profileId);
 
-        const auditLogs = organization
-            ? await databaseService.audits.list({
-                  limit: 10,
-                  orderBy: "created_at",
-                  orderDirection: "desc",
-                  filters: { organization_id: organization.id },
-              })
-            : await databaseService.audits.list({ limit: 10, orderBy: "created_at", orderDirection: "desc" });
+        const auditLogs = await databaseService.audits.list({
+            limit: 10,
+            orderBy: "created_at",
+            orderDirection: "desc",
+            filters: { organization_id: context.organizationId },
+        });
 
-        const tasks = await taskService.getTasks();
+        const tasks = await databaseService.tasks.listByOrganization(context.organizationId);
         const openTasks = tasks.filter((task) => task.status !== "done" && task.status !== "cancelled").length;
 
         return buildOverview({

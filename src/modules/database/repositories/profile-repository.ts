@@ -22,6 +22,17 @@ export class ProfileRepository extends BaseRepository<UserProfile> {
         return (data ?? []) as UserProfile[];
     }
 
+    async getById(id: string): Promise<UserProfile | null> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client.from(this.table).select("*").eq("id", id).maybeSingle();
+        mapRepositoryError(error, "Failed to get profile");
+        return (data as UserProfile | null) ?? null;
+    }
+
     async getByAuthUser(authUserId: string): Promise<UserProfile | null> {
         const client = getRepositoryClient();
         if (!client) {

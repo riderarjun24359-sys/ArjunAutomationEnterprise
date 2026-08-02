@@ -1,22 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuthStore } from "@/src/store/auth.store";
 import { TASK_FILTERS } from "@/src/modules/tasks/constants";
 import { taskService } from "@/src/modules/tasks/services/task.service";
 import type { CreateTaskInput, Task, TaskAssignee, TaskFilter, TaskLabel, TaskStatistics, TaskStatus, UpdateTaskInput } from "@/src/modules/tasks/types";
 
-const fetchTasksData = async () => {
-    const [taskList, assigneeList, labelList, stats] = await Promise.all([
-        taskService.getTasks(),
-        taskService.getAssignees(),
-        taskService.getLabels(),
-        taskService.getStatistics(),
-    ]);
-
-    return { taskList, assigneeList, labelList, stats };
-};
-
 export function useTasks() {
+    const user = useAuthStore((state) => state.user);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [assignees, setAssignees] = useState<TaskAssignee[]>([]);
@@ -27,6 +18,21 @@ export function useTasks() {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<TaskStatus | "all">("all");
 
+    const fetchTasksData = useCallback(async () => {
+        if (!user) {
+            return { taskList: [], assigneeList: [], labelList: [], stats: null };
+        }
+
+        const [taskList, assigneeList, labelList, stats] = await Promise.all([
+            taskService.getTasks(user.id, user.email, user.fullName),
+            taskService.getAssignees(user.id, user.email, user.fullName),
+            taskService.getLabels(user.id, user.email, user.fullName),
+            taskService.getStatistics(user.id, user.email, user.fullName),
+        ]);
+
+        return { taskList, assigneeList, labelList, stats };
+    }, [user]);
+
     const loadData = useCallback(async () => {
         const { taskList, assigneeList, labelList, stats } = await fetchTasksData();
         setTasks(taskList);
@@ -34,7 +40,7 @@ export function useTasks() {
         setLabels(labelList);
         setStatistics(stats);
         setLoading(false);
-    }, []);
+    }, [fetchTasksData]);
 
     useEffect(() => {
         let cancelled = false;
@@ -54,30 +60,46 @@ export function useTasks() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [fetchTasksData]);
 
     const selectTask = useCallback(async (id: string) => {
-        const task = await taskService.getTask(id);
+        if (!user) {
+            return;
+        }
+
+        const task = await taskService.getTask(user.id, user.email, id, user.fullName);
         setSelectedTask(task ?? null);
-    }, []);
+    }, [user]);
 
     const createTask = useCallback(async (input: CreateTaskInput) => {
-        const task = await taskService.createTask(input);
+        if (!user) {
+            throw new Error("Authentication required");
+        }
+
+        const task = await taskService.createTask(user.id, user.email, input, user.fullName);
         await loadData();
         return task;
-    }, [loadData]);
+    }, [user, loadData]);
 
     const updateTask = useCallback(async (id: string, input: UpdateTaskInput) => {
-        const task = await taskService.updateTask(id, input);
+        if (!user) {
+            throw new Error("Authentication required");
+        }
+
+        const task = await taskService.updateTask(user.id, user.email, id, input, user.fullName);
         await loadData();
         if (selectedTask?.id === id && task) {
             setSelectedTask(task);
         }
         return task;
-    }, [loadData, selectedTask?.id]);
+    }, [user, loadData, selectedTask?.id]);
 
     const deleteTask = useCallback(async (id: string) => {
-        const deleted = await taskService.deleteTask(id);
+        if (!user) {
+            return false;
+        }
+
+        const deleted = await taskService.deleteTask(user.id, user.email, id);
         if (deleted) {
             if (selectedTask?.id === id) {
                 setSelectedTask(null);
@@ -85,11 +107,12 @@ export function useTasks() {
             await loadData();
         }
         return deleted;
-    }, [loadData, selectedTask?.id]);
+    }, [user, loadData, selectedTask?.id]);
 
     const filteredTasks = useMemo(() => {
-        const now = new Date("2026-08-02");
-        const weekEnd = new Date("2026-08-09");
+        const now = new Date();
+        const weekEnd = new Date(now);
+        weekEnd.setDate(weekEnd.getDate() + 7);
 
         return tasks.filter((task) => {
             if (statusFilter !== "all" && task.status !== statusFilter) {
@@ -111,7 +134,7 @@ export function useTasks() {
 
             switch (activeFilter) {
                 case TASK_FILTERS.myTasks:
-                    return task.assignee?.id === "assignee-1";
+                    return task.assignee?.id === user?.id;
                 case TASK_FILTERS.overdue:
                     return task.status !== "done" && task.status !== "cancelled" && new Date(task.dueDate) < now;
                 case TASK_FILTERS.dueThisWeek:
@@ -124,7 +147,7 @@ export function useTasks() {
                     return true;
             }
         });
-    }, [tasks, activeFilter, searchQuery, statusFilter]);
+    }, [tasks, activeFilter, searchQuery, statusFilter, user?.id]);
 
     return {
         tasks: filteredTasks,
