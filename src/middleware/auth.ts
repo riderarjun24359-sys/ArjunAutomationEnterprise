@@ -16,6 +16,7 @@ const protectedRoutes = [
     ROUTES.hr,
     ROUTES.inventory,
     ROUTES.support,
+    ROUTES.sales,
 ];
 
 const authRoutes = [

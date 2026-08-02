@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-02T22:43:54.585Z
+-- Generated: 2026-08-02T22:55:02.699Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (11):
+--   Migrations (12):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -17,7 +17,8 @@
 --     - 202608020009_enterprise_hrms.sql
 --     - 202608020010_enterprise_inventory.sql
 --     - 202608020011_enterprise_support.sql
---   Seeds (11):
+--     - 202608020012_enterprise_sales.sql
+--   Seeds (12):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -29,9 +30,10 @@
 --     - 009_enterprise_hrms_seed.sql
 --     - 010_enterprise_inventory_seed.sql
 --     - 011_enterprise_support_seed.sql
+--     - 012_enterprise_sales_seed.sql
 --
--- Includes through Sprint 18:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management
+-- Includes through Sprint 19:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -2807,6 +2809,320 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020012_enterprise_sales.sql
+-- =============================================================================
+-- Sprint 19: Enterprise Sales Pipeline & Revenue Operations
+
+create table if not exists public.sales_pipelines (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  code text not null,
+  description text not null default '',
+  is_default boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, code)
+);
+
+create table if not exists public.sales_pipeline_stages (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  pipeline_id uuid not null references public.sales_pipelines(id) on delete cascade,
+  name text not null,
+  sort_order integer not null default 0,
+  probability integer not null default 0 check (probability >= 0 and probability <= 100),
+  is_closed_won boolean not null default false,
+  is_closed_lost boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (pipeline_id, name)
+);
+
+create table if not exists public.sales_leads (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid references public.clients(id) on delete set null,
+  lead_name text not null,
+  company_name text not null default '',
+  email text not null default '',
+  phone text not null default '',
+  source text not null default 'inbound',
+  status text not null default 'new',
+  score integer not null default 0,
+  assigned_to uuid references public.employees(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_opportunities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_number text not null,
+  name text not null,
+  description text not null default '',
+  pipeline_id uuid references public.sales_pipelines(id) on delete set null,
+  stage_id uuid references public.sales_pipeline_stages(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  contact_id uuid references public.contacts(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  assigned_to uuid references public.employees(id) on delete set null,
+  amount numeric(14,2) not null default 0,
+  probability integer not null default 0,
+  expected_close_date date,
+  status text not null default 'open',
+  won_at timestamptz,
+  lost_at timestamptz,
+  lost_reason text not null default '',
+  estimate_id uuid references public.estimates(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, opportunity_number)
+);
+
+create table if not exists public.sales_quotes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  quote_number text not null,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  title text not null,
+  status text not null default 'draft',
+  total_amount numeric(14,2) not null default 0,
+  valid_until date,
+  estimate_id uuid references public.estimates(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, quote_number)
+);
+
+create table if not exists public.sales_quote_items (
+  id uuid primary key default uuid_generate_v4(),
+  quote_id uuid not null references public.sales_quotes(id) on delete cascade,
+  description text not null,
+  quantity numeric(12,2) not null default 1,
+  unit_price numeric(12,2) not null default 0,
+  line_total numeric(14,2) not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  forecast_period text not null,
+  forecast_date date not null default current_date,
+  pipeline_value numeric(14,2) not null default 0,
+  weighted_value numeric(14,2) not null default 0,
+  closed_value numeric(14,2) not null default 0,
+  notes text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_activities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  activity_type text not null default 'task',
+  subject text not null,
+  description text not null default '',
+  due_at timestamptz,
+  completed_at timestamptz,
+  assigned_to uuid references public.employees(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_meetings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  title text not null,
+  location text not null default '',
+  meeting_url text not null default '',
+  scheduled_at timestamptz not null,
+  duration_minutes integer not null default 30,
+  status text not null default 'scheduled',
+  attendee_names text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_call_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  direction text not null default 'outbound',
+  phone_number text not null default '',
+  duration_seconds integer not null default 0,
+  outcome text not null default '',
+  notes text not null default '',
+  called_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_email_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  subject text not null,
+  recipient_email text not null,
+  status text not null default 'sent',
+  sent_at timestamptz not null default now(),
+  opened_at timestamptz,
+  clicked_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_targets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  period_label text not null,
+  target_amount numeric(14,2) not null default 0,
+  achieved_amount numeric(14,2) not null default 0,
+  period_start date not null,
+  period_end date not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, employee_id, period_label)
+);
+
+create table if not exists public.sales_commissions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  employee_id uuid not null references public.employees(id) on delete cascade,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  commission_rate numeric(5,2) not null default 0,
+  commission_amount numeric(14,2) not null default 0,
+  status text not null default 'pending',
+  calculated_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_win_loss_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  opportunity_id uuid not null references public.sales_opportunities(id) on delete cascade,
+  outcome text not null,
+  reason text not null default '',
+  competitor text not null default '',
+  amount numeric(14,2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.sales_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_sales_pipelines_org on public.sales_pipelines(organization_id);
+create index if not exists idx_sales_pipeline_stages_org on public.sales_pipeline_stages(organization_id);
+create index if not exists idx_sales_leads_org on public.sales_leads(organization_id);
+create index if not exists idx_sales_opportunities_org on public.sales_opportunities(organization_id);
+create index if not exists idx_sales_quotes_org on public.sales_quotes(organization_id);
+create index if not exists idx_sales_forecasts_org on public.sales_forecasts(organization_id);
+create index if not exists idx_sales_activities_org on public.sales_activities(organization_id);
+create index if not exists idx_sales_meetings_org on public.sales_meetings(organization_id);
+create index if not exists idx_sales_call_logs_org on public.sales_call_logs(organization_id);
+create index if not exists idx_sales_email_tracking_org on public.sales_email_tracking(organization_id);
+create index if not exists idx_sales_targets_org on public.sales_targets(organization_id);
+create index if not exists idx_sales_commissions_org on public.sales_commissions(organization_id);
+create index if not exists idx_sales_win_loss_records_org on public.sales_win_loss_records(organization_id);
+create index if not exists idx_sales_audit_logs_org on public.sales_audit_logs(organization_id);
+
+drop trigger if exists trg_sales_pipelines_updated_at on public.sales_pipelines;
+create trigger trg_sales_pipelines_updated_at before update on public.sales_pipelines for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_pipeline_stages_updated_at on public.sales_pipeline_stages;
+create trigger trg_sales_pipeline_stages_updated_at before update on public.sales_pipeline_stages for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_leads_updated_at on public.sales_leads;
+create trigger trg_sales_leads_updated_at before update on public.sales_leads for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_opportunities_updated_at on public.sales_opportunities;
+create trigger trg_sales_opportunities_updated_at before update on public.sales_opportunities for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_quotes_updated_at on public.sales_quotes;
+create trigger trg_sales_quotes_updated_at before update on public.sales_quotes for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_forecasts_updated_at on public.sales_forecasts;
+create trigger trg_sales_forecasts_updated_at before update on public.sales_forecasts for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_meetings_updated_at on public.sales_meetings;
+create trigger trg_sales_meetings_updated_at before update on public.sales_meetings for each row execute function public.set_updated_at();
+drop trigger if exists trg_sales_targets_updated_at on public.sales_targets;
+create trigger trg_sales_targets_updated_at before update on public.sales_targets for each row execute function public.set_updated_at();
+
+alter table public.sales_pipelines enable row level security;
+alter table public.sales_pipeline_stages enable row level security;
+alter table public.sales_leads enable row level security;
+alter table public.sales_opportunities enable row level security;
+alter table public.sales_quotes enable row level security;
+alter table public.sales_quote_items enable row level security;
+alter table public.sales_forecasts enable row level security;
+alter table public.sales_activities enable row level security;
+alter table public.sales_meetings enable row level security;
+alter table public.sales_call_logs enable row level security;
+alter table public.sales_email_tracking enable row level security;
+alter table public.sales_targets enable row level security;
+alter table public.sales_commissions enable row level security;
+alter table public.sales_win_loss_records enable row level security;
+alter table public.sales_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'sales_pipelines', 'sales_pipeline_stages', 'sales_leads', 'sales_opportunities',
+    'sales_quotes', 'sales_forecasts', 'sales_activities', 'sales_meetings',
+    'sales_call_logs', 'sales_email_tracking', 'sales_targets', 'sales_commissions',
+    'sales_win_loss_records', 'sales_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+drop policy if exists sales_quote_items_select on public.sales_quote_items;
+create policy sales_quote_items_select on public.sales_quote_items for select using (
+  exists (select 1 from public.sales_quotes q where q.id = quote_id and public.is_organization_member(q.organization_id))
+);
+drop policy if exists sales_quote_items_insert on public.sales_quote_items;
+create policy sales_quote_items_insert on public.sales_quote_items for insert with check (
+  exists (select 1 from public.sales_quotes q where q.id = quote_id and public.is_organization_member(q.organization_id))
+);
+drop policy if exists sales_quote_items_update on public.sales_quote_items;
+create policy sales_quote_items_update on public.sales_quote_items for update using (
+  exists (select 1 from public.sales_quotes q where q.id = quote_id and public.is_organization_member(q.organization_id))
+);
+drop policy if exists sales_quote_items_delete on public.sales_quote_items;
+create policy sales_quote_items_delete on public.sales_quote_items for delete using (
+  exists (select 1 from public.sales_quotes q where q.id = quote_id and public.is_organization_member(q.organization_id))
+);
+
+insert into public.permissions (key, description, resource)
+values
+  ('sales.view', 'View sales pipeline and revenue data', 'sales'),
+  ('sales.manage', 'Manage leads, opportunities, and quotes', 'sales'),
+  ('sales.pipeline.manage', 'Manage pipelines, stages, and forecasts', 'sales'),
+  ('sales.commissions.manage', 'Manage sales targets and commissions', 'sales')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -3586,6 +3902,106 @@ insert into public.support_audit_logs (id, organization_id, entity_type, entity_
 values
   ('dddddddd-dddd-dddd-dddd-dddddddddd91', '11111111-1111-1111-1111-111111111111', 'ticket', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', 'create', 'Ticket TKT-2026-01042 created for Northstar Labs'),
   ('dddddddd-dddd-dddd-dddd-dddddddddd92', '11111111-1111-1111-1111-111111111111', 'ticket', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d503', 'resolve', 'Ticket TKT-2026-01044 resolved')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 012_enterprise_sales_seed.sql
+-- =============================================================================
+insert into public.sales_pipelines (id, organization_id, name, code, description, is_default)
+values
+  ('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', '11111111-1111-1111-1111-111111111111', 'Enterprise Sales', 'ENT', 'Primary B2B enterprise sales pipeline', true),
+  ('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e102', '11111111-1111-1111-1111-111111111111', 'Mid-Market', 'MM', 'Mid-market and SMB sales pipeline', false)
+on conflict (id) do nothing;
+
+insert into public.sales_pipeline_stages (id, organization_id, pipeline_id, name, sort_order, probability, is_closed_won, is_closed_lost)
+values
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e201', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Prospecting', 1, 10, false, false),
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e202', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Qualification', 2, 25, false, false),
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e203', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Proposal', 3, 50, false, false),
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e204', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Negotiation', 4, 75, false, false),
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e205', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Closed Won', 5, 100, true, false),
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e206', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'Closed Lost', 6, 0, false, true)
+on conflict (id) do nothing;
+
+insert into public.sales_leads (id, organization_id, client_id, lead_name, company_name, email, phone, source, status, score, assigned_to)
+values
+  ('e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e301', '11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee03', 'Sara Chen', 'Helio Health', 'sara@heliohealth.com', '+1 617 555 0201', 'inbound', 'qualified', 82, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01'),
+  ('e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e302', '11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee04', 'Tom Bradley', 'Summit Retail', 'tom@summitretail.com', '+1 312 555 0202', 'referral', 'contacted', 71, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02'),
+  ('e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e303', '11111111-1111-1111-1111-111111111111', null, 'Maria Gonzalez', 'NovaTech Solutions', 'maria@novatech.io', '+1 415 555 0203', 'outbound', 'new', 45, null)
+on conflict (id) do nothing;
+
+insert into public.sales_opportunities (id, organization_id, opportunity_number, name, description, pipeline_id, stage_id, client_id, contact_id, project_id, assigned_to, amount, probability, expected_close_date, status)
+values
+  ('e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', '11111111-1111-1111-1111-111111111111', 'OPP-2026-0088', 'Northstar Enterprise Expansion', 'Annual platform expansion for Northstar Labs', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e204', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'dddddddd-dddd-dddd-dddd-dddddddddd01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 284000.00, 75, '2026-09-15', 'open'),
+  ('e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e402', '11111111-1111-1111-1111-111111111111', 'OPP-2026-0089', 'Helio Health Platform License', 'Healthcare compliance module deployment', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e203', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee03', 'dddddddd-dddd-dddd-dddd-dddddddddd03', null, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 48000.00, 50, '2026-08-30', 'open'),
+  ('e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403', '11111111-1111-1111-1111-111111111111', 'OPP-2026-0075', 'Apex Commerce Renewal', 'Annual renewal with upsell', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e1e101', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e2e205', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee02', 'dddddddd-dddd-dddd-dddd-dddddddddd02', null, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 96000.00, 100, '2026-07-01', 'won')
+on conflict (id) do nothing;
+
+update public.sales_opportunities set won_at = '2026-07-01 14:00:00+00', status = 'won' where id = 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403';
+
+insert into public.sales_quotes (id, organization_id, quote_number, opportunity_id, client_id, title, status, total_amount, valid_until)
+values
+  ('e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e5e501', '11111111-1111-1111-1111-111111111111', 'QT-2026-0042', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'Northstar Enterprise Expansion Proposal', 'sent', 284000.00, '2026-09-01'),
+  ('e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e5e502', '11111111-1111-1111-1111-111111111111', 'QT-2026-0043', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e402', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee03', 'Helio Health Platform License', 'draft', 48000.00, '2026-08-15')
+on conflict (id) do nothing;
+
+insert into public.sales_quote_items (id, quote_id, description, quantity, unit_price, line_total)
+values
+  ('e6e6e6e6-e6e6-e6e6-e6e6-e6e6e6e6e601', 'e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e5e501', 'Enterprise Platform License (100 seats)', 100, 2400.00, 240000.00),
+  ('e6e6e6e6-e6e6-e6e6-e6e6-e6e6e6e6e602', 'e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e5e501', 'Implementation Services', 1, 44000.00, 44000.00),
+  ('e6e6e6e6-e6e6-e6e6-e6e6-e6e6e6e6e603', 'e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e5e502', 'Healthcare Compliance Module', 1, 48000.00, 48000.00)
+on conflict (id) do nothing;
+
+insert into public.sales_forecasts (id, organization_id, forecast_period, forecast_date, pipeline_value, weighted_value, closed_value, notes)
+values
+  ('e7e7e7e7-e7e7-e7e7-e7e7-e7e7e7e7e701', '11111111-1111-1111-1111-111111111111', 'Q3 2026', '2026-08-01', 428000.00, 253000.00, 96000.00, 'Strong pipeline with two enterprise deals in negotiation'),
+  ('e7e7e7e7-e7e7-e7e7-e7e7-e7e7e7e7e702', '11111111-1111-1111-1111-111111111111', 'Q4 2026', '2026-08-01', 185000.00, 92500.00, 0, 'Early-stage Q4 pipeline build')
+on conflict (id) do nothing;
+
+insert into public.sales_activities (id, organization_id, opportunity_id, lead_id, activity_type, subject, description, due_at, assigned_to)
+values
+  ('e8e8e8e8-e8e8-e8e8-e8e8-e8e8e8e8e801', '11111111-1111-1111-1111-111111111111', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', null, 'task', 'Send revised proposal', 'Update pricing per Mina Park feedback', '2026-08-05 17:00:00+00', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01'),
+  ('e8e8e8e8-e8e8-e8e8-e8e8-e8e8e8e8e802', '11111111-1111-1111-1111-111111111111', null, 'e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e302', 'follow_up', 'Follow up on Summit Retail demo', 'Schedule second demo with decision makers', '2026-08-06 10:00:00+00', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02')
+on conflict (id) do nothing;
+
+insert into public.sales_meetings (id, organization_id, opportunity_id, lead_id, title, location, meeting_url, scheduled_at, duration_minutes, status, attendee_names)
+values
+  ('e9e9e9e9-e9e9-e9e9-e9e9-e9e9e9e9e901', '11111111-1111-1111-1111-111111111111', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', null, 'Northstar Contract Review', 'Zoom', 'https://meet.example.com/northstar-review', '2026-08-04 15:00:00+00', 60, 'scheduled', 'Mina Park, Alex Rivera'),
+  ('e9e9e9e9-e9e9-e9e9-e9e9-e9e9e9e9e902', '11111111-1111-1111-1111-111111111111', null, 'e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e301', 'Helio Health Discovery Call', 'Phone', '', '2026-08-03 11:00:00+00', 30, 'completed', 'Sara Chen')
+on conflict (id) do nothing;
+
+insert into public.sales_call_logs (id, organization_id, opportunity_id, lead_id, direction, phone_number, duration_seconds, outcome, notes, called_at)
+values
+  ('eaeaeaea-eaea-eaea-eaea-eaeaeaeaea01', '11111111-1111-1111-1111-111111111111', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', null, 'outbound', '+1 415 555 0148', 1245, 'connected', 'Discussed contract terms and timeline', '2026-08-02 16:30:00+00'),
+  ('eaeaeaea-eaea-eaea-eaea-eaeaeaeaea02', '11111111-1111-1111-1111-111111111111', null, 'e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e303', 'outbound', '+1 415 555 0203', 420, 'voicemail', 'Left voicemail about product demo', '2026-08-01 09:15:00+00')
+on conflict (id) do nothing;
+
+insert into public.sales_email_tracking (id, organization_id, opportunity_id, lead_id, subject, recipient_email, status, sent_at, opened_at)
+values
+  ('ebebebeb-ebeb-ebeb-ebeb-ebebebebeb01', '11111111-1111-1111-1111-111111111111', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', null, 'Northstar Expansion Proposal — QT-2026-0042', 'ops@northstarlabs.com', 'opened', '2026-08-01 10:00:00+00', '2026-08-01 14:22:00+00'),
+  ('ebebebeb-ebeb-ebeb-ebeb-ebebebebeb02', '11111111-1111-1111-1111-111111111111', null, 'e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e3e301', 'Helio Health — Next Steps', 'sara@heliohealth.com', 'clicked', '2026-07-28 11:00:00+00', '2026-07-28 11:45:00+00')
+on conflict (id) do nothing;
+
+insert into public.sales_targets (id, organization_id, employee_id, period_label, target_amount, achieved_amount, period_start, period_end)
+values
+  ('ecececec-ecec-ecec-ecec-ececececec01', '11111111-1111-1111-1111-111111111111', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'Q3 2026', 500000.00, 96000.00, '2026-07-01', '2026-09-30'),
+  ('ecececec-ecec-ecec-ecec-ececececec02', '11111111-1111-1111-1111-111111111111', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 'Q3 2026', 350000.00, 0, '2026-07-01', '2026-09-30')
+on conflict (id) do nothing;
+
+insert into public.sales_commissions (id, organization_id, employee_id, opportunity_id, commission_rate, commission_amount, status, calculated_at)
+values
+  ('edededed-eded-eded-eded-ededededed01', '11111111-1111-1111-1111-111111111111', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403', 8.00, 7680.00, 'approved', '2026-07-02 09:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.sales_win_loss_records (id, organization_id, opportunity_id, outcome, reason, competitor, amount, recorded_at)
+values
+  ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee91', '11111111-1111-1111-1111-111111111111', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403', 'won', 'Competitive pricing and strong relationship', '', 96000.00, '2026-07-01 14:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.sales_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee92', '11111111-1111-1111-1111-111111111111', 'opportunity', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', 'create', 'Opportunity OPP-2026-0088 created for Northstar Labs'),
+  ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee93', '11111111-1111-1111-1111-111111111111', 'opportunity', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403', 'won', 'Opportunity OPP-2026-0075 marked as won')
 on conflict (id) do nothing;
 
 -- =============================================================================

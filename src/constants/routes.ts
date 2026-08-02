@@ -21,6 +21,7 @@ export const ROUTES = {
     hr: "/hr",
     inventory: "/inventory",
     support: "/support",
+    sales: "/sales",
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

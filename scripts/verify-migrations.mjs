@@ -108,6 +108,21 @@ const requiredTables = [
     "support_satisfaction_ratings",
     "support_portal_settings",
     "support_audit_logs",
+    "sales_pipelines",
+    "sales_pipeline_stages",
+    "sales_leads",
+    "sales_opportunities",
+    "sales_quotes",
+    "sales_quote_items",
+    "sales_forecasts",
+    "sales_activities",
+    "sales_meetings",
+    "sales_call_logs",
+    "sales_email_tracking",
+    "sales_targets",
+    "sales_commissions",
+    "sales_win_loss_records",
+    "sales_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

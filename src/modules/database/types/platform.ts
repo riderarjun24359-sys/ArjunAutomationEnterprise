@@ -1245,3 +1245,212 @@ export interface DbSupportAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbSalesPipeline {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    description: string;
+    is_default: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesPipelineStage {
+    id: string;
+    organization_id: string;
+    pipeline_id: string;
+    name: string;
+    sort_order: number;
+    probability: number;
+    is_closed_won: boolean;
+    is_closed_lost: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesLead {
+    id: string;
+    organization_id: string;
+    client_id?: string | null;
+    lead_name: string;
+    company_name: string;
+    email: string;
+    phone: string;
+    source: string;
+    status: string;
+    score: number;
+    assigned_to?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesOpportunity {
+    id: string;
+    organization_id: string;
+    opportunity_number: string;
+    name: string;
+    description: string;
+    pipeline_id?: string | null;
+    stage_id?: string | null;
+    client_id?: string | null;
+    contact_id?: string | null;
+    project_id?: string | null;
+    assigned_to?: string | null;
+    amount: number;
+    probability: number;
+    expected_close_date?: string | null;
+    status: string;
+    won_at?: string | null;
+    lost_at?: string | null;
+    lost_reason: string;
+    estimate_id?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesQuote {
+    id: string;
+    organization_id: string;
+    quote_number: string;
+    opportunity_id?: string | null;
+    client_id?: string | null;
+    title: string;
+    status: string;
+    total_amount: number;
+    valid_until?: string | null;
+    estimate_id?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesQuoteItem {
+    id: string;
+    quote_id: string;
+    description: string;
+    quantity: number;
+    unit_price: number;
+    line_total: number;
+    created_at: string;
+}
+
+export interface DbSalesForecast {
+    id: string;
+    organization_id: string;
+    forecast_period: string;
+    forecast_date: string;
+    pipeline_value: number;
+    weighted_value: number;
+    closed_value: number;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesActivity {
+    id: string;
+    organization_id: string;
+    opportunity_id?: string | null;
+    lead_id?: string | null;
+    activity_type: string;
+    subject: string;
+    description: string;
+    due_at?: string | null;
+    completed_at?: string | null;
+    assigned_to?: string | null;
+    created_at: string;
+}
+
+export interface DbSalesMeeting {
+    id: string;
+    organization_id: string;
+    opportunity_id?: string | null;
+    lead_id?: string | null;
+    title: string;
+    location: string;
+    meeting_url: string;
+    scheduled_at: string;
+    duration_minutes: number;
+    status: string;
+    attendee_names: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesCallLog {
+    id: string;
+    organization_id: string;
+    opportunity_id?: string | null;
+    lead_id?: string | null;
+    direction: string;
+    phone_number: string;
+    duration_seconds: number;
+    outcome: string;
+    notes: string;
+    called_at: string;
+    created_at: string;
+}
+
+export interface DbSalesEmailTracking {
+    id: string;
+    organization_id: string;
+    opportunity_id?: string | null;
+    lead_id?: string | null;
+    subject: string;
+    recipient_email: string;
+    status: string;
+    sent_at: string;
+    opened_at?: string | null;
+    clicked_at?: string | null;
+    created_at: string;
+}
+
+export interface DbSalesTarget {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    period_label: string;
+    target_amount: number;
+    achieved_amount: number;
+    period_start: string;
+    period_end: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSalesCommission {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    opportunity_id?: string | null;
+    commission_rate: number;
+    commission_amount: number;
+    status: string;
+    calculated_at: string;
+    created_at: string;
+}
+
+export interface DbSalesWinLossRecord {
+    id: string;
+    organization_id: string;
+    opportunity_id: string;
+    outcome: string;
+    reason: string;
+    competitor: string;
+    amount: number;
+    recorded_at: string;
+    created_at: string;
+}
+
+export interface DbSalesAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

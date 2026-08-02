@@ -108,6 +108,23 @@ import {
     SupportTicketNoteRepository,
     SupportTicketRepository,
 } from "@/src/modules/database/repositories/support-repositories";
+import {
+    SalesActivityRepository,
+    SalesAuditLogRepository,
+    SalesCallLogRepository,
+    SalesCommissionRepository,
+    SalesEmailTrackingRepository,
+    SalesForecastRepository,
+    SalesLeadRepository,
+    SalesMeetingRepository,
+    SalesOpportunityRepository,
+    SalesPipelineRepository,
+    SalesPipelineStageRepository,
+    SalesQuoteItemRepository,
+    SalesQuoteRepository,
+    SalesTargetRepository,
+    SalesWinLossRecordRepository,
+} from "@/src/modules/database/repositories/sales-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -206,6 +223,21 @@ export class DatabaseAccessLayer {
     readonly supportSatisfactionRatings: SupportSatisfactionRatingRepository;
     readonly supportPortalSettings: SupportPortalSettingsRepository;
     readonly supportAuditLogs: SupportAuditLogRepository;
+    readonly salesPipelines: SalesPipelineRepository;
+    readonly salesPipelineStages: SalesPipelineStageRepository;
+    readonly salesLeads: SalesLeadRepository;
+    readonly salesOpportunities: SalesOpportunityRepository;
+    readonly salesQuotes: SalesQuoteRepository;
+    readonly salesQuoteItems: SalesQuoteItemRepository;
+    readonly salesForecasts: SalesForecastRepository;
+    readonly salesActivities: SalesActivityRepository;
+    readonly salesMeetings: SalesMeetingRepository;
+    readonly salesCallLogs: SalesCallLogRepository;
+    readonly salesEmailTracking: SalesEmailTrackingRepository;
+    readonly salesTargets: SalesTargetRepository;
+    readonly salesCommissions: SalesCommissionRepository;
+    readonly salesWinLossRecords: SalesWinLossRecordRepository;
+    readonly salesAuditLogs: SalesAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -304,6 +336,21 @@ export class DatabaseAccessLayer {
         this.supportSatisfactionRatings = new SupportSatisfactionRatingRepository();
         this.supportPortalSettings = new SupportPortalSettingsRepository();
         this.supportAuditLogs = new SupportAuditLogRepository();
+        this.salesPipelines = new SalesPipelineRepository();
+        this.salesPipelineStages = new SalesPipelineStageRepository();
+        this.salesLeads = new SalesLeadRepository();
+        this.salesOpportunities = new SalesOpportunityRepository();
+        this.salesQuotes = new SalesQuoteRepository();
+        this.salesQuoteItems = new SalesQuoteItemRepository();
+        this.salesForecasts = new SalesForecastRepository();
+        this.salesActivities = new SalesActivityRepository();
+        this.salesMeetings = new SalesMeetingRepository();
+        this.salesCallLogs = new SalesCallLogRepository();
+        this.salesEmailTracking = new SalesEmailTrackingRepository();
+        this.salesTargets = new SalesTargetRepository();
+        this.salesCommissions = new SalesCommissionRepository();
+        this.salesWinLossRecords = new SalesWinLossRecordRepository();
+        this.salesAuditLogs = new SalesAuditLogRepository();
     }
 }
 
