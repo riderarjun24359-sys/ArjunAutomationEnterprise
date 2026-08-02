@@ -50,4 +50,54 @@ export class ClientRepository extends BaseRepository<DbClient> {
         mapRepositoryError(error, "Failed to list leads");
         return (data ?? []) as DbClient[];
     }
+
+    async listActiveClients(organizationId: string): Promise<DbClient[]> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return [];
+        }
+
+        const { data, error } = await client
+            .from(this.table)
+            .select("*")
+            .eq("organization_id", organizationId)
+            .eq("lifecycle_stage", "client")
+            .order("updated_at", { ascending: false });
+
+        mapRepositoryError(error, "Failed to list active clients");
+        return (data ?? []) as DbClient[];
+    }
+
+    async create(input: Record<string, unknown>): Promise<DbClient | null> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client.from(this.table).insert(input).select("*").maybeSingle();
+        mapRepositoryError(error, "Failed to create client");
+        return (data as DbClient | null) ?? null;
+    }
+
+    async update(id: string, input: Record<string, unknown>): Promise<DbClient | null> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client.from(this.table).update(input).eq("id", id).select("*").maybeSingle();
+        mapRepositoryError(error, "Failed to update client");
+        return (data as DbClient | null) ?? null;
+    }
+
+    async delete(id: string): Promise<boolean> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return false;
+        }
+
+        const { error } = await client.from(this.table).delete().eq("id", id);
+        mapRepositoryError(error, "Failed to delete client");
+        return !error;
+    }
 }

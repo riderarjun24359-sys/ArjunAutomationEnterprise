@@ -7,6 +7,7 @@ import { ClientRepository } from "@/src/modules/database/repositories/client-rep
 import { ActivityLogRepository } from "@/src/modules/database/repositories/activity-log-repository";
 import { ProjectRepository } from "@/src/modules/database/repositories/project-repository";
 import { TaskRepository } from "@/src/modules/database/repositories/task-repository";
+import { ContactRepository } from "@/src/modules/database/repositories/contact-repository";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -18,6 +19,7 @@ export class DatabaseAccessLayer {
     readonly activityLogs: ActivityLogRepository;
     readonly projects: ProjectRepository;
     readonly tasks: TaskRepository;
+    readonly contacts: ContactRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -29,6 +31,7 @@ export class DatabaseAccessLayer {
         this.activityLogs = new ActivityLogRepository();
         this.projects = new ProjectRepository();
         this.tasks = new TaskRepository();
+        this.contacts = new ContactRepository();
     }
 }
 

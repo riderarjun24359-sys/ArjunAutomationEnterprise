@@ -10,4 +10,5 @@ export const databaseService = {
     activityLogs: databaseAccess.activityLogs,
     projects: databaseAccess.projects,
     tasks: databaseAccess.tasks,
+    contacts: databaseAccess.contacts,
 };

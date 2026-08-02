@@ -41,6 +41,17 @@ export class ProjectRepository extends BaseRepository<DbProject> {
         return (data as DbProject | null) ?? null;
     }
 
+    async listByClientId(clientId: string): Promise<DbProject[]> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return [];
+        }
+
+        const { data, error } = await client.from(this.table).select("*").eq("client_id", clientId).order("updated_at", { ascending: false });
+        mapRepositoryError(error, "Failed to list projects by client");
+        return (data ?? []) as DbProject[];
+    }
+
     async listMilestones(projectId: string): Promise<DbProjectMilestone[]> {
         return this.listChildRecords<DbProjectMilestone>("project_milestones", projectId);
     }

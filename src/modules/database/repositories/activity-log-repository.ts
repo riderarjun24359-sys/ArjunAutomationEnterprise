@@ -27,4 +27,33 @@ export class ActivityLogRepository extends BaseRepository<DbActivityLog> {
         mapRepositoryError(error, "Failed to list activity logs");
         return (data ?? []) as DbActivityLog[];
     }
+
+    async listByEntity(organizationId: string, entityType: string, entityId: string): Promise<DbActivityLog[]> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return [];
+        }
+
+        const { data, error } = await client
+            .from(this.table)
+            .select("*")
+            .eq("organization_id", organizationId)
+            .eq("entity_type", entityType)
+            .eq("entity_id", entityId)
+            .order("created_at", { ascending: false });
+
+        mapRepositoryError(error, "Failed to list entity activity logs");
+        return (data ?? []) as DbActivityLog[];
+    }
+
+    async create(input: Record<string, unknown>): Promise<DbActivityLog | null> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client.from(this.table).insert(input).select("*").maybeSingle();
+        mapRepositoryError(error, "Failed to create activity log");
+        return (data as DbActivityLog | null) ?? null;
+    }
 }

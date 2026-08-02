@@ -1,0 +1,11 @@
+export { ClientsPage } from "@/src/modules/clients/components/ClientsPage";
+export { ClientStats } from "@/src/modules/clients/components/ClientStats";
+export { ClientFilters } from "@/src/modules/clients/components/ClientFilters";
+export { ClientTable } from "@/src/modules/clients/components/ClientTable";
+export { ClientForm } from "@/src/modules/clients/components/ClientForm";
+export { ClientDetailPanel } from "@/src/modules/clients/components/ClientDetailPanel";
+export { clientService } from "@/src/modules/clients/services/client.service";
+export { useClients } from "@/src/modules/clients/hooks/useClients";
+export * from "@/src/modules/clients/types";
+export * from "@/src/modules/clients/constants";
+export * from "@/src/modules/clients/schemas";
