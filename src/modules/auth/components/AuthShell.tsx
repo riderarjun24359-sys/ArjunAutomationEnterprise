@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { ROUTES } from "@/src/constants/routes";
 import { AuthForm } from "@/src/modules/auth/components/AuthForm";
+import { LoadingState } from "@/src/components/ui/LoadingState";
 
 interface AuthShellProps {
     mode: "sign-in" | "sign-up" | "forgot-password" | "reset-password";
@@ -29,7 +31,9 @@ export function AuthShell({ mode, title, description }: AuthShellProps) {
                 </section>
 
                 <section className="w-full max-w-lg">
-                    <AuthForm mode={mode} />
+                    <Suspense fallback={<LoadingState label="Loading authentication form" />}>
+                        <AuthForm mode={mode} />
+                    </Suspense>
                     <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-300">
                         {mode === "sign-in" ? (
                             <>

@@ -1,5 +1,14 @@
 import { supabaseBrowser } from "@/src/lib/supabase-browser";
-import type { AuthUser, AuthSession, AuthProvider, SignInInput, SignUpInput, ResetPasswordInput, NewPasswordInput } from "@/src/types/auth";
+import { assertSupabaseConfigured } from "@/src/lib/supabase-config";
+import type { AuthUser, AuthSession, SignInInput, SignUpInput, ResetPasswordInput, NewPasswordInput } from "@/src/types/auth";
+
+const getAppOrigin = (): string => {
+    if (typeof window !== "undefined") {
+        return window.location.origin;
+    }
+
+    return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+};
 
 const mapUser = (user: { id: string; email?: string | null; user_metadata?: Record<string, unknown> } | null): AuthUser | null => {
     if (!user) {
@@ -32,14 +41,15 @@ const mapSession = (session: { access_token: string; refresh_token?: string | nu
 
 export const authService = {
     async signIn(input: SignInInput) {
+        assertSupabaseConfigured();
         const client = supabaseBrowser();
         if (!client) {
-            throw new Error("Authentication is not configured.");
+            throw new Error("Unable to initialize Supabase client.");
         }
 
-        const { data, error } = await client.auth.signInWithOtp({
+        const { data, error } = await client.auth.signInWithPassword({
             email: input.email,
-            options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+            password: input.password,
         });
 
         if (error) {
@@ -50,9 +60,10 @@ export const authService = {
     },
 
     async signUp(input: SignUpInput) {
+        assertSupabaseConfigured();
         const client = supabaseBrowser();
         if (!client) {
-            throw new Error("Authentication is not configured.");
+            throw new Error("Unable to initialize Supabase client.");
         }
 
         const { data, error } = await client.auth.signUp({
@@ -60,6 +71,7 @@ export const authService = {
             password: input.password,
             options: {
                 data: { full_name: input.fullName ?? null },
+                emailRedirectTo: `${getAppOrigin()}/auth/callback`,
             },
         });
 
@@ -67,17 +79,22 @@ export const authService = {
             throw error;
         }
 
-        return { user: mapUser(data.user), session: mapSession(data.session) };
+        return {
+            user: mapUser(data.user),
+            session: mapSession(data.session),
+            requiresEmailConfirmation: Boolean(data.user && !data.session),
+        };
     },
 
     async forgotPassword(input: ResetPasswordInput) {
+        assertSupabaseConfigured();
         const client = supabaseBrowser();
         if (!client) {
-            throw new Error("Authentication is not configured.");
+            throw new Error("Unable to initialize Supabase client.");
         }
 
         const { error } = await client.auth.resetPasswordForEmail(input.email, {
-            redirectTo: `${window.location.origin}/auth/reset-password`,
+            redirectTo: `${getAppOrigin()}/auth/reset-password`,
         });
 
         if (error) {
@@ -88,9 +105,10 @@ export const authService = {
     },
 
     async resetPassword(input: NewPasswordInput) {
+        assertSupabaseConfigured();
         const client = supabaseBrowser();
         if (!client) {
-            throw new Error("Authentication is not configured.");
+            throw new Error("Unable to initialize Supabase client.");
         }
 
         const { error } = await client.auth.updateUser({ password: input.password });
@@ -126,5 +144,4 @@ export const authService = {
             session: mapSession(data.session),
         };
     },
-
 };

@@ -37,14 +37,28 @@ export const authServerService = {
             return { user: null, session: null };
         }
 
-        const { data, error } = await client.auth.getUser();
-        if (error) {
+        const { data, error } = await client.auth.getSession();
+        if (error || !data.session) {
             return { user: null, session: null };
         }
 
         return {
-            user: mapUser(data.user),
-            session: null,
+            user: mapUser(data.session.user),
+            session: mapSession(data.session),
         };
+    },
+
+    async getUser() {
+        const client = await supabaseServer();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client.auth.getUser();
+        if (error) {
+            return null;
+        }
+
+        return mapUser(data.user);
     },
 };

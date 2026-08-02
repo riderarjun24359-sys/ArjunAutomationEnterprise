@@ -8,7 +8,16 @@ const envSchema = z.object({
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
-const parsed = envSchema.safeParse(process.env);
+// Next.js only inlines NEXT_PUBLIC_* vars when accessed directly on process.env.
+const runtimeEnv = {
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NODE_ENV: process.env.NODE_ENV,
+};
+
+const parsed = envSchema.safeParse(runtimeEnv);
 
 export const env = parsed.success ? parsed.data : envSchema.parse({});
 

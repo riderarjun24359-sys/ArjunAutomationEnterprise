@@ -1,0 +1,13 @@
+export { TasksPage } from "@/src/modules/tasks/components/TasksPage";
+export { TaskStats } from "@/src/modules/tasks/components/TaskStats";
+export { TaskFilters } from "@/src/modules/tasks/components/TaskFilters";
+export { TaskTable } from "@/src/modules/tasks/components/TaskTable";
+export { TaskKanban } from "@/src/modules/tasks/components/TaskKanban";
+export { TaskCard } from "@/src/modules/tasks/components/TaskCard";
+export { TaskForm } from "@/src/modules/tasks/components/TaskForm";
+export { EmptyState } from "@/src/modules/tasks/components/EmptyState";
+export { taskService } from "@/src/modules/tasks/services/task.service";
+export { useTasks } from "@/src/modules/tasks/hooks/useTasks";
+export * from "@/src/modules/tasks/types";
+export * from "@/src/modules/tasks/constants";
+export * from "@/src/modules/tasks/schemas";
