@@ -14,6 +14,7 @@ const protectedRoutes = [
     ROUTES.automation,
     ROUTES.settings,
     ROUTES.hr,
+    ROUTES.inventory,
 ];
 
 const authRoutes = [

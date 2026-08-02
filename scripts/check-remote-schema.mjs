@@ -39,6 +39,11 @@ const requiredTables = [
     "leave_requests",
     "payroll_cycles",
     "job_openings",
+    "product_categories",
+    "products",
+    "warehouses",
+    "purchase_orders",
+    "assets",
 ];
 
 const supabase = createClient(url, anonKey);

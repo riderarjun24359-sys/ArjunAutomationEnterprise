@@ -73,6 +73,26 @@ import {
     PayrollEntryRepository,
     PerformanceReviewRepository,
 } from "@/src/modules/database/repositories/hr-repositories";
+import {
+    AssetRepository,
+    GoodsReceivedNoteRepository,
+    GrnItemRepository,
+    InventoryAdjustmentRepository,
+    InventoryAuditLogRepository,
+    InventoryValuationRepository,
+    LowStockAlertRepository,
+    ProductBarcodeRepository,
+    ProductCategoryRepository,
+    ProductRepository,
+    PurchaseOrderItemRepository,
+    PurchaseOrderRepository,
+    StockLevelRepository,
+    StockMovementRepository,
+    StockTransferItemRepository,
+    StockTransferRepository,
+    SupplierRepository,
+    WarehouseRepository,
+} from "@/src/modules/database/repositories/inventory-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -140,6 +160,24 @@ export class DatabaseAccessLayer {
     readonly offboardingPlans: OffboardingPlanRepository;
     readonly offboardingTasks: OffboardingTaskRepository;
     readonly orgChartNodes: OrgChartNodeRepository;
+    readonly productCategories: ProductCategoryRepository;
+    readonly products: ProductRepository;
+    readonly warehouses: WarehouseRepository;
+    readonly stockLevels: StockLevelRepository;
+    readonly suppliers: SupplierRepository;
+    readonly stockMovements: StockMovementRepository;
+    readonly inventoryAdjustments: InventoryAdjustmentRepository;
+    readonly purchaseOrders: PurchaseOrderRepository;
+    readonly purchaseOrderItems: PurchaseOrderItemRepository;
+    readonly assets: AssetRepository;
+    readonly productBarcodes: ProductBarcodeRepository;
+    readonly lowStockAlerts: LowStockAlertRepository;
+    readonly stockTransfers: StockTransferRepository;
+    readonly stockTransferItems: StockTransferItemRepository;
+    readonly goodsReceivedNotes: GoodsReceivedNoteRepository;
+    readonly grnItems: GrnItemRepository;
+    readonly inventoryValuations: InventoryValuationRepository;
+    readonly inventoryAuditLogs: InventoryAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -207,6 +245,24 @@ export class DatabaseAccessLayer {
         this.offboardingPlans = new OffboardingPlanRepository();
         this.offboardingTasks = new OffboardingTaskRepository();
         this.orgChartNodes = new OrgChartNodeRepository();
+        this.productCategories = new ProductCategoryRepository();
+        this.products = new ProductRepository();
+        this.warehouses = new WarehouseRepository();
+        this.stockLevels = new StockLevelRepository();
+        this.suppliers = new SupplierRepository();
+        this.stockMovements = new StockMovementRepository();
+        this.inventoryAdjustments = new InventoryAdjustmentRepository();
+        this.purchaseOrders = new PurchaseOrderRepository();
+        this.purchaseOrderItems = new PurchaseOrderItemRepository();
+        this.assets = new AssetRepository();
+        this.productBarcodes = new ProductBarcodeRepository();
+        this.lowStockAlerts = new LowStockAlertRepository();
+        this.stockTransfers = new StockTransferRepository();
+        this.stockTransferItems = new StockTransferItemRepository();
+        this.goodsReceivedNotes = new GoodsReceivedNoteRepository();
+        this.grnItems = new GrnItemRepository();
+        this.inventoryValuations = new InventoryValuationRepository();
+        this.inventoryAuditLogs = new InventoryAuditLogRepository();
     }
 }
 

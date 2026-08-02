@@ -862,3 +862,225 @@ export interface DbOrgChartNode {
     created_at: string;
     updated_at: string;
 }
+
+export interface DbProductCategory {
+    id: string;
+    organization_id: string;
+    name: string;
+    slug: string;
+    description: string;
+    parent_category_id?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbProduct {
+    id: string;
+    organization_id: string;
+    category_id?: string | null;
+    sku: string;
+    name: string;
+    description: string;
+    unit_of_measure: string;
+    unit_cost: number;
+    unit_price: number;
+    reorder_level: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWarehouse {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    location: string;
+    manager_name: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbStockLevel {
+    id: string;
+    organization_id: string;
+    product_id: string;
+    warehouse_id: string;
+    quantity: number;
+    reserved_quantity: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupplier {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    email: string;
+    phone: string;
+    address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbStockMovement {
+    id: string;
+    organization_id: string;
+    product_id: string;
+    warehouse_id: string;
+    movement_type: string;
+    quantity: number;
+    reference_type: string;
+    reference_id?: string | null;
+    project_id?: string | null;
+    notes: string;
+    moved_at: string;
+    created_at: string;
+}
+
+export interface DbInventoryAdjustment {
+    id: string;
+    organization_id: string;
+    product_id: string;
+    warehouse_id: string;
+    adjustment_type: string;
+    quantity_delta: number;
+    reason: string;
+    adjusted_by?: string | null;
+    created_at: string;
+}
+
+export interface DbPurchaseOrder {
+    id: string;
+    organization_id: string;
+    supplier_id: string;
+    po_number: string;
+    status: string;
+    order_date: string;
+    expected_date?: string | null;
+    total_amount: number;
+    expense_id?: string | null;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbPurchaseOrderItem {
+    id: string;
+    purchase_order_id: string;
+    product_id: string;
+    quantity: number;
+    unit_cost: number;
+    line_total: number;
+    created_at: string;
+}
+
+export interface DbAsset {
+    id: string;
+    organization_id: string;
+    asset_tag: string;
+    name: string;
+    category: string;
+    serial_number: string;
+    purchase_cost: number;
+    status: string;
+    warehouse_id?: string | null;
+    project_id?: string | null;
+    employee_id?: string | null;
+    acquired_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbProductBarcode {
+    id: string;
+    organization_id: string;
+    product_id?: string | null;
+    asset_id?: string | null;
+    barcode_value: string;
+    barcode_type: string;
+    created_at: string;
+}
+
+export interface DbLowStockAlert {
+    id: string;
+    organization_id: string;
+    product_id: string;
+    warehouse_id: string;
+    current_quantity: number;
+    reorder_level: number;
+    status: string;
+    triggered_at: string;
+    resolved_at?: string | null;
+    created_at: string;
+}
+
+export interface DbStockTransfer {
+    id: string;
+    organization_id: string;
+    transfer_number: string;
+    source_warehouse_id: string;
+    destination_warehouse_id: string;
+    status: string;
+    notes: string;
+    transferred_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbStockTransferItem {
+    id: string;
+    transfer_id: string;
+    product_id: string;
+    quantity: number;
+    created_at: string;
+}
+
+export interface DbGoodsReceivedNote {
+    id: string;
+    organization_id: string;
+    grn_number: string;
+    purchase_order_id?: string | null;
+    warehouse_id: string;
+    supplier_id?: string | null;
+    status: string;
+    received_date: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbGrnItem {
+    id: string;
+    grn_id: string;
+    product_id: string;
+    quantity_received: number;
+    unit_cost: number;
+    created_at: string;
+}
+
+export interface DbInventoryValuation {
+    id: string;
+    organization_id: string;
+    valuation_date: string;
+    method: string;
+    total_value: number;
+    total_units: number;
+    notes: string;
+    created_at: string;
+}
+
+export interface DbInventoryAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}
