@@ -1639,3 +1639,187 @@ export interface DbDocumentAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbAiProvider {
+    id: string;
+    organization_id: string;
+    name: string;
+    provider_key: string;
+    api_base_url: string;
+    status: string;
+    is_default: boolean;
+    config: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiModelRoute {
+    id: string;
+    organization_id: string;
+    name: string;
+    provider_id: string;
+    model_id: string;
+    priority: number;
+    routing_strategy: string;
+    fallback_provider_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiOrchestrationAgent {
+    id: string;
+    organization_id: string;
+    name: string;
+    agent_type: string;
+    workflow_agent_id?: string | null;
+    provider_id?: string | null;
+    model_route_id?: string | null;
+    capabilities: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiPromptTemplate {
+    id: string;
+    organization_id: string;
+    name: string;
+    template_key: string;
+    category: string;
+    content: string;
+    variables: unknown[];
+    version: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiSession {
+    id: string;
+    organization_id: string;
+    agent_id?: string | null;
+    session_key: string;
+    module_source: string;
+    entity_type: string;
+    entity_id?: string | null;
+    context: Record<string, unknown>;
+    status: string;
+    expires_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiTaskExecution {
+    id: string;
+    organization_id: string;
+    agent_id?: string | null;
+    session_id?: string | null;
+    provider_id?: string | null;
+    task_type: string;
+    input_payload: Record<string, unknown>;
+    output_payload: Record<string, unknown>;
+    status: string;
+    model_used: string;
+    tokens_used: number;
+    duration_ms: number;
+    error_message: string;
+    started_at: string;
+    completed_at?: string | null;
+    created_at: string;
+}
+
+export interface DbAiUsageRecord {
+    id: string;
+    organization_id: string;
+    provider_id?: string | null;
+    agent_id?: string | null;
+    task_execution_id?: string | null;
+    tokens_input: number;
+    tokens_output: number;
+    request_count: number;
+    recorded_at: string;
+    created_at: string;
+}
+
+export interface DbAiCostRecord {
+    id: string;
+    organization_id: string;
+    provider_id?: string | null;
+    usage_record_id?: string | null;
+    cost_usd: number;
+    pricing_model: string;
+    recorded_at: string;
+    created_at: string;
+}
+
+export interface DbAiRateLimit {
+    id: string;
+    organization_id: string;
+    scope_type: string;
+    scope_id?: string | null;
+    requests_per_minute: number;
+    tokens_per_day: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiPermissionGrant {
+    id: string;
+    organization_id: string;
+    grantee_type: string;
+    grantee_id?: string | null;
+    permission_key: string;
+    resource_type: string;
+    resource_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface DbAiProviderHealthCheck {
+    id: string;
+    organization_id: string;
+    provider_id: string;
+    status: string;
+    latency_ms: number;
+    error_message: string;
+    last_checked_at: string;
+    created_at: string;
+}
+
+export interface DbAiRetryPolicy {
+    id: string;
+    organization_id: string;
+    name: string;
+    max_retries: number;
+    backoff_strategy: string;
+    fallback_route_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAiOrchestrationAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}
+
+export interface DbAiOrchestrationAnalytics {
+    id: string;
+    organization_id: string;
+    metric_key: string;
+    metric_value: number;
+    dimensions: Record<string, unknown>;
+    period_start: string;
+    period_end: string;
+    computed_at: string;
+    created_at: string;
+}

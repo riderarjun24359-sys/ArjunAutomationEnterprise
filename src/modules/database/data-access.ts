@@ -143,6 +143,22 @@ import {
     DocumentTemplateRepository,
     DocumentVersionRepository,
 } from "@/src/modules/database/repositories/documents-repositories";
+import {
+    AiCostRecordRepository,
+    AiModelRouteRepository,
+    AiOrchestrationAgentRepository,
+    AiOrchestrationAnalyticsRepository,
+    AiOrchestrationAuditLogRepository,
+    AiPermissionGrantRepository,
+    AiPromptTemplateRepository,
+    AiProviderHealthCheckRepository,
+    AiProviderRepository,
+    AiRateLimitRepository,
+    AiRetryPolicyRepository,
+    AiSessionRepository,
+    AiTaskExecutionRepository,
+    AiUsageRecordRepository,
+} from "@/src/modules/database/repositories/ai-orchestration-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -272,6 +288,20 @@ export class DatabaseAccessLayer {
     readonly documentArchives: DocumentArchiveRepository;
     readonly documentActivityLogs: DocumentActivityLogRepository;
     readonly documentAuditLogs: DocumentAuditLogRepository;
+    readonly aiProviders: AiProviderRepository;
+    readonly aiModelRoutes: AiModelRouteRepository;
+    readonly aiOrchestrationAgents: AiOrchestrationAgentRepository;
+    readonly aiPromptTemplates: AiPromptTemplateRepository;
+    readonly aiSessions: AiSessionRepository;
+    readonly aiTaskExecutions: AiTaskExecutionRepository;
+    readonly aiUsageRecords: AiUsageRecordRepository;
+    readonly aiCostRecords: AiCostRecordRepository;
+    readonly aiRateLimits: AiRateLimitRepository;
+    readonly aiPermissionGrants: AiPermissionGrantRepository;
+    readonly aiProviderHealthChecks: AiProviderHealthCheckRepository;
+    readonly aiRetryPolicies: AiRetryPolicyRepository;
+    readonly aiOrchestrationAuditLogs: AiOrchestrationAuditLogRepository;
+    readonly aiOrchestrationAnalytics: AiOrchestrationAnalyticsRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -401,6 +431,20 @@ export class DatabaseAccessLayer {
         this.documentArchives = new DocumentArchiveRepository();
         this.documentActivityLogs = new DocumentActivityLogRepository();
         this.documentAuditLogs = new DocumentAuditLogRepository();
+        this.aiProviders = new AiProviderRepository();
+        this.aiModelRoutes = new AiModelRouteRepository();
+        this.aiOrchestrationAgents = new AiOrchestrationAgentRepository();
+        this.aiPromptTemplates = new AiPromptTemplateRepository();
+        this.aiSessions = new AiSessionRepository();
+        this.aiTaskExecutions = new AiTaskExecutionRepository();
+        this.aiUsageRecords = new AiUsageRecordRepository();
+        this.aiCostRecords = new AiCostRecordRepository();
+        this.aiRateLimits = new AiRateLimitRepository();
+        this.aiPermissionGrants = new AiPermissionGrantRepository();
+        this.aiProviderHealthChecks = new AiProviderHealthCheckRepository();
+        this.aiRetryPolicies = new AiRetryPolicyRepository();
+        this.aiOrchestrationAuditLogs = new AiOrchestrationAuditLogRepository();
+        this.aiOrchestrationAnalytics = new AiOrchestrationAnalyticsRepository();
     }
 }
 

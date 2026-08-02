@@ -50,6 +50,8 @@ const requiredTables = [
     "sales_leads",
     "document_folders",
     "documents",
+    "ai_providers",
+    "ai_orchestration_agents",
 ];
 
 const supabase = createClient(url, anonKey);

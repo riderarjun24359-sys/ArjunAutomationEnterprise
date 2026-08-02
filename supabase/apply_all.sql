@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-02T23:08:09.100Z
+-- Generated: 2026-08-02T23:23:47.584Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (13):
+--   Migrations (14):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -19,7 +19,8 @@
 --     - 202608020011_enterprise_support.sql
 --     - 202608020012_enterprise_sales.sql
 --     - 202608020013_enterprise_documents.sql
---   Seeds (13):
+--     - 202608020014_enterprise_ai_orchestration.sql
+--   Seeds (14):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -33,9 +34,10 @@
 --     - 011_enterprise_support_seed.sql
 --     - 012_enterprise_sales_seed.sql
 --     - 013_enterprise_documents_seed.sql
+--     - 014_enterprise_ai_orchestration_seed.sql
 --
--- Includes through Sprint 20:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management
+-- Includes through Sprint 21:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -3416,6 +3418,276 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020014_enterprise_ai_orchestration.sql
+-- =============================================================================
+-- Sprint 21: Enterprise AI Orchestration Layer
+
+create table if not exists public.ai_providers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  provider_key text not null,
+  api_base_url text not null default '',
+  status text not null default 'active',
+  is_default boolean not null default false,
+  config jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, provider_key)
+);
+
+create table if not exists public.ai_model_routes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  provider_id uuid not null references public.ai_providers(id) on delete cascade,
+  model_id text not null,
+  priority integer not null default 0,
+  routing_strategy text not null default 'priority',
+  fallback_provider_id uuid references public.ai_providers(id) on delete set null,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.ai_orchestration_agents (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  agent_type text not null default 'general',
+  workflow_agent_id uuid references public.ai_agents(id) on delete set null,
+  provider_id uuid references public.ai_providers(id) on delete set null,
+  model_route_id uuid references public.ai_model_routes(id) on delete set null,
+  capabilities jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.ai_prompt_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  template_key text not null,
+  category text not null default 'general',
+  content text not null default '',
+  variables jsonb not null default '[]'::jsonb,
+  version integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, template_key)
+);
+
+create table if not exists public.ai_sessions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_key text not null,
+  module_source text not null default 'general',
+  entity_type text not null default '',
+  entity_id uuid,
+  context jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  expires_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, session_key)
+);
+
+create table if not exists public.ai_task_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  provider_id uuid references public.ai_providers(id) on delete set null,
+  task_type text not null,
+  input_payload jsonb not null default '{}'::jsonb,
+  output_payload jsonb not null default '{}'::jsonb,
+  status text not null default 'pending',
+  model_used text not null default '',
+  tokens_used integer not null default 0,
+  duration_ms integer not null default 0,
+  error_message text not null default '',
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_usage_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  provider_id uuid references public.ai_providers(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  task_execution_id uuid references public.ai_task_executions(id) on delete set null,
+  tokens_input integer not null default 0,
+  tokens_output integer not null default 0,
+  request_count integer not null default 1,
+  recorded_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_cost_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  provider_id uuid references public.ai_providers(id) on delete set null,
+  usage_record_id uuid references public.ai_usage_records(id) on delete set null,
+  cost_usd numeric(12, 6) not null default 0,
+  pricing_model text not null default 'token',
+  recorded_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_rate_limits (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  scope_type text not null default 'organization',
+  scope_id uuid,
+  requests_per_minute integer not null default 60,
+  tokens_per_day integer not null default 1000000,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_permission_grants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  grantee_type text not null default 'employee',
+  grantee_id uuid,
+  permission_key text not null,
+  resource_type text not null default 'all',
+  resource_id uuid,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_provider_health_checks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  provider_id uuid not null references public.ai_providers(id) on delete cascade,
+  status text not null default 'healthy',
+  latency_ms integer not null default 0,
+  error_message text not null default '',
+  last_checked_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_retry_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  max_retries integer not null default 3,
+  backoff_strategy text not null default 'exponential',
+  fallback_route_id uuid references public.ai_model_routes(id) on delete set null,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.ai_orchestration_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_orchestration_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metric_key text not null,
+  metric_value numeric(14, 4) not null default 0,
+  dimensions jsonb not null default '{}'::jsonb,
+  period_start timestamptz not null,
+  period_end timestamptz not null,
+  computed_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_ai_providers_org on public.ai_providers(organization_id);
+create index if not exists idx_ai_model_routes_org on public.ai_model_routes(organization_id);
+create index if not exists idx_ai_orchestration_agents_org on public.ai_orchestration_agents(organization_id);
+create index if not exists idx_ai_prompt_templates_org on public.ai_prompt_templates(organization_id);
+create index if not exists idx_ai_sessions_org on public.ai_sessions(organization_id);
+create index if not exists idx_ai_task_executions_org on public.ai_task_executions(organization_id);
+create index if not exists idx_ai_usage_records_org on public.ai_usage_records(organization_id);
+create index if not exists idx_ai_cost_records_org on public.ai_cost_records(organization_id);
+create index if not exists idx_ai_rate_limits_org on public.ai_rate_limits(organization_id);
+create index if not exists idx_ai_permission_grants_org on public.ai_permission_grants(organization_id);
+create index if not exists idx_ai_provider_health_checks_org on public.ai_provider_health_checks(organization_id);
+create index if not exists idx_ai_retry_policies_org on public.ai_retry_policies(organization_id);
+create index if not exists idx_ai_orchestration_audit_logs_org on public.ai_orchestration_audit_logs(organization_id);
+create index if not exists idx_ai_orchestration_analytics_org on public.ai_orchestration_analytics(organization_id);
+
+drop trigger if exists trg_ai_providers_updated_at on public.ai_providers;
+create trigger trg_ai_providers_updated_at before update on public.ai_providers for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_model_routes_updated_at on public.ai_model_routes;
+create trigger trg_ai_model_routes_updated_at before update on public.ai_model_routes for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_orchestration_agents_updated_at on public.ai_orchestration_agents;
+create trigger trg_ai_orchestration_agents_updated_at before update on public.ai_orchestration_agents for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_prompt_templates_updated_at on public.ai_prompt_templates;
+create trigger trg_ai_prompt_templates_updated_at before update on public.ai_prompt_templates for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_sessions_updated_at on public.ai_sessions;
+create trigger trg_ai_sessions_updated_at before update on public.ai_sessions for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_rate_limits_updated_at on public.ai_rate_limits;
+create trigger trg_ai_rate_limits_updated_at before update on public.ai_rate_limits for each row execute function public.set_updated_at();
+drop trigger if exists trg_ai_retry_policies_updated_at on public.ai_retry_policies;
+create trigger trg_ai_retry_policies_updated_at before update on public.ai_retry_policies for each row execute function public.set_updated_at();
+
+alter table public.ai_providers enable row level security;
+alter table public.ai_model_routes enable row level security;
+alter table public.ai_orchestration_agents enable row level security;
+alter table public.ai_prompt_templates enable row level security;
+alter table public.ai_sessions enable row level security;
+alter table public.ai_task_executions enable row level security;
+alter table public.ai_usage_records enable row level security;
+alter table public.ai_cost_records enable row level security;
+alter table public.ai_rate_limits enable row level security;
+alter table public.ai_permission_grants enable row level security;
+alter table public.ai_provider_health_checks enable row level security;
+alter table public.ai_retry_policies enable row level security;
+alter table public.ai_orchestration_audit_logs enable row level security;
+alter table public.ai_orchestration_analytics enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'ai_providers', 'ai_model_routes', 'ai_orchestration_agents', 'ai_prompt_templates',
+    'ai_sessions', 'ai_task_executions', 'ai_usage_records', 'ai_cost_records',
+    'ai_rate_limits', 'ai_permission_grants', 'ai_provider_health_checks',
+    'ai_retry_policies', 'ai_orchestration_audit_logs', 'ai_orchestration_analytics'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('ai.view', 'View AI orchestration configuration and metrics', 'ai'),
+  ('ai.manage', 'Manage AI providers, routes, agents, and templates', 'ai'),
+  ('ai.execute', 'Execute AI tasks and manage sessions', 'ai'),
+  ('ai.admin', 'Manage AI permissions, rate limits, and policies', 'ai')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -4401,6 +4673,93 @@ insert into public.document_audit_logs (id, organization_id, entity_type, entity
 values
   ('ffffffff-ffff-ffff-ffff-ffffffffff95', '11111111-1111-1111-1111-111111111111', 'document', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'create', 'Document Northstar Master Service Agreement created'),
   ('ffffffff-ffff-ffff-ffff-ffffffffff96', '11111111-1111-1111-1111-111111111111', 'folder', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', 'create', 'Root folder Company Documents created')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 014_enterprise_ai_orchestration_seed.sql
+-- =============================================================================
+insert into public.ai_providers (id, organization_id, name, provider_key, api_base_url, status, is_default, config)
+values
+  ('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', '11111111-1111-1111-1111-111111111111', 'OpenAI Production', 'openai', 'https://api.openai.com/v1', 'active', true, '{"region":"us-east-1"}'::jsonb),
+  ('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a102', '11111111-1111-1111-1111-111111111111', 'Anthropic Enterprise', 'anthropic', 'https://api.anthropic.com/v1', 'active', false, '{"region":"us-west-2"}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.ai_model_routes (id, organization_id, name, provider_id, model_id, priority, routing_strategy, fallback_provider_id, is_active)
+values
+  ('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '11111111-1111-1111-1111-111111111111', 'Primary GPT-4o Route', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'gpt-4o', 1, 'priority', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a102', true),
+  ('a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a202', '11111111-1111-1111-1111-111111111111', 'Claude Sonnet Fallback', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a102', 'claude-sonnet-4', 2, 'fallback', null, true)
+on conflict (id) do nothing;
+
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', '11111111-1111-1111-1111-111111111111', 'Business Analyst Agent', 'analyst', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["analysis","reporting","crm"]'::jsonb, 'active'),
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a302', '11111111-1111-1111-1111-111111111111', 'Operations Orchestrator', 'operations', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["automation","tasks","projects"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_prompt_templates (id, organization_id, name, template_key, category, content, variables, version, status)
+values
+  ('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a401', '11111111-1111-1111-1111-111111111111', 'CRM Analysis Prompt', 'crm.analysis', 'crm', 'Analyze client {{client_name}} with context: {{context}}. Provide actionable insights.', '["client_name","context"]'::jsonb, 1, 'active'),
+  ('a4a4a4a4-a4a4-a4a4-a4a4-a4a4a4a4a402', '11111111-1111-1111-1111-111111111111', 'Project Risk Assessment', 'projects.risk', 'projects', 'Assess project {{project_name}} risks based on: {{deliverables}}.', '["project_name","deliverables"]'::jsonb, 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a501', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', 'crm-northstar-analysis-001', 'crm', 'client', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', '{"objective":"expansion analysis"}'::jsonb, 'active', '2026-12-31 23:59:59+00'),
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a502', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a302', 'projects-delivery-001', 'projects', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"delivery optimization"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.ai_task_executions (id, organization_id, agent_id, session_id, provider_id, task_type, input_payload, output_payload, status, model_used, tokens_used, duration_ms, completed_at)
+values
+  ('a6a6a6a6-a6a6-a6a6-a6a6-a6a6a6a6a601', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a501', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'analysis', '{"prompt":"Analyze Northstar expansion"}'::jsonb, '{"summary":"Strong expansion potential"}'::jsonb, 'completed', 'gpt-4o', 1842, 2340, '2026-08-01 10:00:00+00'),
+  ('a6a6a6a6-a6a6-a6a6-a6a6-a6a6a6a6a602', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a302', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a502', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'orchestration', '{"prompt":"Optimize delivery timeline"}'::jsonb, '{}'::jsonb, 'pending', 'gpt-4o', 0, 0, null)
+on conflict (id) do nothing;
+
+insert into public.ai_usage_records (id, organization_id, provider_id, agent_id, task_execution_id, tokens_input, tokens_output, request_count, recorded_at)
+values
+  ('a7a7a7a7-a7a7-a7a7-a7a7-a7a7a7a7a701', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', 'a6a6a6a6-a6a6-a6a6-a6a6-a6a6a6a6a601', 1200, 642, 1, '2026-08-01 10:00:00+00'),
+  ('a7a7a7a7-a7a7-a7a7-a7a7-a7a7a7a7a702', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a302', null, 450, 210, 1, '2026-08-01 11:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.ai_cost_records (id, organization_id, provider_id, usage_record_id, cost_usd, pricing_model, recorded_at)
+values
+  ('a8a8a8a8-a8a8-a8a8-a8a8-a8a8a8a8a801', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a7a7a7a7-a7a7-a7a7-a7a7-a7a7a7a7a701', 0.018420, 'token', '2026-08-01 10:00:00+00'),
+  ('a8a8a8a8-a8a8-a8a8-a8a8-a8a8a8a8a802', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a7a7a7a7-a7a7-a7a7-a7a7-a7a7a7a7a702', 0.006600, 'token', '2026-08-01 11:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.ai_rate_limits (id, organization_id, scope_type, scope_id, requests_per_minute, tokens_per_day, is_active)
+values
+  ('a9a9a9a9-a9a9-a9a9-a9a9-a9a9a9a9a901', '11111111-1111-1111-1111-111111111111', 'organization', null, 120, 2000000, true),
+  ('a9a9a9a9-a9a9-a9a9-a9a9-a9a9a9a9a902', '11111111-1111-1111-1111-111111111111', 'agent', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', 30, 500000, true)
+on conflict (id) do nothing;
+
+insert into public.ai_permission_grants (id, organization_id, grantee_type, grantee_id, permission_key, resource_type, resource_id, is_active)
+values
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaab101', '11111111-1111-1111-1111-111111111111', 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'ai.execute', 'agent', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', true),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaab102', '11111111-1111-1111-1111-111111111111', 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 'ai.manage', 'all', null, true)
+on conflict (id) do nothing;
+
+insert into public.ai_provider_health_checks (id, organization_id, provider_id, status, latency_ms, error_message, last_checked_at)
+values
+  ('abababab-abab-abab-abab-ababababab01', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'healthy', 142, '', '2026-08-01 12:00:00+00'),
+  ('abababab-abab-abab-abab-ababababab02', '11111111-1111-1111-1111-111111111111', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a102', 'degraded', 890, 'Elevated latency detected', '2026-08-01 12:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.ai_retry_policies (id, organization_id, name, max_retries, backoff_strategy, fallback_route_id, is_active)
+values
+  ('acacacac-acac-acac-acac-acacacacac01', '11111111-1111-1111-1111-111111111111', 'Default Retry with Claude Fallback', 3, 'exponential', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a202', true)
+on conflict (id) do nothing;
+
+insert into public.ai_orchestration_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('adadadad-adad-adad-adad-adadadadad01', '11111111-1111-1111-1111-111111111111', 'provider', 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'create', 'OpenAI Production provider registered'),
+  ('adadadad-adad-adad-adad-adadadadad02', '11111111-1111-1111-1111-111111111111', 'task', 'a6a6a6a6-a6a6-a6a6-a6a6-a6a6a6a6a601', 'execute', 'CRM analysis task completed successfully')
+on conflict (id) do nothing;
+
+insert into public.ai_orchestration_analytics (id, organization_id, metric_key, metric_value, dimensions, period_start, period_end, computed_at)
+values
+  ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae01', '11111111-1111-1111-1111-111111111111', 'tasks.completed', 1, '{"module":"crm"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00'),
+  ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae02', '11111111-1111-1111-1111-111111111111', 'tokens.total', 2502, '{"provider":"openai"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00'),
+  ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae03', '11111111-1111-1111-1111-111111111111', 'cost.usd', 0.025020, '{"provider":"openai"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00')
 on conflict (id) do nothing;
 
 -- =============================================================================

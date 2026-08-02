@@ -139,6 +139,20 @@ const requiredTables = [
     "document_archives",
     "document_activity_logs",
     "document_audit_logs",
+    "ai_providers",
+    "ai_model_routes",
+    "ai_orchestration_agents",
+    "ai_prompt_templates",
+    "ai_sessions",
+    "ai_task_executions",
+    "ai_usage_records",
+    "ai_cost_records",
+    "ai_rate_limits",
+    "ai_permission_grants",
+    "ai_provider_health_checks",
+    "ai_retry_policies",
+    "ai_orchestration_audit_logs",
+    "ai_orchestration_analytics",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
