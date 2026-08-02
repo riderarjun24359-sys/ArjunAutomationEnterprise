@@ -33,6 +33,24 @@ import {
     AnalyticsReportRepository,
     AnalyticsWidgetRepository,
 } from "@/src/modules/database/repositories/analytics-repositories";
+import {
+    ApiKeyRepository,
+    AuditConfigRepository,
+    BackupConfigRepository,
+    BackupRunRepository,
+    NotificationPreferenceRepository,
+    OrganizationBrandingRepository,
+    OrganizationInvitationRepository,
+    OrganizationPreferencesRepository,
+    OrganizationSecurityPolicyRepository,
+    OrganizationSettingsRepository,
+    PermissionRepository,
+    RolePermissionGrantRepository,
+    RoleRepository,
+    TeamMemberRepository,
+    TeamRepository,
+    UserPreferencesRepository,
+} from "@/src/modules/database/repositories/settings-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -64,6 +82,22 @@ export class DatabaseAccessLayer {
     readonly analyticsWidgets: AnalyticsWidgetRepository;
     readonly analyticsMetrics: AnalyticsMetricRepository;
     readonly analyticsReports: AnalyticsReportRepository;
+    readonly organizationSettings: OrganizationSettingsRepository;
+    readonly organizationBranding: OrganizationBrandingRepository;
+    readonly organizationPreferences: OrganizationPreferencesRepository;
+    readonly organizationSecurityPolicies: OrganizationSecurityPolicyRepository;
+    readonly teams: TeamRepository;
+    readonly teamMembers: TeamMemberRepository;
+    readonly organizationInvitations: OrganizationInvitationRepository;
+    readonly userPreferences: UserPreferencesRepository;
+    readonly auditConfig: AuditConfigRepository;
+    readonly apiKeys: ApiKeyRepository;
+    readonly notificationPreferences: NotificationPreferenceRepository;
+    readonly backupConfigs: BackupConfigRepository;
+    readonly backupRuns: BackupRunRepository;
+    readonly roles: RoleRepository;
+    readonly permissions: PermissionRepository;
+    readonly rolePermissionGrants: RolePermissionGrantRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -95,6 +129,22 @@ export class DatabaseAccessLayer {
         this.analyticsWidgets = new AnalyticsWidgetRepository();
         this.analyticsMetrics = new AnalyticsMetricRepository();
         this.analyticsReports = new AnalyticsReportRepository();
+        this.organizationSettings = new OrganizationSettingsRepository();
+        this.organizationBranding = new OrganizationBrandingRepository();
+        this.organizationPreferences = new OrganizationPreferencesRepository();
+        this.organizationSecurityPolicies = new OrganizationSecurityPolicyRepository();
+        this.teams = new TeamRepository();
+        this.teamMembers = new TeamMemberRepository();
+        this.organizationInvitations = new OrganizationInvitationRepository();
+        this.userPreferences = new UserPreferencesRepository();
+        this.auditConfig = new AuditConfigRepository();
+        this.apiKeys = new ApiKeyRepository();
+        this.notificationPreferences = new NotificationPreferenceRepository();
+        this.backupConfigs = new BackupConfigRepository();
+        this.backupRuns = new BackupRunRepository();
+        this.roles = new RoleRepository();
+        this.permissions = new PermissionRepository();
+        this.rolePermissionGrants = new RolePermissionGrantRepository();
     }
 }
 

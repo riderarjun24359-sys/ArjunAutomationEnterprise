@@ -44,6 +44,19 @@ const requiredTables = [
     "analytics_widgets",
     "analytics_metrics",
     "analytics_reports",
+    "organization_settings",
+    "organization_branding",
+    "organization_preferences",
+    "organization_security_policies",
+    "teams",
+    "team_members",
+    "organization_invitations",
+    "user_preferences",
+    "audit_config",
+    "api_keys",
+    "notification_preferences",
+    "backup_configs",
+    "backup_runs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

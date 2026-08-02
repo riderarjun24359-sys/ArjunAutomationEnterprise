@@ -44,8 +44,8 @@ ${migrationFiles.map((file) => `--     - ${file}`).join("\n")}
 --   Seeds (${seedFiles.length}):
 ${seedFiles.map((file) => `--     - ${file}`).join("\n")}
 --
--- Includes through Sprint 14:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics
+-- Includes through Sprint 15:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.

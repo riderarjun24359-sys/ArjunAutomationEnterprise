@@ -178,6 +178,14 @@ export interface DbPermission {
     updated_at: string;
 }
 
+export interface DbRolePermissionGrant {
+    id: string;
+    role_id: string;
+    permission_id: string;
+    action: string;
+    created_at: string;
+}
+
 export interface DbTaxRate {
     id: string;
     organization_id: string;
@@ -459,4 +467,161 @@ export interface DbAnalyticsReport {
     generated_at?: string | null;
     created_at: string;
     updated_at: string;
+}
+
+export interface DbOrganizationSettings {
+    id: string;
+    organization_id: string;
+    timezone: string;
+    currency: string;
+    fiscal_year_start: string;
+    contact_email: string;
+    billing_address: string;
+    support_phone: string;
+    feature_flags: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOrganizationBranding {
+    id: string;
+    organization_id: string;
+    logo_url: string;
+    favicon_url: string;
+    primary_color: string;
+    secondary_color: string;
+    accent_color: string;
+    custom_domain: string;
+    email_header_html: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOrganizationPreferences {
+    id: string;
+    organization_id: string;
+    default_locale: string;
+    default_timezone: string;
+    week_starts_on: string;
+    date_format: string;
+    time_format: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOrganizationSecurityPolicy {
+    id: string;
+    organization_id: string;
+    mfa_required: boolean;
+    session_timeout_minutes: number;
+    password_min_length: number;
+    ip_allowlist: unknown[];
+    login_attempt_limit: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTeam {
+    id: string;
+    organization_id: string;
+    name: string;
+    slug: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTeamMember {
+    id: string;
+    team_id: string;
+    user_id: string;
+    role_name: string;
+    created_at: string;
+}
+
+export interface DbOrganizationInvitation {
+    id: string;
+    organization_id: string;
+    email: string;
+    role_name: string;
+    status: string;
+    invited_by?: string | null;
+    expires_at: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbUserPreferences {
+    id: string;
+    user_id: string;
+    organization_id?: string | null;
+    theme: string;
+    locale: string;
+    timezone: string;
+    date_format: string;
+    digest_frequency: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAuditConfig {
+    id: string;
+    organization_id: string;
+    retention_days: number;
+    enabled_events: string[];
+    export_format: string;
+    alert_threshold: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbApiKey {
+    id: string;
+    organization_id: string;
+    name: string;
+    key_prefix: string;
+    key_hash: string;
+    scopes: unknown[];
+    status: string;
+    expires_at?: string | null;
+    last_used_at?: string | null;
+    created_by?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbNotificationPreference {
+    id: string;
+    organization_id: string;
+    user_id?: string | null;
+    channel: string;
+    event_type: string;
+    enabled: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBackupConfig {
+    id: string;
+    organization_id: string;
+    name: string;
+    schedule_cron: string;
+    destination: string;
+    retention_count: number;
+    include_tables: unknown[];
+    is_enabled: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBackupRun {
+    id: string;
+    config_id: string;
+    status: string;
+    started_at: string;
+    completed_at?: string | null;
+    size_bytes: number;
+    storage_path: string;
+    error_message: string;
+    created_at: string;
 }

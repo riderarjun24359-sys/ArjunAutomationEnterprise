@@ -30,6 +30,10 @@ const requiredTables = [
     "analytics_dashboards",
     "analytics_metrics",
     "analytics_reports",
+    "organization_settings",
+    "teams",
+    "api_keys",
+    "backup_configs",
 ];
 
 const supabase = createClient(url, anonKey);
