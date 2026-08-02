@@ -1,0 +1,33 @@
+import { z } from "zod";
+
+export const entryFormSchema = z.object({ title: z.string().min(2), slug: z.string().min(2), content: z.string().min(10), category: z.string().min(1), clientId: z.string().optional(), projectId: z.string().optional() });
+export const semanticIndexFormSchema = z.object({ entryId: z.string().min(1), searchText: z.string().min(10), embeddingKey: z.string().optional() });
+export const solutionFormSchema = z.object({ name: z.string().min(2), problemStatement: z.string().min(10), solutionSummary: z.string().min(10), implementationNotes: z.string().optional(), category: z.string().min(1) });
+export const adrFormSchema = z.object({ title: z.string().min(2), context: z.string().min(10), decision: z.string().min(10), consequences: z.string().optional() });
+export const promptFormSchema = z.object({ name: z.string().min(2), promptKey: z.string().min(2), category: z.string().min(1), content: z.string().min(10) });
+export const projectMemoryFormSchema = z.object({ projectId: z.string().min(1), memoryKey: z.string().min(2), summary: z.string().min(5), details: z.string().optional() });
+export const clientMemoryFormSchema = z.object({ clientId: z.string().min(1), memoryKey: z.string().min(2), summary: z.string().min(5), details: z.string().optional() });
+export const componentFormSchema = z.object({ name: z.string().min(2), componentType: z.string().min(1), description: z.string().min(10), usageGuidelines: z.string().optional() });
+export const patternFormSchema = z.object({ name: z.string().min(2), patternType: z.string().min(1), description: z.string().min(10), whenToUse: z.string().optional() });
+export const documentationFormSchema = z.object({ title: z.string().min(2), docKey: z.string().min(2), moduleSource: z.string().min(1), content: z.string().min(10) });
+export const aiContextFormSchema = z.object({ contextKey: z.string().min(2), agentId: z.string().optional(), sessionId: z.string().optional(), entryId: z.string().optional() });
+export const versionFormSchema = z.object({ entryId: z.string().min(1), content: z.string().min(10), changeSummary: z.string().min(5) });
+export const permissionGrantFormSchema = z.object({ granteeType: z.string().min(1), granteeId: z.string().optional(), permissionKey: z.string().min(1), resourceType: z.string().min(1), resourceId: z.string().optional() });
+export const crossLinkFormSchema = z.object({ sourceModule: z.string().min(1), sourceEntityType: z.string().min(1), sourceEntityId: z.string().optional(), entryId: z.string().optional(), linkType: z.string().optional() });
+export const searchFormSchema = z.object({ query: z.string().min(2) });
+
+export type EntryFormValues = z.infer<typeof entryFormSchema>;
+export type SemanticIndexFormValues = z.infer<typeof semanticIndexFormSchema>;
+export type SolutionFormValues = z.infer<typeof solutionFormSchema>;
+export type AdrFormValues = z.infer<typeof adrFormSchema>;
+export type PromptFormValues = z.infer<typeof promptFormSchema>;
+export type ProjectMemoryFormValues = z.infer<typeof projectMemoryFormSchema>;
+export type ClientMemoryFormValues = z.infer<typeof clientMemoryFormSchema>;
+export type ComponentFormValues = z.infer<typeof componentFormSchema>;
+export type PatternFormValues = z.infer<typeof patternFormSchema>;
+export type DocumentationFormValues = z.infer<typeof documentationFormSchema>;
+export type AiContextFormValues = z.infer<typeof aiContextFormSchema>;
+export type VersionFormValues = z.infer<typeof versionFormSchema>;
+export type PermissionGrantFormValues = z.infer<typeof permissionGrantFormSchema>;
+export type CrossLinkFormValues = z.infer<typeof crossLinkFormSchema>;
+export type SearchFormValues = z.infer<typeof searchFormSchema>;

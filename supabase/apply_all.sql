@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-02T23:23:47.584Z
+-- Generated: 2026-08-02T23:40:30.950Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (14):
+--   Migrations (15):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -20,7 +20,8 @@
 --     - 202608020012_enterprise_sales.sql
 --     - 202608020013_enterprise_documents.sql
 --     - 202608020014_enterprise_ai_orchestration.sql
---   Seeds (14):
+--     - 202608020015_enterprise_knowledge.sql
+--   Seeds (15):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -35,9 +36,10 @@
 --     - 012_enterprise_sales_seed.sql
 --     - 013_enterprise_documents_seed.sql
 --     - 014_enterprise_ai_orchestration_seed.sql
+--     - 015_enterprise_knowledge_seed.sql
 --
--- Includes through Sprint 21:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer
+-- Includes through Sprint 22:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -3688,6 +3690,306 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020015_enterprise_knowledge.sql
+-- =============================================================================
+-- Sprint 22: Enterprise Knowledge & Memory Engine
+
+create table if not exists public.knowledge_entries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  slug text not null,
+  content text not null default '',
+  category text not null default 'general',
+  status text not null default 'published',
+  tags jsonb not null default '[]'::jsonb,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  employee_id uuid references public.employees(id) on delete set null,
+  ai_session_id uuid references public.ai_sessions(id) on delete set null,
+  current_version integer not null default 1,
+  created_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, slug)
+);
+
+create table if not exists public.knowledge_semantic_index (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
+  embedding_key text not null default '',
+  search_text text not null default '',
+  indexed_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.knowledge_solutions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  problem_statement text not null default '',
+  solution_summary text not null default '',
+  implementation_notes text not null default '',
+  category text not null default 'general',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.knowledge_adrs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  adr_number integer not null,
+  title text not null,
+  status text not null default 'proposed',
+  context text not null default '',
+  decision text not null default '',
+  consequences text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, adr_number)
+);
+
+create table if not exists public.knowledge_prompt_base (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  prompt_key text not null,
+  category text not null default 'general',
+  content text not null default '',
+  use_cases jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, prompt_key)
+);
+
+create table if not exists public.knowledge_project_memory (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  project_id uuid not null references public.projects(id) on delete cascade,
+  memory_key text not null,
+  summary text not null default '',
+  details text not null default '',
+  context jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, project_id, memory_key)
+);
+
+create table if not exists public.knowledge_client_memory (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid not null references public.clients(id) on delete cascade,
+  memory_key text not null,
+  summary text not null default '',
+  details text not null default '',
+  context jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, client_id, memory_key)
+);
+
+create table if not exists public.knowledge_components (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  component_type text not null default 'ui',
+  description text not null default '',
+  usage_guidelines text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.knowledge_patterns (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  pattern_type text not null default 'architecture',
+  description text not null default '',
+  when_to_use text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.knowledge_documentation (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  doc_key text not null,
+  module_source text not null default 'general',
+  content text not null default '',
+  status text not null default 'published',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, doc_key)
+);
+
+create table if not exists public.knowledge_ai_contexts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_key text not null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  entry_id uuid references public.knowledge_entries(id) on delete set null,
+  context_payload jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_key)
+);
+
+create table if not exists public.knowledge_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
+  version_number integer not null,
+  content text not null default '',
+  change_summary text not null default '',
+  created_at timestamptz not null default now(),
+  unique (entry_id, version_number)
+);
+
+create table if not exists public.knowledge_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metric_key text not null,
+  metric_value numeric(14, 4) not null default 0,
+  dimensions jsonb not null default '{}'::jsonb,
+  period_start timestamptz not null,
+  period_end timestamptz not null,
+  computed_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.knowledge_permissions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  grantee_type text not null default 'employee',
+  grantee_id uuid,
+  permission_key text not null,
+  resource_type text not null default 'all',
+  resource_id uuid,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.knowledge_cross_links (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  source_module text not null,
+  source_entity_type text not null,
+  source_entity_id uuid,
+  entry_id uuid references public.knowledge_entries(id) on delete cascade,
+  link_type text not null default 'reference',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.knowledge_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_knowledge_entries_org on public.knowledge_entries(organization_id);
+create index if not exists idx_knowledge_semantic_index_org on public.knowledge_semantic_index(organization_id);
+create index if not exists idx_knowledge_solutions_org on public.knowledge_solutions(organization_id);
+create index if not exists idx_knowledge_adrs_org on public.knowledge_adrs(organization_id);
+create index if not exists idx_knowledge_prompt_base_org on public.knowledge_prompt_base(organization_id);
+create index if not exists idx_knowledge_project_memory_org on public.knowledge_project_memory(organization_id);
+create index if not exists idx_knowledge_client_memory_org on public.knowledge_client_memory(organization_id);
+create index if not exists idx_knowledge_components_org on public.knowledge_components(organization_id);
+create index if not exists idx_knowledge_patterns_org on public.knowledge_patterns(organization_id);
+create index if not exists idx_knowledge_documentation_org on public.knowledge_documentation(organization_id);
+create index if not exists idx_knowledge_ai_contexts_org on public.knowledge_ai_contexts(organization_id);
+create index if not exists idx_knowledge_versions_org on public.knowledge_versions(organization_id);
+create index if not exists idx_knowledge_analytics_org on public.knowledge_analytics(organization_id);
+create index if not exists idx_knowledge_permissions_org on public.knowledge_permissions(organization_id);
+create index if not exists idx_knowledge_cross_links_org on public.knowledge_cross_links(organization_id);
+create index if not exists idx_knowledge_audit_logs_org on public.knowledge_audit_logs(organization_id);
+
+drop trigger if exists trg_knowledge_entries_updated_at on public.knowledge_entries;
+create trigger trg_knowledge_entries_updated_at before update on public.knowledge_entries for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_solutions_updated_at on public.knowledge_solutions;
+create trigger trg_knowledge_solutions_updated_at before update on public.knowledge_solutions for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_adrs_updated_at on public.knowledge_adrs;
+create trigger trg_knowledge_adrs_updated_at before update on public.knowledge_adrs for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_prompt_base_updated_at on public.knowledge_prompt_base;
+create trigger trg_knowledge_prompt_base_updated_at before update on public.knowledge_prompt_base for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_project_memory_updated_at on public.knowledge_project_memory;
+create trigger trg_knowledge_project_memory_updated_at before update on public.knowledge_project_memory for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_client_memory_updated_at on public.knowledge_client_memory;
+create trigger trg_knowledge_client_memory_updated_at before update on public.knowledge_client_memory for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_components_updated_at on public.knowledge_components;
+create trigger trg_knowledge_components_updated_at before update on public.knowledge_components for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_patterns_updated_at on public.knowledge_patterns;
+create trigger trg_knowledge_patterns_updated_at before update on public.knowledge_patterns for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_documentation_updated_at on public.knowledge_documentation;
+create trigger trg_knowledge_documentation_updated_at before update on public.knowledge_documentation for each row execute function public.set_updated_at();
+drop trigger if exists trg_knowledge_ai_contexts_updated_at on public.knowledge_ai_contexts;
+create trigger trg_knowledge_ai_contexts_updated_at before update on public.knowledge_ai_contexts for each row execute function public.set_updated_at();
+
+alter table public.knowledge_entries enable row level security;
+alter table public.knowledge_semantic_index enable row level security;
+alter table public.knowledge_solutions enable row level security;
+alter table public.knowledge_adrs enable row level security;
+alter table public.knowledge_prompt_base enable row level security;
+alter table public.knowledge_project_memory enable row level security;
+alter table public.knowledge_client_memory enable row level security;
+alter table public.knowledge_components enable row level security;
+alter table public.knowledge_patterns enable row level security;
+alter table public.knowledge_documentation enable row level security;
+alter table public.knowledge_ai_contexts enable row level security;
+alter table public.knowledge_versions enable row level security;
+alter table public.knowledge_analytics enable row level security;
+alter table public.knowledge_permissions enable row level security;
+alter table public.knowledge_cross_links enable row level security;
+alter table public.knowledge_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'knowledge_entries', 'knowledge_semantic_index', 'knowledge_solutions', 'knowledge_adrs',
+    'knowledge_prompt_base', 'knowledge_project_memory', 'knowledge_client_memory',
+    'knowledge_components', 'knowledge_patterns', 'knowledge_documentation',
+    'knowledge_ai_contexts', 'knowledge_versions', 'knowledge_analytics',
+    'knowledge_permissions', 'knowledge_cross_links', 'knowledge_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('knowledge.view', 'View knowledge repository and memory', 'knowledge'),
+  ('knowledge.manage', 'Create and edit knowledge entries and memory', 'knowledge'),
+  ('knowledge.publish', 'Publish and version knowledge content', 'knowledge'),
+  ('knowledge.admin', 'Manage knowledge permissions and analytics', 'knowledge')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -4760,6 +5062,102 @@ values
   ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae01', '11111111-1111-1111-1111-111111111111', 'tasks.completed', 1, '{"module":"crm"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00'),
   ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae02', '11111111-1111-1111-1111-111111111111', 'tokens.total', 2502, '{"provider":"openai"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00'),
   ('aeaeaeae-aeae-aeae-aeae-aeaeaeaeae03', '11111111-1111-1111-1111-111111111111', 'cost.usd', 0.025020, '{"provider":"openai"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 015_enterprise_knowledge_seed.sql
+-- =============================================================================
+insert into public.knowledge_entries (id, organization_id, title, slug, content, category, status, tags, client_id, project_id, current_version)
+values
+  ('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '11111111-1111-1111-1111-111111111111', 'Northstar Client Profile', 'northstar-client-profile', 'Northstar Labs is a Series B SaaS company focused on workflow automation with expansion plans in Q4 2026.', 'client', 'published', '["crm","client","expansion"]'::jsonb, 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', null, 1),
+  ('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10202', '11111111-1111-1111-1111-111111111111', 'Northstar Expansion Project Context', 'northstar-expansion-context', 'Northstar Expansion project includes platform migration, API integration, and training deliverables.', 'project', 'published', '["projects","delivery"]'::jsonb, 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 1)
+on conflict (id) do nothing;
+
+insert into public.knowledge_semantic_index (id, organization_id, entry_id, embedding_key, search_text)
+values
+  ('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c20101', '11111111-1111-1111-1111-111111111111', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', 'emb-northstar-profile', 'Northstar Labs Series B SaaS workflow automation expansion Q4 2026'),
+  ('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c20202', '11111111-1111-1111-1111-111111111111', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10202', 'emb-northstar-project', 'Northstar Expansion platform migration API integration training deliverables')
+on conflict (id) do nothing;
+
+insert into public.knowledge_solutions (id, organization_id, name, problem_statement, solution_summary, implementation_notes, category, status)
+values
+  ('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c30101', '11111111-1111-1111-1111-111111111111', 'Enterprise Client Onboarding Playbook', 'New enterprise clients require structured onboarding', 'Use phased onboarding with CRM, project, and knowledge memory setup', 'Link client memory to AI context for analyst agents', 'onboarding', 'active'),
+  ('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c30202', '11111111-1111-1111-1111-111111111111', 'Supabase RLS Org Pattern', 'Multi-tenant data isolation required', 'Use is_organization_member loop policies on all org-scoped tables', 'Apply to every new module migration', 'architecture', 'active')
+on conflict (id) do nothing;
+
+insert into public.knowledge_adrs (id, organization_id, adr_number, title, status, context, decision, consequences)
+values
+  ('c4c4c4c4-c4c4-c4c4-c4c4-c4c4c4c40101', '11111111-1111-1111-1111-111111111111', 1, 'Modular Enterprise Architecture', 'accepted', 'Need scalable module boundaries for enterprise OS', 'Each domain gets migration, seed, module, service, hook, and UI', 'Consistent sprint delivery, clear ownership'),
+  ('c4c4c4c4-c4c4-c4c4-c4c4-c4c4c4c40202', '11111111-1111-1111-1111-111111111111', 2, 'AI Orchestration as Infrastructure Layer', 'accepted', 'AI capabilities must not be chat-only features', 'All AI modules consume ai-orchestration SDK and knowledge engine', 'Unified routing, context, and memory')
+on conflict (id) do nothing;
+
+insert into public.knowledge_prompt_base (id, organization_id, name, prompt_key, category, content, use_cases, status)
+values
+  ('c5c5c5c5-c5c5-c5c5-c5c5-c5c5c5c50101', '11111111-1111-1111-1111-111111111111', 'Client Context Injection', 'knowledge.client.context', 'crm', 'Use the following client memory: {{client_memory}}. Answer based on permanent knowledge.', '["analysis","support","sales"]'::jsonb, 'active'),
+  ('c5c5c5c5-c5c5-c5c5-c5c5-c5c5c5c50202', '11111111-1111-1111-1111-111111111111', 'Project Delivery Context', 'knowledge.project.context', 'projects', 'Project memory: {{project_memory}}. Consider deliverables and timeline.', '["pm","architect","qa"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.knowledge_project_memory (id, organization_id, project_id, memory_key, summary, details, context)
+values
+  ('c6c6c6c6-c6c6-c6c6-c6c6-c6c6c6c60101', '11111111-1111-1111-1111-111111111111', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'delivery-status', 'Phase 2 migration in progress', 'API integration complete, training scheduled for August 2026', '{"phase":2,"risk":"low"}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.knowledge_client_memory (id, organization_id, client_id, memory_key, summary, details, context)
+values
+  ('c7c7c7c7-c7c7-c7c7-c7c7-c7c7c7c70101', '11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'relationship-summary', 'Strategic enterprise client since 2024', 'Primary contact Mina Park, expansion opportunity in platform services', '{"tier":"enterprise","health":"strong"}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.knowledge_components (id, organization_id, name, component_type, description, usage_guidelines, status)
+values
+  ('c8c8c8c8-c8c8-c8c8-c8c8-c8c8c8c80101', '11111111-1111-1111-1111-111111111111', 'StatCard', 'ui', 'Dashboard metric display card with trend indicator', 'Use in module overview stats sections with 4-column grid', 'active'),
+  ('c8c8c8c8-c8c8-c8c8-c8c8-c8c8c8c80202', '11111111-1111-1111-1111-111111111111', 'SectionHeader', 'ui', 'Panel section title with description', 'Pair with Card hover wrapper in tab panels', 'active')
+on conflict (id) do nothing;
+
+insert into public.knowledge_patterns (id, organization_id, name, pattern_type, description, when_to_use, status)
+values
+  ('c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c90101', '11111111-1111-1111-1111-111111111111', 'Org-Scoped Repository', 'data-access', 'BaseRepository with listByOrganization for all domain tables', 'Every new enterprise module with Supabase tables', 'active'),
+  ('c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c90202', '11111111-1111-1111-1111-111111111111', 'Service-Hook-Panel UI', 'frontend', 'Service layer, useHook parallel fetch, tabbed Panels', 'All enterprise module UIs', 'active')
+on conflict (id) do nothing;
+
+insert into public.knowledge_documentation (id, organization_id, title, doc_key, module_source, content, status)
+values
+  ('ca000001-ca00-ca00-ca00-ca0000000001', '11111111-1111-1111-1111-111111111111', 'AI Orchestration Integration Guide', 'docs.ai.integration', 'ai', 'All AI capabilities must use createAiOrchestrationClient and knowledge SDK for context.', 'published'),
+  ('ca000001-ca00-ca00-ca00-ca0000000002', '11111111-1111-1111-1111-111111111111', 'Knowledge Engine Overview', 'docs.knowledge.overview', 'knowledge', 'Permanent knowledge system for entries, memory, patterns, and AI context.', 'published')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000001', '11111111-1111-1111-1111-111111111111', 'northstar-analyst-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a301', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a501', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.knowledge_versions (id, organization_id, entry_id, version_number, content, change_summary)
+values
+  ('cc000001-cc00-cc00-cc00-cc0000000001', '11111111-1111-1111-1111-111111111111', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', 1, 'Northstar Labs is a Series B SaaS company focused on workflow automation.', 'Initial version')
+on conflict (id) do nothing;
+
+insert into public.knowledge_analytics (id, organization_id, metric_key, metric_value, dimensions, period_start, period_end, computed_at)
+values
+  ('cd000001-cd00-cd00-cd00-cd0000000001', '11111111-1111-1111-1111-111111111111', 'entries.total', 2, '{"category":"all"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00'),
+  ('cd000001-cd00-cd00-cd00-cd0000000002', '11111111-1111-1111-1111-111111111111', 'searches.indexed', 2, '{"type":"semantic"}'::jsonb, '2026-08-01 00:00:00+00', '2026-08-01 23:59:59+00', '2026-08-01 12:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_permissions (id, organization_id, grantee_type, grantee_id, permission_key, resource_type, resource_id, is_active)
+values
+  ('ce000001-ce00-ce00-ce00-ce0000000001', '11111111-1111-1111-1111-111111111111', 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'knowledge.manage', 'all', null, true),
+  ('ce000001-ce00-ce00-ce00-ce0000000002', '11111111-1111-1111-1111-111111111111', 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 'knowledge.view', 'entry', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', true)
+on conflict (id) do nothing;
+
+insert into public.knowledge_cross_links (id, organization_id, source_module, source_entity_type, source_entity_id, entry_id, link_type)
+values
+  ('cf000001-cf00-cf00-cf00-cf0000000001', '11111111-1111-1111-1111-111111111111', 'crm', 'client', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', 'reference'),
+  ('cf000001-cf00-cf00-cf00-cf0000000002', '11111111-1111-1111-1111-111111111111', 'projects', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10202', 'reference'),
+  ('cf000001-cf00-cf00-cf00-cf0000000003', '11111111-1111-1111-1111-111111111111', 'ai', 'session', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a501', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', 'context')
+on conflict (id) do nothing;
+
+insert into public.knowledge_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('d0000001-d000-d000-d000-d00000000001', '11111111-1111-1111-1111-111111111111', 'entry', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', 'create', 'Northstar Client Profile knowledge entry created'),
+  ('d0000001-d000-d000-d000-d00000000002', '11111111-1111-1111-1111-111111111111', 'context', 'cb000001-cb00-cb00-cb00-cb0000000001', 'link', 'AI context linked to analyst session')
 on conflict (id) do nothing;
 
 -- =============================================================================

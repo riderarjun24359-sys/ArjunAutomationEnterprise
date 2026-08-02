@@ -1823,3 +1823,201 @@ export interface DbAiOrchestrationAnalytics {
     computed_at: string;
     created_at: string;
 }
+
+export interface DbKnowledgeEntry {
+    id: string;
+    organization_id: string;
+    title: string;
+    slug: string;
+    content: string;
+    category: string;
+    status: string;
+    tags: unknown[];
+    client_id?: string | null;
+    project_id?: string | null;
+    employee_id?: string | null;
+    ai_session_id?: string | null;
+    current_version: number;
+    created_by?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeSemanticIndex {
+    id: string;
+    organization_id: string;
+    entry_id: string;
+    embedding_key: string;
+    search_text: string;
+    indexed_at: string;
+    created_at: string;
+}
+
+export interface DbKnowledgeSolution {
+    id: string;
+    organization_id: string;
+    name: string;
+    problem_statement: string;
+    solution_summary: string;
+    implementation_notes: string;
+    category: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeAdr {
+    id: string;
+    organization_id: string;
+    adr_number: number;
+    title: string;
+    status: string;
+    context: string;
+    decision: string;
+    consequences: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgePromptBase {
+    id: string;
+    organization_id: string;
+    name: string;
+    prompt_key: string;
+    category: string;
+    content: string;
+    use_cases: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeProjectMemory {
+    id: string;
+    organization_id: string;
+    project_id: string;
+    memory_key: string;
+    summary: string;
+    details: string;
+    context: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeClientMemory {
+    id: string;
+    organization_id: string;
+    client_id: string;
+    memory_key: string;
+    summary: string;
+    details: string;
+    context: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeComponent {
+    id: string;
+    organization_id: string;
+    name: string;
+    component_type: string;
+    description: string;
+    usage_guidelines: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgePattern {
+    id: string;
+    organization_id: string;
+    name: string;
+    pattern_type: string;
+    description: string;
+    when_to_use: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeDocumentation {
+    id: string;
+    organization_id: string;
+    title: string;
+    doc_key: string;
+    module_source: string;
+    content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeAiContext {
+    id: string;
+    organization_id: string;
+    context_key: string;
+    agent_id?: string | null;
+    session_id?: string | null;
+    entry_id?: string | null;
+    context_payload: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbKnowledgeVersion {
+    id: string;
+    organization_id: string;
+    entry_id: string;
+    version_number: number;
+    content: string;
+    change_summary: string;
+    created_at: string;
+}
+
+export interface DbKnowledgeAnalytics {
+    id: string;
+    organization_id: string;
+    metric_key: string;
+    metric_value: number;
+    dimensions: Record<string, unknown>;
+    period_start: string;
+    period_end: string;
+    computed_at: string;
+    created_at: string;
+}
+
+export interface DbKnowledgePermission {
+    id: string;
+    organization_id: string;
+    grantee_type: string;
+    grantee_id?: string | null;
+    permission_key: string;
+    resource_type: string;
+    resource_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface DbKnowledgeCrossLink {
+    id: string;
+    organization_id: string;
+    source_module: string;
+    source_entity_type: string;
+    source_entity_id?: string | null;
+    entry_id?: string | null;
+    link_type: string;
+    created_at: string;
+}
+
+export interface DbKnowledgeAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

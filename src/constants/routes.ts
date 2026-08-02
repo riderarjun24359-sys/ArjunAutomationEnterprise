@@ -15,6 +15,7 @@ export const ROUTES = {
     tasks: "/tasks",
     finance: "/finance",
     ai: "/ai",
+    knowledge: "/knowledge",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

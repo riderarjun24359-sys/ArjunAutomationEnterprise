@@ -159,6 +159,24 @@ import {
     AiTaskExecutionRepository,
     AiUsageRecordRepository,
 } from "@/src/modules/database/repositories/ai-orchestration-repositories";
+import {
+    KnowledgeAdrRepository,
+    KnowledgeAiContextRepository,
+    KnowledgeAnalyticsRepository,
+    KnowledgeAuditLogRepository,
+    KnowledgeClientMemoryRepository,
+    KnowledgeComponentRepository,
+    KnowledgeCrossLinkRepository,
+    KnowledgeDocumentationRepository,
+    KnowledgeEntryRepository,
+    KnowledgePatternRepository,
+    KnowledgePermissionRepository,
+    KnowledgeProjectMemoryRepository,
+    KnowledgePromptBaseRepository,
+    KnowledgeSemanticIndexRepository,
+    KnowledgeSolutionRepository,
+    KnowledgeVersionRepository,
+} from "@/src/modules/database/repositories/knowledge-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -302,6 +320,22 @@ export class DatabaseAccessLayer {
     readonly aiRetryPolicies: AiRetryPolicyRepository;
     readonly aiOrchestrationAuditLogs: AiOrchestrationAuditLogRepository;
     readonly aiOrchestrationAnalytics: AiOrchestrationAnalyticsRepository;
+    readonly knowledgeEntries: KnowledgeEntryRepository;
+    readonly knowledgeSemanticIndex: KnowledgeSemanticIndexRepository;
+    readonly knowledgeSolutions: KnowledgeSolutionRepository;
+    readonly knowledgeAdrs: KnowledgeAdrRepository;
+    readonly knowledgePromptBase: KnowledgePromptBaseRepository;
+    readonly knowledgeProjectMemory: KnowledgeProjectMemoryRepository;
+    readonly knowledgeClientMemory: KnowledgeClientMemoryRepository;
+    readonly knowledgeComponents: KnowledgeComponentRepository;
+    readonly knowledgePatterns: KnowledgePatternRepository;
+    readonly knowledgeDocumentation: KnowledgeDocumentationRepository;
+    readonly knowledgeAiContexts: KnowledgeAiContextRepository;
+    readonly knowledgeVersions: KnowledgeVersionRepository;
+    readonly knowledgeAnalytics: KnowledgeAnalyticsRepository;
+    readonly knowledgePermissions: KnowledgePermissionRepository;
+    readonly knowledgeCrossLinks: KnowledgeCrossLinkRepository;
+    readonly knowledgeAuditLogs: KnowledgeAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -445,6 +479,22 @@ export class DatabaseAccessLayer {
         this.aiRetryPolicies = new AiRetryPolicyRepository();
         this.aiOrchestrationAuditLogs = new AiOrchestrationAuditLogRepository();
         this.aiOrchestrationAnalytics = new AiOrchestrationAnalyticsRepository();
+        this.knowledgeEntries = new KnowledgeEntryRepository();
+        this.knowledgeSemanticIndex = new KnowledgeSemanticIndexRepository();
+        this.knowledgeSolutions = new KnowledgeSolutionRepository();
+        this.knowledgeAdrs = new KnowledgeAdrRepository();
+        this.knowledgePromptBase = new KnowledgePromptBaseRepository();
+        this.knowledgeProjectMemory = new KnowledgeProjectMemoryRepository();
+        this.knowledgeClientMemory = new KnowledgeClientMemoryRepository();
+        this.knowledgeComponents = new KnowledgeComponentRepository();
+        this.knowledgePatterns = new KnowledgePatternRepository();
+        this.knowledgeDocumentation = new KnowledgeDocumentationRepository();
+        this.knowledgeAiContexts = new KnowledgeAiContextRepository();
+        this.knowledgeVersions = new KnowledgeVersionRepository();
+        this.knowledgeAnalytics = new KnowledgeAnalyticsRepository();
+        this.knowledgePermissions = new KnowledgePermissionRepository();
+        this.knowledgeCrossLinks = new KnowledgeCrossLinkRepository();
+        this.knowledgeAuditLogs = new KnowledgeAuditLogRepository();
     }
 }
 

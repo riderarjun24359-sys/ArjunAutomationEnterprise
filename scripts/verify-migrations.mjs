@@ -153,6 +153,22 @@ const requiredTables = [
     "ai_retry_policies",
     "ai_orchestration_audit_logs",
     "ai_orchestration_analytics",
+    "knowledge_entries",
+    "knowledge_semantic_index",
+    "knowledge_solutions",
+    "knowledge_adrs",
+    "knowledge_prompt_base",
+    "knowledge_project_memory",
+    "knowledge_client_memory",
+    "knowledge_components",
+    "knowledge_patterns",
+    "knowledge_documentation",
+    "knowledge_ai_contexts",
+    "knowledge_versions",
+    "knowledge_analytics",
+    "knowledge_permissions",
+    "knowledge_cross_links",
+    "knowledge_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

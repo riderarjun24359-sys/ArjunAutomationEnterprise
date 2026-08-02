@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
     BarChart3,
     Bot,
+    BookOpen,
     Brain,
     BriefcaseBusiness,
     Building2,
@@ -36,6 +37,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Sales", href: ROUTES.sales, description: "Pipeline and revenue operations", icon: TrendingUp, section: "secondary" },
     { label: "AI Orchestration", href: ROUTES.ai, description: "Core AI infrastructure and SDK", icon: Brain, section: "secondary" },
+    { label: "Knowledge", href: ROUTES.knowledge, description: "Enterprise knowledge and memory engine", icon: BookOpen, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
     { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },
