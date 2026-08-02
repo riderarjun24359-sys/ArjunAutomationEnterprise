@@ -51,17 +51,14 @@ export function TasksPage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-slate-50 px-4 py-8 dark:bg-slate-950 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-7xl">
                     <LoadingState label="Loading task management data" />
-                </div>
-            </main>
+            </div>
         );
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 dark:bg-slate-950 dark:text-slate-100 sm:px-6 lg:px-8">
-            <div className="mx-auto flex max-w-7xl flex-col gap-6">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-slate-900 dark:text-slate-100">
                 <motion.header
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -227,7 +224,6 @@ export function TasksPage() {
                         </div>
                     </Card>
                 ) : null}
-            </div>
-        </main>
+        </div>
     );
 }
