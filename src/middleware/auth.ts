@@ -13,6 +13,7 @@ const protectedRoutes = [
     ROUTES.analytics,
     ROUTES.automation,
     ROUTES.settings,
+    ROUTES.hr,
 ];
 
 const authRoutes = [

@@ -625,3 +625,240 @@ export interface DbBackupRun {
     error_message: string;
     created_at: string;
 }
+
+export interface DbDepartment {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    parent_department_id?: string | null;
+    head_employee_id?: string | null;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDesignation {
+    id: string;
+    organization_id: string;
+    title: string;
+    level: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEmployee {
+    id: string;
+    organization_id: string;
+    employee_code: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    department_id?: string | null;
+    designation_id?: string | null;
+    manager_id?: string | null;
+    profile_id?: string | null;
+    status: string;
+    employment_type: string;
+    hire_date: string;
+    base_salary: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHrTeam {
+    id: string;
+    organization_id: string;
+    name: string;
+    slug: string;
+    department_id?: string | null;
+    lead_employee_id?: string | null;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHrTeamMember {
+    id: string;
+    team_id: string;
+    employee_id: string;
+    role_name: string;
+    created_at: string;
+}
+
+export interface DbAttendanceRecord {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    work_date: string;
+    check_in?: string | null;
+    check_out?: string | null;
+    status: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbLeaveType {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    annual_quota: number;
+    paid: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbLeaveRequest {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    leave_type_id: string;
+    start_date: string;
+    end_date: string;
+    status: string;
+    reason: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHoliday {
+    id: string;
+    organization_id: string;
+    name: string;
+    holiday_date: string;
+    region: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbPayrollCycle {
+    id: string;
+    organization_id: string;
+    name: string;
+    period_start: string;
+    period_end: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbPayrollEntry {
+    id: string;
+    cycle_id: string;
+    employee_id: string;
+    base_salary: number;
+    allowances: number;
+    deductions: number;
+    net_pay: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEmployeeDocument {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    title: string;
+    document_type: string;
+    file_url: string;
+    uploaded_at: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbPerformanceReview {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    reviewer_id?: string | null;
+    review_period: string;
+    rating: number;
+    summary: string;
+    status: string;
+    reviewed_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbJobOpening {
+    id: string;
+    organization_id: string;
+    title: string;
+    department_id?: string | null;
+    designation_id?: string | null;
+    status: string;
+    description: string;
+    opened_at: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbJobCandidate {
+    id: string;
+    opening_id: string;
+    full_name: string;
+    email: string;
+    stage: string;
+    applied_at: string;
+    notes: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOnboardingPlan {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    status: string;
+    start_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOnboardingTask {
+    id: string;
+    plan_id: string;
+    title: string;
+    status: string;
+    due_date?: string | null;
+    completed_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOffboardingPlan {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    status: string;
+    last_working_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOffboardingTask {
+    id: string;
+    plan_id: string;
+    title: string;
+    status: string;
+    due_date?: string | null;
+    completed_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbOrgChartNode {
+    id: string;
+    organization_id: string;
+    employee_id: string;
+    department_id?: string | null;
+    parent_node_id?: string | null;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+}

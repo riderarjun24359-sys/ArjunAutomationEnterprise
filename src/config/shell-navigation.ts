@@ -7,6 +7,7 @@ import {
     CheckSquare,
     LayoutDashboard,
     Settings,
+    UserCog,
     Users,
     Wallet,
 } from "lucide-react";
@@ -30,6 +31,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
+    { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },
     { label: "Settings", href: ROUTES.settings, description: "System configuration", icon: Settings, section: "secondary" },
 ];
 

@@ -34,6 +34,11 @@ const requiredTables = [
     "teams",
     "api_keys",
     "backup_configs",
+    "departments",
+    "employees",
+    "leave_requests",
+    "payroll_cycles",
+    "job_openings",
 ];
 
 const supabase = createClient(url, anonKey);
