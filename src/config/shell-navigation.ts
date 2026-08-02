@@ -6,6 +6,7 @@ import {
     Building2,
     CheckSquare,
     LayoutDashboard,
+    Headphones,
     Package,
     Settings,
     UserCog,
@@ -34,6 +35,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
     { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },
     { label: "Inventory", href: ROUTES.inventory, description: "Stock, assets, and procurement", icon: Package, section: "secondary" },
+    { label: "Support", href: ROUTES.support, description: "Customer support and service desk", icon: Headphones, section: "secondary" },
     { label: "Settings", href: ROUTES.settings, description: "System configuration", icon: Settings, section: "secondary" },
 ];
 

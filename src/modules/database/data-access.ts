@@ -93,6 +93,21 @@ import {
     SupplierRepository,
     WarehouseRepository,
 } from "@/src/modules/database/repositories/inventory-repositories";
+import {
+    SupportAuditLogRepository,
+    SupportCannedResponseRepository,
+    SupportCategoryRepository,
+    SupportEscalationRuleRepository,
+    SupportKnowledgeArticleRepository,
+    SupportPortalSettingsRepository,
+    SupportPriorityRepository,
+    SupportQueueRepository,
+    SupportSatisfactionRatingRepository,
+    SupportSlaRepository,
+    SupportTicketAttachmentRepository,
+    SupportTicketNoteRepository,
+    SupportTicketRepository,
+} from "@/src/modules/database/repositories/support-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -178,6 +193,19 @@ export class DatabaseAccessLayer {
     readonly grnItems: GrnItemRepository;
     readonly inventoryValuations: InventoryValuationRepository;
     readonly inventoryAuditLogs: InventoryAuditLogRepository;
+    readonly supportCategories: SupportCategoryRepository;
+    readonly supportPriorities: SupportPriorityRepository;
+    readonly supportSlas: SupportSlaRepository;
+    readonly supportQueues: SupportQueueRepository;
+    readonly supportTickets: SupportTicketRepository;
+    readonly supportTicketNotes: SupportTicketNoteRepository;
+    readonly supportTicketAttachments: SupportTicketAttachmentRepository;
+    readonly supportKnowledgeArticles: SupportKnowledgeArticleRepository;
+    readonly supportCannedResponses: SupportCannedResponseRepository;
+    readonly supportEscalationRules: SupportEscalationRuleRepository;
+    readonly supportSatisfactionRatings: SupportSatisfactionRatingRepository;
+    readonly supportPortalSettings: SupportPortalSettingsRepository;
+    readonly supportAuditLogs: SupportAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -263,6 +291,19 @@ export class DatabaseAccessLayer {
         this.grnItems = new GrnItemRepository();
         this.inventoryValuations = new InventoryValuationRepository();
         this.inventoryAuditLogs = new InventoryAuditLogRepository();
+        this.supportCategories = new SupportCategoryRepository();
+        this.supportPriorities = new SupportPriorityRepository();
+        this.supportSlas = new SupportSlaRepository();
+        this.supportQueues = new SupportQueueRepository();
+        this.supportTickets = new SupportTicketRepository();
+        this.supportTicketNotes = new SupportTicketNoteRepository();
+        this.supportTicketAttachments = new SupportTicketAttachmentRepository();
+        this.supportKnowledgeArticles = new SupportKnowledgeArticleRepository();
+        this.supportCannedResponses = new SupportCannedResponseRepository();
+        this.supportEscalationRules = new SupportEscalationRuleRepository();
+        this.supportSatisfactionRatings = new SupportSatisfactionRatingRepository();
+        this.supportPortalSettings = new SupportPortalSettingsRepository();
+        this.supportAuditLogs = new SupportAuditLogRepository();
     }
 }
 

@@ -44,6 +44,8 @@ const requiredTables = [
     "warehouses",
     "purchase_orders",
     "assets",
+    "support_tickets",
+    "support_queues",
 ];
 
 const supabase = createClient(url, anonKey);

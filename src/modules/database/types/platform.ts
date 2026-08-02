@@ -1084,3 +1084,164 @@ export interface DbInventoryAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbSupportCategory {
+    id: string;
+    organization_id: string;
+    name: string;
+    slug: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportPriority {
+    id: string;
+    organization_id: string;
+    name: string;
+    level: number;
+    color: string;
+    response_hours: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportSla {
+    id: string;
+    organization_id: string;
+    name: string;
+    priority_id?: string | null;
+    first_response_minutes: number;
+    resolution_minutes: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportQueue {
+    id: string;
+    organization_id: string;
+    name: string;
+    code: string;
+    description: string;
+    default_assignee_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportTicket {
+    id: string;
+    organization_id: string;
+    ticket_number: string;
+    subject: string;
+    description: string;
+    status: string;
+    category_id?: string | null;
+    priority_id?: string | null;
+    sla_id?: string | null;
+    queue_id?: string | null;
+    client_id?: string | null;
+    contact_id?: string | null;
+    project_id?: string | null;
+    assigned_agent_id?: string | null;
+    invoice_id?: string | null;
+    portal_visible: boolean;
+    due_at?: string | null;
+    resolved_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportTicketNote {
+    id: string;
+    organization_id: string;
+    ticket_id: string;
+    author_id?: string | null;
+    body: string;
+    is_internal: boolean;
+    created_at: string;
+}
+
+export interface DbSupportTicketAttachment {
+    id: string;
+    organization_id: string;
+    ticket_id: string;
+    file_name: string;
+    file_url: string;
+    file_size: number;
+    mime_type: string;
+    uploaded_by?: string | null;
+    created_at: string;
+}
+
+export interface DbSupportKnowledgeArticle {
+    id: string;
+    organization_id: string;
+    title: string;
+    slug: string;
+    content: string;
+    category_id?: string | null;
+    status: string;
+    view_count: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportCannedResponse {
+    id: string;
+    organization_id: string;
+    title: string;
+    shortcut: string;
+    body: string;
+    category_id?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportEscalationRule {
+    id: string;
+    organization_id: string;
+    name: string;
+    trigger_condition: string;
+    escalation_level: number;
+    target_queue_id?: string | null;
+    notify_agent_id?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportSatisfactionRating {
+    id: string;
+    organization_id: string;
+    ticket_id: string;
+    rating: number;
+    comment: string;
+    submitted_at: string;
+    created_at: string;
+}
+
+export interface DbSupportPortalSettings {
+    id: string;
+    organization_id: string;
+    portal_enabled: boolean;
+    welcome_message: string;
+    allow_ticket_creation: boolean;
+    show_knowledge_base: boolean;
+    custom_domain: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSupportAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

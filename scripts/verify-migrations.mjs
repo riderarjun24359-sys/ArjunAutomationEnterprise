@@ -95,6 +95,19 @@ const requiredTables = [
     "grn_items",
     "inventory_valuations",
     "inventory_audit_logs",
+    "support_categories",
+    "support_priorities",
+    "support_slas",
+    "support_queues",
+    "support_tickets",
+    "support_ticket_notes",
+    "support_ticket_attachments",
+    "support_knowledge_articles",
+    "support_canned_responses",
+    "support_escalation_rules",
+    "support_satisfaction_ratings",
+    "support_portal_settings",
+    "support_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

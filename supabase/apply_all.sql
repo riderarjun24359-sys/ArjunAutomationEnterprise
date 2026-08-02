@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-02T22:30:05.336Z
+-- Generated: 2026-08-02T22:43:54.585Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (10):
+--   Migrations (11):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -16,7 +16,8 @@
 --     - 202608020008_enterprise_settings.sql
 --     - 202608020009_enterprise_hrms.sql
 --     - 202608020010_enterprise_inventory.sql
---   Seeds (10):
+--     - 202608020011_enterprise_support.sql
+--   Seeds (11):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -27,9 +28,10 @@
 --     - 008_enterprise_settings_seed.sql
 --     - 009_enterprise_hrms_seed.sql
 --     - 010_enterprise_inventory_seed.sql
+--     - 011_enterprise_support_seed.sql
 --
--- Includes through Sprint 17:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management
+-- Includes through Sprint 18:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -2551,6 +2553,260 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020011_enterprise_support.sql
+-- =============================================================================
+-- Sprint 18: Enterprise Customer Support & Service Management
+
+create table if not exists public.support_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  slug text not null,
+  description text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, slug)
+);
+
+create table if not exists public.support_priorities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  level integer not null default 1,
+  color text not null default '#64748b',
+  response_hours integer not null default 24,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.support_slas (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  priority_id uuid references public.support_priorities(id) on delete set null,
+  first_response_minutes integer not null default 60,
+  resolution_minutes integer not null default 480,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.support_queues (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  code text not null,
+  description text not null default '',
+  default_assignee_id uuid references public.employees(id) on delete set null,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, code)
+);
+
+create table if not exists public.support_tickets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  ticket_number text not null,
+  subject text not null,
+  description text not null default '',
+  status text not null default 'open',
+  category_id uuid references public.support_categories(id) on delete set null,
+  priority_id uuid references public.support_priorities(id) on delete set null,
+  sla_id uuid references public.support_slas(id) on delete set null,
+  queue_id uuid references public.support_queues(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  contact_id uuid references public.contacts(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  assigned_agent_id uuid references public.employees(id) on delete set null,
+  invoice_id uuid references public.invoices(id) on delete set null,
+  portal_visible boolean not null default true,
+  due_at timestamptz,
+  resolved_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, ticket_number)
+);
+
+create table if not exists public.support_ticket_notes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  ticket_id uuid not null references public.support_tickets(id) on delete cascade,
+  author_id uuid references public.user_profiles(id) on delete set null,
+  body text not null,
+  is_internal boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.support_ticket_attachments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  ticket_id uuid not null references public.support_tickets(id) on delete cascade,
+  file_name text not null,
+  file_url text not null default '',
+  file_size integer not null default 0,
+  mime_type text not null default 'application/octet-stream',
+  uploaded_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.support_knowledge_articles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  slug text not null,
+  content text not null default '',
+  category_id uuid references public.support_categories(id) on delete set null,
+  status text not null default 'draft',
+  view_count integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, slug)
+);
+
+create table if not exists public.support_canned_responses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  shortcut text not null,
+  body text not null default '',
+  category_id uuid references public.support_categories(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, shortcut)
+);
+
+create table if not exists public.support_escalation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  trigger_condition text not null default 'sla_breach',
+  escalation_level integer not null default 1,
+  target_queue_id uuid references public.support_queues(id) on delete set null,
+  notify_agent_id uuid references public.employees(id) on delete set null,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.support_satisfaction_ratings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  ticket_id uuid not null references public.support_tickets(id) on delete cascade,
+  rating integer not null check (rating >= 1 and rating <= 5),
+  comment text not null default '',
+  submitted_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.support_portal_settings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  portal_enabled boolean not null default true,
+  welcome_message text not null default 'Welcome to our support portal.',
+  allow_ticket_creation boolean not null default true,
+  show_knowledge_base boolean not null default true,
+  custom_domain text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id)
+);
+
+create table if not exists public.support_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_support_categories_org on public.support_categories(organization_id);
+create index if not exists idx_support_priorities_org on public.support_priorities(organization_id);
+create index if not exists idx_support_slas_org on public.support_slas(organization_id);
+create index if not exists idx_support_queues_org on public.support_queues(organization_id);
+create index if not exists idx_support_tickets_org on public.support_tickets(organization_id);
+create index if not exists idx_support_tickets_status on public.support_tickets(status);
+create index if not exists idx_support_ticket_notes_org on public.support_ticket_notes(organization_id);
+create index if not exists idx_support_ticket_notes_ticket on public.support_ticket_notes(ticket_id);
+create index if not exists idx_support_ticket_attachments_org on public.support_ticket_attachments(organization_id);
+create index if not exists idx_support_knowledge_articles_org on public.support_knowledge_articles(organization_id);
+create index if not exists idx_support_canned_responses_org on public.support_canned_responses(organization_id);
+create index if not exists idx_support_escalation_rules_org on public.support_escalation_rules(organization_id);
+create index if not exists idx_support_satisfaction_ratings_org on public.support_satisfaction_ratings(organization_id);
+create index if not exists idx_support_portal_settings_org on public.support_portal_settings(organization_id);
+create index if not exists idx_support_audit_logs_org on public.support_audit_logs(organization_id);
+
+drop trigger if exists trg_support_categories_updated_at on public.support_categories;
+create trigger trg_support_categories_updated_at before update on public.support_categories for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_priorities_updated_at on public.support_priorities;
+create trigger trg_support_priorities_updated_at before update on public.support_priorities for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_slas_updated_at on public.support_slas;
+create trigger trg_support_slas_updated_at before update on public.support_slas for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_queues_updated_at on public.support_queues;
+create trigger trg_support_queues_updated_at before update on public.support_queues for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_tickets_updated_at on public.support_tickets;
+create trigger trg_support_tickets_updated_at before update on public.support_tickets for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_knowledge_articles_updated_at on public.support_knowledge_articles;
+create trigger trg_support_knowledge_articles_updated_at before update on public.support_knowledge_articles for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_canned_responses_updated_at on public.support_canned_responses;
+create trigger trg_support_canned_responses_updated_at before update on public.support_canned_responses for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_escalation_rules_updated_at on public.support_escalation_rules;
+create trigger trg_support_escalation_rules_updated_at before update on public.support_escalation_rules for each row execute function public.set_updated_at();
+drop trigger if exists trg_support_portal_settings_updated_at on public.support_portal_settings;
+create trigger trg_support_portal_settings_updated_at before update on public.support_portal_settings for each row execute function public.set_updated_at();
+
+alter table public.support_categories enable row level security;
+alter table public.support_priorities enable row level security;
+alter table public.support_slas enable row level security;
+alter table public.support_queues enable row level security;
+alter table public.support_tickets enable row level security;
+alter table public.support_ticket_notes enable row level security;
+alter table public.support_ticket_attachments enable row level security;
+alter table public.support_knowledge_articles enable row level security;
+alter table public.support_canned_responses enable row level security;
+alter table public.support_escalation_rules enable row level security;
+alter table public.support_satisfaction_ratings enable row level security;
+alter table public.support_portal_settings enable row level security;
+alter table public.support_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'support_categories', 'support_priorities', 'support_slas', 'support_queues',
+    'support_tickets', 'support_ticket_notes', 'support_ticket_attachments',
+    'support_knowledge_articles', 'support_canned_responses', 'support_escalation_rules',
+    'support_satisfaction_ratings', 'support_portal_settings', 'support_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('support.view', 'View support tickets and service data', 'support'),
+  ('support.manage', 'Manage tickets, queues, and SLAs', 'support'),
+  ('support.agents.manage', 'Manage agent assignment and escalation', 'support'),
+  ('support.knowledge.manage', 'Manage knowledge base and canned responses', 'support')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -3244,6 +3500,92 @@ values
   ('c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c9c901', '11111111-1111-1111-1111-111111111111', 'purchase_order', 'b8b8b8b8-b8b8-b8b8-b8b8-b8b8b8b8b801', 'approve', 'Purchase order PO-2026-0042 approved', '{"po_number":"PO-2026-0042"}'::jsonb),
   ('c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c9c902', '11111111-1111-1111-1111-111111111111', 'stock_transfer', 'c4c4c4c4-c4c4-c4c4-c4c4-c4c4c4c4c401', 'complete', 'Transfer TRF-2026-0018 completed', '{"transfer_number":"TRF-2026-0018"}'::jsonb),
   ('c9c9c9c9-c9c9-c9c9-c9c9-c9c9c9c9c903', '11111111-1111-1111-1111-111111111111', 'asset', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c101', 'assign', 'Asset AST-LPT-001 assigned to employee', '{"asset_tag":"AST-LPT-001"}'::jsonb)
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 011_enterprise_support_seed.sql
+-- =============================================================================
+insert into public.support_categories (id, organization_id, name, slug, description)
+values
+  ('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d101', '11111111-1111-1111-1111-111111111111', 'Technical Issue', 'technical', 'Software bugs and technical problems'),
+  ('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d102', '11111111-1111-1111-1111-111111111111', 'Billing', 'billing', 'Invoices, payments, and subscription questions'),
+  ('d1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d103', '11111111-1111-1111-1111-111111111111', 'Feature Request', 'feature-request', 'Product enhancement requests')
+on conflict (id) do nothing;
+
+insert into public.support_priorities (id, organization_id, name, level, color, response_hours)
+values
+  ('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d201', '11111111-1111-1111-1111-111111111111', 'Critical', 1, '#ef4444', 1),
+  ('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d202', '11111111-1111-1111-1111-111111111111', 'High', 2, '#f97316', 4),
+  ('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d203', '11111111-1111-1111-1111-111111111111', 'Medium', 3, '#eab308', 24),
+  ('d2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d204', '11111111-1111-1111-1111-111111111111', 'Low', 4, '#22c55e', 72)
+on conflict (id) do nothing;
+
+insert into public.support_slas (id, organization_id, name, priority_id, first_response_minutes, resolution_minutes, is_active)
+values
+  ('d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d301', '11111111-1111-1111-1111-111111111111', 'Critical SLA', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d201', 15, 240, true),
+  ('d3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d302', '11111111-1111-1111-1111-111111111111', 'Standard SLA', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d203', 60, 480, true)
+on conflict (id) do nothing;
+
+insert into public.support_queues (id, organization_id, name, code, description, default_assignee_id, is_active)
+values
+  ('d4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d401', '11111111-1111-1111-1111-111111111111', 'General Support', 'GEN', 'Default support queue for all incoming tickets', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', true),
+  ('d4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d402', '11111111-1111-1111-1111-111111111111', 'Enterprise Escalations', 'ESC', 'Priority queue for enterprise customers', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', true)
+on conflict (id) do nothing;
+
+insert into public.support_tickets (id, organization_id, ticket_number, subject, description, status, category_id, priority_id, sla_id, queue_id, client_id, contact_id, project_id, assigned_agent_id, portal_visible, due_at)
+values
+  ('d5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', '11111111-1111-1111-1111-111111111111', 'TKT-2026-01042', 'API integration timeout errors', 'Northstar Labs reporting intermittent 504 errors on webhook endpoints during peak hours.', 'open', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d101', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d202', 'd3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d301', 'd4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d402', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'dddddddd-dddd-dddd-dddd-dddddddddd01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', true, '2026-08-03 18:00:00+00'),
+  ('d5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d502', '11111111-1111-1111-1111-111111111111', 'TKT-2026-01043', 'Invoice discrepancy on Q2 billing', 'Apex Commerce needs clarification on duplicate line items in June invoice.', 'pending', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d102', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d203', 'd3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d302', 'd4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d401', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee02', 'dddddddd-dddd-dddd-dddd-dddddddddd02', null, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', true, '2026-08-05 12:00:00+00'),
+  ('d5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d503', '11111111-1111-1111-1111-111111111111', 'TKT-2026-01044', 'Request for bulk export feature', 'Customer requesting CSV export for analytics dashboard data.', 'resolved', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d103', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d2d204', 'd3d3d3d3-d3d3-d3d3-d3d3-d3d3d3d3d302', 'd4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d401', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', null, 'ffffffff-ffff-ffff-ffff-ffffffffff01', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', true, null)
+on conflict (id) do nothing;
+
+update public.support_tickets set resolved_at = '2026-07-30 16:45:00+00' where id = 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d503';
+
+insert into public.support_ticket_notes (id, organization_id, ticket_id, body, is_internal)
+values
+  ('d6d6d6d6-d6d6-d6d6-d6d6-d6d6d6d6d601', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', 'Investigating load balancer logs — spike correlates with webhook batch processing.', true),
+  ('d6d6d6d6-d6d6-d6d6-d6d6-d6d6d6d6d602', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', 'We are actively investigating the timeout issue and will update you shortly.', false),
+  ('d6d6d6d6-d6d6-d6d6-d6d6-d6d6d6d6d603', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d502', 'Forwarded to finance team for invoice reconciliation.', true)
+on conflict (id) do nothing;
+
+insert into public.support_ticket_attachments (id, organization_id, ticket_id, file_name, file_url, file_size, mime_type)
+values
+  ('d7d7d7d7-d7d7-d7d7-d7d7-d7d7d7d7d701', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', 'error-logs.txt', 'https://storage.example.com/support/error-logs.txt', 24576, 'text/plain'),
+  ('d7d7d7d7-d7d7-d7d7-d7d7-d7d7d7d7d702', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d502', 'invoice-june-2026.pdf', 'https://storage.example.com/support/invoice-june-2026.pdf', 102400, 'application/pdf')
+on conflict (id) do nothing;
+
+insert into public.support_knowledge_articles (id, organization_id, title, slug, content, category_id, status, view_count)
+values
+  ('d8d8d8d8-d8d8-d8d8-d8d8-d8d8d8d8d801', '11111111-1111-1111-1111-111111111111', 'Getting Started with Webhooks', 'getting-started-webhooks', 'Configure webhook endpoints in Settings > Integrations. Ensure your endpoint responds within 5 seconds.', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d101', 'published', 142),
+  ('d8d8d8d8-d8d8-d8d8-d8d8-d8d8d8d8d802', '11111111-1111-1111-1111-111111111111', 'Understanding Your Invoice', 'understanding-invoice', 'Your invoice includes base subscription, usage overages, and applicable taxes. Contact billing for adjustments.', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d1d102', 'published', 89)
+on conflict (id) do nothing;
+
+insert into public.support_canned_responses (id, organization_id, title, shortcut, body, category_id)
+values
+  ('d9d9d9d9-d9d9-d9d9-d9d9-d9d9d9d9d901', '11111111-1111-1111-1111-111111111111', 'Acknowledge receipt', '/ack', 'Thank you for contacting support. We have received your request and assigned it to our team.', null),
+  ('d9d9d9d9-d9d9-d9d9-d9d9-d9d9d9d9d902', '11111111-1111-1111-1111-111111111111', 'Request more info', '/info', 'To help us resolve this faster, could you please provide additional details or screenshots?', null)
+on conflict (id) do nothing;
+
+insert into public.support_escalation_rules (id, organization_id, name, trigger_condition, escalation_level, target_queue_id, notify_agent_id, is_active)
+values
+  ('dadadada-dada-dada-dada-dadadadada01', '11111111-1111-1111-1111-111111111111', 'SLA breach escalation', 'sla_breach', 1, 'd4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d402', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', true),
+  ('dadadada-dada-dada-dada-dadadadada02', '11111111-1111-1111-1111-111111111111', 'Critical priority auto-escalate', 'priority_critical', 2, 'd4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d402', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', true)
+on conflict (id) do nothing;
+
+insert into public.support_satisfaction_ratings (id, organization_id, ticket_id, rating, comment, submitted_at)
+values
+  ('dbdbdbdb-dbdb-dbdb-dbdb-dbdbdbdbdb01', '11111111-1111-1111-1111-111111111111', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d503', 5, 'Quick resolution and helpful agent. Export feature works perfectly.', '2026-07-31 09:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.support_portal_settings (id, organization_id, portal_enabled, welcome_message, allow_ticket_creation, show_knowledge_base, custom_domain)
+values
+  ('dcdcdcdc-dcdc-dcdc-dcdc-dcdcdcdcdc01', '11111111-1111-1111-1111-111111111111', true, 'Welcome to Acme Support. How can we help you today?', true, true, 'support.acme.example.com')
+on conflict (id) do nothing;
+
+insert into public.support_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('dddddddd-dddd-dddd-dddd-dddddddddd91', '11111111-1111-1111-1111-111111111111', 'ticket', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d501', 'create', 'Ticket TKT-2026-01042 created for Northstar Labs'),
+  ('dddddddd-dddd-dddd-dddd-dddddddddd92', '11111111-1111-1111-1111-111111111111', 'ticket', 'd5d5d5d5-d5d5-d5d5-d5d5-d5d5d5d5d503', 'resolve', 'Ticket TKT-2026-01044 resolved')
 on conflict (id) do nothing;
 
 -- =============================================================================
