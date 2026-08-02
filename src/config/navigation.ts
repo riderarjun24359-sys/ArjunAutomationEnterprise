@@ -8,6 +8,7 @@ export interface NavigationItem {
 
 export const primaryNavigation: NavigationItem[] = [
     { label: "Dashboard", href: ROUTES.dashboard, description: "Executive overview" },
+    { label: "Organization", href: ROUTES.organization, description: "Governance and workspaces" },
     { label: "Projects", href: ROUTES.projects, description: "Delivery and execution" },
     { label: "Clients", href: ROUTES.clients, description: "Client lifecycle" },
     { label: "Tasks", href: ROUTES.tasks, description: "Operational execution" },
