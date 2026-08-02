@@ -26,4 +26,8 @@ export const databaseService = {
     workflowSchedules: databaseAccess.workflowSchedules,
     workflowExecutions: databaseAccess.workflowExecutions,
     automationLogs: databaseAccess.automationLogs,
+    analyticsDashboards: databaseAccess.analyticsDashboards,
+    analyticsWidgets: databaseAccess.analyticsWidgets,
+    analyticsMetrics: databaseAccess.analyticsMetrics,
+    analyticsReports: databaseAccess.analyticsReports,
 };

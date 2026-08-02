@@ -40,6 +40,10 @@ const requiredTables = [
     "workflow_schedules",
     "workflow_executions",
     "automation_logs",
+    "analytics_dashboards",
+    "analytics_widgets",
+    "analytics_metrics",
+    "analytics_reports",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

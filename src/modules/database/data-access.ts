@@ -27,6 +27,12 @@ import {
     WorkflowTemplateRepository,
     WorkflowTriggerRepository,
 } from "@/src/modules/database/repositories/automation-repositories";
+import {
+    AnalyticsDashboardRepository,
+    AnalyticsMetricRepository,
+    AnalyticsReportRepository,
+    AnalyticsWidgetRepository,
+} from "@/src/modules/database/repositories/analytics-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -54,6 +60,10 @@ export class DatabaseAccessLayer {
     readonly workflowSchedules: WorkflowScheduleRepository;
     readonly workflowExecutions: WorkflowExecutionRepository;
     readonly automationLogs: AutomationLogRepository;
+    readonly analyticsDashboards: AnalyticsDashboardRepository;
+    readonly analyticsWidgets: AnalyticsWidgetRepository;
+    readonly analyticsMetrics: AnalyticsMetricRepository;
+    readonly analyticsReports: AnalyticsReportRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -81,6 +91,10 @@ export class DatabaseAccessLayer {
         this.workflowSchedules = new WorkflowScheduleRepository();
         this.workflowExecutions = new WorkflowExecutionRepository();
         this.automationLogs = new AutomationLogRepository();
+        this.analyticsDashboards = new AnalyticsDashboardRepository();
+        this.analyticsWidgets = new AnalyticsWidgetRepository();
+        this.analyticsMetrics = new AnalyticsMetricRepository();
+        this.analyticsReports = new AnalyticsReportRepository();
     }
 }
 

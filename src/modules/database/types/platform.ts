@@ -408,3 +408,55 @@ export interface DbAutomationLog {
     metadata: Record<string, unknown>;
     created_at: string;
 }
+
+export interface DbAnalyticsDashboard {
+    id: string;
+    organization_id: string;
+    name: string;
+    description: string;
+    is_default: boolean;
+    layout: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAnalyticsWidget {
+    id: string;
+    dashboard_id: string;
+    title: string;
+    widget_type: string;
+    metric_key: string;
+    chart_type: string;
+    config: Record<string, unknown>;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAnalyticsMetric {
+    id: string;
+    organization_id: string;
+    metric_key: string;
+    label: string;
+    category: string;
+    value: number;
+    unit: string;
+    period_start?: string | null;
+    period_end?: string | null;
+    metadata: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAnalyticsReport {
+    id: string;
+    organization_id: string;
+    name: string;
+    report_type: string;
+    status: string;
+    filters: Record<string, unknown>;
+    summary: Record<string, unknown>;
+    generated_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}

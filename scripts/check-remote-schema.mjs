@@ -27,6 +27,9 @@ const requiredTables = [
     "workflows",
     "workflow_executions",
     "automation_logs",
+    "analytics_dashboards",
+    "analytics_metrics",
+    "analytics_reports",
 ];
 
 const supabase = createClient(url, anonKey);
