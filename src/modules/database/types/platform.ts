@@ -1454,3 +1454,188 @@ export interface DbSalesAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbDocumentFolder {
+    id: string;
+    organization_id: string;
+    parent_folder_id?: string | null;
+    name: string;
+    slug: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocument {
+    id: string;
+    organization_id: string;
+    folder_id?: string | null;
+    title: string;
+    file_name: string;
+    file_url: string;
+    mime_type: string;
+    file_size: number;
+    status: string;
+    current_version: number;
+    client_id?: string | null;
+    project_id?: string | null;
+    employee_id?: string | null;
+    invoice_id?: string | null;
+    purchase_order_id?: string | null;
+    support_ticket_id?: string | null;
+    sales_opportunity_id?: string | null;
+    uploaded_by?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocumentTag {
+    id: string;
+    organization_id: string;
+    name: string;
+    color: string;
+    created_at: string;
+}
+
+export interface DbDocumentTagLink {
+    id: string;
+    document_id: string;
+    tag_id: string;
+    created_at: string;
+}
+
+export interface DbDocumentVersion {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    version_number: number;
+    file_url: string;
+    file_size: number;
+    change_summary: string;
+    created_by?: string | null;
+    created_at: string;
+}
+
+export interface DbDocumentApproval {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    approver_id?: string | null;
+    status: string;
+    comments: string;
+    decided_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocumentEsignPreparation {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    signer_name: string;
+    signer_email: string;
+    status: string;
+    prepared_at: string;
+    sent_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocumentShare {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    share_token: string;
+    recipient_email: string;
+    permission_level: string;
+    expires_at?: string | null;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface DbDocumentAccessGrant {
+    id: string;
+    organization_id: string;
+    document_id?: string | null;
+    folder_id?: string | null;
+    grantee_type: string;
+    grantee_id?: string | null;
+    permission_level: string;
+    created_at: string;
+}
+
+export interface DbDocumentTemplate {
+    id: string;
+    organization_id: string;
+    name: string;
+    category: string;
+    description: string;
+    template_content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocumentPreview {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    preview_type: string;
+    preview_url: string;
+    page_count: number;
+    generated_at: string;
+    created_at: string;
+}
+
+export interface DbDocumentSearchIndex {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    search_text: string;
+    indexed_at: string;
+    created_at: string;
+}
+
+export interface DbDocumentRetentionPolicy {
+    id: string;
+    organization_id: string;
+    name: string;
+    retention_days: number;
+    action_on_expiry: string;
+    applies_to_category: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDocumentArchive {
+    id: string;
+    organization_id: string;
+    document_id: string;
+    archived_at: string;
+    archived_by?: string | null;
+    restore_available: boolean;
+    created_at: string;
+}
+
+export interface DbDocumentActivityLog {
+    id: string;
+    organization_id: string;
+    document_id?: string | null;
+    activity_type: string;
+    summary: string;
+    performed_by?: string | null;
+    created_at: string;
+}
+
+export interface DbDocumentAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

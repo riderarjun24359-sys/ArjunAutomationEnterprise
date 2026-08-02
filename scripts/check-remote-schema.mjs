@@ -48,6 +48,8 @@ const requiredTables = [
     "support_queues",
     "sales_opportunities",
     "sales_leads",
+    "document_folders",
+    "documents",
 ];
 
 const supabase = createClient(url, anonKey);

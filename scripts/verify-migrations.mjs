@@ -123,6 +123,22 @@ const requiredTables = [
     "sales_commissions",
     "sales_win_loss_records",
     "sales_audit_logs",
+    "document_folders",
+    "documents",
+    "document_tags",
+    "document_tag_links",
+    "document_versions",
+    "document_approvals",
+    "document_esign_preparations",
+    "document_shares",
+    "document_access_grants",
+    "document_templates",
+    "document_previews",
+    "document_search_index",
+    "document_retention_policies",
+    "document_archives",
+    "document_activity_logs",
+    "document_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

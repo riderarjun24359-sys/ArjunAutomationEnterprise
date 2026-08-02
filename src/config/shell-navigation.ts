@@ -13,6 +13,7 @@ import {
     Users,
     TrendingUp,
     Wallet,
+    FileText,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
 
@@ -38,6 +39,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },
     { label: "Inventory", href: ROUTES.inventory, description: "Stock, assets, and procurement", icon: Package, section: "secondary" },
     { label: "Support", href: ROUTES.support, description: "Customer support and service desk", icon: Headphones, section: "secondary" },
+    { label: "Documents", href: ROUTES.documents, description: "Document and content management", icon: FileText, section: "secondary" },
     { label: "Settings", href: ROUTES.settings, description: "System configuration", icon: Settings, section: "secondary" },
 ];
 

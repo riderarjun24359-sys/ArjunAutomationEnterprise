@@ -125,6 +125,24 @@ import {
     SalesTargetRepository,
     SalesWinLossRecordRepository,
 } from "@/src/modules/database/repositories/sales-repositories";
+import {
+    DocumentAccessGrantRepository,
+    DocumentActivityLogRepository,
+    DocumentApprovalRepository,
+    DocumentArchiveRepository,
+    DocumentAuditLogRepository,
+    DocumentEsignPreparationRepository,
+    DocumentFolderRepository,
+    DocumentPreviewRepository,
+    DocumentRepository,
+    DocumentRetentionPolicyRepository,
+    DocumentSearchIndexRepository,
+    DocumentShareRepository,
+    DocumentTagLinkRepository,
+    DocumentTagRepository,
+    DocumentTemplateRepository,
+    DocumentVersionRepository,
+} from "@/src/modules/database/repositories/documents-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -238,6 +256,22 @@ export class DatabaseAccessLayer {
     readonly salesCommissions: SalesCommissionRepository;
     readonly salesWinLossRecords: SalesWinLossRecordRepository;
     readonly salesAuditLogs: SalesAuditLogRepository;
+    readonly documentFolders: DocumentFolderRepository;
+    readonly documents: DocumentRepository;
+    readonly documentTags: DocumentTagRepository;
+    readonly documentTagLinks: DocumentTagLinkRepository;
+    readonly documentVersions: DocumentVersionRepository;
+    readonly documentApprovals: DocumentApprovalRepository;
+    readonly documentEsignPreparations: DocumentEsignPreparationRepository;
+    readonly documentShares: DocumentShareRepository;
+    readonly documentAccessGrants: DocumentAccessGrantRepository;
+    readonly documentTemplates: DocumentTemplateRepository;
+    readonly documentPreviews: DocumentPreviewRepository;
+    readonly documentSearchIndex: DocumentSearchIndexRepository;
+    readonly documentRetentionPolicies: DocumentRetentionPolicyRepository;
+    readonly documentArchives: DocumentArchiveRepository;
+    readonly documentActivityLogs: DocumentActivityLogRepository;
+    readonly documentAuditLogs: DocumentAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -351,6 +385,22 @@ export class DatabaseAccessLayer {
         this.salesCommissions = new SalesCommissionRepository();
         this.salesWinLossRecords = new SalesWinLossRecordRepository();
         this.salesAuditLogs = new SalesAuditLogRepository();
+        this.documentFolders = new DocumentFolderRepository();
+        this.documents = new DocumentRepository();
+        this.documentTags = new DocumentTagRepository();
+        this.documentTagLinks = new DocumentTagLinkRepository();
+        this.documentVersions = new DocumentVersionRepository();
+        this.documentApprovals = new DocumentApprovalRepository();
+        this.documentEsignPreparations = new DocumentEsignPreparationRepository();
+        this.documentShares = new DocumentShareRepository();
+        this.documentAccessGrants = new DocumentAccessGrantRepository();
+        this.documentTemplates = new DocumentTemplateRepository();
+        this.documentPreviews = new DocumentPreviewRepository();
+        this.documentSearchIndex = new DocumentSearchIndexRepository();
+        this.documentRetentionPolicies = new DocumentRetentionPolicyRepository();
+        this.documentArchives = new DocumentArchiveRepository();
+        this.documentActivityLogs = new DocumentActivityLogRepository();
+        this.documentAuditLogs = new DocumentAuditLogRepository();
     }
 }
 

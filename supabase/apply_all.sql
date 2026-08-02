@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-02T22:55:02.699Z
+-- Generated: 2026-08-02T23:08:09.100Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (12):
+--   Migrations (13):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -18,7 +18,8 @@
 --     - 202608020010_enterprise_inventory.sql
 --     - 202608020011_enterprise_support.sql
 --     - 202608020012_enterprise_sales.sql
---   Seeds (12):
+--     - 202608020013_enterprise_documents.sql
+--   Seeds (13):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -31,9 +32,10 @@
 --     - 010_enterprise_inventory_seed.sql
 --     - 011_enterprise_support_seed.sql
 --     - 012_enterprise_sales_seed.sql
+--     - 013_enterprise_documents_seed.sql
 --
--- Includes through Sprint 19:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations
+-- Includes through Sprint 20:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -3123,6 +3125,297 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020013_enterprise_documents.sql
+-- =============================================================================
+-- Sprint 20: Enterprise Document & Content Management
+
+create table if not exists public.document_folders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  parent_folder_id uuid references public.document_folders(id) on delete set null,
+  name text not null,
+  slug text not null,
+  description text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, slug)
+);
+
+create table if not exists public.documents (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  folder_id uuid references public.document_folders(id) on delete set null,
+  title text not null,
+  file_name text not null,
+  file_url text not null default '',
+  mime_type text not null default 'application/octet-stream',
+  file_size integer not null default 0,
+  status text not null default 'active',
+  current_version integer not null default 1,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  employee_id uuid references public.employees(id) on delete set null,
+  invoice_id uuid references public.invoices(id) on delete set null,
+  purchase_order_id uuid references public.purchase_orders(id) on delete set null,
+  support_ticket_id uuid references public.support_tickets(id) on delete set null,
+  sales_opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  uploaded_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.document_tags (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  color text not null default '#64748b',
+  created_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.document_tag_links (
+  id uuid primary key default uuid_generate_v4(),
+  document_id uuid not null references public.documents(id) on delete cascade,
+  tag_id uuid not null references public.document_tags(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (document_id, tag_id)
+);
+
+create table if not exists public.document_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  version_number integer not null,
+  file_url text not null default '',
+  file_size integer not null default 0,
+  change_summary text not null default '',
+  created_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (document_id, version_number)
+);
+
+create table if not exists public.document_approvals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  approver_id uuid references public.employees(id) on delete set null,
+  status text not null default 'pending',
+  comments text not null default '',
+  decided_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.document_esign_preparations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  signer_name text not null,
+  signer_email text not null,
+  status text not null default 'draft',
+  prepared_at timestamptz not null default now(),
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.document_shares (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  share_token text not null,
+  recipient_email text not null default '',
+  permission_level text not null default 'view',
+  expires_at timestamptz,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  unique (organization_id, share_token)
+);
+
+create table if not exists public.document_access_grants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid references public.documents(id) on delete cascade,
+  folder_id uuid references public.document_folders(id) on delete cascade,
+  grantee_type text not null default 'employee',
+  grantee_id uuid,
+  permission_level text not null default 'view',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.document_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  category text not null default 'general',
+  description text not null default '',
+  template_content text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.document_previews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  preview_type text not null default 'thumbnail',
+  preview_url text not null default '',
+  page_count integer not null default 1,
+  generated_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.document_search_index (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  search_text text not null default '',
+  indexed_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.document_retention_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  retention_days integer not null default 365,
+  action_on_expiry text not null default 'archive',
+  applies_to_category text not null default 'all',
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, name)
+);
+
+create table if not exists public.document_archives (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  archived_at timestamptz not null default now(),
+  archived_by uuid references public.user_profiles(id) on delete set null,
+  restore_available boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.document_activity_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  document_id uuid references public.documents(id) on delete set null,
+  activity_type text not null,
+  summary text not null default '',
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.document_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_document_folders_org on public.document_folders(organization_id);
+create index if not exists idx_documents_org on public.documents(organization_id);
+create index if not exists idx_document_tags_org on public.document_tags(organization_id);
+create index if not exists idx_document_versions_org on public.document_versions(organization_id);
+create index if not exists idx_document_approvals_org on public.document_approvals(organization_id);
+create index if not exists idx_document_esign_preparations_org on public.document_esign_preparations(organization_id);
+create index if not exists idx_document_shares_org on public.document_shares(organization_id);
+create index if not exists idx_document_access_grants_org on public.document_access_grants(organization_id);
+create index if not exists idx_document_templates_org on public.document_templates(organization_id);
+create index if not exists idx_document_previews_org on public.document_previews(organization_id);
+create index if not exists idx_document_search_index_org on public.document_search_index(organization_id);
+create index if not exists idx_document_retention_policies_org on public.document_retention_policies(organization_id);
+create index if not exists idx_document_archives_org on public.document_archives(organization_id);
+create index if not exists idx_document_activity_logs_org on public.document_activity_logs(organization_id);
+create index if not exists idx_document_audit_logs_org on public.document_audit_logs(organization_id);
+
+drop trigger if exists trg_document_folders_updated_at on public.document_folders;
+create trigger trg_document_folders_updated_at before update on public.document_folders for each row execute function public.set_updated_at();
+drop trigger if exists trg_documents_updated_at on public.documents;
+create trigger trg_documents_updated_at before update on public.documents for each row execute function public.set_updated_at();
+drop trigger if exists trg_document_approvals_updated_at on public.document_approvals;
+create trigger trg_document_approvals_updated_at before update on public.document_approvals for each row execute function public.set_updated_at();
+drop trigger if exists trg_document_esign_preparations_updated_at on public.document_esign_preparations;
+create trigger trg_document_esign_preparations_updated_at before update on public.document_esign_preparations for each row execute function public.set_updated_at();
+drop trigger if exists trg_document_templates_updated_at on public.document_templates;
+create trigger trg_document_templates_updated_at before update on public.document_templates for each row execute function public.set_updated_at();
+drop trigger if exists trg_document_retention_policies_updated_at on public.document_retention_policies;
+create trigger trg_document_retention_policies_updated_at before update on public.document_retention_policies for each row execute function public.set_updated_at();
+
+alter table public.document_folders enable row level security;
+alter table public.documents enable row level security;
+alter table public.document_tags enable row level security;
+alter table public.document_tag_links enable row level security;
+alter table public.document_versions enable row level security;
+alter table public.document_approvals enable row level security;
+alter table public.document_esign_preparations enable row level security;
+alter table public.document_shares enable row level security;
+alter table public.document_access_grants enable row level security;
+alter table public.document_templates enable row level security;
+alter table public.document_previews enable row level security;
+alter table public.document_search_index enable row level security;
+alter table public.document_retention_policies enable row level security;
+alter table public.document_archives enable row level security;
+alter table public.document_activity_logs enable row level security;
+alter table public.document_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'document_folders', 'documents', 'document_tags', 'document_versions',
+    'document_approvals', 'document_esign_preparations', 'document_shares',
+    'document_access_grants', 'document_templates', 'document_previews',
+    'document_search_index', 'document_retention_policies', 'document_archives',
+    'document_activity_logs', 'document_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+drop policy if exists document_tag_links_select on public.document_tag_links;
+create policy document_tag_links_select on public.document_tag_links for select using (
+  exists (select 1 from public.documents d where d.id = document_id and public.is_organization_member(d.organization_id))
+);
+drop policy if exists document_tag_links_insert on public.document_tag_links;
+create policy document_tag_links_insert on public.document_tag_links for insert with check (
+  exists (select 1 from public.documents d where d.id = document_id and public.is_organization_member(d.organization_id))
+);
+drop policy if exists document_tag_links_update on public.document_tag_links;
+create policy document_tag_links_update on public.document_tag_links for update using (
+  exists (select 1 from public.documents d where d.id = document_id and public.is_organization_member(d.organization_id))
+);
+drop policy if exists document_tag_links_delete on public.document_tag_links;
+create policy document_tag_links_delete on public.document_tag_links for delete using (
+  exists (select 1 from public.documents d where d.id = document_id and public.is_organization_member(d.organization_id))
+);
+
+insert into public.permissions (key, description, resource)
+values
+  ('documents.view', 'View documents and content library', 'documents'),
+  ('documents.manage', 'Upload, edit, and organize documents', 'documents'),
+  ('documents.approve', 'Approve documents and manage workflows', 'documents'),
+  ('documents.admin', 'Manage retention, access, and policies', 'documents')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -4002,6 +4295,112 @@ insert into public.sales_audit_logs (id, organization_id, entity_type, entity_id
 values
   ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee92', '11111111-1111-1111-1111-111111111111', 'opportunity', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401', 'create', 'Opportunity OPP-2026-0088 created for Northstar Labs'),
   ('eeeeeeee-eeee-eeee-eeee-eeeeeeeeee93', '11111111-1111-1111-1111-111111111111', 'opportunity', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e403', 'won', 'Opportunity OPP-2026-0075 marked as won')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 013_enterprise_documents_seed.sql
+-- =============================================================================
+insert into public.document_folders (id, organization_id, parent_folder_id, name, slug, description)
+values
+  ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', '11111111-1111-1111-1111-111111111111', null, 'Company Documents', 'company', 'Root folder for company-wide documents'),
+  ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f102', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', 'Legal', 'legal', 'Contracts, agreements, and legal documents'),
+  ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f103', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', 'Finance', 'finance', 'Invoices, reports, and financial records'),
+  ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f104', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', 'Projects', 'projects', 'Project deliverables and documentation')
+on conflict (id) do nothing;
+
+insert into public.documents (id, organization_id, folder_id, title, file_name, file_url, mime_type, file_size, status, current_version, client_id, project_id, sales_opportunity_id)
+values
+  ('f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f102', 'Northstar Master Service Agreement', 'northstar-msa-v3.pdf', 'https://storage.example.com/docs/northstar-msa-v3.pdf', 'application/pdf', 524288, 'active', 3, 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e401'),
+  ('f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f202', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f103', 'Q2 2026 Financial Report', 'q2-2026-financial-report.xlsx', 'https://storage.example.com/docs/q2-2026-financial-report.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 1048576, 'active', 1, null, null, null),
+  ('f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f203', '11111111-1111-1111-1111-111111111111', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f104', 'Northstar Expansion SOW', 'northstar-sow-v1.docx', 'https://storage.example.com/docs/northstar-sow-v1.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 262144, 'active', 1, 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', null)
+on conflict (id) do nothing;
+
+insert into public.document_tags (id, organization_id, name, color)
+values
+  ('f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f301', '11111111-1111-1111-1111-111111111111', 'Contract', '#3b82f6'),
+  ('f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f302', '11111111-1111-1111-1111-111111111111', 'Financial', '#22c55e'),
+  ('f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f303', '11111111-1111-1111-1111-111111111111', 'Confidential', '#ef4444')
+on conflict (id) do nothing;
+
+insert into public.document_tag_links (id, document_id, tag_id)
+values
+  ('f4f4f4f4-f4f4-f4f4-f4f4-f4f4f4f4f401', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f301'),
+  ('f4f4f4f4-f4f4-f4f4-f4f4-f4f4f4f4f402', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f303'),
+  ('f4f4f4f4-f4f4-f4f4-f4f4-f4f4f4f4f403', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f202', 'f3f3f3f3-f3f3-f3f3-f3f3-f3f3f3f3f302')
+on conflict (id) do nothing;
+
+insert into public.document_versions (id, organization_id, document_id, version_number, file_url, file_size, change_summary)
+values
+  ('f5f5f5f5-f5f5-f5f5-f5f5-f5f5f5f5f501', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 1, 'https://storage.example.com/docs/northstar-msa-v1.pdf', 480000, 'Initial draft'),
+  ('f5f5f5f5-f5f5-f5f5-f5f5-f5f5f5f5f502', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 2, 'https://storage.example.com/docs/northstar-msa-v2.pdf', 510000, 'Legal review updates'),
+  ('f5f5f5f5-f5f5-f5f5-f5f5-f5f5f5f5f503', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 3, 'https://storage.example.com/docs/northstar-msa-v3.pdf', 524288, 'Final signed version')
+on conflict (id) do nothing;
+
+insert into public.document_approvals (id, organization_id, document_id, approver_id, status, comments, decided_at)
+values
+  ('f6f6f6f6-f6f6-f6f6-f6f6-f6f6f6f6f601', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'approved', 'Legal terms reviewed and approved', '2026-07-25 10:00:00+00'),
+  ('f6f6f6f6-f6f6-f6f6-f6f6-f6f6f6f6f602', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f203', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 'pending', 'Awaiting project manager review', null)
+on conflict (id) do nothing;
+
+insert into public.document_esign_preparations (id, organization_id, document_id, signer_name, signer_email, status, sent_at)
+values
+  ('f7f7f7f7-f7f7-f7f7-f7f7-f7f7f7f7f701', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'Mina Park', 'ops@northstarlabs.com', 'sent', '2026-07-28 14:00:00+00')
+on conflict (id) do nothing;
+
+insert into public.document_shares (id, organization_id, document_id, share_token, recipient_email, permission_level, expires_at, is_active)
+values
+  ('f8f8f8f8-f8f8-f8f8-f8f8-f8f8f8f8f801', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'share-northstar-msa-2026', 'ops@northstarlabs.com', 'view', '2026-12-31 23:59:59+00', true),
+  ('f8f8f8f8-f8f8-f8f8-f8f8-f8f8f8f8f802', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f203', 'share-northstar-sow-2026', 'mina@northstarlabs.com', 'comment', '2026-09-30 23:59:59+00', true)
+on conflict (id) do nothing;
+
+insert into public.document_access_grants (id, organization_id, document_id, folder_id, grantee_type, grantee_id, permission_level)
+values
+  ('f9f9f9f9-f9f9-f9f9-f9f9-f9f9f9f9f901', '11111111-1111-1111-1111-111111111111', null, 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f102', 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'edit'),
+  ('f9f9f9f9-f9f9-f9f9-f9f9-f9f9f9f9f902', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f202', null, 'employee', '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c02', 'view')
+on conflict (id) do nothing;
+
+insert into public.document_templates (id, organization_id, name, category, description, template_content, status)
+values
+  ('fafafafa-fafa-fafa-fafa-fafafafafa01', '11111111-1111-1111-1111-111111111111', 'Master Service Agreement', 'legal', 'Standard MSA template for enterprise clients', 'This Master Service Agreement is entered into between {{company_name}} and {{client_name}}...', 'active'),
+  ('fafafafa-fafa-fafa-fafa-fafafafafa02', '11111111-1111-1111-1111-111111111111', 'Statement of Work', 'projects', 'Project SOW template with deliverables section', 'Statement of Work for {{project_name}}. Deliverables: {{deliverables_list}}...', 'active')
+on conflict (id) do nothing;
+
+insert into public.document_previews (id, organization_id, document_id, preview_type, preview_url, page_count)
+values
+  ('fbfbfbfb-fbfb-fbfb-fbfb-fbfbfbfbfb01', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'thumbnail', 'https://storage.example.com/previews/northstar-msa-thumb.png', 12),
+  ('fbfbfbfb-fbfb-fbfb-fbfb-fbfbfbfbfb02', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f202', 'thumbnail', 'https://storage.example.com/previews/q2-report-thumb.png', 8)
+on conflict (id) do nothing;
+
+insert into public.document_search_index (id, organization_id, document_id, search_text)
+values
+  ('fcfcfcfc-fcfc-fcfc-fcfc-fcfcfcfcfc01', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'Northstar Master Service Agreement MSA contract legal terms enterprise'),
+  ('fcfcfcfc-fcfc-fcfc-fcfc-fcfcfcfcfc02', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f202', 'Q2 2026 Financial Report revenue expenses balance sheet'),
+  ('fcfcfcfc-fcfc-fcfc-fcfc-fcfcfcfcfc03', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f203', 'Northstar Expansion SOW statement of work deliverables scope')
+on conflict (id) do nothing;
+
+insert into public.document_retention_policies (id, organization_id, name, retention_days, action_on_expiry, applies_to_category, is_active)
+values
+  ('fdfdfdfd-fdfd-fdfd-fdfd-fdfdfdfdfd01', '11111111-1111-1111-1111-111111111111', 'Legal Documents — 7 Year Retention', 2555, 'archive', 'legal', true),
+  ('fdfdfdfd-fdfd-fdfd-fdfd-fdfdfdfdfd02', '11111111-1111-1111-1111-111111111111', 'Financial Records — 5 Year Retention', 1825, 'archive', 'finance', true)
+on conflict (id) do nothing;
+
+insert into public.document_archives (id, organization_id, document_id, archived_at, restore_available)
+values
+  ('fefefefe-fefe-fefe-fefe-fefefefefe01', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', '2026-01-15 00:00:00+00', false)
+on conflict (id) do nothing;
+
+insert into public.document_activity_logs (id, organization_id, document_id, activity_type, summary)
+values
+  ('ffffffff-ffff-ffff-ffff-ffffffffff91', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'upload', 'Document uploaded: Northstar Master Service Agreement'),
+  ('ffffffff-ffff-ffff-ffff-ffffffffff92', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'version', 'Version 3 uploaded with legal review changes'),
+  ('ffffffff-ffff-ffff-ffff-ffffffffff93', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'share', 'Document shared with ops@northstarlabs.com'),
+  ('ffffffff-ffff-ffff-ffff-ffffffffff94', '11111111-1111-1111-1111-111111111111', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'approval', 'Document approved by legal team')
+on conflict (id) do nothing;
+
+insert into public.document_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('ffffffff-ffff-ffff-ffff-ffffffffff95', '11111111-1111-1111-1111-111111111111', 'document', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f201', 'create', 'Document Northstar Master Service Agreement created'),
+  ('ffffffff-ffff-ffff-ffff-ffffffffff96', '11111111-1111-1111-1111-111111111111', 'folder', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f101', 'create', 'Root folder Company Documents created')
 on conflict (id) do nothing;
 
 -- =============================================================================
