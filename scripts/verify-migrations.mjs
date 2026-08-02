@@ -31,6 +31,15 @@ const requiredTables = [
     "payments",
     "expenses",
     "recurring_invoices",
+    "ai_agents",
+    "workflow_templates",
+    "workflows",
+    "workflow_triggers",
+    "workflow_actions",
+    "workflow_conditions",
+    "workflow_schedules",
+    "workflow_executions",
+    "automation_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

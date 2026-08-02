@@ -1,0 +1,18 @@
+export { AutomationPage } from "@/src/modules/automation/components/AutomationPage";
+export { AutomationStats } from "@/src/modules/automation/components/AutomationStats";
+export { AutomationFilters } from "@/src/modules/automation/components/AutomationFilters";
+export { WorkflowTable } from "@/src/modules/automation/components/WorkflowTable";
+export { WorkflowForm } from "@/src/modules/automation/components/WorkflowForm";
+export { WorkflowDetailPanel } from "@/src/modules/automation/components/WorkflowDetailPanel";
+export { AgentTable } from "@/src/modules/automation/components/AgentTable";
+export { AgentForm } from "@/src/modules/automation/components/AgentForm";
+export { TemplateTable } from "@/src/modules/automation/components/TemplateTable";
+export { ExecutionTable } from "@/src/modules/automation/components/ExecutionTable";
+export { AutomationLogTable } from "@/src/modules/automation/components/AutomationLogTable";
+export { AutomationMonitoring } from "@/src/modules/automation/components/AutomationMonitoring";
+export { AutomationAnalyticsPanel } from "@/src/modules/automation/components/AutomationAnalyticsPanel";
+export { automationService } from "@/src/modules/automation/services/automation.service";
+export { useAutomation } from "@/src/modules/automation/hooks/useAutomation";
+export * from "@/src/modules/automation/types";
+export * from "@/src/modules/automation/constants";
+export * from "@/src/modules/automation/schemas";

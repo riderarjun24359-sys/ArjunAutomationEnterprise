@@ -3,15 +3,7 @@ values
   ('11111111-1111-1111-1111-111111111111', 'Acme Enterprise', 'acme-enterprise', 'active', '{"industry":"software"}'::jsonb)
 on conflict (id) do nothing;
 
-insert into public.user_profiles (id, auth_user_id, email, full_name, locale, metadata)
-values
-  ('22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', 'admin@acme.example', 'System Admin', 'en', '{"role":"super_admin"}'::jsonb)
-on conflict (id) do nothing;
-
-insert into public.organization_members (organization_id, user_id, role_name, is_active)
-values
-  ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'super_admin', true)
-on conflict (organization_id, user_id) do nothing;
+-- user_profiles and organization_members are created at auth signup via handle_new_profile trigger (see 004 seed).
 
 insert into public.permission_definitions (key, description)
 values

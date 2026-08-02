@@ -163,6 +163,38 @@ create table if not exists public.project_comments (
   created_at timestamptz not null default now()
 );
 
+-- Repoint legacy Sprint 9 project child tables (migration 003) to canonical projects FK.
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'project_milestones',
+    'project_time_entries',
+    'project_files',
+    'project_comments',
+    'project_tasks',
+    'project_team_members'
+  ]
+  loop
+    if exists (
+      select 1
+      from information_schema.tables
+      where table_schema = 'public'
+        and table_name = tbl
+    ) then
+      execute format(
+        'alter table public.%I drop constraint if exists %I_project_id_fkey',
+        tbl, tbl
+      );
+      execute format(
+        'alter table public.%I add constraint %I_project_id_fkey foreign key (project_id) references public.projects(id) on delete cascade',
+        tbl, tbl
+      );
+    end if;
+  end loop;
+end $$;
+
 -- ---------------------------------------------------------------------------
 -- Tasks
 -- ---------------------------------------------------------------------------

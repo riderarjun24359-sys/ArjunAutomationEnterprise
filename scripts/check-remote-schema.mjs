@@ -23,6 +23,10 @@ const requiredTables = [
     "payments",
     "expenses",
     "recurring_invoices",
+    "ai_agents",
+    "workflows",
+    "workflow_executions",
+    "automation_logs",
 ];
 
 const supabase = createClient(url, anonKey);

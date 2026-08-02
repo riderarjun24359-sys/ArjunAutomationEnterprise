@@ -16,6 +16,17 @@ import {
     RecurringInvoiceRepository,
     TaxRateRepository,
 } from "@/src/modules/database/repositories/finance-repositories";
+import {
+    AiAgentRepository,
+    AutomationLogRepository,
+    WorkflowActionRepository,
+    WorkflowConditionRepository,
+    WorkflowExecutionRepository,
+    WorkflowRepository,
+    WorkflowScheduleRepository,
+    WorkflowTemplateRepository,
+    WorkflowTriggerRepository,
+} from "@/src/modules/database/repositories/automation-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -34,6 +45,15 @@ export class DatabaseAccessLayer {
     readonly payments: PaymentRepository;
     readonly expenses: ExpenseRepository;
     readonly recurringInvoices: RecurringInvoiceRepository;
+    readonly aiAgents: AiAgentRepository;
+    readonly workflowTemplates: WorkflowTemplateRepository;
+    readonly workflows: WorkflowRepository;
+    readonly workflowTriggers: WorkflowTriggerRepository;
+    readonly workflowActions: WorkflowActionRepository;
+    readonly workflowConditions: WorkflowConditionRepository;
+    readonly workflowSchedules: WorkflowScheduleRepository;
+    readonly workflowExecutions: WorkflowExecutionRepository;
+    readonly automationLogs: AutomationLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -52,6 +72,15 @@ export class DatabaseAccessLayer {
         this.payments = new PaymentRepository();
         this.expenses = new ExpenseRepository();
         this.recurringInvoices = new RecurringInvoiceRepository();
+        this.aiAgents = new AiAgentRepository();
+        this.workflowTemplates = new WorkflowTemplateRepository();
+        this.workflows = new WorkflowRepository();
+        this.workflowTriggers = new WorkflowTriggerRepository();
+        this.workflowActions = new WorkflowActionRepository();
+        this.workflowConditions = new WorkflowConditionRepository();
+        this.workflowSchedules = new WorkflowScheduleRepository();
+        this.workflowExecutions = new WorkflowExecutionRepository();
+        this.automationLogs = new AutomationLogRepository();
     }
 }
 

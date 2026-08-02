@@ -1,5 +1,48 @@
--- 202608020001_enterprise_foundation.sql
+-- =============================================================================
+-- Arjun Automation OS Enterprise — Production apply_all.sql
+-- =============================================================================
+-- Generated: 2026-08-02T18:32:57.882Z
+-- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
+--
+-- Contents:
+--   Migrations (6):
+--     - 202608020001_enterprise_foundation.sql
+--     - 202608020002_crm_foundation.sql
+--     - 202608020003_project_management.sql
+--     - 202608020004_enterprise_data_platform.sql
+--     - 202608020005_enterprise_finance.sql
+--     - 202608020006_enterprise_automation.sql
+--   Seeds (6):
+--     - 001_enterprise_seed.sql
+--     - 002_crm_seed.sql
+--     - 003_project_seed.sql
+--     - 004_enterprise_data_platform_seed.sql
+--     - 005_enterprise_finance_seed.sql
+--     - 006_enterprise_automation_seed.sql
+--
+-- Includes through Sprint 13:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows
+--
+-- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
+-- Safe to run on a project that already has core Sprint 10 tables.
+-- =============================================================================
+
+begin;
+
+-- =============================================================================
+-- MIGRATION: 202608020001_enterprise_foundation.sql
+-- =============================================================================
 create extension if not exists "uuid-ossp";
+
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
 
 create table if not exists public.organizations (
   id uuid primary key default uuid_generate_v4(),
@@ -73,24 +116,42 @@ create table if not exists public.storage_objects (
   updated_at timestamptz not null default now()
 );
 
-create policy if not exists orgs_select on public.organizations for select using (true);
-create policy if not exists orgs_insert on public.organizations for insert with check (true);
-create policy if not exists orgs_update on public.organizations for update using (true) with check (true);
-create policy if not exists profiles_select on public.user_profiles for select using (true);
-create policy if not exists profiles_insert on public.user_profiles for insert with check (true);
-create policy if not exists profiles_update on public.user_profiles for update using (true) with check (true);
-create policy if not exists memberships_select on public.organization_members for select using (true);
-create policy if not exists memberships_insert on public.organization_members for insert with check (true);
-create policy if not exists memberships_update on public.organization_members for update using (true) with check (true);
-create policy if not exists permissions_select on public.permission_definitions for select using (true);
-create policy if not exists permissions_insert on public.permission_definitions for insert with check (true);
-create policy if not exists role_perms_select on public.role_permissions for select using (true);
-create policy if not exists role_perms_insert on public.role_permissions for insert with check (true);
-create policy if not exists audit_logs_select on public.audit_logs for select using (true);
-create policy if not exists audit_logs_insert on public.audit_logs for insert with check (true);
-create policy if not exists storage_select on public.storage_objects for select using (true);
-create policy if not exists storage_insert on public.storage_objects for insert with check (true);
-create policy if not exists storage_update on public.storage_objects for update using (true) with check (true);
+drop policy if exists orgs_select on public.organizations;
+create policy orgs_select on public.organizations for select using (true);
+drop policy if exists orgs_insert on public.organizations;
+create policy orgs_insert on public.organizations for insert with check (true);
+drop policy if exists orgs_update on public.organizations;
+create policy orgs_update on public.organizations for update using (true) with check (true);
+drop policy if exists profiles_select on public.user_profiles;
+create policy profiles_select on public.user_profiles for select using (true);
+drop policy if exists profiles_insert on public.user_profiles;
+create policy profiles_insert on public.user_profiles for insert with check (true);
+drop policy if exists profiles_update on public.user_profiles;
+create policy profiles_update on public.user_profiles for update using (true) with check (true);
+drop policy if exists memberships_select on public.organization_members;
+create policy memberships_select on public.organization_members for select using (true);
+drop policy if exists memberships_insert on public.organization_members;
+create policy memberships_insert on public.organization_members for insert with check (true);
+drop policy if exists memberships_update on public.organization_members;
+create policy memberships_update on public.organization_members for update using (true) with check (true);
+drop policy if exists permissions_select on public.permission_definitions;
+create policy permissions_select on public.permission_definitions for select using (true);
+drop policy if exists permissions_insert on public.permission_definitions;
+create policy permissions_insert on public.permission_definitions for insert with check (true);
+drop policy if exists role_perms_select on public.role_permissions;
+create policy role_perms_select on public.role_permissions for select using (true);
+drop policy if exists role_perms_insert on public.role_permissions;
+create policy role_perms_insert on public.role_permissions for insert with check (true);
+drop policy if exists audit_logs_select on public.audit_logs;
+create policy audit_logs_select on public.audit_logs for select using (true);
+drop policy if exists audit_logs_insert on public.audit_logs;
+create policy audit_logs_insert on public.audit_logs for insert with check (true);
+drop policy if exists storage_select on public.storage_objects;
+create policy storage_select on public.storage_objects for select using (true);
+drop policy if exists storage_insert on public.storage_objects;
+create policy storage_insert on public.storage_objects for insert with check (true);
+drop policy if exists storage_update on public.storage_objects;
+create policy storage_update on public.storage_objects for update using (true) with check (true);
 
 alter table public.organizations enable row level security;
 alter table public.user_profiles enable row level security;
@@ -100,8 +161,9 @@ alter table public.role_permissions enable row level security;
 alter table public.audit_logs enable row level security;
 alter table public.storage_objects enable row level security;
 
-
--- 202608020002_crm_foundation.sql
+-- =============================================================================
+-- MIGRATION: 202608020002_crm_foundation.sql
+-- =============================================================================
 create table if not exists public.crm_clients (
   id uuid primary key default uuid_generate_v4(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
@@ -167,21 +229,36 @@ create table if not exists public.crm_tasks (
   updated_at timestamptz not null default now()
 );
 
-create policy if not exists crm_clients_select on public.crm_clients for select using (true);
-create policy if not exists crm_clients_insert on public.crm_clients for insert with check (true);
-create policy if not exists crm_clients_update on public.crm_clients for update using (true) with check (true);
-create policy if not exists crm_leads_select on public.crm_leads for select using (true);
-create policy if not exists crm_leads_insert on public.crm_leads for insert with check (true);
-create policy if not exists crm_leads_update on public.crm_leads for update using (true) with check (true);
-create policy if not exists crm_deals_select on public.crm_deals for select using (true);
-create policy if not exists crm_deals_insert on public.crm_deals for insert with check (true);
-create policy if not exists crm_deals_update on public.crm_deals for update using (true) with check (true);
-create policy if not exists crm_activities_select on public.crm_activities for select using (true);
-create policy if not exists crm_activities_insert on public.crm_activities for insert with check (true);
-create policy if not exists crm_activities_update on public.crm_activities for update using (true) with check (true);
-create policy if not exists crm_tasks_select on public.crm_tasks for select using (true);
-create policy if not exists crm_tasks_insert on public.crm_tasks for insert with check (true);
-create policy if not exists crm_tasks_update on public.crm_tasks for update using (true) with check (true);
+drop policy if exists crm_clients_select on public.crm_clients;
+create policy crm_clients_select on public.crm_clients for select using (true);
+drop policy if exists crm_clients_insert on public.crm_clients;
+create policy crm_clients_insert on public.crm_clients for insert with check (true);
+drop policy if exists crm_clients_update on public.crm_clients;
+create policy crm_clients_update on public.crm_clients for update using (true) with check (true);
+drop policy if exists crm_leads_select on public.crm_leads;
+create policy crm_leads_select on public.crm_leads for select using (true);
+drop policy if exists crm_leads_insert on public.crm_leads;
+create policy crm_leads_insert on public.crm_leads for insert with check (true);
+drop policy if exists crm_leads_update on public.crm_leads;
+create policy crm_leads_update on public.crm_leads for update using (true) with check (true);
+drop policy if exists crm_deals_select on public.crm_deals;
+create policy crm_deals_select on public.crm_deals for select using (true);
+drop policy if exists crm_deals_insert on public.crm_deals;
+create policy crm_deals_insert on public.crm_deals for insert with check (true);
+drop policy if exists crm_deals_update on public.crm_deals;
+create policy crm_deals_update on public.crm_deals for update using (true) with check (true);
+drop policy if exists crm_activities_select on public.crm_activities;
+create policy crm_activities_select on public.crm_activities for select using (true);
+drop policy if exists crm_activities_insert on public.crm_activities;
+create policy crm_activities_insert on public.crm_activities for insert with check (true);
+drop policy if exists crm_activities_update on public.crm_activities;
+create policy crm_activities_update on public.crm_activities for update using (true) with check (true);
+drop policy if exists crm_tasks_select on public.crm_tasks;
+create policy crm_tasks_select on public.crm_tasks for select using (true);
+drop policy if exists crm_tasks_insert on public.crm_tasks;
+create policy crm_tasks_insert on public.crm_tasks for insert with check (true);
+drop policy if exists crm_tasks_update on public.crm_tasks;
+create policy crm_tasks_update on public.crm_tasks for update using (true) with check (true);
 
 alter table public.crm_clients enable row level security;
 alter table public.crm_leads enable row level security;
@@ -189,8 +266,9 @@ alter table public.crm_deals enable row level security;
 alter table public.crm_activities enable row level security;
 alter table public.crm_tasks enable row level security;
 
-
--- 202608020003_project_management.sql
+-- =============================================================================
+-- MIGRATION: 202608020003_project_management.sql
+-- =============================================================================
 create table if not exists public.project_management (
   id uuid primary key default uuid_generate_v4(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
@@ -272,27 +350,48 @@ create table if not exists public.project_comments (
   created_at timestamptz not null default now()
 );
 
-create policy if not exists projects_select on public.project_management for select using (true);
-create policy if not exists projects_insert on public.project_management for insert with check (true);
-create policy if not exists projects_update on public.project_management for update using (true) with check (true);
-create policy if not exists milestones_select on public.project_milestones for select using (true);
-create policy if not exists milestones_insert on public.project_milestones for insert with check (true);
-create policy if not exists milestones_update on public.project_milestones for update using (true) with check (true);
-create policy if not exists tasks_select on public.project_tasks for select using (true);
-create policy if not exists tasks_insert on public.project_tasks for insert with check (true);
-create policy if not exists tasks_update on public.project_tasks for update using (true) with check (true);
-create policy if not exists team_select on public.project_team_members for select using (true);
-create policy if not exists team_insert on public.project_team_members for insert with check (true);
-create policy if not exists team_update on public.project_team_members for update using (true) with check (true);
-create policy if not exists time_select on public.project_time_entries for select using (true);
-create policy if not exists time_insert on public.project_time_entries for insert with check (true);
-create policy if not exists time_update on public.project_time_entries for update using (true) with check (true);
-create policy if not exists files_select on public.project_files for select using (true);
-create policy if not exists files_insert on public.project_files for insert with check (true);
-create policy if not exists files_update on public.project_files for update using (true) with check (true);
-create policy if not exists comments_select on public.project_comments for select using (true);
-create policy if not exists comments_insert on public.project_comments for insert with check (true);
-create policy if not exists comments_update on public.project_comments for update using (true) with check (true);
+drop policy if exists projects_select on public.project_management;
+create policy projects_select on public.project_management for select using (true);
+drop policy if exists projects_insert on public.project_management;
+create policy projects_insert on public.project_management for insert with check (true);
+drop policy if exists projects_update on public.project_management;
+create policy projects_update on public.project_management for update using (true) with check (true);
+drop policy if exists milestones_select on public.project_milestones;
+create policy milestones_select on public.project_milestones for select using (true);
+drop policy if exists milestones_insert on public.project_milestones;
+create policy milestones_insert on public.project_milestones for insert with check (true);
+drop policy if exists milestones_update on public.project_milestones;
+create policy milestones_update on public.project_milestones for update using (true) with check (true);
+drop policy if exists tasks_select on public.project_tasks;
+create policy tasks_select on public.project_tasks for select using (true);
+drop policy if exists tasks_insert on public.project_tasks;
+create policy tasks_insert on public.project_tasks for insert with check (true);
+drop policy if exists tasks_update on public.project_tasks;
+create policy tasks_update on public.project_tasks for update using (true) with check (true);
+drop policy if exists team_select on public.project_team_members;
+create policy team_select on public.project_team_members for select using (true);
+drop policy if exists team_insert on public.project_team_members;
+create policy team_insert on public.project_team_members for insert with check (true);
+drop policy if exists team_update on public.project_team_members;
+create policy team_update on public.project_team_members for update using (true) with check (true);
+drop policy if exists time_select on public.project_time_entries;
+create policy time_select on public.project_time_entries for select using (true);
+drop policy if exists time_insert on public.project_time_entries;
+create policy time_insert on public.project_time_entries for insert with check (true);
+drop policy if exists time_update on public.project_time_entries;
+create policy time_update on public.project_time_entries for update using (true) with check (true);
+drop policy if exists files_select on public.project_files;
+create policy files_select on public.project_files for select using (true);
+drop policy if exists files_insert on public.project_files;
+create policy files_insert on public.project_files for insert with check (true);
+drop policy if exists files_update on public.project_files;
+create policy files_update on public.project_files for update using (true) with check (true);
+drop policy if exists comments_select on public.project_comments;
+create policy comments_select on public.project_comments for select using (true);
+drop policy if exists comments_insert on public.project_comments;
+create policy comments_insert on public.project_comments for insert with check (true);
+drop policy if exists comments_update on public.project_comments;
+create policy comments_update on public.project_comments for update using (true) with check (true);
 
 alter table public.project_management enable row level security;
 alter table public.project_milestones enable row level security;
@@ -302,8 +401,9 @@ alter table public.project_time_entries enable row level security;
 alter table public.project_files enable row level security;
 alter table public.project_comments enable row level security;
 
-
--- 202608020004_enterprise_data_platform.sql
+-- =============================================================================
+-- MIGRATION: 202608020004_enterprise_data_platform.sql
+-- =============================================================================
 -- Sprint 10: Enterprise Data Platform — canonical schema, indexes, and RLS
 
 -- ---------------------------------------------------------------------------
@@ -468,6 +568,38 @@ create table if not exists public.project_comments (
   attachments jsonb default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
+
+-- Repoint legacy Sprint 9 project child tables (migration 003) to canonical projects FK.
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'project_milestones',
+    'project_time_entries',
+    'project_files',
+    'project_comments',
+    'project_tasks',
+    'project_team_members'
+  ]
+  loop
+    if exists (
+      select 1
+      from information_schema.tables
+      where table_schema = 'public'
+        and table_name = tbl
+    ) then
+      execute format(
+        'alter table public.%I drop constraint if exists %I_project_id_fkey',
+        tbl, tbl
+      );
+      execute format(
+        'alter table public.%I add constraint %I_project_id_fkey foreign key (project_id) references public.projects(id) on delete cascade',
+        tbl, tbl
+      );
+    end if;
+  end loop;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- Tasks
@@ -765,8 +897,9 @@ create policy profiles_insert on public.user_profiles for insert with check (aut
 drop policy if exists profiles_update on public.user_profiles;
 create policy profiles_update on public.user_profiles for update using (auth_user_id = auth.uid());
 
-
--- 202608020005_enterprise_finance.sql
+-- =============================================================================
+-- MIGRATION: 202608020005_enterprise_finance.sql
+-- =============================================================================
 -- Sprint 12: Enterprise Finance & Invoicing
 
 create table if not exists public.tax_rates (
@@ -990,22 +1123,213 @@ insert into public.permissions (key, description, resource)
 values ('finance.manage', 'Manage finance and invoicing', 'finance')
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
+-- =============================================================================
+-- MIGRATION: 202608020006_enterprise_automation.sql
+-- =============================================================================
+-- Sprint 13: Enterprise AI Automation & Workflow Builder
 
--- 001_enterprise_seed.sql
+create table if not exists public.ai_agents (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  description text not null default '',
+  model text not null default 'gpt-4o',
+  system_prompt text not null default '',
+  status text not null default 'active',
+  temperature numeric(3, 2) not null default 0.70,
+  max_tokens integer not null default 4096,
+  config jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  description text not null default '',
+  category text not null default 'general',
+  definition jsonb not null default '{}'::jsonb,
+  is_public boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  template_id uuid references public.workflow_templates(id) on delete set null,
+  agent_id uuid references public.ai_agents(id) on delete set null,
+  name text not null,
+  description text not null default '',
+  status text not null default 'draft',
+  version integer not null default 1,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  workflow_id uuid not null references public.workflows(id) on delete cascade,
+  trigger_type text not null default 'manual',
+  event_name text not null default '',
+  config jsonb not null default '{}'::jsonb,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_actions (
+  id uuid primary key default uuid_generate_v4(),
+  workflow_id uuid not null references public.workflows(id) on delete cascade,
+  step_order integer not null default 0,
+  action_type text not null default 'notify',
+  config jsonb not null default '{}'::jsonb,
+  agent_id uuid references public.ai_agents(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_conditions (
+  id uuid primary key default uuid_generate_v4(),
+  workflow_id uuid not null references public.workflows(id) on delete cascade,
+  step_order integer not null default 0,
+  field text not null,
+  operator text not null default 'equals',
+  value text not null default '',
+  logic_group text not null default 'default',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_schedules (
+  id uuid primary key default uuid_generate_v4(),
+  workflow_id uuid not null references public.workflows(id) on delete cascade,
+  cron_expression text not null default '0 9 * * 1',
+  timezone text not null default 'UTC',
+  next_run_at timestamptz,
+  last_run_at timestamptz,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.workflow_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workflow_id uuid not null references public.workflows(id) on delete cascade,
+  status text not null default 'pending',
+  trigger_type text not null default 'manual',
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  duration_ms integer not null default 0,
+  result jsonb not null default '{}'::jsonb,
+  error_message text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.automation_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workflow_id uuid references public.workflows(id) on delete set null,
+  execution_id uuid references public.workflow_executions(id) on delete set null,
+  level text not null default 'info',
+  message text not null,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_ai_agents_updated_at on public.ai_agents;
+create trigger trg_ai_agents_updated_at before update on public.ai_agents for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_workflow_templates_updated_at on public.workflow_templates;
+create trigger trg_workflow_templates_updated_at before update on public.workflow_templates for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_workflows_updated_at on public.workflows;
+create trigger trg_workflows_updated_at before update on public.workflows for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_workflow_triggers_updated_at on public.workflow_triggers;
+create trigger trg_workflow_triggers_updated_at before update on public.workflow_triggers for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_workflow_actions_updated_at on public.workflow_actions;
+create trigger trg_workflow_actions_updated_at before update on public.workflow_actions for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_workflow_schedules_updated_at on public.workflow_schedules;
+create trigger trg_workflow_schedules_updated_at before update on public.workflow_schedules for each row execute function public.set_updated_at();
+
+create index if not exists idx_ai_agents_org on public.ai_agents(organization_id);
+create index if not exists idx_ai_agents_status on public.ai_agents(status);
+create index if not exists idx_workflow_templates_org on public.workflow_templates(organization_id);
+create index if not exists idx_workflow_templates_category on public.workflow_templates(category);
+create index if not exists idx_workflows_org on public.workflows(organization_id);
+create index if not exists idx_workflows_status on public.workflows(status);
+create index if not exists idx_workflow_triggers_workflow on public.workflow_triggers(workflow_id);
+create index if not exists idx_workflow_actions_workflow on public.workflow_actions(workflow_id);
+create index if not exists idx_workflow_conditions_workflow on public.workflow_conditions(workflow_id);
+create index if not exists idx_workflow_schedules_workflow on public.workflow_schedules(workflow_id);
+create index if not exists idx_workflow_executions_org on public.workflow_executions(organization_id);
+create index if not exists idx_workflow_executions_workflow on public.workflow_executions(workflow_id);
+create index if not exists idx_workflow_executions_status on public.workflow_executions(status);
+create index if not exists idx_automation_logs_org on public.automation_logs(organization_id);
+create index if not exists idx_automation_logs_workflow on public.automation_logs(workflow_id);
+create index if not exists idx_automation_logs_execution on public.automation_logs(execution_id);
+
+alter table public.ai_agents enable row level security;
+alter table public.workflow_templates enable row level security;
+alter table public.workflows enable row level security;
+alter table public.workflow_triggers enable row level security;
+alter table public.workflow_actions enable row level security;
+alter table public.workflow_conditions enable row level security;
+alter table public.workflow_schedules enable row level security;
+alter table public.workflow_executions enable row level security;
+alter table public.automation_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array['ai_agents', 'workflow_templates', 'workflows', 'workflow_executions', 'automation_logs']
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array['workflow_triggers', 'workflow_actions', 'workflow_conditions', 'workflow_schedules']
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (exists (select 1 from public.workflows w where w.id = workflow_id and public.is_organization_member(w.organization_id)))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (exists (select 1 from public.workflows w where w.id = workflow_id and public.is_organization_member(w.organization_id)))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (exists (select 1 from public.workflows w where w.id = workflow_id and public.is_organization_member(w.organization_id))) with check (exists (select 1 from public.workflows w where w.id = workflow_id and public.is_organization_member(w.organization_id)))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (exists (select 1 from public.workflows w where w.id = workflow_id and public.is_organization_member(w.organization_id)))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values ('automation.manage', 'Manage AI automation and workflows', 'automation')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
+-- SEED: 001_enterprise_seed.sql
+-- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
 values
   ('11111111-1111-1111-1111-111111111111', 'Acme Enterprise', 'acme-enterprise', 'active', '{"industry":"software"}'::jsonb)
 on conflict (id) do nothing;
 
-insert into public.user_profiles (id, auth_user_id, email, full_name, locale, metadata)
-values
-  ('22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', 'admin@acme.example', 'System Admin', 'en', '{"role":"super_admin"}'::jsonb)
-on conflict (id) do nothing;
-
-insert into public.organization_members (organization_id, user_id, role_name, is_active)
-values
-  ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'super_admin', true)
-on conflict (organization_id, user_id) do nothing;
+-- user_profiles and organization_members are created at auth signup via handle_new_profile trigger (see 004 seed).
 
 insert into public.permission_definitions (key, description)
 values
@@ -1021,8 +1345,9 @@ values
   ('super_admin', 'clients.manage', 'manage')
 on conflict (role_name, permission_key, action) do nothing;
 
-
--- 002_crm_seed.sql
+-- =============================================================================
+-- SEED: 002_crm_seed.sql
+-- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata) values
   ('11111111-1111-1111-1111-111111111111', 'Northstar Labs', 'northstar-labs', 'active', '{"segment":"saas"}')
 on conflict (id) do nothing;
@@ -1048,37 +1373,17 @@ insert into public.crm_tasks (organization_id, title, assignee, due_date, priori
   ('11111111-1111-1111-1111-111111111111', 'Prepare onboarding checklist', 'Mina Park', '2026-08-04', 'high', 'pending'),
   ('11111111-1111-1111-1111-111111111111', 'Review contract terms', 'Drew Hsu', '2026-08-06', 'medium', 'in_progress');
 
+-- =============================================================================
+-- SEED: 003_project_seed.sql
+-- =============================================================================
+-- Legacy Sprint 9 project_management seed removed.
+-- Canonical projects, milestones, tasks, and members are seeded in
+-- 004_enterprise_data_platform_seed.sql after parent organizations, clients,
+-- and projects records exist.
 
--- 003_project_seed.sql
-insert into public.project_management (organization_id, name, status, priority, progress, budget, timeline, owner, description, template, client, team_size) values
-  ('11111111-1111-1111-1111-111111111111', 'Northstar Expansion', 'active', 'high', 74, '$284k', 'Q3 2026', 'Mina Park', 'Expand the enterprise implementation footprint across new verticals.', 'Enterprise Delivery', 'Northstar Labs', 8),
-  ('11111111-1111-1111-1111-111111111111', 'FinOps Refresh', 'planning', 'medium', 36, '$92k', 'Q4 2026', 'Drew Hsu', 'Modernize finance automation and reporting readiness.', 'Operational Readiness', 'Apex Commerce', 4);
-
-insert into public.project_milestones (project_id, title, due_date, status, progress) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Discovery complete', '2026-08-10', 'completed', 100),
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Pilot launch', '2026-08-24', 'in_progress', 62);
-
-insert into public.project_tasks (project_id, title, status, assignee, due_date, priority) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Finalize rollout plan', 'in_progress', 'Lina Ortiz', '2026-08-06', 'high'),
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Review integration requirements', 'todo', 'Jordan Lee', '2026-08-08', 'medium');
-
-insert into public.project_team_members (project_id, name, role, capacity, status) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Mina Park', 'owner', '92%', 'active'),
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Lina Ortiz', 'manager', '78%', 'active');
-
-insert into public.project_time_entries (project_id, project_name, started_at, duration, status) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Northstar Expansion', '09:15', '2h 12m', 'running'),
-  ((select id from public.project_management where name='FinOps Refresh' limit 1), 'FinOps Refresh', '13:40', '1h 05m', 'paused');
-
-insert into public.project_files (project_id, name, folder, version, updated_at) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Implementation Plan.pdf', 'Planning', 'v3', 'Today'),
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Architecture Diagram.png', 'Design', 'v1', 'Yesterday');
-
-insert into public.project_comments (project_id, author, body, mentions, attachments) values
-  ((select id from public.project_management where name='Northstar Expansion' limit 1), 'Mina Park', 'Need final sign-off before the pilot starts.', '["Lina"]', '["plan.pdf"]');
-
-
--- 004_enterprise_data_platform_seed.sql
+-- =============================================================================
+-- SEED: 004_enterprise_data_platform_seed.sql
+-- =============================================================================
 -- Sprint 10 seed: canonical enterprise data platform records
 
 insert into public.organizations (id, name, slug, status, metadata)
@@ -1250,8 +1555,9 @@ create trigger on_profile_created
 after insert on public.user_profiles
 for each row execute function public.handle_new_profile();
 
-
--- 005_enterprise_finance_seed.sql
+-- =============================================================================
+-- SEED: 005_enterprise_finance_seed.sql
+-- =============================================================================
 insert into public.tax_rates (id, organization_id, name, rate_percent, is_default)
 values
   ('a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', '11111111-1111-1111-1111-111111111111', 'Standard Sales Tax', 8.50, true)
@@ -1296,3 +1602,71 @@ insert into public.recurring_invoices (id, organization_id, client_id, project_i
 values
   ('18181818-1818-1818-1818-181818181801', '11111111-1111-1111-1111-111111111111', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'Northstar monthly support retainer', 'monthly', '2026-09-01', '2027-09-01', 4200.00, 357.00, 4557.00, 'USD', true, 'Monthly support and maintenance')
 on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 006_enterprise_automation_seed.sql
+-- =============================================================================
+insert into public.ai_agents (id, organization_id, name, description, model, system_prompt, status, temperature, max_tokens, config)
+values
+  ('19191919-1919-1919-1919-191919191901', '11111111-1111-1111-1111-111111111111', 'Ops Copilot', 'Operations assistant for task triage and routing', 'gpt-4o', 'You are an enterprise operations copilot. Triage tasks, summarize status, and recommend next actions.', 'active', 0.50, 4096, '{"tools":["tasks","projects"]}'::jsonb),
+  ('19191919-1919-1919-1919-191919191902', '11111111-1111-1111-1111-111111111111', 'Finance Analyst', 'Finance workflow assistant for invoice and payment alerts', 'gpt-4o-mini', 'You analyze finance events and draft concise alerts for finance operators.', 'active', 0.30, 2048, '{"tools":["finance","clients"]}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.workflow_templates (id, organization_id, name, description, category, definition, is_public)
+values
+  ('1a1a1a1a-1a1a-1a1a-1a1a-1a1a1a1a1a01', '11111111-1111-1111-1111-111111111111', 'Client Onboarding', 'Automate client onboarding notifications and task creation', 'onboarding', '{"triggers":["client.created"],"actions":["notify","create_task"]}'::jsonb, true),
+  ('1a1a1a1a-1a1a-1a1a-1a1a-1a1a1a1a1a02', '11111111-1111-1111-1111-111111111111', 'Invoice Reminder', 'Send reminders for overdue invoices', 'finance', '{"triggers":["invoice.overdue"],"actions":["email","notify"]}'::jsonb, true)
+on conflict (id) do nothing;
+
+insert into public.workflows (id, organization_id, template_id, agent_id, name, description, status, version)
+values
+  ('2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', '11111111-1111-1111-1111-111111111111', '1a1a1a1a-1a1a-1a1a-1a1a-1a1a1a1a1a01', '19191919-1919-1919-1919-191919191901', 'Northstar Client Onboarding', 'Onboard new Northstar client accounts with task routing', 'active', 1),
+  ('2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', '11111111-1111-1111-1111-111111111111', '1a1a1a1a-1a1a-1a1a-1a1a-1a1a1a1a1a02', '19191919-1919-1919-1919-191919191902', 'Overdue Invoice Escalation', 'Escalate overdue invoices to finance team', 'active', 1),
+  ('2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b03', '11111111-1111-1111-1111-111111111111', null, '19191919-1919-1919-1919-191919191901', 'Weekly Ops Digest', 'Weekly summary of open tasks and project risks', 'paused', 1)
+on conflict (id) do nothing;
+
+insert into public.workflow_triggers (id, workflow_id, trigger_type, event_name, config, is_active)
+values
+  ('3c3c3c3c-3c3c-3c3c-3c3c-3c3c3c3c3c01', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 'event', 'client.created', '{"source":"crm"}'::jsonb, true),
+  ('3c3c3c3c-3c3c-3c3c-3c3c-3c3c3c3c3c02', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', 'event', 'invoice.overdue', '{"days_overdue":7}'::jsonb, true),
+  ('3c3c3c3c-3c3c-3c3c-3c3c-3c3c3c3c3c03', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b03', 'schedule', 'cron.weekly', '{"day":"monday","hour":9}'::jsonb, false)
+on conflict (id) do nothing;
+
+insert into public.workflow_actions (id, workflow_id, step_order, action_type, config, agent_id)
+values
+  ('4d4d4d4d-4d4d-4d4d-4d4d-4d4d4d4d4d01', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 1, 'notify', '{"channel":"slack","template":"client_onboarding"}'::jsonb, '19191919-1919-1919-1919-191919191901'),
+  ('4d4d4d4d-4d4d-4d4d-4d4d-4d4d4d4d4d02', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 2, 'create_task', '{"project":"onboarding","priority":"high"}'::jsonb, null),
+  ('4d4d4d4d-4d4d-4d4d-4d4d-4d4d4d4d4d03', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', 1, 'email', '{"to":"finance@acme.com","template":"invoice_overdue"}'::jsonb, '19191919-1919-1919-1919-191919191902'),
+  ('4d4d4d4d-4d4d-4d4d-4d4d-4d4d4d4d4d04', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', 2, 'ai_task', '{"prompt":"Summarize overdue invoice context"}'::jsonb, '19191919-1919-1919-1919-191919191902')
+on conflict (id) do nothing;
+
+insert into public.workflow_conditions (id, workflow_id, step_order, field, operator, value, logic_group)
+values
+  ('5e5e5e5e-5e5e-5e5e-5e5e-5e5e5e5e5e01', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 1, 'client.status', 'equals', 'active', 'default'),
+  ('5e5e5e5e-5e5e-5e5e-5e5e-5e5e5e5e5e02', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', 1, 'invoice.balance_due', 'greater_than', '0', 'default')
+on conflict (id) do nothing;
+
+insert into public.workflow_schedules (id, workflow_id, cron_expression, timezone, next_run_at, last_run_at, is_active)
+values
+  ('6f6f6f6f-6f6f-6f6f-6f6f-6f6f6f6f6f01', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b03', '0 9 * * 1', 'America/New_York', '2026-08-04 09:00:00+00', '2026-07-28 09:00:00+00', false)
+on conflict (id) do nothing;
+
+insert into public.workflow_executions (id, organization_id, workflow_id, status, trigger_type, started_at, completed_at, duration_ms, result, error_message)
+values
+  ('7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a01', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 'completed', 'event', '2026-08-01 10:15:00+00', '2026-08-01 10:15:04+00', 4200, '{"tasks_created":1,"notifications_sent":1}'::jsonb, ''),
+  ('7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a02', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', 'failed', 'event', '2026-08-02 08:30:00+00', '2026-08-02 08:30:02+00', 2100, '{}'::jsonb, 'Email gateway timeout'),
+  ('7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a03', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', 'running', 'manual', '2026-08-02 14:00:00+00', null, 0, '{}'::jsonb, '')
+on conflict (id) do nothing;
+
+insert into public.automation_logs (id, organization_id, workflow_id, execution_id, level, message, metadata)
+values
+  ('8b8b8b8b-8b8b-8b8b-8b8b-8b8b8b8b8b01', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', '7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a01', 'info', 'Workflow execution started', '{"trigger":"client.created"}'::jsonb),
+  ('8b8b8b8b-8b8b-8b8b-8b8b-8b8b8b8b8b02', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b01', '7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a01', 'info', 'Notification dispatched to Slack', '{"channel":"#ops"}'::jsonb),
+  ('8b8b8b8b-8b8b-8b8b-8b8b-8b8b8b8b8b03', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b02', '7a7a7a7a-7a7a-7a7a-7a7a-7a7a7a7a7a02', 'error', 'Email gateway timeout after 2s', '{"retry":true}'::jsonb),
+  ('8b8b8b8b-8b8b-8b8b-8b8b-8b8b8b8b8b04', '11111111-1111-1111-1111-111111111111', '2b2b2b2b-2b2b-2b2b-2b2b-2b2b2b2b2b03', null, 'warn', 'Weekly digest schedule paused by operator', '{}'::jsonb)
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- END apply_all.sql
+-- =============================================================================
+commit;

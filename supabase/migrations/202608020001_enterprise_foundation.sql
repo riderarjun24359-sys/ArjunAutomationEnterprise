@@ -1,5 +1,15 @@
 create extension if not exists "uuid-ossp";
 
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
 create table if not exists public.organizations (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
@@ -72,24 +82,42 @@ create table if not exists public.storage_objects (
   updated_at timestamptz not null default now()
 );
 
-create policy if not exists orgs_select on public.organizations for select using (true);
-create policy if not exists orgs_insert on public.organizations for insert with check (true);
-create policy if not exists orgs_update on public.organizations for update using (true) with check (true);
-create policy if not exists profiles_select on public.user_profiles for select using (true);
-create policy if not exists profiles_insert on public.user_profiles for insert with check (true);
-create policy if not exists profiles_update on public.user_profiles for update using (true) with check (true);
-create policy if not exists memberships_select on public.organization_members for select using (true);
-create policy if not exists memberships_insert on public.organization_members for insert with check (true);
-create policy if not exists memberships_update on public.organization_members for update using (true) with check (true);
-create policy if not exists permissions_select on public.permission_definitions for select using (true);
-create policy if not exists permissions_insert on public.permission_definitions for insert with check (true);
-create policy if not exists role_perms_select on public.role_permissions for select using (true);
-create policy if not exists role_perms_insert on public.role_permissions for insert with check (true);
-create policy if not exists audit_logs_select on public.audit_logs for select using (true);
-create policy if not exists audit_logs_insert on public.audit_logs for insert with check (true);
-create policy if not exists storage_select on public.storage_objects for select using (true);
-create policy if not exists storage_insert on public.storage_objects for insert with check (true);
-create policy if not exists storage_update on public.storage_objects for update using (true) with check (true);
+drop policy if exists orgs_select on public.organizations;
+create policy orgs_select on public.organizations for select using (true);
+drop policy if exists orgs_insert on public.organizations;
+create policy orgs_insert on public.organizations for insert with check (true);
+drop policy if exists orgs_update on public.organizations;
+create policy orgs_update on public.organizations for update using (true) with check (true);
+drop policy if exists profiles_select on public.user_profiles;
+create policy profiles_select on public.user_profiles for select using (true);
+drop policy if exists profiles_insert on public.user_profiles;
+create policy profiles_insert on public.user_profiles for insert with check (true);
+drop policy if exists profiles_update on public.user_profiles;
+create policy profiles_update on public.user_profiles for update using (true) with check (true);
+drop policy if exists memberships_select on public.organization_members;
+create policy memberships_select on public.organization_members for select using (true);
+drop policy if exists memberships_insert on public.organization_members;
+create policy memberships_insert on public.organization_members for insert with check (true);
+drop policy if exists memberships_update on public.organization_members;
+create policy memberships_update on public.organization_members for update using (true) with check (true);
+drop policy if exists permissions_select on public.permission_definitions;
+create policy permissions_select on public.permission_definitions for select using (true);
+drop policy if exists permissions_insert on public.permission_definitions;
+create policy permissions_insert on public.permission_definitions for insert with check (true);
+drop policy if exists role_perms_select on public.role_permissions;
+create policy role_perms_select on public.role_permissions for select using (true);
+drop policy if exists role_perms_insert on public.role_permissions;
+create policy role_perms_insert on public.role_permissions for insert with check (true);
+drop policy if exists audit_logs_select on public.audit_logs;
+create policy audit_logs_select on public.audit_logs for select using (true);
+drop policy if exists audit_logs_insert on public.audit_logs;
+create policy audit_logs_insert on public.audit_logs for insert with check (true);
+drop policy if exists storage_select on public.storage_objects;
+create policy storage_select on public.storage_objects for select using (true);
+drop policy if exists storage_insert on public.storage_objects;
+create policy storage_insert on public.storage_objects for insert with check (true);
+drop policy if exists storage_update on public.storage_objects;
+create policy storage_update on public.storage_objects for update using (true) with check (true);
 
 alter table public.organizations enable row level security;
 alter table public.user_profiles enable row level security;

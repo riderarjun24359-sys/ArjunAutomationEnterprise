@@ -298,3 +298,113 @@ export interface DbRecurringInvoice {
     created_at: string;
     updated_at: string;
 }
+
+export interface DbAiAgent {
+    id: string;
+    organization_id: string;
+    name: string;
+    description: string;
+    model: string;
+    system_prompt: string;
+    status: string;
+    temperature: number;
+    max_tokens: number;
+    config: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflowTemplate {
+    id: string;
+    organization_id: string;
+    name: string;
+    description: string;
+    category: string;
+    definition: Record<string, unknown>;
+    is_public: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflow {
+    id: string;
+    organization_id: string;
+    template_id?: string | null;
+    agent_id?: string | null;
+    name: string;
+    description: string;
+    status: string;
+    version: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflowTrigger {
+    id: string;
+    workflow_id: string;
+    trigger_type: string;
+    event_name: string;
+    config: Record<string, unknown>;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflowAction {
+    id: string;
+    workflow_id: string;
+    step_order: number;
+    action_type: string;
+    config: Record<string, unknown>;
+    agent_id?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflowCondition {
+    id: string;
+    workflow_id: string;
+    step_order: number;
+    field: string;
+    operator: string;
+    value: string;
+    logic_group: string;
+    created_at: string;
+}
+
+export interface DbWorkflowSchedule {
+    id: string;
+    workflow_id: string;
+    cron_expression: string;
+    timezone: string;
+    next_run_at?: string | null;
+    last_run_at?: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbWorkflowExecution {
+    id: string;
+    organization_id: string;
+    workflow_id: string;
+    status: string;
+    trigger_type: string;
+    started_at: string;
+    completed_at?: string | null;
+    duration_ms: number;
+    result: Record<string, unknown>;
+    error_message: string;
+    created_at: string;
+}
+
+export interface DbAutomationLog {
+    id: string;
+    organization_id: string;
+    workflow_id?: string | null;
+    execution_id?: string | null;
+    level: string;
+    message: string;
+    metadata: Record<string, unknown>;
+    created_at: string;
+}

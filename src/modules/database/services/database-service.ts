@@ -17,4 +17,13 @@ export const databaseService = {
     payments: databaseAccess.payments,
     expenses: databaseAccess.expenses,
     recurringInvoices: databaseAccess.recurringInvoices,
+    aiAgents: databaseAccess.aiAgents,
+    workflowTemplates: databaseAccess.workflowTemplates,
+    workflows: databaseAccess.workflows,
+    workflowTriggers: databaseAccess.workflowTriggers,
+    workflowActions: databaseAccess.workflowActions,
+    workflowConditions: databaseAccess.workflowConditions,
+    workflowSchedules: databaseAccess.workflowSchedules,
+    workflowExecutions: databaseAccess.workflowExecutions,
+    automationLogs: databaseAccess.automationLogs,
 };
