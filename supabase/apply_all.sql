@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T01:34:59.152Z
+-- Generated: 2026-08-03T13:48:14.224Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (21):
+--   Migrations (22):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -27,7 +27,8 @@
 --     - 202608020019_enterprise_ai_qa_engineer.sql
 --     - 202608020020_enterprise_ai_devops_deployment.sql
 --     - 202608020021_enterprise_ai_customer_success.sql
---   Seeds (21):
+--     - 202608020022_enterprise_founder_operating_system.sql
+--   Seeds (22):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -49,9 +50,10 @@
 --     - 019_enterprise_ai_qa_engineer_seed.sql
 --     - 020_enterprise_ai_devops_deployment_seed.sql
 --     - 021_enterprise_ai_customer_success_seed.sql
+--     - 022_enterprise_founder_operating_system_seed.sql
 --
--- Includes through Sprint 28:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager
+-- Includes through Sprint 29:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -6322,6 +6324,406 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020022_enterprise_founder_operating_system.sql
+-- =============================================================================
+-- Sprint 29: Founder Operating System
+
+create table if not exists public.fo_workspaces (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  workspace_key text not null,
+  ba_engagement_id uuid references public.ba_engagements(id) on delete set null,
+  sa_engagement_id uuid references public.sa_engagements(id) on delete set null,
+  df_engagement_id uuid references public.df_engagements(id) on delete set null,
+  qa_engagement_id uuid references public.qa_engagements(id) on delete set null,
+  dd_engagement_id uuid references public.dd_engagements(id) on delete set null,
+  cs_engagement_id uuid references public.cs_engagements(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  knowledge_context_id uuid references public.knowledge_ai_contexts(id) on delete set null,
+  pipeline_stage text not null default 'founder_operating_system',
+  status text not null default 'active',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_key)
+);
+
+create table if not exists public.fo_strategic_okrs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  okr_key text not null,
+  title text not null,
+  objective text not null default '',
+  key_results jsonb not null default '[]'::jsonb,
+  quarter text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, okr_key)
+);
+
+create table if not exists public.fo_executive_dashboards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  dashboard_key text not null,
+  name text not null,
+  widgets jsonb not null default '[]'::jsonb,
+  refresh_cadence text not null default 'daily',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, dashboard_key)
+);
+
+create table if not exists public.fo_revenue_runway (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  runway_key text not null,
+  name text not null,
+  monthly_burn_usd numeric(14, 2) not null default 0,
+  cash_balance_usd numeric(14, 2) not null default 0,
+  runway_months numeric(6, 2) not null default 0,
+  revenue_forecast jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, runway_key)
+);
+
+create table if not exists public.fo_team_capacity (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  capacity_key text not null,
+  name text not null,
+  team_allocations jsonb not null default '[]'::jsonb,
+  utilization_percent numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, capacity_key)
+);
+
+create table if not exists public.fo_product_roadmaps (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  roadmap_key text not null,
+  name text not null,
+  initiatives jsonb not null default '[]'::jsonb,
+  timeline_quarters jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, roadmap_key)
+);
+
+create table if not exists public.fo_investor_relations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  relation_key text not null,
+  investor_name text not null,
+  round text not null default '',
+  engagement_notes text not null default '',
+  next_touchpoint date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, relation_key)
+);
+
+create table if not exists public.fo_board_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  report_key text not null,
+  title text not null,
+  reporting_period text not null default '',
+  sections jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, report_key)
+);
+
+create table if not exists public.fo_decision_log (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  decision_key text not null,
+  title text not null,
+  decision_type text not null default 'strategic',
+  rationale text not null default '',
+  outcome text not null default '',
+  status text not null default 'recorded',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, decision_key)
+);
+
+create table if not exists public.fo_priorities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  priority_key text not null,
+  title text not null,
+  priority_level text not null default 'medium',
+  owner text not null default '',
+  due_date date,
+  status text not null default 'open',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, priority_key)
+);
+
+create table if not exists public.fo_resource_allocations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  allocation_key text not null,
+  name text not null,
+  budget_usd numeric(14, 2) not null default 0,
+  allocations jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, allocation_key)
+);
+
+create table if not exists public.fo_risk_register (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  risk_key text not null,
+  title text not null,
+  risk_level text not null default 'medium',
+  mitigation_plan text not null default '',
+  owner text not null default '',
+  status text not null default 'open',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, risk_key)
+);
+
+create table if not exists public.fo_growth_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  metric_key text not null,
+  name text not null,
+  metric_type text not null default 'revenue',
+  current_value numeric(14, 4) not null default 0,
+  target_value numeric(14, 4) not null default 0,
+  growth_rate_percent numeric(8, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, metric_key)
+);
+
+create table if not exists public.fo_founder_agenda (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  agenda_key text not null,
+  title text not null,
+  scheduled_at timestamptz,
+  agenda_items jsonb not null default '[]'::jsonb,
+  status text not null default 'scheduled',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, agenda_key)
+);
+
+create table if not exists public.fo_stakeholders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  stakeholder_key text not null,
+  name text not null,
+  stakeholder_type text not null default 'internal',
+  influence_level text not null default 'medium',
+  engagement_plan text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, stakeholder_key)
+);
+
+create table if not exists public.fo_capital_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  funding_target_usd numeric(14, 2) not null default 0,
+  use_of_funds jsonb not null default '[]'::jsonb,
+  timeline text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, plan_key)
+);
+
+create table if not exists public.fo_company_milestones (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  milestone_key text not null,
+  title text not null,
+  target_date date,
+  milestone_type text not null default 'product',
+  success_criteria text not null default '',
+  status text not null default 'planned',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, milestone_key)
+);
+
+create table if not exists public.fo_founder_insights (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
+  insight_key text not null,
+  title text not null,
+  insight_type text not null default 'strategic',
+  content text not null default '',
+  confidence_score numeric(5, 2) not null default 0,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, workspace_id, insight_key)
+);
+
+create table if not exists public.fo_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_fo_workspaces_org on public.fo_workspaces(organization_id);
+create index if not exists idx_fo_strategic_okrs_org on public.fo_strategic_okrs(organization_id);
+create index if not exists idx_fo_executive_dashboards_org on public.fo_executive_dashboards(organization_id);
+create index if not exists idx_fo_revenue_runway_org on public.fo_revenue_runway(organization_id);
+create index if not exists idx_fo_team_capacity_org on public.fo_team_capacity(organization_id);
+create index if not exists idx_fo_product_roadmaps_org on public.fo_product_roadmaps(organization_id);
+create index if not exists idx_fo_investor_relations_org on public.fo_investor_relations(organization_id);
+create index if not exists idx_fo_board_reports_org on public.fo_board_reports(organization_id);
+create index if not exists idx_fo_decision_log_org on public.fo_decision_log(organization_id);
+create index if not exists idx_fo_priorities_org on public.fo_priorities(organization_id);
+create index if not exists idx_fo_resource_allocations_org on public.fo_resource_allocations(organization_id);
+create index if not exists idx_fo_risk_register_org on public.fo_risk_register(organization_id);
+create index if not exists idx_fo_growth_metrics_org on public.fo_growth_metrics(organization_id);
+create index if not exists idx_fo_founder_agenda_org on public.fo_founder_agenda(organization_id);
+create index if not exists idx_fo_stakeholders_org on public.fo_stakeholders(organization_id);
+create index if not exists idx_fo_capital_plans_org on public.fo_capital_plans(organization_id);
+create index if not exists idx_fo_company_milestones_org on public.fo_company_milestones(organization_id);
+create index if not exists idx_fo_founder_insights_org on public.fo_founder_insights(organization_id);
+create index if not exists idx_fo_audit_logs_org on public.fo_audit_logs(organization_id);
+
+drop trigger if exists trg_fo_workspaces_updated_at on public.fo_workspaces;
+create trigger trg_fo_workspaces_updated_at before update on public.fo_workspaces for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_strategic_okrs_updated_at on public.fo_strategic_okrs;
+create trigger trg_fo_strategic_okrs_updated_at before update on public.fo_strategic_okrs for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_executive_dashboards_updated_at on public.fo_executive_dashboards;
+create trigger trg_fo_executive_dashboards_updated_at before update on public.fo_executive_dashboards for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_revenue_runway_updated_at on public.fo_revenue_runway;
+create trigger trg_fo_revenue_runway_updated_at before update on public.fo_revenue_runway for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_team_capacity_updated_at on public.fo_team_capacity;
+create trigger trg_fo_team_capacity_updated_at before update on public.fo_team_capacity for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_product_roadmaps_updated_at on public.fo_product_roadmaps;
+create trigger trg_fo_product_roadmaps_updated_at before update on public.fo_product_roadmaps for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_investor_relations_updated_at on public.fo_investor_relations;
+create trigger trg_fo_investor_relations_updated_at before update on public.fo_investor_relations for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_board_reports_updated_at on public.fo_board_reports;
+create trigger trg_fo_board_reports_updated_at before update on public.fo_board_reports for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_decision_log_updated_at on public.fo_decision_log;
+create trigger trg_fo_decision_log_updated_at before update on public.fo_decision_log for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_priorities_updated_at on public.fo_priorities;
+create trigger trg_fo_priorities_updated_at before update on public.fo_priorities for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_resource_allocations_updated_at on public.fo_resource_allocations;
+create trigger trg_fo_resource_allocations_updated_at before update on public.fo_resource_allocations for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_risk_register_updated_at on public.fo_risk_register;
+create trigger trg_fo_risk_register_updated_at before update on public.fo_risk_register for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_growth_metrics_updated_at on public.fo_growth_metrics;
+create trigger trg_fo_growth_metrics_updated_at before update on public.fo_growth_metrics for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_founder_agenda_updated_at on public.fo_founder_agenda;
+create trigger trg_fo_founder_agenda_updated_at before update on public.fo_founder_agenda for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_stakeholders_updated_at on public.fo_stakeholders;
+create trigger trg_fo_stakeholders_updated_at before update on public.fo_stakeholders for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_capital_plans_updated_at on public.fo_capital_plans;
+create trigger trg_fo_capital_plans_updated_at before update on public.fo_capital_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_company_milestones_updated_at on public.fo_company_milestones;
+create trigger trg_fo_company_milestones_updated_at before update on public.fo_company_milestones for each row execute function public.set_updated_at();
+drop trigger if exists trg_fo_founder_insights_updated_at on public.fo_founder_insights;
+create trigger trg_fo_founder_insights_updated_at before update on public.fo_founder_insights for each row execute function public.set_updated_at();
+
+alter table public.fo_workspaces enable row level security;
+alter table public.fo_strategic_okrs enable row level security;
+alter table public.fo_executive_dashboards enable row level security;
+alter table public.fo_revenue_runway enable row level security;
+alter table public.fo_team_capacity enable row level security;
+alter table public.fo_product_roadmaps enable row level security;
+alter table public.fo_investor_relations enable row level security;
+alter table public.fo_board_reports enable row level security;
+alter table public.fo_decision_log enable row level security;
+alter table public.fo_priorities enable row level security;
+alter table public.fo_resource_allocations enable row level security;
+alter table public.fo_risk_register enable row level security;
+alter table public.fo_growth_metrics enable row level security;
+alter table public.fo_founder_agenda enable row level security;
+alter table public.fo_stakeholders enable row level security;
+alter table public.fo_capital_plans enable row level security;
+alter table public.fo_company_milestones enable row level security;
+alter table public.fo_founder_insights enable row level security;
+alter table public.fo_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'fo_workspaces', 'fo_strategic_okrs', 'fo_executive_dashboards', 'fo_revenue_runway',
+    'fo_team_capacity', 'fo_product_roadmaps', 'fo_investor_relations', 'fo_board_reports',
+    'fo_decision_log', 'fo_priorities', 'fo_resource_allocations', 'fo_risk_register',
+    'fo_growth_metrics', 'fo_founder_agenda', 'fo_stakeholders', 'fo_capital_plans',
+    'fo_company_milestones', 'fo_founder_insights', 'fo_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('fo.view', 'View Founder Operating System workspaces and artifacts', 'founder_os'),
+  ('fo.manage', 'Create and edit founder OS deliverables', 'founder_os'),
+  ('fo.approve', 'Review and approve founder OS outputs', 'founder_os'),
+  ('fo.admin', 'Administer founder OS and permissions', 'founder_os')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -8162,6 +8564,120 @@ insert into public.cs_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('ca000001-ca00-ca00-ca00-ca0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'c501c501-c501-c501-c501-c501c5010101', 'create', 'Northstar Platform Customer Success engagement created from DevOps deployment handoff'),
   ('ca000002-ca00-ca00-ca00-ca0000000002', '11111111-1111-1111-1111-111111111111', 'onboarding_workflow', 'c502c502-c502-c502-c502-c502c5020201', 'generate', 'Enterprise onboarding workflow generated from deployment release')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 022_enterprise_founder_operating_system_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a309', '11111111-1111-1111-1111-111111111111', 'Founder Operating System Agent', 'founder_os', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["strategic_okrs","revenue_runway","board_reports","founder_insights"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a509', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a309', 'northstar-fo-001', 'founder_os', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"founder operating system orchestration"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000008', '11111111-1111-1111-1111-111111111111', 'northstar-fo-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a309', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a509', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory","ba_outputs","sa_outputs","df_outputs","qa_outputs","dd_outputs","cs_outputs","finance_context"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_workspaces (id, organization_id, title, workspace_key, ba_engagement_id, sa_engagement_id, df_engagement_id, qa_engagement_id, dd_engagement_id, cs_engagement_id, client_id, project_id, agent_id, session_id, knowledge_context_id, pipeline_stage, status, summary)
+values
+  ('f001f001-f001-f001-f001-f001f0010101', '11111111-1111-1111-1111-111111111111', 'Northstar Founder Operating System', 'northstar-founder-os-001', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b10101', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f10101', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'c501c501-c501-c501-c501-c501c5010101', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a309', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a509', 'cb000001-cb00-cb00-cb00-cb0000000008', 'founder_operating_system', 'active', 'Founder operating system workspace orchestrating strategic execution across all AI workers and enterprise modules')
+on conflict (id) do nothing;
+
+insert into public.fo_strategic_okrs (id, organization_id, workspace_id, okr_key, title, objective, key_results, quarter, status)
+values
+  ('f002f002-f002-f002-f002-f002f0020201', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'okr-q4-2026', 'Q4 2026 Strategic OKRs', 'Achieve product-market fit and Series A readiness', '[{"result":"Reach $2M ARR","target":2000000},{"result":"Net revenue retention 110%","target":110}]'::jsonb, 'Q4 2026', 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_executive_dashboards (id, organization_id, workspace_id, dashboard_key, name, widgets, refresh_cadence, status)
+values
+  ('f003f003-f003-f003-f003-f003f0030301', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'exec-dashboard', 'Northstar Executive Dashboard', '[{"widget":"revenue","position":1},{"widget":"runway","position":2},{"widget":"team_capacity","position":3}]'::jsonb, 'daily', 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_revenue_runway (id, organization_id, workspace_id, runway_key, name, monthly_burn_usd, cash_balance_usd, runway_months, revenue_forecast, status)
+values
+  ('f004f004-f004-f004-f004-f004f0040401', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'runway-q4', 'Q4 Revenue Runway', 85000.00, 1275000.00, 15.00, '[{"month":"2026-09","revenue":120000},{"month":"2026-10","revenue":135000}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_team_capacity (id, organization_id, workspace_id, capacity_key, name, team_allocations, utilization_percent, status)
+values
+  ('f005f005-f005-f005-f005-f005f0050501', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'capacity-engineering', 'Engineering Team Capacity', '[{"team":"platform","allocated_pct":60},{"team":"product","allocated_pct":40}]'::jsonb, 82.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_product_roadmaps (id, organization_id, workspace_id, roadmap_key, name, initiatives, timeline_quarters, status)
+values
+  ('f006f006-f006-f006-f006-f006f0060601', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'roadmap-2027', '2027 Product Roadmap', '["enterprise_modules","ai_workers","founder_os"]'::jsonb, '["Q1 2027","Q2 2027","Q3 2027"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_investor_relations (id, organization_id, workspace_id, relation_key, investor_name, round, engagement_notes, next_touchpoint, status)
+values
+  ('f007f007-f007-f007-f007-f007f0070701', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'investor-acme', 'Acme Ventures', 'Series A', 'Strong interest in AI worker platform; requested updated metrics deck', '2026-09-15', 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_board_reports (id, organization_id, workspace_id, report_key, title, reporting_period, sections, status)
+values
+  ('f008f008-f008-f008-f008-f008f0080801', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'board-q3-2026', 'Q3 2026 Board Report', 'Q3 2026', '["financials","product","team","risks","outlook"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.fo_decision_log (id, organization_id, workspace_id, decision_key, title, decision_type, rationale, outcome, status)
+values
+  ('f009f009-f009-f009-f009-f009f0090901', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'decision-series-a', 'Series A Timing Decision', 'strategic', 'Market conditions favorable; strong pipeline and retention metrics support raise in Q4', 'Proceed with Series A preparation in Q4 2026', 'recorded')
+on conflict (id) do nothing;
+
+insert into public.fo_priorities (id, organization_id, workspace_id, priority_key, title, priority_level, owner, due_date, status)
+values
+  ('f00af00a-f00a-f00a-f00a-f00af00a0a01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'priority-fundraise', 'Complete Series A data room', 'critical', 'CEO', '2026-10-31', 'open')
+on conflict (id) do nothing;
+
+insert into public.fo_resource_allocations (id, organization_id, workspace_id, allocation_key, name, budget_usd, allocations, status)
+values
+  ('f00bf00b-f00b-f00b-f00b-f00bf00b0b01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'budget-q4', 'Q4 Resource Allocation', 450000.00, '[{"department":"engineering","amount_usd":280000},{"department":"sales","amount_usd":90000}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_risk_register (id, organization_id, workspace_id, risk_key, title, risk_level, mitigation_plan, owner, status)
+values
+  ('f00cf00c-f00c-f00c-f00c-f00cf00c0c01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'risk-runway', 'Runway compression if burn increases', 'medium', 'Maintain monthly burn review and extend runway via revenue growth initiatives', 'CFO', 'open')
+on conflict (id) do nothing;
+
+insert into public.fo_growth_metrics (id, organization_id, workspace_id, metric_key, name, metric_type, current_value, target_value, growth_rate_percent, status)
+values
+  ('f00df00d-f00d-f00d-f00d-f00df00d0d01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'metric-arr', 'Annual Recurring Revenue', 'revenue', 1650000.0000, 2000000.0000, 18.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_founder_agenda (id, organization_id, workspace_id, agenda_key, title, scheduled_at, agenda_items, status)
+values
+  ('f00ef00e-f00e-f00e-f00e-f00ef00e0e01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'agenda-weekly', 'Weekly Founder Sync', '2026-09-08 14:00:00+00', '["okr_review","runway_update","priority_triage","investor_prep"]'::jsonb, 'scheduled')
+on conflict (id) do nothing;
+
+insert into public.fo_stakeholders (id, organization_id, workspace_id, stakeholder_key, name, stakeholder_type, influence_level, engagement_plan, status)
+values
+  ('f00ff00f-f00f-f00f-f00f-f00ff00f0f01', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'stakeholder-board', 'Board of Directors', 'board', 'high', 'Monthly board updates and quarterly in-person sessions', 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_capital_plans (id, organization_id, workspace_id, plan_key, name, funding_target_usd, use_of_funds, timeline, status)
+values
+  ('f010f010-f010-f010-f010-f010f0101001', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'capital-series-a', 'Series A Capital Plan', 8000000.00, '[{"category":"product","amount_usd":3200000},{"category":"sales","amount_usd":2400000},{"category":"operations","amount_usd":2400000}]'::jsonb, 'Q4 2026 – Q1 2027', 'draft')
+on conflict (id) do nothing;
+
+insert into public.fo_company_milestones (id, organization_id, workspace_id, milestone_key, title, target_date, milestone_type, success_criteria, status)
+values
+  ('f011f011-f011-f011-f011-f011f0111101', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'milestone-series-a', 'Close Series A', '2027-01-31', 'fundraising', 'Signed term sheet and closed round at target valuation', 'planned')
+on conflict (id) do nothing;
+
+insert into public.fo_founder_insights (id, organization_id, workspace_id, insight_key, title, insight_type, content, confidence_score, status)
+values
+  ('f012f012-f012-f012-f012-f012f0121201', '11111111-1111-1111-1111-111111111111', 'f001f001-f001-f001-f001-f001f0010101', 'insight-growth', 'Enterprise module adoption driving expansion', 'strategic', 'Customer success handoffs from DevOps deployments correlate with 40% higher expansion revenue within 90 days', 87.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.fo_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('fa000001-fa00-fa00-fa00-fa0000000001', '11111111-1111-1111-1111-111111111111', 'workspace', 'f001f001-f001-f001-f001-f001f0010101', 'create', 'Northstar Founder Operating System workspace created from customer success handoff'),
+  ('fa000002-fa00-fa00-fa00-fa0000000002', '11111111-1111-1111-1111-111111111111', 'strategic_okr', 'f002f002-f002-f002-f002-f002f0020201', 'generate', 'Q4 2026 strategic OKRs generated from cross-module intelligence')
 on conflict (id) do nothing;
 
 -- =============================================================================

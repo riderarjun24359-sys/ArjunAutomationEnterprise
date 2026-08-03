@@ -3583,3 +3583,272 @@ export interface DbCsAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbFoWorkspace {
+    id: string;
+    organization_id: string;
+    title: string;
+    workspace_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    df_engagement_id?: string | null;
+    qa_engagement_id?: string | null;
+    dd_engagement_id?: string | null;
+    cs_engagement_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoStrategicOkr {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    okr_key: string;
+    title: string;
+    objective: string;
+    key_results: unknown[];
+    quarter: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoExecutiveDashboard {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    dashboard_key: string;
+    name: string;
+    widgets: unknown[];
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoRevenueRunway {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    runway_key: string;
+    name: string;
+    monthly_burn_usd: number;
+    cash_balance_usd: number;
+    runway_months: number;
+    revenue_forecast: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoTeamCapacity {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    capacity_key: string;
+    name: string;
+    team_allocations: unknown[];
+    utilization_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoProductRoadmap {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    roadmap_key: string;
+    name: string;
+    initiatives: unknown[];
+    timeline_quarters: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoInvestorRelation {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    relation_key: string;
+    investor_name: string;
+    round: string;
+    engagement_notes: string;
+    next_touchpoint?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoBoardReport {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    report_key: string;
+    title: string;
+    reporting_period: string;
+    sections: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoDecisionLog {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    decision_key: string;
+    title: string;
+    decision_type: string;
+    rationale: string;
+    outcome: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoPriority {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    priority_key: string;
+    title: string;
+    priority_level: string;
+    owner: string;
+    due_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoResourceAllocation {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    allocation_key: string;
+    name: string;
+    budget_usd: number;
+    allocations: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoRiskRegister {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    risk_key: string;
+    title: string;
+    risk_level: string;
+    mitigation_plan: string;
+    owner: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoGrowthMetric {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    metric_key: string;
+    name: string;
+    metric_type: string;
+    current_value: number;
+    target_value: number;
+    growth_rate_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoFounderAgenda {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    agenda_key: string;
+    title: string;
+    scheduled_at?: string | null;
+    agenda_items: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoStakeholder {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    stakeholder_key: string;
+    name: string;
+    stakeholder_type: string;
+    influence_level: string;
+    engagement_plan: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoCapitalPlan {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    plan_key: string;
+    name: string;
+    funding_target_usd: number;
+    use_of_funds: unknown[];
+    timeline: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoCompanyMilestone {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    milestone_key: string;
+    title: string;
+    target_date?: string | null;
+    milestone_type: string;
+    success_criteria: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoFounderInsight {
+    id: string;
+    organization_id: string;
+    workspace_id: string;
+    insight_key: string;
+    title: string;
+    insight_type: string;
+    content: string;
+    confidence_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbFoAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

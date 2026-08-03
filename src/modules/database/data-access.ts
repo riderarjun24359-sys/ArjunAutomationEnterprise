@@ -302,6 +302,27 @@ import {
     CsSupportTrendAnalysisRepository,
     CsTrainingRecommendationRepository,
 } from "@/src/modules/database/repositories/customer-success-repositories";
+import {
+    FoAuditLogRepository,
+    FoBoardReportRepository,
+    FoCapitalPlanRepository,
+    FoCompanyMilestoneRepository,
+    FoDecisionLogRepository,
+    FoExecutiveDashboardRepository,
+    FoFounderAgendaRepository,
+    FoFounderInsightRepository,
+    FoGrowthMetricRepository,
+    FoInvestorRelationRepository,
+    FoPriorityRepository,
+    FoProductRoadmapRepository,
+    FoResourceAllocationRepository,
+    FoRevenueRunwayRepository,
+    FoRiskRegisterRepository,
+    FoStakeholderRepository,
+    FoStrategicOkrRepository,
+    FoTeamCapacityRepository,
+    FoWorkspaceRepository,
+} from "@/src/modules/database/repositories/founder-os-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -574,6 +595,25 @@ export class DatabaseAccessLayer {
     readonly csLifecycleManagement: CsLifecycleManagementRepository;
     readonly csExecutiveSummaries: CsExecutiveSummaryRepository;
     readonly csAuditLogs: CsAuditLogRepository;
+    readonly foWorkspaces: FoWorkspaceRepository;
+    readonly foStrategicOkrs: FoStrategicOkrRepository;
+    readonly foExecutiveDashboards: FoExecutiveDashboardRepository;
+    readonly foRevenueRunway: FoRevenueRunwayRepository;
+    readonly foTeamCapacity: FoTeamCapacityRepository;
+    readonly foProductRoadmaps: FoProductRoadmapRepository;
+    readonly foInvestorRelations: FoInvestorRelationRepository;
+    readonly foBoardReports: FoBoardReportRepository;
+    readonly foDecisionLog: FoDecisionLogRepository;
+    readonly foPriorities: FoPriorityRepository;
+    readonly foResourceAllocations: FoResourceAllocationRepository;
+    readonly foRiskRegister: FoRiskRegisterRepository;
+    readonly foGrowthMetrics: FoGrowthMetricRepository;
+    readonly foFounderAgenda: FoFounderAgendaRepository;
+    readonly foStakeholders: FoStakeholderRepository;
+    readonly foCapitalPlans: FoCapitalPlanRepository;
+    readonly foCompanyMilestones: FoCompanyMilestoneRepository;
+    readonly foFounderInsights: FoFounderInsightRepository;
+    readonly foAuditLogs: FoAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -846,6 +886,25 @@ export class DatabaseAccessLayer {
         this.csLifecycleManagement = new CsLifecycleManagementRepository();
         this.csExecutiveSummaries = new CsExecutiveSummaryRepository();
         this.csAuditLogs = new CsAuditLogRepository();
+        this.foWorkspaces = new FoWorkspaceRepository();
+        this.foStrategicOkrs = new FoStrategicOkrRepository();
+        this.foExecutiveDashboards = new FoExecutiveDashboardRepository();
+        this.foRevenueRunway = new FoRevenueRunwayRepository();
+        this.foTeamCapacity = new FoTeamCapacityRepository();
+        this.foProductRoadmaps = new FoProductRoadmapRepository();
+        this.foInvestorRelations = new FoInvestorRelationRepository();
+        this.foBoardReports = new FoBoardReportRepository();
+        this.foDecisionLog = new FoDecisionLogRepository();
+        this.foPriorities = new FoPriorityRepository();
+        this.foResourceAllocations = new FoResourceAllocationRepository();
+        this.foRiskRegister = new FoRiskRegisterRepository();
+        this.foGrowthMetrics = new FoGrowthMetricRepository();
+        this.foFounderAgenda = new FoFounderAgendaRepository();
+        this.foStakeholders = new FoStakeholderRepository();
+        this.foCapitalPlans = new FoCapitalPlanRepository();
+        this.foCompanyMilestones = new FoCompanyMilestoneRepository();
+        this.foFounderInsights = new FoFounderInsightRepository();
+        this.foAuditLogs = new FoAuditLogRepository();
     }
 }
 
