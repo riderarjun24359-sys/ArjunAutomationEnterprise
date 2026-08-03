@@ -53,6 +53,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "DevOps & Deployment", href: ROUTES.devopsDeployment, description: "AI worker for CI/CD, infrastructure, and release orchestration", icon: Rocket, section: "secondary" },
     { label: "Customer Success", href: ROUTES.customerSuccess, description: "AI worker for onboarding, adoption, health scores, and renewal", icon: HeartHandshake, section: "secondary" },
     { label: "Autonomous Company", href: ROUTES.autonomousCompany, description: "Orchestration layer unifying Founder OS, AI workers, and enterprise modules", icon: Sparkles, section: "secondary" },
+    { label: "Commercial Platform", href: ROUTES.commercialPlatform, description: "Multi-tenant SaaS platform for tenant registration, subscriptions, billing, and usage", icon: Building2, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },

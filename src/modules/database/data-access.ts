@@ -344,6 +344,40 @@ import {
     AcWorkerCollaborationRepository,
     AcWorkflowOrchestrationRepository,
 } from "@/src/modules/database/repositories/autonomous-company-repositories";
+import {
+    SaasAdminMetricRepository,
+    SaasAuditLogRepository,
+    SaasBillingCouponRepository,
+    SaasBillingCreditRepository,
+    SaasCommercialInvoiceRepository,
+    SaasDomainConfigRepository,
+    SaasEmailVerificationRepository,
+    SaasFeatureFlagRepository,
+    SaasLicenseAllocationRepository,
+    SaasLicenseRepository,
+    SaasOnboardingChecklistRepository,
+    SaasPlanLimitRepository,
+    SaasPortalApiKeyRepository,
+    SaasPortalBrandingRepository,
+    SaasPortalIntegrationRepository,
+    SaasPortalSettingRepository,
+    SaasProductAdoptionRepository,
+    SaasRecurringBillingRepository,
+    SaasRegistrationRepository,
+    SaasRenewalTrackingRepository,
+    SaasSubscriptionEventRepository,
+    SaasSubscriptionRepository,
+    SaasSupportSummaryRepository,
+    SaasTenantHealthScoreRepository,
+    SaasTenantProfileRepository,
+    SaasTenantRepository,
+    SaasTenantRoleProvisionRepository,
+    SaasTrialRepository,
+    SaasUsageMeterRepository,
+    SaasUsageRecordRepository,
+    SaasWelcomeExperienceRepository,
+    SaasWorkspaceSetupRepository,
+} from "@/src/modules/database/repositories/commercial-saas-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -654,6 +688,38 @@ export class DatabaseAccessLayer {
     readonly acComplianceDashboards: AcComplianceDashboardRepository;
     readonly acOperationalHealth: AcOperationalHealthRepository;
     readonly acAuditLogs: AcAuditLogRepository;
+    readonly saasTenants: SaasTenantRepository;
+    readonly saasRegistrations: SaasRegistrationRepository;
+    readonly saasTenantProfiles: SaasTenantProfileRepository;
+    readonly saasDomainConfigs: SaasDomainConfigRepository;
+    readonly saasEmailVerifications: SaasEmailVerificationRepository;
+    readonly saasTrials: SaasTrialRepository;
+    readonly saasWorkspaceSetups: SaasWorkspaceSetupRepository;
+    readonly saasTenantRoleProvisions: SaasTenantRoleProvisionRepository;
+    readonly saasWelcomeExperiences: SaasWelcomeExperienceRepository;
+    readonly saasSubscriptions: SaasSubscriptionRepository;
+    readonly saasPlanLimits: SaasPlanLimitRepository;
+    readonly saasSubscriptionEvents: SaasSubscriptionEventRepository;
+    readonly saasLicenses: SaasLicenseRepository;
+    readonly saasLicenseAllocations: SaasLicenseAllocationRepository;
+    readonly saasFeatureFlags: SaasFeatureFlagRepository;
+    readonly saasPortalSettings: SaasPortalSettingRepository;
+    readonly saasPortalBranding: SaasPortalBrandingRepository;
+    readonly saasPortalIntegrations: SaasPortalIntegrationRepository;
+    readonly saasPortalApiKeys: SaasPortalApiKeyRepository;
+    readonly saasUsageMeters: SaasUsageMeterRepository;
+    readonly saasUsageRecords: SaasUsageRecordRepository;
+    readonly saasCommercialInvoices: SaasCommercialInvoiceRepository;
+    readonly saasBillingCredits: SaasBillingCreditRepository;
+    readonly saasBillingCoupons: SaasBillingCouponRepository;
+    readonly saasRecurringBilling: SaasRecurringBillingRepository;
+    readonly saasTenantHealthScores: SaasTenantHealthScoreRepository;
+    readonly saasOnboardingChecklists: SaasOnboardingChecklistRepository;
+    readonly saasProductAdoption: SaasProductAdoptionRepository;
+    readonly saasRenewalTracking: SaasRenewalTrackingRepository;
+    readonly saasSupportSummaries: SaasSupportSummaryRepository;
+    readonly saasAdminMetrics: SaasAdminMetricRepository;
+    readonly saasAuditLogs: SaasAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -964,6 +1030,38 @@ export class DatabaseAccessLayer {
         this.acComplianceDashboards = new AcComplianceDashboardRepository();
         this.acOperationalHealth = new AcOperationalHealthRepository();
         this.acAuditLogs = new AcAuditLogRepository();
+        this.saasTenants = new SaasTenantRepository();
+        this.saasRegistrations = new SaasRegistrationRepository();
+        this.saasTenantProfiles = new SaasTenantProfileRepository();
+        this.saasDomainConfigs = new SaasDomainConfigRepository();
+        this.saasEmailVerifications = new SaasEmailVerificationRepository();
+        this.saasTrials = new SaasTrialRepository();
+        this.saasWorkspaceSetups = new SaasWorkspaceSetupRepository();
+        this.saasTenantRoleProvisions = new SaasTenantRoleProvisionRepository();
+        this.saasWelcomeExperiences = new SaasWelcomeExperienceRepository();
+        this.saasSubscriptions = new SaasSubscriptionRepository();
+        this.saasPlanLimits = new SaasPlanLimitRepository();
+        this.saasSubscriptionEvents = new SaasSubscriptionEventRepository();
+        this.saasLicenses = new SaasLicenseRepository();
+        this.saasLicenseAllocations = new SaasLicenseAllocationRepository();
+        this.saasFeatureFlags = new SaasFeatureFlagRepository();
+        this.saasPortalSettings = new SaasPortalSettingRepository();
+        this.saasPortalBranding = new SaasPortalBrandingRepository();
+        this.saasPortalIntegrations = new SaasPortalIntegrationRepository();
+        this.saasPortalApiKeys = new SaasPortalApiKeyRepository();
+        this.saasUsageMeters = new SaasUsageMeterRepository();
+        this.saasUsageRecords = new SaasUsageRecordRepository();
+        this.saasCommercialInvoices = new SaasCommercialInvoiceRepository();
+        this.saasBillingCredits = new SaasBillingCreditRepository();
+        this.saasBillingCoupons = new SaasBillingCouponRepository();
+        this.saasRecurringBilling = new SaasRecurringBillingRepository();
+        this.saasTenantHealthScores = new SaasTenantHealthScoreRepository();
+        this.saasOnboardingChecklists = new SaasOnboardingChecklistRepository();
+        this.saasProductAdoption = new SaasProductAdoptionRepository();
+        this.saasRenewalTracking = new SaasRenewalTrackingRepository();
+        this.saasSupportSummaries = new SaasSupportSummaryRepository();
+        this.saasAdminMetrics = new SaasAdminMetricRepository();
+        this.saasAuditLogs = new SaasAuditLogRepository();
     }
 }
 

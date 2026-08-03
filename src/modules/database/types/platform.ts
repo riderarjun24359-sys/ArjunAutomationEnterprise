@@ -4125,3 +4125,440 @@ export interface DbAcAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbSaasTenant {
+    id: string;
+    organization_id: string;
+    tenant_key: string;
+    company_name: string;
+    owner_user_id?: string | null;
+    current_plan: string;
+    tenant_status: string;
+    trial_ends_at?: string | null;
+    subscription_ends_at?: string | null;
+    grace_period_ends_at?: string | null;
+    domain_slug: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasRegistration {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    registration_key: string;
+    company_name: string;
+    owner_email: string;
+    owner_name: string;
+    registration_status: string;
+    metadata: Record<string, unknown>;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasTenantProfile {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    profile_key: string;
+    legal_name: string;
+    industry: string;
+    company_size: string;
+    billing_email: string;
+    address: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasDomainConfig {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    domain_key: string;
+    subdomain: string;
+    custom_domain: string;
+    ssl_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasEmailVerification {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    verification_key: string;
+    email: string;
+    verification_token: string;
+    verified_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasTrial {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    trial_key: string;
+    plan_tier: string;
+    started_at: string;
+    ends_at: string;
+    converted_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasWorkspaceSetup {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    setup_key: string;
+    workspace_name: string;
+    initialization_steps: unknown[];
+    completed_steps: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasTenantRoleProvision {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    provision_key: string;
+    role_name: string;
+    permissions: unknown[];
+    is_default: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasWelcomeExperience {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    experience_key: string;
+    title: string;
+    welcome_steps: unknown[];
+    completed: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasSubscription {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    subscription_key: string;
+    plan_tier: string;
+    billing_cycle: string;
+    amount_usd: number;
+    starts_at: string;
+    renews_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasPlanLimit {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    limit_key: string;
+    plan_tier: string;
+    resource_type: string;
+    limit_value: number;
+    current_usage: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasSubscriptionEvent {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    event_key: string;
+    event_type: string;
+    from_plan: string;
+    to_plan: string;
+    reason: string;
+    effective_at: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbSaasLicense {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    license_key: string;
+    license_type: string;
+    name: string;
+    total_units: number;
+    used_units: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasLicenseAllocation {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    allocation_key: string;
+    license_id?: string | null;
+    resource_type: string;
+    resource_name: string;
+    allocated_units: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasFeatureFlag {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    flag_key: string;
+    name: string;
+    enabled: boolean;
+    module_source: string;
+    usage_limit?: number | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasPortalSetting {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    settings_key: string;
+    portal_name: string;
+    preferences: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasPortalBranding {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    branding_key: string;
+    logo_url: string;
+    primary_color: string;
+    accent_color: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasPortalIntegration {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    integration_key: string;
+    provider: string;
+    config: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasPortalApiKey {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    api_key_hash: string;
+    key_name: string;
+    scopes: unknown[];
+    last_used_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasUsageMeter {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    meter_key: string;
+    meter_type: string;
+    unit_label: string;
+    current_period_usage: number;
+    period_start: string;
+    period_end?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasUsageRecord {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    record_key: string;
+    meter_type: string;
+    quantity: number;
+    recorded_at: string;
+    metadata: Record<string, unknown>;
+    created_at: string;
+}
+
+export interface DbSaasCommercialInvoice {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    invoice_key: string;
+    invoice_number: string;
+    amount_usd: number;
+    tax_amount_usd: number;
+    discount_amount_usd: number;
+    due_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasBillingCredit {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    credit_key: string;
+    balance_usd: number;
+    reason: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasBillingCoupon {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    coupon_key: string;
+    code: string;
+    discount_type: string;
+    discount_value: number;
+    expires_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasRecurringBilling {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    billing_key: string;
+    amount_usd: number;
+    billing_cycle: string;
+    next_billing_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasTenantHealthScore {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    score_key: string;
+    overall_score: number;
+    dimension_scores: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasOnboardingChecklist {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    checklist_key: string;
+    name: string;
+    items: unknown[];
+    completion_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasProductAdoption {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    adoption_key: string;
+    module_name: string;
+    adoption_percent: number;
+    active_users: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasRenewalTracking {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    renewal_key: string;
+    renewal_date: string;
+    renewal_value_usd: number;
+    renewal_probability: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasSupportSummary {
+    id: string;
+    organization_id: string;
+    tenant_id: string;
+    summary_key: string;
+    open_tickets: number;
+    avg_resolution_hours: number;
+    satisfaction_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasAdminMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    active_tenants: number;
+    trial_tenants: number;
+    mrr_usd: number;
+    arr_usd: number;
+    churn_rate_percent: number;
+    renewal_count: number;
+    total_usage_records: number;
+    avg_health_score: number;
+    growth_rate_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaasAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

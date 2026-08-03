@@ -61,6 +61,7 @@ const requiredTables = [
     "cs_engagements",
     "fo_workspaces",
     "ac_company_contexts",
+    "saas_tenants",
 ];
 
 const supabase = createClient(url, anonKey);

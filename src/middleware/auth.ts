@@ -28,6 +28,7 @@ const protectedRoutes = [
     ROUTES.customerSuccess,
     ROUTES.founderOs,
     ROUTES.autonomousCompany,
+    ROUTES.commercialPlatform,
 ];
 
 const authRoutes = [

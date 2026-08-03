@@ -24,6 +24,7 @@ export const ROUTES = {
     customerSuccess: "/customer-success",
     founderOs: "/founder-os",
     autonomousCompany: "/autonomous-company",
+    commercialPlatform: "/commercial-platform",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

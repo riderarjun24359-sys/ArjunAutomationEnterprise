@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T14:31:26.986Z
+-- Generated: 2026-08-03T15:38:25.623Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (23):
+--   Migrations (24):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -29,7 +29,8 @@
 --     - 202608020021_enterprise_ai_customer_success.sql
 --     - 202608020022_enterprise_founder_operating_system.sql
 --     - 202608020023_enterprise_autonomous_company_v1.sql
---   Seeds (23):
+--     - 202608020024_commercial_saas_platform.sql
+--   Seeds (24):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -53,9 +54,10 @@
 --     - 021_enterprise_ai_customer_success_seed.sql
 --     - 022_enterprise_founder_operating_system_seed.sql
 --     - 023_enterprise_autonomous_company_v1_seed.sql
+--     - 024_commercial_saas_platform_seed.sql
 --
--- Includes through Sprint 30:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1
+-- Includes through V2 Program A Sprint 1:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -7127,6 +7129,599 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020024_commercial_saas_platform.sql
+-- =============================================================================
+-- V2 Program A Sprint 1: Commercial Multi-Tenant SaaS Platform
+
+create table if not exists public.saas_tenants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_key text not null,
+  company_name text not null,
+  owner_user_id uuid references public.user_profiles(id) on delete set null,
+  current_plan text not null default 'trial',
+  tenant_status text not null default 'active',
+  trial_ends_at timestamptz,
+  subscription_ends_at timestamptz,
+  grace_period_ends_at timestamptz,
+  domain_slug text not null default '',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_key)
+);
+
+create table if not exists public.saas_registrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  registration_key text not null,
+  company_name text not null,
+  owner_email text not null,
+  owner_name text not null default '',
+  registration_status text not null default 'pending',
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, registration_key)
+);
+
+create table if not exists public.saas_tenant_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  profile_key text not null,
+  legal_name text not null default '',
+  industry text not null default '',
+  company_size text not null default '',
+  billing_email text not null default '',
+  address jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, profile_key)
+);
+
+create table if not exists public.saas_domain_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  domain_key text not null,
+  subdomain text not null,
+  custom_domain text not null default '',
+  ssl_status text not null default 'pending',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, domain_key)
+);
+
+create table if not exists public.saas_email_verifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  verification_key text not null,
+  email text not null,
+  verification_token text not null default '',
+  verified_at timestamptz,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, verification_key)
+);
+
+create table if not exists public.saas_trials (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  trial_key text not null,
+  plan_tier text not null default 'trial',
+  started_at timestamptz not null default now(),
+  ends_at timestamptz not null,
+  converted_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, trial_key)
+);
+
+create table if not exists public.saas_workspace_setups (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  setup_key text not null,
+  workspace_name text not null,
+  initialization_steps jsonb not null default '[]'::jsonb,
+  completed_steps jsonb not null default '[]'::jsonb,
+  status text not null default 'in_progress',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, setup_key)
+);
+
+create table if not exists public.saas_tenant_role_provisions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  provision_key text not null,
+  role_name text not null,
+  permissions jsonb not null default '[]'::jsonb,
+  is_default boolean not null default true,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, provision_key)
+);
+
+create table if not exists public.saas_welcome_experiences (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  experience_key text not null,
+  title text not null,
+  welcome_steps jsonb not null default '[]'::jsonb,
+  completed boolean not null default false,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, experience_key)
+);
+
+create table if not exists public.saas_subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  subscription_key text not null,
+  plan_tier text not null default 'starter',
+  billing_cycle text not null default 'monthly',
+  amount_usd numeric(12, 2) not null default 0,
+  starts_at timestamptz not null default now(),
+  renews_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, subscription_key)
+);
+
+create table if not exists public.saas_plan_limits (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  limit_key text not null,
+  plan_tier text not null,
+  resource_type text not null,
+  limit_value numeric(14, 2) not null default 0,
+  current_usage numeric(14, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, limit_key)
+);
+
+create table if not exists public.saas_subscription_events (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  event_key text not null,
+  event_type text not null,
+  from_plan text not null default '',
+  to_plan text not null default '',
+  reason text not null default '',
+  effective_at timestamptz not null default now(),
+  status text not null default 'completed',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.saas_licenses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  license_key text not null,
+  license_type text not null default 'seat',
+  name text not null,
+  total_units integer not null default 0,
+  used_units integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, license_key)
+);
+
+create table if not exists public.saas_license_allocations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  allocation_key text not null,
+  license_id uuid references public.saas_licenses(id) on delete set null,
+  resource_type text not null default 'seat',
+  resource_name text not null,
+  allocated_units integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, allocation_key)
+);
+
+create table if not exists public.saas_feature_flags (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  flag_key text not null,
+  name text not null,
+  enabled boolean not null default false,
+  module_source text not null default '',
+  usage_limit numeric(14, 2),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, flag_key)
+);
+
+create table if not exists public.saas_portal_settings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  settings_key text not null,
+  portal_name text not null default '',
+  preferences jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, settings_key)
+);
+
+create table if not exists public.saas_portal_branding (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  branding_key text not null,
+  logo_url text not null default '',
+  primary_color text not null default '#0ea5e9',
+  accent_color text not null default '#0284c7',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, branding_key)
+);
+
+create table if not exists public.saas_portal_integrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  integration_key text not null,
+  provider text not null,
+  config jsonb not null default '{}'::jsonb,
+  status text not null default 'inactive',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, integration_key)
+);
+
+create table if not exists public.saas_portal_api_keys (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  api_key_hash text not null default '',
+  key_name text not null,
+  scopes jsonb not null default '[]'::jsonb,
+  last_used_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, key_name)
+);
+
+create table if not exists public.saas_usage_meters (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  meter_key text not null,
+  meter_type text not null default 'users',
+  unit_label text not null default '',
+  current_period_usage numeric(14, 4) not null default 0,
+  period_start timestamptz not null default now(),
+  period_end timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, meter_key)
+);
+
+create table if not exists public.saas_usage_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  record_key text not null,
+  meter_type text not null,
+  quantity numeric(14, 4) not null default 0,
+  recorded_at timestamptz not null default now(),
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.saas_commercial_invoices (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  invoice_key text not null,
+  invoice_number text not null,
+  amount_usd numeric(12, 2) not null default 0,
+  tax_amount_usd numeric(12, 2) not null default 0,
+  discount_amount_usd numeric(12, 2) not null default 0,
+  due_date date,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, invoice_key)
+);
+
+create table if not exists public.saas_billing_credits (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  credit_key text not null,
+  balance_usd numeric(12, 2) not null default 0,
+  reason text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, credit_key)
+);
+
+create table if not exists public.saas_billing_coupons (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  coupon_key text not null,
+  code text not null,
+  discount_type text not null default 'percent',
+  discount_value numeric(8, 2) not null default 0,
+  expires_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, coupon_key)
+);
+
+create table if not exists public.saas_recurring_billing (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  billing_key text not null,
+  amount_usd numeric(12, 2) not null default 0,
+  billing_cycle text not null default 'monthly',
+  next_billing_date date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, billing_key)
+);
+
+create table if not exists public.saas_tenant_health_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  score_key text not null,
+  overall_score numeric(5, 2) not null default 0,
+  dimension_scores jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, score_key)
+);
+
+create table if not exists public.saas_onboarding_checklists (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  checklist_key text not null,
+  name text not null,
+  items jsonb not null default '[]'::jsonb,
+  completion_percent numeric(5, 2) not null default 0,
+  status text not null default 'in_progress',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, checklist_key)
+);
+
+create table if not exists public.saas_product_adoption (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  adoption_key text not null,
+  module_name text not null,
+  adoption_percent numeric(5, 2) not null default 0,
+  active_users integer not null default 0,
+  status text not null default 'tracking',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, adoption_key)
+);
+
+create table if not exists public.saas_renewal_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  renewal_key text not null,
+  renewal_date date not null,
+  renewal_value_usd numeric(12, 2) not null default 0,
+  renewal_probability numeric(5, 2) not null default 0,
+  status text not null default 'upcoming',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, renewal_key)
+);
+
+create table if not exists public.saas_support_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
+  summary_key text not null,
+  open_tickets integer not null default 0,
+  avg_resolution_hours numeric(8, 2) not null default 0,
+  satisfaction_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, tenant_id, summary_key)
+);
+
+create table if not exists public.saas_admin_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  active_tenants integer not null default 0,
+  trial_tenants integer not null default 0,
+  mrr_usd numeric(14, 2) not null default 0,
+  arr_usd numeric(14, 2) not null default 0,
+  churn_rate_percent numeric(5, 2) not null default 0,
+  renewal_count integer not null default 0,
+  total_usage_records integer not null default 0,
+  avg_health_score numeric(5, 2) not null default 0,
+  growth_rate_percent numeric(8, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+create table if not exists public.saas_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+-- indexes
+create index if not exists idx_saas_tenants_org on public.saas_tenants(organization_id);
+create index if not exists idx_saas_registrations_org on public.saas_registrations(organization_id);
+create index if not exists idx_saas_tenant_profiles_org on public.saas_tenant_profiles(organization_id);
+create index if not exists idx_saas_domain_configs_org on public.saas_domain_configs(organization_id);
+create index if not exists idx_saas_email_verifications_org on public.saas_email_verifications(organization_id);
+create index if not exists idx_saas_trials_org on public.saas_trials(organization_id);
+create index if not exists idx_saas_workspace_setups_org on public.saas_workspace_setups(organization_id);
+create index if not exists idx_saas_tenant_role_provisions_org on public.saas_tenant_role_provisions(organization_id);
+create index if not exists idx_saas_welcome_experiences_org on public.saas_welcome_experiences(organization_id);
+create index if not exists idx_saas_subscriptions_org on public.saas_subscriptions(organization_id);
+create index if not exists idx_saas_plan_limits_org on public.saas_plan_limits(organization_id);
+create index if not exists idx_saas_subscription_events_org on public.saas_subscription_events(organization_id);
+create index if not exists idx_saas_licenses_org on public.saas_licenses(organization_id);
+create index if not exists idx_saas_license_allocations_org on public.saas_license_allocations(organization_id);
+create index if not exists idx_saas_feature_flags_org on public.saas_feature_flags(organization_id);
+create index if not exists idx_saas_portal_settings_org on public.saas_portal_settings(organization_id);
+create index if not exists idx_saas_portal_branding_org on public.saas_portal_branding(organization_id);
+create index if not exists idx_saas_portal_integrations_org on public.saas_portal_integrations(organization_id);
+create index if not exists idx_saas_portal_api_keys_org on public.saas_portal_api_keys(organization_id);
+create index if not exists idx_saas_usage_meters_org on public.saas_usage_meters(organization_id);
+create index if not exists idx_saas_usage_records_org on public.saas_usage_records(organization_id);
+create index if not exists idx_saas_commercial_invoices_org on public.saas_commercial_invoices(organization_id);
+create index if not exists idx_saas_billing_credits_org on public.saas_billing_credits(organization_id);
+create index if not exists idx_saas_billing_coupons_org on public.saas_billing_coupons(organization_id);
+create index if not exists idx_saas_recurring_billing_org on public.saas_recurring_billing(organization_id);
+create index if not exists idx_saas_tenant_health_scores_org on public.saas_tenant_health_scores(organization_id);
+create index if not exists idx_saas_onboarding_checklists_org on public.saas_onboarding_checklists(organization_id);
+create index if not exists idx_saas_product_adoption_org on public.saas_product_adoption(organization_id);
+create index if not exists idx_saas_renewal_tracking_org on public.saas_renewal_tracking(organization_id);
+create index if not exists idx_saas_support_summaries_org on public.saas_support_summaries(organization_id);
+create index if not exists idx_saas_admin_metrics_org on public.saas_admin_metrics(organization_id);
+create index if not exists idx_saas_audit_logs_org on public.saas_audit_logs(organization_id);
+
+-- updated_at triggers
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'saas_tenants','saas_registrations','saas_tenant_profiles','saas_domain_configs',
+    'saas_email_verifications','saas_trials','saas_workspace_setups','saas_tenant_role_provisions',
+    'saas_welcome_experiences','saas_subscriptions','saas_plan_limits','saas_licenses',
+    'saas_license_allocations','saas_feature_flags','saas_portal_settings','saas_portal_branding',
+    'saas_portal_integrations','saas_portal_api_keys','saas_usage_meters','saas_commercial_invoices',
+    'saas_billing_credits','saas_billing_coupons','saas_recurring_billing','saas_tenant_health_scores',
+    'saas_onboarding_checklists','saas_product_adoption','saas_renewal_tracking','saas_support_summaries',
+    'saas_admin_metrics'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+-- RLS
+alter table public.saas_tenants enable row level security;
+alter table public.saas_registrations enable row level security;
+alter table public.saas_tenant_profiles enable row level security;
+alter table public.saas_domain_configs enable row level security;
+alter table public.saas_email_verifications enable row level security;
+alter table public.saas_trials enable row level security;
+alter table public.saas_workspace_setups enable row level security;
+alter table public.saas_tenant_role_provisions enable row level security;
+alter table public.saas_welcome_experiences enable row level security;
+alter table public.saas_subscriptions enable row level security;
+alter table public.saas_plan_limits enable row level security;
+alter table public.saas_subscription_events enable row level security;
+alter table public.saas_licenses enable row level security;
+alter table public.saas_license_allocations enable row level security;
+alter table public.saas_feature_flags enable row level security;
+alter table public.saas_portal_settings enable row level security;
+alter table public.saas_portal_branding enable row level security;
+alter table public.saas_portal_integrations enable row level security;
+alter table public.saas_portal_api_keys enable row level security;
+alter table public.saas_usage_meters enable row level security;
+alter table public.saas_usage_records enable row level security;
+alter table public.saas_commercial_invoices enable row level security;
+alter table public.saas_billing_credits enable row level security;
+alter table public.saas_billing_coupons enable row level security;
+alter table public.saas_recurring_billing enable row level security;
+alter table public.saas_tenant_health_scores enable row level security;
+alter table public.saas_onboarding_checklists enable row level security;
+alter table public.saas_product_adoption enable row level security;
+alter table public.saas_renewal_tracking enable row level security;
+alter table public.saas_support_summaries enable row level security;
+alter table public.saas_admin_metrics enable row level security;
+alter table public.saas_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'saas_tenants','saas_registrations','saas_tenant_profiles','saas_domain_configs',
+    'saas_email_verifications','saas_trials','saas_workspace_setups','saas_tenant_role_provisions',
+    'saas_welcome_experiences','saas_subscriptions','saas_plan_limits','saas_subscription_events',
+    'saas_licenses','saas_license_allocations','saas_feature_flags','saas_portal_settings',
+    'saas_portal_branding','saas_portal_integrations','saas_portal_api_keys','saas_usage_meters',
+    'saas_usage_records','saas_commercial_invoices','saas_billing_credits','saas_billing_coupons',
+    'saas_recurring_billing','saas_tenant_health_scores','saas_onboarding_checklists',
+    'saas_product_adoption','saas_renewal_tracking','saas_support_summaries','saas_admin_metrics',
+    'saas_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('saas.view', 'View commercial SaaS platform and tenant data', 'commercial_saas'),
+  ('saas.manage', 'Manage tenant registration, subscriptions, and billing', 'commercial_saas'),
+  ('saas.approve', 'Approve subscription changes and commercial operations', 'commercial_saas'),
+  ('saas.admin', 'Administer commercial SaaS platform and tenant governance', 'commercial_saas')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -9195,6 +9790,188 @@ insert into public.ac_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('ac000001-ac00-ac00-ac00-ac0000000001', '11111111-1111-1111-1111-111111111111', 'company_context', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'create', 'Northstar Autonomous Company v1 context created from Founder OS handoff', '{"source":"founder_os","fo_workspace_id":"f001f001-f001-f001-f001-f001f0010101"}'::jsonb, 'standard'),
   ('ac000002-ac00-ac00-ac00-ac0000000002', '11111111-1111-1111-1111-111111111111', 'worker_collaboration', 'ac04ac04-ac04-ac04-ac04-ac04ac040401', 'activate', 'Full AI worker collaboration mesh activated with Founder OS integration', '{"workers":["business_analyst","solution_architect","development_factory","qa_engineering","devops_deployment","customer_success","founder_os"]}'::jsonb, 'elevated')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 024_commercial_saas_platform_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a320', '11111111-1111-1111-1111-111111111111', 'Commercial SaaS Orchestrator', 'commercial_saas', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["tenant_registration","subscription_management","usage_tracking","billing","license_management"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a520', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a320', 'northstar-saas-001', 'commercial_saas', 'tenant', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', '{"objective":"commercial multi-tenant saas platform"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.saas_tenants (id, organization_id, tenant_key, company_name, current_plan, tenant_status, trial_ends_at, subscription_ends_at, domain_slug, summary)
+values
+  ('aa01aa01-aa01-aa01-aa01-aa01aa010101', '11111111-1111-1111-1111-111111111111', 'northstar-saas', 'Northstar Commercial SaaS', 'starter', 'active', '2026-09-02 00:24:00+00', '2027-08-02 00:24:00+00', 'northstar', 'Northstar tenant on starter plan with seat, AI, and module licenses covering trial-to-starter conversion')
+on conflict (id) do nothing;
+
+insert into public.saas_registrations (id, organization_id, tenant_id, registration_key, company_name, owner_email, owner_name, registration_status, metadata)
+values
+  ('aa02aa02-aa02-aa02-aa02-aa02aa020201', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'reg-northstar-001', 'Northstar Commercial SaaS', 'founder@northstar.example', 'Alex Founder', 'completed', '{"source":"self_service","plan":"starter"}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.saas_tenant_profiles (id, organization_id, tenant_id, profile_key, legal_name, industry, company_size, billing_email, address, status)
+values
+  ('aa03aa03-aa03-aa03-aa03-aa03aa030301', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'profile-northstar', 'Northstar Automation OS Inc.', 'enterprise_software', '11-50', 'billing@northstar.example', '{"city":"San Francisco","country":"US"}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_domain_configs (id, organization_id, tenant_id, domain_key, subdomain, custom_domain, ssl_status, status)
+values
+  ('aa04aa04-aa04-aa04-aa04-aa04aa040401', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'domain-northstar', 'northstar', 'app.northstar.example', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_email_verifications (id, organization_id, tenant_id, verification_key, email, verification_token, verified_at, status)
+values
+  ('aa05aa05-aa05-aa05-aa05-aa05aa050501', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'verify-northstar', 'founder@northstar.example', 'tok-northstar-verify-001', '2026-08-02 00:24:00+00', 'verified')
+on conflict (id) do nothing;
+
+insert into public.saas_trials (id, organization_id, tenant_id, trial_key, plan_tier, started_at, ends_at, converted_at, status)
+values
+  ('aa06aa06-aa06-aa06-aa06-aa06aa060601', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'trial-northstar', 'trial', '2026-07-19 00:24:00+00', '2026-08-02 00:24:00+00', '2026-08-02 00:24:00+00', 'converted')
+on conflict (id) do nothing;
+
+insert into public.saas_workspace_setups (id, organization_id, tenant_id, setup_key, workspace_name, initialization_steps, completed_steps, status)
+values
+  ('aa07aa07-aa07-aa07-aa07-aa07aa070701', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'setup-northstar', 'Northstar Workspace', '["create_org","provision_roles","configure_portal","enable_modules"]'::jsonb, '["create_org","provision_roles","configure_portal","enable_modules"]'::jsonb, 'completed')
+on conflict (id) do nothing;
+
+insert into public.saas_tenant_role_provisions (id, organization_id, tenant_id, provision_key, role_name, permissions, is_default, status)
+values
+  ('aa08aa08-aa08-aa08-aa08-aa08aa080801', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'role-admin', 'Tenant Admin', '["saas.view","saas.manage","saas.approve"]'::jsonb, true, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_welcome_experiences (id, organization_id, tenant_id, experience_key, title, welcome_steps, completed, status)
+values
+  ('aa09aa09-aa09-aa09-aa09-aa09aa090901', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'welcome-northstar', 'Welcome to Northstar SaaS', '["verify_email","complete_profile","invite_team","explore_modules"]'::jsonb, true, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_subscriptions (id, organization_id, tenant_id, subscription_key, plan_tier, billing_cycle, amount_usd, starts_at, renews_at, status)
+values
+  ('aa0aaa0a-aa0a-aa0a-aa0a-aa0aaa0a0a01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'sub-northstar-starter', 'starter', 'monthly', 299.00, '2026-08-02 00:24:00+00', '2026-09-02 00:24:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_plan_limits (id, organization_id, tenant_id, limit_key, plan_tier, resource_type, limit_value, current_usage, status)
+values
+  ('aa0baa0b-aa0b-aa0b-aa0b-aa0baa0b0b01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'limit-seats-starter', 'starter', 'seats', 25, 8, 'active'),
+  ('aa0baa0b-aa0b-aa0b-aa0b-aa0baa0b0b02', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'limit-ai-starter', 'starter', 'ai_tokens', 500000, 125000, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_subscription_events (id, organization_id, tenant_id, event_key, event_type, from_plan, to_plan, reason, effective_at, status)
+values
+  ('aa0caa0c-aa0c-aa0c-aa0c-aa0caa0c0c01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'event-trial-to-starter', 'plan_change', 'trial', 'starter', 'Trial converted to paid starter subscription', '2026-08-02 00:24:00+00', 'completed')
+on conflict (id) do nothing;
+
+insert into public.saas_licenses (id, organization_id, tenant_id, license_key, license_type, name, total_units, used_units, status)
+values
+  ('aa0daa0d-aa0d-aa0d-aa0d-aa0daa0d0d01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'lic-seats', 'seat', 'Starter Seat License', 25, 8, 'active'),
+  ('aa0daa0d-aa0d-aa0d-aa0d-aa0daa0d0d02', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'lic-ai', 'ai', 'AI Orchestration License', 500000, 125000, 'active'),
+  ('aa0daa0d-aa0d-aa0d-aa0d-aa0daa0d0d03', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'lic-modules', 'module', 'Enterprise Module Pack', 12, 6, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_license_allocations (id, organization_id, tenant_id, allocation_key, license_id, resource_type, resource_name, allocated_units, status)
+values
+  ('aa0eaa0e-aa0e-aa0e-aa0e-aa0eaa0e0e01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'alloc-admin-seats', 'aa0daa0d-aa0d-aa0d-aa0d-aa0daa0d0d01', 'seat', 'Admin Team', 5, 'active'),
+  ('aa0eaa0e-aa0e-aa0e-aa0e-aa0eaa0e0e02', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'alloc-ai-ops', 'aa0daa0d-aa0d-aa0d-aa0d-aa0daa0d0d02', 'ai', 'AI Operations', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_feature_flags (id, organization_id, tenant_id, flag_key, name, enabled, module_source, usage_limit, status)
+values
+  ('aa0faa0f-aa0f-aa0f-aa0f-aa0faa0f0f01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'flag-ai-orchestration', 'AI Orchestration', true, 'ai-orchestration', 500000, 'active'),
+  ('aa0faa0f-aa0f-aa0f-aa0f-aa0faa0f0f02', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'flag-autonomous-company', 'Autonomous Company v1', true, 'autonomous-company', null, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_portal_settings (id, organization_id, tenant_id, settings_key, portal_name, preferences, status)
+values
+  ('aa10aa10-aa10-aa10-aa10-aa10aa101001', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'settings-portal', 'Northstar Customer Portal', '{"theme":"sky-600","locale":"en-US","notifications":true}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_portal_branding (id, organization_id, tenant_id, branding_key, logo_url, primary_color, accent_color, status)
+values
+  ('aa11aa11-aa11-aa11-aa11-aa11aa111101', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'brand-northstar', '/branding/northstar-logo.svg', '#0284c7', '#0ea5e9', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_portal_integrations (id, organization_id, tenant_id, integration_key, provider, config, status)
+values
+  ('aa12aa12-aa12-aa12-aa12-aa12aa121201', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'int-stripe', 'stripe', '{"mode":"live","webhook_enabled":true}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_portal_api_keys (id, organization_id, tenant_id, api_key_hash, key_name, scopes, last_used_at, status)
+values
+  ('aa13aa13-aa13-aa13-aa13-aa13aa131301', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'sha256:northstar-portal-key-hash-001', 'northstar-portal-prod', '["saas.read","saas.write","usage.track"]'::jsonb, '2026-08-02 12:00:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_usage_meters (id, organization_id, tenant_id, meter_key, meter_type, unit_label, current_period_usage, period_start, period_end, status)
+values
+  ('aa14aa14-aa14-aa14-aa14-aa14aa141401', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'meter-users', 'users', 'active users', 8.0000, '2026-08-01 00:00:00+00', '2026-09-01 00:00:00+00', 'active'),
+  ('aa14aa14-aa14-aa14-aa14-aa14aa141402', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'meter-ai-tokens', 'ai_tokens', 'tokens', 125000.0000, '2026-08-01 00:00:00+00', '2026-09-01 00:00:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_usage_records (id, organization_id, tenant_id, record_key, meter_type, quantity, recorded_at, metadata)
+values
+  ('aa15aa15-aa15-aa15-aa15-aa15aa151501', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'usage-ai-001', 'ai_tokens', 1500.0000, '2026-08-02 10:00:00+00', '{"module":"commercial_saas","task":"register_tenant"}'::jsonb)
+on conflict (id) do nothing;
+
+insert into public.saas_commercial_invoices (id, organization_id, tenant_id, invoice_key, invoice_number, amount_usd, tax_amount_usd, discount_amount_usd, due_date, status)
+values
+  ('aa16aa16-aa16-aa16-aa16-aa16aa161601', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'inv-starter-001', 'INV-NS-2026-0801', 299.00, 26.91, 0.00, '2026-08-15', 'paid')
+on conflict (id) do nothing;
+
+insert into public.saas_billing_credits (id, organization_id, tenant_id, credit_key, balance_usd, reason, status)
+values
+  ('aa17aa17-aa17-aa17-aa17-aa17aa171701', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'credit-welcome', 50.00, 'Welcome credit for trial conversion', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_billing_coupons (id, organization_id, tenant_id, coupon_key, code, discount_type, discount_value, expires_at, status)
+values
+  ('aa18aa18-aa18-aa18-aa18-aa18aa181801', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'coupon-launch', 'NORTHSTAR20', 'percent', 20.00, '2026-12-31 23:59:59+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_recurring_billing (id, organization_id, tenant_id, billing_key, amount_usd, billing_cycle, next_billing_date, status)
+values
+  ('aa19aa19-aa19-aa19-aa19-aa19aa191901', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'recurring-starter', 299.00, 'monthly', '2026-09-02', 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_tenant_health_scores (id, organization_id, tenant_id, score_key, overall_score, dimension_scores, status)
+values
+  ('aa1aaa1a-aa1a-aa1a-aa1a-aa1aaa1a1a01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'health-northstar', 88.50, '[{"dimension":"adoption","score":85},{"dimension":"billing","score":92},{"dimension":"support","score":88},{"dimension":"usage","score":89}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_onboarding_checklists (id, organization_id, tenant_id, checklist_key, name, items, completion_percent, status)
+values
+  ('aa1baa1b-aa1b-aa1b-aa1b-aa1baa1b1b01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'onboard-northstar', 'Northstar Onboarding', '["verify_email","setup_workspace","invite_team","configure_billing","enable_modules"]'::jsonb, 100.00, 'completed')
+on conflict (id) do nothing;
+
+insert into public.saas_product_adoption (id, organization_id, tenant_id, adoption_key, module_name, adoption_percent, active_users, status)
+values
+  ('aa1caa1c-aa1c-aa1c-aa1c-aa1caa1c1c01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'adopt-ai', 'ai-orchestration', 75.00, 6, 'tracking'),
+  ('aa1caa1c-aa1c-aa1c-aa1c-aa1caa1c1c02', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'adopt-ac', 'autonomous-company', 50.00, 4, 'tracking')
+on conflict (id) do nothing;
+
+insert into public.saas_renewal_tracking (id, organization_id, tenant_id, renewal_key, renewal_date, renewal_value_usd, renewal_probability, status)
+values
+  ('aa1daa1d-aa1d-aa1d-aa1d-aa1daa1d1d01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'renewal-starter-2027', '2027-08-02', 3588.00, 92.50, 'upcoming')
+on conflict (id) do nothing;
+
+insert into public.saas_support_summaries (id, organization_id, tenant_id, summary_key, open_tickets, avg_resolution_hours, satisfaction_score, status)
+values
+  ('aa1eaa1e-aa1e-aa1e-aa1e-aa1eaa1e1e01', '11111111-1111-1111-1111-111111111111', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'support-northstar', 2, 4.50, 4.80, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_admin_metrics (id, organization_id, metrics_key, metric_date, active_tenants, trial_tenants, mrr_usd, arr_usd, churn_rate_percent, renewal_count, total_usage_records, avg_health_score, growth_rate_percent, status)
+values
+  ('aa1faa1f-aa1f-aa1f-aa1f-aa1faa1f1f01', '11111111-1111-1111-1111-111111111111', 'metrics-northstar-daily', '2026-08-02', 1, 0, 299.00, 3588.00, 0.00, 1, 1, 88.50, 15.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.saas_audit_logs (id, organization_id, entity_type, entity_id, action, summary, metadata, security_level)
+values
+  ('aa000001-aa00-aa00-aa00-aa0000000001', '11111111-1111-1111-1111-111111111111', 'tenant', 'aa01aa01-aa01-aa01-aa01-aa01aa010101', 'create', 'Northstar Commercial SaaS tenant registered and trial started', '{"plan":"trial","source":"self_service"}'::jsonb, 'standard'),
+  ('aa000002-aa00-aa00-aa00-aa0000000002', '11111111-1111-1111-1111-111111111111', 'subscription', 'aa0aaa0a-aa0a-aa0a-aa0a-aa0aaa0a0a01', 'plan_change', 'Trial converted to starter subscription — MRR $299.00', '{"from_plan":"trial","to_plan":"starter","mrr_usd":299}'::jsonb, 'elevated'),
+  ('aa000003-aa00-aa00-aa00-aa0000000003', '11111111-1111-1111-1111-111111111111', 'portal_api_key', 'aa13aa13-aa13-aa13-aa13-aa13aa131301', 'create', 'Production portal API key provisioned with scoped access', '{"key_name":"northstar-portal-prod","scopes":["saas.read","saas.write","usage.track"]}'::jsonb, 'restricted')
 on conflict (id) do nothing;
 
 -- =============================================================================
