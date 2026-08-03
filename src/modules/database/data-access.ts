@@ -239,6 +239,27 @@ import {
     DfVersionRepository,
     DfWorkPackageRepository,
 } from "@/src/modules/database/repositories/development-factory-repositories";
+import {
+    QaAccessibilityValidationRepository,
+    QaApiValidationRepository,
+    QaAuditLogRepository,
+    QaBugTriageRepository,
+    QaCoverageAnalyticsRepository,
+    QaDatabaseValidationRepository,
+    QaDefectAnalysisRepository,
+    QaEngagementRepository,
+    QaE2eTestPlanRepository,
+    QaIntegrationTestPlanRepository,
+    QaPerformanceValidationRepository,
+    QaQualityScoreRepository,
+    QaRegressionAnalysisRepository,
+    QaReleaseReadinessRepository,
+    QaRiskBasedTestRepository,
+    QaSecurityValidationRepository,
+    QaTestStrategyRepository,
+    QaUiValidationRepository,
+    QaUnitTestPlanRepository,
+} from "@/src/modules/database/repositories/qa-engineer-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -454,6 +475,25 @@ export class DatabaseAccessLayer {
     readonly dfBuildArtifacts: DfBuildArtifactRepository;
     readonly dfVersions: DfVersionRepository;
     readonly dfAuditLogs: DfAuditLogRepository;
+    readonly qaEngagements: QaEngagementRepository;
+    readonly qaTestStrategies: QaTestStrategyRepository;
+    readonly qaUnitTestPlans: QaUnitTestPlanRepository;
+    readonly qaIntegrationTestPlans: QaIntegrationTestPlanRepository;
+    readonly qaE2eTestPlans: QaE2eTestPlanRepository;
+    readonly qaRegressionAnalyses: QaRegressionAnalysisRepository;
+    readonly qaRiskBasedTests: QaRiskBasedTestRepository;
+    readonly qaSecurityValidations: QaSecurityValidationRepository;
+    readonly qaPerformanceValidations: QaPerformanceValidationRepository;
+    readonly qaAccessibilityValidations: QaAccessibilityValidationRepository;
+    readonly qaApiValidations: QaApiValidationRepository;
+    readonly qaDatabaseValidations: QaDatabaseValidationRepository;
+    readonly qaUiValidations: QaUiValidationRepository;
+    readonly qaBugTriages: QaBugTriageRepository;
+    readonly qaDefectAnalyses: QaDefectAnalysisRepository;
+    readonly qaCoverageAnalytics: QaCoverageAnalyticsRepository;
+    readonly qaReleaseReadiness: QaReleaseReadinessRepository;
+    readonly qaQualityScores: QaQualityScoreRepository;
+    readonly qaAuditLogs: QaAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -669,6 +709,25 @@ export class DatabaseAccessLayer {
         this.dfBuildArtifacts = new DfBuildArtifactRepository();
         this.dfVersions = new DfVersionRepository();
         this.dfAuditLogs = new DfAuditLogRepository();
+        this.qaEngagements = new QaEngagementRepository();
+        this.qaTestStrategies = new QaTestStrategyRepository();
+        this.qaUnitTestPlans = new QaUnitTestPlanRepository();
+        this.qaIntegrationTestPlans = new QaIntegrationTestPlanRepository();
+        this.qaE2eTestPlans = new QaE2eTestPlanRepository();
+        this.qaRegressionAnalyses = new QaRegressionAnalysisRepository();
+        this.qaRiskBasedTests = new QaRiskBasedTestRepository();
+        this.qaSecurityValidations = new QaSecurityValidationRepository();
+        this.qaPerformanceValidations = new QaPerformanceValidationRepository();
+        this.qaAccessibilityValidations = new QaAccessibilityValidationRepository();
+        this.qaApiValidations = new QaApiValidationRepository();
+        this.qaDatabaseValidations = new QaDatabaseValidationRepository();
+        this.qaUiValidations = new QaUiValidationRepository();
+        this.qaBugTriages = new QaBugTriageRepository();
+        this.qaDefectAnalyses = new QaDefectAnalysisRepository();
+        this.qaCoverageAnalytics = new QaCoverageAnalyticsRepository();
+        this.qaReleaseReadiness = new QaReleaseReadinessRepository();
+        this.qaQualityScores = new QaQualityScoreRepository();
+        this.qaAuditLogs = new QaAuditLogRepository();
     }
 }
 

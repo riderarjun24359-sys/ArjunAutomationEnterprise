@@ -19,6 +19,7 @@ export const ROUTES = {
     businessAnalyst: "/business-analyst",
     solutionArchitect: "/solution-architect",
     developmentFactory: "/development-factory",
+    qaEngineer: "/qa-engineer",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

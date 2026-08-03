@@ -23,6 +23,7 @@ const protectedRoutes = [
     ROUTES.businessAnalyst,
     ROUTES.solutionArchitect,
     ROUTES.developmentFactory,
+    ROUTES.qaEngineer,
 ];
 
 const authRoutes = [

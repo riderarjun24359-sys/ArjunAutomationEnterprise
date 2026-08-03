@@ -2778,3 +2778,268 @@ export interface DbDfAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbQaEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    df_engagement_id?: string | null;
+    brd_id?: string | null;
+    frs_id?: string | null;
+    solution_architecture_id?: string | null;
+    work_package_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaTestStrategy {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    strategy_key: string;
+    title: string;
+    scope: string;
+    approach: string;
+    test_levels: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaUnitTestPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    target_modules: string;
+    test_cases: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaIntegrationTestPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    integration_points: unknown[];
+    test_scenarios: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaE2eTestPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    user_journeys: unknown[];
+    test_scenarios: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaRegressionAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    name: string;
+    affected_areas: unknown[];
+    regression_risks: string;
+    recommendations: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaRiskBasedTest {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    test_key: string;
+    name: string;
+    risk_level: string;
+    risk_factors: unknown[];
+    test_priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaSecurityValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    security_checks: unknown[];
+    findings: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaPerformanceValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    performance_targets: unknown[];
+    results: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaAccessibilityValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    wcag_level: string;
+    checks: unknown[];
+    findings: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaApiValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    endpoints: unknown[];
+    validation_results: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaDatabaseValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    schema_checks: unknown[];
+    data_integrity_checks: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaUiValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    ui_components: unknown[];
+    validation_results: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaBugTriage {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    bug_key: string;
+    title: string;
+    severity: string;
+    priority: string;
+    triage_notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaDefectAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    title: string;
+    root_cause: string;
+    impact_analysis: string;
+    remediation: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaCoverageAnalytics {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analytics_key: string;
+    name: string;
+    coverage_metrics: unknown[];
+    coverage_percent: number;
+    gaps: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaReleaseReadiness {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    assessment_key: string;
+    title: string;
+    readiness_criteria: unknown[];
+    blockers: unknown[];
+    recommendation: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaQualityScore {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    score_key: string;
+    name: string;
+    overall_score: number;
+    dimension_scores: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbQaAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}
