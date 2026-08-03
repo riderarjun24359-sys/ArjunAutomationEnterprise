@@ -43,6 +43,7 @@ export const ROUTES = {
     hospital: "/hospital",
     retail: "/retail",
     launchFoundation: "/launch-foundation",
+    companyFoundation: "/company-foundation",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

@@ -12604,3 +12604,431 @@ export interface DbElfAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbCmpCompanyHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    company_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpBrandProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    brand_status: string;
+    brand_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpLogoAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    asset_type: string;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpThemeConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    config_key: string;
+    config_name: string;
+    primary_color: string;
+    secondary_color: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpBrandAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    asset_category: string;
+    asset_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpWebsitePage {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    page_key: string;
+    page_title: string;
+    page_slug: string;
+    page_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpWebsiteFeature {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    feature_key: string;
+    feature_name: string;
+    feature_type: string;
+    feature_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpWebsiteSection {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    section_key: string;
+    section_name: string;
+    section_type: string;
+    section_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDemoRequest {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    request_key: string;
+    request_name: string;
+    request_status: string;
+    contact_email: string;
+    requested_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPricingPlan {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    plan_key: string;
+    plan_name: string;
+    plan_tier: string;
+    base_price: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPricingPackage {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    package_key: string;
+    package_name: string;
+    package_type: string;
+    package_price: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpModulePricing {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    pricing_key: string;
+    module_name: string;
+    price_amount: number;
+    billing_cycle: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDiscountRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    discount_percent: number;
+    rule_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpProposal {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    proposal_key: string;
+    proposal_name: string;
+    proposal_status: string;
+    proposal_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpProposalDocument {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    document_key: string;
+    document_name: string;
+    document_type: string;
+    document_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpProposalContract {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    contract_key: string;
+    contract_name: string;
+    contract_status: string;
+    contract_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpProposalHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_type: string;
+    changed_at: string;
+    change_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPortalDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_type: string;
+    widget_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPortalSubscription {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    subscription_key: string;
+    plan_name: string;
+    subscription_status: string;
+    seat_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPortalBilling {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    billing_key: string;
+    billing_type: string;
+    billing_amount: number;
+    billing_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpPortalSupport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    support_key: string;
+    support_title: string;
+    support_status: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDocGuide {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    guide_key: string;
+    guide_title: string;
+    guide_category: string;
+    guide_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDocApiReference {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    reference_key: string;
+    reference_name: string;
+    api_version: string;
+    endpoint_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDocVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_name: string;
+    version_number: string;
+    released_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDemoOrganization {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    org_key: string;
+    org_name: string;
+    org_type: string;
+    region: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDemoDataSet {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dataset_key: string;
+    dataset_name: string;
+    record_count: number;
+    dataset_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpDemoUser {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    user_key: string;
+    user_name: string;
+    user_role: string;
+    user_email: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpCompanyMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    website_analytics_score: number;
+    demo_request_count: number;
+    active_customer_count: number;
+    revenue_total: number;
+    proposal_pending_count: number;
+    support_open_count: number;
+    platform_health_score: number;
+    overall_company_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpCompanyHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    website_status: string;
+    revenue_status: string;
+    support_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpExecutiveKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpCompanyFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCmpAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

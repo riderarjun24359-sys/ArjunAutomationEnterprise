@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T22:43:58.841Z
+-- Generated: 2026-08-03T23:13:41.484Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (42):
+--   Migrations (43):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -48,7 +48,8 @@
 --     - 202608020040_enterprise_hospital_business_os.sql
 --     - 202608020041_enterprise_retail_business_os.sql
 --     - 202608020042_enterprise_launch_foundation.sql
---   Seeds (42):
+--     - 202608020043_company_foundation.sql
+--   Seeds (43):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -91,9 +92,10 @@
 --     - 040_enterprise_hospital_business_os_seed.sql
 --     - 041_enterprise_retail_business_os_seed.sql
 --     - 042_enterprise_launch_foundation_seed.sql
+--     - 043_company_foundation_seed.sql
 --
--- Includes through V2 Program C Sprint 4:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation
+-- Includes through V2 Program F Capability Wave 1:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -19294,6 +19296,634 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020043_company_foundation.sql
+-- =============================================================================
+-- V2 Program F Capability Wave 1: Company Foundation
+
+-- CompanyHub
+create table if not exists public.cmp_company_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  company_tier text not null default 'enterprise',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- BrandProfile
+create table if not exists public.cmp_brand_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  brand_status text not null default 'draft',
+  brand_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- LogoAsset
+create table if not exists public.cmp_logo_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  asset_type text not null default 'primary',
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- ThemeConfig
+create table if not exists public.cmp_theme_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  config_key text not null,
+  config_name text not null default '',
+  primary_color text not null default '#059669',
+  secondary_color text not null default '#047857',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, config_key)
+);
+
+-- BrandAsset
+create table if not exists public.cmp_brand_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  asset_category text not null default 'marketing',
+  asset_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- WebsitePage
+create table if not exists public.cmp_website_pages (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  page_key text not null,
+  page_title text not null default '',
+  page_slug text not null default '',
+  page_status text not null default 'draft',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, page_key)
+);
+
+-- WebsiteFeature
+create table if not exists public.cmp_website_features (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  feature_key text not null,
+  feature_name text not null default '',
+  feature_type text not null default 'core',
+  feature_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, feature_key)
+);
+
+-- WebsiteSection
+create table if not exists public.cmp_website_sections (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  section_key text not null,
+  section_name text not null default '',
+  section_type text not null default 'hero',
+  section_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, section_key)
+);
+
+-- DemoRequest
+create table if not exists public.cmp_demo_requests (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  request_key text not null,
+  request_name text not null default '',
+  request_status text not null default 'pending',
+  contact_email text not null default '',
+  requested_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, request_key)
+);
+
+-- PricingPlan
+create table if not exists public.cmp_pricing_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  plan_key text not null,
+  plan_name text not null default '',
+  plan_tier text not null default 'standard',
+  base_price numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, plan_key)
+);
+
+-- PricingPackage
+create table if not exists public.cmp_pricing_packages (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  package_key text not null,
+  package_name text not null default '',
+  package_type text not null default 'bundle',
+  package_price numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, package_key)
+);
+
+-- ModulePricing
+create table if not exists public.cmp_module_pricing (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  pricing_key text not null,
+  module_name text not null default '',
+  price_amount numeric(12, 2) not null default 0,
+  billing_cycle text not null default 'monthly',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, pricing_key)
+);
+
+-- DiscountRule
+create table if not exists public.cmp_discount_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  discount_percent numeric(5, 2) not null default 0,
+  rule_type text not null default 'volume',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- Proposal
+create table if not exists public.cmp_proposals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  proposal_key text not null,
+  proposal_name text not null default '',
+  proposal_status text not null default 'draft',
+  proposal_value numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, proposal_key)
+);
+
+-- ProposalDocument
+create table if not exists public.cmp_proposal_documents (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  document_key text not null,
+  document_name text not null default '',
+  document_type text not null default 'pdf',
+  document_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, document_key)
+);
+
+-- ProposalContract
+create table if not exists public.cmp_proposal_contracts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  contract_key text not null,
+  contract_name text not null default '',
+  contract_status text not null default 'pending',
+  contract_value numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, contract_key)
+);
+
+-- ProposalHistory
+create table if not exists public.cmp_proposal_history (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  history_key text not null,
+  history_type text not null default 'revision',
+  changed_at timestamptz not null default now(),
+  change_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- PortalDashboard
+create table if not exists public.cmp_portal_dashboards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  dashboard_key text not null,
+  dashboard_name text not null default '',
+  dashboard_type text not null default 'customer',
+  widget_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dashboard_key)
+);
+
+-- PortalSubscription
+create table if not exists public.cmp_portal_subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  subscription_key text not null,
+  plan_name text not null default '',
+  subscription_status text not null default 'active',
+  seat_count integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, subscription_key)
+);
+
+-- PortalBilling
+create table if not exists public.cmp_portal_billing (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  billing_key text not null,
+  billing_type text not null default 'invoice',
+  billing_amount numeric(12, 2) not null default 0,
+  billing_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, billing_key)
+);
+
+-- PortalSupport
+create table if not exists public.cmp_portal_support (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  support_key text not null,
+  support_title text not null default '',
+  support_status text not null default 'open',
+  priority text not null default 'normal',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, support_key)
+);
+
+-- DocGuide
+create table if not exists public.cmp_doc_guides (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  guide_key text not null,
+  guide_title text not null default '',
+  guide_category text not null default 'getting_started',
+  guide_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, guide_key)
+);
+
+-- DocApiReference
+create table if not exists public.cmp_doc_api_references (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  reference_key text not null,
+  reference_name text not null default '',
+  api_version text not null default 'v1',
+  endpoint_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, reference_key)
+);
+
+-- DocVersion
+create table if not exists public.cmp_doc_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  version_key text not null,
+  version_name text not null default '',
+  version_number text not null default '1.0.0',
+  released_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- DemoOrganization
+create table if not exists public.cmp_demo_organizations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  org_key text not null,
+  org_name text not null default '',
+  org_type text not null default 'sandbox',
+  region text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, org_key)
+);
+
+-- DemoDataSet
+create table if not exists public.cmp_demo_data_sets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  dataset_key text not null,
+  dataset_name text not null default '',
+  record_count integer not null default 0,
+  dataset_type text not null default 'sample',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dataset_key)
+);
+
+-- DemoUser
+create table if not exists public.cmp_demo_users (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  user_key text not null,
+  user_name text not null default '',
+  user_role text not null default 'viewer',
+  user_email text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, user_key)
+);
+
+-- CompanyMetric
+create table if not exists public.cmp_company_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  website_analytics_score numeric(5, 2) not null default 100,
+  demo_request_count integer not null default 0,
+  active_customer_count integer not null default 0,
+  revenue_total numeric(14, 2) not null default 0,
+  proposal_pending_count integer not null default 0,
+  support_open_count integer not null default 0,
+  platform_health_score numeric(5, 2) not null default 100,
+  overall_company_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- CompanyHealth
+create table if not exists public.cmp_company_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  website_status text not null default 'healthy',
+  revenue_status text not null default 'healthy',
+  support_status text not null default 'healthy',
+  security_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveKpi
+create table if not exists public.cmp_executive_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'executive',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- CompanyFailure
+create table if not exists public.cmp_company_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'website',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.cmp_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_cmp_company_hubs_org on public.cmp_company_hubs(organization_id);
+create index if not exists idx_cmp_brand_profiles_org on public.cmp_brand_profiles(organization_id);
+create index if not exists idx_cmp_brand_profiles_hub on public.cmp_brand_profiles(hub_id);
+create index if not exists idx_cmp_logo_assets_org on public.cmp_logo_assets(organization_id);
+create index if not exists idx_cmp_logo_assets_hub on public.cmp_logo_assets(hub_id);
+create index if not exists idx_cmp_theme_configs_org on public.cmp_theme_configs(organization_id);
+create index if not exists idx_cmp_theme_configs_hub on public.cmp_theme_configs(hub_id);
+create index if not exists idx_cmp_brand_assets_org on public.cmp_brand_assets(organization_id);
+create index if not exists idx_cmp_brand_assets_hub on public.cmp_brand_assets(hub_id);
+create index if not exists idx_cmp_website_pages_org on public.cmp_website_pages(organization_id);
+create index if not exists idx_cmp_website_pages_hub on public.cmp_website_pages(hub_id);
+create index if not exists idx_cmp_website_features_org on public.cmp_website_features(organization_id);
+create index if not exists idx_cmp_website_features_hub on public.cmp_website_features(hub_id);
+create index if not exists idx_cmp_website_sections_org on public.cmp_website_sections(organization_id);
+create index if not exists idx_cmp_website_sections_hub on public.cmp_website_sections(hub_id);
+create index if not exists idx_cmp_demo_requests_org on public.cmp_demo_requests(organization_id);
+create index if not exists idx_cmp_demo_requests_hub on public.cmp_demo_requests(hub_id);
+create index if not exists idx_cmp_pricing_plans_org on public.cmp_pricing_plans(organization_id);
+create index if not exists idx_cmp_pricing_plans_hub on public.cmp_pricing_plans(hub_id);
+create index if not exists idx_cmp_pricing_packages_org on public.cmp_pricing_packages(organization_id);
+create index if not exists idx_cmp_pricing_packages_hub on public.cmp_pricing_packages(hub_id);
+create index if not exists idx_cmp_module_pricing_org on public.cmp_module_pricing(organization_id);
+create index if not exists idx_cmp_module_pricing_hub on public.cmp_module_pricing(hub_id);
+create index if not exists idx_cmp_discount_rules_org on public.cmp_discount_rules(organization_id);
+create index if not exists idx_cmp_discount_rules_hub on public.cmp_discount_rules(hub_id);
+create index if not exists idx_cmp_proposals_org on public.cmp_proposals(organization_id);
+create index if not exists idx_cmp_proposals_hub on public.cmp_proposals(hub_id);
+create index if not exists idx_cmp_proposal_documents_org on public.cmp_proposal_documents(organization_id);
+create index if not exists idx_cmp_proposal_documents_hub on public.cmp_proposal_documents(hub_id);
+create index if not exists idx_cmp_proposal_contracts_org on public.cmp_proposal_contracts(organization_id);
+create index if not exists idx_cmp_proposal_contracts_hub on public.cmp_proposal_contracts(hub_id);
+create index if not exists idx_cmp_proposal_history_org on public.cmp_proposal_history(organization_id);
+create index if not exists idx_cmp_proposal_history_hub on public.cmp_proposal_history(hub_id);
+create index if not exists idx_cmp_portal_dashboards_org on public.cmp_portal_dashboards(organization_id);
+create index if not exists idx_cmp_portal_dashboards_hub on public.cmp_portal_dashboards(hub_id);
+create index if not exists idx_cmp_portal_subscriptions_org on public.cmp_portal_subscriptions(organization_id);
+create index if not exists idx_cmp_portal_subscriptions_hub on public.cmp_portal_subscriptions(hub_id);
+create index if not exists idx_cmp_portal_billing_org on public.cmp_portal_billing(organization_id);
+create index if not exists idx_cmp_portal_billing_hub on public.cmp_portal_billing(hub_id);
+create index if not exists idx_cmp_portal_support_org on public.cmp_portal_support(organization_id);
+create index if not exists idx_cmp_portal_support_hub on public.cmp_portal_support(hub_id);
+create index if not exists idx_cmp_doc_guides_org on public.cmp_doc_guides(organization_id);
+create index if not exists idx_cmp_doc_guides_hub on public.cmp_doc_guides(hub_id);
+create index if not exists idx_cmp_doc_api_references_org on public.cmp_doc_api_references(organization_id);
+create index if not exists idx_cmp_doc_api_references_hub on public.cmp_doc_api_references(hub_id);
+create index if not exists idx_cmp_doc_versions_org on public.cmp_doc_versions(organization_id);
+create index if not exists idx_cmp_doc_versions_hub on public.cmp_doc_versions(hub_id);
+create index if not exists idx_cmp_demo_organizations_org on public.cmp_demo_organizations(organization_id);
+create index if not exists idx_cmp_demo_organizations_hub on public.cmp_demo_organizations(hub_id);
+create index if not exists idx_cmp_demo_data_sets_org on public.cmp_demo_data_sets(organization_id);
+create index if not exists idx_cmp_demo_data_sets_hub on public.cmp_demo_data_sets(hub_id);
+create index if not exists idx_cmp_demo_users_org on public.cmp_demo_users(organization_id);
+create index if not exists idx_cmp_demo_users_hub on public.cmp_demo_users(hub_id);
+create index if not exists idx_cmp_company_metrics_org on public.cmp_company_metrics(organization_id);
+create index if not exists idx_cmp_company_health_org on public.cmp_company_health(organization_id);
+create index if not exists idx_cmp_executive_kpis_org on public.cmp_executive_kpis(organization_id);
+create index if not exists idx_cmp_executive_kpis_hub on public.cmp_executive_kpis(hub_id);
+create index if not exists idx_cmp_company_failures_org on public.cmp_company_failures(organization_id);
+create index if not exists idx_cmp_company_failures_hub on public.cmp_company_failures(hub_id);
+create index if not exists idx_cmp_audit_logs_org on public.cmp_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'cmp_company_hubs','cmp_brand_profiles','cmp_logo_assets','cmp_theme_configs','cmp_brand_assets','cmp_website_pages','cmp_website_features','cmp_website_sections','cmp_demo_requests','cmp_pricing_plans','cmp_pricing_packages','cmp_module_pricing','cmp_discount_rules','cmp_proposals','cmp_proposal_documents','cmp_proposal_contracts','cmp_proposal_history','cmp_portal_dashboards','cmp_portal_subscriptions','cmp_portal_billing','cmp_portal_support','cmp_doc_guides','cmp_doc_api_references','cmp_doc_versions','cmp_demo_organizations','cmp_demo_data_sets','cmp_demo_users','cmp_company_metrics','cmp_company_health','cmp_executive_kpis','cmp_company_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.cmp_company_hubs enable row level security;
+alter table public.cmp_brand_profiles enable row level security;
+alter table public.cmp_logo_assets enable row level security;
+alter table public.cmp_theme_configs enable row level security;
+alter table public.cmp_brand_assets enable row level security;
+alter table public.cmp_website_pages enable row level security;
+alter table public.cmp_website_features enable row level security;
+alter table public.cmp_website_sections enable row level security;
+alter table public.cmp_demo_requests enable row level security;
+alter table public.cmp_pricing_plans enable row level security;
+alter table public.cmp_pricing_packages enable row level security;
+alter table public.cmp_module_pricing enable row level security;
+alter table public.cmp_discount_rules enable row level security;
+alter table public.cmp_proposals enable row level security;
+alter table public.cmp_proposal_documents enable row level security;
+alter table public.cmp_proposal_contracts enable row level security;
+alter table public.cmp_proposal_history enable row level security;
+alter table public.cmp_portal_dashboards enable row level security;
+alter table public.cmp_portal_subscriptions enable row level security;
+alter table public.cmp_portal_billing enable row level security;
+alter table public.cmp_portal_support enable row level security;
+alter table public.cmp_doc_guides enable row level security;
+alter table public.cmp_doc_api_references enable row level security;
+alter table public.cmp_doc_versions enable row level security;
+alter table public.cmp_demo_organizations enable row level security;
+alter table public.cmp_demo_data_sets enable row level security;
+alter table public.cmp_demo_users enable row level security;
+alter table public.cmp_company_metrics enable row level security;
+alter table public.cmp_company_health enable row level security;
+alter table public.cmp_executive_kpis enable row level security;
+alter table public.cmp_company_failures enable row level security;
+alter table public.cmp_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'cmp_company_hubs','cmp_brand_profiles','cmp_logo_assets','cmp_theme_configs','cmp_brand_assets','cmp_website_pages','cmp_website_features','cmp_website_sections','cmp_demo_requests','cmp_pricing_plans','cmp_pricing_packages','cmp_module_pricing','cmp_discount_rules','cmp_proposals','cmp_proposal_documents','cmp_proposal_contracts','cmp_proposal_history','cmp_portal_dashboards','cmp_portal_subscriptions','cmp_portal_billing','cmp_portal_support','cmp_doc_guides','cmp_doc_api_references','cmp_doc_versions','cmp_demo_organizations','cmp_demo_data_sets','cmp_demo_users','cmp_company_metrics','cmp_company_health','cmp_executive_kpis','cmp_company_failures','cmp_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('cmp.view', 'View company foundation data', 'company_foundation'),
+  ('cmp.manage', 'Manage brand, website, pricing, proposal, portal, documentation, demo, and dashboard outputs', 'company_foundation'),
+  ('cmp.approve', 'Approve company foundation gates and publishing actions', 'company_foundation'),
+  ('cmp.admin', 'Administer company foundation governance', 'company_foundation')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -24450,6 +25080,156 @@ on conflict (id) do nothing;
 
 insert into public.elf_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('043e011e-043e-043e-043e-043e011e2001', '11111111-1111-1111-1111-111111111111', 'launch_hub', 'seed', 'Enterprise launch foundation seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 043_company_foundation_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a343', '11111111-1111-1111-1111-111111111111', 'Company Foundation Orchestrator', 'company_foundation', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["brand","website","pricing","proposal","customer_portal","documentation","demo","dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a543', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a343', 'northstar-company-foundation-001', 'company_foundation', 'company_hub', '00730073-0073-0073-0073-007300730101', '{"objective":"Company foundation for northstar platform brand, website, pricing, and portal"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- G0 Company Hub
+insert into public.cmp_company_hubs (id, organization_id, hub_key, hub_name, environment, company_tier, status)
+values ('00730073-0073-0073-0073-007300730101', '11111111-1111-1111-1111-111111111111', 'northstar-company-foundation', 'Northstar Company Foundation Hub', 'production', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+-- G1 Brand
+insert into public.cmp_brand_profiles (id, organization_id, hub_id, profile_key, profile_name, brand_status, status)
+values ('04300100-0430-0430-0430-043001000101', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'brand-profile-0904', 'Northstar Brand Profile', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_logo_assets (id, organization_id, hub_id, asset_key, asset_name, asset_type, status)
+values ('04310101-0431-0431-0431-043101010201', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'logo-primary-0904', 'Northstar Primary Logo', 'primary', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_theme_configs (id, organization_id, hub_id, config_key, config_name, primary_color, status)
+values ('04320102-0432-0432-0432-043201020301', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'theme-emerald-0904', 'Emerald Theme', '#059669', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_brand_assets (id, organization_id, hub_id, asset_key, asset_name, asset_category, status)
+values ('04330103-0433-0433-0433-043301030401', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'brand-asset-0904', 'Marketing Banner', 'marketing', 'active')
+on conflict (id) do nothing;
+
+-- G2 Website
+insert into public.cmp_website_pages (id, organization_id, hub_id, page_key, page_title, page_slug, status)
+values ('04340104-0434-0434-0434-043401040501', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'page-home-0904', 'Home Page', 'home', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_website_features (id, organization_id, hub_id, feature_key, feature_name, feature_type, status)
+values ('04350105-0435-0435-0435-043501050601', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'feat-automation-0904', 'Automation Engine', 'core', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_website_sections (id, organization_id, hub_id, section_key, section_name, section_type, status)
+values ('04360106-0436-0436-0436-043601060701', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'section-hero-0904', 'Hero Section', 'hero', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_demo_requests (id, organization_id, hub_id, request_key, request_name, request_status, status)
+values ('04370107-0437-0437-0437-043701070801', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'demo-req-0904', 'Enterprise Demo Request', 'pending', 'active')
+on conflict (id) do nothing;
+
+-- G3 Pricing
+insert into public.cmp_pricing_plans (id, organization_id, hub_id, plan_key, plan_name, plan_tier, status)
+values ('04380108-0438-0438-0438-043801080901', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'plan-enterprise-0904', 'Enterprise Plan', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_pricing_packages (id, organization_id, hub_id, package_key, package_name, package_type, status)
+values ('04390109-0439-0439-0439-043901090a01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'pkg-platform-0904', 'Platform Bundle', 'bundle', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_module_pricing (id, organization_id, hub_id, pricing_key, module_name, price_amount, status)
+values ('043a010a-043a-043a-043a-043a010a0b01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'mod-price-0904', 'Workflow Engine', 499.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_discount_rules (id, organization_id, hub_id, rule_key, rule_name, discount_percent, status)
+values ('043b010b-043b-043b-043b-043b010b0c01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'disc-volume-0904', 'Volume Discount', 15.00, 'active')
+on conflict (id) do nothing;
+
+-- G4 Proposal
+insert into public.cmp_proposals (id, organization_id, hub_id, proposal_key, proposal_name, proposal_status, status)
+values ('043c010c-043c-043c-043c-043c010c0d01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'prop-enterprise-0904', 'Enterprise Proposal', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_proposal_documents (id, organization_id, hub_id, document_key, document_name, document_type, status)
+values ('043d010d-043d-043d-043d-043d010d0e01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'doc-proposal-0904', 'Proposal PDF', 'pdf', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_proposal_contracts (id, organization_id, hub_id, contract_key, contract_name, contract_status, status)
+values ('043e010e-043e-043e-043e-043e010e0f01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'contract-0904', 'Enterprise Contract', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_proposal_history (id, organization_id, hub_id, history_key, history_type, status)
+values ('043f010f-043f-043f-043f-043f010f1001', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'hist-revision-0904', 'revision', 'active')
+on conflict (id) do nothing;
+
+-- G5 Customer Portal
+insert into public.cmp_portal_dashboards (id, organization_id, hub_id, dashboard_key, dashboard_name, dashboard_type, status)
+values ('04400110-0440-0440-0440-044001101101', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'dash-customer-0904', 'Customer Dashboard', 'customer', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_portal_subscriptions (id, organization_id, hub_id, subscription_key, plan_name, subscription_status, status)
+values ('04410111-0441-0441-0441-044101111201', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'sub-portal-0904', 'Enterprise Plan', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_portal_billing (id, organization_id, hub_id, billing_key, billing_type, billing_amount, status)
+values ('04420112-0442-0442-0442-044201121301', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'bill-invoice-0904', 'invoice', 4999.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_portal_support (id, organization_id, hub_id, support_key, support_title, support_status, status)
+values ('04430113-0443-0443-0443-044301131401', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'support-0904', 'Portal Support Request', 'open', 'active')
+on conflict (id) do nothing;
+
+-- G6 Documentation
+insert into public.cmp_doc_guides (id, organization_id, hub_id, guide_key, guide_title, guide_category, status)
+values ('04440114-0444-0444-0444-044401141501', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'guide-start-0904', 'Getting Started Guide', 'getting_started', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_doc_api_references (id, organization_id, hub_id, reference_key, reference_name, api_version, status)
+values ('04450115-0445-0445-0445-044501151601', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'api-ref-0904', 'Platform API Reference', 'v1', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_doc_versions (id, organization_id, hub_id, version_key, version_name, version_number, status)
+values ('04460116-0446-0446-0446-044601161701', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'doc-ver-0904', 'Documentation v1', '1.0.0', 'active')
+on conflict (id) do nothing;
+
+-- G7 Demo
+insert into public.cmp_demo_organizations (id, organization_id, hub_id, org_key, org_name, org_type, status)
+values ('04470117-0447-0447-0447-044701171801', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'demo-org-0904', 'Demo Sandbox Org', 'sandbox', 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_demo_data_sets (id, organization_id, hub_id, dataset_key, dataset_name, record_count, status)
+values ('04480118-0448-0448-0448-044801181901', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'demo-dataset-0904', 'Sample Customer Data', 500, 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_demo_users (id, organization_id, hub_id, user_key, user_name, user_role, status)
+values ('04490119-0449-0449-0449-044901191a01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'demo-user-0904', 'Demo Admin', 'admin', 'active')
+on conflict (id) do nothing;
+
+-- G8 Dashboard
+insert into public.cmp_company_metrics (id, organization_id, metrics_key, website_analytics_score, demo_request_count, active_customer_count, revenue_total, proposal_pending_count, support_open_count, platform_health_score, overall_company_score, status)
+values ('044a011a-044a-044a-044a-044a011a1b01', '11111111-1111-1111-1111-111111111111', 'cmp-metrics-0904', 94.00, 12, 45, 125000.00, 5, 3, 96.00, 95.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_company_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, website_status, revenue_status, support_status, security_status, summary, status)
+values ('044b011b-044b-044b-044b-044b011b1c01', '11111111-1111-1111-1111-111111111111', 'cmp-health-0904', 95.00, false, 'healthy', 'healthy', 'healthy', 'healthy', 'Company foundation operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.cmp_executive_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('044c011c-044c-044c-044c-044c011c1d01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'kpi-exec-0904', 'Executive KPI Score', 97.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cmp_company_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('044d011d-044d-044d-044d-044d011d1e01', '11111111-1111-1111-1111-111111111111', '00730073-0073-0073-0073-007300730101', 'fail-website-0904', 'website', 'PAGE_RENDER_ERROR', 'Home page render timeout', 'open')
+on conflict (id) do nothing;
+
+insert into public.cmp_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('044e011e-044e-044e-044e-044e011e1f01', '11111111-1111-1111-1111-111111111111', 'company_hub', 'seed', 'Company foundation seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

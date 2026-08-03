@@ -85,6 +85,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Hospital OS", href: ROUTES.hospital, description: "Enterprise hospital business operating system: foundation, patient, clinical operations, pharmacy, lab, finance, patient experience, analytics, and hospital dashboard", icon: HeartPulse, section: "secondary" },
     { label: "Retail OS", href: ROUTES.retail, description: "Enterprise retail business operating system: foundation, product, sales and POS, inventory, customer, finance, analytics, and retail dashboard", icon: ShoppingBag, section: "secondary" },
     { label: "Launch Foundation", href: ROUTES.launchFoundation, description: "Enterprise launch foundation: provisioning, config wizard, data import, go-live, customer success, support ops, platform admin, and mission control", icon: Rocket, section: "secondary" },
+    { label: "Company Foundation", href: ROUTES.companyFoundation, description: "Company foundation: brand, website, pricing, proposal, customer portal, documentation, demo, and dashboard", icon: Building2, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },

@@ -991,6 +991,41 @@ import {
     ElfLaunchFailureRepository,
     ElfAuditLogRepository,
 } from "@/src/modules/database/repositories/launch-foundation-repositories";
+import {
+    CmpCompanyHubRepository,
+    CmpBrandProfileRepository,
+    CmpLogoAssetRepository,
+    CmpThemeConfigRepository,
+    CmpBrandAssetRepository,
+    CmpWebsitePageRepository,
+    CmpWebsiteFeatureRepository,
+    CmpWebsiteSectionRepository,
+    CmpDemoRequestRepository,
+    CmpPricingPlanRepository,
+    CmpPricingPackageRepository,
+    CmpModulePricingRepository,
+    CmpDiscountRuleRepository,
+    CmpProposalRepository,
+    CmpProposalDocumentRepository,
+    CmpProposalContractRepository,
+    CmpProposalHistoryRepository,
+    CmpPortalDashboardRepository,
+    CmpPortalSubscriptionRepository,
+    CmpPortalBillingRepository,
+    CmpPortalSupportRepository,
+    CmpDocGuideRepository,
+    CmpDocApiReferenceRepository,
+    CmpDocVersionRepository,
+    CmpDemoOrganizationRepository,
+    CmpDemoDataSetRepository,
+    CmpDemoUserRepository,
+    CmpCompanyMetricRepository,
+    CmpCompanyHealthRepository,
+    CmpExecutiveKpiRepository,
+    CmpCompanyFailureRepository,
+    CmpAuditLogRepository,
+} from "@/src/modules/database/repositories/company-foundation-repositories";
+
 
 
 
@@ -1920,6 +1955,38 @@ export class DatabaseAccessLayer {
     readonly elfMissionControlKpis: ElfMissionControlKpiRepository;
     readonly elfLaunchFailures: ElfLaunchFailureRepository;
     readonly elfAuditLogs: ElfAuditLogRepository;
+    readonly cmpCompanyHubs: CmpCompanyHubRepository;
+    readonly cmpBrandProfiles: CmpBrandProfileRepository;
+    readonly cmpLogoAssets: CmpLogoAssetRepository;
+    readonly cmpThemeConfigs: CmpThemeConfigRepository;
+    readonly cmpBrandAssets: CmpBrandAssetRepository;
+    readonly cmpWebsitePages: CmpWebsitePageRepository;
+    readonly cmpWebsiteFeatures: CmpWebsiteFeatureRepository;
+    readonly cmpWebsiteSections: CmpWebsiteSectionRepository;
+    readonly cmpDemoRequests: CmpDemoRequestRepository;
+    readonly cmpPricingPlans: CmpPricingPlanRepository;
+    readonly cmpPricingPackages: CmpPricingPackageRepository;
+    readonly cmpModulePricing: CmpModulePricingRepository;
+    readonly cmpDiscountRules: CmpDiscountRuleRepository;
+    readonly cmpProposals: CmpProposalRepository;
+    readonly cmpProposalDocuments: CmpProposalDocumentRepository;
+    readonly cmpProposalContracts: CmpProposalContractRepository;
+    readonly cmpProposalHistory: CmpProposalHistoryRepository;
+    readonly cmpPortalDashboards: CmpPortalDashboardRepository;
+    readonly cmpPortalSubscriptions: CmpPortalSubscriptionRepository;
+    readonly cmpPortalBilling: CmpPortalBillingRepository;
+    readonly cmpPortalSupport: CmpPortalSupportRepository;
+    readonly cmpDocGuides: CmpDocGuideRepository;
+    readonly cmpDocApiReferences: CmpDocApiReferenceRepository;
+    readonly cmpDocVersions: CmpDocVersionRepository;
+    readonly cmpDemoOrganizations: CmpDemoOrganizationRepository;
+    readonly cmpDemoDataSets: CmpDemoDataSetRepository;
+    readonly cmpDemoUsers: CmpDemoUserRepository;
+    readonly cmpCompanyMetrics: CmpCompanyMetricRepository;
+    readonly cmpCompanyHealth: CmpCompanyHealthRepository;
+    readonly cmpExecutiveKpis: CmpExecutiveKpiRepository;
+    readonly cmpCompanyFailures: CmpCompanyFailureRepository;
+    readonly cmpAuditLogs: CmpAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2839,6 +2906,38 @@ export class DatabaseAccessLayer {
         this.elfMissionControlKpis = new ElfMissionControlKpiRepository();
         this.elfLaunchFailures = new ElfLaunchFailureRepository();
         this.elfAuditLogs = new ElfAuditLogRepository();
+        this.cmpCompanyHubs = new CmpCompanyHubRepository();
+        this.cmpBrandProfiles = new CmpBrandProfileRepository();
+        this.cmpLogoAssets = new CmpLogoAssetRepository();
+        this.cmpThemeConfigs = new CmpThemeConfigRepository();
+        this.cmpBrandAssets = new CmpBrandAssetRepository();
+        this.cmpWebsitePages = new CmpWebsitePageRepository();
+        this.cmpWebsiteFeatures = new CmpWebsiteFeatureRepository();
+        this.cmpWebsiteSections = new CmpWebsiteSectionRepository();
+        this.cmpDemoRequests = new CmpDemoRequestRepository();
+        this.cmpPricingPlans = new CmpPricingPlanRepository();
+        this.cmpPricingPackages = new CmpPricingPackageRepository();
+        this.cmpModulePricing = new CmpModulePricingRepository();
+        this.cmpDiscountRules = new CmpDiscountRuleRepository();
+        this.cmpProposals = new CmpProposalRepository();
+        this.cmpProposalDocuments = new CmpProposalDocumentRepository();
+        this.cmpProposalContracts = new CmpProposalContractRepository();
+        this.cmpProposalHistory = new CmpProposalHistoryRepository();
+        this.cmpPortalDashboards = new CmpPortalDashboardRepository();
+        this.cmpPortalSubscriptions = new CmpPortalSubscriptionRepository();
+        this.cmpPortalBilling = new CmpPortalBillingRepository();
+        this.cmpPortalSupport = new CmpPortalSupportRepository();
+        this.cmpDocGuides = new CmpDocGuideRepository();
+        this.cmpDocApiReferences = new CmpDocApiReferenceRepository();
+        this.cmpDocVersions = new CmpDocVersionRepository();
+        this.cmpDemoOrganizations = new CmpDemoOrganizationRepository();
+        this.cmpDemoDataSets = new CmpDemoDataSetRepository();
+        this.cmpDemoUsers = new CmpDemoUserRepository();
+        this.cmpCompanyMetrics = new CmpCompanyMetricRepository();
+        this.cmpCompanyHealth = new CmpCompanyHealthRepository();
+        this.cmpExecutiveKpis = new CmpExecutiveKpiRepository();
+        this.cmpCompanyFailures = new CmpCompanyFailureRepository();
+        this.cmpAuditLogs = new CmpAuditLogRepository();
     }
 }
 

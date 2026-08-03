@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 922 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_*)
+// 954 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -930,6 +930,38 @@ const requiredTables = [
     "elf_mission_control_kpis",
     "elf_launch_failures",
     "elf_audit_logs",
+    "cmp_company_hubs",
+    "cmp_brand_profiles",
+    "cmp_logo_assets",
+    "cmp_theme_configs",
+    "cmp_brand_assets",
+    "cmp_website_pages",
+    "cmp_website_features",
+    "cmp_website_sections",
+    "cmp_demo_requests",
+    "cmp_pricing_plans",
+    "cmp_pricing_packages",
+    "cmp_module_pricing",
+    "cmp_discount_rules",
+    "cmp_proposals",
+    "cmp_proposal_documents",
+    "cmp_proposal_contracts",
+    "cmp_proposal_history",
+    "cmp_portal_dashboards",
+    "cmp_portal_subscriptions",
+    "cmp_portal_billing",
+    "cmp_portal_support",
+    "cmp_doc_guides",
+    "cmp_doc_api_references",
+    "cmp_doc_versions",
+    "cmp_demo_organizations",
+    "cmp_demo_data_sets",
+    "cmp_demo_users",
+    "cmp_company_metrics",
+    "cmp_company_health",
+    "cmp_executive_kpis",
+    "cmp_company_failures",
+    "cmp_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
