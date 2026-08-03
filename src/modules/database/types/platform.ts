@@ -11295,3 +11295,439 @@ export interface DbSchAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbHspHospitalHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    hospital_code: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspCampus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campus_key: string;
+    campus_name: string;
+    campus_type: string;
+    address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspDepartment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    department_key: string;
+    department_name: string;
+    department_type: string;
+    floor_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspWard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    ward_key: string;
+    ward_name: string;
+    ward_type: string;
+    capacity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalBed {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    bed_key: string;
+    bed_number: string;
+    bed_status: string;
+    ward_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPatientRegistration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    registration_key: string;
+    registration_name: string;
+    registration_status: string;
+    patient_type: string;
+    registered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPatientProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    blood_group: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspMedicalHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_name: string;
+    history_type: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspInsurancePolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    policy_type: string;
+    coverage_amount: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspAppointment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    appointment_key: string;
+    appointment_name: string;
+    appointment_status: string;
+    appointment_type: string;
+    scheduled_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspOpdVisit {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    visit_key: string;
+    visit_name: string;
+    visit_status: string;
+    visit_type: string;
+    visited_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspIpdAdmission {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    admission_key: string;
+    admission_name: string;
+    admission_status: string;
+    ward_ref: string;
+    admitted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspClinicalNote {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    note_key: string;
+    note_name: string;
+    note_type: string;
+    note_content: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPharmacyInventory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    inventory_key: string;
+    inventory_name: string;
+    inventory_type: string;
+    stock_quantity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPrescription {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    prescription_key: string;
+    prescription_name: string;
+    prescription_status: string;
+    prescribed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspLabOrder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    order_key: string;
+    order_name: string;
+    order_status: string;
+    order_type: string;
+    ordered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspLabResult {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    result_key: string;
+    result_name: string;
+    result_status: string;
+    result_value: string;
+    resulted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalBilling {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    billing_key: string;
+    billing_name: string;
+    billing_amount: number;
+    billing_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspInsuranceClaim {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    claim_key: string;
+    claim_name: string;
+    claim_status: string;
+    claim_amount: number;
+    submitted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalInvoice {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    invoice_key: string;
+    invoice_name: string;
+    invoice_amount: number;
+    invoice_status: string;
+    due_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalPayment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    payment_key: string;
+    payment_name: string;
+    payment_amount: number;
+    payment_status: string;
+    paid_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPatientNotification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    notification_key: string;
+    notification_title: string;
+    notification_type: string;
+    sent_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspMedicalReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_name: string;
+    report_type: string;
+    generated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspPatientFeedback {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    feedback_key: string;
+    feedback_name: string;
+    feedback_score: number;
+    feedback_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspAdmissionsAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspOccupancyAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspRevenueAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    admissions_count: number;
+    discharge_count: number;
+    bed_occupancy_rate: number;
+    revenue_total: number;
+    department_performance_score: number;
+    patient_satisfaction_score: number;
+    operational_health_score: number;
+    overall_hospital_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    bed_utilization_status: string;
+    financial_health_status: string;
+    operational_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspExecutiveKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspHospitalFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbHspAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

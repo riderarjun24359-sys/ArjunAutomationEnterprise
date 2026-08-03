@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 826 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_*)
+// 858 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -834,6 +834,38 @@ const requiredTables = [
     "sch_executive_kpis",
     "sch_school_failures",
     "sch_audit_logs",
+    "hsp_hospital_hubs",
+    "hsp_campuses",
+    "hsp_departments",
+    "hsp_wards",
+    "hsp_hospital_beds",
+    "hsp_patient_registrations",
+    "hsp_patient_profiles",
+    "hsp_medical_histories",
+    "hsp_insurance_policies",
+    "hsp_appointments",
+    "hsp_opd_visits",
+    "hsp_ipd_admissions",
+    "hsp_clinical_notes",
+    "hsp_pharmacy_inventory",
+    "hsp_prescriptions",
+    "hsp_lab_orders",
+    "hsp_lab_results",
+    "hsp_hospital_billing",
+    "hsp_insurance_claims",
+    "hsp_hospital_invoices",
+    "hsp_hospital_payments",
+    "hsp_patient_notifications",
+    "hsp_medical_reports",
+    "hsp_patient_feedback",
+    "hsp_admissions_analytics",
+    "hsp_occupancy_analytics",
+    "hsp_revenue_analytics",
+    "hsp_hospital_metrics",
+    "hsp_hospital_health",
+    "hsp_executive_kpis",
+    "hsp_hospital_failures",
+    "hsp_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

@@ -44,6 +44,7 @@ const protectedRoutes = [
     ROUTES.documentEngine,
     ROUTES.restaurant,
     ROUTES.school,
+    ROUTES.hospital,
 ];
 
 const authRoutes = [

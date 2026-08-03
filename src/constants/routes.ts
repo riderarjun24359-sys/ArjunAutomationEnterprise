@@ -40,6 +40,7 @@ export const ROUTES = {
     documentEngine: "/document-engine",
     restaurant: "/restaurant",
     school: "/school",
+    hospital: "/hospital",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

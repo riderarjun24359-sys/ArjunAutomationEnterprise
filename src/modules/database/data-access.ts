@@ -889,6 +889,41 @@ import {
     SchSchoolFailureRepository,
     SchAuditLogRepository,
 } from "@/src/modules/database/repositories/school-repositories";
+import {
+    HspHospitalHubRepository,
+    HspCampusRepository,
+    HspDepartmentRepository,
+    HspWardRepository,
+    HspHospitalBedRepository,
+    HspPatientRegistrationRepository,
+    HspPatientProfileRepository,
+    HspMedicalHistoryRepository,
+    HspInsurancePolicyRepository,
+    HspAppointmentRepository,
+    HspOpdVisitRepository,
+    HspIpdAdmissionRepository,
+    HspClinicalNoteRepository,
+    HspPharmacyInventoryRepository,
+    HspPrescriptionRepository,
+    HspLabOrderRepository,
+    HspLabResultRepository,
+    HspHospitalBillingRepository,
+    HspInsuranceClaimRepository,
+    HspHospitalInvoiceRepository,
+    HspHospitalPaymentRepository,
+    HspPatientNotificationRepository,
+    HspMedicalReportRepository,
+    HspPatientFeedbackRepository,
+    HspAdmissionsAnalyticsRepository,
+    HspOccupancyAnalyticsRepository,
+    HspRevenueAnalyticsRepository,
+    HspHospitalMetricRepository,
+    HspHospitalHealthRepository,
+    HspExecutiveKpiRepository,
+    HspHospitalFailureRepository,
+    HspAuditLogRepository,
+} from "@/src/modules/database/repositories/hospital-repositories";
+
 
 
 
@@ -1719,6 +1754,38 @@ export class DatabaseAccessLayer {
     readonly schExecutiveKpis: SchExecutiveKpiRepository;
     readonly schSchoolFailures: SchSchoolFailureRepository;
     readonly schAuditLogs: SchAuditLogRepository;
+    readonly hspHospitalHubs: HspHospitalHubRepository;
+    readonly hspCampuses: HspCampusRepository;
+    readonly hspDepartments: HspDepartmentRepository;
+    readonly hspWards: HspWardRepository;
+    readonly hspHospitalBeds: HspHospitalBedRepository;
+    readonly hspPatientRegistrations: HspPatientRegistrationRepository;
+    readonly hspPatientProfiles: HspPatientProfileRepository;
+    readonly hspMedicalHistories: HspMedicalHistoryRepository;
+    readonly hspInsurancePolicies: HspInsurancePolicyRepository;
+    readonly hspAppointments: HspAppointmentRepository;
+    readonly hspOpdVisits: HspOpdVisitRepository;
+    readonly hspIpdAdmissions: HspIpdAdmissionRepository;
+    readonly hspClinicalNotes: HspClinicalNoteRepository;
+    readonly hspPharmacyInventory: HspPharmacyInventoryRepository;
+    readonly hspPrescriptions: HspPrescriptionRepository;
+    readonly hspLabOrders: HspLabOrderRepository;
+    readonly hspLabResults: HspLabResultRepository;
+    readonly hspHospitalBilling: HspHospitalBillingRepository;
+    readonly hspInsuranceClaims: HspInsuranceClaimRepository;
+    readonly hspHospitalInvoices: HspHospitalInvoiceRepository;
+    readonly hspHospitalPayments: HspHospitalPaymentRepository;
+    readonly hspPatientNotifications: HspPatientNotificationRepository;
+    readonly hspMedicalReports: HspMedicalReportRepository;
+    readonly hspPatientFeedback: HspPatientFeedbackRepository;
+    readonly hspAdmissionsAnalytics: HspAdmissionsAnalyticsRepository;
+    readonly hspOccupancyAnalytics: HspOccupancyAnalyticsRepository;
+    readonly hspRevenueAnalytics: HspRevenueAnalyticsRepository;
+    readonly hspHospitalMetrics: HspHospitalMetricRepository;
+    readonly hspHospitalHealth: HspHospitalHealthRepository;
+    readonly hspExecutiveKpis: HspExecutiveKpiRepository;
+    readonly hspHospitalFailures: HspHospitalFailureRepository;
+    readonly hspAuditLogs: HspAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2542,6 +2609,38 @@ export class DatabaseAccessLayer {
         this.schExecutiveKpis = new SchExecutiveKpiRepository();
         this.schSchoolFailures = new SchSchoolFailureRepository();
         this.schAuditLogs = new SchAuditLogRepository();
+        this.hspHospitalHubs = new HspHospitalHubRepository();
+        this.hspCampuses = new HspCampusRepository();
+        this.hspDepartments = new HspDepartmentRepository();
+        this.hspWards = new HspWardRepository();
+        this.hspHospitalBeds = new HspHospitalBedRepository();
+        this.hspPatientRegistrations = new HspPatientRegistrationRepository();
+        this.hspPatientProfiles = new HspPatientProfileRepository();
+        this.hspMedicalHistories = new HspMedicalHistoryRepository();
+        this.hspInsurancePolicies = new HspInsurancePolicyRepository();
+        this.hspAppointments = new HspAppointmentRepository();
+        this.hspOpdVisits = new HspOpdVisitRepository();
+        this.hspIpdAdmissions = new HspIpdAdmissionRepository();
+        this.hspClinicalNotes = new HspClinicalNoteRepository();
+        this.hspPharmacyInventory = new HspPharmacyInventoryRepository();
+        this.hspPrescriptions = new HspPrescriptionRepository();
+        this.hspLabOrders = new HspLabOrderRepository();
+        this.hspLabResults = new HspLabResultRepository();
+        this.hspHospitalBilling = new HspHospitalBillingRepository();
+        this.hspInsuranceClaims = new HspInsuranceClaimRepository();
+        this.hspHospitalInvoices = new HspHospitalInvoiceRepository();
+        this.hspHospitalPayments = new HspHospitalPaymentRepository();
+        this.hspPatientNotifications = new HspPatientNotificationRepository();
+        this.hspMedicalReports = new HspMedicalReportRepository();
+        this.hspPatientFeedback = new HspPatientFeedbackRepository();
+        this.hspAdmissionsAnalytics = new HspAdmissionsAnalyticsRepository();
+        this.hspOccupancyAnalytics = new HspOccupancyAnalyticsRepository();
+        this.hspRevenueAnalytics = new HspRevenueAnalyticsRepository();
+        this.hspHospitalMetrics = new HspHospitalMetricRepository();
+        this.hspHospitalHealth = new HspHospitalHealthRepository();
+        this.hspExecutiveKpis = new HspExecutiveKpiRepository();
+        this.hspHospitalFailures = new HspHospitalFailureRepository();
+        this.hspAuditLogs = new HspAuditLogRepository();
     }
 }
 

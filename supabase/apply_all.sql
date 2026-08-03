@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T21:22:02.927Z
+-- Generated: 2026-08-03T21:40:38.718Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (39):
+--   Migrations (40):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -45,7 +45,8 @@
 --     - 202608020037_enterprise_dynamic_document_engine.sql
 --     - 202608020038_enterprise_restaurant_business_os.sql
 --     - 202608020039_enterprise_school_business_os.sql
---   Seeds (39):
+--     - 202608020040_enterprise_hospital_business_os.sql
+--   Seeds (40):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -85,9 +86,10 @@
 --     - 037_enterprise_dynamic_document_engine_seed.sql
 --     - 038_enterprise_restaurant_business_os_seed.sql
 --     - 039_enterprise_school_business_os_seed.sql
+--     - 040_enterprise_hospital_business_os_seed.sql
 --
--- Includes through V2 Program B Sprint 7:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System
+-- Includes through V2 Program B Sprint 8:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -17379,6 +17381,642 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020040_enterprise_hospital_business_os.sql
+-- =============================================================================
+-- V2 Program B Sprint 8: Enterprise Hospital Business Operating System
+
+-- HospitalHub
+create table if not exists public.hsp_hospital_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  hospital_code text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- Campus
+create table if not exists public.hsp_campuses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  campus_key text not null,
+  campus_name text not null default '',
+  campus_type text not null default 'main',
+  address text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, campus_key)
+);
+
+-- Department
+create table if not exists public.hsp_departments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  department_key text not null,
+  department_name text not null default '',
+  department_type text not null default 'clinical',
+  floor_level text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, department_key)
+);
+
+-- Ward
+create table if not exists public.hsp_wards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  ward_key text not null,
+  ward_name text not null default '',
+  ward_type text not null default 'general',
+  capacity integer not null default 20,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, ward_key)
+);
+
+-- HospitalBed
+create table if not exists public.hsp_hospital_beds (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  bed_key text not null,
+  bed_number text not null default '',
+  bed_status text not null default 'available',
+  ward_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, bed_key)
+);
+
+-- PatientRegistration
+create table if not exists public.hsp_patient_registrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  registration_key text not null,
+  registration_name text not null default '',
+  registration_status text not null default 'pending',
+  patient_type text not null default 'outpatient',
+  registered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, registration_key)
+);
+
+-- PatientProfile
+create table if not exists public.hsp_patient_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'regular',
+  blood_group text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- MedicalHistory
+create table if not exists public.hsp_medical_histories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  history_key text not null,
+  history_name text not null default '',
+  history_type text not null default 'general',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- InsurancePolicy
+create table if not exists public.hsp_insurance_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  policy_key text not null,
+  policy_name text not null default '',
+  policy_type text not null default 'health',
+  coverage_amount numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, policy_key)
+);
+
+-- Appointment
+create table if not exists public.hsp_appointments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  appointment_key text not null,
+  appointment_name text not null default '',
+  appointment_status text not null default 'scheduled',
+  appointment_type text not null default 'consultation',
+  scheduled_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, appointment_key)
+);
+
+-- OpdVisit
+create table if not exists public.hsp_opd_visits (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  visit_key text not null,
+  visit_name text not null default '',
+  visit_status text not null default 'checked_in',
+  visit_type text not null default 'opd',
+  visited_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, visit_key)
+);
+
+-- IpdAdmission
+create table if not exists public.hsp_ipd_admissions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  admission_key text not null,
+  admission_name text not null default '',
+  admission_status text not null default 'admitted',
+  ward_ref text not null default '',
+  admitted_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, admission_key)
+);
+
+-- ClinicalNote
+create table if not exists public.hsp_clinical_notes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  note_key text not null,
+  note_name text not null default '',
+  note_type text not null default 'operational',
+  note_content text not null default '',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, note_key)
+);
+
+-- PharmacyInventory
+create table if not exists public.hsp_pharmacy_inventory (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  inventory_key text not null,
+  inventory_name text not null default '',
+  inventory_type text not null default 'medicine',
+  stock_quantity integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, inventory_key)
+);
+
+-- Prescription
+create table if not exists public.hsp_prescriptions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  prescription_key text not null,
+  prescription_name text not null default '',
+  prescription_status text not null default 'pending',
+  prescribed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, prescription_key)
+);
+
+-- LabOrder
+create table if not exists public.hsp_lab_orders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  order_key text not null,
+  order_name text not null default '',
+  order_status text not null default 'pending',
+  order_type text not null default 'blood_test',
+  ordered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, order_key)
+);
+
+-- LabResult
+create table if not exists public.hsp_lab_results (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  result_key text not null,
+  result_name text not null default '',
+  result_status text not null default 'pending',
+  result_value text not null default '',
+  resulted_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, result_key)
+);
+
+-- HospitalBilling
+create table if not exists public.hsp_hospital_billing (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  billing_key text not null,
+  billing_name text not null default '',
+  billing_amount numeric(12, 2) not null default 0,
+  billing_type text not null default 'inpatient',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, billing_key)
+);
+
+-- InsuranceClaim
+create table if not exists public.hsp_insurance_claims (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  claim_key text not null,
+  claim_name text not null default '',
+  claim_status text not null default 'pending',
+  claim_amount numeric(12, 2) not null default 0,
+  submitted_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, claim_key)
+);
+
+-- HospitalInvoice
+create table if not exists public.hsp_hospital_invoices (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  invoice_key text not null,
+  invoice_name text not null default '',
+  invoice_amount numeric(12, 2) not null default 0,
+  invoice_status text not null default 'pending',
+  due_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, invoice_key)
+);
+
+-- HospitalPayment
+create table if not exists public.hsp_hospital_payments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  payment_key text not null,
+  payment_name text not null default '',
+  payment_amount numeric(12, 2) not null default 0,
+  payment_status text not null default 'completed',
+  paid_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, payment_key)
+);
+
+-- PatientNotification
+create table if not exists public.hsp_patient_notifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  notification_key text not null,
+  notification_title text not null default '',
+  notification_type text not null default 'general',
+  sent_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, notification_key)
+);
+
+-- MedicalReport
+create table if not exists public.hsp_medical_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  report_key text not null,
+  report_name text not null default '',
+  report_type text not null default 'operational',
+  generated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- PatientFeedback
+create table if not exists public.hsp_patient_feedback (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  feedback_key text not null,
+  feedback_name text not null default '',
+  feedback_score numeric(3, 1) not null default 0,
+  feedback_type text not null default 'service',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, feedback_key)
+);
+
+-- AdmissionsAnalytics
+create table if not exists public.hsp_admissions_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'admissions',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- OccupancyAnalytics
+create table if not exists public.hsp_occupancy_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'occupancy',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- RevenueAnalytics
+create table if not exists public.hsp_revenue_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'revenue',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- HospitalMetric
+create table if not exists public.hsp_hospital_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  admissions_count integer not null default 0,
+  discharge_count integer not null default 0,
+  bed_occupancy_rate numeric(5, 2) not null default 0,
+  revenue_total numeric(12, 2) not null default 0,
+  department_performance_score numeric(5, 2) not null default 0,
+  patient_satisfaction_score numeric(5, 2) not null default 0,
+  operational_health_score numeric(5, 2) not null default 0,
+  overall_hospital_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- HospitalHealth
+create table if not exists public.hsp_hospital_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  bed_utilization_status text not null default 'healthy',
+  financial_health_status text not null default 'healthy',
+  operational_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveKpi
+create table if not exists public.hsp_executive_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'executive',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- HospitalFailure
+create table if not exists public.hsp_hospital_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'billing',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.hsp_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_hsp_hospital_hubs_org on public.hsp_hospital_hubs(organization_id);
+create index if not exists idx_hsp_campuses_org on public.hsp_campuses(organization_id);
+create index if not exists idx_hsp_campuses_hub on public.hsp_campuses(hub_id);
+create index if not exists idx_hsp_departments_org on public.hsp_departments(organization_id);
+create index if not exists idx_hsp_departments_hub on public.hsp_departments(hub_id);
+create index if not exists idx_hsp_wards_org on public.hsp_wards(organization_id);
+create index if not exists idx_hsp_wards_hub on public.hsp_wards(hub_id);
+create index if not exists idx_hsp_hospital_beds_org on public.hsp_hospital_beds(organization_id);
+create index if not exists idx_hsp_hospital_beds_hub on public.hsp_hospital_beds(hub_id);
+create index if not exists idx_hsp_patient_registrations_org on public.hsp_patient_registrations(organization_id);
+create index if not exists idx_hsp_patient_registrations_hub on public.hsp_patient_registrations(hub_id);
+create index if not exists idx_hsp_patient_profiles_org on public.hsp_patient_profiles(organization_id);
+create index if not exists idx_hsp_patient_profiles_hub on public.hsp_patient_profiles(hub_id);
+create index if not exists idx_hsp_medical_histories_org on public.hsp_medical_histories(organization_id);
+create index if not exists idx_hsp_medical_histories_hub on public.hsp_medical_histories(hub_id);
+create index if not exists idx_hsp_insurance_policies_org on public.hsp_insurance_policies(organization_id);
+create index if not exists idx_hsp_insurance_policies_hub on public.hsp_insurance_policies(hub_id);
+create index if not exists idx_hsp_appointments_org on public.hsp_appointments(organization_id);
+create index if not exists idx_hsp_appointments_hub on public.hsp_appointments(hub_id);
+create index if not exists idx_hsp_opd_visits_org on public.hsp_opd_visits(organization_id);
+create index if not exists idx_hsp_opd_visits_hub on public.hsp_opd_visits(hub_id);
+create index if not exists idx_hsp_ipd_admissions_org on public.hsp_ipd_admissions(organization_id);
+create index if not exists idx_hsp_ipd_admissions_hub on public.hsp_ipd_admissions(hub_id);
+create index if not exists idx_hsp_clinical_notes_org on public.hsp_clinical_notes(organization_id);
+create index if not exists idx_hsp_clinical_notes_hub on public.hsp_clinical_notes(hub_id);
+create index if not exists idx_hsp_pharmacy_inventory_org on public.hsp_pharmacy_inventory(organization_id);
+create index if not exists idx_hsp_pharmacy_inventory_hub on public.hsp_pharmacy_inventory(hub_id);
+create index if not exists idx_hsp_prescriptions_org on public.hsp_prescriptions(organization_id);
+create index if not exists idx_hsp_prescriptions_hub on public.hsp_prescriptions(hub_id);
+create index if not exists idx_hsp_lab_orders_org on public.hsp_lab_orders(organization_id);
+create index if not exists idx_hsp_lab_orders_hub on public.hsp_lab_orders(hub_id);
+create index if not exists idx_hsp_lab_results_org on public.hsp_lab_results(organization_id);
+create index if not exists idx_hsp_lab_results_hub on public.hsp_lab_results(hub_id);
+create index if not exists idx_hsp_hospital_billing_org on public.hsp_hospital_billing(organization_id);
+create index if not exists idx_hsp_hospital_billing_hub on public.hsp_hospital_billing(hub_id);
+create index if not exists idx_hsp_insurance_claims_org on public.hsp_insurance_claims(organization_id);
+create index if not exists idx_hsp_insurance_claims_hub on public.hsp_insurance_claims(hub_id);
+create index if not exists idx_hsp_hospital_invoices_org on public.hsp_hospital_invoices(organization_id);
+create index if not exists idx_hsp_hospital_invoices_hub on public.hsp_hospital_invoices(hub_id);
+create index if not exists idx_hsp_hospital_payments_org on public.hsp_hospital_payments(organization_id);
+create index if not exists idx_hsp_hospital_payments_hub on public.hsp_hospital_payments(hub_id);
+create index if not exists idx_hsp_patient_notifications_org on public.hsp_patient_notifications(organization_id);
+create index if not exists idx_hsp_patient_notifications_hub on public.hsp_patient_notifications(hub_id);
+create index if not exists idx_hsp_medical_reports_org on public.hsp_medical_reports(organization_id);
+create index if not exists idx_hsp_medical_reports_hub on public.hsp_medical_reports(hub_id);
+create index if not exists idx_hsp_patient_feedback_org on public.hsp_patient_feedback(organization_id);
+create index if not exists idx_hsp_patient_feedback_hub on public.hsp_patient_feedback(hub_id);
+create index if not exists idx_hsp_admissions_analytics_org on public.hsp_admissions_analytics(organization_id);
+create index if not exists idx_hsp_admissions_analytics_hub on public.hsp_admissions_analytics(hub_id);
+create index if not exists idx_hsp_occupancy_analytics_org on public.hsp_occupancy_analytics(organization_id);
+create index if not exists idx_hsp_occupancy_analytics_hub on public.hsp_occupancy_analytics(hub_id);
+create index if not exists idx_hsp_revenue_analytics_org on public.hsp_revenue_analytics(organization_id);
+create index if not exists idx_hsp_revenue_analytics_hub on public.hsp_revenue_analytics(hub_id);
+create index if not exists idx_hsp_hospital_metrics_org on public.hsp_hospital_metrics(organization_id);
+create index if not exists idx_hsp_hospital_health_org on public.hsp_hospital_health(organization_id);
+create index if not exists idx_hsp_executive_kpis_org on public.hsp_executive_kpis(organization_id);
+create index if not exists idx_hsp_executive_kpis_hub on public.hsp_executive_kpis(hub_id);
+create index if not exists idx_hsp_hospital_failures_org on public.hsp_hospital_failures(organization_id);
+create index if not exists idx_hsp_hospital_failures_hub on public.hsp_hospital_failures(hub_id);
+create index if not exists idx_hsp_audit_logs_org on public.hsp_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'hsp_hospital_hubs','hsp_campuses','hsp_departments','hsp_wards','hsp_hospital_beds','hsp_patient_registrations','hsp_patient_profiles','hsp_medical_histories','hsp_insurance_policies','hsp_appointments','hsp_opd_visits','hsp_ipd_admissions','hsp_clinical_notes','hsp_pharmacy_inventory','hsp_prescriptions','hsp_lab_orders','hsp_lab_results','hsp_hospital_billing','hsp_insurance_claims','hsp_hospital_invoices','hsp_hospital_payments','hsp_patient_notifications','hsp_medical_reports','hsp_patient_feedback','hsp_admissions_analytics','hsp_occupancy_analytics','hsp_revenue_analytics','hsp_hospital_metrics','hsp_hospital_health','hsp_executive_kpis','hsp_hospital_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.hsp_hospital_hubs enable row level security;
+alter table public.hsp_campuses enable row level security;
+alter table public.hsp_departments enable row level security;
+alter table public.hsp_wards enable row level security;
+alter table public.hsp_hospital_beds enable row level security;
+alter table public.hsp_patient_registrations enable row level security;
+alter table public.hsp_patient_profiles enable row level security;
+alter table public.hsp_medical_histories enable row level security;
+alter table public.hsp_insurance_policies enable row level security;
+alter table public.hsp_appointments enable row level security;
+alter table public.hsp_opd_visits enable row level security;
+alter table public.hsp_ipd_admissions enable row level security;
+alter table public.hsp_clinical_notes enable row level security;
+alter table public.hsp_pharmacy_inventory enable row level security;
+alter table public.hsp_prescriptions enable row level security;
+alter table public.hsp_lab_orders enable row level security;
+alter table public.hsp_lab_results enable row level security;
+alter table public.hsp_hospital_billing enable row level security;
+alter table public.hsp_insurance_claims enable row level security;
+alter table public.hsp_hospital_invoices enable row level security;
+alter table public.hsp_hospital_payments enable row level security;
+alter table public.hsp_patient_notifications enable row level security;
+alter table public.hsp_medical_reports enable row level security;
+alter table public.hsp_patient_feedback enable row level security;
+alter table public.hsp_admissions_analytics enable row level security;
+alter table public.hsp_occupancy_analytics enable row level security;
+alter table public.hsp_revenue_analytics enable row level security;
+alter table public.hsp_hospital_metrics enable row level security;
+alter table public.hsp_hospital_health enable row level security;
+alter table public.hsp_executive_kpis enable row level security;
+alter table public.hsp_hospital_failures enable row level security;
+alter table public.hsp_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'hsp_hospital_hubs','hsp_campuses','hsp_departments','hsp_wards','hsp_hospital_beds','hsp_patient_registrations','hsp_patient_profiles','hsp_medical_histories','hsp_insurance_policies','hsp_appointments','hsp_opd_visits','hsp_ipd_admissions','hsp_clinical_notes','hsp_pharmacy_inventory','hsp_prescriptions','hsp_lab_orders','hsp_lab_results','hsp_hospital_billing','hsp_insurance_claims','hsp_hospital_invoices','hsp_hospital_payments','hsp_patient_notifications','hsp_medical_reports','hsp_patient_feedback','hsp_admissions_analytics','hsp_occupancy_analytics','hsp_revenue_analytics','hsp_hospital_metrics','hsp_hospital_health','hsp_executive_kpis','hsp_hospital_failures','hsp_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('hsp.view', 'View enterprise hospital business operating system data', 'enterprise_hospital_business_os'),
+  ('hsp.manage', 'Manage hospital foundation, patient, clinical operations, pharmacy, lab, finance, and framework outputs', 'enterprise_hospital_business_os'),
+  ('hsp.approve', 'Approve hospital admissions and billing gates', 'enterprise_hospital_business_os'),
+  ('hsp.admin', 'Administer enterprise hospital business operating system governance', 'enterprise_hospital_business_os')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -22085,6 +22723,156 @@ on conflict (id) do nothing;
 
 insert into public.sch_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('011e011e-011e-011e-011e-011e011e2001', '11111111-1111-1111-1111-111111111111', 'school_hub', 'seed', 'Enterprise school business operating system seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 040_enterprise_hospital_business_os_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a340', '11111111-1111-1111-1111-111111111111', 'Enterprise Hospital Orchestrator', 'enterprise_hospital_business_os', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["hospital_foundation","patient_engine","clinical_operations","pharmacy_lab","finance_engine","hospital_analytics","hospital_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a540', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a340', 'northstar-hospital-os-001', 'enterprise_hospital_business_os', 'hospital_hub', '00700070-0070-0070-0070-007000700101', '{"objective":"Enterprise hospital business operating system for northstar healthcare operations"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Hospital Hub
+insert into public.hsp_hospital_hubs (id, organization_id, hub_key, hub_name, environment, hospital_code, status)
+values ('00700070-0070-0070-0070-007000700101', '11111111-1111-1111-1111-111111111111', 'northstar-hospital-os', 'Northstar Hospital OS Hub', 'production', 'HSP-0804-001', 'active')
+on conflict (id) do nothing;
+
+-- M1 Foundation
+insert into public.hsp_campuses (id, organization_id, hub_id, campus_key, campus_name, campus_type, status)
+values ('02000100-0200-0200-0200-020001000201', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'campus-main-0804', 'Main Campus', 'main', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_departments (id, organization_id, hub_id, department_key, department_name, department_type, status)
+values ('02010101-0201-0201-0201-020101010301', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'dept-cardio-0804', 'Cardiology Department', 'clinical', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_wards (id, organization_id, hub_id, ward_key, ward_name, ward_type, status)
+values ('02020102-0202-0202-0202-020201020401', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'ward-general-0804', 'General Ward', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_hospital_beds (id, organization_id, hub_id, bed_key, bed_number, bed_status, ward_ref, status)
+values ('02030103-0203-0203-0203-020301030501', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'bed-101-0804', '101', 'available', 'ward-general-0804', 'active')
+on conflict (id) do nothing;
+
+-- M2 Patient
+insert into public.hsp_patient_registrations (id, organization_id, hub_id, registration_key, registration_name, registration_status, status)
+values ('02040104-0204-0204-0204-020401040601', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'reg-smith-0804', 'Smith Patient Registration', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_patient_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('02050105-0205-0205-0205-020501050701', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'pat-jones-0804', 'Jones Patient Profile', 'regular', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_medical_histories (id, organization_id, hub_id, history_key, history_name, history_type, status)
+values ('02060106-0206-0206-0206-020601060801', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'hist-jones-0804', 'Jones Medical History', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_insurance_policies (id, organization_id, hub_id, policy_key, policy_name, policy_type, status)
+values ('02070107-0207-0207-0207-020701070901', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'pol-jones-0804', 'Jones Insurance Policy', 'health', 'active')
+on conflict (id) do nothing;
+
+-- M3 Clinical Operations
+insert into public.hsp_appointments (id, organization_id, hub_id, appointment_key, appointment_name, appointment_status, status)
+values ('02080108-0208-0208-0208-020801080a01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'appt-jones-0804', 'Jones Appointment', 'scheduled', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_opd_visits (id, organization_id, hub_id, visit_key, visit_name, visit_status, status)
+values ('02090109-0209-0209-0209-020901090b01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'opd-jones-0804', 'Jones OPD Visit', 'checked_in', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_ipd_admissions (id, organization_id, hub_id, admission_key, admission_name, admission_status, status)
+values ('020a010a-020a-020a-020a-020a010a0c01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'ipd-jones-0804', 'Jones IPD Admission', 'admitted', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_clinical_notes (id, organization_id, hub_id, note_key, note_name, note_type, status)
+values ('020b010b-020b-020b-020b-020b010b0d01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'note-jones-0804', 'Jones Clinical Note', 'operational', 'active')
+on conflict (id) do nothing;
+
+-- M4 Pharmacy & Lab
+insert into public.hsp_pharmacy_inventory (id, organization_id, hub_id, inventory_key, inventory_name, inventory_type, status)
+values ('020c010c-020c-020c-020c-020c010c0e01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'inv-paracetamol-0804', 'Paracetamol Inventory', 'medicine', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_prescriptions (id, organization_id, hub_id, prescription_key, prescription_name, prescription_status, status)
+values ('020d010d-020d-020d-020d-020d010d0f01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'rx-jones-0804', 'Jones Prescription', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_lab_orders (id, organization_id, hub_id, order_key, order_name, order_status, status)
+values ('020e010e-020e-020e-020e-020e010e1001', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'lab-jones-0804', 'Jones Lab Order', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_lab_results (id, organization_id, hub_id, result_key, result_name, result_status, status)
+values ('020f010f-020f-020f-020f-020f010f1101', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'res-jones-0804', 'Jones Lab Result', 'pending', 'active')
+on conflict (id) do nothing;
+
+-- M5 Finance & Billing
+insert into public.hsp_hospital_billing (id, organization_id, hub_id, billing_key, billing_name, billing_amount, status)
+values ('02100110-0210-0210-0210-021001101201', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'bill-jones-0804', 'Jones Hospital Billing', 15000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_insurance_claims (id, organization_id, hub_id, claim_key, claim_name, claim_status, status)
+values ('02110111-0211-0211-0211-021101111301', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'clm-jones-0804', 'Jones Insurance Claim', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_hospital_invoices (id, organization_id, hub_id, invoice_key, invoice_name, invoice_amount, status)
+values ('02120112-0212-0212-0212-021201121401', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'inv-jones-0804', 'Jones Hospital Invoice', 15000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_hospital_payments (id, organization_id, hub_id, payment_key, payment_name, payment_amount, status)
+values ('02130113-0213-0213-0213-021301131501', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'pay-jones-0804', 'Jones Hospital Payment', 15000.00, 'active')
+on conflict (id) do nothing;
+
+-- M6 Patient Experience
+insert into public.hsp_patient_notifications (id, organization_id, hub_id, notification_key, notification_title, notification_type, status)
+values ('02140114-0214-0214-0214-021401141601', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'ntf-jones-0804', 'Appointment Reminder', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_medical_reports (id, organization_id, hub_id, report_key, report_name, report_type, status)
+values ('02150115-0215-0215-0215-021501151701', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'rpt-jones-0804', 'Jones Medical Report', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_patient_feedback (id, organization_id, hub_id, feedback_key, feedback_name, feedback_score, status)
+values ('02160116-0216-0216-0216-021601161801', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'fdb-jones-0804', 'Jones Patient Feedback', 4.5, 'active')
+on conflict (id) do nothing;
+
+-- M7 Analytics
+insert into public.hsp_admissions_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('02170117-0217-0217-0217-021701171901', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'anly-adm-0804', 'admissions', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_occupancy_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('02180118-0218-0218-0218-021801181a01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'anly-occ-0804', 'occupancy', 88.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_revenue_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('02190119-0219-0219-0219-021901191b01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'anly-rev-0804', 'revenue', 96.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Executive Dashboard
+insert into public.hsp_hospital_metrics (id, organization_id, metrics_key, admissions_count, discharge_count, bed_occupancy_rate, revenue_total, department_performance_score, patient_satisfaction_score, operational_health_score, overall_hospital_score, status)
+values ('021a011a-021a-021a-021a-021a011a1c01', '11111111-1111-1111-1111-111111111111', 'hsp-metrics-0804', 850, 720, 88.50, 2500000.00, 91.00, 92.50, 93.00, 95.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_hospital_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, bed_utilization_status, financial_health_status, operational_health_status, summary, status)
+values ('021b011b-021b-021b-021b-021b011b1d01', '11111111-1111-1111-1111-111111111111', 'hsp-health-0804', 96.00, false, 'healthy', 'healthy', 'healthy', 'Hospital business operating system operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.hsp_executive_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('021c011c-021c-021c-021c-021c011c1e01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'kpi-exec-0804', 'Executive KPI Score', 97.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.hsp_hospital_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('021d011d-021d-021d-021d-021d011d1f01', '11111111-1111-1111-1111-111111111111', '00700070-0070-0070-0070-007000700101', 'fail-bill-0804', 'billing', 'BILL_TIMEOUT', 'Billing processing timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.hsp_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('021e011e-021e-021e-021e-021e011e2001', '11111111-1111-1111-1111-111111111111', 'hospital_hub', 'seed', 'Enterprise hospital business operating system seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================
