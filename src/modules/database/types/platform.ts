@@ -10863,3 +10863,435 @@ export interface DbRstAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbSchSchoolHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    school_code: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchCampus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campus_key: string;
+    campus_name: string;
+    campus_type: string;
+    address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchBuilding {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    building_key: string;
+    building_name: string;
+    building_type: string;
+    floor_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchClassroom {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    classroom_key: string;
+    classroom_name: string;
+    classroom_type: string;
+    capacity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAcademicYear {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    year_key: string;
+    year_name: string;
+    year_status: string;
+    start_date: string;
+    end_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAdmission {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    admission_key: string;
+    admission_name: string;
+    admission_status: string;
+    grade_level: string;
+    applied_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchStudentProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    grade_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchParentProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    parent_key: string;
+    parent_name: string;
+    parent_type: string;
+    email: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchEnrollment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    enrollment_key: string;
+    enrollment_name: string;
+    enrollment_status: string;
+    enrolled_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchSubject {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    subject_key: string;
+    subject_name: string;
+    subject_type: string;
+    credit_hours: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchTimetable {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    timetable_key: string;
+    timetable_name: string;
+    timetable_type: string;
+    period_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchExamination {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    exam_key: string;
+    exam_name: string;
+    exam_type: string;
+    exam_status: string;
+    scheduled_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchReportCard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_name: string;
+    report_grade: string;
+    gpa: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchTeacher {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    teacher_key: string;
+    teacher_name: string;
+    teacher_type: string;
+    department: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchStaffAttendance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    attendance_key: string;
+    attendance_name: string;
+    attendance_status: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchLeaveRequest {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    leave_key: string;
+    leave_name: string;
+    leave_status: string;
+    leave_type: string;
+    requested_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchSubstituteTeacher {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    substitute_key: string;
+    substitute_name: string;
+    substitute_status: string;
+    assigned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchFeeStructure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    fee_key: string;
+    fee_name: string;
+    fee_type: string;
+    amount: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchFeeInvoice {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    invoice_key: string;
+    invoice_name: string;
+    invoice_amount: number;
+    invoice_status: string;
+    due_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchFeePayment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    payment_key: string;
+    payment_name: string;
+    payment_amount: number;
+    payment_status: string;
+    paid_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchScholarship {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    scholarship_key: string;
+    scholarship_name: string;
+    scholarship_amount: number;
+    scholarship_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAnnouncement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    announcement_key: string;
+    announcement_title: string;
+    announcement_type: string;
+    published_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchMessaging {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    message_key: string;
+    message_subject: string;
+    message_type: string;
+    sent_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchEvent {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    event_key: string;
+    event_name: string;
+    event_type: string;
+    event_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAdmissionsAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAttendanceAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAcademicAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchSchoolMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    revenue_total: number;
+    admissions_count: number;
+    attendance_rate: number;
+    academic_performance_score: number;
+    fee_collection_rate: number;
+    teacher_performance_score: number;
+    student_growth_rate: number;
+    overall_school_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchSchoolHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    campus_health_status: string;
+    financial_health_status: string;
+    operational_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchExecutiveKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchSchoolFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSchAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

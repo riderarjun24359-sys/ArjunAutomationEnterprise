@@ -43,6 +43,7 @@ const protectedRoutes = [
     ROUTES.workflowEngine,
     ROUTES.documentEngine,
     ROUTES.restaurant,
+    ROUTES.school,
 ];
 
 const authRoutes = [

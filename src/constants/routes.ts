@@ -39,6 +39,7 @@ export const ROUTES = {
     workflowEngine: "/workflow-engine",
     documentEngine: "/document-engine",
     restaurant: "/restaurant",
+    school: "/school",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

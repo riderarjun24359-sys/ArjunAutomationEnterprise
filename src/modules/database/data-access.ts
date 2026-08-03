@@ -855,6 +855,41 @@ import {
     RstRestaurantFailureRepository,
     RstAuditLogRepository,
 } from "@/src/modules/database/repositories/restaurant-repositories";
+import {
+    SchSchoolHubRepository,
+    SchCampusRepository,
+    SchBuildingRepository,
+    SchClassroomRepository,
+    SchAcademicYearRepository,
+    SchAdmissionRepository,
+    SchStudentProfileRepository,
+    SchParentProfileRepository,
+    SchEnrollmentRepository,
+    SchSubjectRepository,
+    SchTimetableRepository,
+    SchExaminationRepository,
+    SchReportCardRepository,
+    SchTeacherRepository,
+    SchStaffAttendanceRepository,
+    SchLeaveRequestRepository,
+    SchSubstituteTeacherRepository,
+    SchFeeStructureRepository,
+    SchFeeInvoiceRepository,
+    SchFeePaymentRepository,
+    SchScholarshipRepository,
+    SchAnnouncementRepository,
+    SchMessagingRepository,
+    SchEventRepository,
+    SchAdmissionsAnalyticsRepository,
+    SchAttendanceAnalyticsRepository,
+    SchAcademicAnalyticsRepository,
+    SchSchoolMetricRepository,
+    SchSchoolHealthRepository,
+    SchExecutiveKpiRepository,
+    SchSchoolFailureRepository,
+    SchAuditLogRepository,
+} from "@/src/modules/database/repositories/school-repositories";
+
 
 
 
@@ -1652,6 +1687,38 @@ export class DatabaseAccessLayer {
     readonly rstKitchenPerformance: RstKitchenPerformanceRepository;
     readonly rstRestaurantFailures: RstRestaurantFailureRepository;
     readonly rstAuditLogs: RstAuditLogRepository;
+    readonly schSchoolHubs: SchSchoolHubRepository;
+    readonly schCampuses: SchCampusRepository;
+    readonly schBuildings: SchBuildingRepository;
+    readonly schClassrooms: SchClassroomRepository;
+    readonly schAcademicYears: SchAcademicYearRepository;
+    readonly schAdmissions: SchAdmissionRepository;
+    readonly schStudentProfiles: SchStudentProfileRepository;
+    readonly schParentProfiles: SchParentProfileRepository;
+    readonly schEnrollments: SchEnrollmentRepository;
+    readonly schSubjects: SchSubjectRepository;
+    readonly schTimetables: SchTimetableRepository;
+    readonly schExaminations: SchExaminationRepository;
+    readonly schReportCards: SchReportCardRepository;
+    readonly schTeachers: SchTeacherRepository;
+    readonly schStaffAttendance: SchStaffAttendanceRepository;
+    readonly schLeaveRequests: SchLeaveRequestRepository;
+    readonly schSubstituteTeachers: SchSubstituteTeacherRepository;
+    readonly schFeeStructures: SchFeeStructureRepository;
+    readonly schFeeInvoices: SchFeeInvoiceRepository;
+    readonly schFeePayments: SchFeePaymentRepository;
+    readonly schScholarships: SchScholarshipRepository;
+    readonly schAnnouncements: SchAnnouncementRepository;
+    readonly schMessaging: SchMessagingRepository;
+    readonly schEvents: SchEventRepository;
+    readonly schAdmissionsAnalytics: SchAdmissionsAnalyticsRepository;
+    readonly schAttendanceAnalytics: SchAttendanceAnalyticsRepository;
+    readonly schAcademicAnalytics: SchAcademicAnalyticsRepository;
+    readonly schSchoolMetrics: SchSchoolMetricRepository;
+    readonly schSchoolHealth: SchSchoolHealthRepository;
+    readonly schExecutiveKpis: SchExecutiveKpiRepository;
+    readonly schSchoolFailures: SchSchoolFailureRepository;
+    readonly schAuditLogs: SchAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2443,6 +2510,38 @@ export class DatabaseAccessLayer {
         this.rstKitchenPerformance = new RstKitchenPerformanceRepository();
         this.rstRestaurantFailures = new RstRestaurantFailureRepository();
         this.rstAuditLogs = new RstAuditLogRepository();
+        this.schSchoolHubs = new SchSchoolHubRepository();
+        this.schCampuses = new SchCampusRepository();
+        this.schBuildings = new SchBuildingRepository();
+        this.schClassrooms = new SchClassroomRepository();
+        this.schAcademicYears = new SchAcademicYearRepository();
+        this.schAdmissions = new SchAdmissionRepository();
+        this.schStudentProfiles = new SchStudentProfileRepository();
+        this.schParentProfiles = new SchParentProfileRepository();
+        this.schEnrollments = new SchEnrollmentRepository();
+        this.schSubjects = new SchSubjectRepository();
+        this.schTimetables = new SchTimetableRepository();
+        this.schExaminations = new SchExaminationRepository();
+        this.schReportCards = new SchReportCardRepository();
+        this.schTeachers = new SchTeacherRepository();
+        this.schStaffAttendance = new SchStaffAttendanceRepository();
+        this.schLeaveRequests = new SchLeaveRequestRepository();
+        this.schSubstituteTeachers = new SchSubstituteTeacherRepository();
+        this.schFeeStructures = new SchFeeStructureRepository();
+        this.schFeeInvoices = new SchFeeInvoiceRepository();
+        this.schFeePayments = new SchFeePaymentRepository();
+        this.schScholarships = new SchScholarshipRepository();
+        this.schAnnouncements = new SchAnnouncementRepository();
+        this.schMessaging = new SchMessagingRepository();
+        this.schEvents = new SchEventRepository();
+        this.schAdmissionsAnalytics = new SchAdmissionsAnalyticsRepository();
+        this.schAttendanceAnalytics = new SchAttendanceAnalyticsRepository();
+        this.schAcademicAnalytics = new SchAcademicAnalyticsRepository();
+        this.schSchoolMetrics = new SchSchoolMetricRepository();
+        this.schSchoolHealth = new SchSchoolHealthRepository();
+        this.schExecutiveKpis = new SchExecutiveKpiRepository();
+        this.schSchoolFailures = new SchSchoolFailureRepository();
+        this.schAuditLogs = new SchAuditLogRepository();
     }
 }
 

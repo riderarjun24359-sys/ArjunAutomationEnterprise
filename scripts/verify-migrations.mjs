@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 794 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_*)
+// 826 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -802,6 +802,38 @@ const requiredTables = [
     "rst_kitchen_performance",
     "rst_restaurant_failures",
     "rst_audit_logs",
+    "sch_school_hubs",
+    "sch_campuses",
+    "sch_buildings",
+    "sch_classrooms",
+    "sch_academic_years",
+    "sch_admissions",
+    "sch_student_profiles",
+    "sch_parent_profiles",
+    "sch_enrollments",
+    "sch_subjects",
+    "sch_timetables",
+    "sch_examinations",
+    "sch_report_cards",
+    "sch_teachers",
+    "sch_staff_attendance",
+    "sch_leave_requests",
+    "sch_substitute_teachers",
+    "sch_fee_structures",
+    "sch_fee_invoices",
+    "sch_fee_payments",
+    "sch_scholarships",
+    "sch_announcements",
+    "sch_messaging",
+    "sch_events",
+    "sch_admissions_analytics",
+    "sch_attendance_analytics",
+    "sch_academic_analytics",
+    "sch_school_metrics",
+    "sch_school_health",
+    "sch_executive_kpis",
+    "sch_school_failures",
+    "sch_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T20:56:40.290Z
+-- Generated: 2026-08-03T21:22:02.927Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (38):
+--   Migrations (39):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -44,7 +44,8 @@
 --     - 202608020036_enterprise_dynamic_workflow_engine.sql
 --     - 202608020037_enterprise_dynamic_document_engine.sql
 --     - 202608020038_enterprise_restaurant_business_os.sql
---   Seeds (38):
+--     - 202608020039_enterprise_school_business_os.sql
+--   Seeds (39):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -83,9 +84,10 @@
 --     - 036_enterprise_dynamic_workflow_engine_seed.sql
 --     - 037_enterprise_dynamic_document_engine_seed.sql
 --     - 038_enterprise_restaurant_business_os_seed.sql
+--     - 039_enterprise_school_business_os_seed.sql
 --
--- Includes through V2 Program B Sprint 6:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System
+-- Includes through V2 Program B Sprint 7:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -16745,6 +16747,638 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020039_enterprise_school_business_os.sql
+-- =============================================================================
+-- V2 Program B Sprint 7: Enterprise School Business Operating System
+
+-- SchoolHub
+create table if not exists public.sch_school_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  school_code text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- Campus
+create table if not exists public.sch_campuses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  campus_key text not null,
+  campus_name text not null default '',
+  campus_type text not null default 'main',
+  address text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, campus_key)
+);
+
+-- Building
+create table if not exists public.sch_buildings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  building_key text not null,
+  building_name text not null default '',
+  building_type text not null default 'academic',
+  floor_count integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, building_key)
+);
+
+-- Classroom
+create table if not exists public.sch_classrooms (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  classroom_key text not null,
+  classroom_name text not null default '',
+  classroom_type text not null default 'standard',
+  capacity integer not null default 30,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, classroom_key)
+);
+
+-- AcademicYear
+create table if not exists public.sch_academic_years (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  year_key text not null,
+  year_name text not null default '',
+  year_status text not null default 'active',
+  start_date date not null default current_date,
+  end_date date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, year_key)
+);
+
+-- Admission
+create table if not exists public.sch_admissions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  admission_key text not null,
+  admission_name text not null default '',
+  admission_status text not null default 'pending',
+  grade_level text not null default '',
+  applied_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, admission_key)
+);
+
+-- StudentProfile
+create table if not exists public.sch_student_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'regular',
+  grade_level text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- ParentProfile
+create table if not exists public.sch_parent_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  parent_key text not null,
+  parent_name text not null default '',
+  parent_type text not null default 'guardian',
+  email text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, parent_key)
+);
+
+-- Enrollment
+create table if not exists public.sch_enrollments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  enrollment_key text not null,
+  enrollment_name text not null default '',
+  enrollment_status text not null default 'active',
+  enrolled_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, enrollment_key)
+);
+
+-- Subject
+create table if not exists public.sch_subjects (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  subject_key text not null,
+  subject_name text not null default '',
+  subject_type text not null default 'core',
+  credit_hours numeric(4, 1) not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, subject_key)
+);
+
+-- Timetable
+create table if not exists public.sch_timetables (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  timetable_key text not null,
+  timetable_name text not null default '',
+  timetable_type text not null default 'weekly',
+  period_count integer not null default 8,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, timetable_key)
+);
+
+-- Examination
+create table if not exists public.sch_examinations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  exam_key text not null,
+  exam_name text not null default '',
+  exam_type text not null default 'midterm',
+  exam_status text not null default 'scheduled',
+  scheduled_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, exam_key)
+);
+
+-- ReportCard
+create table if not exists public.sch_report_cards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  report_key text not null,
+  report_name text not null default '',
+  report_grade text not null default 'A',
+  gpa numeric(3, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- Teacher
+create table if not exists public.sch_teachers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  teacher_key text not null,
+  teacher_name text not null default '',
+  teacher_type text not null default 'full_time',
+  department text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, teacher_key)
+);
+
+-- StaffAttendance
+create table if not exists public.sch_staff_attendance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  attendance_key text not null,
+  attendance_name text not null default '',
+  attendance_status text not null default 'present',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, attendance_key)
+);
+
+-- LeaveRequest
+create table if not exists public.sch_leave_requests (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  leave_key text not null,
+  leave_name text not null default '',
+  leave_status text not null default 'pending',
+  leave_type text not null default 'personal',
+  requested_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, leave_key)
+);
+
+-- SubstituteTeacher
+create table if not exists public.sch_substitute_teachers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  substitute_key text not null,
+  substitute_name text not null default '',
+  substitute_status text not null default 'available',
+  assigned_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, substitute_key)
+);
+
+-- FeeStructure
+create table if not exists public.sch_fee_structures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  fee_key text not null,
+  fee_name text not null default '',
+  fee_type text not null default 'tuition',
+  amount numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, fee_key)
+);
+
+-- FeeInvoice
+create table if not exists public.sch_fee_invoices (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  invoice_key text not null,
+  invoice_name text not null default '',
+  invoice_amount numeric(12, 2) not null default 0,
+  invoice_status text not null default 'pending',
+  due_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, invoice_key)
+);
+
+-- FeePayment
+create table if not exists public.sch_fee_payments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  payment_key text not null,
+  payment_name text not null default '',
+  payment_amount numeric(12, 2) not null default 0,
+  payment_status text not null default 'completed',
+  paid_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, payment_key)
+);
+
+-- Scholarship
+create table if not exists public.sch_scholarships (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  scholarship_key text not null,
+  scholarship_name text not null default '',
+  scholarship_amount numeric(12, 2) not null default 0,
+  scholarship_type text not null default 'merit',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, scholarship_key)
+);
+
+-- Announcement
+create table if not exists public.sch_announcements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  announcement_key text not null,
+  announcement_title text not null default '',
+  announcement_type text not null default 'general',
+  published_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, announcement_key)
+);
+
+-- Messaging
+create table if not exists public.sch_messaging (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  message_key text not null,
+  message_subject text not null default '',
+  message_type text not null default 'direct',
+  sent_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, message_key)
+);
+
+-- Event
+create table if not exists public.sch_events (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  event_key text not null,
+  event_name text not null default '',
+  event_type text not null default 'academic',
+  event_date timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, event_key)
+);
+
+-- AdmissionsAnalytics
+create table if not exists public.sch_admissions_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'admissions',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- AttendanceAnalytics
+create table if not exists public.sch_attendance_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'attendance',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- AcademicAnalytics
+create table if not exists public.sch_academic_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'academic',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- SchoolMetric
+create table if not exists public.sch_school_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  revenue_total numeric(12, 2) not null default 0,
+  admissions_count integer not null default 0,
+  attendance_rate numeric(5, 2) not null default 0,
+  academic_performance_score numeric(5, 2) not null default 0,
+  fee_collection_rate numeric(5, 2) not null default 0,
+  teacher_performance_score numeric(5, 2) not null default 0,
+  student_growth_rate numeric(5, 2) not null default 0,
+  overall_school_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- SchoolHealth
+create table if not exists public.sch_school_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  campus_health_status text not null default 'healthy',
+  financial_health_status text not null default 'healthy',
+  operational_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveKpi
+create table if not exists public.sch_executive_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'executive',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- SchoolFailure
+create table if not exists public.sch_school_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'admission',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.sch_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_sch_school_hubs_org on public.sch_school_hubs(organization_id);
+create index if not exists idx_sch_campuses_org on public.sch_campuses(organization_id);
+create index if not exists idx_sch_campuses_hub on public.sch_campuses(hub_id);
+create index if not exists idx_sch_buildings_org on public.sch_buildings(organization_id);
+create index if not exists idx_sch_buildings_hub on public.sch_buildings(hub_id);
+create index if not exists idx_sch_classrooms_org on public.sch_classrooms(organization_id);
+create index if not exists idx_sch_classrooms_hub on public.sch_classrooms(hub_id);
+create index if not exists idx_sch_academic_years_org on public.sch_academic_years(organization_id);
+create index if not exists idx_sch_academic_years_hub on public.sch_academic_years(hub_id);
+create index if not exists idx_sch_admissions_org on public.sch_admissions(organization_id);
+create index if not exists idx_sch_admissions_hub on public.sch_admissions(hub_id);
+create index if not exists idx_sch_student_profiles_org on public.sch_student_profiles(organization_id);
+create index if not exists idx_sch_student_profiles_hub on public.sch_student_profiles(hub_id);
+create index if not exists idx_sch_parent_profiles_org on public.sch_parent_profiles(organization_id);
+create index if not exists idx_sch_parent_profiles_hub on public.sch_parent_profiles(hub_id);
+create index if not exists idx_sch_enrollments_org on public.sch_enrollments(organization_id);
+create index if not exists idx_sch_enrollments_hub on public.sch_enrollments(hub_id);
+create index if not exists idx_sch_subjects_org on public.sch_subjects(organization_id);
+create index if not exists idx_sch_subjects_hub on public.sch_subjects(hub_id);
+create index if not exists idx_sch_timetables_org on public.sch_timetables(organization_id);
+create index if not exists idx_sch_timetables_hub on public.sch_timetables(hub_id);
+create index if not exists idx_sch_examinations_org on public.sch_examinations(organization_id);
+create index if not exists idx_sch_examinations_hub on public.sch_examinations(hub_id);
+create index if not exists idx_sch_report_cards_org on public.sch_report_cards(organization_id);
+create index if not exists idx_sch_report_cards_hub on public.sch_report_cards(hub_id);
+create index if not exists idx_sch_teachers_org on public.sch_teachers(organization_id);
+create index if not exists idx_sch_teachers_hub on public.sch_teachers(hub_id);
+create index if not exists idx_sch_staff_attendance_org on public.sch_staff_attendance(organization_id);
+create index if not exists idx_sch_staff_attendance_hub on public.sch_staff_attendance(hub_id);
+create index if not exists idx_sch_leave_requests_org on public.sch_leave_requests(organization_id);
+create index if not exists idx_sch_leave_requests_hub on public.sch_leave_requests(hub_id);
+create index if not exists idx_sch_substitute_teachers_org on public.sch_substitute_teachers(organization_id);
+create index if not exists idx_sch_substitute_teachers_hub on public.sch_substitute_teachers(hub_id);
+create index if not exists idx_sch_fee_structures_org on public.sch_fee_structures(organization_id);
+create index if not exists idx_sch_fee_structures_hub on public.sch_fee_structures(hub_id);
+create index if not exists idx_sch_fee_invoices_org on public.sch_fee_invoices(organization_id);
+create index if not exists idx_sch_fee_invoices_hub on public.sch_fee_invoices(hub_id);
+create index if not exists idx_sch_fee_payments_org on public.sch_fee_payments(organization_id);
+create index if not exists idx_sch_fee_payments_hub on public.sch_fee_payments(hub_id);
+create index if not exists idx_sch_scholarships_org on public.sch_scholarships(organization_id);
+create index if not exists idx_sch_scholarships_hub on public.sch_scholarships(hub_id);
+create index if not exists idx_sch_announcements_org on public.sch_announcements(organization_id);
+create index if not exists idx_sch_announcements_hub on public.sch_announcements(hub_id);
+create index if not exists idx_sch_messaging_org on public.sch_messaging(organization_id);
+create index if not exists idx_sch_messaging_hub on public.sch_messaging(hub_id);
+create index if not exists idx_sch_events_org on public.sch_events(organization_id);
+create index if not exists idx_sch_events_hub on public.sch_events(hub_id);
+create index if not exists idx_sch_admissions_analytics_org on public.sch_admissions_analytics(organization_id);
+create index if not exists idx_sch_admissions_analytics_hub on public.sch_admissions_analytics(hub_id);
+create index if not exists idx_sch_attendance_analytics_org on public.sch_attendance_analytics(organization_id);
+create index if not exists idx_sch_attendance_analytics_hub on public.sch_attendance_analytics(hub_id);
+create index if not exists idx_sch_academic_analytics_org on public.sch_academic_analytics(organization_id);
+create index if not exists idx_sch_academic_analytics_hub on public.sch_academic_analytics(hub_id);
+create index if not exists idx_sch_school_metrics_org on public.sch_school_metrics(organization_id);
+create index if not exists idx_sch_school_health_org on public.sch_school_health(organization_id);
+create index if not exists idx_sch_executive_kpis_org on public.sch_executive_kpis(organization_id);
+create index if not exists idx_sch_executive_kpis_hub on public.sch_executive_kpis(hub_id);
+create index if not exists idx_sch_school_failures_org on public.sch_school_failures(organization_id);
+create index if not exists idx_sch_school_failures_hub on public.sch_school_failures(hub_id);
+create index if not exists idx_sch_audit_logs_org on public.sch_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'sch_school_hubs','sch_campuses','sch_buildings','sch_classrooms','sch_academic_years','sch_admissions','sch_student_profiles','sch_parent_profiles','sch_enrollments','sch_subjects','sch_timetables','sch_examinations','sch_report_cards','sch_teachers','sch_staff_attendance','sch_leave_requests','sch_substitute_teachers','sch_fee_structures','sch_fee_invoices','sch_fee_payments','sch_scholarships','sch_announcements','sch_messaging','sch_events','sch_admissions_analytics','sch_attendance_analytics','sch_academic_analytics','sch_school_metrics','sch_school_health','sch_executive_kpis','sch_school_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.sch_school_hubs enable row level security;
+alter table public.sch_campuses enable row level security;
+alter table public.sch_buildings enable row level security;
+alter table public.sch_classrooms enable row level security;
+alter table public.sch_academic_years enable row level security;
+alter table public.sch_admissions enable row level security;
+alter table public.sch_student_profiles enable row level security;
+alter table public.sch_parent_profiles enable row level security;
+alter table public.sch_enrollments enable row level security;
+alter table public.sch_subjects enable row level security;
+alter table public.sch_timetables enable row level security;
+alter table public.sch_examinations enable row level security;
+alter table public.sch_report_cards enable row level security;
+alter table public.sch_teachers enable row level security;
+alter table public.sch_staff_attendance enable row level security;
+alter table public.sch_leave_requests enable row level security;
+alter table public.sch_substitute_teachers enable row level security;
+alter table public.sch_fee_structures enable row level security;
+alter table public.sch_fee_invoices enable row level security;
+alter table public.sch_fee_payments enable row level security;
+alter table public.sch_scholarships enable row level security;
+alter table public.sch_announcements enable row level security;
+alter table public.sch_messaging enable row level security;
+alter table public.sch_events enable row level security;
+alter table public.sch_admissions_analytics enable row level security;
+alter table public.sch_attendance_analytics enable row level security;
+alter table public.sch_academic_analytics enable row level security;
+alter table public.sch_school_metrics enable row level security;
+alter table public.sch_school_health enable row level security;
+alter table public.sch_executive_kpis enable row level security;
+alter table public.sch_school_failures enable row level security;
+alter table public.sch_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'sch_school_hubs','sch_campuses','sch_buildings','sch_classrooms','sch_academic_years','sch_admissions','sch_student_profiles','sch_parent_profiles','sch_enrollments','sch_subjects','sch_timetables','sch_examinations','sch_report_cards','sch_teachers','sch_staff_attendance','sch_leave_requests','sch_substitute_teachers','sch_fee_structures','sch_fee_invoices','sch_fee_payments','sch_scholarships','sch_announcements','sch_messaging','sch_events','sch_admissions_analytics','sch_attendance_analytics','sch_academic_analytics','sch_school_metrics','sch_school_health','sch_executive_kpis','sch_school_failures','sch_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('sch.view', 'View enterprise school business operating system data', 'enterprise_school_business_os'),
+  ('sch.manage', 'Manage school foundation, student, academics, staff, finance, and framework outputs', 'enterprise_school_business_os'),
+  ('sch.approve', 'Approve school admissions and fee gates', 'enterprise_school_business_os'),
+  ('sch.admin', 'Administer enterprise school business operating system governance', 'enterprise_school_business_os')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -21301,6 +21935,156 @@ on conflict (id) do nothing;
 
 insert into public.rst_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00930093-0093-0093-0093-009300932101', '11111111-1111-1111-1111-111111111111', 'restaurant_hub', 'seed', 'Enterprise restaurant business operating system seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 039_enterprise_school_business_os_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a339', '11111111-1111-1111-1111-111111111111', 'Enterprise School Orchestrator', 'enterprise_school_business_os', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["school_foundation","student_engine","academics_engine","staff_engine","finance_engine","school_analytics","school_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a539', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a339', 'northstar-school-os-001', 'enterprise_school_business_os', 'school_hub', '006f006f-006f-006f-006f-006f006f0101', '{"objective":"Enterprise school business operating system for northstar education operations"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 School Hub
+insert into public.sch_school_hubs (id, organization_id, hub_key, hub_name, environment, school_code, status)
+values ('006f006f-006f-006f-006f-006f006f0101', '11111111-1111-1111-1111-111111111111', 'northstar-school-os', 'Northstar School OS Hub', 'production', 'SCH-0804-001', 'active')
+on conflict (id) do nothing;
+
+-- M1 Foundation
+insert into public.sch_campuses (id, organization_id, hub_id, campus_key, campus_name, campus_type, status)
+values ('01000100-0100-0100-0100-010001000201', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'campus-main-0804', 'Main Campus', 'main', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_buildings (id, organization_id, hub_id, building_key, building_name, building_type, status)
+values ('01010101-0101-0101-0101-010101010301', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'bldg-science-0804', 'Science Building', 'academic', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_classrooms (id, organization_id, hub_id, classroom_key, classroom_name, classroom_type, status)
+values ('01020102-0102-0102-0102-010201020401', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'cls-101-0804', 'Classroom 101', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_academic_years (id, organization_id, hub_id, year_key, year_name, year_status, status)
+values ('01030103-0103-0103-0103-010301030501', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'year-2026-0804', 'Academic Year 2026', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M2 Student
+insert into public.sch_admissions (id, organization_id, hub_id, admission_key, admission_name, admission_status, status)
+values ('01040104-0104-0104-0104-010401040601', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'adm-smith-0804', 'Smith Admission Application', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_student_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('01050105-0105-0105-0105-010501050701', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'stu-jones-0804', 'Jones Student Profile', 'regular', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_parent_profiles (id, organization_id, hub_id, parent_key, parent_name, parent_type, status)
+values ('01060106-0106-0106-0106-010601060801', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'par-jones-0804', 'Jones Parent Profile', 'guardian', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_enrollments (id, organization_id, hub_id, enrollment_key, enrollment_name, enrollment_status, status)
+values ('01070107-0107-0107-0107-010701070901', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'enr-jones-0804', 'Jones Enrollment', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M3 Academics
+insert into public.sch_subjects (id, organization_id, hub_id, subject_key, subject_name, subject_type, status)
+values ('01080108-0108-0108-0108-010801080a01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'sub-math-0804', 'Mathematics', 'core', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_timetables (id, organization_id, hub_id, timetable_key, timetable_name, timetable_type, status)
+values ('01090109-0109-0109-0109-010901090b01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'tt-weekly-0804', 'Weekly Timetable', 'weekly', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_examinations (id, organization_id, hub_id, exam_key, exam_name, exam_type, status)
+values ('010a010a-010a-010a-010a-010a010a0c01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'exam-mid-0804', 'Midterm Examination', 'midterm', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_report_cards (id, organization_id, hub_id, report_key, report_name, report_grade, status)
+values ('010b010b-010b-010b-010b-010b010b0d01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'rpt-jones-0804', 'Jones Report Card', 'A', 'active')
+on conflict (id) do nothing;
+
+-- M4 Staff
+insert into public.sch_teachers (id, organization_id, hub_id, teacher_key, teacher_name, teacher_type, status)
+values ('010c010c-010c-010c-010c-010c010c0e01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'tch-wilson-0804', 'Wilson Teacher', 'full_time', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_staff_attendance (id, organization_id, hub_id, attendance_key, attendance_name, attendance_status, status)
+values ('010d010d-010d-010d-010d-010d010d0f01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'att-wilson-0804', 'Wilson Attendance', 'present', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_leave_requests (id, organization_id, hub_id, leave_key, leave_name, leave_status, status)
+values ('010e010e-010e-010e-010e-010e010e1001', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'lv-wilson-0804', 'Wilson Leave Request', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_substitute_teachers (id, organization_id, hub_id, substitute_key, substitute_name, substitute_status, status)
+values ('010f010f-010f-010f-010f-010f010f1101', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'sub-brown-0804', 'Brown Substitute', 'available', 'active')
+on conflict (id) do nothing;
+
+-- M5 Finance
+insert into public.sch_fee_structures (id, organization_id, hub_id, fee_key, fee_name, fee_type, status)
+values ('01100110-0110-0110-0110-011001101201', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'fee-tuition-0804', 'Tuition Fee Structure', 'tuition', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_fee_invoices (id, organization_id, hub_id, invoice_key, invoice_name, invoice_amount, status)
+values ('01110111-0111-0111-0111-011101111301', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'inv-jones-0804', 'Jones Fee Invoice', 5000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_fee_payments (id, organization_id, hub_id, payment_key, payment_name, payment_amount, status)
+values ('01120112-0112-0112-0112-011201121401', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'pay-jones-0804', 'Jones Fee Payment', 5000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_scholarships (id, organization_id, hub_id, scholarship_key, scholarship_name, scholarship_amount, status)
+values ('01130113-0113-0113-0113-011301131501', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'sch-merit-0804', 'Merit Scholarship', 1000.00, 'active')
+on conflict (id) do nothing;
+
+-- M6 Parent/Student Experience
+insert into public.sch_announcements (id, organization_id, hub_id, announcement_key, announcement_title, announcement_type, status)
+values ('01140114-0114-0114-0114-011401141601', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'ann-open-0804', 'Open House Announcement', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_messaging (id, organization_id, hub_id, message_key, message_subject, message_type, status)
+values ('01150115-0115-0115-0115-011501151701', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'msg-parent-0804', 'Parent Message', 'direct', 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_events (id, organization_id, hub_id, event_key, event_name, event_type, status)
+values ('01160116-0116-0116-0116-011601161801', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'evt-sports-0804', 'Sports Day Event', 'academic', 'active')
+on conflict (id) do nothing;
+
+-- M7 Analytics
+insert into public.sch_admissions_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('01170117-0117-0117-0117-011701171901', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'anly-adm-0804', 'admissions', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_attendance_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('01180118-0118-0118-0118-011801181a01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'anly-att-0804', 'attendance', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_academic_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('01190119-0119-0119-0119-011901191b01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'anly-acad-0804', 'academic', 96.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Executive Dashboard
+insert into public.sch_school_metrics (id, organization_id, metrics_key, revenue_total, admissions_count, attendance_rate, academic_performance_score, fee_collection_rate, teacher_performance_score, student_growth_rate, overall_school_score, status)
+values ('011a011a-011a-011a-011a-011a011a1c01', '11111111-1111-1111-1111-111111111111', 'sch-metrics-0804', 850000.00, 1250, 94.50, 91.00, 88.50, 93.00, 8.50, 95.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_school_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, campus_health_status, financial_health_status, operational_health_status, summary, status)
+values ('011b011b-011b-011b-011b-011b011b1d01', '11111111-1111-1111-1111-111111111111', 'sch-health-0804', 96.00, false, 'healthy', 'healthy', 'healthy', 'School business operating system operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.sch_executive_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('011c011c-011c-011c-011c-011c011c1e01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'kpi-exec-0804', 'Executive KPI Score', 97.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.sch_school_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('011d011d-011d-011d-011d-011d011d1f01', '11111111-1111-1111-1111-111111111111', '006f006f-006f-006f-006f-006f006f0101', 'fail-adm-0804', 'admission', 'ADM_TIMEOUT', 'Admission processing timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.sch_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('011e011e-011e-011e-011e-011e011e2001', '11111111-1111-1111-1111-111111111111', 'school_hub', 'seed', 'Enterprise school business operating system seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================
