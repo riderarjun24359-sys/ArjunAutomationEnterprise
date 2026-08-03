@@ -719,6 +719,41 @@ import {
     BpfProcessFailureRepository,
     BpfAuditLogRepository,
 } from "@/src/modules/database/repositories/business-process-repositories";
+import {
+    DfeFormHubRepository,
+    DfeFormDefinitionRepository,
+    DfeFormCategoryRepository,
+    DfeFormVersionRepository,
+    DfeFormDependencyRepository,
+    DfeFormSectionRepository,
+    DfeFormTabRepository,
+    DfeFormGroupRepository,
+    DfeRepeatableSectionRepository,
+    DfeFormFieldRepository,
+    DfeFieldOptionRepository,
+    DfeFormulaFieldRepository,
+    DfeMediaFieldRepository,
+    DfeRequiredRuleRepository,
+    DfeRegexRuleRepository,
+    DfeRangeRuleRepository,
+    DfeCrossFieldRuleRepository,
+    DfeFormDraftRepository,
+    DfeFormSubmissionRepository,
+    DfeFormReviewRepository,
+    DfeExecutionAuditEntryRepository,
+    DfeRenderProfileRepository,
+    DfeThemeConfigRepository,
+    DfeLocalizationPackRepository,
+    DfeSubmissionAnalyticsRepository,
+    DfeCompletionMetricRepository,
+    DfeUsageTrendRepository,
+    DfeFormMetricRepository,
+    DfeFormHealthRepository,
+    DfePendingReviewItemRepository,
+    DfeFormFailureRepository,
+    DfeAuditLogRepository,
+} from "@/src/modules/database/repositories/form-engine-repositories";
+
 
 
 
@@ -1384,6 +1419,38 @@ export class DatabaseAccessLayer {
     readonly bpfFailedProcessRecords: BpfFailedProcessRecordRepository;
     readonly bpfProcessFailures: BpfProcessFailureRepository;
     readonly bpfAuditLogs: BpfAuditLogRepository;
+    readonly dfeFormHubs: DfeFormHubRepository;
+    readonly dfeFormDefinitions: DfeFormDefinitionRepository;
+    readonly dfeFormCategories: DfeFormCategoryRepository;
+    readonly dfeFormVersions: DfeFormVersionRepository;
+    readonly dfeFormDependencies: DfeFormDependencyRepository;
+    readonly dfeFormSections: DfeFormSectionRepository;
+    readonly dfeFormTabs: DfeFormTabRepository;
+    readonly dfeFormGroups: DfeFormGroupRepository;
+    readonly dfeRepeatableSections: DfeRepeatableSectionRepository;
+    readonly dfeFormFields: DfeFormFieldRepository;
+    readonly dfeFieldOptions: DfeFieldOptionRepository;
+    readonly dfeFormulaFields: DfeFormulaFieldRepository;
+    readonly dfeMediaFields: DfeMediaFieldRepository;
+    readonly dfeRequiredRules: DfeRequiredRuleRepository;
+    readonly dfeRegexRules: DfeRegexRuleRepository;
+    readonly dfeRangeRules: DfeRangeRuleRepository;
+    readonly dfeCrossFieldRules: DfeCrossFieldRuleRepository;
+    readonly dfeFormDrafts: DfeFormDraftRepository;
+    readonly dfeFormSubmissions: DfeFormSubmissionRepository;
+    readonly dfeFormReviews: DfeFormReviewRepository;
+    readonly dfeExecutionAuditEntries: DfeExecutionAuditEntryRepository;
+    readonly dfeRenderProfiles: DfeRenderProfileRepository;
+    readonly dfeThemeConfigs: DfeThemeConfigRepository;
+    readonly dfeLocalizationPacks: DfeLocalizationPackRepository;
+    readonly dfeSubmissionAnalytics: DfeSubmissionAnalyticsRepository;
+    readonly dfeCompletionMetrics: DfeCompletionMetricRepository;
+    readonly dfeUsageTrends: DfeUsageTrendRepository;
+    readonly dfeFormMetrics: DfeFormMetricRepository;
+    readonly dfeFormHealth: DfeFormHealthRepository;
+    readonly dfePendingReviewItems: DfePendingReviewItemRepository;
+    readonly dfeFormFailures: DfeFormFailureRepository;
+    readonly dfeAuditLogs: DfeAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2047,6 +2114,38 @@ export class DatabaseAccessLayer {
         this.bpfFailedProcessRecords = new BpfFailedProcessRecordRepository();
         this.bpfProcessFailures = new BpfProcessFailureRepository();
         this.bpfAuditLogs = new BpfAuditLogRepository();
+        this.dfeFormHubs = new DfeFormHubRepository();
+        this.dfeFormDefinitions = new DfeFormDefinitionRepository();
+        this.dfeFormCategories = new DfeFormCategoryRepository();
+        this.dfeFormVersions = new DfeFormVersionRepository();
+        this.dfeFormDependencies = new DfeFormDependencyRepository();
+        this.dfeFormSections = new DfeFormSectionRepository();
+        this.dfeFormTabs = new DfeFormTabRepository();
+        this.dfeFormGroups = new DfeFormGroupRepository();
+        this.dfeRepeatableSections = new DfeRepeatableSectionRepository();
+        this.dfeFormFields = new DfeFormFieldRepository();
+        this.dfeFieldOptions = new DfeFieldOptionRepository();
+        this.dfeFormulaFields = new DfeFormulaFieldRepository();
+        this.dfeMediaFields = new DfeMediaFieldRepository();
+        this.dfeRequiredRules = new DfeRequiredRuleRepository();
+        this.dfeRegexRules = new DfeRegexRuleRepository();
+        this.dfeRangeRules = new DfeRangeRuleRepository();
+        this.dfeCrossFieldRules = new DfeCrossFieldRuleRepository();
+        this.dfeFormDrafts = new DfeFormDraftRepository();
+        this.dfeFormSubmissions = new DfeFormSubmissionRepository();
+        this.dfeFormReviews = new DfeFormReviewRepository();
+        this.dfeExecutionAuditEntries = new DfeExecutionAuditEntryRepository();
+        this.dfeRenderProfiles = new DfeRenderProfileRepository();
+        this.dfeThemeConfigs = new DfeThemeConfigRepository();
+        this.dfeLocalizationPacks = new DfeLocalizationPackRepository();
+        this.dfeSubmissionAnalytics = new DfeSubmissionAnalyticsRepository();
+        this.dfeCompletionMetrics = new DfeCompletionMetricRepository();
+        this.dfeUsageTrends = new DfeUsageTrendRepository();
+        this.dfeFormMetrics = new DfeFormMetricRepository();
+        this.dfeFormHealth = new DfeFormHealthRepository();
+        this.dfePendingReviewItems = new DfePendingReviewItemRepository();
+        this.dfeFormFailures = new DfeFormFailureRepository();
+        this.dfeAuditLogs = new DfeAuditLogRepository();
     }
 }
 

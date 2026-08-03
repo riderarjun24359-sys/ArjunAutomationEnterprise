@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T19:37:23.669Z
+-- Generated: 2026-08-03T19:53:58.683Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (34):
+--   Migrations (35):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -40,7 +40,8 @@
 --     - 202608020032_enterprise_launch_readiness_platform.sql
 --     - 202608020033_enterprise_industry_framework_core.sql
 --     - 202608020034_enterprise_business_process_framework.sql
---   Seeds (34):
+--     - 202608020035_enterprise_dynamic_form_engine.sql
+--   Seeds (35):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -75,9 +76,10 @@
 --     - 032_enterprise_launch_readiness_platform_seed.sql
 --     - 033_enterprise_industry_framework_core_seed.sql
 --     - 034_enterprise_business_process_framework_seed.sql
+--     - 035_enterprise_dynamic_form_engine_seed.sql
 --
--- Includes through V2 Program B Sprint 2:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework
+-- Includes through V2 Program B Sprint 3:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -14236,6 +14238,628 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020035_enterprise_dynamic_form_engine.sql
+-- =============================================================================
+-- V2 Program B Sprint 3: Enterprise Dynamic Form Engine
+
+-- FormHub
+create table if not exists public.dfe_form_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- FormDefinition
+create table if not exists public.dfe_form_definitions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  form_key text not null,
+  form_name text not null default '',
+  form_type text not null default 'standard',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, form_key)
+);
+
+-- FormCategory
+create table if not exists public.dfe_form_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_type text not null default 'general',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- FormVersion
+create table if not exists public.dfe_form_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '',
+  release_channel text not null default 'stable',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- FormDependency
+create table if not exists public.dfe_form_dependencies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  dependency_key text not null,
+  dependency_type text not null default 'form',
+  dependency_ref text not null default '',
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dependency_key)
+);
+
+-- FormSection
+create table if not exists public.dfe_form_sections (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  section_key text not null,
+  section_name text not null default '',
+  section_order integer not null default 0,
+  section_type text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, section_key)
+);
+
+-- FormTab
+create table if not exists public.dfe_form_tabs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  tab_key text not null,
+  tab_name text not null default '',
+  tab_order integer not null default 0,
+  tab_type text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, tab_key)
+);
+
+-- FormGroup
+create table if not exists public.dfe_form_groups (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  group_key text not null,
+  group_name text not null default '',
+  group_order integer not null default 0,
+  group_type text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, group_key)
+);
+
+-- RepeatableSection
+create table if not exists public.dfe_repeatable_sections (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  section_key text not null,
+  section_name text not null default '',
+  min_instances integer not null default 0,
+  max_instances integer not null default 10,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, section_key)
+);
+
+-- FormField
+create table if not exists public.dfe_form_fields (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  field_key text not null,
+  field_name text not null default '',
+  field_type text not null default 'text',
+  field_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, field_key)
+);
+
+-- FieldOption
+create table if not exists public.dfe_field_options (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  option_key text not null,
+  option_label text not null default '',
+  option_value text not null default '',
+  option_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, option_key)
+);
+
+-- FormulaField
+create table if not exists public.dfe_formula_fields (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  formula_key text not null,
+  formula_name text not null default '',
+  formula_expression text not null default '',
+  result_type text not null default 'number',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, formula_key)
+);
+
+-- MediaField
+create table if not exists public.dfe_media_fields (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  media_key text not null,
+  media_name text not null default '',
+  media_type text not null default 'image',
+  max_file_size_mb integer not null default 10,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, media_key)
+);
+
+-- RequiredRule
+create table if not exists public.dfe_required_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  field_ref text not null default '',
+  error_message text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- RegexRule
+create table if not exists public.dfe_regex_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  pattern text not null default '',
+  error_message text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- RangeRule
+create table if not exists public.dfe_range_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  min_value numeric(12, 2),
+  max_value numeric(12, 2),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- CrossFieldRule
+create table if not exists public.dfe_cross_field_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  rule_expression text not null default '',
+  error_message text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- FormDraft
+create table if not exists public.dfe_form_drafts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  draft_key text not null,
+  draft_name text not null default '',
+  draft_status text not null default 'draft',
+  saved_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, draft_key)
+);
+
+-- FormSubmission
+create table if not exists public.dfe_form_submissions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  submission_key text not null,
+  submission_name text not null default '',
+  submission_status text not null default 'submitted',
+  submitted_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, submission_key)
+);
+
+-- FormReview
+create table if not exists public.dfe_form_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  review_key text not null,
+  review_name text not null default '',
+  review_status text not null default 'pending',
+  reviewed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- ExecutionAuditEntry
+create table if not exists public.dfe_execution_audit_entries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  audit_key text not null,
+  audit_type text not null default 'submission',
+  audit_summary text not null default '',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, audit_key)
+);
+
+-- RenderProfile
+create table if not exists public.dfe_render_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'standard',
+  layout_mode text not null default 'vertical',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- ThemeConfig
+create table if not exists public.dfe_theme_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  theme_key text not null,
+  theme_name text not null default '',
+  primary_color text not null default '#d97706',
+  theme_mode text not null default 'light',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, theme_key)
+);
+
+-- LocalizationPack
+create table if not exists public.dfe_localization_packs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  locale_key text not null,
+  locale_code text not null default 'en-US',
+  locale_name text not null default '',
+  translation_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, locale_key)
+);
+
+-- SubmissionAnalytics
+create table if not exists public.dfe_submission_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'submission',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- CompletionMetric
+create table if not exists public.dfe_completion_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  metric_key text not null,
+  metric_name text not null default '',
+  completion_rate numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metric_key)
+);
+
+-- UsageTrend
+create table if not exists public.dfe_usage_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  trend_key text not null,
+  trend_name text not null default '',
+  trend_value numeric(12, 2) not null default 0,
+  trend_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- FormMetric
+create table if not exists public.dfe_form_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  submission_count integer not null default 0,
+  completion_rate numeric(5, 2) not null default 100,
+  average_completion_time_ms integer not null default 0,
+  validation_error_count integer not null default 0,
+  abandonment_rate numeric(5, 2) not null default 0,
+  overall_form_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- FormHealth
+create table if not exists public.dfe_form_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  pending_reviews_count integer not null default 0,
+  active_forms_count integer not null default 0,
+  framework_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- PendingReviewItem
+create table if not exists public.dfe_pending_review_items (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  item_key text not null,
+  item_name text not null default '',
+  review_type text not null default 'submission',
+  priority text not null default 'normal',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, item_key)
+);
+
+-- FormFailure
+create table if not exists public.dfe_form_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'validation',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.dfe_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_dfe_form_hubs_org on public.dfe_form_hubs(organization_id);
+create index if not exists idx_dfe_form_definitions_org on public.dfe_form_definitions(organization_id);
+create index if not exists idx_dfe_form_definitions_hub on public.dfe_form_definitions(hub_id);
+create index if not exists idx_dfe_form_categories_org on public.dfe_form_categories(organization_id);
+create index if not exists idx_dfe_form_categories_hub on public.dfe_form_categories(hub_id);
+create index if not exists idx_dfe_form_versions_org on public.dfe_form_versions(organization_id);
+create index if not exists idx_dfe_form_versions_hub on public.dfe_form_versions(hub_id);
+create index if not exists idx_dfe_form_dependencies_org on public.dfe_form_dependencies(organization_id);
+create index if not exists idx_dfe_form_dependencies_hub on public.dfe_form_dependencies(hub_id);
+create index if not exists idx_dfe_form_sections_org on public.dfe_form_sections(organization_id);
+create index if not exists idx_dfe_form_sections_hub on public.dfe_form_sections(hub_id);
+create index if not exists idx_dfe_form_tabs_org on public.dfe_form_tabs(organization_id);
+create index if not exists idx_dfe_form_tabs_hub on public.dfe_form_tabs(hub_id);
+create index if not exists idx_dfe_form_groups_org on public.dfe_form_groups(organization_id);
+create index if not exists idx_dfe_form_groups_hub on public.dfe_form_groups(hub_id);
+create index if not exists idx_dfe_repeatable_sections_org on public.dfe_repeatable_sections(organization_id);
+create index if not exists idx_dfe_repeatable_sections_hub on public.dfe_repeatable_sections(hub_id);
+create index if not exists idx_dfe_form_fields_org on public.dfe_form_fields(organization_id);
+create index if not exists idx_dfe_form_fields_hub on public.dfe_form_fields(hub_id);
+create index if not exists idx_dfe_field_options_org on public.dfe_field_options(organization_id);
+create index if not exists idx_dfe_field_options_hub on public.dfe_field_options(hub_id);
+create index if not exists idx_dfe_formula_fields_org on public.dfe_formula_fields(organization_id);
+create index if not exists idx_dfe_formula_fields_hub on public.dfe_formula_fields(hub_id);
+create index if not exists idx_dfe_media_fields_org on public.dfe_media_fields(organization_id);
+create index if not exists idx_dfe_media_fields_hub on public.dfe_media_fields(hub_id);
+create index if not exists idx_dfe_required_rules_org on public.dfe_required_rules(organization_id);
+create index if not exists idx_dfe_required_rules_hub on public.dfe_required_rules(hub_id);
+create index if not exists idx_dfe_regex_rules_org on public.dfe_regex_rules(organization_id);
+create index if not exists idx_dfe_regex_rules_hub on public.dfe_regex_rules(hub_id);
+create index if not exists idx_dfe_range_rules_org on public.dfe_range_rules(organization_id);
+create index if not exists idx_dfe_range_rules_hub on public.dfe_range_rules(hub_id);
+create index if not exists idx_dfe_cross_field_rules_org on public.dfe_cross_field_rules(organization_id);
+create index if not exists idx_dfe_cross_field_rules_hub on public.dfe_cross_field_rules(hub_id);
+create index if not exists idx_dfe_form_drafts_org on public.dfe_form_drafts(organization_id);
+create index if not exists idx_dfe_form_drafts_hub on public.dfe_form_drafts(hub_id);
+create index if not exists idx_dfe_form_submissions_org on public.dfe_form_submissions(organization_id);
+create index if not exists idx_dfe_form_submissions_hub on public.dfe_form_submissions(hub_id);
+create index if not exists idx_dfe_form_reviews_org on public.dfe_form_reviews(organization_id);
+create index if not exists idx_dfe_form_reviews_hub on public.dfe_form_reviews(hub_id);
+create index if not exists idx_dfe_execution_audit_entries_org on public.dfe_execution_audit_entries(organization_id);
+create index if not exists idx_dfe_execution_audit_entries_hub on public.dfe_execution_audit_entries(hub_id);
+create index if not exists idx_dfe_render_profiles_org on public.dfe_render_profiles(organization_id);
+create index if not exists idx_dfe_render_profiles_hub on public.dfe_render_profiles(hub_id);
+create index if not exists idx_dfe_theme_configs_org on public.dfe_theme_configs(organization_id);
+create index if not exists idx_dfe_theme_configs_hub on public.dfe_theme_configs(hub_id);
+create index if not exists idx_dfe_localization_packs_org on public.dfe_localization_packs(organization_id);
+create index if not exists idx_dfe_localization_packs_hub on public.dfe_localization_packs(hub_id);
+create index if not exists idx_dfe_submission_analytics_org on public.dfe_submission_analytics(organization_id);
+create index if not exists idx_dfe_submission_analytics_hub on public.dfe_submission_analytics(hub_id);
+create index if not exists idx_dfe_completion_metrics_org on public.dfe_completion_metrics(organization_id);
+create index if not exists idx_dfe_completion_metrics_hub on public.dfe_completion_metrics(hub_id);
+create index if not exists idx_dfe_usage_trends_org on public.dfe_usage_trends(organization_id);
+create index if not exists idx_dfe_usage_trends_hub on public.dfe_usage_trends(hub_id);
+create index if not exists idx_dfe_form_metrics_org on public.dfe_form_metrics(organization_id);
+create index if not exists idx_dfe_form_health_org on public.dfe_form_health(organization_id);
+create index if not exists idx_dfe_pending_review_items_org on public.dfe_pending_review_items(organization_id);
+create index if not exists idx_dfe_pending_review_items_hub on public.dfe_pending_review_items(hub_id);
+create index if not exists idx_dfe_form_failures_org on public.dfe_form_failures(organization_id);
+create index if not exists idx_dfe_form_failures_hub on public.dfe_form_failures(hub_id);
+create index if not exists idx_dfe_audit_logs_org on public.dfe_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'dfe_form_hubs','dfe_form_definitions','dfe_form_categories','dfe_form_versions','dfe_form_dependencies','dfe_form_sections','dfe_form_tabs','dfe_form_groups','dfe_repeatable_sections','dfe_form_fields','dfe_field_options','dfe_formula_fields','dfe_media_fields','dfe_required_rules','dfe_regex_rules','dfe_range_rules','dfe_cross_field_rules','dfe_form_drafts','dfe_form_submissions','dfe_form_reviews','dfe_execution_audit_entries','dfe_render_profiles','dfe_theme_configs','dfe_localization_packs','dfe_submission_analytics','dfe_completion_metrics','dfe_usage_trends','dfe_form_metrics','dfe_form_health','dfe_pending_review_items','dfe_form_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.dfe_form_hubs enable row level security;
+alter table public.dfe_form_definitions enable row level security;
+alter table public.dfe_form_categories enable row level security;
+alter table public.dfe_form_versions enable row level security;
+alter table public.dfe_form_dependencies enable row level security;
+alter table public.dfe_form_sections enable row level security;
+alter table public.dfe_form_tabs enable row level security;
+alter table public.dfe_form_groups enable row level security;
+alter table public.dfe_repeatable_sections enable row level security;
+alter table public.dfe_form_fields enable row level security;
+alter table public.dfe_field_options enable row level security;
+alter table public.dfe_formula_fields enable row level security;
+alter table public.dfe_media_fields enable row level security;
+alter table public.dfe_required_rules enable row level security;
+alter table public.dfe_regex_rules enable row level security;
+alter table public.dfe_range_rules enable row level security;
+alter table public.dfe_cross_field_rules enable row level security;
+alter table public.dfe_form_drafts enable row level security;
+alter table public.dfe_form_submissions enable row level security;
+alter table public.dfe_form_reviews enable row level security;
+alter table public.dfe_execution_audit_entries enable row level security;
+alter table public.dfe_render_profiles enable row level security;
+alter table public.dfe_theme_configs enable row level security;
+alter table public.dfe_localization_packs enable row level security;
+alter table public.dfe_submission_analytics enable row level security;
+alter table public.dfe_completion_metrics enable row level security;
+alter table public.dfe_usage_trends enable row level security;
+alter table public.dfe_form_metrics enable row level security;
+alter table public.dfe_form_health enable row level security;
+alter table public.dfe_pending_review_items enable row level security;
+alter table public.dfe_form_failures enable row level security;
+alter table public.dfe_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'dfe_form_hubs','dfe_form_definitions','dfe_form_categories','dfe_form_versions','dfe_form_dependencies','dfe_form_sections','dfe_form_tabs','dfe_form_groups','dfe_repeatable_sections','dfe_form_fields','dfe_field_options','dfe_formula_fields','dfe_media_fields','dfe_required_rules','dfe_regex_rules','dfe_range_rules','dfe_cross_field_rules','dfe_form_drafts','dfe_form_submissions','dfe_form_reviews','dfe_execution_audit_entries','dfe_render_profiles','dfe_theme_configs','dfe_localization_packs','dfe_submission_analytics','dfe_completion_metrics','dfe_usage_trends','dfe_form_metrics','dfe_form_health','dfe_pending_review_items','dfe_form_failures','dfe_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('dfe.view', 'View enterprise dynamic form engine data', 'enterprise_dynamic_form_engine'),
+  ('dfe.manage', 'Manage form registry, builder, validation, execution, and framework outputs', 'enterprise_dynamic_form_engine'),
+  ('dfe.approve', 'Approve form reviews and validation gates', 'enterprise_dynamic_form_engine'),
+  ('dfe.admin', 'Administer enterprise dynamic form engine governance', 'enterprise_dynamic_form_engine')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -18194,6 +18818,156 @@ on conflict (id) do nothing;
 
 insert into public.bpf_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00890089-0089-0089-0089-008900892101', '11111111-1111-1111-1111-111111111111', 'process_hub', 'seed', 'Enterprise business process framework seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 035_enterprise_dynamic_form_engine_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a335', '11111111-1111-1111-1111-111111111111', 'Enterprise Dynamic Form Orchestrator', 'enterprise_dynamic_form_engine', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["form_registry","form_builder","field_engine","validation_engine","form_execution","form_rendering","form_analytics","form_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a535', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a335', 'northstar-form-engine-001', 'enterprise_dynamic_form_engine', 'form_hub', '006b006b-006b-006b-006b-006b006b0101', '{"objective":"Enterprise dynamic form engine for northstar operational forms"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Form Hub
+insert into public.dfe_form_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('006b006b-006b-006b-006b-006b006b0101', '11111111-1111-1111-1111-111111111111', 'northstar-form-engine', 'Northstar Form Engine Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+-- M1 Form Registry
+insert into public.dfe_form_definitions (id, organization_id, hub_id, form_key, form_name, form_type, status)
+values ('006c006c-006c-006c-006c-006c006c0201', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'form-onboard-0804', 'Customer Onboarding Form', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_categories (id, organization_id, hub_id, category_key, category_name, category_type, status)
+values ('006d006d-006d-006d-006d-006d006d0301', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'cat-ops-0804', 'Operations', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_versions (id, organization_id, hub_id, version_key, version_number, release_channel, status)
+values ('006e006e-006e-006e-006e-006e006e0401', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'ver-1-0-0', '1.0.0', 'stable', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_dependencies (id, organization_id, hub_id, dependency_key, dependency_type, dependency_ref, status)
+values ('006f006f-006f-006f-006f-006f006f0501', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'dep-crm-0804', 'form', 'crm-onboarding', 'active')
+on conflict (id) do nothing;
+
+-- M2 Form Builder
+insert into public.dfe_form_sections (id, organization_id, hub_id, section_key, section_name, section_order, status)
+values ('00700070-0070-0070-0070-007000700601', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'sec-personal-0804', 'Personal Information', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_tabs (id, organization_id, hub_id, tab_key, tab_name, tab_order, status)
+values ('00710071-0071-0071-0071-007100710701', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'tab-details-0804', 'Details', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_groups (id, organization_id, hub_id, group_key, group_name, group_order, status)
+values ('00720072-0072-0072-0072-007200720801', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'grp-contact-0804', 'Contact Group', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_repeatable_sections (id, organization_id, hub_id, section_key, section_name, min_instances, status)
+values ('00730073-0073-0073-0073-007300730901', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'rep-addr-0804', 'Addresses', 0, 'active')
+on conflict (id) do nothing;
+
+-- M3 Field Engine
+insert into public.dfe_form_fields (id, organization_id, hub_id, field_key, field_name, field_type, status)
+values ('00740074-0074-0074-0074-007400740a01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'fld-email-0804', 'Email Address', 'email', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_field_options (id, organization_id, hub_id, option_key, option_label, option_value, status)
+values ('00750075-0075-0075-0075-007500750b01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'opt-yes-0804', 'Yes', 'yes', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_formula_fields (id, organization_id, hub_id, formula_key, formula_name, formula_expression, status)
+values ('00760076-0076-0076-0076-007600760c01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'frm-total-0804', 'Total Amount', 'price * quantity', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_media_fields (id, organization_id, hub_id, media_key, media_name, media_type, status)
+values ('00770077-0077-0077-0077-007700770d01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'med-doc-0804', 'Document Upload', 'document', 'active')
+on conflict (id) do nothing;
+
+-- M4 Validation Engine
+insert into public.dfe_required_rules (id, organization_id, hub_id, rule_key, rule_name, field_ref, status)
+values ('00780078-0078-0078-0078-007800780e01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'req-email-0804', 'Email Required', 'fld-email-0804', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_regex_rules (id, organization_id, hub_id, rule_key, rule_name, pattern, status)
+values ('00790079-0079-0079-0079-007900790f01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'rx-email-0804', 'Email Format', '^[^@]+@[^@]+\\.[^@]+$', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_range_rules (id, organization_id, hub_id, rule_key, rule_name, min_value, status)
+values ('007a007a-007a-007a-007a-007a007a1001', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'rng-age-0804', 'Age Range', 18, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_cross_field_rules (id, organization_id, hub_id, rule_key, rule_name, rule_expression, status)
+values ('007b007b-007b-007b-007b-007b007b1101', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'xfr-match-0804', 'Password Match', 'password === confirmPassword', 'active')
+on conflict (id) do nothing;
+
+-- M5 Form Execution
+insert into public.dfe_form_drafts (id, organization_id, hub_id, draft_key, draft_name, draft_status, status)
+values ('007c007c-007c-007c-007c-007c007c1201', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'drf-save-0804', 'Onboarding Draft #12', 'draft', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_submissions (id, organization_id, hub_id, submission_key, submission_name, submission_status, status)
+values ('007d007d-007d-007d-007d-007d007d1301', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'sub-run-0804', 'Onboarding Submission #42', 'submitted', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_reviews (id, organization_id, hub_id, review_key, review_name, review_status, status)
+values ('007e007e-007e-007e-007e-007e007e1401', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'rev-pending-0804', 'Pending Review', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_execution_audit_entries (id, organization_id, hub_id, audit_key, audit_type, audit_summary, status)
+values ('007f007f-007f-007f-007f-007f007f1501', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'aud-sub-0804', 'submission', 'Form submitted successfully', 'active')
+on conflict (id) do nothing;
+
+-- M6 Form Rendering
+insert into public.dfe_render_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('00800080-0080-0080-0080-008000801601', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'prof-std-0804', 'Standard Layout', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_theme_configs (id, organization_id, hub_id, theme_key, theme_name, primary_color, status)
+values ('00810081-0081-0081-0081-008100811701', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'thm-amber-0804', 'Amber Theme', '#d97706', 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_localization_packs (id, organization_id, hub_id, locale_key, locale_code, locale_name, status)
+values ('00820082-0082-0082-0082-008200821801', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'loc-en-0804', 'en-US', 'English (US)', 'active')
+on conflict (id) do nothing;
+
+-- M7 Form Analytics
+insert into public.dfe_submission_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('00830083-0083-0083-0083-008300831901', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'anly-sub-0804', 'submission', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_completion_metrics (id, organization_id, hub_id, metric_key, metric_name, completion_rate, status)
+values ('00840084-0084-0084-0084-008400841a01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'cmp-rate-0804', 'Completion Rate', 87.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_usage_trends (id, organization_id, hub_id, trend_key, trend_name, trend_value, status)
+values ('00850085-0085-0085-0085-008500851b01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'trd-vol-0804', 'Submission Volume', 1250.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Form Dashboard
+insert into public.dfe_form_metrics (id, organization_id, metrics_key, submission_count, completion_rate, average_completion_time_ms, validation_error_count, abandonment_rate, overall_form_score, status)
+values ('00860086-0086-0086-0086-008600861c01', '11111111-1111-1111-1111-111111111111', 'form-metrics-0804', 1250, 87.50, 4500, 42, 12.50, 94.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, pending_reviews_count, active_forms_count, framework_health_status, summary, status)
+values ('00870087-0087-0087-0087-008700871d01', '11111111-1111-1111-1111-111111111111', 'form-health-0804', 95.00, false, 3, 42, 'healthy', 'Dynamic form engine operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.dfe_pending_review_items (id, organization_id, hub_id, item_key, item_name, review_type, status)
+values ('00880088-0088-0088-0088-008800881e01', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'item-rev-0804', 'Pending Submission Review', 'submission', 'open')
+on conflict (id) do nothing;
+
+insert into public.dfe_form_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00890089-0089-0089-0089-008900892001', '11111111-1111-1111-1111-111111111111', '006b006b-006b-006b-006b-006b006b0101', 'fail-val-0804', 'validation', 'VAL_REQUIRED', 'Required field email is missing', 'open')
+on conflict (id) do nothing;
+
+insert into public.dfe_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00900090-0090-0090-0090-009000902101', '11111111-1111-1111-1111-111111111111', 'form_hub', 'seed', 'Enterprise dynamic form engine seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

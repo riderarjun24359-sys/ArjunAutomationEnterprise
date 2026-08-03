@@ -39,6 +39,7 @@ const protectedRoutes = [
     ROUTES.launchReadiness,
     ROUTES.industryFramework,
     ROUTES.businessProcess,
+    ROUTES.formEngine,
 ];
 
 const authRoutes = [

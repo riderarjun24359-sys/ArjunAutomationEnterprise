@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 666 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_*)
+// 698 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -674,6 +674,38 @@ const requiredTables = [
     "bpf_failed_process_records",
     "bpf_process_failures",
     "bpf_audit_logs",
+    "dfe_form_hubs",
+    "dfe_form_definitions",
+    "dfe_form_categories",
+    "dfe_form_versions",
+    "dfe_form_dependencies",
+    "dfe_form_sections",
+    "dfe_form_tabs",
+    "dfe_form_groups",
+    "dfe_repeatable_sections",
+    "dfe_form_fields",
+    "dfe_field_options",
+    "dfe_formula_fields",
+    "dfe_media_fields",
+    "dfe_required_rules",
+    "dfe_regex_rules",
+    "dfe_range_rules",
+    "dfe_cross_field_rules",
+    "dfe_form_drafts",
+    "dfe_form_submissions",
+    "dfe_form_reviews",
+    "dfe_execution_audit_entries",
+    "dfe_render_profiles",
+    "dfe_theme_configs",
+    "dfe_localization_packs",
+    "dfe_submission_analytics",
+    "dfe_completion_metrics",
+    "dfe_usage_trends",
+    "dfe_form_metrics",
+    "dfe_form_health",
+    "dfe_pending_review_items",
+    "dfe_form_failures",
+    "dfe_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

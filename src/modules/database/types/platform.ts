@@ -9162,3 +9162,425 @@ export interface DbBpfAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbDfeFormHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormDefinition {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    form_key: string;
+    form_name: string;
+    form_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormDependency {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dependency_key: string;
+    dependency_type: string;
+    dependency_ref: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormSection {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    section_key: string;
+    section_name: string;
+    section_order: number;
+    section_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormTab {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    tab_key: string;
+    tab_name: string;
+    tab_order: number;
+    tab_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormGroup {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    group_key: string;
+    group_name: string;
+    group_order: number;
+    group_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeRepeatableSection {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    section_key: string;
+    section_name: string;
+    min_instances: number;
+    max_instances: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormField {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    field_key: string;
+    field_name: string;
+    field_type: string;
+    field_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFieldOption {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    option_key: string;
+    option_label: string;
+    option_value: string;
+    option_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormulaField {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    formula_key: string;
+    formula_name: string;
+    formula_expression: string;
+    result_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeMediaField {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    media_key: string;
+    media_name: string;
+    media_type: string;
+    max_file_size_mb: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeRequiredRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    field_ref: string;
+    error_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeRegexRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    pattern: string;
+    error_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeRangeRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    min_value?: number;
+    max_value?: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeCrossFieldRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_expression: string;
+    error_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormDraft {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    draft_key: string;
+    draft_name: string;
+    draft_status: string;
+    saved_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormSubmission {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    submission_key: string;
+    submission_name: string;
+    submission_status: string;
+    submitted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    review_name: string;
+    review_status: string;
+    reviewed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeExecutionAuditEntry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    audit_key: string;
+    audit_type: string;
+    audit_summary: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeRenderProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    layout_mode: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeThemeConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    theme_key: string;
+    theme_name: string;
+    primary_color: string;
+    theme_mode: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeLocalizationPack {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    locale_key: string;
+    locale_code: string;
+    locale_name: string;
+    translation_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeSubmissionAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeCompletionMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metric_key: string;
+    metric_name: string;
+    completion_rate: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeUsageTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    trend_name: string;
+    trend_value: number;
+    trend_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    submission_count: number;
+    completion_rate: number;
+    average_completion_time_ms: number;
+    validation_error_count: number;
+    abandonment_rate: number;
+    overall_form_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    pending_reviews_count: number;
+    active_forms_count: number;
+    framework_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfePendingReviewItem {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    item_key: string;
+    item_name: string;
+    review_type: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeFormFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfeAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

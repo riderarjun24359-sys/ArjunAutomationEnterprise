@@ -30,6 +30,7 @@ import {
     TrendingUp,
     Wallet,
     FileText,
+    FileEdit,
     GitBranch,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
@@ -71,6 +72,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Launch Readiness", href: ROUTES.launchReadiness, description: "Enterprise launch readiness: production validation, deployment, backup and recovery, observability, security, documentation, and launch scoring", icon: Rocket, section: "secondary" },
     { label: "Industry Framework", href: ROUTES.industryFramework, description: "Enterprise industry framework core: industry registry, profile engine, template engine, configuration, context, deployment profiles, SDK, and framework dashboard", icon: Layers, section: "secondary" },
     { label: "Business Process", href: ROUTES.businessProcess, description: "Enterprise business process framework: process registry, designer, approval engine, task engine, business rules, execution, analytics, and process dashboard", icon: GitBranch, section: "secondary" },
+    { label: "Form Engine", href: ROUTES.formEngine, description: "Enterprise dynamic form engine: form registry, builder, field engine, validation, execution, rendering, analytics, and form dashboard", icon: FileEdit, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },

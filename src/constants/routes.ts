@@ -35,6 +35,7 @@ export const ROUTES = {
     launchReadiness: "/launch-readiness",
     industryFramework: "/industry-framework",
     businessProcess: "/business-process",
+    formEngine: "/form-engine",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

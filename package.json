@@ -19,7 +19,8 @@
     "sprint8:verify": "node scripts/verify-sprint8.mjs",
     "sprint9:verify": "node scripts/verify-sprint9.mjs",
     "sprint-b1:verify": "node scripts/verify-sprint-b1.mjs",
-    "sprint-b2:verify": "node scripts/verify-sprint-b2.mjs"
+    "sprint-b2:verify": "node scripts/verify-sprint-b2.mjs",
+    "sprint-b3:verify": "node scripts/verify-sprint-b3.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",
