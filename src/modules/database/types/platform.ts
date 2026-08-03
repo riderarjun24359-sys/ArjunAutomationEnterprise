@@ -5002,3 +5002,495 @@ export interface DbIdpAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbTloTenantContext {
+    id: string;
+    organization_id: string;
+    context_key: string;
+    company_name: string;
+    lifecycle_stage: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloLifecycleRecord {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    record_key: string;
+    current_stage: string;
+    previous_stage: string;
+    stage_entered_at: string;
+    owner_user_id?: string | null;
+    notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloLifecycleTransition {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    transition_key: string;
+    from_stage: string;
+    to_stage: string;
+    triggered_by?: string | null;
+    reason: string;
+    approved_by?: string | null;
+    transitioned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloLifecycleEvent {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    event_key: string;
+    event_type: string;
+    stage: string;
+    summary: string;
+    details: Record<string, unknown>;
+    actor_user_id?: string | null;
+    occurred_at: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbTloReactivationRequest {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    request_key: string;
+    prior_stage: string;
+    target_stage: string;
+    requested_by?: string | null;
+    approved_by?: string | null;
+    justification: string;
+    requested_at: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloWorkspace {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    workspace_key: string;
+    workspace_name: string;
+    workspace_type: string;
+    region: string;
+    isolation_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloEnvironmentSetting {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    setting_key: string;
+    environment_name: string;
+    config: Record<string, unknown>;
+    feature_flags: Record<string, unknown>;
+    api_rate_limit: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloStorageManagement {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    storage_key: string;
+    storage_type: string;
+    quota_gb: number;
+    used_gb: number;
+    retention_days: number;
+    encryption_enabled: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloOperationsControl {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    control_key: string;
+    backup_enabled: boolean;
+    backup_schedule_cron: string;
+    last_backup_at?: string | null;
+    restore_point_id: string;
+    maintenance_mode: boolean;
+    maintenance_window: Record<string, unknown>;
+    maintenance_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloOnboardingFlow {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    flow_key: string;
+    flow_name: string;
+    flow_type: string;
+    steps: unknown[];
+    estimated_days: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloOnboardingProgress {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    progress_key: string;
+    flow_id?: string | null;
+    current_step: string;
+    completed_steps: unknown[];
+    percent_complete: number;
+    started_at: string;
+    completed_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloOnboardingValidation {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    validation_key: string;
+    validation_type: string;
+    rule_name: string;
+    expected_value: string;
+    actual_value: string;
+    passed: boolean;
+    validated_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloGoLiveChecklist {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    checklist_key: string;
+    name: string;
+    checklist_items: unknown[];
+    completed_items: unknown[];
+    signoff_user_id?: string | null;
+    go_live_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloMarketplaceModule {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    module_key: string;
+    module_name: string;
+    module_version: string;
+    category: string;
+    description: string;
+    is_published: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloModuleInstallation {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    installation_key: string;
+    module_id?: string | null;
+    installed_version: string;
+    installed_at: string;
+    installed_by?: string | null;
+    config: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloModuleDependency {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    dependency_key: string;
+    module_id?: string | null;
+    depends_on_module_id?: string | null;
+    dependency_type: string;
+    min_version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloModuleCompatibility {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    compatibility_key: string;
+    module_id?: string | null;
+    platform_version: string;
+    compatible: boolean;
+    notes: string;
+    tested_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloIndustryPack {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    pack_key: string;
+    pack_name: string;
+    industry: string;
+    pack_version: string;
+    included_modules: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloPackInstallation {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    installation_key: string;
+    pack_id?: string | null;
+    installed_version: string;
+    installed_at: string;
+    installed_by?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloPackVersion {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    version_key: string;
+    pack_id?: string | null;
+    version_number: string;
+    changelog: string;
+    release_notes: Record<string, unknown>;
+    released_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloPackExport {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    export_key: string;
+    pack_id?: string | null;
+    export_format: string;
+    export_uri: string;
+    exported_at: string;
+    exported_by?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloHealthSnapshot {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    overall_score: number;
+    trend: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloHealthDimension {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    dimension_key: string;
+    snapshot_id?: string | null;
+    dimension_name: string;
+    score: number;
+    weight: number;
+    metrics: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloHealthRisk {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    risk_key: string;
+    risk_type: string;
+    severity: string;
+    title: string;
+    description: string;
+    detected_at: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloHealthScore {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    score_key: string;
+    score_type: string;
+    score_value: number;
+    previous_value: number;
+    calculated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloSuccessPlan {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    plan_key: string;
+    plan_name: string;
+    csm_user_id?: string | null;
+    objectives: unknown[];
+    start_date: string;
+    end_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloQuarterlyReview {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    review_key: string;
+    quarter: string;
+    review_date: string;
+    attendees: unknown[];
+    outcomes: unknown[];
+    next_actions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloRenewalPlan {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    renewal_key: string;
+    contract_end_date: string;
+    renewal_amount_usd: number;
+    renewal_probability: number;
+    owner_user_id?: string | null;
+    strategy: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloCustomerMilestone {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    milestone_key: string;
+    milestone_name: string;
+    milestone_type: string;
+    target_date?: string | null;
+    achieved_at?: string | null;
+    success_plan_id?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloCommercialMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    total_tenants: number;
+    active_tenants: number;
+    trial_tenants: number;
+    churned_tenants: number;
+    mrr_usd: number;
+    arr_usd: number;
+    net_revenue_retention: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloGrowthSnapshot {
+    id: string;
+    organization_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    new_tenants_30d: number;
+    expansion_revenue_usd: number;
+    contraction_revenue_usd: number;
+    pipeline_value_usd: number;
+    growth_rate_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloExpansionOpportunity {
+    id: string;
+    organization_id: string;
+    tenant_context_id: string;
+    opportunity_key: string;
+    opportunity_type: string;
+    title: string;
+    estimated_value_usd: number;
+    probability: number;
+    owner_user_id?: string | null;
+    expected_close_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbTloAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

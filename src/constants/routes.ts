@@ -26,6 +26,7 @@ export const ROUTES = {
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",
     enterpriseIdentity: "/enterprise-identity",
+    tenantLifecycle: "/tenant-lifecycle",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

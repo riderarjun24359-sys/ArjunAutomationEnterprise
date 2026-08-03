@@ -412,6 +412,41 @@ import {
     IdpTemporaryAccessGrantRepository,
     IdpTrustedDeviceRepository,
 } from "@/src/modules/database/repositories/enterprise-identity-repositories";
+import {
+    TloAuditLogRepository,
+    TloCommercialMetricRepository,
+    TloCustomerMilestoneRepository,
+    TloEnvironmentSettingRepository,
+    TloExpansionOpportunityRepository,
+    TloGoLiveChecklistRepository,
+    TloGrowthSnapshotRepository,
+    TloHealthDimensionRepository,
+    TloHealthRiskRepository,
+    TloHealthScoreRepository,
+    TloHealthSnapshotRepository,
+    TloIndustryPackRepository,
+    TloLifecycleEventRepository,
+    TloLifecycleRecordRepository,
+    TloLifecycleTransitionRepository,
+    TloMarketplaceModuleRepository,
+    TloModuleCompatibilityRepository,
+    TloModuleDependencyRepository,
+    TloModuleInstallationRepository,
+    TloOnboardingFlowRepository,
+    TloOnboardingProgressRepository,
+    TloOnboardingValidationRepository,
+    TloOperationsControlRepository,
+    TloPackExportRepository,
+    TloPackInstallationRepository,
+    TloPackVersionRepository,
+    TloQuarterlyReviewRepository,
+    TloReactivationRequestRepository,
+    TloRenewalPlanRepository,
+    TloStorageManagementRepository,
+    TloSuccessPlanRepository,
+    TloTenantContextRepository,
+    TloWorkspaceRepository,
+} from "@/src/modules/database/repositories/tenant-lifecycle-ops-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -786,6 +821,39 @@ export class DatabaseAccessLayer {
     readonly idpIdentityHealth: IdpIdentityHealthRepository;
     readonly idpCompromisedAccounts: IdpCompromisedAccountRepository;
     readonly idpAuditLogs: IdpAuditLogRepository;
+    readonly tloTenantContexts: TloTenantContextRepository;
+    readonly tloLifecycleRecords: TloLifecycleRecordRepository;
+    readonly tloLifecycleTransitions: TloLifecycleTransitionRepository;
+    readonly tloLifecycleEvents: TloLifecycleEventRepository;
+    readonly tloReactivationRequests: TloReactivationRequestRepository;
+    readonly tloWorkspaces: TloWorkspaceRepository;
+    readonly tloEnvironmentSettings: TloEnvironmentSettingRepository;
+    readonly tloStorageManagement: TloStorageManagementRepository;
+    readonly tloOperationsControls: TloOperationsControlRepository;
+    readonly tloOnboardingFlows: TloOnboardingFlowRepository;
+    readonly tloOnboardingProgress: TloOnboardingProgressRepository;
+    readonly tloOnboardingValidations: TloOnboardingValidationRepository;
+    readonly tloGoLiveChecklists: TloGoLiveChecklistRepository;
+    readonly tloMarketplaceModules: TloMarketplaceModuleRepository;
+    readonly tloModuleInstallations: TloModuleInstallationRepository;
+    readonly tloModuleDependencies: TloModuleDependencyRepository;
+    readonly tloModuleCompatibility: TloModuleCompatibilityRepository;
+    readonly tloIndustryPacks: TloIndustryPackRepository;
+    readonly tloPackInstallations: TloPackInstallationRepository;
+    readonly tloPackVersions: TloPackVersionRepository;
+    readonly tloPackExports: TloPackExportRepository;
+    readonly tloHealthSnapshots: TloHealthSnapshotRepository;
+    readonly tloHealthDimensions: TloHealthDimensionRepository;
+    readonly tloHealthRisks: TloHealthRiskRepository;
+    readonly tloHealthScores: TloHealthScoreRepository;
+    readonly tloSuccessPlans: TloSuccessPlanRepository;
+    readonly tloQuarterlyReviews: TloQuarterlyReviewRepository;
+    readonly tloRenewalPlans: TloRenewalPlanRepository;
+    readonly tloCustomerMilestones: TloCustomerMilestoneRepository;
+    readonly tloCommercialMetrics: TloCommercialMetricRepository;
+    readonly tloGrowthSnapshots: TloGrowthSnapshotRepository;
+    readonly tloExpansionOpportunities: TloExpansionOpportunityRepository;
+    readonly tloAuditLogs: TloAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1160,6 +1228,39 @@ export class DatabaseAccessLayer {
         this.idpIdentityHealth = new IdpIdentityHealthRepository();
         this.idpCompromisedAccounts = new IdpCompromisedAccountRepository();
         this.idpAuditLogs = new IdpAuditLogRepository();
+        this.tloTenantContexts = new TloTenantContextRepository();
+        this.tloLifecycleRecords = new TloLifecycleRecordRepository();
+        this.tloLifecycleTransitions = new TloLifecycleTransitionRepository();
+        this.tloLifecycleEvents = new TloLifecycleEventRepository();
+        this.tloReactivationRequests = new TloReactivationRequestRepository();
+        this.tloWorkspaces = new TloWorkspaceRepository();
+        this.tloEnvironmentSettings = new TloEnvironmentSettingRepository();
+        this.tloStorageManagement = new TloStorageManagementRepository();
+        this.tloOperationsControls = new TloOperationsControlRepository();
+        this.tloOnboardingFlows = new TloOnboardingFlowRepository();
+        this.tloOnboardingProgress = new TloOnboardingProgressRepository();
+        this.tloOnboardingValidations = new TloOnboardingValidationRepository();
+        this.tloGoLiveChecklists = new TloGoLiveChecklistRepository();
+        this.tloMarketplaceModules = new TloMarketplaceModuleRepository();
+        this.tloModuleInstallations = new TloModuleInstallationRepository();
+        this.tloModuleDependencies = new TloModuleDependencyRepository();
+        this.tloModuleCompatibility = new TloModuleCompatibilityRepository();
+        this.tloIndustryPacks = new TloIndustryPackRepository();
+        this.tloPackInstallations = new TloPackInstallationRepository();
+        this.tloPackVersions = new TloPackVersionRepository();
+        this.tloPackExports = new TloPackExportRepository();
+        this.tloHealthSnapshots = new TloHealthSnapshotRepository();
+        this.tloHealthDimensions = new TloHealthDimensionRepository();
+        this.tloHealthRisks = new TloHealthRiskRepository();
+        this.tloHealthScores = new TloHealthScoreRepository();
+        this.tloSuccessPlans = new TloSuccessPlanRepository();
+        this.tloQuarterlyReviews = new TloQuarterlyReviewRepository();
+        this.tloRenewalPlans = new TloRenewalPlanRepository();
+        this.tloCustomerMilestones = new TloCustomerMilestoneRepository();
+        this.tloCommercialMetrics = new TloCommercialMetricRepository();
+        this.tloGrowthSnapshots = new TloGrowthSnapshotRepository();
+        this.tloExpansionOpportunities = new TloExpansionOpportunityRepository();
+        this.tloAuditLogs = new TloAuditLogRepository();
     }
 }
 

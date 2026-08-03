@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 377 required tables (345 foundation + enterprise + 32 idp_*)
+// 410 required tables (377 foundation + enterprise + idp + 33 tlo_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -385,6 +385,39 @@ const requiredTables = [
     "idp_identity_health",
     "idp_compromised_accounts",
     "idp_audit_logs",
+    "tlo_tenant_contexts",
+    "tlo_lifecycle_records",
+    "tlo_lifecycle_transitions",
+    "tlo_lifecycle_events",
+    "tlo_reactivation_requests",
+    "tlo_workspaces",
+    "tlo_environment_settings",
+    "tlo_storage_management",
+    "tlo_operations_controls",
+    "tlo_onboarding_flows",
+    "tlo_onboarding_progress",
+    "tlo_onboarding_validations",
+    "tlo_go_live_checklists",
+    "tlo_marketplace_modules",
+    "tlo_module_installations",
+    "tlo_module_dependencies",
+    "tlo_module_compatibility",
+    "tlo_industry_packs",
+    "tlo_pack_installations",
+    "tlo_pack_versions",
+    "tlo_pack_exports",
+    "tlo_health_snapshots",
+    "tlo_health_dimensions",
+    "tlo_health_risks",
+    "tlo_health_scores",
+    "tlo_success_plans",
+    "tlo_quarterly_reviews",
+    "tlo_renewal_plans",
+    "tlo_customer_milestones",
+    "tlo_commercial_metrics",
+    "tlo_growth_snapshots",
+    "tlo_expansion_opportunities",
+    "tlo_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
