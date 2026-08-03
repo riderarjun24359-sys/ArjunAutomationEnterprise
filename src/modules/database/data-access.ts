@@ -957,6 +957,41 @@ import {
     RtlRetailFailureRepository,
     RtlAuditLogRepository,
 } from "@/src/modules/database/repositories/retail-repositories";
+import {
+    ElfLaunchHubRepository,
+    ElfOrganizationProvisionRepository,
+    ElfTenantProvisionRepository,
+    ElfIndustryPackAssignmentRepository,
+    ElfModuleLicenseRepository,
+    ElfWizardProfileRepository,
+    ElfWizardBrandingRepository,
+    ElfWizardDepartmentRepository,
+    ElfWizardSettingRepository,
+    ElfImportJobRepository,
+    ElfImportValidationRepository,
+    ElfImportPreviewRepository,
+    ElfImportHistoryRepository,
+    ElfGoLiveChecklistRepository,
+    ElfGoLiveScoreRepository,
+    ElfDeploymentStatusRepository,
+    ElfReadinessValidationRepository,
+    ElfCustomerHealthScoreRepository,
+    ElfPlatformAdoptionRepository,
+    ElfFeatureUsageRepository,
+    ElfRenewalTrackingRepository,
+    ElfSupportTicketRepository,
+    ElfKnowledgeBaseArticleRepository,
+    ElfIncidentTrackingRepository,
+    ElfCustomerRegistryRepository,
+    ElfSubscriptionRecordRepository,
+    ElfLicenseManagementRepository,
+    ElfLaunchMetricRepository,
+    ElfLaunchHealthRepository,
+    ElfMissionControlKpiRepository,
+    ElfLaunchFailureRepository,
+    ElfAuditLogRepository,
+} from "@/src/modules/database/repositories/launch-foundation-repositories";
+
 
 
 
@@ -1853,6 +1888,38 @@ export class DatabaseAccessLayer {
     readonly rtlExecutiveKpis: RtlExecutiveKpiRepository;
     readonly rtlRetailFailures: RtlRetailFailureRepository;
     readonly rtlAuditLogs: RtlAuditLogRepository;
+    readonly elfLaunchHubs: ElfLaunchHubRepository;
+    readonly elfOrganizationProvisions: ElfOrganizationProvisionRepository;
+    readonly elfTenantProvisions: ElfTenantProvisionRepository;
+    readonly elfIndustryPackAssignments: ElfIndustryPackAssignmentRepository;
+    readonly elfModuleLicenses: ElfModuleLicenseRepository;
+    readonly elfWizardProfiles: ElfWizardProfileRepository;
+    readonly elfWizardBranding: ElfWizardBrandingRepository;
+    readonly elfWizardDepartments: ElfWizardDepartmentRepository;
+    readonly elfWizardSettings: ElfWizardSettingRepository;
+    readonly elfImportJobs: ElfImportJobRepository;
+    readonly elfImportValidations: ElfImportValidationRepository;
+    readonly elfImportPreviews: ElfImportPreviewRepository;
+    readonly elfImportHistory: ElfImportHistoryRepository;
+    readonly elfGoLiveChecklists: ElfGoLiveChecklistRepository;
+    readonly elfGoLiveScores: ElfGoLiveScoreRepository;
+    readonly elfDeploymentStatuses: ElfDeploymentStatusRepository;
+    readonly elfReadinessValidations: ElfReadinessValidationRepository;
+    readonly elfCustomerHealthScores: ElfCustomerHealthScoreRepository;
+    readonly elfPlatformAdoption: ElfPlatformAdoptionRepository;
+    readonly elfFeatureUsage: ElfFeatureUsageRepository;
+    readonly elfRenewalTracking: ElfRenewalTrackingRepository;
+    readonly elfSupportTickets: ElfSupportTicketRepository;
+    readonly elfKnowledgeBaseArticles: ElfKnowledgeBaseArticleRepository;
+    readonly elfIncidentTracking: ElfIncidentTrackingRepository;
+    readonly elfCustomerRegistry: ElfCustomerRegistryRepository;
+    readonly elfSubscriptionRecords: ElfSubscriptionRecordRepository;
+    readonly elfLicenseManagement: ElfLicenseManagementRepository;
+    readonly elfLaunchMetrics: ElfLaunchMetricRepository;
+    readonly elfLaunchHealth: ElfLaunchHealthRepository;
+    readonly elfMissionControlKpis: ElfMissionControlKpiRepository;
+    readonly elfLaunchFailures: ElfLaunchFailureRepository;
+    readonly elfAuditLogs: ElfAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2740,6 +2807,38 @@ export class DatabaseAccessLayer {
         this.rtlExecutiveKpis = new RtlExecutiveKpiRepository();
         this.rtlRetailFailures = new RtlRetailFailureRepository();
         this.rtlAuditLogs = new RtlAuditLogRepository();
+        this.elfLaunchHubs = new ElfLaunchHubRepository();
+        this.elfOrganizationProvisions = new ElfOrganizationProvisionRepository();
+        this.elfTenantProvisions = new ElfTenantProvisionRepository();
+        this.elfIndustryPackAssignments = new ElfIndustryPackAssignmentRepository();
+        this.elfModuleLicenses = new ElfModuleLicenseRepository();
+        this.elfWizardProfiles = new ElfWizardProfileRepository();
+        this.elfWizardBranding = new ElfWizardBrandingRepository();
+        this.elfWizardDepartments = new ElfWizardDepartmentRepository();
+        this.elfWizardSettings = new ElfWizardSettingRepository();
+        this.elfImportJobs = new ElfImportJobRepository();
+        this.elfImportValidations = new ElfImportValidationRepository();
+        this.elfImportPreviews = new ElfImportPreviewRepository();
+        this.elfImportHistory = new ElfImportHistoryRepository();
+        this.elfGoLiveChecklists = new ElfGoLiveChecklistRepository();
+        this.elfGoLiveScores = new ElfGoLiveScoreRepository();
+        this.elfDeploymentStatuses = new ElfDeploymentStatusRepository();
+        this.elfReadinessValidations = new ElfReadinessValidationRepository();
+        this.elfCustomerHealthScores = new ElfCustomerHealthScoreRepository();
+        this.elfPlatformAdoption = new ElfPlatformAdoptionRepository();
+        this.elfFeatureUsage = new ElfFeatureUsageRepository();
+        this.elfRenewalTracking = new ElfRenewalTrackingRepository();
+        this.elfSupportTickets = new ElfSupportTicketRepository();
+        this.elfKnowledgeBaseArticles = new ElfKnowledgeBaseArticleRepository();
+        this.elfIncidentTracking = new ElfIncidentTrackingRepository();
+        this.elfCustomerRegistry = new ElfCustomerRegistryRepository();
+        this.elfSubscriptionRecords = new ElfSubscriptionRecordRepository();
+        this.elfLicenseManagement = new ElfLicenseManagementRepository();
+        this.elfLaunchMetrics = new ElfLaunchMetricRepository();
+        this.elfLaunchHealth = new ElfLaunchHealthRepository();
+        this.elfMissionControlKpis = new ElfMissionControlKpiRepository();
+        this.elfLaunchFailures = new ElfLaunchFailureRepository();
+        this.elfAuditLogs = new ElfAuditLogRepository();
     }
 }
 

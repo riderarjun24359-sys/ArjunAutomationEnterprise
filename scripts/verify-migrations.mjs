@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 890 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_*)
+// 922 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -898,6 +898,38 @@ const requiredTables = [
     "rtl_executive_kpis",
     "rtl_retail_failures",
     "rtl_audit_logs",
+    "elf_launch_hubs",
+    "elf_organization_provisions",
+    "elf_tenant_provisions",
+    "elf_industry_pack_assignments",
+    "elf_module_licenses",
+    "elf_wizard_profiles",
+    "elf_wizard_branding",
+    "elf_wizard_departments",
+    "elf_wizard_settings",
+    "elf_import_jobs",
+    "elf_import_validations",
+    "elf_import_previews",
+    "elf_import_history",
+    "elf_go_live_checklists",
+    "elf_go_live_scores",
+    "elf_deployment_statuses",
+    "elf_readiness_validations",
+    "elf_customer_health_scores",
+    "elf_platform_adoption",
+    "elf_feature_usage",
+    "elf_renewal_tracking",
+    "elf_support_tickets",
+    "elf_knowledge_base_articles",
+    "elf_incident_tracking",
+    "elf_customer_registry",
+    "elf_subscription_records",
+    "elf_license_management",
+    "elf_launch_metrics",
+    "elf_launch_health",
+    "elf_mission_control_kpis",
+    "elf_launch_failures",
+    "elf_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

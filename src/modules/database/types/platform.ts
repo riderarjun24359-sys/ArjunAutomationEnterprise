@@ -12161,3 +12161,446 @@ export interface DbRtlAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbElfLaunchHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    platform_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfOrganizationProvision {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    provision_key: string;
+    provision_name: string;
+    provision_status: string;
+    org_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfTenantProvision {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    provision_key: string;
+    tenant_ref: string;
+    provision_status: string;
+    provision_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfIndustryPackAssignment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    assignment_key: string;
+    pack_name: string;
+    pack_type: string;
+    pack_version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfModuleLicense {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    license_key: string;
+    module_name: string;
+    license_status: string;
+    seat_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfWizardProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    completion_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfWizardBranding {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    branding_key: string;
+    branding_name: string;
+    brand_color: string;
+    logo_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfWizardDepartment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    department_key: string;
+    department_name: string;
+    department_type: string;
+    head_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfWizardSetting {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    setting_key: string;
+    setting_name: string;
+    setting_value: string;
+    setting_group: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfImportJob {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    job_key: string;
+    job_name: string;
+    job_status: string;
+    source_ref: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfImportValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_type: string;
+    validation_score: number;
+    validation_summary: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfImportPreview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    preview_key: string;
+    preview_name: string;
+    record_count: number;
+    preview_summary: string;
+    previewed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfImportHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_type: string;
+    imported_at: string;
+    record_count: number;
+    import_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfGoLiveChecklist {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    checklist_key: string;
+    checklist_name: string;
+    completion_score: number;
+    checklist_items: Record<string, unknown>;
+    reviewed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfGoLiveScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    score_type: string;
+    go_live_score: number;
+    metric_date: string;
+    captured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfDeploymentStatus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    status_key: string;
+    deployment_name: string;
+    deployment_status: string;
+    target_version: string;
+    deployed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfReadinessValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_type: string;
+    validation_score: number;
+    validation_summary: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfCustomerHealthScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    customer_ref: string;
+    health_score: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfPlatformAdoption {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    adoption_key: string;
+    feature_name: string;
+    adoption_rate: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfFeatureUsage {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    usage_key: string;
+    feature_name: string;
+    usage_count: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfRenewalTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    renewal_key: string;
+    customer_ref: string;
+    renewal_status: string;
+    renewal_date: string;
+    contract_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfSupportTicket {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    ticket_key: string;
+    ticket_title: string;
+    ticket_status: string;
+    priority: string;
+    opened_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfKnowledgeBaseArticle {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    article_key: string;
+    article_title: string;
+    article_category: string;
+    article_summary: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfIncidentTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    incident_key: string;
+    incident_title: string;
+    incident_severity: string;
+    incident_summary: string;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfCustomerRegistry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    customer_key: string;
+    customer_name: string;
+    customer_tier: string;
+    region: string;
+    onboarded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfSubscriptionRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    subscription_key: string;
+    plan_name: string;
+    subscription_status: string;
+    seat_count: number;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfLicenseManagement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    license_key: string;
+    license_type: string;
+    license_status: string;
+    seat_limit: number;
+    expires_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfLaunchMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    platform_health_score: number;
+    customer_health_score: number;
+    deployment_count: number;
+    subscription_count: number;
+    support_open_count: number;
+    go_live_score: number;
+    overall_launch_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfLaunchHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    platform_status: string;
+    customer_success_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfMissionControlKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfLaunchFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElfAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

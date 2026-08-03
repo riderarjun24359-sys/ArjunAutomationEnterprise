@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T22:03:07.760Z
+-- Generated: 2026-08-03T22:43:58.841Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (41):
+--   Migrations (42):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -47,7 +47,8 @@
 --     - 202608020039_enterprise_school_business_os.sql
 --     - 202608020040_enterprise_hospital_business_os.sql
 --     - 202608020041_enterprise_retail_business_os.sql
---   Seeds (41):
+--     - 202608020042_enterprise_launch_foundation.sql
+--   Seeds (42):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -89,9 +90,10 @@
 --     - 039_enterprise_school_business_os_seed.sql
 --     - 040_enterprise_hospital_business_os_seed.sql
 --     - 041_enterprise_retail_business_os_seed.sql
+--     - 042_enterprise_launch_foundation_seed.sql
 --
--- Includes through V2 Program B Sprint 9:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System
+-- Includes through V2 Program C Sprint 4:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -18649,6 +18651,649 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020042_enterprise_launch_foundation.sql
+-- =============================================================================
+-- V2 Program C Sprint 4: Enterprise Launch Foundation
+
+-- LaunchHub
+create table if not exists public.elf_launch_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  platform_tier text not null default 'enterprise',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- OrganizationProvision
+create table if not exists public.elf_organization_provisions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  provision_key text not null,
+  provision_name text not null default '',
+  provision_status text not null default 'pending',
+  org_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, provision_key)
+);
+
+-- TenantProvision
+create table if not exists public.elf_tenant_provisions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  provision_key text not null,
+  tenant_ref text not null default '',
+  provision_status text not null default 'pending',
+  provision_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, provision_key)
+);
+
+-- IndustryPackAssignment
+create table if not exists public.elf_industry_pack_assignments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  assignment_key text not null,
+  pack_name text not null default '',
+  pack_type text not null default 'hospital',
+  pack_version text not null default '1.0',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, assignment_key)
+);
+
+-- ModuleLicense
+create table if not exists public.elf_module_licenses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  license_key text not null,
+  module_name text not null default '',
+  license_status text not null default 'active',
+  seat_count integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, license_key)
+);
+
+-- WizardProfile
+create table if not exists public.elf_wizard_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'standard',
+  completion_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- WizardBranding
+create table if not exists public.elf_wizard_branding (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  branding_key text not null,
+  branding_name text not null default '',
+  brand_color text not null default '#475569',
+  logo_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, branding_key)
+);
+
+-- WizardDepartment
+create table if not exists public.elf_wizard_departments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  department_key text not null,
+  department_name text not null default '',
+  department_type text not null default 'operations',
+  head_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, department_key)
+);
+
+-- WizardSetting
+create table if not exists public.elf_wizard_settings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  setting_key text not null,
+  setting_name text not null default '',
+  setting_value text not null default '',
+  setting_group text not null default 'general',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, setting_key)
+);
+
+-- ImportJob
+create table if not exists public.elf_import_jobs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  job_key text not null,
+  job_name text not null default '',
+  job_status text not null default 'pending',
+  source_ref text not null default '',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, job_key)
+);
+
+-- ImportValidation
+create table if not exists public.elf_import_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  validation_key text not null,
+  validation_type text not null default 'schema',
+  validation_score numeric(5, 2) not null default 0,
+  validation_summary text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- ImportPreview
+create table if not exists public.elf_import_previews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  preview_key text not null,
+  preview_name text not null default '',
+  record_count integer not null default 0,
+  preview_summary text not null default '',
+  previewed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, preview_key)
+);
+
+-- ImportHistory
+create table if not exists public.elf_import_history (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  history_key text not null,
+  history_type text not null default 'bulk',
+  imported_at timestamptz not null default now(),
+  record_count integer not null default 0,
+  import_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- GoLiveChecklist
+create table if not exists public.elf_go_live_checklists (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  checklist_key text not null,
+  checklist_name text not null default '',
+  completion_score numeric(5, 2) not null default 0,
+  checklist_items jsonb not null default '[]'::jsonb,
+  reviewed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, checklist_key)
+);
+
+-- GoLiveScore
+create table if not exists public.elf_go_live_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  score_key text not null,
+  score_type text not null default 'overall',
+  go_live_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  captured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- DeploymentStatus
+create table if not exists public.elf_deployment_statuses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  status_key text not null,
+  deployment_name text not null default '',
+  deployment_status text not null default 'pending',
+  target_version text not null default '',
+  deployed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, status_key)
+);
+
+-- ReadinessValidation
+create table if not exists public.elf_readiness_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  validation_key text not null,
+  validation_type text not null default 'launch_gate',
+  validation_score numeric(5, 2) not null default 0,
+  validation_summary text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- CustomerHealthScore
+create table if not exists public.elf_customer_health_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  score_key text not null,
+  customer_ref text not null default '',
+  health_score numeric(5, 2) not null default 100,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- PlatformAdoption
+create table if not exists public.elf_platform_adoption (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  adoption_key text not null,
+  feature_name text not null default '',
+  adoption_rate numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, adoption_key)
+);
+
+-- FeatureUsage
+create table if not exists public.elf_feature_usage (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  usage_key text not null,
+  feature_name text not null default '',
+  usage_count integer not null default 0,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, usage_key)
+);
+
+-- RenewalTracking
+create table if not exists public.elf_renewal_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  renewal_key text not null,
+  customer_ref text not null default '',
+  renewal_status text not null default 'pending',
+  renewal_date date not null default current_date,
+  contract_value numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, renewal_key)
+);
+
+-- SupportTicket
+create table if not exists public.elf_support_tickets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  ticket_key text not null,
+  ticket_title text not null default '',
+  ticket_status text not null default 'open',
+  priority text not null default 'normal',
+  opened_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, ticket_key)
+);
+
+-- KnowledgeBaseArticle
+create table if not exists public.elf_knowledge_base_articles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  article_key text not null,
+  article_title text not null default '',
+  article_category text not null default 'general',
+  article_summary text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, article_key)
+);
+
+-- IncidentTracking
+create table if not exists public.elf_incident_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  incident_key text not null,
+  incident_title text not null default '',
+  incident_severity text not null default 'warning',
+  incident_summary text not null default '',
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, incident_key)
+);
+
+-- CustomerRegistry
+create table if not exists public.elf_customer_registry (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  customer_key text not null,
+  customer_name text not null default '',
+  customer_tier text not null default 'standard',
+  region text not null default '',
+  onboarded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, customer_key)
+);
+
+-- SubscriptionRecord
+create table if not exists public.elf_subscription_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  subscription_key text not null,
+  plan_name text not null default '',
+  subscription_status text not null default 'active',
+  seat_count integer not null default 1,
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, subscription_key)
+);
+
+-- LicenseManagement
+create table if not exists public.elf_license_management (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  license_key text not null,
+  license_type text not null default 'platform',
+  license_status text not null default 'active',
+  seat_limit integer not null default 100,
+  expires_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, license_key)
+);
+
+-- LaunchMetric
+create table if not exists public.elf_launch_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  platform_health_score numeric(5, 2) not null default 100,
+  customer_health_score numeric(5, 2) not null default 100,
+  deployment_count integer not null default 0,
+  subscription_count integer not null default 0,
+  support_open_count integer not null default 0,
+  go_live_score numeric(5, 2) not null default 100,
+  overall_launch_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- LaunchHealth
+create table if not exists public.elf_launch_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  platform_status text not null default 'healthy',
+  customer_success_status text not null default 'healthy',
+  security_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- MissionControlKpi
+create table if not exists public.elf_mission_control_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'mission_control',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- LaunchFailure
+create table if not exists public.elf_launch_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'provisioning',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.elf_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_elf_launch_hubs_org on public.elf_launch_hubs(organization_id);
+create index if not exists idx_elf_organization_provisions_org on public.elf_organization_provisions(organization_id);
+create index if not exists idx_elf_organization_provisions_hub on public.elf_organization_provisions(hub_id);
+create index if not exists idx_elf_tenant_provisions_org on public.elf_tenant_provisions(organization_id);
+create index if not exists idx_elf_tenant_provisions_hub on public.elf_tenant_provisions(hub_id);
+create index if not exists idx_elf_industry_pack_assignments_org on public.elf_industry_pack_assignments(organization_id);
+create index if not exists idx_elf_industry_pack_assignments_hub on public.elf_industry_pack_assignments(hub_id);
+create index if not exists idx_elf_module_licenses_org on public.elf_module_licenses(organization_id);
+create index if not exists idx_elf_module_licenses_hub on public.elf_module_licenses(hub_id);
+create index if not exists idx_elf_wizard_profiles_org on public.elf_wizard_profiles(organization_id);
+create index if not exists idx_elf_wizard_profiles_hub on public.elf_wizard_profiles(hub_id);
+create index if not exists idx_elf_wizard_branding_org on public.elf_wizard_branding(organization_id);
+create index if not exists idx_elf_wizard_branding_hub on public.elf_wizard_branding(hub_id);
+create index if not exists idx_elf_wizard_departments_org on public.elf_wizard_departments(organization_id);
+create index if not exists idx_elf_wizard_departments_hub on public.elf_wizard_departments(hub_id);
+create index if not exists idx_elf_wizard_settings_org on public.elf_wizard_settings(organization_id);
+create index if not exists idx_elf_wizard_settings_hub on public.elf_wizard_settings(hub_id);
+create index if not exists idx_elf_import_jobs_org on public.elf_import_jobs(organization_id);
+create index if not exists idx_elf_import_jobs_hub on public.elf_import_jobs(hub_id);
+create index if not exists idx_elf_import_validations_org on public.elf_import_validations(organization_id);
+create index if not exists idx_elf_import_validations_hub on public.elf_import_validations(hub_id);
+create index if not exists idx_elf_import_previews_org on public.elf_import_previews(organization_id);
+create index if not exists idx_elf_import_previews_hub on public.elf_import_previews(hub_id);
+create index if not exists idx_elf_import_history_org on public.elf_import_history(organization_id);
+create index if not exists idx_elf_import_history_hub on public.elf_import_history(hub_id);
+create index if not exists idx_elf_go_live_checklists_org on public.elf_go_live_checklists(organization_id);
+create index if not exists idx_elf_go_live_checklists_hub on public.elf_go_live_checklists(hub_id);
+create index if not exists idx_elf_go_live_scores_org on public.elf_go_live_scores(organization_id);
+create index if not exists idx_elf_go_live_scores_hub on public.elf_go_live_scores(hub_id);
+create index if not exists idx_elf_deployment_statuses_org on public.elf_deployment_statuses(organization_id);
+create index if not exists idx_elf_deployment_statuses_hub on public.elf_deployment_statuses(hub_id);
+create index if not exists idx_elf_readiness_validations_org on public.elf_readiness_validations(organization_id);
+create index if not exists idx_elf_readiness_validations_hub on public.elf_readiness_validations(hub_id);
+create index if not exists idx_elf_customer_health_scores_org on public.elf_customer_health_scores(organization_id);
+create index if not exists idx_elf_customer_health_scores_hub on public.elf_customer_health_scores(hub_id);
+create index if not exists idx_elf_platform_adoption_org on public.elf_platform_adoption(organization_id);
+create index if not exists idx_elf_platform_adoption_hub on public.elf_platform_adoption(hub_id);
+create index if not exists idx_elf_feature_usage_org on public.elf_feature_usage(organization_id);
+create index if not exists idx_elf_feature_usage_hub on public.elf_feature_usage(hub_id);
+create index if not exists idx_elf_renewal_tracking_org on public.elf_renewal_tracking(organization_id);
+create index if not exists idx_elf_renewal_tracking_hub on public.elf_renewal_tracking(hub_id);
+create index if not exists idx_elf_support_tickets_org on public.elf_support_tickets(organization_id);
+create index if not exists idx_elf_support_tickets_hub on public.elf_support_tickets(hub_id);
+create index if not exists idx_elf_knowledge_base_articles_org on public.elf_knowledge_base_articles(organization_id);
+create index if not exists idx_elf_knowledge_base_articles_hub on public.elf_knowledge_base_articles(hub_id);
+create index if not exists idx_elf_incident_tracking_org on public.elf_incident_tracking(organization_id);
+create index if not exists idx_elf_incident_tracking_hub on public.elf_incident_tracking(hub_id);
+create index if not exists idx_elf_customer_registry_org on public.elf_customer_registry(organization_id);
+create index if not exists idx_elf_customer_registry_hub on public.elf_customer_registry(hub_id);
+create index if not exists idx_elf_subscription_records_org on public.elf_subscription_records(organization_id);
+create index if not exists idx_elf_subscription_records_hub on public.elf_subscription_records(hub_id);
+create index if not exists idx_elf_license_management_org on public.elf_license_management(organization_id);
+create index if not exists idx_elf_license_management_hub on public.elf_license_management(hub_id);
+create index if not exists idx_elf_launch_metrics_org on public.elf_launch_metrics(organization_id);
+create index if not exists idx_elf_launch_health_org on public.elf_launch_health(organization_id);
+create index if not exists idx_elf_mission_control_kpis_org on public.elf_mission_control_kpis(organization_id);
+create index if not exists idx_elf_mission_control_kpis_hub on public.elf_mission_control_kpis(hub_id);
+create index if not exists idx_elf_launch_failures_org on public.elf_launch_failures(organization_id);
+create index if not exists idx_elf_launch_failures_hub on public.elf_launch_failures(hub_id);
+create index if not exists idx_elf_audit_logs_org on public.elf_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'elf_launch_hubs','elf_organization_provisions','elf_tenant_provisions','elf_industry_pack_assignments','elf_module_licenses','elf_wizard_profiles','elf_wizard_branding','elf_wizard_departments','elf_wizard_settings','elf_import_jobs','elf_import_validations','elf_import_previews','elf_import_history','elf_go_live_checklists','elf_go_live_scores','elf_deployment_statuses','elf_readiness_validations','elf_customer_health_scores','elf_platform_adoption','elf_feature_usage','elf_renewal_tracking','elf_support_tickets','elf_knowledge_base_articles','elf_incident_tracking','elf_customer_registry','elf_subscription_records','elf_license_management','elf_launch_metrics','elf_launch_health','elf_mission_control_kpis','elf_launch_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.elf_launch_hubs enable row level security;
+alter table public.elf_organization_provisions enable row level security;
+alter table public.elf_tenant_provisions enable row level security;
+alter table public.elf_industry_pack_assignments enable row level security;
+alter table public.elf_module_licenses enable row level security;
+alter table public.elf_wizard_profiles enable row level security;
+alter table public.elf_wizard_branding enable row level security;
+alter table public.elf_wizard_departments enable row level security;
+alter table public.elf_wizard_settings enable row level security;
+alter table public.elf_import_jobs enable row level security;
+alter table public.elf_import_validations enable row level security;
+alter table public.elf_import_previews enable row level security;
+alter table public.elf_import_history enable row level security;
+alter table public.elf_go_live_checklists enable row level security;
+alter table public.elf_go_live_scores enable row level security;
+alter table public.elf_deployment_statuses enable row level security;
+alter table public.elf_readiness_validations enable row level security;
+alter table public.elf_customer_health_scores enable row level security;
+alter table public.elf_platform_adoption enable row level security;
+alter table public.elf_feature_usage enable row level security;
+alter table public.elf_renewal_tracking enable row level security;
+alter table public.elf_support_tickets enable row level security;
+alter table public.elf_knowledge_base_articles enable row level security;
+alter table public.elf_incident_tracking enable row level security;
+alter table public.elf_customer_registry enable row level security;
+alter table public.elf_subscription_records enable row level security;
+alter table public.elf_license_management enable row level security;
+alter table public.elf_launch_metrics enable row level security;
+alter table public.elf_launch_health enable row level security;
+alter table public.elf_mission_control_kpis enable row level security;
+alter table public.elf_launch_failures enable row level security;
+alter table public.elf_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'elf_launch_hubs','elf_organization_provisions','elf_tenant_provisions','elf_industry_pack_assignments','elf_module_licenses','elf_wizard_profiles','elf_wizard_branding','elf_wizard_departments','elf_wizard_settings','elf_import_jobs','elf_import_validations','elf_import_previews','elf_import_history','elf_go_live_checklists','elf_go_live_scores','elf_deployment_statuses','elf_readiness_validations','elf_customer_health_scores','elf_platform_adoption','elf_feature_usage','elf_renewal_tracking','elf_support_tickets','elf_knowledge_base_articles','elf_incident_tracking','elf_customer_registry','elf_subscription_records','elf_license_management','elf_launch_metrics','elf_launch_health','elf_mission_control_kpis','elf_launch_failures','elf_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('elf.view', 'View enterprise launch foundation data', 'enterprise_launch_foundation'),
+  ('elf.manage', 'Manage provisioning, configuration, import, go-live, customer success, support, and platform admin outputs', 'enterprise_launch_foundation'),
+  ('elf.approve', 'Approve launch foundation gates and deployment actions', 'enterprise_launch_foundation'),
+  ('elf.admin', 'Administer enterprise launch foundation governance', 'enterprise_launch_foundation')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -23655,6 +24300,156 @@ on conflict (id) do nothing;
 
 insert into public.rtl_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('031e011e-031e-031e-031e-031e011e2001', '11111111-1111-1111-1111-111111111111', 'retail_hub', 'seed', 'Enterprise retail business operating system seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 042_enterprise_launch_foundation_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a342', '11111111-1111-1111-1111-111111111111', 'Enterprise Launch Foundation Orchestrator', 'enterprise_launch_foundation', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["provisioning","config_wizard","data_import","go_live","customer_success","support_ops","platform_admin","mission_control"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a542', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a342', 'northstar-launch-foundation-001', 'enterprise_launch_foundation', 'launch_hub', '00720072-0072-0072-0072-007200720101', '{"objective":"Enterprise launch foundation for northstar platform go-live"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Launch Hub
+insert into public.elf_launch_hubs (id, organization_id, hub_key, hub_name, environment, platform_tier, status)
+values ('00720072-0072-0072-0072-007200720101', '11111111-1111-1111-1111-111111111111', 'northstar-launch-foundation', 'Northstar Launch Foundation Hub', 'production', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+-- M1 Provisioning
+insert into public.elf_organization_provisions (id, organization_id, hub_id, provision_key, provision_name, provision_status, status)
+values ('04200100-0420-0420-0420-042001000201', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'org-provision-0904', 'Northstar Organization Provision', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_tenant_provisions (id, organization_id, hub_id, provision_key, tenant_ref, provision_status, status)
+values ('04210101-0421-0421-0421-042101010301', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'tenant-provision-0904', 'northstar-tenant-001', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_industry_pack_assignments (id, organization_id, hub_id, assignment_key, pack_name, pack_type, status)
+values ('04220102-0422-0422-0422-042201020401', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'pack-hospital-0904', 'Hospital Business OS', 'hospital', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_module_licenses (id, organization_id, hub_id, license_key, module_name, license_status, status)
+values ('04230103-0423-0423-0423-042301030501', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'lic-platform-0904', 'Platform Core', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M2 Config Wizard
+insert into public.elf_wizard_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('04240104-0424-0424-0424-042401040601', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'wiz-profile-0904', 'Northstar Wizard Profile', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_wizard_branding (id, organization_id, hub_id, branding_key, branding_name, brand_color, status)
+values ('04250105-0425-0425-0425-042501050701', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'wiz-brand-0904', 'Northstar Branding', '#475569', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_wizard_departments (id, organization_id, hub_id, department_key, department_name, department_type, status)
+values ('04260106-0426-0426-0426-042601060801', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'wiz-dept-0904', 'Operations Department', 'operations', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_wizard_settings (id, organization_id, hub_id, setting_key, setting_name, setting_value, status)
+values ('04270107-0427-0427-0427-042701070901', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'wiz-setting-0904', 'Default Timezone', 'UTC', 'active')
+on conflict (id) do nothing;
+
+-- M3 Data Import
+insert into public.elf_import_jobs (id, organization_id, hub_id, job_key, job_name, job_status, status)
+values ('04280108-0428-0428-0428-042801080a01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'import-job-0904', 'Customer Data Import', 'completed', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_import_validations (id, organization_id, hub_id, validation_key, validation_type, validation_score, status)
+values ('04290109-0429-0429-0429-042901090b01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'import-val-0904', 'schema', 98.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_import_previews (id, organization_id, hub_id, preview_key, preview_name, record_count, status)
+values ('042a010a-042a-042a-042a-042a010a0c01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'import-prev-0904', 'Customer Preview', 1250, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_import_history (id, organization_id, hub_id, history_key, history_type, status)
+values ('042b010b-042b-042b-042b-042b010b0d01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'import-hist-0904', 'bulk', 'active')
+on conflict (id) do nothing;
+
+-- M4 Go Live
+insert into public.elf_go_live_checklists (id, organization_id, hub_id, checklist_key, checklist_name, completion_score, status)
+values ('042c010c-042c-042c-042c-042c010c0e01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'golive-check-0904', 'Production Go-Live Checklist', 95.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_go_live_scores (id, organization_id, hub_id, score_key, score_type, go_live_score, status)
+values ('042d010d-042d-042d-042d-042d010d0f01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'golive-score-0904', 'overall', 96.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_deployment_statuses (id, organization_id, hub_id, status_key, deployment_name, deployment_status, status)
+values ('042e010e-042e-042e-042e-042e010e1001', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'deploy-status-0904', 'Production Deployment', 'deployed', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_readiness_validations (id, organization_id, hub_id, validation_key, validation_type, validation_score, status)
+values ('042f010f-042f-042f-042f-042f010f1101', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'ready-val-0904', 'launch_gate', 97.00, 'active')
+on conflict (id) do nothing;
+
+-- M5 Customer Success
+insert into public.elf_customer_health_scores (id, organization_id, hub_id, score_key, customer_ref, health_score, status)
+values ('04300110-0430-0430-0430-043001101201', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'cust-health-0904', 'northstar-customer-001', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_platform_adoption (id, organization_id, hub_id, adoption_key, feature_name, adoption_rate, status)
+values ('04310111-0431-0431-0431-043101111301', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'adopt-dash-0904', 'Dashboard', 88.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_feature_usage (id, organization_id, hub_id, usage_key, feature_name, usage_count, status)
+values ('04320112-0432-0432-0432-043201121401', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'usage-wf-0904', 'Workflow Engine', 4500, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_renewal_tracking (id, organization_id, hub_id, renewal_key, customer_ref, renewal_status, status)
+values ('04330113-0433-0433-0433-043301131501', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'renewal-0904', 'northstar-customer-001', 'confirmed', 'active')
+on conflict (id) do nothing;
+
+-- M6 Support Ops
+insert into public.elf_support_tickets (id, organization_id, hub_id, ticket_key, ticket_title, ticket_status, status)
+values ('04340114-0434-0434-0434-043401141601', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'ticket-0904', 'Onboarding Support Request', 'open', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_knowledge_base_articles (id, organization_id, hub_id, article_key, article_title, article_category, status)
+values ('04350115-0435-0435-0435-043501151701', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'kb-article-0904', 'Getting Started Guide', 'onboarding', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_incident_tracking (id, organization_id, hub_id, incident_key, incident_title, incident_severity, status)
+values ('04360116-0436-0436-0436-043601161801', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'incident-0904', 'Import Pipeline Delay', 'warning', 'active')
+on conflict (id) do nothing;
+
+-- M7 Platform Admin
+insert into public.elf_customer_registry (id, organization_id, hub_id, customer_key, customer_name, customer_tier, status)
+values ('04370117-0437-0437-0437-043701171901', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'cust-reg-0904', 'Northstar Customer', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_subscription_records (id, organization_id, hub_id, subscription_key, plan_name, subscription_status, status)
+values ('04380118-0438-0438-0438-043801181a01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'sub-record-0904', 'Enterprise Plan', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_license_management (id, organization_id, hub_id, license_key, license_type, license_status, status)
+values ('04390119-0439-0439-0439-043901191b01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'lic-mgmt-0904', 'platform', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M8 Mission Control
+insert into public.elf_launch_metrics (id, organization_id, metrics_key, platform_health_score, customer_health_score, deployment_count, subscription_count, support_open_count, go_live_score, overall_launch_score, status)
+values ('043a011a-043a-043a-043a-043a011a1c01', '11111111-1111-1111-1111-111111111111', 'elf-metrics-0904', 96.00, 92.00, 12, 45, 3, 96.50, 95.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_launch_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, platform_status, customer_success_status, security_status, summary, status)
+values ('043b011b-043b-043b-043b-043b011b1d01', '11111111-1111-1111-1111-111111111111', 'elf-health-0904', 96.00, false, 'healthy', 'healthy', 'healthy', 'Enterprise launch foundation operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.elf_mission_control_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('043c011c-043c-043c-043c-043c011c1e01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'kpi-mission-0904', 'Mission Control KPI Score', 97.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.elf_launch_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('043d011d-043d-043d-043d-043d011d1f01', '11111111-1111-1111-1111-111111111111', '00720072-0072-0072-0072-007200720101', 'fail-provision-0904', 'provisioning', 'PROVISION_TIMEOUT', 'Tenant provisioning timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.elf_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('043e011e-043e-043e-043e-043e011e2001', '11111111-1111-1111-1111-111111111111', 'launch_hub', 'seed', 'Enterprise launch foundation seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

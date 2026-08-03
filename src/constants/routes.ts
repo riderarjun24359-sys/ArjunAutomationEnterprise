@@ -42,6 +42,7 @@ export const ROUTES = {
     school: "/school",
     hospital: "/hospital",
     retail: "/retail",
+    launchFoundation: "/launch-foundation",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",
