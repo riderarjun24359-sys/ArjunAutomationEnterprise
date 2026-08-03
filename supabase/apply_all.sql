@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T01:09:12.987Z
+-- Generated: 2026-08-03T01:34:59.152Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (20):
+--   Migrations (21):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -26,7 +26,8 @@
 --     - 202608020018_enterprise_development_factory.sql
 --     - 202608020019_enterprise_ai_qa_engineer.sql
 --     - 202608020020_enterprise_ai_devops_deployment.sql
---   Seeds (20):
+--     - 202608020021_enterprise_ai_customer_success.sql
+--   Seeds (21):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -47,9 +48,10 @@
 --     - 018_enterprise_development_factory_seed.sql
 --     - 019_enterprise_ai_qa_engineer_seed.sql
 --     - 020_enterprise_ai_devops_deployment_seed.sql
+--     - 021_enterprise_ai_customer_success_seed.sql
 --
--- Includes through Sprint 27:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer
+-- Includes through Sprint 28:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -5921,6 +5923,405 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020021_enterprise_ai_customer_success.sql
+-- =============================================================================
+-- Sprint 28: AI Customer Success Manager
+
+create table if not exists public.cs_engagements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  engagement_key text not null,
+  ba_engagement_id uuid references public.ba_engagements(id) on delete set null,
+  sa_engagement_id uuid references public.sa_engagements(id) on delete set null,
+  df_engagement_id uuid references public.df_engagements(id) on delete set null,
+  qa_engagement_id uuid references public.qa_engagements(id) on delete set null,
+  dd_engagement_id uuid references public.dd_engagements(id) on delete set null,
+  brd_id uuid references public.ba_brds(id) on delete set null,
+  frs_id uuid references public.ba_frs_documents(id) on delete set null,
+  solution_architecture_id uuid references public.sa_solution_architectures(id) on delete set null,
+  work_package_id uuid references public.df_work_packages(id) on delete set null,
+  qa_release_readiness_id uuid references public.qa_release_readiness(id) on delete set null,
+  dd_release_version_id uuid references public.dd_release_versions(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  contact_id uuid references public.contacts(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  knowledge_context_id uuid references public.knowledge_ai_contexts(id) on delete set null,
+  pipeline_stage text not null default 'customer_success',
+  status text not null default 'active',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_key)
+);
+
+create table if not exists public.cs_onboarding_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  workflow_key text not null,
+  name text not null,
+  phases jsonb not null default '[]'::jsonb,
+  milestones jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, workflow_key)
+);
+
+create table if not exists public.cs_adoption_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  tracking_key text not null,
+  name text not null,
+  feature_adoptions jsonb not null default '[]'::jsonb,
+  adoption_percent numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, tracking_key)
+);
+
+create table if not exists public.cs_health_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  score_key text not null,
+  name text not null,
+  overall_score numeric(5, 2) not null default 0,
+  dimension_scores jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, score_key)
+);
+
+create table if not exists public.cs_renewal_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  renewal_date date,
+  renewal_value_usd numeric(12, 2) not null default 0,
+  renewal_actions jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.cs_expansion_opportunities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  opportunity_key text not null,
+  name text not null,
+  opportunity_type text not null default 'upsell',
+  estimated_value_usd numeric(12, 2) not null default 0,
+  signals jsonb not null default '[]'::jsonb,
+  status text not null default 'identified',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, opportunity_key)
+);
+
+create table if not exists public.cs_risk_analyses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  analysis_key text not null,
+  name text not null,
+  risk_level text not null default 'medium',
+  risk_factors jsonb not null default '[]'::jsonb,
+  mitigation_plan text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, analysis_key)
+);
+
+create table if not exists public.cs_support_trend_analyses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  analysis_key text not null,
+  name text not null,
+  trend_metrics jsonb not null default '[]'::jsonb,
+  insights text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, analysis_key)
+);
+
+create table if not exists public.cs_success_playbooks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  playbook_key text not null,
+  name text not null,
+  playbook_type text not null default 'onboarding',
+  steps jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, playbook_key)
+);
+
+create table if not exists public.cs_qbr_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  report_key text not null,
+  title text not null,
+  quarter text not null default '',
+  report_sections jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, report_key)
+);
+
+create table if not exists public.cs_communication_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  channels jsonb not null default '[]'::jsonb,
+  cadence text not null default 'monthly',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.cs_training_recommendations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  recommendation_key text not null,
+  name text not null,
+  training_modules jsonb not null default '[]'::jsonb,
+  priority text not null default 'medium',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, recommendation_key)
+);
+
+create table if not exists public.cs_feedback_analyses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  analysis_key text not null,
+  name text not null,
+  sentiment_score numeric(5, 2) not null default 0,
+  themes jsonb not null default '[]'::jsonb,
+  recommendations text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, analysis_key)
+);
+
+create table if not exists public.cs_sla_monitoring (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  monitoring_key text not null,
+  name text not null,
+  sla_targets jsonb not null default '[]'::jsonb,
+  compliance_percent numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, monitoring_key)
+);
+
+create table if not exists public.cs_success_kpi_dashboards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  dashboard_key text not null,
+  name text not null,
+  kpis jsonb not null default '[]'::jsonb,
+  refresh_cadence text not null default 'weekly',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, dashboard_key)
+);
+
+create table if not exists public.cs_churn_predictions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  prediction_key text not null,
+  name text not null,
+  churn_probability numeric(5, 2) not null default 0,
+  risk_signals jsonb not null default '[]'::jsonb,
+  retention_actions jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, prediction_key)
+);
+
+create table if not exists public.cs_lifecycle_management (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  lifecycle_key text not null,
+  name text not null,
+  current_stage text not null default 'onboarding',
+  stage_history jsonb not null default '[]'::jsonb,
+  next_actions jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, lifecycle_key)
+);
+
+create table if not exists public.cs_executive_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
+  summary_key text not null,
+  title text not null,
+  summary_content text not null default '',
+  key_metrics jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, summary_key)
+);
+
+create table if not exists public.cs_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_cs_engagements_org on public.cs_engagements(organization_id);
+create index if not exists idx_cs_onboarding_workflows_org on public.cs_onboarding_workflows(organization_id);
+create index if not exists idx_cs_adoption_tracking_org on public.cs_adoption_tracking(organization_id);
+create index if not exists idx_cs_health_scores_org on public.cs_health_scores(organization_id);
+create index if not exists idx_cs_renewal_plans_org on public.cs_renewal_plans(organization_id);
+create index if not exists idx_cs_expansion_opportunities_org on public.cs_expansion_opportunities(organization_id);
+create index if not exists idx_cs_risk_analyses_org on public.cs_risk_analyses(organization_id);
+create index if not exists idx_cs_support_trend_analyses_org on public.cs_support_trend_analyses(organization_id);
+create index if not exists idx_cs_success_playbooks_org on public.cs_success_playbooks(organization_id);
+create index if not exists idx_cs_qbr_reports_org on public.cs_qbr_reports(organization_id);
+create index if not exists idx_cs_communication_plans_org on public.cs_communication_plans(organization_id);
+create index if not exists idx_cs_training_recommendations_org on public.cs_training_recommendations(organization_id);
+create index if not exists idx_cs_feedback_analyses_org on public.cs_feedback_analyses(organization_id);
+create index if not exists idx_cs_sla_monitoring_org on public.cs_sla_monitoring(organization_id);
+create index if not exists idx_cs_success_kpi_dashboards_org on public.cs_success_kpi_dashboards(organization_id);
+create index if not exists idx_cs_churn_predictions_org on public.cs_churn_predictions(organization_id);
+create index if not exists idx_cs_lifecycle_management_org on public.cs_lifecycle_management(organization_id);
+create index if not exists idx_cs_executive_summaries_org on public.cs_executive_summaries(organization_id);
+create index if not exists idx_cs_audit_logs_org on public.cs_audit_logs(organization_id);
+
+drop trigger if exists trg_cs_engagements_updated_at on public.cs_engagements;
+create trigger trg_cs_engagements_updated_at before update on public.cs_engagements for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_onboarding_workflows_updated_at on public.cs_onboarding_workflows;
+create trigger trg_cs_onboarding_workflows_updated_at before update on public.cs_onboarding_workflows for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_adoption_tracking_updated_at on public.cs_adoption_tracking;
+create trigger trg_cs_adoption_tracking_updated_at before update on public.cs_adoption_tracking for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_health_scores_updated_at on public.cs_health_scores;
+create trigger trg_cs_health_scores_updated_at before update on public.cs_health_scores for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_renewal_plans_updated_at on public.cs_renewal_plans;
+create trigger trg_cs_renewal_plans_updated_at before update on public.cs_renewal_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_expansion_opportunities_updated_at on public.cs_expansion_opportunities;
+create trigger trg_cs_expansion_opportunities_updated_at before update on public.cs_expansion_opportunities for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_risk_analyses_updated_at on public.cs_risk_analyses;
+create trigger trg_cs_risk_analyses_updated_at before update on public.cs_risk_analyses for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_support_trend_analyses_updated_at on public.cs_support_trend_analyses;
+create trigger trg_cs_support_trend_analyses_updated_at before update on public.cs_support_trend_analyses for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_success_playbooks_updated_at on public.cs_success_playbooks;
+create trigger trg_cs_success_playbooks_updated_at before update on public.cs_success_playbooks for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_qbr_reports_updated_at on public.cs_qbr_reports;
+create trigger trg_cs_qbr_reports_updated_at before update on public.cs_qbr_reports for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_communication_plans_updated_at on public.cs_communication_plans;
+create trigger trg_cs_communication_plans_updated_at before update on public.cs_communication_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_training_recommendations_updated_at on public.cs_training_recommendations;
+create trigger trg_cs_training_recommendations_updated_at before update on public.cs_training_recommendations for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_feedback_analyses_updated_at on public.cs_feedback_analyses;
+create trigger trg_cs_feedback_analyses_updated_at before update on public.cs_feedback_analyses for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_sla_monitoring_updated_at on public.cs_sla_monitoring;
+create trigger trg_cs_sla_monitoring_updated_at before update on public.cs_sla_monitoring for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_success_kpi_dashboards_updated_at on public.cs_success_kpi_dashboards;
+create trigger trg_cs_success_kpi_dashboards_updated_at before update on public.cs_success_kpi_dashboards for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_churn_predictions_updated_at on public.cs_churn_predictions;
+create trigger trg_cs_churn_predictions_updated_at before update on public.cs_churn_predictions for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_lifecycle_management_updated_at on public.cs_lifecycle_management;
+create trigger trg_cs_lifecycle_management_updated_at before update on public.cs_lifecycle_management for each row execute function public.set_updated_at();
+drop trigger if exists trg_cs_executive_summaries_updated_at on public.cs_executive_summaries;
+create trigger trg_cs_executive_summaries_updated_at before update on public.cs_executive_summaries for each row execute function public.set_updated_at();
+
+alter table public.cs_engagements enable row level security;
+alter table public.cs_onboarding_workflows enable row level security;
+alter table public.cs_adoption_tracking enable row level security;
+alter table public.cs_health_scores enable row level security;
+alter table public.cs_renewal_plans enable row level security;
+alter table public.cs_expansion_opportunities enable row level security;
+alter table public.cs_risk_analyses enable row level security;
+alter table public.cs_support_trend_analyses enable row level security;
+alter table public.cs_success_playbooks enable row level security;
+alter table public.cs_qbr_reports enable row level security;
+alter table public.cs_communication_plans enable row level security;
+alter table public.cs_training_recommendations enable row level security;
+alter table public.cs_feedback_analyses enable row level security;
+alter table public.cs_sla_monitoring enable row level security;
+alter table public.cs_success_kpi_dashboards enable row level security;
+alter table public.cs_churn_predictions enable row level security;
+alter table public.cs_lifecycle_management enable row level security;
+alter table public.cs_executive_summaries enable row level security;
+alter table public.cs_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'cs_engagements', 'cs_onboarding_workflows', 'cs_adoption_tracking', 'cs_health_scores',
+    'cs_renewal_plans', 'cs_expansion_opportunities', 'cs_risk_analyses', 'cs_support_trend_analyses',
+    'cs_success_playbooks', 'cs_qbr_reports', 'cs_communication_plans', 'cs_training_recommendations',
+    'cs_feedback_analyses', 'cs_sla_monitoring', 'cs_success_kpi_dashboards', 'cs_churn_predictions',
+    'cs_lifecycle_management', 'cs_executive_summaries', 'cs_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('cs.view', 'View AI Customer Success engagements and artifacts', 'customer_success'),
+  ('cs.manage', 'Create and edit customer success deliverables', 'customer_success'),
+  ('cs.approve', 'Review and approve customer success outputs', 'customer_success'),
+  ('cs.admin', 'Administer customer success pipeline and permissions', 'customer_success')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -7647,6 +8048,120 @@ insert into public.dd_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('da000001-da00-da00-da00-da0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'create', 'Northstar Platform DevOps engagement created from QA handoff'),
   ('da000002-da00-da00-da00-da0000000002', '11111111-1111-1111-1111-111111111111', 'cicd_pipeline', 'dd02dd02-dd02-dd02-dd02-dd02dd020101', 'generate', 'CRM-Project sync CI/CD pipeline generated from QA release readiness')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 021_enterprise_ai_customer_success_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a307', '11111111-1111-1111-1111-111111111111', 'Customer Success Agent', 'customer_success', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["onboarding","adoption","renewal","health_scoring"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a507', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a307', 'northstar-cs-001', 'customer_success', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"customer success orchestration"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000006', '11111111-1111-1111-1111-111111111111', 'northstar-cs-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a307', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a507', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory","ba_outputs","sa_outputs","df_outputs","qa_outputs","dd_outputs","support_trends"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_engagements (id, organization_id, title, engagement_key, ba_engagement_id, sa_engagement_id, df_engagement_id, qa_engagement_id, dd_engagement_id, brd_id, frs_id, solution_architecture_id, work_package_id, qa_release_readiness_id, dd_release_version_id, client_id, project_id, contact_id, agent_id, session_id, knowledge_context_id, pipeline_stage, status, summary)
+values
+  ('c501c501-c501-c501-c501-c501c5010101', '11111111-1111-1111-1111-111111111111', 'Northstar Platform Customer Success', 'northstar-expansion-cs-001', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b10101', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f10101', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b30101', 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b40101', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d20101', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e20101', 'fa00000a-fa00-fa00-fa00-fa000000000a', 'dd12dd12-dd12-dd12-dd12-dd12dd120101', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'dddddddd-dddd-dddd-dddd-dddddddddd01', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a307', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a507', 'cb000001-cb00-cb00-cb00-cb0000000006', 'customer_success', 'active', 'Customer success orchestration for Northstar platform expansion from DevOps deployment handoff')
+on conflict (id) do nothing;
+
+insert into public.cs_onboarding_workflows (id, organization_id, engagement_id, workflow_key, name, phases, milestones, status)
+values
+  ('c502c502-c502-c502-c502-c502c5020201', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'onboarding-northstar', 'Northstar Platform Onboarding', '["kickoff","configuration","training","go_live"]'::jsonb, '["stakeholder_intro","environment_access","admin_training","first_sync_complete"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_adoption_tracking (id, organization_id, engagement_id, tracking_key, name, feature_adoptions, adoption_percent, status)
+values
+  ('c503c503-c503-c503-c503-c503c5030301', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'adoption-crm-sync', 'CRM Sync Feature Adoption', '["sync_dashboard","status_panel","client_mapping"]'::jsonb, 72.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_health_scores (id, organization_id, engagement_id, score_key, name, overall_score, dimension_scores, status)
+values
+  ('c504c504-c504-c504-c504-c504c5040401', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'health-northstar', 'Northstar Account Health', 84.00, '[{"dimension":"adoption","score":78},{"dimension":"engagement","score":88},{"dimension":"support","score":86}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_renewal_plans (id, organization_id, engagement_id, plan_key, name, renewal_date, renewal_value_usd, renewal_actions, status)
+values
+  ('c505c505-c505-c505-c505-c505c5050501', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'renewal-2027', 'Northstar 2027 Renewal Plan', '2027-03-31', 248000.00, '["executive_briefing","roi_review","expansion_proposal"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_expansion_opportunities (id, organization_id, engagement_id, opportunity_key, name, opportunity_type, estimated_value_usd, signals, status)
+values
+  ('c506c506-c506-c506-c506-c506c5060601', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'expansion-analytics', 'Analytics Module Upsell', 'upsell', 45000.00, '["high_adoption","executive_interest","support_positive"]'::jsonb, 'identified')
+on conflict (id) do nothing;
+
+insert into public.cs_risk_analyses (id, organization_id, engagement_id, analysis_key, name, risk_level, risk_factors, mitigation_plan, status)
+values
+  ('c507c507-c507-c507-c507-c507c5070701', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'risk-adoption-lag', 'Adoption Lag Risk Analysis', 'medium', '["low_training_attendance","delayed_go_live"]'::jsonb, 'Schedule additional training sessions and assign dedicated CSM for first 90 days', 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_support_trend_analyses (id, organization_id, engagement_id, analysis_key, name, trend_metrics, insights, status)
+values
+  ('c508c508-c508-c508-c508-c508c5080801', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'support-trends-q3', 'Q3 Support Trend Analysis', '[{"metric":"ticket_volume","trend":"down","change_pct":-18},{"metric":"resolution_time","trend":"stable","change_pct":2}]'::jsonb, 'Support ticket volume declining post-deployment; CRM sync module driving fewer integration issues', 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_success_playbooks (id, organization_id, engagement_id, playbook_key, name, playbook_type, steps, status)
+values
+  ('c509c509-c509-c509-c509-c509c5090901', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'playbook-onboarding', 'Enterprise Onboarding Playbook', 'onboarding', '["welcome_call","kickoff","training","30_day_checkin","90_day_review"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_qbr_reports (id, organization_id, engagement_id, report_key, title, quarter, report_sections, status)
+values
+  ('c50ac50a-c50a-c50a-c50a-c50ac50a0a01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'qbr-q3-2026', 'Northstar Q3 2026 QBR', 'Q3 2026', '["executive_summary","adoption_metrics","support_trends","roadmap_alignment"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_communication_plans (id, organization_id, engagement_id, plan_key, name, channels, cadence, status)
+values
+  ('c50bc50b-c50b-c50b-c50b-c50bc50b0b01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'comms-northstar', 'Northstar Communication Plan', '["email","slack","qbr_meeting"]'::jsonb, 'monthly', 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_training_recommendations (id, organization_id, engagement_id, recommendation_key, name, training_modules, priority, status)
+values
+  ('c50cc50c-c50c-c50c-c50c-c50cc50c0c01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'training-advanced-sync', 'Advanced Sync Configuration Training', '["sync_rules","conflict_resolution","reporting"]'::jsonb, 'high', 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_feedback_analyses (id, organization_id, engagement_id, analysis_key, name, sentiment_score, themes, recommendations, status)
+values
+  ('c50dc50d-c50d-c50d-c50d-c50dc50d0d01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'feedback-post-launch', 'Post-Launch Feedback Analysis', 82.00, '["positive_ui","sync_reliability","training_gaps"]'::jsonb, 'Expand self-service training and schedule advanced sync workshop', 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_sla_monitoring (id, organization_id, engagement_id, monitoring_key, name, sla_targets, compliance_percent, status)
+values
+  ('c50ec50e-c50e-c50e-c50e-c50ec50e0e01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'sla-support', 'Support SLA Monitoring', '[{"target":"first_response_4h","compliance":96},{"target":"resolution_24h","compliance":91}]'::jsonb, 93.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_success_kpi_dashboards (id, organization_id, engagement_id, dashboard_key, name, kpis, refresh_cadence, status)
+values
+  ('c50fc50f-c50f-c50f-c50f-c50fc50f0f01', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'kpi-northstar', 'Northstar Success KPI Dashboard', '[{"kpi":"adoption_rate","value":72.5},{"kpi":"health_score","value":84},{"kpi":"nps","value":42}]'::jsonb, 'weekly', 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_churn_predictions (id, organization_id, engagement_id, prediction_key, name, churn_probability, risk_signals, retention_actions, status)
+values
+  ('c510c510-c510-c510-c510-c510c5101001', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'churn-northstar', 'Northstar Churn Prediction', 12.00, '["low_executive_engagement"]'::jsonb, '["schedule_executive_briefing","roi_case_study"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_lifecycle_management (id, organization_id, engagement_id, lifecycle_key, name, current_stage, stage_history, next_actions, status)
+values
+  ('c511c511-c511-c511-c511-c511c5111101', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'lifecycle-northstar', 'Northstar Lifecycle Management', 'adoption', '[{"stage":"onboarding","entered_at":"2026-08-01"},{"stage":"adoption","entered_at":"2026-08-15"}]'::jsonb, '["90_day_review","expansion_discussion"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cs_executive_summaries (id, organization_id, engagement_id, summary_key, title, summary_content, key_metrics, status)
+values
+  ('c512c512-c512-c512-c512-c512c5121201', '11111111-1111-1111-1111-111111111111', 'c501c501-c501-c501-c501-c501c5010101', 'exec-q3-2026', 'Northstar Q3 Executive Summary', 'Northstar platform expansion on track with strong adoption and declining support volume post-deployment.', '[{"metric":"health_score","value":84},{"metric":"adoption_pct","value":72.5},{"metric":"renewal_value_usd","value":248000}]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.cs_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('ca000001-ca00-ca00-ca00-ca0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'c501c501-c501-c501-c501-c501c5010101', 'create', 'Northstar Platform Customer Success engagement created from DevOps deployment handoff'),
+  ('ca000002-ca00-ca00-ca00-ca0000000002', '11111111-1111-1111-1111-111111111111', 'onboarding_workflow', 'c502c502-c502-c502-c502-c502c5020201', 'generate', 'Enterprise onboarding workflow generated from deployment release')
 on conflict (id) do nothing;
 
 -- =============================================================================

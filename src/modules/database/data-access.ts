@@ -281,6 +281,27 @@ import {
     DdReleaseVersionRepository,
     DdRollbackPlanRepository,
 } from "@/src/modules/database/repositories/devops-deployment-repositories";
+import {
+    CsAdoptionTrackingRepository,
+    CsAuditLogRepository,
+    CsChurnPredictionRepository,
+    CsCommunicationPlanRepository,
+    CsEngagementRepository,
+    CsExecutiveSummaryRepository,
+    CsExpansionOpportunityRepository,
+    CsFeedbackAnalysisRepository,
+    CsHealthScoreRepository,
+    CsLifecycleManagementRepository,
+    CsOnboardingWorkflowRepository,
+    CsQbrReportRepository,
+    CsRenewalPlanRepository,
+    CsRiskAnalysisRepository,
+    CsSlaMonitoringRepository,
+    CsSuccessKpiDashboardRepository,
+    CsSuccessPlaybookRepository,
+    CsSupportTrendAnalysisRepository,
+    CsTrainingRecommendationRepository,
+} from "@/src/modules/database/repositories/customer-success-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -534,6 +555,25 @@ export class DatabaseAccessLayer {
     readonly ddDeploymentApprovals: DdDeploymentApprovalRepository;
     readonly ddReleaseVersions: DdReleaseVersionRepository;
     readonly ddAuditLogs: DdAuditLogRepository;
+    readonly csEngagements: CsEngagementRepository;
+    readonly csOnboardingWorkflows: CsOnboardingWorkflowRepository;
+    readonly csAdoptionTracking: CsAdoptionTrackingRepository;
+    readonly csHealthScores: CsHealthScoreRepository;
+    readonly csRenewalPlans: CsRenewalPlanRepository;
+    readonly csExpansionOpportunities: CsExpansionOpportunityRepository;
+    readonly csRiskAnalyses: CsRiskAnalysisRepository;
+    readonly csSupportTrendAnalyses: CsSupportTrendAnalysisRepository;
+    readonly csSuccessPlaybooks: CsSuccessPlaybookRepository;
+    readonly csQbrReports: CsQbrReportRepository;
+    readonly csCommunicationPlans: CsCommunicationPlanRepository;
+    readonly csTrainingRecommendations: CsTrainingRecommendationRepository;
+    readonly csFeedbackAnalyses: CsFeedbackAnalysisRepository;
+    readonly csSlaMonitoring: CsSlaMonitoringRepository;
+    readonly csSuccessKpiDashboards: CsSuccessKpiDashboardRepository;
+    readonly csChurnPredictions: CsChurnPredictionRepository;
+    readonly csLifecycleManagement: CsLifecycleManagementRepository;
+    readonly csExecutiveSummaries: CsExecutiveSummaryRepository;
+    readonly csAuditLogs: CsAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -787,6 +827,25 @@ export class DatabaseAccessLayer {
         this.ddDeploymentApprovals = new DdDeploymentApprovalRepository();
         this.ddReleaseVersions = new DdReleaseVersionRepository();
         this.ddAuditLogs = new DdAuditLogRepository();
+        this.csEngagements = new CsEngagementRepository();
+        this.csOnboardingWorkflows = new CsOnboardingWorkflowRepository();
+        this.csAdoptionTracking = new CsAdoptionTrackingRepository();
+        this.csHealthScores = new CsHealthScoreRepository();
+        this.csRenewalPlans = new CsRenewalPlanRepository();
+        this.csExpansionOpportunities = new CsExpansionOpportunityRepository();
+        this.csRiskAnalyses = new CsRiskAnalysisRepository();
+        this.csSupportTrendAnalyses = new CsSupportTrendAnalysisRepository();
+        this.csSuccessPlaybooks = new CsSuccessPlaybookRepository();
+        this.csQbrReports = new CsQbrReportRepository();
+        this.csCommunicationPlans = new CsCommunicationPlanRepository();
+        this.csTrainingRecommendations = new CsTrainingRecommendationRepository();
+        this.csFeedbackAnalyses = new CsFeedbackAnalysisRepository();
+        this.csSlaMonitoring = new CsSlaMonitoringRepository();
+        this.csSuccessKpiDashboards = new CsSuccessKpiDashboardRepository();
+        this.csChurnPredictions = new CsChurnPredictionRepository();
+        this.csLifecycleManagement = new CsLifecycleManagementRepository();
+        this.csExecutiveSummaries = new CsExecutiveSummaryRepository();
+        this.csAuditLogs = new CsAuditLogRepository();
     }
 }
 

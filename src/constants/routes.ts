@@ -21,6 +21,7 @@ export const ROUTES = {
     developmentFactory: "/development-factory",
     qaEngineer: "/qa-engineer",
     devopsDeployment: "/devops-deployment",
+    customerSuccess: "/customer-success",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

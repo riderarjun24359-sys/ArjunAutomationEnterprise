@@ -3315,3 +3315,271 @@ export interface DbDdAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbCsEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    df_engagement_id?: string | null;
+    qa_engagement_id?: string | null;
+    dd_engagement_id?: string | null;
+    brd_id?: string | null;
+    frs_id?: string | null;
+    solution_architecture_id?: string | null;
+    work_package_id?: string | null;
+    qa_release_readiness_id?: string | null;
+    dd_release_version_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    contact_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsOnboardingWorkflow {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    workflow_key: string;
+    name: string;
+    phases: unknown[];
+    milestones: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsAdoptionTracking {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    tracking_key: string;
+    name: string;
+    feature_adoptions: unknown[];
+    adoption_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsHealthScore {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    score_key: string;
+    name: string;
+    overall_score: number;
+    dimension_scores: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsRenewalPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    renewal_date?: string | null;
+    renewal_value_usd: number;
+    renewal_actions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsExpansionOpportunity {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    opportunity_key: string;
+    name: string;
+    opportunity_type: string;
+    estimated_value_usd: number;
+    signals: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsRiskAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    name: string;
+    risk_level: string;
+    risk_factors: unknown[];
+    mitigation_plan: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsSupportTrendAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    name: string;
+    trend_metrics: unknown[];
+    insights: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsSuccessPlaybook {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    playbook_key: string;
+    name: string;
+    playbook_type: string;
+    steps: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsQbrReport {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    report_key: string;
+    title: string;
+    quarter: string;
+    report_sections: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsCommunicationPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    channels: unknown[];
+    cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsTrainingRecommendation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    recommendation_key: string;
+    name: string;
+    training_modules: unknown[];
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsFeedbackAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    name: string;
+    sentiment_score: number;
+    themes: unknown[];
+    recommendations: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsSlaMonitoring {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    monitoring_key: string;
+    name: string;
+    sla_targets: unknown[];
+    compliance_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsSuccessKpiDashboard {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    dashboard_key: string;
+    name: string;
+    kpis: unknown[];
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsChurnPrediction {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    prediction_key: string;
+    name: string;
+    churn_probability: number;
+    risk_signals: unknown[];
+    retention_actions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsLifecycleManagement {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    lifecycle_key: string;
+    name: string;
+    current_stage: string;
+    stage_history: unknown[];
+    next_actions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsExecutiveSummary {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    summary_key: string;
+    title: string;
+    summary_content: string;
+    key_metrics: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}
