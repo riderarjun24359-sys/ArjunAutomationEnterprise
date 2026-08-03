@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T19:53:58.683Z
+-- Generated: 2026-08-03T20:14:00.511Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (35):
+--   Migrations (36):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -41,7 +41,8 @@
 --     - 202608020033_enterprise_industry_framework_core.sql
 --     - 202608020034_enterprise_business_process_framework.sql
 --     - 202608020035_enterprise_dynamic_form_engine.sql
---   Seeds (35):
+--     - 202608020036_enterprise_dynamic_workflow_engine.sql
+--   Seeds (36):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -77,9 +78,10 @@
 --     - 033_enterprise_industry_framework_core_seed.sql
 --     - 034_enterprise_business_process_framework_seed.sql
 --     - 035_enterprise_dynamic_form_engine_seed.sql
+--     - 036_enterprise_dynamic_workflow_engine_seed.sql
 --
--- Includes through V2 Program B Sprint 3:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine
+-- Includes through V2 Program B Sprint 4:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -14860,6 +14862,631 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020036_enterprise_dynamic_workflow_engine.sql
+-- =============================================================================
+-- V2 Program B Sprint 4: Enterprise Dynamic Workflow Engine
+
+-- WorkflowHub
+create table if not exists public.dwe_workflow_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- WorkflowDefinition
+create table if not exists public.dwe_workflow_definitions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  workflow_key text not null,
+  workflow_name text not null default '',
+  workflow_type text not null default 'standard',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, workflow_key)
+);
+
+-- WorkflowCategory
+create table if not exists public.dwe_workflow_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_type text not null default 'general',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- WorkflowTemplate
+create table if not exists public.dwe_workflow_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_type text not null default 'standard',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- WorkflowVersion
+create table if not exists public.dwe_workflow_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '',
+  release_channel text not null default 'stable',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- WorkflowNode
+create table if not exists public.dwe_workflow_nodes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  node_key text not null,
+  node_name text not null default '',
+  node_type text not null default 'task',
+  node_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, node_key)
+);
+
+-- WorkflowTransition
+create table if not exists public.dwe_workflow_transitions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  transition_key text not null,
+  transition_name text not null default '',
+  source_node_ref text not null default '',
+  target_node_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, transition_key)
+);
+
+-- DecisionNode
+create table if not exists public.dwe_decision_nodes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  decision_key text not null,
+  decision_name text not null default '',
+  decision_expression text not null default '',
+  default_branch text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, decision_key)
+);
+
+-- ReusableSubflow
+create table if not exists public.dwe_reusable_subflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  subflow_key text not null,
+  subflow_name text not null default '',
+  subflow_type text not null default 'standard',
+  input_schema jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, subflow_key)
+);
+
+-- WorkflowExecution
+create table if not exists public.dwe_workflow_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  execution_key text not null,
+  execution_name text not null default '',
+  execution_status text not null default 'running',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, execution_key)
+);
+
+-- ExecutionHistory
+create table if not exists public.dwe_execution_history (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  history_key text not null,
+  history_type text not null default 'step',
+  history_summary text not null default '',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- ExecutionRetry
+create table if not exists public.dwe_execution_retries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  retry_key text not null,
+  retry_count integer not null default 0,
+  retry_status text not null default 'pending',
+  next_retry_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, retry_key)
+);
+
+-- ExecutionRollback
+create table if not exists public.dwe_execution_rollbacks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  rollback_key text not null,
+  rollback_reason text not null default '',
+  rollback_status text not null default 'pending',
+  rolled_back_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rollback_key)
+);
+
+-- TimeTrigger
+create table if not exists public.dwe_time_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  trigger_key text not null,
+  trigger_name text not null default '',
+  cron_expression text not null default '',
+  timezone text not null default 'UTC',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trigger_key)
+);
+
+-- BusinessEventTrigger
+create table if not exists public.dwe_business_event_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  trigger_key text not null,
+  trigger_name text not null default '',
+  event_type text not null default '',
+  event_filter jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trigger_key)
+);
+
+-- WebhookTrigger
+create table if not exists public.dwe_webhook_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  trigger_key text not null,
+  trigger_name text not null default '',
+  webhook_url text not null default '',
+  secret_token text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trigger_key)
+);
+
+-- ScheduledTrigger
+create table if not exists public.dwe_scheduled_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  trigger_key text not null,
+  trigger_name text not null default '',
+  schedule_type text not null default 'interval',
+  interval_seconds integer not null default 3600,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trigger_key)
+);
+
+-- ManualReview
+create table if not exists public.dwe_manual_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  review_key text not null,
+  review_name text not null default '',
+  review_status text not null default 'pending',
+  assigned_to uuid,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- ApprovalTask
+create table if not exists public.dwe_approval_tasks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  task_key text not null,
+  task_name text not null default '',
+  task_status text not null default 'pending',
+  due_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, task_key)
+);
+
+-- EscalationRule
+create table if not exists public.dwe_escalation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  escalation_level integer not null default 1,
+  escalation_after_minutes integer not null default 60,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- SlaTracking
+create table if not exists public.dwe_sla_trackings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  sla_key text not null,
+  sla_name text not null default '',
+  target_minutes integer not null default 60,
+  breach_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, sla_key)
+);
+
+-- AutomationNotification
+create table if not exists public.dwe_automation_notifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  notification_key text not null,
+  notification_name text not null default '',
+  channel text not null default 'email',
+  template_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, notification_key)
+);
+
+-- AutomationApiCall
+create table if not exists public.dwe_automation_api_calls (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  api_key text not null,
+  api_name text not null default '',
+  endpoint_url text not null default '',
+  http_method text not null default 'POST',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, api_key)
+);
+
+-- AutomationIntegration
+create table if not exists public.dwe_automation_integrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  integration_key text not null,
+  integration_name text not null default '',
+  integration_type text not null default 'rest',
+  config jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, integration_key)
+);
+
+-- ExecutionAnalytics
+create table if not exists public.dwe_execution_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'execution',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- BottleneckReport
+create table if not exists public.dwe_bottleneck_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  report_key text not null,
+  report_name text not null default '',
+  bottleneck_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- SlaComplianceMetric
+create table if not exists public.dwe_sla_compliance_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  metric_key text not null,
+  metric_name text not null default '',
+  compliance_rate numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metric_key)
+);
+
+-- WorkflowMetric
+create table if not exists public.dwe_workflow_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  execution_count integer not null default 0,
+  average_duration_ms integer not null default 0,
+  failure_rate numeric(5, 2) not null default 0,
+  success_rate numeric(5, 2) not null default 100,
+  bottleneck_score numeric(5, 2) not null default 0,
+  sla_compliance_score numeric(5, 2) not null default 100,
+  overall_workflow_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- WorkflowHealth
+create table if not exists public.dwe_workflow_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  running_workflows_count integer not null default 0,
+  pending_tasks_count integer not null default 0,
+  automation_health_status text not null default 'healthy',
+  framework_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- FailedExecution
+create table if not exists public.dwe_failed_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  failure_key text not null,
+  execution_ref text not null default '',
+  failure_type text not null default 'runtime',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- WorkflowFailure
+create table if not exists public.dwe_workflow_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'execution',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.dwe_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_dwe_workflow_hubs_org on public.dwe_workflow_hubs(organization_id);
+create index if not exists idx_dwe_workflow_definitions_org on public.dwe_workflow_definitions(organization_id);
+create index if not exists idx_dwe_workflow_definitions_hub on public.dwe_workflow_definitions(hub_id);
+create index if not exists idx_dwe_workflow_categories_org on public.dwe_workflow_categories(organization_id);
+create index if not exists idx_dwe_workflow_categories_hub on public.dwe_workflow_categories(hub_id);
+create index if not exists idx_dwe_workflow_templates_org on public.dwe_workflow_templates(organization_id);
+create index if not exists idx_dwe_workflow_templates_hub on public.dwe_workflow_templates(hub_id);
+create index if not exists idx_dwe_workflow_versions_org on public.dwe_workflow_versions(organization_id);
+create index if not exists idx_dwe_workflow_versions_hub on public.dwe_workflow_versions(hub_id);
+create index if not exists idx_dwe_workflow_nodes_org on public.dwe_workflow_nodes(organization_id);
+create index if not exists idx_dwe_workflow_nodes_hub on public.dwe_workflow_nodes(hub_id);
+create index if not exists idx_dwe_workflow_transitions_org on public.dwe_workflow_transitions(organization_id);
+create index if not exists idx_dwe_workflow_transitions_hub on public.dwe_workflow_transitions(hub_id);
+create index if not exists idx_dwe_decision_nodes_org on public.dwe_decision_nodes(organization_id);
+create index if not exists idx_dwe_decision_nodes_hub on public.dwe_decision_nodes(hub_id);
+create index if not exists idx_dwe_reusable_subflows_org on public.dwe_reusable_subflows(organization_id);
+create index if not exists idx_dwe_reusable_subflows_hub on public.dwe_reusable_subflows(hub_id);
+create index if not exists idx_dwe_workflow_executions_org on public.dwe_workflow_executions(organization_id);
+create index if not exists idx_dwe_workflow_executions_hub on public.dwe_workflow_executions(hub_id);
+create index if not exists idx_dwe_execution_history_org on public.dwe_execution_history(organization_id);
+create index if not exists idx_dwe_execution_history_hub on public.dwe_execution_history(hub_id);
+create index if not exists idx_dwe_execution_retries_org on public.dwe_execution_retries(organization_id);
+create index if not exists idx_dwe_execution_retries_hub on public.dwe_execution_retries(hub_id);
+create index if not exists idx_dwe_execution_rollbacks_org on public.dwe_execution_rollbacks(organization_id);
+create index if not exists idx_dwe_execution_rollbacks_hub on public.dwe_execution_rollbacks(hub_id);
+create index if not exists idx_dwe_time_triggers_org on public.dwe_time_triggers(organization_id);
+create index if not exists idx_dwe_time_triggers_hub on public.dwe_time_triggers(hub_id);
+create index if not exists idx_dwe_business_event_triggers_org on public.dwe_business_event_triggers(organization_id);
+create index if not exists idx_dwe_business_event_triggers_hub on public.dwe_business_event_triggers(hub_id);
+create index if not exists idx_dwe_webhook_triggers_org on public.dwe_webhook_triggers(organization_id);
+create index if not exists idx_dwe_webhook_triggers_hub on public.dwe_webhook_triggers(hub_id);
+create index if not exists idx_dwe_scheduled_triggers_org on public.dwe_scheduled_triggers(organization_id);
+create index if not exists idx_dwe_scheduled_triggers_hub on public.dwe_scheduled_triggers(hub_id);
+create index if not exists idx_dwe_manual_reviews_org on public.dwe_manual_reviews(organization_id);
+create index if not exists idx_dwe_manual_reviews_hub on public.dwe_manual_reviews(hub_id);
+create index if not exists idx_dwe_approval_tasks_org on public.dwe_approval_tasks(organization_id);
+create index if not exists idx_dwe_approval_tasks_hub on public.dwe_approval_tasks(hub_id);
+create index if not exists idx_dwe_escalation_rules_org on public.dwe_escalation_rules(organization_id);
+create index if not exists idx_dwe_escalation_rules_hub on public.dwe_escalation_rules(hub_id);
+create index if not exists idx_dwe_sla_trackings_org on public.dwe_sla_trackings(organization_id);
+create index if not exists idx_dwe_sla_trackings_hub on public.dwe_sla_trackings(hub_id);
+create index if not exists idx_dwe_automation_notifications_org on public.dwe_automation_notifications(organization_id);
+create index if not exists idx_dwe_automation_notifications_hub on public.dwe_automation_notifications(hub_id);
+create index if not exists idx_dwe_automation_api_calls_org on public.dwe_automation_api_calls(organization_id);
+create index if not exists idx_dwe_automation_api_calls_hub on public.dwe_automation_api_calls(hub_id);
+create index if not exists idx_dwe_automation_integrations_org on public.dwe_automation_integrations(organization_id);
+create index if not exists idx_dwe_automation_integrations_hub on public.dwe_automation_integrations(hub_id);
+create index if not exists idx_dwe_execution_analytics_org on public.dwe_execution_analytics(organization_id);
+create index if not exists idx_dwe_execution_analytics_hub on public.dwe_execution_analytics(hub_id);
+create index if not exists idx_dwe_bottleneck_reports_org on public.dwe_bottleneck_reports(organization_id);
+create index if not exists idx_dwe_bottleneck_reports_hub on public.dwe_bottleneck_reports(hub_id);
+create index if not exists idx_dwe_sla_compliance_metrics_org on public.dwe_sla_compliance_metrics(organization_id);
+create index if not exists idx_dwe_sla_compliance_metrics_hub on public.dwe_sla_compliance_metrics(hub_id);
+create index if not exists idx_dwe_workflow_metrics_org on public.dwe_workflow_metrics(organization_id);
+create index if not exists idx_dwe_workflow_health_org on public.dwe_workflow_health(organization_id);
+create index if not exists idx_dwe_failed_executions_org on public.dwe_failed_executions(organization_id);
+create index if not exists idx_dwe_failed_executions_hub on public.dwe_failed_executions(hub_id);
+create index if not exists idx_dwe_workflow_failures_org on public.dwe_workflow_failures(organization_id);
+create index if not exists idx_dwe_workflow_failures_hub on public.dwe_workflow_failures(hub_id);
+create index if not exists idx_dwe_audit_logs_org on public.dwe_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'dwe_workflow_hubs','dwe_workflow_definitions','dwe_workflow_categories','dwe_workflow_templates','dwe_workflow_versions','dwe_workflow_nodes','dwe_workflow_transitions','dwe_decision_nodes','dwe_reusable_subflows','dwe_workflow_executions','dwe_execution_history','dwe_execution_retries','dwe_execution_rollbacks','dwe_time_triggers','dwe_business_event_triggers','dwe_webhook_triggers','dwe_scheduled_triggers','dwe_manual_reviews','dwe_approval_tasks','dwe_escalation_rules','dwe_sla_trackings','dwe_automation_notifications','dwe_automation_api_calls','dwe_automation_integrations','dwe_execution_analytics','dwe_bottleneck_reports','dwe_sla_compliance_metrics','dwe_workflow_metrics','dwe_workflow_health','dwe_failed_executions','dwe_workflow_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.dwe_workflow_hubs enable row level security;
+alter table public.dwe_workflow_definitions enable row level security;
+alter table public.dwe_workflow_categories enable row level security;
+alter table public.dwe_workflow_templates enable row level security;
+alter table public.dwe_workflow_versions enable row level security;
+alter table public.dwe_workflow_nodes enable row level security;
+alter table public.dwe_workflow_transitions enable row level security;
+alter table public.dwe_decision_nodes enable row level security;
+alter table public.dwe_reusable_subflows enable row level security;
+alter table public.dwe_workflow_executions enable row level security;
+alter table public.dwe_execution_history enable row level security;
+alter table public.dwe_execution_retries enable row level security;
+alter table public.dwe_execution_rollbacks enable row level security;
+alter table public.dwe_time_triggers enable row level security;
+alter table public.dwe_business_event_triggers enable row level security;
+alter table public.dwe_webhook_triggers enable row level security;
+alter table public.dwe_scheduled_triggers enable row level security;
+alter table public.dwe_manual_reviews enable row level security;
+alter table public.dwe_approval_tasks enable row level security;
+alter table public.dwe_escalation_rules enable row level security;
+alter table public.dwe_sla_trackings enable row level security;
+alter table public.dwe_automation_notifications enable row level security;
+alter table public.dwe_automation_api_calls enable row level security;
+alter table public.dwe_automation_integrations enable row level security;
+alter table public.dwe_execution_analytics enable row level security;
+alter table public.dwe_bottleneck_reports enable row level security;
+alter table public.dwe_sla_compliance_metrics enable row level security;
+alter table public.dwe_workflow_metrics enable row level security;
+alter table public.dwe_workflow_health enable row level security;
+alter table public.dwe_failed_executions enable row level security;
+alter table public.dwe_workflow_failures enable row level security;
+alter table public.dwe_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'dwe_workflow_hubs','dwe_workflow_definitions','dwe_workflow_categories','dwe_workflow_templates','dwe_workflow_versions','dwe_workflow_nodes','dwe_workflow_transitions','dwe_decision_nodes','dwe_reusable_subflows','dwe_workflow_executions','dwe_execution_history','dwe_execution_retries','dwe_execution_rollbacks','dwe_time_triggers','dwe_business_event_triggers','dwe_webhook_triggers','dwe_scheduled_triggers','dwe_manual_reviews','dwe_approval_tasks','dwe_escalation_rules','dwe_sla_trackings','dwe_automation_notifications','dwe_automation_api_calls','dwe_automation_integrations','dwe_execution_analytics','dwe_bottleneck_reports','dwe_sla_compliance_metrics','dwe_workflow_metrics','dwe_workflow_health','dwe_failed_executions','dwe_workflow_failures','dwe_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('dwe.view', 'View enterprise dynamic workflow engine data', 'enterprise_dynamic_workflow_engine'),
+  ('dwe.manage', 'Manage workflow registry, designer, execution, automation, and framework outputs', 'enterprise_dynamic_workflow_engine'),
+  ('dwe.approve', 'Approve workflow reviews and approval gates', 'enterprise_dynamic_workflow_engine'),
+  ('dwe.admin', 'Administer enterprise dynamic workflow engine governance', 'enterprise_dynamic_workflow_engine')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -18968,6 +19595,156 @@ on conflict (id) do nothing;
 
 insert into public.dfe_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00900090-0090-0090-0090-009000902101', '11111111-1111-1111-1111-111111111111', 'form_hub', 'seed', 'Enterprise dynamic form engine seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 036_enterprise_dynamic_workflow_engine_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a336', '11111111-1111-1111-1111-111111111111', 'Enterprise Dynamic Workflow Orchestrator', 'enterprise_dynamic_workflow_engine', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["workflow_registry","visual_designer","execution_engine","event_triggers","approval_tasks","workflow_automation","workflow_analytics","workflow_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a536', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a336', 'northstar-workflow-engine-001', 'enterprise_dynamic_workflow_engine', 'workflow_hub', '006c006c-006c-006c-006c-006c006c0101', '{"objective":"Enterprise dynamic workflow engine for northstar operational workflows"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Workflow Hub
+insert into public.dwe_workflow_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('006c006c-006c-006c-006c-006c006c0101', '11111111-1111-1111-1111-111111111111', 'northstar-workflow-engine', 'Northstar Workflow Engine Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+-- M1 Workflow Registry
+insert into public.dwe_workflow_definitions (id, organization_id, hub_id, workflow_key, workflow_name, workflow_type, status)
+values ('006d006d-006d-006d-006d-006d006d0201', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'wf-onboard-0804', 'Customer Onboarding Workflow', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_categories (id, organization_id, hub_id, category_key, category_name, category_type, status)
+values ('006e006e-006e-006e-006e-006e006e0301', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'cat-ops-0804', 'Operations', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_templates (id, organization_id, hub_id, template_key, template_name, template_type, status)
+values ('006f006f-006f-006f-006f-006f006f0401', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'tpl-std-0804', 'Standard Approval Template', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_versions (id, organization_id, hub_id, version_key, version_number, release_channel, status)
+values ('00700070-0070-0070-0070-007000700501', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'ver-1-0-0', '1.0.0', 'stable', 'active')
+on conflict (id) do nothing;
+
+-- M2 Visual Designer
+insert into public.dwe_workflow_nodes (id, organization_id, hub_id, node_key, node_name, node_type, status)
+values ('00710071-0071-0071-0071-007100710601', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'node-start-0804', 'Start Node', 'start', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_transitions (id, organization_id, hub_id, transition_key, transition_name, source_node_ref, status)
+values ('00720072-0072-0072-0072-007200720701', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'trn-approve-0804', 'Approve Transition', 'node-start-0804', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_decision_nodes (id, organization_id, hub_id, decision_key, decision_name, decision_expression, status)
+values ('00730073-0073-0073-0073-007300730801', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'dec-amount-0804', 'Amount Check', 'amount > 1000', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_reusable_subflows (id, organization_id, hub_id, subflow_key, subflow_name, subflow_type, status)
+values ('00740074-0074-0074-0074-007400740901', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'sub-notify-0804', 'Notification Subflow', 'standard', 'active')
+on conflict (id) do nothing;
+
+-- M3 Execution Engine
+insert into public.dwe_workflow_executions (id, organization_id, hub_id, execution_key, execution_name, execution_status, status)
+values ('00750075-0075-0075-0075-007500750a01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'exec-run-0804', 'Onboarding Execution #42', 'running', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_execution_history (id, organization_id, hub_id, history_key, history_type, history_summary, status)
+values ('00760076-0076-0076-0076-007600760b01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'hist-step-0804', 'step', 'Step completed successfully', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_execution_retries (id, organization_id, hub_id, retry_key, retry_count, retry_status, status)
+values ('00770077-0077-0077-0077-007700770c01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'rty-fail-0804', 1, 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_execution_rollbacks (id, organization_id, hub_id, rollback_key, rollback_reason, rollback_status, status)
+values ('00780078-0078-0078-0078-007800780d01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'rbk-err-0804', 'Validation failed', 'pending', 'active')
+on conflict (id) do nothing;
+
+-- M4 Event & Trigger
+insert into public.dwe_time_triggers (id, organization_id, hub_id, trigger_key, trigger_name, cron_expression, status)
+values ('00790079-0079-0079-0079-007900790e01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'trg-daily-0804', 'Daily Trigger', '0 9 * * *', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_business_event_triggers (id, organization_id, hub_id, trigger_key, trigger_name, event_type, status)
+values ('007a007a-007a-007a-007a-007a007a0f01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'trg-order-0804', 'Order Created', 'order.created', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_webhook_triggers (id, organization_id, hub_id, trigger_key, trigger_name, webhook_url, status)
+values ('007b007b-007b-007b-007b-007b007b1001', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'trg-hook-0804', 'Webhook Trigger', 'https://api.example.com/hook', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_scheduled_triggers (id, organization_id, hub_id, trigger_key, trigger_name, schedule_type, status)
+values ('007c007c-007c-007c-007c-007c007c1101', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'trg-sched-0804', 'Hourly Trigger', 'interval', 'active')
+on conflict (id) do nothing;
+
+-- M5 Approval & Human Tasks
+insert into public.dwe_manual_reviews (id, organization_id, hub_id, review_key, review_name, review_status, status)
+values ('007d007d-007d-007d-007d-007d007d1201', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'rev-pending-0804', 'Pending Manual Review', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_approval_tasks (id, organization_id, hub_id, task_key, task_name, task_status, status)
+values ('007e007e-007e-007e-007e-007e007e1301', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'tsk-approve-0804', 'Manager Approval', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_escalation_rules (id, organization_id, hub_id, rule_key, rule_name, escalation_level, status)
+values ('007f007f-007f-007f-007f-007f007f1401', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'esc-l1-0804', 'Level 1 Escalation', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_sla_trackings (id, organization_id, hub_id, sla_key, sla_name, target_minutes, status)
+values ('00800080-0080-0080-0080-008000801501', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'sla-24h-0804', '24 Hour SLA', 1440, 'active')
+on conflict (id) do nothing;
+
+-- M6 Workflow Automation
+insert into public.dwe_automation_notifications (id, organization_id, hub_id, notification_key, notification_name, channel, status)
+values ('00810081-0081-0081-0081-008100811601', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'ntf-email-0804', 'Email Notification', 'email', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_automation_api_calls (id, organization_id, hub_id, api_key, api_name, endpoint_url, status)
+values ('00820082-0082-0082-0082-008200821701', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'api-crm-0804', 'CRM API Call', 'https://api.example.com/crm', 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_automation_integrations (id, organization_id, hub_id, integration_key, integration_name, integration_type, status)
+values ('00830083-0083-0083-0083-008300831801', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'int-slack-0804', 'Slack Integration', 'rest', 'active')
+on conflict (id) do nothing;
+
+-- M7 Workflow Analytics
+insert into public.dwe_execution_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('00840084-0084-0084-0084-008400841901', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'anly-exec-0804', 'execution', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_bottleneck_reports (id, organization_id, hub_id, report_key, report_name, bottleneck_score, status)
+values ('00850085-0085-0085-0085-008500851a01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'bnk-approval-0804', 'Approval Bottleneck', 12.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_sla_compliance_metrics (id, organization_id, hub_id, metric_key, metric_name, compliance_rate, status)
+values ('00860086-0086-0086-0086-008600861b01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'sla-rate-0804', 'SLA Compliance Rate', 96.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Workflow Dashboard
+insert into public.dwe_workflow_metrics (id, organization_id, metrics_key, execution_count, average_duration_ms, failure_rate, success_rate, bottleneck_score, sla_compliance_score, overall_workflow_score, status)
+values ('00870087-0087-0087-0087-008700871c01', '11111111-1111-1111-1111-111111111111', 'wf-metrics-0804', 850, 3200, 2.50, 97.50, 8.00, 96.00, 94.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, running_workflows_count, pending_tasks_count, automation_health_status, framework_health_status, summary, status)
+values ('00880088-0088-0088-0088-008800881d01', '11111111-1111-1111-1111-111111111111', 'wf-health-0804', 95.00, false, 12, 5, 'healthy', 'healthy', 'Dynamic workflow engine operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.dwe_failed_executions (id, organization_id, hub_id, failure_key, execution_ref, failure_type, error_message, status)
+values ('00890089-0089-0089-0089-008900891e01', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'fail-exec-0804', 'exec-run-0804', 'runtime', 'Node execution timeout', 'open')
+on conflict (id) do nothing;
+
+insert into public.dwe_workflow_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00900090-0090-0090-0090-009000902001', '11111111-1111-1111-1111-111111111111', '006c006c-006c-006c-006c-006c006c0101', 'fail-wf-0804', 'execution', 'WF_TIMEOUT', 'Workflow execution timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.dwe_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00910091-0091-0091-0091-009100912101', '11111111-1111-1111-1111-111111111111', 'workflow_hub', 'seed', 'Enterprise dynamic workflow engine seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

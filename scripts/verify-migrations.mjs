@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 698 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_*)
+// 730 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -706,6 +706,38 @@ const requiredTables = [
     "dfe_pending_review_items",
     "dfe_form_failures",
     "dfe_audit_logs",
+    "dwe_workflow_hubs",
+    "dwe_workflow_definitions",
+    "dwe_workflow_categories",
+    "dwe_workflow_templates",
+    "dwe_workflow_versions",
+    "dwe_workflow_nodes",
+    "dwe_workflow_transitions",
+    "dwe_decision_nodes",
+    "dwe_reusable_subflows",
+    "dwe_workflow_executions",
+    "dwe_execution_history",
+    "dwe_execution_retries",
+    "dwe_execution_rollbacks",
+    "dwe_time_triggers",
+    "dwe_business_event_triggers",
+    "dwe_webhook_triggers",
+    "dwe_scheduled_triggers",
+    "dwe_manual_reviews",
+    "dwe_approval_tasks",
+    "dwe_escalation_rules",
+    "dwe_sla_trackings",
+    "dwe_automation_notifications",
+    "dwe_automation_api_calls",
+    "dwe_automation_integrations",
+    "dwe_execution_analytics",
+    "dwe_bottleneck_reports",
+    "dwe_sla_compliance_metrics",
+    "dwe_workflow_metrics",
+    "dwe_workflow_health",
+    "dwe_failed_executions",
+    "dwe_workflow_failures",
+    "dwe_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

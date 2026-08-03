@@ -9584,3 +9584,428 @@ export interface DbDfeAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbDweWorkflowHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowDefinition {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    workflow_key: string;
+    workflow_name: string;
+    workflow_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowNode {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    node_key: string;
+    node_name: string;
+    node_type: string;
+    node_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowTransition {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    transition_key: string;
+    transition_name: string;
+    source_node_ref: string;
+    target_node_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweDecisionNode {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    decision_key: string;
+    decision_name: string;
+    decision_expression: string;
+    default_branch: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweReusableSubflow {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    subflow_key: string;
+    subflow_name: string;
+    subflow_type: string;
+    input_schema: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowExecution {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    execution_key: string;
+    execution_name: string;
+    execution_status: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweExecutionHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_type: string;
+    history_summary: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweExecutionRetry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    retry_key: string;
+    retry_count: number;
+    retry_status: string;
+    next_retry_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweExecutionRollback {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rollback_key: string;
+    rollback_reason: string;
+    rollback_status: string;
+    rolled_back_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweTimeTrigger {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trigger_key: string;
+    trigger_name: string;
+    cron_expression: string;
+    timezone: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweBusinessEventTrigger {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trigger_key: string;
+    trigger_name: string;
+    event_type: string;
+    event_filter: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWebhookTrigger {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trigger_key: string;
+    trigger_name: string;
+    webhook_url: string;
+    secret_token: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweScheduledTrigger {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trigger_key: string;
+    trigger_name: string;
+    schedule_type: string;
+    interval_seconds: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweManualReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    review_name: string;
+    review_status: string;
+    assigned_to?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweApprovalTask {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    task_key: string;
+    task_name: string;
+    task_status: string;
+    due_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweEscalationRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    escalation_level: number;
+    escalation_after_minutes: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweSlaTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    sla_key: string;
+    sla_name: string;
+    target_minutes: number;
+    breach_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweAutomationNotification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    notification_key: string;
+    notification_name: string;
+    channel: string;
+    template_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweAutomationApiCall {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key: string;
+    api_name: string;
+    endpoint_url: string;
+    http_method: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweAutomationIntegration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    integration_key: string;
+    integration_name: string;
+    integration_type: string;
+    config: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweExecutionAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweBottleneckReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_name: string;
+    bottleneck_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweSlaComplianceMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metric_key: string;
+    metric_name: string;
+    compliance_rate: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    execution_count: number;
+    average_duration_ms: number;
+    failure_rate: number;
+    success_rate: number;
+    bottleneck_score: number;
+    sla_compliance_score: number;
+    overall_workflow_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    running_workflows_count: number;
+    pending_tasks_count: number;
+    automation_health_status: string;
+    framework_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweFailedExecution {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    execution_ref: string;
+    failure_type: string;
+    error_message: string;
+    failed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweWorkflowFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDweAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

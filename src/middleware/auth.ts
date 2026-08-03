@@ -40,6 +40,7 @@ const protectedRoutes = [
     ROUTES.industryFramework,
     ROUTES.businessProcess,
     ROUTES.formEngine,
+    ROUTES.workflowEngine,
 ];
 
 const authRoutes = [
