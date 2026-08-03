@@ -29,6 +29,7 @@ export const ROUTES = {
     tenantLifecycle: "/tenant-lifecycle",
     billingRevenue: "/billing-revenue",
     communicationHub: "/communication-hub",
+    integrationPlatform: "/integration-platform",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

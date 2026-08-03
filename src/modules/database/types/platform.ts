@@ -6462,3 +6462,478 @@ export interface DbCnhAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbIntgIntegrationHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgConnectedService {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    service_key: string;
+    service_name: string;
+    provider_type: string;
+    connector_status: string;
+    credentials_ref: string;
+    config: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgConnectorConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connected_service_id: string;
+    config_key: string;
+    config_name: string;
+    provider_type: string;
+    api_version: string;
+    settings: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgConnectorHealth {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connected_service_id: string;
+    health_key: string;
+    health_score: number;
+    last_check_at: string;
+    check_details: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgPaymentConnector {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_key: string;
+    connector_name: string;
+    provider_type: string;
+    connector_status: string;
+    api_version: string;
+    credentials_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgPaymentConnectorHealth {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    health_key: string;
+    health_score: number;
+    last_check_at: string;
+    latency_ms: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgPaymentRetryQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    queue_key: string;
+    transaction_ref: string;
+    retry_count: number;
+    max_retries: number;
+    next_retry_at?: string | null;
+    last_error: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgPaymentTransaction {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    transaction_key: string;
+    external_id: string;
+    amount: number;
+    currency: string;
+    provider_type: string;
+    transaction_status: string;
+    processed_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgAccountingConnector {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_key: string;
+    connector_name: string;
+    provider_type: string;
+    connector_status: string;
+    api_version: string;
+    credentials_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgAccountingSyncStatus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    sync_key: string;
+    entity_type: string;
+    last_sync_at?: string | null;
+    records_synced: number;
+    sync_status: string;
+    error_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgExportMapping {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    mapping_key: string;
+    mapping_name: string;
+    source_entity: string;
+    target_entity: string;
+    field_mappings: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgAccountingExport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_id: string;
+    export_key: string;
+    export_type: string;
+    record_count: number;
+    export_status: string;
+    started_at: string;
+    completed_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgApiKey {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    key_name: string;
+    key_prefix: string;
+    key_hash: string;
+    api_version: string;
+    expires_at?: string | null;
+    last_used_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgApiScope {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key_id: string;
+    scope_key: string;
+    scope_name: string;
+    permissions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgRateLimit {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key_id?: string | null;
+    limit_key: string;
+    limit_name: string;
+    rate_limit_rpm: number;
+    burst_limit: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgApiUsage {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key_id?: string | null;
+    usage_key: string;
+    endpoint: string;
+    request_count: number;
+    error_count: number;
+    period_start: string;
+    period_end?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgIncomingWebhook {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    webhook_key: string;
+    webhook_name: string;
+    endpoint_path: string;
+    provider_type: string;
+    webhook_signing_key_hash: string;
+    is_enabled: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgOutgoingWebhook {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    webhook_key: string;
+    webhook_name: string;
+    target_url: string;
+    event_types: unknown[];
+    webhook_signing_key_hash: string;
+    is_enabled: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgWebhookDeadLetter {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    outgoing_webhook_id?: string | null;
+    dead_letter_key: string;
+    event_type: string;
+    payload: Record<string, unknown>;
+    dead_letter_status: string;
+    retry_count: number;
+    last_error: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgWebhookDeliveryLog {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    outgoing_webhook_id: string;
+    delivery_key: string;
+    event_type: string;
+    http_status: number;
+    delivery_status: string;
+    response_body: string;
+    delivered_at?: string | null;
+    latency_ms: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgMarketplaceConnector {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    connector_slug: string;
+    connector_name: string;
+    provider_type: string;
+    category: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgMarketplaceInstallation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    marketplace_connector_id: string;
+    installation_key: string;
+    connector_status: string;
+    installed_at: string;
+    config: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgMarketplaceCompatibility {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    marketplace_connector_id: string;
+    compatibility_key: string;
+    min_api_version: string;
+    max_api_version: string;
+    platform_requirements: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgMarketplaceVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    marketplace_connector_id: string;
+    version_key: string;
+    version_number: string;
+    api_version: string;
+    changelog: string;
+    published_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgApiAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    metric_date: string;
+    total_requests: number;
+    total_errors: number;
+    error_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgLatencyMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metrics_key: string;
+    metric_date: string;
+    endpoint: string;
+    p50_ms: number;
+    p95_ms: number;
+    p99_ms: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgWebhookAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    metric_date: string;
+    total_deliveries: number;
+    successful_deliveries: number;
+    failed_deliveries: number;
+    success_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgUsageTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    metric_date: string;
+    trend_direction: string;
+    usage_delta: number;
+    baseline_value: number;
+    current_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgIntegrationMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    active_connectors: number;
+    total_api_calls: number;
+    total_webhook_deliveries: number;
+    overall_success_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgIntegrationHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    uptime_percent: number;
+    active_connectors: number;
+    degraded_connectors: number;
+    disaster_recovery_mode: boolean;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgIntegrationFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    provider_type: string;
+    error_code: string;
+    error_message: string;
+    retry_count: number;
+    failed_at: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIntgAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

@@ -13,7 +13,8 @@
     "db:check-remote": "node scripts/check-remote-schema.mjs",
     "sprint3:verify": "node scripts/verify-sprint3.mjs",
     "sprint4:verify": "node scripts/verify-sprint4.mjs",
-    "sprint5:verify": "node scripts/verify-sprint5.mjs"
+    "sprint5:verify": "node scripts/verify-sprint5.mjs",
+    "sprint6:verify": "node scripts/verify-sprint6.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 474 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_*)
+// 506 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -482,6 +482,38 @@ const requiredTables = [
     "cnh_system_health",
     "cnh_delivery_failures",
     "cnh_audit_logs",
+    "intg_integration_hubs",
+    "intg_connected_services",
+    "intg_connector_configs",
+    "intg_connector_health",
+    "intg_payment_connectors",
+    "intg_payment_connector_health",
+    "intg_payment_retry_queue",
+    "intg_payment_transactions",
+    "intg_accounting_connectors",
+    "intg_accounting_sync_status",
+    "intg_export_mappings",
+    "intg_accounting_exports",
+    "intg_api_keys",
+    "intg_api_scopes",
+    "intg_rate_limits",
+    "intg_api_usage",
+    "intg_incoming_webhooks",
+    "intg_outgoing_webhooks",
+    "intg_webhook_dead_letter",
+    "intg_webhook_delivery_logs",
+    "intg_marketplace_connectors",
+    "intg_marketplace_installations",
+    "intg_marketplace_compatibility",
+    "intg_marketplace_versions",
+    "intg_api_analytics",
+    "intg_latency_metrics",
+    "intg_webhook_analytics",
+    "intg_usage_trends",
+    "intg_integration_metrics",
+    "intg_integration_health",
+    "intg_integration_failures",
+    "intg_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

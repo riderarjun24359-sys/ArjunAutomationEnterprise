@@ -515,6 +515,40 @@ import {
     CnhTemplateLocalizationRepository,
     CnhTemplateVariableRepository,
 } from "@/src/modules/database/repositories/communication-hub-repositories";
+import {
+    IntgAccountingConnectorRepository,
+    IntgAccountingExportRepository,
+    IntgAccountingSyncStatusRepository,
+    IntgApiAnalyticsRepository,
+    IntgApiKeyRepository,
+    IntgApiScopeRepository,
+    IntgApiUsageRepository,
+    IntgAuditLogRepository,
+    IntgConnectedServiceRepository,
+    IntgConnectorConfigRepository,
+    IntgConnectorHealthRepository,
+    IntgExportMappingRepository,
+    IntgIncomingWebhookRepository,
+    IntgIntegrationFailureRepository,
+    IntgIntegrationHealthRepository,
+    IntgIntegrationHubRepository,
+    IntgIntegrationMetricRepository,
+    IntgLatencyMetricRepository,
+    IntgMarketplaceCompatibilityRepository,
+    IntgMarketplaceConnectorRepository,
+    IntgMarketplaceInstallationRepository,
+    IntgMarketplaceVersionRepository,
+    IntgOutgoingWebhookRepository,
+    IntgPaymentConnectorHealthRepository,
+    IntgPaymentConnectorRepository,
+    IntgPaymentRetryQueueRepository,
+    IntgPaymentTransactionRepository,
+    IntgRateLimitRepository,
+    IntgUsageTrendRepository,
+    IntgWebhookAnalyticsRepository,
+    IntgWebhookDeadLetterRepository,
+    IntgWebhookDeliveryLogRepository,
+} from "@/src/modules/database/repositories/integration-platform-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -986,6 +1020,38 @@ export class DatabaseAccessLayer {
     readonly cnhSystemHealth: CnhSystemHealthRepository;
     readonly cnhDeliveryFailures: CnhDeliveryFailureRepository;
     readonly cnhAuditLogs: CnhAuditLogRepository;
+    readonly intgIntegrationHubs: IntgIntegrationHubRepository;
+    readonly intgConnectedServices: IntgConnectedServiceRepository;
+    readonly intgConnectorConfigs: IntgConnectorConfigRepository;
+    readonly intgConnectorHealth: IntgConnectorHealthRepository;
+    readonly intgPaymentConnectors: IntgPaymentConnectorRepository;
+    readonly intgPaymentConnectorHealth: IntgPaymentConnectorHealthRepository;
+    readonly intgPaymentRetryQueue: IntgPaymentRetryQueueRepository;
+    readonly intgPaymentTransactions: IntgPaymentTransactionRepository;
+    readonly intgAccountingConnectors: IntgAccountingConnectorRepository;
+    readonly intgAccountingSyncStatus: IntgAccountingSyncStatusRepository;
+    readonly intgExportMappings: IntgExportMappingRepository;
+    readonly intgAccountingExports: IntgAccountingExportRepository;
+    readonly intgApiKeys: IntgApiKeyRepository;
+    readonly intgApiScopes: IntgApiScopeRepository;
+    readonly intgRateLimits: IntgRateLimitRepository;
+    readonly intgApiUsage: IntgApiUsageRepository;
+    readonly intgIncomingWebhooks: IntgIncomingWebhookRepository;
+    readonly intgOutgoingWebhooks: IntgOutgoingWebhookRepository;
+    readonly intgWebhookDeadLetter: IntgWebhookDeadLetterRepository;
+    readonly intgWebhookDeliveryLogs: IntgWebhookDeliveryLogRepository;
+    readonly intgMarketplaceConnectors: IntgMarketplaceConnectorRepository;
+    readonly intgMarketplaceInstallations: IntgMarketplaceInstallationRepository;
+    readonly intgMarketplaceCompatibility: IntgMarketplaceCompatibilityRepository;
+    readonly intgMarketplaceVersions: IntgMarketplaceVersionRepository;
+    readonly intgApiAnalytics: IntgApiAnalyticsRepository;
+    readonly intgLatencyMetrics: IntgLatencyMetricRepository;
+    readonly intgWebhookAnalytics: IntgWebhookAnalyticsRepository;
+    readonly intgUsageTrends: IntgUsageTrendRepository;
+    readonly intgIntegrationMetrics: IntgIntegrationMetricRepository;
+    readonly intgIntegrationHealth: IntgIntegrationHealthRepository;
+    readonly intgIntegrationFailures: IntgIntegrationFailureRepository;
+    readonly intgAuditLogs: IntgAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1457,6 +1523,38 @@ export class DatabaseAccessLayer {
         this.cnhSystemHealth = new CnhSystemHealthRepository();
         this.cnhDeliveryFailures = new CnhDeliveryFailureRepository();
         this.cnhAuditLogs = new CnhAuditLogRepository();
+        this.intgIntegrationHubs = new IntgIntegrationHubRepository();
+        this.intgConnectedServices = new IntgConnectedServiceRepository();
+        this.intgConnectorConfigs = new IntgConnectorConfigRepository();
+        this.intgConnectorHealth = new IntgConnectorHealthRepository();
+        this.intgPaymentConnectors = new IntgPaymentConnectorRepository();
+        this.intgPaymentConnectorHealth = new IntgPaymentConnectorHealthRepository();
+        this.intgPaymentRetryQueue = new IntgPaymentRetryQueueRepository();
+        this.intgPaymentTransactions = new IntgPaymentTransactionRepository();
+        this.intgAccountingConnectors = new IntgAccountingConnectorRepository();
+        this.intgAccountingSyncStatus = new IntgAccountingSyncStatusRepository();
+        this.intgExportMappings = new IntgExportMappingRepository();
+        this.intgAccountingExports = new IntgAccountingExportRepository();
+        this.intgApiKeys = new IntgApiKeyRepository();
+        this.intgApiScopes = new IntgApiScopeRepository();
+        this.intgRateLimits = new IntgRateLimitRepository();
+        this.intgApiUsage = new IntgApiUsageRepository();
+        this.intgIncomingWebhooks = new IntgIncomingWebhookRepository();
+        this.intgOutgoingWebhooks = new IntgOutgoingWebhookRepository();
+        this.intgWebhookDeadLetter = new IntgWebhookDeadLetterRepository();
+        this.intgWebhookDeliveryLogs = new IntgWebhookDeliveryLogRepository();
+        this.intgMarketplaceConnectors = new IntgMarketplaceConnectorRepository();
+        this.intgMarketplaceInstallations = new IntgMarketplaceInstallationRepository();
+        this.intgMarketplaceCompatibility = new IntgMarketplaceCompatibilityRepository();
+        this.intgMarketplaceVersions = new IntgMarketplaceVersionRepository();
+        this.intgApiAnalytics = new IntgApiAnalyticsRepository();
+        this.intgLatencyMetrics = new IntgLatencyMetricRepository();
+        this.intgWebhookAnalytics = new IntgWebhookAnalyticsRepository();
+        this.intgUsageTrends = new IntgUsageTrendRepository();
+        this.intgIntegrationMetrics = new IntgIntegrationMetricRepository();
+        this.intgIntegrationHealth = new IntgIntegrationHealthRepository();
+        this.intgIntegrationFailures = new IntgIntegrationFailureRepository();
+        this.intgAuditLogs = new IntgAuditLogRepository();
     }
 }
 
