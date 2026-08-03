@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T13:48:14.224Z
+-- Generated: 2026-08-03T14:31:26.986Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (22):
+--   Migrations (23):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -28,7 +28,8 @@
 --     - 202608020020_enterprise_ai_devops_deployment.sql
 --     - 202608020021_enterprise_ai_customer_success.sql
 --     - 202608020022_enterprise_founder_operating_system.sql
---   Seeds (22):
+--     - 202608020023_enterprise_autonomous_company_v1.sql
+--   Seeds (23):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -51,9 +52,10 @@
 --     - 020_enterprise_ai_devops_deployment_seed.sql
 --     - 021_enterprise_ai_customer_success_seed.sql
 --     - 022_enterprise_founder_operating_system_seed.sql
+--     - 023_enterprise_autonomous_company_v1_seed.sql
 --
--- Includes through Sprint 29:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System
+-- Includes through Sprint 30:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -6724,6 +6726,407 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020023_enterprise_autonomous_company_v1.sql
+-- =============================================================================
+-- Sprint 30: Autonomous Company v1
+
+create table if not exists public.ac_company_contexts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  context_key text not null,
+  ba_engagement_id uuid references public.ba_engagements(id) on delete set null,
+  sa_engagement_id uuid references public.sa_engagements(id) on delete set null,
+  df_engagement_id uuid references public.df_engagements(id) on delete set null,
+  qa_engagement_id uuid references public.qa_engagements(id) on delete set null,
+  dd_engagement_id uuid references public.dd_engagements(id) on delete set null,
+  cs_engagement_id uuid references public.cs_engagements(id) on delete set null,
+  fo_workspace_id uuid references public.fo_workspaces(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  knowledge_context_id uuid references public.knowledge_ai_contexts(id) on delete set null,
+  pipeline_stage text not null default 'autonomous_company',
+  status text not null default 'active',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_key)
+);
+
+create table if not exists public.ac_workflow_orchestrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  orchestration_key text not null,
+  name text not null,
+  workflow_definition jsonb not null default '[]'::jsonb,
+  participating_modules jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, orchestration_key)
+);
+
+create table if not exists public.ac_event_bus_events (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  event_key text not null,
+  name text not null,
+  source_module text not null default '',
+  target_modules jsonb not null default '[]'::jsonb,
+  payload_schema jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, event_key)
+);
+
+create table if not exists public.ac_worker_collaborations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  collaboration_key text not null,
+  name text not null,
+  participating_workers jsonb not null default '[]'::jsonb,
+  handoff_rules jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, collaboration_key)
+);
+
+create table if not exists public.ac_approval_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  workflow_key text not null,
+  title text not null,
+  approval_steps jsonb not null default '[]'::jsonb,
+  required_role text not null default 'admin',
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, workflow_key)
+);
+
+create table if not exists public.ac_notification_center (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  notification_key text not null,
+  title text not null,
+  channel text not null default 'in_app',
+  priority text not null default 'normal',
+  message text not null default '',
+  status text not null default 'unread',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, notification_key)
+);
+
+create table if not exists public.ac_company_timeline (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  timeline_key text not null,
+  title text not null,
+  event_type text not null default 'milestone',
+  event_at timestamptz not null default now(),
+  metadata jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, timeline_key)
+);
+
+create table if not exists public.ac_activity_feed (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  feed_key text not null,
+  actor_type text not null default 'system',
+  actor_name text not null default '',
+  action text not null default '',
+  resource_type text not null default '',
+  resource_id uuid,
+  summary text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.ac_cross_module_automations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  automation_key text not null,
+  name text not null,
+  trigger_module text not null default '',
+  action_modules jsonb not null default '[]'::jsonb,
+  conditions jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, automation_key)
+);
+
+create table if not exists public.ac_executive_insights (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  insight_key text not null,
+  title text not null,
+  insight_type text not null default 'summary',
+  content text not null default '',
+  metrics jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, insight_key)
+);
+
+create table if not exists public.ac_predictive_recommendations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  recommendation_key text not null,
+  title text not null,
+  recommendation_type text not null default 'operational',
+  confidence_score numeric(5, 2) not null default 0,
+  recommendation text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, recommendation_key)
+);
+
+create table if not exists public.ac_system_search (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  search_key text not null,
+  resource_type text not null,
+  resource_id uuid,
+  title text not null,
+  keywords text not null default '',
+  module_source text not null default '',
+  status text not null default 'indexed',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, search_key)
+);
+
+create table if not exists public.ac_command_palette (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  command_key text not null,
+  label text not null,
+  action_type text not null default 'navigate',
+  target_path text not null default '',
+  shortcut text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, command_key)
+);
+
+create table if not exists public.ac_emergency_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  workflow_key text not null,
+  name text not null,
+  severity text not null default 'high',
+  response_steps jsonb not null default '[]'::jsonb,
+  escalation_contacts jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, workflow_key)
+);
+
+create table if not exists public.ac_business_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  kpi_key text not null,
+  name text not null,
+  kpi_category text not null default 'operational',
+  current_value numeric(14, 4) not null default 0,
+  target_value numeric(14, 4) not null default 0,
+  unit text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, kpi_key)
+);
+
+create table if not exists public.ac_security_governance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  governance_key text not null,
+  name text not null,
+  control_area text not null default 'access',
+  controls jsonb not null default '[]'::jsonb,
+  compliance_status text not null default 'pending',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, governance_key)
+);
+
+create table if not exists public.ac_compliance_dashboards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  dashboard_key text not null,
+  name text not null,
+  framework text not null default 'soc2',
+  requirements jsonb not null default '[]'::jsonb,
+  compliance_percent numeric(5, 2) not null default 0,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, dashboard_key)
+);
+
+create table if not exists public.ac_operational_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
+  health_key text not null,
+  name text not null,
+  overall_score numeric(5, 2) not null default 0,
+  dimension_scores jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, context_id, health_key)
+);
+
+create table if not exists public.ac_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_ac_company_contexts_org on public.ac_company_contexts(organization_id);
+create index if not exists idx_ac_workflow_orchestrations_org on public.ac_workflow_orchestrations(organization_id);
+create index if not exists idx_ac_event_bus_events_org on public.ac_event_bus_events(organization_id);
+create index if not exists idx_ac_worker_collaborations_org on public.ac_worker_collaborations(organization_id);
+create index if not exists idx_ac_approval_workflows_org on public.ac_approval_workflows(organization_id);
+create index if not exists idx_ac_notification_center_org on public.ac_notification_center(organization_id);
+create index if not exists idx_ac_company_timeline_org on public.ac_company_timeline(organization_id);
+create index if not exists idx_ac_activity_feed_org on public.ac_activity_feed(organization_id);
+create index if not exists idx_ac_cross_module_automations_org on public.ac_cross_module_automations(organization_id);
+create index if not exists idx_ac_executive_insights_org on public.ac_executive_insights(organization_id);
+create index if not exists idx_ac_predictive_recommendations_org on public.ac_predictive_recommendations(organization_id);
+create index if not exists idx_ac_system_search_org on public.ac_system_search(organization_id);
+create index if not exists idx_ac_command_palette_org on public.ac_command_palette(organization_id);
+create index if not exists idx_ac_emergency_workflows_org on public.ac_emergency_workflows(organization_id);
+create index if not exists idx_ac_business_kpis_org on public.ac_business_kpis(organization_id);
+create index if not exists idx_ac_security_governance_org on public.ac_security_governance(organization_id);
+create index if not exists idx_ac_compliance_dashboards_org on public.ac_compliance_dashboards(organization_id);
+create index if not exists idx_ac_operational_health_org on public.ac_operational_health(organization_id);
+create index if not exists idx_ac_audit_logs_org on public.ac_audit_logs(organization_id);
+
+drop trigger if exists trg_ac_company_contexts_updated_at on public.ac_company_contexts;
+create trigger trg_ac_company_contexts_updated_at before update on public.ac_company_contexts for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_workflow_orchestrations_updated_at on public.ac_workflow_orchestrations;
+create trigger trg_ac_workflow_orchestrations_updated_at before update on public.ac_workflow_orchestrations for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_event_bus_events_updated_at on public.ac_event_bus_events;
+create trigger trg_ac_event_bus_events_updated_at before update on public.ac_event_bus_events for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_worker_collaborations_updated_at on public.ac_worker_collaborations;
+create trigger trg_ac_worker_collaborations_updated_at before update on public.ac_worker_collaborations for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_approval_workflows_updated_at on public.ac_approval_workflows;
+create trigger trg_ac_approval_workflows_updated_at before update on public.ac_approval_workflows for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_notification_center_updated_at on public.ac_notification_center;
+create trigger trg_ac_notification_center_updated_at before update on public.ac_notification_center for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_company_timeline_updated_at on public.ac_company_timeline;
+create trigger trg_ac_company_timeline_updated_at before update on public.ac_company_timeline for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_cross_module_automations_updated_at on public.ac_cross_module_automations;
+create trigger trg_ac_cross_module_automations_updated_at before update on public.ac_cross_module_automations for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_executive_insights_updated_at on public.ac_executive_insights;
+create trigger trg_ac_executive_insights_updated_at before update on public.ac_executive_insights for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_predictive_recommendations_updated_at on public.ac_predictive_recommendations;
+create trigger trg_ac_predictive_recommendations_updated_at before update on public.ac_predictive_recommendations for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_system_search_updated_at on public.ac_system_search;
+create trigger trg_ac_system_search_updated_at before update on public.ac_system_search for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_command_palette_updated_at on public.ac_command_palette;
+create trigger trg_ac_command_palette_updated_at before update on public.ac_command_palette for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_emergency_workflows_updated_at on public.ac_emergency_workflows;
+create trigger trg_ac_emergency_workflows_updated_at before update on public.ac_emergency_workflows for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_business_kpis_updated_at on public.ac_business_kpis;
+create trigger trg_ac_business_kpis_updated_at before update on public.ac_business_kpis for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_security_governance_updated_at on public.ac_security_governance;
+create trigger trg_ac_security_governance_updated_at before update on public.ac_security_governance for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_compliance_dashboards_updated_at on public.ac_compliance_dashboards;
+create trigger trg_ac_compliance_dashboards_updated_at before update on public.ac_compliance_dashboards for each row execute function public.set_updated_at();
+drop trigger if exists trg_ac_operational_health_updated_at on public.ac_operational_health;
+create trigger trg_ac_operational_health_updated_at before update on public.ac_operational_health for each row execute function public.set_updated_at();
+
+alter table public.ac_company_contexts enable row level security;
+alter table public.ac_workflow_orchestrations enable row level security;
+alter table public.ac_event_bus_events enable row level security;
+alter table public.ac_worker_collaborations enable row level security;
+alter table public.ac_approval_workflows enable row level security;
+alter table public.ac_notification_center enable row level security;
+alter table public.ac_company_timeline enable row level security;
+alter table public.ac_activity_feed enable row level security;
+alter table public.ac_cross_module_automations enable row level security;
+alter table public.ac_executive_insights enable row level security;
+alter table public.ac_predictive_recommendations enable row level security;
+alter table public.ac_system_search enable row level security;
+alter table public.ac_command_palette enable row level security;
+alter table public.ac_emergency_workflows enable row level security;
+alter table public.ac_business_kpis enable row level security;
+alter table public.ac_security_governance enable row level security;
+alter table public.ac_compliance_dashboards enable row level security;
+alter table public.ac_operational_health enable row level security;
+alter table public.ac_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'ac_company_contexts', 'ac_workflow_orchestrations', 'ac_event_bus_events', 'ac_worker_collaborations',
+    'ac_approval_workflows', 'ac_notification_center', 'ac_company_timeline', 'ac_activity_feed',
+    'ac_cross_module_automations', 'ac_executive_insights', 'ac_predictive_recommendations', 'ac_system_search',
+    'ac_command_palette', 'ac_emergency_workflows', 'ac_business_kpis', 'ac_security_governance',
+    'ac_compliance_dashboards', 'ac_operational_health', 'ac_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('ac.view', 'View Autonomous Company orchestration and artifacts', 'autonomous_company'),
+  ('ac.manage', 'Create and edit autonomous company deliverables', 'autonomous_company'),
+  ('ac.approve', 'Review and approve autonomous company workflows', 'autonomous_company'),
+  ('ac.admin', 'Administer autonomous company governance and permissions', 'autonomous_company')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -8678,6 +9081,120 @@ insert into public.fo_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('fa000001-fa00-fa00-fa00-fa0000000001', '11111111-1111-1111-1111-111111111111', 'workspace', 'f001f001-f001-f001-f001-f001f0010101', 'create', 'Northstar Founder Operating System workspace created from customer success handoff'),
   ('fa000002-fa00-fa00-fa00-fa0000000002', '11111111-1111-1111-1111-111111111111', 'strategic_okr', 'f002f002-f002-f002-f002-f002f0020201', 'generate', 'Q4 2026 strategic OKRs generated from cross-module intelligence')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 023_enterprise_autonomous_company_v1_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a310', '11111111-1111-1111-1111-111111111111', 'Autonomous Company Orchestrator', 'autonomous_company', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["workflow_orchestration","event_bus","worker_collaboration","executive_insights","security_governance"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a510', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a310', 'northstar-ac-001', 'autonomous_company', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"autonomous company orchestration"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000009', '11111111-1111-1111-1111-111111111111', 'northstar-ac-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a310', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a510', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory","ba_outputs","sa_outputs","df_outputs","qa_outputs","dd_outputs","cs_outputs","fo_outputs","finance_context"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_company_contexts (id, organization_id, title, context_key, ba_engagement_id, sa_engagement_id, df_engagement_id, qa_engagement_id, dd_engagement_id, cs_engagement_id, fo_workspace_id, client_id, project_id, agent_id, session_id, knowledge_context_id, pipeline_stage, status, summary)
+values
+  ('ac01ac01-ac01-ac01-ac01-ac01ac010101', '11111111-1111-1111-1111-111111111111', 'Northstar Autonomous Company v1', 'northstar-autonomous-company-001', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b10101', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f10101', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'c501c501-c501-c501-c501-c501c5010101', 'f001f001-f001-f001-f001-f001f0010101', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a310', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a510', 'cb000001-cb00-cb00-cb00-cb0000000009', 'autonomous_company', 'active', 'Autonomous company orchestration layer unifying Founder OS, all AI workers, and enterprise modules for continuous operations')
+on conflict (id) do nothing;
+
+insert into public.ac_workflow_orchestrations (id, organization_id, context_id, orchestration_key, name, workflow_definition, participating_modules, status)
+values
+  ('ac02ac02-ac02-ac02-ac02-ac02ac020201', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'orchestration-northstar', 'Northstar Cross-Module Orchestration', '[{"step":"founder_os_handoff","module":"founder_os"},{"step":"worker_sync","module":"ai_workers"},{"step":"continuous_ops","module":"autonomous_company"}]'::jsonb, '["founder_os","business_analyst","solution_architect","development_factory","qa_engineering","devops_deployment","customer_success","autonomous_company"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_event_bus_events (id, organization_id, context_id, event_key, name, source_module, target_modules, payload_schema, status)
+values
+  ('ac03ac03-ac03-ac03-ac03-ac03ac030301', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'event-founder-handoff', 'Founder OS Strategic Handoff', 'founder_os', '["autonomous_company","business_analyst","customer_success"]'::jsonb, '{"type":"object","properties":{"workspaceId":{"type":"string"},"pipelineStage":{"type":"string"}}}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_worker_collaborations (id, organization_id, context_id, collaboration_key, name, participating_workers, handoff_rules, status)
+values
+  ('ac04ac04-ac04-ac04-ac04-ac04ac040401', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'collab-all-workers', 'Full AI Worker Collaboration Mesh', '["business_analyst","solution_architect","development_factory","qa_engineering","devops_deployment","customer_success","founder_os"]'::jsonb, '[{"from":"business_analyst","to":"solution_architect","trigger":"requirements_complete"},{"from":"solution_architect","to":"development_factory","trigger":"architecture_approved"},{"from":"development_factory","to":"qa_engineering","trigger":"build_complete"},{"from":"qa_engineering","to":"devops_deployment","trigger":"qa_passed"},{"from":"devops_deployment","to":"customer_success","trigger":"deployment_complete"},{"from":"customer_success","to":"founder_os","trigger":"expansion_ready"},{"from":"founder_os","to":"autonomous_company","trigger":"strategic_execution"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_approval_workflows (id, organization_id, context_id, workflow_key, title, approval_steps, required_role, status)
+values
+  ('ac05ac05-ac05-ac05-ac05-ac05ac050501', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'approval-orchestration', 'Cross-Module Orchestration Approval', '[{"step":1,"role":"admin","action":"review_orchestration"},{"step":2,"role":"ac.approve","action":"authorize_execution"}]'::jsonb, 'admin', 'pending')
+on conflict (id) do nothing;
+
+insert into public.ac_notification_center (id, organization_id, context_id, notification_key, title, channel, priority, message, status)
+values
+  ('ac06ac06-ac06-ac06-ac06-ac06ac060601', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'notif-orchestration-ready', 'Autonomous Company Orchestration Ready', 'in_app', 'high', 'Founder OS handoff complete. Autonomous Company v1 orchestration layer is active for Northstar.', 'unread')
+on conflict (id) do nothing;
+
+insert into public.ac_company_timeline (id, organization_id, context_id, timeline_key, title, event_type, event_at, metadata, status)
+values
+  ('ac07ac07-ac07-ac07-ac07-ac07ac070701', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'timeline-ac-launch', 'Autonomous Company v1 Activated', 'milestone', '2026-08-02 00:23:00+00', '{"source":"founder_os","pipeline":"continuous_operations"}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_activity_feed (id, organization_id, context_id, feed_key, actor_type, actor_name, action, resource_type, resource_id, summary)
+values
+  ('ac08ac08-ac08-ac08-ac08-ac08ac080801', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'feed-context-created', 'system', 'Autonomous Company Orchestrator', 'create', 'company_context', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'Northstar Autonomous Company v1 context created from Founder OS workspace handoff')
+on conflict (id) do nothing;
+
+insert into public.ac_cross_module_automations (id, organization_id, context_id, automation_key, name, trigger_module, action_modules, conditions, status)
+values
+  ('ac09ac09-ac09-ac09-ac09-ac09ac090901', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'automation-fo-sync', 'Founder OS to Autonomous Company Sync', 'founder_os', '["autonomous_company","knowledge","ai_orchestration"]'::jsonb, '[{"field":"pipeline_stage","operator":"equals","value":"founder_operating_system"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_executive_insights (id, organization_id, context_id, insight_key, title, insight_type, content, metrics, status)
+values
+  ('ac0aac0a-ac0a-ac0a-ac0a-ac0aac0a0a01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'insight-orchestration', 'Unified Orchestration Readiness', 'summary', 'All six AI workers and Founder OS are synchronized. Cross-module event bus active with 98% module coverage.', '[{"metric":"worker_sync","value":100},{"metric":"module_coverage","value":98}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_predictive_recommendations (id, organization_id, context_id, recommendation_key, title, recommendation_type, confidence_score, recommendation, status)
+values
+  ('ac0bac0b-ac0b-ac0b-ac0b-ac0bac0b0b01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'rec-continuous-ops', 'Enable Continuous Operations Mode', 'operational', 91.50, 'Activate automated cross-module handoffs from Founder OS insights to customer success expansion workflows within 48 hours of board report generation.', 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_system_search (id, organization_id, context_id, search_key, resource_type, resource_id, title, keywords, module_source, status)
+values
+  ('ac0cac0c-ac0c-ac0c-ac0c-ac0cac0c0c01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'search-orchestration', 'workflow_orchestration', 'ac02ac02-ac02-ac02-ac02-ac02ac020201', 'Northstar Cross-Module Orchestration', 'orchestration founder os ai workers continuous operations', 'autonomous_company', 'indexed')
+on conflict (id) do nothing;
+
+insert into public.ac_command_palette (id, organization_id, context_id, command_key, label, action_type, target_path, shortcut, status)
+values
+  ('ac0dac0d-ac0d-ac0d-ac0d-ac0dac0d0d01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'cmd-orchestration', 'Open Orchestration Dashboard', 'navigate', '/autonomous-company', 'Ctrl+Shift+A', 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_emergency_workflows (id, organization_id, context_id, workflow_key, name, severity, response_steps, escalation_contacts, status)
+values
+  ('ac0eac0e-ac0e-ac0e-ac0e-ac0eac0e0e01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'emergency-module-failure', 'Critical Module Failure Response', 'critical', '["isolate_module","notify_admin","activate_fallback","audit_log"]'::jsonb, '[{"role":"admin","channel":"in_app"},{"role":"ac.admin","channel":"email"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_business_kpis (id, organization_id, context_id, kpi_key, name, kpi_category, current_value, target_value, unit, status)
+values
+  ('ac0fac0f-ac0f-ac0f-ac0f-ac0fac0f0f01', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'kpi-orchestration-uptime', 'Orchestration Layer Uptime', 'operational', 99.9500, 99.9900, 'percent', 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_security_governance (id, organization_id, context_id, governance_key, name, control_area, controls, compliance_status, status)
+values
+  ('ac10ac10-ac10-ac10-ac10-ac10ac101001', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'gov-access-control', 'Orchestration Access Control', 'access', '[{"control":"rls_enabled","status":"active"},{"control":"org_membership","status":"active"},{"control":"ac_permissions","status":"active"}]'::jsonb, 'compliant', 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_compliance_dashboards (id, organization_id, context_id, dashboard_key, name, framework, requirements, compliance_percent, status)
+values
+  ('ac11ac11-ac11-ac11-ac11-ac11ac111101', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'compliance-soc2', 'SOC 2 Orchestration Compliance', 'soc2', '["access_control","audit_logging","data_isolation","change_management"]'::jsonb, 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_operational_health (id, organization_id, context_id, health_key, name, overall_score, dimension_scores, status)
+values
+  ('ac12ac12-ac12-ac12-ac12-ac12ac121201', '11111111-1111-1111-1111-111111111111', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'health-overall', 'Northstar Operational Health', 92.75, '[{"dimension":"orchestration","score":95},{"dimension":"security","score":94},{"dimension":"worker_sync","score":90},{"dimension":"compliance","score":92}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ac_audit_logs (id, organization_id, entity_type, entity_id, action, summary, metadata, security_level)
+values
+  ('ac000001-ac00-ac00-ac00-ac0000000001', '11111111-1111-1111-1111-111111111111', 'company_context', 'ac01ac01-ac01-ac01-ac01-ac01ac010101', 'create', 'Northstar Autonomous Company v1 context created from Founder OS handoff', '{"source":"founder_os","fo_workspace_id":"f001f001-f001-f001-f001-f001f0010101"}'::jsonb, 'standard'),
+  ('ac000002-ac00-ac00-ac00-ac0000000002', '11111111-1111-1111-1111-111111111111', 'worker_collaboration', 'ac04ac04-ac04-ac04-ac04-ac04ac040401', 'activate', 'Full AI worker collaboration mesh activated with Founder OS integration', '{"workers":["business_analyst","solution_architect","development_factory","qa_engineering","devops_deployment","customer_success","founder_os"]}'::jsonb, 'elevated')
 on conflict (id) do nothing;
 
 -- =============================================================================

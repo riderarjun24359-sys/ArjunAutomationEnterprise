@@ -323,6 +323,27 @@ import {
     FoTeamCapacityRepository,
     FoWorkspaceRepository,
 } from "@/src/modules/database/repositories/founder-os-repositories";
+import {
+    AcActivityFeedRepository,
+    AcApprovalWorkflowRepository,
+    AcAuditLogRepository,
+    AcBusinessKpiRepository,
+    AcCommandPaletteRepository,
+    AcCompanyContextRepository,
+    AcCompanyTimelineRepository,
+    AcComplianceDashboardRepository,
+    AcCrossModuleAutomationRepository,
+    AcEmergencyWorkflowRepository,
+    AcEventBusEventRepository,
+    AcExecutiveInsightRepository,
+    AcNotificationCenterRepository,
+    AcOperationalHealthRepository,
+    AcPredictiveRecommendationRepository,
+    AcSecurityGovernanceRepository,
+    AcSystemSearchRepository,
+    AcWorkerCollaborationRepository,
+    AcWorkflowOrchestrationRepository,
+} from "@/src/modules/database/repositories/autonomous-company-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -614,6 +635,25 @@ export class DatabaseAccessLayer {
     readonly foCompanyMilestones: FoCompanyMilestoneRepository;
     readonly foFounderInsights: FoFounderInsightRepository;
     readonly foAuditLogs: FoAuditLogRepository;
+    readonly acCompanyContexts: AcCompanyContextRepository;
+    readonly acWorkflowOrchestrations: AcWorkflowOrchestrationRepository;
+    readonly acEventBusEvents: AcEventBusEventRepository;
+    readonly acWorkerCollaborations: AcWorkerCollaborationRepository;
+    readonly acApprovalWorkflows: AcApprovalWorkflowRepository;
+    readonly acNotificationCenter: AcNotificationCenterRepository;
+    readonly acCompanyTimeline: AcCompanyTimelineRepository;
+    readonly acActivityFeed: AcActivityFeedRepository;
+    readonly acCrossModuleAutomations: AcCrossModuleAutomationRepository;
+    readonly acExecutiveInsights: AcExecutiveInsightRepository;
+    readonly acPredictiveRecommendations: AcPredictiveRecommendationRepository;
+    readonly acSystemSearch: AcSystemSearchRepository;
+    readonly acCommandPalette: AcCommandPaletteRepository;
+    readonly acEmergencyWorkflows: AcEmergencyWorkflowRepository;
+    readonly acBusinessKpis: AcBusinessKpiRepository;
+    readonly acSecurityGovernance: AcSecurityGovernanceRepository;
+    readonly acComplianceDashboards: AcComplianceDashboardRepository;
+    readonly acOperationalHealth: AcOperationalHealthRepository;
+    readonly acAuditLogs: AcAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -905,6 +945,25 @@ export class DatabaseAccessLayer {
         this.foCompanyMilestones = new FoCompanyMilestoneRepository();
         this.foFounderInsights = new FoFounderInsightRepository();
         this.foAuditLogs = new FoAuditLogRepository();
+        this.acCompanyContexts = new AcCompanyContextRepository();
+        this.acWorkflowOrchestrations = new AcWorkflowOrchestrationRepository();
+        this.acEventBusEvents = new AcEventBusEventRepository();
+        this.acWorkerCollaborations = new AcWorkerCollaborationRepository();
+        this.acApprovalWorkflows = new AcApprovalWorkflowRepository();
+        this.acNotificationCenter = new AcNotificationCenterRepository();
+        this.acCompanyTimeline = new AcCompanyTimelineRepository();
+        this.acActivityFeed = new AcActivityFeedRepository();
+        this.acCrossModuleAutomations = new AcCrossModuleAutomationRepository();
+        this.acExecutiveInsights = new AcExecutiveInsightRepository();
+        this.acPredictiveRecommendations = new AcPredictiveRecommendationRepository();
+        this.acSystemSearch = new AcSystemSearchRepository();
+        this.acCommandPalette = new AcCommandPaletteRepository();
+        this.acEmergencyWorkflows = new AcEmergencyWorkflowRepository();
+        this.acBusinessKpis = new AcBusinessKpiRepository();
+        this.acSecurityGovernance = new AcSecurityGovernanceRepository();
+        this.acComplianceDashboards = new AcComplianceDashboardRepository();
+        this.acOperationalHealth = new AcOperationalHealthRepository();
+        this.acAuditLogs = new AcAuditLogRepository();
     }
 }
 

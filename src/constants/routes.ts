@@ -23,6 +23,7 @@ export const ROUTES = {
     devopsDeployment: "/devops-deployment",
     customerSuccess: "/customer-success",
     founderOs: "/founder-os",
+    autonomousCompany: "/autonomous-company",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

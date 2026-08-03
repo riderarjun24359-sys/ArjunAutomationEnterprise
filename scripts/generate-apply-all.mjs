@@ -44,8 +44,8 @@ ${migrationFiles.map((file) => `--     - ${file}`).join("\n")}
 --   Seeds (${seedFiles.length}):
 ${seedFiles.map((file) => `--     - ${file}`).join("\n")}
 --
--- Includes through Sprint 29:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System
+-- Includes through Sprint 30:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.

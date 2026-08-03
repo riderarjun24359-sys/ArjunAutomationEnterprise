@@ -27,6 +27,7 @@ const protectedRoutes = [
     ROUTES.devopsDeployment,
     ROUTES.customerSuccess,
     ROUTES.founderOs,
+    ROUTES.autonomousCompany,
 ];
 
 const authRoutes = [

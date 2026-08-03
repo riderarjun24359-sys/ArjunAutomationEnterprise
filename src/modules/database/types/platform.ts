@@ -3852,3 +3852,276 @@ export interface DbFoAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbAcCompanyContext {
+    id: string;
+    organization_id: string;
+    title: string;
+    context_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    df_engagement_id?: string | null;
+    qa_engagement_id?: string | null;
+    dd_engagement_id?: string | null;
+    cs_engagement_id?: string | null;
+    fo_workspace_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcWorkflowOrchestration {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    orchestration_key: string;
+    name: string;
+    workflow_definition: unknown[];
+    participating_modules: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcEventBusEvent {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    event_key: string;
+    name: string;
+    source_module: string;
+    target_modules: unknown[];
+    payload_schema: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcWorkerCollaboration {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    collaboration_key: string;
+    name: string;
+    participating_workers: unknown[];
+    handoff_rules: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcApprovalWorkflow {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    workflow_key: string;
+    title: string;
+    approval_steps: unknown[];
+    required_role: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcNotificationCenter {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    notification_key: string;
+    title: string;
+    channel: string;
+    priority: string;
+    message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcCompanyTimeline {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    timeline_key: string;
+    title: string;
+    event_type: string;
+    event_at: string;
+    metadata: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcActivityFeed {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    feed_key: string;
+    actor_type: string;
+    actor_name: string;
+    action: string;
+    resource_type: string;
+    resource_id?: string | null;
+    summary: string;
+    created_at: string;
+}
+
+export interface DbAcCrossModuleAutomation {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    automation_key: string;
+    name: string;
+    trigger_module: string;
+    action_modules: unknown[];
+    conditions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcExecutiveInsight {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    insight_key: string;
+    title: string;
+    insight_type: string;
+    content: string;
+    metrics: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcPredictiveRecommendation {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    recommendation_key: string;
+    title: string;
+    recommendation_type: string;
+    confidence_score: number;
+    recommendation: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcSystemSearch {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    search_key: string;
+    resource_type: string;
+    resource_id?: string | null;
+    title: string;
+    keywords: string;
+    module_source: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcCommandPalette {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    command_key: string;
+    label: string;
+    action_type: string;
+    target_path: string;
+    shortcut: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcEmergencyWorkflow {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    workflow_key: string;
+    name: string;
+    severity: string;
+    response_steps: unknown[];
+    escalation_contacts: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcBusinessKpi {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    kpi_key: string;
+    name: string;
+    kpi_category: string;
+    current_value: number;
+    target_value: number;
+    unit: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcSecurityGovernance {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    governance_key: string;
+    name: string;
+    control_area: string;
+    controls: unknown[];
+    compliance_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcComplianceDashboard {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    dashboard_key: string;
+    name: string;
+    framework: string;
+    requirements: unknown[];
+    compliance_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcOperationalHealth {
+    id: string;
+    organization_id: string;
+    context_id: string;
+    health_key: string;
+    name: string;
+    overall_score: number;
+    dimension_scores: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAcAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}
