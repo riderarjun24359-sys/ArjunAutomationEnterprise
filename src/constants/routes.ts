@@ -38,6 +38,7 @@ export const ROUTES = {
     formEngine: "/form-engine",
     workflowEngine: "/workflow-engine",
     documentEngine: "/document-engine",
+    restaurant: "/restaurant",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

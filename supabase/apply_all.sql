@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T20:38:00.047Z
+-- Generated: 2026-08-03T20:56:40.290Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (37):
+--   Migrations (38):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -43,7 +43,8 @@
 --     - 202608020035_enterprise_dynamic_form_engine.sql
 --     - 202608020036_enterprise_dynamic_workflow_engine.sql
 --     - 202608020037_enterprise_dynamic_document_engine.sql
---   Seeds (37):
+--     - 202608020038_enterprise_restaurant_business_os.sql
+--   Seeds (38):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -81,9 +82,10 @@
 --     - 035_enterprise_dynamic_form_engine_seed.sql
 --     - 036_enterprise_dynamic_workflow_engine_seed.sql
 --     - 037_enterprise_dynamic_document_engine_seed.sql
+--     - 038_enterprise_restaurant_business_os_seed.sql
 --
--- Includes through V2 Program B Sprint 5:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine
+-- Includes through V2 Program B Sprint 6:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -16112,6 +16114,637 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020038_enterprise_restaurant_business_os.sql
+-- =============================================================================
+-- V2 Program B Sprint 6: Enterprise Restaurant Business Operating System
+
+-- RestaurantHub
+create table if not exists public.rst_restaurant_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  gst_number text not null default '',
+  operating_hours jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- Brand
+create table if not exists public.rst_brands (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  brand_key text not null,
+  brand_name text not null default '',
+  brand_type text not null default 'franchise',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, brand_key)
+);
+
+-- Branch
+create table if not exists public.rst_branches (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  branch_key text not null,
+  branch_name text not null default '',
+  branch_address text not null default '',
+  city text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, branch_key)
+);
+
+-- BusinessLicense
+create table if not exists public.rst_business_licenses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  license_key text not null,
+  license_name text not null default '',
+  license_type text not null default 'food_service',
+  expiry_date date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, license_key)
+);
+
+-- DiningArea
+create table if not exists public.rst_dining_areas (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  area_key text not null,
+  area_name text not null default '',
+  area_type text not null default 'indoor',
+  capacity integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, area_key)
+);
+
+-- RestaurantTable
+create table if not exists public.rst_restaurant_tables (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  table_key text not null,
+  table_name text not null default '',
+  qr_code text not null default '',
+  table_status text not null default 'available',
+  floor_ref text not null default '',
+  seats integer not null default 4,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, table_key)
+);
+
+-- MenuCategory
+create table if not exists public.rst_menu_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_type text not null default 'main',
+  display_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- MenuItem
+create table if not exists public.rst_menu_items (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  item_key text not null,
+  item_name text not null default '',
+  item_price numeric(10, 2) not null default 0,
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, item_key)
+);
+
+-- MenuVariant
+create table if not exists public.rst_menu_variants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  variant_key text not null,
+  variant_name text not null default '',
+  variant_type text not null default 'size',
+  price_adjustment numeric(10, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, variant_key)
+);
+
+-- AddOn
+create table if not exists public.rst_add_ons (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  addon_key text not null,
+  addon_name text not null default '',
+  addon_price numeric(10, 2) not null default 0,
+  addon_type text not null default 'extra',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, addon_key)
+);
+
+-- ComboMeal
+create table if not exists public.rst_combo_meals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  combo_key text not null,
+  combo_name text not null default '',
+  combo_price numeric(10, 2) not null default 0,
+  combo_type text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, combo_key)
+);
+
+-- Order
+create table if not exists public.rst_orders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  order_key text not null,
+  order_number text not null default '',
+  order_type text not null default 'dine-in',
+  order_status text not null default 'pending',
+  total_amount numeric(10, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, order_key)
+);
+
+-- OrderItem
+create table if not exists public.rst_order_items (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  item_key text not null,
+  item_name text not null default '',
+  item_quantity integer not null default 1,
+  unit_price numeric(10, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, item_key)
+);
+
+-- OrderQueue
+create table if not exists public.rst_order_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_name text not null default '',
+  queue_status text not null default 'waiting',
+  position integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- KitchenRouting
+create table if not exists public.rst_kitchen_routing (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  routing_key text not null,
+  routing_name text not null default '',
+  routing_status text not null default 'pending',
+  station_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, routing_key)
+);
+
+-- OrderTimeline
+create table if not exists public.rst_order_timeline (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  timeline_key text not null,
+  timeline_event text not null default '',
+  timeline_status text not null default 'pending',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, timeline_key)
+);
+
+-- KitchenStation
+create table if not exists public.rst_kitchen_stations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  station_key text not null,
+  station_name text not null default '',
+  station_type text not null default 'grill',
+  capacity integer not null default 5,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, station_key)
+);
+
+-- PreparationQueue
+create table if not exists public.rst_preparation_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  prep_key text not null,
+  prep_name text not null default '',
+  prep_status text not null default 'queued',
+  priority integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, prep_key)
+);
+
+-- CookingStatus
+create table if not exists public.rst_cooking_status (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  cooking_key text not null,
+  cooking_name text not null default '',
+  cooking_status text not null default 'preparing',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, cooking_key)
+);
+
+-- ReadyQueue
+create table if not exists public.rst_ready_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  ready_key text not null,
+  ready_name text not null default '',
+  ready_status text not null default 'ready',
+  ready_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, ready_key)
+);
+
+-- RushOrder
+create table if not exists public.rst_rush_orders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  rush_key text not null,
+  rush_name text not null default '',
+  rush_priority text not null default 'high',
+  escalated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rush_key)
+);
+
+-- Reservation
+create table if not exists public.rst_reservations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  reservation_key text not null,
+  reservation_name text not null default '',
+  reservation_status text not null default 'pending',
+  party_size integer not null default 2,
+  reserved_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, reservation_key)
+);
+
+-- WaitingList
+create table if not exists public.rst_waiting_list (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  wait_key text not null,
+  wait_name text not null default '',
+  wait_status text not null default 'waiting',
+  party_size integer not null default 2,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, wait_key)
+);
+
+-- CustomerProfile
+create table if not exists public.rst_customer_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'regular',
+  email text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- LoyaltyProgram
+create table if not exists public.rst_loyalty_programs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  program_key text not null,
+  program_name text not null default '',
+  program_type text not null default 'points',
+  points_balance integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, program_key)
+);
+
+-- FeedbackReview
+create table if not exists public.rst_feedback_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  review_key text not null,
+  review_title text not null default '',
+  review_rating numeric(3, 1) not null default 5,
+  review_text text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- RestaurantMetric
+create table if not exists public.rst_restaurant_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  order_count integer not null default 0,
+  revenue_total numeric(12, 2) not null default 0,
+  average_bill numeric(10, 2) not null default 0,
+  occupancy_rate numeric(5, 2) not null default 0,
+  popular_dish_score numeric(5, 2) not null default 0,
+  peak_hour_score numeric(5, 2) not null default 0,
+  customer_growth_rate numeric(5, 2) not null default 0,
+  kitchen_performance_score numeric(5, 2) not null default 0,
+  overall_restaurant_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- RestaurantHealth
+create table if not exists public.rst_restaurant_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  pending_orders_count integer not null default 0,
+  kitchen_queue_depth integer not null default 0,
+  framework_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- RevenueAnalytics
+create table if not exists public.rst_revenue_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'revenue',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- KitchenPerformance
+create table if not exists public.rst_kitchen_performance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  performance_key text not null,
+  performance_type text not null default 'kitchen',
+  performance_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, performance_key)
+);
+
+-- RestaurantFailure
+create table if not exists public.rst_restaurant_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'order',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.rst_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_rst_restaurant_hubs_org on public.rst_restaurant_hubs(organization_id);
+create index if not exists idx_rst_brands_org on public.rst_brands(organization_id);
+create index if not exists idx_rst_brands_hub on public.rst_brands(hub_id);
+create index if not exists idx_rst_branches_org on public.rst_branches(organization_id);
+create index if not exists idx_rst_branches_hub on public.rst_branches(hub_id);
+create index if not exists idx_rst_business_licenses_org on public.rst_business_licenses(organization_id);
+create index if not exists idx_rst_business_licenses_hub on public.rst_business_licenses(hub_id);
+create index if not exists idx_rst_dining_areas_org on public.rst_dining_areas(organization_id);
+create index if not exists idx_rst_dining_areas_hub on public.rst_dining_areas(hub_id);
+create index if not exists idx_rst_restaurant_tables_org on public.rst_restaurant_tables(organization_id);
+create index if not exists idx_rst_restaurant_tables_hub on public.rst_restaurant_tables(hub_id);
+create index if not exists idx_rst_menu_categories_org on public.rst_menu_categories(organization_id);
+create index if not exists idx_rst_menu_categories_hub on public.rst_menu_categories(hub_id);
+create index if not exists idx_rst_menu_items_org on public.rst_menu_items(organization_id);
+create index if not exists idx_rst_menu_items_hub on public.rst_menu_items(hub_id);
+create index if not exists idx_rst_menu_variants_org on public.rst_menu_variants(organization_id);
+create index if not exists idx_rst_menu_variants_hub on public.rst_menu_variants(hub_id);
+create index if not exists idx_rst_add_ons_org on public.rst_add_ons(organization_id);
+create index if not exists idx_rst_add_ons_hub on public.rst_add_ons(hub_id);
+create index if not exists idx_rst_combo_meals_org on public.rst_combo_meals(organization_id);
+create index if not exists idx_rst_combo_meals_hub on public.rst_combo_meals(hub_id);
+create index if not exists idx_rst_orders_org on public.rst_orders(organization_id);
+create index if not exists idx_rst_orders_hub on public.rst_orders(hub_id);
+create index if not exists idx_rst_order_items_org on public.rst_order_items(organization_id);
+create index if not exists idx_rst_order_items_hub on public.rst_order_items(hub_id);
+create index if not exists idx_rst_order_queue_org on public.rst_order_queue(organization_id);
+create index if not exists idx_rst_order_queue_hub on public.rst_order_queue(hub_id);
+create index if not exists idx_rst_kitchen_routing_org on public.rst_kitchen_routing(organization_id);
+create index if not exists idx_rst_kitchen_routing_hub on public.rst_kitchen_routing(hub_id);
+create index if not exists idx_rst_order_timeline_org on public.rst_order_timeline(organization_id);
+create index if not exists idx_rst_order_timeline_hub on public.rst_order_timeline(hub_id);
+create index if not exists idx_rst_kitchen_stations_org on public.rst_kitchen_stations(organization_id);
+create index if not exists idx_rst_kitchen_stations_hub on public.rst_kitchen_stations(hub_id);
+create index if not exists idx_rst_preparation_queue_org on public.rst_preparation_queue(organization_id);
+create index if not exists idx_rst_preparation_queue_hub on public.rst_preparation_queue(hub_id);
+create index if not exists idx_rst_cooking_status_org on public.rst_cooking_status(organization_id);
+create index if not exists idx_rst_cooking_status_hub on public.rst_cooking_status(hub_id);
+create index if not exists idx_rst_ready_queue_org on public.rst_ready_queue(organization_id);
+create index if not exists idx_rst_ready_queue_hub on public.rst_ready_queue(hub_id);
+create index if not exists idx_rst_rush_orders_org on public.rst_rush_orders(organization_id);
+create index if not exists idx_rst_rush_orders_hub on public.rst_rush_orders(hub_id);
+create index if not exists idx_rst_reservations_org on public.rst_reservations(organization_id);
+create index if not exists idx_rst_reservations_hub on public.rst_reservations(hub_id);
+create index if not exists idx_rst_waiting_list_org on public.rst_waiting_list(organization_id);
+create index if not exists idx_rst_waiting_list_hub on public.rst_waiting_list(hub_id);
+create index if not exists idx_rst_customer_profiles_org on public.rst_customer_profiles(organization_id);
+create index if not exists idx_rst_customer_profiles_hub on public.rst_customer_profiles(hub_id);
+create index if not exists idx_rst_loyalty_programs_org on public.rst_loyalty_programs(organization_id);
+create index if not exists idx_rst_loyalty_programs_hub on public.rst_loyalty_programs(hub_id);
+create index if not exists idx_rst_feedback_reviews_org on public.rst_feedback_reviews(organization_id);
+create index if not exists idx_rst_feedback_reviews_hub on public.rst_feedback_reviews(hub_id);
+create index if not exists idx_rst_restaurant_metrics_org on public.rst_restaurant_metrics(organization_id);
+create index if not exists idx_rst_restaurant_health_org on public.rst_restaurant_health(organization_id);
+create index if not exists idx_rst_revenue_analytics_org on public.rst_revenue_analytics(organization_id);
+create index if not exists idx_rst_revenue_analytics_hub on public.rst_revenue_analytics(hub_id);
+create index if not exists idx_rst_kitchen_performance_org on public.rst_kitchen_performance(organization_id);
+create index if not exists idx_rst_kitchen_performance_hub on public.rst_kitchen_performance(hub_id);
+create index if not exists idx_rst_restaurant_failures_org on public.rst_restaurant_failures(organization_id);
+create index if not exists idx_rst_restaurant_failures_hub on public.rst_restaurant_failures(hub_id);
+create index if not exists idx_rst_audit_logs_org on public.rst_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'rst_restaurant_hubs','rst_brands','rst_branches','rst_business_licenses','rst_dining_areas','rst_restaurant_tables','rst_menu_categories','rst_menu_items','rst_menu_variants','rst_add_ons','rst_combo_meals','rst_orders','rst_order_items','rst_order_queue','rst_kitchen_routing','rst_order_timeline','rst_kitchen_stations','rst_preparation_queue','rst_cooking_status','rst_ready_queue','rst_rush_orders','rst_reservations','rst_waiting_list','rst_customer_profiles','rst_loyalty_programs','rst_feedback_reviews','rst_restaurant_metrics','rst_restaurant_health','rst_revenue_analytics','rst_kitchen_performance','rst_restaurant_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.rst_restaurant_hubs enable row level security;
+alter table public.rst_brands enable row level security;
+alter table public.rst_branches enable row level security;
+alter table public.rst_business_licenses enable row level security;
+alter table public.rst_dining_areas enable row level security;
+alter table public.rst_restaurant_tables enable row level security;
+alter table public.rst_menu_categories enable row level security;
+alter table public.rst_menu_items enable row level security;
+alter table public.rst_menu_variants enable row level security;
+alter table public.rst_add_ons enable row level security;
+alter table public.rst_combo_meals enable row level security;
+alter table public.rst_orders enable row level security;
+alter table public.rst_order_items enable row level security;
+alter table public.rst_order_queue enable row level security;
+alter table public.rst_kitchen_routing enable row level security;
+alter table public.rst_order_timeline enable row level security;
+alter table public.rst_kitchen_stations enable row level security;
+alter table public.rst_preparation_queue enable row level security;
+alter table public.rst_cooking_status enable row level security;
+alter table public.rst_ready_queue enable row level security;
+alter table public.rst_rush_orders enable row level security;
+alter table public.rst_reservations enable row level security;
+alter table public.rst_waiting_list enable row level security;
+alter table public.rst_customer_profiles enable row level security;
+alter table public.rst_loyalty_programs enable row level security;
+alter table public.rst_feedback_reviews enable row level security;
+alter table public.rst_restaurant_metrics enable row level security;
+alter table public.rst_restaurant_health enable row level security;
+alter table public.rst_revenue_analytics enable row level security;
+alter table public.rst_kitchen_performance enable row level security;
+alter table public.rst_restaurant_failures enable row level security;
+alter table public.rst_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'rst_restaurant_hubs','rst_brands','rst_branches','rst_business_licenses','rst_dining_areas','rst_restaurant_tables','rst_menu_categories','rst_menu_items','rst_menu_variants','rst_add_ons','rst_combo_meals','rst_orders','rst_order_items','rst_order_queue','rst_kitchen_routing','rst_order_timeline','rst_kitchen_stations','rst_preparation_queue','rst_cooking_status','rst_ready_queue','rst_rush_orders','rst_reservations','rst_waiting_list','rst_customer_profiles','rst_loyalty_programs','rst_feedback_reviews','rst_restaurant_metrics','rst_restaurant_health','rst_revenue_analytics','rst_kitchen_performance','rst_restaurant_failures','rst_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('rst.view', 'View enterprise restaurant business operating system data', 'enterprise_restaurant_business_os'),
+  ('rst.manage', 'Manage restaurant foundation, menu, orders, kitchen, customer, and framework outputs', 'enterprise_restaurant_business_os'),
+  ('rst.approve', 'Approve restaurant reservations and order gates', 'enterprise_restaurant_business_os'),
+  ('rst.admin', 'Administer enterprise restaurant business operating system governance', 'enterprise_restaurant_business_os')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -20520,6 +21153,154 @@ on conflict (id) do nothing;
 
 insert into public.dde_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00920092-0092-0092-0092-009200922101', '11111111-1111-1111-1111-111111111111', 'document_hub', 'seed', 'Enterprise dynamic document engine seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 038_enterprise_restaurant_business_os_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a338', '11111111-1111-1111-1111-111111111111', 'Enterprise Restaurant Orchestrator', 'enterprise_restaurant_business_os', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["restaurant_foundation","menu_engine","order_engine","kitchen_engine","customer_engine","restaurant_analytics","restaurant_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a538', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a338', 'northstar-restaurant-os-001', 'enterprise_restaurant_business_os', 'restaurant_hub', '006e006e-006e-006e-006e-006e006e0101', '{"objective":"Enterprise restaurant business operating system for northstar dining operations"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Restaurant Hub
+insert into public.rst_restaurant_hubs (id, organization_id, hub_key, hub_name, environment, gst_number, operating_hours, status)
+values ('006e006e-006e-006e-006e-006e006e0101', '11111111-1111-1111-1111-111111111111', 'northstar-restaurant-os', 'Northstar Restaurant OS Hub', 'production', 'GST-0804-001', '{"mon":"09:00-22:00","tue":"09:00-22:00"}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+-- M1 Foundation
+insert into public.rst_brands (id, organization_id, hub_id, brand_key, brand_name, brand_type, status)
+values ('006f006f-006f-006f-006f-006f006f0201', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'brand-northstar-0804', 'Northstar Dining', 'franchise', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_branches (id, organization_id, hub_id, branch_key, branch_name, branch_address, status)
+values ('00700070-0070-0070-0070-007000700301', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'branch-downtown-0804', 'Downtown Branch', '123 Main Street', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_business_licenses (id, organization_id, hub_id, license_key, license_name, license_type, status)
+values ('00710071-0071-0071-0071-007100710401', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'lic-food-0804', 'Food Service License', 'food_service', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_dining_areas (id, organization_id, hub_id, area_key, area_name, area_type, status)
+values ('00720072-0072-0072-0072-007200720501', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'area-patio-0804', 'Patio Dining', 'outdoor', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_restaurant_tables (id, organization_id, hub_id, table_key, table_name, qr_code, table_status, floor_ref, seats, status)
+values ('00730073-0073-0073-0073-007300730601', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'tbl-12-0804', 'Table 12', 'QR-TBL-12', 'available', 'floor-1', 4, 'active')
+on conflict (id) do nothing;
+
+-- M2 Menu
+insert into public.rst_menu_categories (id, organization_id, hub_id, category_key, category_name, category_type, status)
+values ('00740074-0074-0074-0074-007400740701', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'cat-mains-0804', 'Main Courses', 'main', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_menu_items (id, organization_id, hub_id, item_key, item_name, item_price, status)
+values ('00750075-0075-0075-0075-007500750801', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'item-pasta-0804', 'Truffle Pasta', 18.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_menu_variants (id, organization_id, hub_id, variant_key, variant_name, variant_type, status)
+values ('00760076-0076-0076-0076-007600760901', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'var-large-0804', 'Large Portion', 'size', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_add_ons (id, organization_id, hub_id, addon_key, addon_name, addon_price, status)
+values ('00770077-0077-0077-0077-007700770a01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'addon-cheese-0804', 'Extra Cheese', 2.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_combo_meals (id, organization_id, hub_id, combo_key, combo_name, combo_price, status)
+values ('00780078-0078-0078-0078-007800780b01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'combo-lunch-0804', 'Lunch Combo', 14.99, 'active')
+on conflict (id) do nothing;
+
+-- M3 Orders
+insert into public.rst_orders (id, organization_id, hub_id, order_key, order_number, order_type, status)
+values ('00790079-0079-0079-0079-007900790c01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'ord-1042-0804', 'ORD-1042', 'dine-in', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_order_items (id, organization_id, hub_id, item_key, item_name, item_quantity, status)
+values ('007a007a-007a-007a-007a-007a007a0d01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'oi-pasta-0804', 'Truffle Pasta', 2, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_order_queue (id, organization_id, hub_id, queue_key, queue_name, queue_status, status)
+values ('007b007b-007b-007b-007b-007b007b0e01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'que-1042-0804', 'Order Queue #1042', 'waiting', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_kitchen_routing (id, organization_id, hub_id, routing_key, routing_name, routing_status, status)
+values ('007c007c-007c-007c-007c-007c007c0f01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'route-grill-0804', 'Grill Station Route', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_order_timeline (id, organization_id, hub_id, timeline_key, timeline_event, timeline_status, status)
+values ('007d007d-007d-007d-007d-007d007d1001', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'tl-placed-0804', 'Order Placed', 'completed', 'active')
+on conflict (id) do nothing;
+
+-- M4 Kitchen
+insert into public.rst_kitchen_stations (id, organization_id, hub_id, station_key, station_name, station_type, status)
+values ('007e007e-007e-007e-007e-007e007e1101', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'sta-grill-0804', 'Grill Station', 'grill', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_preparation_queue (id, organization_id, hub_id, prep_key, prep_name, prep_status, status)
+values ('007f007f-007f-007f-007f-007f007f1201', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'prep-1042-0804', 'Prep Order #1042', 'queued', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_cooking_status (id, organization_id, hub_id, cooking_key, cooking_name, cooking_status, status)
+values ('00800080-0080-0080-0080-008000801301', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'cook-1042-0804', 'Cooking Order #1042', 'preparing', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_ready_queue (id, organization_id, hub_id, ready_key, ready_name, ready_status, status)
+values ('00810081-0081-0081-0081-008100811401', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'ready-1042-0804', 'Ready Order #1042', 'ready', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_rush_orders (id, organization_id, hub_id, rush_key, rush_name, rush_priority, status)
+values ('00820082-0082-0082-0082-008200821501', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'rush-vip-0804', 'VIP Rush Order', 'high', 'active')
+on conflict (id) do nothing;
+
+-- M5 Customer
+insert into public.rst_reservations (id, organization_id, hub_id, reservation_key, reservation_name, reservation_status, status)
+values ('00830083-0083-0083-0083-008300831601', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'res-smith-0804', 'Smith Party Reservation', 'confirmed', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_waiting_list (id, organization_id, hub_id, wait_key, wait_name, wait_status, status)
+values ('00840084-0084-0084-0084-008400841701', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'wait-jones-0804', 'Jones Party Waiting', 'waiting', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_customer_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('00850085-0085-0085-0085-008500851801', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'prof-vip-0804', 'VIP Customer Profile', 'vip', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_loyalty_programs (id, organization_id, hub_id, program_key, program_name, program_type, status)
+values ('00860086-0086-0086-0086-008600861901', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'prog-points-0804', 'Points Rewards Program', 'points', 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_feedback_reviews (id, organization_id, hub_id, review_key, review_title, review_rating, status)
+values ('00870087-0087-0087-0087-008700871a01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'rev-great-0804', 'Excellent Dining Experience', 4.8, 'active')
+on conflict (id) do nothing;
+
+-- M6 Analytics/Dashboard
+insert into public.rst_restaurant_metrics (id, organization_id, metrics_key, order_count, revenue_total, average_bill, occupancy_rate, popular_dish_score, peak_hour_score, customer_growth_rate, kitchen_performance_score, overall_restaurant_score, status)
+values ('00880088-0088-0088-0088-008800881b01', '11111111-1111-1111-1111-111111111111', 'rst-metrics-0804', 850, 42500.00, 50.00, 78.50, 92.00, 88.00, 12.50, 91.00, 94.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_restaurant_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, pending_orders_count, kitchen_queue_depth, framework_health_status, summary, status)
+values ('00890089-0089-0089-0089-008900891c01', '11111111-1111-1111-1111-111111111111', 'rst-health-0804', 95.00, false, 5, 3, 'healthy', 'Restaurant business operating system operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.rst_revenue_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('00900090-0090-0090-0090-009000901d01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'anly-rev-0804', 'revenue', 96.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_kitchen_performance (id, organization_id, hub_id, performance_key, performance_type, performance_score, status)
+values ('00910091-0091-0091-0091-009100911e01', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'perf-kitchen-0804', 'kitchen', 93.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.rst_restaurant_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00920092-0092-0092-0092-009200922001', '11111111-1111-1111-1111-111111111111', '006e006e-006e-006e-006e-006e006e0101', 'fail-ord-0804', 'order', 'ORD_TIMEOUT', 'Order processing timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.rst_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00930093-0093-0093-0093-009300932101', '11111111-1111-1111-1111-111111111111', 'restaurant_hub', 'seed', 'Enterprise restaurant business operating system seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

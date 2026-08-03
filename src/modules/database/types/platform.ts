@@ -10432,3 +10432,434 @@ export interface DbDdeAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbRstRestaurantHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    gst_number: string;
+    operating_hours: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstBrand {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    brand_key: string;
+    brand_name: string;
+    brand_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstBranch {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    branch_key: string;
+    branch_name: string;
+    branch_address: string;
+    city: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstBusinessLicense {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    license_key: string;
+    license_name: string;
+    license_type: string;
+    expiry_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstDiningArea {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    area_key: string;
+    area_name: string;
+    area_type: string;
+    capacity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRestaurantTable {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    table_key: string;
+    table_name: string;
+    qr_code: string;
+    table_status: string;
+    floor_ref: string;
+    seats: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstMenuCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    display_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstMenuItem {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    item_key: string;
+    item_name: string;
+    item_price: number;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstMenuVariant {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    variant_key: string;
+    variant_name: string;
+    variant_type: string;
+    price_adjustment: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstAddOn {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    addon_key: string;
+    addon_name: string;
+    addon_price: number;
+    addon_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstComboMeal {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    combo_key: string;
+    combo_name: string;
+    combo_price: number;
+    combo_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstOrder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    order_key: string;
+    order_number: string;
+    order_type: string;
+    order_status: string;
+    total_amount: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstOrderItem {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    item_key: string;
+    item_name: string;
+    item_quantity: number;
+    unit_price: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstOrderQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_name: string;
+    queue_status: string;
+    position: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstKitchenRouting {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    routing_key: string;
+    routing_name: string;
+    routing_status: string;
+    station_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstOrderTimeline {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    timeline_key: string;
+    timeline_event: string;
+    timeline_status: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstKitchenStation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    station_key: string;
+    station_name: string;
+    station_type: string;
+    capacity: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstPreparationQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    prep_key: string;
+    prep_name: string;
+    prep_status: string;
+    priority: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstCookingStatus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    cooking_key: string;
+    cooking_name: string;
+    cooking_status: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstReadyQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    ready_key: string;
+    ready_name: string;
+    ready_status: string;
+    ready_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRushOrder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rush_key: string;
+    rush_name: string;
+    rush_priority: string;
+    escalated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstReservation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    reservation_key: string;
+    reservation_name: string;
+    reservation_status: string;
+    party_size: number;
+    reserved_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstWaitingList {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    wait_key: string;
+    wait_name: string;
+    wait_status: string;
+    party_size: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstCustomerProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    email: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstLoyaltyProgram {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    program_key: string;
+    program_name: string;
+    program_type: string;
+    points_balance: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstFeedbackReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    review_title: string;
+    review_rating: number;
+    review_text: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRestaurantMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    order_count: number;
+    revenue_total: number;
+    average_bill: number;
+    occupancy_rate: number;
+    popular_dish_score: number;
+    peak_hour_score: number;
+    customer_growth_rate: number;
+    kitchen_performance_score: number;
+    overall_restaurant_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRestaurantHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    pending_orders_count: number;
+    kitchen_queue_depth: number;
+    framework_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRevenueAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstKitchenPerformance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    performance_key: string;
+    performance_type: string;
+    performance_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstRestaurantFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRstAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

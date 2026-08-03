@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 762 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_*)
+// 794 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -770,6 +770,38 @@ const requiredTables = [
     "dde_pending_signatures",
     "dde_document_failures",
     "dde_audit_logs",
+    "rst_restaurant_hubs",
+    "rst_brands",
+    "rst_branches",
+    "rst_business_licenses",
+    "rst_dining_areas",
+    "rst_restaurant_tables",
+    "rst_menu_categories",
+    "rst_menu_items",
+    "rst_menu_variants",
+    "rst_add_ons",
+    "rst_combo_meals",
+    "rst_orders",
+    "rst_order_items",
+    "rst_order_queue",
+    "rst_kitchen_routing",
+    "rst_order_timeline",
+    "rst_kitchen_stations",
+    "rst_preparation_queue",
+    "rst_cooking_status",
+    "rst_ready_queue",
+    "rst_rush_orders",
+    "rst_reservations",
+    "rst_waiting_list",
+    "rst_customer_profiles",
+    "rst_loyalty_programs",
+    "rst_feedback_reviews",
+    "rst_restaurant_metrics",
+    "rst_restaurant_health",
+    "rst_revenue_analytics",
+    "rst_kitchen_performance",
+    "rst_restaurant_failures",
+    "rst_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
