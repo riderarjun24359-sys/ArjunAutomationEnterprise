@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 410 required tables (377 foundation + enterprise + idp + 33 tlo_*)
+// 442 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -418,6 +418,38 @@ const requiredTables = [
     "tlo_growth_snapshots",
     "tlo_expansion_opportunities",
     "tlo_audit_logs",
+    "brv_billing_accounts",
+    "brv_billing_cycles",
+    "brv_subscription_billings",
+    "brv_proration_records",
+    "brv_payment_methods",
+    "brv_payment_attempts",
+    "brv_refunds",
+    "brv_wallet_balances",
+    "brv_mrr_snapshots",
+    "brv_arr_snapshots",
+    "brv_deferred_revenue",
+    "brv_revenue_recognition",
+    "brv_invoices",
+    "brv_credit_notes",
+    "brv_debit_notes",
+    "brv_tax_configs",
+    "brv_outstanding_balances",
+    "brv_payment_reminders",
+    "brv_collection_cases",
+    "brv_write_offs",
+    "brv_analytics_snapshots",
+    "brv_revenue_growth_metrics",
+    "brv_cash_flow_records",
+    "brv_subscription_trends",
+    "brv_renewal_forecasts",
+    "brv_mrr_forecasts",
+    "brv_arr_forecasts",
+    "brv_revenue_projections",
+    "brv_finance_metrics",
+    "brv_financial_health",
+    "brv_expansion_contraction",
+    "brv_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

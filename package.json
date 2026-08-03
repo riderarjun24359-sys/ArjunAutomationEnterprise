@@ -11,7 +11,8 @@
     "db:validate": "node scripts/validate-apply-all.mjs",
     "db:apply": "node scripts/apply-migrations.mjs",
     "db:check-remote": "node scripts/check-remote-schema.mjs",
-    "sprint3:verify": "node scripts/verify-sprint3.mjs"
+    "sprint3:verify": "node scripts/verify-sprint3.mjs",
+    "sprint4:verify": "node scripts/verify-sprint4.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

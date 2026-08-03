@@ -5494,3 +5494,488 @@ export interface DbTloAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbBrvBillingAccount {
+    id: string;
+    organization_id: string;
+    account_key: string;
+    account_name: string;
+    currency_code: string;
+    billing_email: string;
+    payment_terms_days: number;
+    tax_id: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvBillingCycle {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    cycle_key: string;
+    billing_cycle: string;
+    cycle_start_date: string;
+    cycle_end_date?: string | null;
+    next_invoice_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvSubscriptionBilling {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    subscription_key: string;
+    plan_name: string;
+    billing_cycle: string;
+    amount_usd: number;
+    mrr_usd: number;
+    arr_usd: number;
+    quantity: number;
+    starts_at: string;
+    ends_at?: string | null;
+    renews_at?: string | null;
+    payment_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvProrationRecord {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    proration_key: string;
+    subscription_billing_id?: string | null;
+    proration_type: string;
+    prorated_amount_usd: number;
+    days_remaining: number;
+    days_in_cycle: number;
+    effective_date: string;
+    reason: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvPaymentMethod {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    method_key: string;
+    method_type: string;
+    last_four: string;
+    brand: string;
+    expiry_month?: number | null;
+    expiry_year?: number | null;
+    is_default: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvPaymentAttempt {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    attempt_key: string;
+    payment_method_id?: string | null;
+    amount_usd: number;
+    currency_code: string;
+    payment_status: string;
+    gateway_reference: string;
+    failure_reason: string;
+    attempted_at: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbBrvRefund {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    refund_key: string;
+    payment_attempt_id?: string | null;
+    amount_usd: number;
+    refund_reason: string;
+    refund_status: string;
+    processed_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvWalletBalance {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    balance_key: string;
+    balance_usd: number;
+    credit_usd: number;
+    debit_usd: number;
+    last_transaction_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvMrrSnapshot {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    mrr_usd: number;
+    previous_mrr_usd: number;
+    new_mrr_usd: number;
+    expansion_mrr_usd: number;
+    contraction_mrr_usd: number;
+    churn_mrr_usd: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvArrSnapshot {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    arr_usd: number;
+    previous_arr_usd: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvDeferredRevenue {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    deferred_key: string;
+    period_start: string;
+    period_end?: string | null;
+    total_deferred_usd: number;
+    recognized_usd: number;
+    remaining_usd: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvRevenueRecognition {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    recognition_key: string;
+    deferred_revenue_id?: string | null;
+    recognized_amount_usd: number;
+    recognition_date: string;
+    recognition_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvInvoice {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    invoice_key: string;
+    invoice_number: string;
+    subtotal_usd: number;
+    tax_amount: number;
+    total_usd: number;
+    amount_due_usd: number;
+    billing_cycle: string;
+    invoice_date: string;
+    due_date?: string | null;
+    paid_at?: string | null;
+    payment_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvCreditNote {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    credit_key: string;
+    invoice_id?: string | null;
+    amount_usd: number;
+    tax_amount: number;
+    reason: string;
+    issued_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvDebitNote {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    debit_key: string;
+    invoice_id?: string | null;
+    amount_usd: number;
+    tax_amount: number;
+    reason: string;
+    issued_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvTaxConfig {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    config_key: string;
+    tax_name: string;
+    gst_rate: number;
+    tax_type: string;
+    jurisdiction: string;
+    is_default: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvOutstandingBalance {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    balance_key: string;
+    total_outstanding_usd: number;
+    overdue_usd: number;
+    current_usd: number;
+    days_overdue: number;
+    last_payment_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvPaymentReminder {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    reminder_key: string;
+    outstanding_balance_id?: string | null;
+    reminder_type: string;
+    channel: string;
+    sent_at?: string | null;
+    next_reminder_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvCollectionCase {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    case_key: string;
+    case_type: string;
+    priority: string;
+    outstanding_amount_usd: number;
+    assigned_to?: string | null;
+    opened_at: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvWriteOff {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    writeoff_key: string;
+    collection_case_id?: string | null;
+    amount_usd: number;
+    reason: string;
+    approved_by?: string | null;
+    written_off_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvAnalyticsSnapshot {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    total_revenue_usd: number;
+    mrr_usd: number;
+    arr_usd: number;
+    metrics: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvRevenueGrowthMetric {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    metrics_key: string;
+    metric_date: string;
+    growth_rate_percent: number;
+    net_revenue_retention: number;
+    expansion_revenue_usd: number;
+    contraction_revenue_usd: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvCashFlowRecord {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    record_key: string;
+    record_date: string;
+    inflow_usd: number;
+    outflow_usd: number;
+    net_cash_usd: number;
+    category: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvSubscriptionTrend {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    trend_key: string;
+    trend_date: string;
+    active_subscriptions: number;
+    new_subscriptions: number;
+    churned_subscriptions: number;
+    mrr_usd: number;
+    arr_usd: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvRenewalForecast {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    forecast_key: string;
+    forecast_date: string;
+    renewal_amount_usd: number;
+    renewal_probability: number;
+    contract_end_date?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvMrrForecast {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    forecast_key: string;
+    forecast_date: string;
+    forecast_period: string;
+    projected_mrr_usd: number;
+    confidence_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvArrForecast {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    forecast_key: string;
+    forecast_date: string;
+    forecast_period: string;
+    projected_arr_usd: number;
+    confidence_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvRevenueProjection {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    projection_key: string;
+    projection_date: string;
+    projected_revenue_usd: number;
+    projection_horizon_months: number;
+    assumptions: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvFinanceMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    total_mrr_usd: number;
+    total_arr_usd: number;
+    total_revenue_usd: number;
+    collection_rate_percent: number;
+    dso_days: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvFinancialHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    liquidity_score: number;
+    collection_score: number;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvExpansionContraction {
+    id: string;
+    organization_id: string;
+    billing_account_id: string;
+    record_key: string;
+    record_date: string;
+    record_type: string;
+    amount_usd: number;
+    mrr_impact_usd: number;
+    reason: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBrvAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

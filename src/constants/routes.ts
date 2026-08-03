@@ -27,6 +27,7 @@ export const ROUTES = {
     commercialPlatform: "/commercial-platform",
     enterpriseIdentity: "/enterprise-identity",
     tenantLifecycle: "/tenant-lifecycle",
+    billingRevenue: "/billing-revenue",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

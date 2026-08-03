@@ -447,6 +447,40 @@ import {
     TloTenantContextRepository,
     TloWorkspaceRepository,
 } from "@/src/modules/database/repositories/tenant-lifecycle-ops-repositories";
+import {
+    BrvAnalyticsSnapshotRepository,
+    BrvArrForecastRepository,
+    BrvArrSnapshotRepository,
+    BrvAuditLogRepository,
+    BrvBillingAccountRepository,
+    BrvBillingCycleRepository,
+    BrvCashFlowRecordRepository,
+    BrvCollectionCaseRepository,
+    BrvCreditNoteRepository,
+    BrvDebitNoteRepository,
+    BrvDeferredRevenueRepository,
+    BrvExpansionContractionRepository,
+    BrvFinanceMetricRepository,
+    BrvFinancialHealthRepository,
+    BrvInvoiceRepository,
+    BrvMrrForecastRepository,
+    BrvMrrSnapshotRepository,
+    BrvOutstandingBalanceRepository,
+    BrvPaymentAttemptRepository,
+    BrvPaymentMethodRepository,
+    BrvPaymentReminderRepository,
+    BrvProrationRecordRepository,
+    BrvRefundRepository,
+    BrvRenewalForecastRepository,
+    BrvRevenueGrowthMetricRepository,
+    BrvRevenueProjectionRepository,
+    BrvRevenueRecognitionRepository,
+    BrvSubscriptionBillingRepository,
+    BrvSubscriptionTrendRepository,
+    BrvTaxConfigRepository,
+    BrvWalletBalanceRepository,
+    BrvWriteOffRepository,
+} from "@/src/modules/database/repositories/billing-revenue-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -854,6 +888,38 @@ export class DatabaseAccessLayer {
     readonly tloGrowthSnapshots: TloGrowthSnapshotRepository;
     readonly tloExpansionOpportunities: TloExpansionOpportunityRepository;
     readonly tloAuditLogs: TloAuditLogRepository;
+    readonly brvBillingAccounts: BrvBillingAccountRepository;
+    readonly brvBillingCycles: BrvBillingCycleRepository;
+    readonly brvSubscriptionBillings: BrvSubscriptionBillingRepository;
+    readonly brvProrationRecords: BrvProrationRecordRepository;
+    readonly brvPaymentMethods: BrvPaymentMethodRepository;
+    readonly brvPaymentAttempts: BrvPaymentAttemptRepository;
+    readonly brvRefunds: BrvRefundRepository;
+    readonly brvWalletBalances: BrvWalletBalanceRepository;
+    readonly brvMrrSnapshots: BrvMrrSnapshotRepository;
+    readonly brvArrSnapshots: BrvArrSnapshotRepository;
+    readonly brvDeferredRevenue: BrvDeferredRevenueRepository;
+    readonly brvRevenueRecognition: BrvRevenueRecognitionRepository;
+    readonly brvInvoices: BrvInvoiceRepository;
+    readonly brvCreditNotes: BrvCreditNoteRepository;
+    readonly brvDebitNotes: BrvDebitNoteRepository;
+    readonly brvTaxConfigs: BrvTaxConfigRepository;
+    readonly brvOutstandingBalances: BrvOutstandingBalanceRepository;
+    readonly brvPaymentReminders: BrvPaymentReminderRepository;
+    readonly brvCollectionCases: BrvCollectionCaseRepository;
+    readonly brvWriteOffs: BrvWriteOffRepository;
+    readonly brvAnalyticsSnapshots: BrvAnalyticsSnapshotRepository;
+    readonly brvRevenueGrowthMetrics: BrvRevenueGrowthMetricRepository;
+    readonly brvCashFlowRecords: BrvCashFlowRecordRepository;
+    readonly brvSubscriptionTrends: BrvSubscriptionTrendRepository;
+    readonly brvRenewalForecasts: BrvRenewalForecastRepository;
+    readonly brvMrrForecasts: BrvMrrForecastRepository;
+    readonly brvArrForecasts: BrvArrForecastRepository;
+    readonly brvRevenueProjections: BrvRevenueProjectionRepository;
+    readonly brvFinanceMetrics: BrvFinanceMetricRepository;
+    readonly brvFinancialHealth: BrvFinancialHealthRepository;
+    readonly brvExpansionContraction: BrvExpansionContractionRepository;
+    readonly brvAuditLogs: BrvAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1261,6 +1327,38 @@ export class DatabaseAccessLayer {
         this.tloGrowthSnapshots = new TloGrowthSnapshotRepository();
         this.tloExpansionOpportunities = new TloExpansionOpportunityRepository();
         this.tloAuditLogs = new TloAuditLogRepository();
+        this.brvBillingAccounts = new BrvBillingAccountRepository();
+        this.brvBillingCycles = new BrvBillingCycleRepository();
+        this.brvSubscriptionBillings = new BrvSubscriptionBillingRepository();
+        this.brvProrationRecords = new BrvProrationRecordRepository();
+        this.brvPaymentMethods = new BrvPaymentMethodRepository();
+        this.brvPaymentAttempts = new BrvPaymentAttemptRepository();
+        this.brvRefunds = new BrvRefundRepository();
+        this.brvWalletBalances = new BrvWalletBalanceRepository();
+        this.brvMrrSnapshots = new BrvMrrSnapshotRepository();
+        this.brvArrSnapshots = new BrvArrSnapshotRepository();
+        this.brvDeferredRevenue = new BrvDeferredRevenueRepository();
+        this.brvRevenueRecognition = new BrvRevenueRecognitionRepository();
+        this.brvInvoices = new BrvInvoiceRepository();
+        this.brvCreditNotes = new BrvCreditNoteRepository();
+        this.brvDebitNotes = new BrvDebitNoteRepository();
+        this.brvTaxConfigs = new BrvTaxConfigRepository();
+        this.brvOutstandingBalances = new BrvOutstandingBalanceRepository();
+        this.brvPaymentReminders = new BrvPaymentReminderRepository();
+        this.brvCollectionCases = new BrvCollectionCaseRepository();
+        this.brvWriteOffs = new BrvWriteOffRepository();
+        this.brvAnalyticsSnapshots = new BrvAnalyticsSnapshotRepository();
+        this.brvRevenueGrowthMetrics = new BrvRevenueGrowthMetricRepository();
+        this.brvCashFlowRecords = new BrvCashFlowRecordRepository();
+        this.brvSubscriptionTrends = new BrvSubscriptionTrendRepository();
+        this.brvRenewalForecasts = new BrvRenewalForecastRepository();
+        this.brvMrrForecasts = new BrvMrrForecastRepository();
+        this.brvArrForecasts = new BrvArrForecastRepository();
+        this.brvRevenueProjections = new BrvRevenueProjectionRepository();
+        this.brvFinanceMetrics = new BrvFinanceMetricRepository();
+        this.brvFinancialHealth = new BrvFinancialHealthRepository();
+        this.brvExpansionContraction = new BrvExpansionContractionRepository();
+        this.brvAuditLogs = new BrvAuditLogRepository();
     }
 }
 
