@@ -2522,3 +2522,259 @@ export interface DbSaAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbDfEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    brd_id?: string | null;
+    frs_id?: string | null;
+    solution_architecture_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfWorkPackage {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    package_key: string;
+    title: string;
+    description: string;
+    deliverables: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfBackendWorkflow {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    workflow_key: string;
+    name: string;
+    steps: unknown[];
+    target_modules: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfFrontendWorkflow {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    workflow_key: string;
+    name: string;
+    steps: unknown[];
+    target_modules: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfApiScaffold {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    scaffold_key: string;
+    name: string;
+    endpoints: unknown[];
+    scaffold_spec: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfMigrationPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    migrations: unknown[];
+    rollback_notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfRepositoryStructure {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    repo_key: string;
+    name: string;
+    repo_type: string;
+    structure: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfComponent {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    component_key: string;
+    name: string;
+    component_type: string;
+    specification: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfTestScaffold {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    scaffold_key: string;
+    name: string;
+    test_type: string;
+    test_cases: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfCodingStandard {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    standard_key: string;
+    name: string;
+    rules: unknown[];
+    enforcement_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfSecureCodingValidation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    validation_key: string;
+    name: string;
+    checks: unknown[];
+    findings: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfModuleRecommendation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    recommendation_key: string;
+    module_name: string;
+    platform_module: string;
+    rationale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfPullRequest {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    pr_key: string;
+    title: string;
+    description: string;
+    changed_files: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfCodeReview {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    review_key: string;
+    title: string;
+    checklist: unknown[];
+    reviewer_id?: string | null;
+    review_status: string;
+    comments: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfTechnicalDoc {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    doc_key: string;
+    title: string;
+    doc_type: string;
+    content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfProgressTracking {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    tracking_key: string;
+    milestone: string;
+    progress_percent: number;
+    notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfBuildArtifact {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    artifact_key: string;
+    name: string;
+    artifact_type: string;
+    artifact_path: string;
+    metadata: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDfVersion {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    entity_type: string;
+    entity_id: string;
+    version_number: number;
+    content: string;
+    change_summary: string;
+    created_at: string;
+}
+
+export interface DbDfAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

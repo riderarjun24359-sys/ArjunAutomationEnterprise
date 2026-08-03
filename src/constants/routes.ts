@@ -18,6 +18,7 @@ export const ROUTES = {
     knowledge: "/knowledge",
     businessAnalyst: "/business-analyst",
     solutionArchitect: "/solution-architect",
+    developmentFactory: "/development-factory",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

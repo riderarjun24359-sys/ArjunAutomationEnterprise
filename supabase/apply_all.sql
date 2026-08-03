@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T00:22:45.112Z
+-- Generated: 2026-08-03T00:35:59.068Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (17):
+--   Migrations (18):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -23,7 +23,8 @@
 --     - 202608020015_enterprise_knowledge.sql
 --     - 202608020016_enterprise_business_analyst.sql
 --     - 202608020017_enterprise_solution_architect.sql
---   Seeds (17):
+--     - 202608020018_enterprise_development_factory.sql
+--   Seeds (18):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -41,9 +42,10 @@
 --     - 015_enterprise_knowledge_seed.sql
 --     - 016_enterprise_business_analyst_seed.sql
 --     - 017_enterprise_solution_architect_seed.sql
+--     - 018_enterprise_development_factory_seed.sql
 --
--- Includes through Sprint 24:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect
+-- Includes through Sprint 25:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -4731,6 +4733,391 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020018_enterprise_development_factory.sql
+-- =============================================================================
+-- Sprint 25: AI Development Factory
+
+create table if not exists public.df_engagements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  engagement_key text not null,
+  ba_engagement_id uuid references public.ba_engagements(id) on delete set null,
+  sa_engagement_id uuid references public.sa_engagements(id) on delete set null,
+  brd_id uuid references public.ba_brds(id) on delete set null,
+  frs_id uuid references public.ba_frs_documents(id) on delete set null,
+  solution_architecture_id uuid references public.sa_solution_architectures(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  knowledge_context_id uuid references public.knowledge_ai_contexts(id) on delete set null,
+  pipeline_stage text not null default 'development_factory',
+  status text not null default 'active',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_key)
+);
+
+create table if not exists public.df_work_packages (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  package_key text not null,
+  title text not null,
+  description text not null default '',
+  deliverables jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, package_key)
+);
+
+create table if not exists public.df_backend_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  workflow_key text not null,
+  name text not null,
+  steps jsonb not null default '[]'::jsonb,
+  target_modules text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, workflow_key)
+);
+
+create table if not exists public.df_frontend_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  workflow_key text not null,
+  name text not null,
+  steps jsonb not null default '[]'::jsonb,
+  target_modules text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, workflow_key)
+);
+
+create table if not exists public.df_api_scaffolds (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  scaffold_key text not null,
+  name text not null,
+  endpoints jsonb not null default '[]'::jsonb,
+  scaffold_spec text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, scaffold_key)
+);
+
+create table if not exists public.df_migration_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  migrations jsonb not null default '[]'::jsonb,
+  rollback_notes text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.df_repositories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  repo_key text not null,
+  name text not null,
+  repo_type text not null default 'service',
+  structure jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, repo_key)
+);
+
+create table if not exists public.df_components (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  component_key text not null,
+  name text not null,
+  component_type text not null default 'ui',
+  specification text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, component_key)
+);
+
+create table if not exists public.df_test_scaffolds (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  scaffold_key text not null,
+  name text not null,
+  test_type text not null default 'unit',
+  test_cases jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, scaffold_key)
+);
+
+create table if not exists public.df_coding_standards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  standard_key text not null,
+  name text not null,
+  rules jsonb not null default '[]'::jsonb,
+  enforcement_level text not null default 'required',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, standard_key)
+);
+
+create table if not exists public.df_secure_coding_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  validation_key text not null,
+  name text not null,
+  checks jsonb not null default '[]'::jsonb,
+  findings text not null default '',
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, validation_key)
+);
+
+create table if not exists public.df_module_recommendations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  recommendation_key text not null,
+  module_name text not null,
+  platform_module text not null default '',
+  rationale text not null default '',
+  status text not null default 'proposed',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, recommendation_key)
+);
+
+create table if not exists public.df_pull_requests (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  pr_key text not null,
+  title text not null,
+  description text not null default '',
+  changed_files jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, pr_key)
+);
+
+create table if not exists public.df_code_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  review_key text not null,
+  title text not null,
+  checklist jsonb not null default '[]'::jsonb,
+  reviewer_id uuid references public.employees(id) on delete set null,
+  review_status text not null default 'pending',
+  comments text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, review_key)
+);
+
+create table if not exists public.df_technical_docs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  doc_key text not null,
+  title text not null,
+  doc_type text not null default 'technical',
+  content text not null default '',
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, doc_key)
+);
+
+create table if not exists public.df_progress_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  tracking_key text not null,
+  milestone text not null,
+  progress_percent numeric(5, 2) not null default 0,
+  notes text not null default '',
+  status text not null default 'in_progress',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, tracking_key)
+);
+
+create table if not exists public.df_build_artifacts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  artifact_key text not null,
+  name text not null,
+  artifact_type text not null default 'build',
+  artifact_path text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  status text not null default 'generated',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, artifact_key)
+);
+
+create table if not exists public.df_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.df_engagements(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid not null,
+  version_number integer not null,
+  content text not null default '',
+  change_summary text not null default '',
+  created_at timestamptz not null default now(),
+  unique (entity_type, entity_id, version_number)
+);
+
+create table if not exists public.df_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_df_engagements_org on public.df_engagements(organization_id);
+create index if not exists idx_df_work_packages_org on public.df_work_packages(organization_id);
+create index if not exists idx_df_backend_workflows_org on public.df_backend_workflows(organization_id);
+create index if not exists idx_df_frontend_workflows_org on public.df_frontend_workflows(organization_id);
+create index if not exists idx_df_api_scaffolds_org on public.df_api_scaffolds(organization_id);
+create index if not exists idx_df_migration_plans_org on public.df_migration_plans(organization_id);
+create index if not exists idx_df_repositories_org on public.df_repositories(organization_id);
+create index if not exists idx_df_components_org on public.df_components(organization_id);
+create index if not exists idx_df_test_scaffolds_org on public.df_test_scaffolds(organization_id);
+create index if not exists idx_df_coding_standards_org on public.df_coding_standards(organization_id);
+create index if not exists idx_df_secure_coding_validations_org on public.df_secure_coding_validations(organization_id);
+create index if not exists idx_df_module_recommendations_org on public.df_module_recommendations(organization_id);
+create index if not exists idx_df_pull_requests_org on public.df_pull_requests(organization_id);
+create index if not exists idx_df_code_reviews_org on public.df_code_reviews(organization_id);
+create index if not exists idx_df_technical_docs_org on public.df_technical_docs(organization_id);
+create index if not exists idx_df_progress_tracking_org on public.df_progress_tracking(organization_id);
+create index if not exists idx_df_build_artifacts_org on public.df_build_artifacts(organization_id);
+create index if not exists idx_df_versions_org on public.df_versions(organization_id);
+create index if not exists idx_df_audit_logs_org on public.df_audit_logs(organization_id);
+
+drop trigger if exists trg_df_engagements_updated_at on public.df_engagements;
+create trigger trg_df_engagements_updated_at before update on public.df_engagements for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_work_packages_updated_at on public.df_work_packages;
+create trigger trg_df_work_packages_updated_at before update on public.df_work_packages for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_backend_workflows_updated_at on public.df_backend_workflows;
+create trigger trg_df_backend_workflows_updated_at before update on public.df_backend_workflows for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_frontend_workflows_updated_at on public.df_frontend_workflows;
+create trigger trg_df_frontend_workflows_updated_at before update on public.df_frontend_workflows for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_api_scaffolds_updated_at on public.df_api_scaffolds;
+create trigger trg_df_api_scaffolds_updated_at before update on public.df_api_scaffolds for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_migration_plans_updated_at on public.df_migration_plans;
+create trigger trg_df_migration_plans_updated_at before update on public.df_migration_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_repositories_updated_at on public.df_repositories;
+create trigger trg_df_repositories_updated_at before update on public.df_repositories for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_components_updated_at on public.df_components;
+create trigger trg_df_components_updated_at before update on public.df_components for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_test_scaffolds_updated_at on public.df_test_scaffolds;
+create trigger trg_df_test_scaffolds_updated_at before update on public.df_test_scaffolds for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_coding_standards_updated_at on public.df_coding_standards;
+create trigger trg_df_coding_standards_updated_at before update on public.df_coding_standards for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_secure_coding_validations_updated_at on public.df_secure_coding_validations;
+create trigger trg_df_secure_coding_validations_updated_at before update on public.df_secure_coding_validations for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_module_recommendations_updated_at on public.df_module_recommendations;
+create trigger trg_df_module_recommendations_updated_at before update on public.df_module_recommendations for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_pull_requests_updated_at on public.df_pull_requests;
+create trigger trg_df_pull_requests_updated_at before update on public.df_pull_requests for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_code_reviews_updated_at on public.df_code_reviews;
+create trigger trg_df_code_reviews_updated_at before update on public.df_code_reviews for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_technical_docs_updated_at on public.df_technical_docs;
+create trigger trg_df_technical_docs_updated_at before update on public.df_technical_docs for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_progress_tracking_updated_at on public.df_progress_tracking;
+create trigger trg_df_progress_tracking_updated_at before update on public.df_progress_tracking for each row execute function public.set_updated_at();
+drop trigger if exists trg_df_build_artifacts_updated_at on public.df_build_artifacts;
+create trigger trg_df_build_artifacts_updated_at before update on public.df_build_artifacts for each row execute function public.set_updated_at();
+
+alter table public.df_engagements enable row level security;
+alter table public.df_work_packages enable row level security;
+alter table public.df_backend_workflows enable row level security;
+alter table public.df_frontend_workflows enable row level security;
+alter table public.df_api_scaffolds enable row level security;
+alter table public.df_migration_plans enable row level security;
+alter table public.df_repositories enable row level security;
+alter table public.df_components enable row level security;
+alter table public.df_test_scaffolds enable row level security;
+alter table public.df_coding_standards enable row level security;
+alter table public.df_secure_coding_validations enable row level security;
+alter table public.df_module_recommendations enable row level security;
+alter table public.df_pull_requests enable row level security;
+alter table public.df_code_reviews enable row level security;
+alter table public.df_technical_docs enable row level security;
+alter table public.df_progress_tracking enable row level security;
+alter table public.df_build_artifacts enable row level security;
+alter table public.df_versions enable row level security;
+alter table public.df_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'df_engagements', 'df_work_packages', 'df_backend_workflows', 'df_frontend_workflows',
+    'df_api_scaffolds', 'df_migration_plans', 'df_repositories', 'df_components',
+    'df_test_scaffolds', 'df_coding_standards', 'df_secure_coding_validations', 'df_module_recommendations',
+    'df_pull_requests', 'df_code_reviews', 'df_technical_docs', 'df_progress_tracking',
+    'df_build_artifacts', 'df_versions', 'df_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('df.view', 'View AI Development Factory engagements and artifacts', 'development_factory'),
+  ('df.manage', 'Create and edit development factory deliverables', 'development_factory'),
+  ('df.approve', 'Review and approve development outputs', 'development_factory'),
+  ('df.admin', 'Administer development factory pipeline and permissions', 'development_factory')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -6115,6 +6502,120 @@ insert into public.sa_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('da00000a-da00-da00-da00-da0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'create', 'Northstar Platform Architecture engagement created from BA handoff'),
   ('da00000a-da00-da00-da00-da0000000002', '11111111-1111-1111-1111-111111111111', 'solution_architecture', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d20101', 'generate', 'Solution architecture generated from BA requirements')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 018_enterprise_development_factory_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a304', '11111111-1111-1111-1111-111111111111', 'Development Factory Agent', 'developer', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["codegen","testing","documentation"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a504', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a304', 'northstar-development-001', 'development_factory', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"development factory execution"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000003', '11111111-1111-1111-1111-111111111111', 'northstar-developer-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a304', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a504', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory","ba_outputs","sa_outputs"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.df_engagements (id, organization_id, title, engagement_key, ba_engagement_id, sa_engagement_id, brd_id, frs_id, solution_architecture_id, client_id, project_id, agent_id, session_id, knowledge_context_id, pipeline_stage, status, summary)
+values
+  ('e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', '11111111-1111-1111-1111-111111111111', 'Northstar Platform Development', 'northstar-expansion-df-001', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b10101', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b30101', 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b40101', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d20101', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a304', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a504', 'cb000001-cb00-cb00-cb00-cb0000000003', 'development_factory', 'active', 'Development factory engagement for Northstar platform expansion from BA and SA deliverables')
+on conflict (id) do nothing;
+
+insert into public.df_work_packages (id, organization_id, engagement_id, package_key, title, description, deliverables, status)
+values
+  ('e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e20101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'wp-crm-sync-001', 'CRM-Project Sync Work Package', 'Implement bidirectional CRM-Project sync per SA architecture and BA FRS FR-001', '["API scaffold","Repository layer","Migration plan","Test scaffolds","Technical docs"]'::jsonb, 'in_progress')
+on conflict (id) do nothing;
+
+insert into public.df_backend_workflows (id, organization_id, engagement_id, workflow_key, name, steps, target_modules, status)
+values
+  ('e3e3e3e3-e3e3-e3e3-e3e3-e3e3e3e30101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'backend-crm-sync', 'CRM Sync Backend Workflow', '["Generate repository","Generate service","Generate API route","Apply migration","Run tests"]'::jsonb, 'crm,projects,database', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_frontend_workflows (id, organization_id, engagement_id, workflow_key, name, steps, target_modules, status)
+values
+  ('e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e40101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'frontend-sync-ui', 'Sync Status UI Workflow', '["Generate page component","Generate hook","Generate form panel","Wire to API"]'::jsonb, 'crm,projects', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_api_scaffolds (id, organization_id, engagement_id, scaffold_key, name, endpoints, scaffold_spec, status)
+values
+  ('e5e5e5e5-e5e5-e5e5-e5e5-e5e5e5e50101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'api-crm-sync', 'CRM Sync API Scaffold', '[{"method":"POST","path":"/api/sync/client"},{"method":"GET","path":"/api/sync/status"}]'::jsonb, 'Next.js App Router API routes with service layer delegation', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_migration_plans (id, organization_id, engagement_id, plan_key, name, migrations, rollback_notes, status)
+values
+  ('e6e6e6e6-e6e6-e6e6-e6e6-e6e6e6e60101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'migration-sync-events', 'Sync Events Migration Plan', '[{"file":"202608020019_sync_events.sql","description":"Create sync_events table with RLS"}]'::jsonb, 'Drop sync_events table and remove triggers', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_repositories (id, organization_id, engagement_id, repo_key, name, repo_type, structure, status)
+values
+  ('e7e7e7e7-e7e7-e7e7-e7e7-e7e7e7e70101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'repo-sync', 'SyncEventRepository', 'repository', '["src/modules/database/repositories/sync-event-repository.ts","src/modules/database/lib/sync-mappers.ts"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_components (id, organization_id, engagement_id, component_key, name, component_type, specification, status)
+values
+  ('e8e8e8e8-e8e8-e8e8-e8e8-e8e8e8e80101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'comp-sync-status', 'SyncStatusPanel', 'ui', 'React component showing CRM-Project sync status with Card and SectionHeader pattern', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_test_scaffolds (id, organization_id, engagement_id, scaffold_key, name, test_type, test_cases, status)
+values
+  ('e9e9e9e9-e9e9-e9e9-e9e9-e9e9e9e90101', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'test-sync-api', 'CRM Sync API Tests', 'integration', '["POST /api/sync/client returns 200","GET /api/sync/status returns sync state"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_coding_standards (id, organization_id, engagement_id, standard_key, name, rules, enforcement_level, status)
+values
+  ('ea000001-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'std-enterprise', 'Enterprise Coding Standards', '["Use repository pattern","No direct Supabase calls in components","Zod validation on forms","RLS on all new tables"]'::jsonb, 'required', 'active')
+on conflict (id) do nothing;
+
+insert into public.df_secure_coding_validations (id, organization_id, engagement_id, validation_key, name, checks, findings, status)
+values
+  ('ea000002-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'sec-sync-api', 'Sync API Security Validation', '["Input validation","Auth middleware","RLS enforcement","No SQL injection vectors"]'::jsonb, 'All checks passed for scaffold design', 'passed')
+on conflict (id) do nothing;
+
+insert into public.df_module_recommendations (id, organization_id, engagement_id, recommendation_key, module_name, platform_module, rationale, status)
+values
+  ('ea000003-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'rec-crm-reuse', 'CRM Module Extension', 'crm', 'Extend existing CRM repositories rather than building new client module', 'approved')
+on conflict (id) do nothing;
+
+insert into public.df_pull_requests (id, organization_id, engagement_id, pr_key, title, description, changed_files, status)
+values
+  ('ea000004-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'pr-crm-sync-001', 'feat: CRM-Project sync API and repository', 'Implements FR-001 CRM client sync per SA architecture', '["src/modules/crm/services/sync.service.ts","src/modules/database/repositories/sync-event-repository.ts","app/api/sync/client/route.ts"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_code_reviews (id, organization_id, engagement_id, review_key, title, checklist, reviewer_id, review_status, comments)
+values
+  ('ea000005-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'review-crm-sync', 'CRM Sync Code Review', '["Repository pattern followed","RLS applied","Tests included","No secrets in code"]'::jsonb, '7c7c7c7c-7c7c-7c7c-7c7c-7c7c7c7c7c01', 'pending', 'Awaiting senior developer review')
+on conflict (id) do nothing;
+
+insert into public.df_technical_docs (id, organization_id, engagement_id, doc_key, title, doc_type, content, status)
+values
+  ('ea000006-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'doc-crm-sync', 'CRM-Project Sync Technical Documentation', 'technical', 'Technical documentation for CRM-Project sync implementation including API endpoints, data flow, and error handling.', 'draft')
+on conflict (id) do nothing;
+
+insert into public.df_progress_tracking (id, organization_id, engagement_id, tracking_key, milestone, progress_percent, notes, status)
+values
+  ('ea000007-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'progress-sprint1', 'Sprint 1 - API Scaffold', 35.00, 'Work package created, API scaffold and migration plan drafted', 'in_progress')
+on conflict (id) do nothing;
+
+insert into public.df_build_artifacts (id, organization_id, engagement_id, artifact_key, name, artifact_type, artifact_path, metadata, status)
+values
+  ('ea000008-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'artifact-api-scaffold', 'CRM Sync API Scaffold Output', 'scaffold', 'generated/api/sync/', '{"generator":"development_factory","version":"1.0.0"}'::jsonb, 'generated')
+on conflict (id) do nothing;
+
+insert into public.df_versions (id, organization_id, engagement_id, entity_type, entity_id, version_number, content, change_summary)
+values
+  ('ea000009-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'work_package', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e20101', 1, 'Initial work package for CRM-Project sync', 'Created from SA sprint plan and BA user stories')
+on conflict (id) do nothing;
+
+insert into public.df_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('ea00000a-ea00-ea00-ea00-ea0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'create', 'Northstar Platform Development engagement created from SA handoff'),
+  ('ea00000a-ea00-ea00-ea00-ea0000000002', '11111111-1111-1111-1111-111111111111', 'work_package', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e20101', 'generate', 'CRM-Project sync work package generated from BA/SA outputs')
 on conflict (id) do nothing;
 
 -- =============================================================================

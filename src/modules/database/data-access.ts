@@ -218,6 +218,27 @@ import {
     SaSystemDecompositionRepository,
     SaTechnologyDecisionRepository,
 } from "@/src/modules/database/repositories/solution-architect-repositories";
+import {
+    DfApiScaffoldRepository,
+    DfAuditLogRepository,
+    DfBackendWorkflowRepository,
+    DfBuildArtifactRepository,
+    DfCodeReviewRepository,
+    DfCodingStandardRepository,
+    DfComponentRepository,
+    DfEngagementRepository,
+    DfFrontendWorkflowRepository,
+    DfMigrationPlanRepository,
+    DfModuleRecommendationRepository,
+    DfProgressTrackingRepository,
+    DfPullRequestRepository,
+    DfRepositoryStructureRepository,
+    DfSecureCodingValidationRepository,
+    DfTechnicalDocRepository,
+    DfTestScaffoldRepository,
+    DfVersionRepository,
+    DfWorkPackageRepository,
+} from "@/src/modules/database/repositories/development-factory-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -414,6 +435,25 @@ export class DatabaseAccessLayer {
     readonly saArchitectureReviews: SaArchitectureReviewRepository;
     readonly saArchitectureVersions: SaArchitectureVersionRepository;
     readonly saAuditLogs: SaAuditLogRepository;
+    readonly dfEngagements: DfEngagementRepository;
+    readonly dfWorkPackages: DfWorkPackageRepository;
+    readonly dfBackendWorkflows: DfBackendWorkflowRepository;
+    readonly dfFrontendWorkflows: DfFrontendWorkflowRepository;
+    readonly dfApiScaffolds: DfApiScaffoldRepository;
+    readonly dfMigrationPlans: DfMigrationPlanRepository;
+    readonly dfRepositoryStructures: DfRepositoryStructureRepository;
+    readonly dfComponents: DfComponentRepository;
+    readonly dfTestScaffolds: DfTestScaffoldRepository;
+    readonly dfCodingStandards: DfCodingStandardRepository;
+    readonly dfSecureCodingValidations: DfSecureCodingValidationRepository;
+    readonly dfModuleRecommendations: DfModuleRecommendationRepository;
+    readonly dfPullRequests: DfPullRequestRepository;
+    readonly dfCodeReviews: DfCodeReviewRepository;
+    readonly dfTechnicalDocs: DfTechnicalDocRepository;
+    readonly dfProgressTracking: DfProgressTrackingRepository;
+    readonly dfBuildArtifacts: DfBuildArtifactRepository;
+    readonly dfVersions: DfVersionRepository;
+    readonly dfAuditLogs: DfAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -610,6 +650,25 @@ export class DatabaseAccessLayer {
         this.saArchitectureReviews = new SaArchitectureReviewRepository();
         this.saArchitectureVersions = new SaArchitectureVersionRepository();
         this.saAuditLogs = new SaAuditLogRepository();
+        this.dfEngagements = new DfEngagementRepository();
+        this.dfWorkPackages = new DfWorkPackageRepository();
+        this.dfBackendWorkflows = new DfBackendWorkflowRepository();
+        this.dfFrontendWorkflows = new DfFrontendWorkflowRepository();
+        this.dfApiScaffolds = new DfApiScaffoldRepository();
+        this.dfMigrationPlans = new DfMigrationPlanRepository();
+        this.dfRepositoryStructures = new DfRepositoryStructureRepository();
+        this.dfComponents = new DfComponentRepository();
+        this.dfTestScaffolds = new DfTestScaffoldRepository();
+        this.dfCodingStandards = new DfCodingStandardRepository();
+        this.dfSecureCodingValidations = new DfSecureCodingValidationRepository();
+        this.dfModuleRecommendations = new DfModuleRecommendationRepository();
+        this.dfPullRequests = new DfPullRequestRepository();
+        this.dfCodeReviews = new DfCodeReviewRepository();
+        this.dfTechnicalDocs = new DfTechnicalDocRepository();
+        this.dfProgressTracking = new DfProgressTrackingRepository();
+        this.dfBuildArtifacts = new DfBuildArtifactRepository();
+        this.dfVersions = new DfVersionRepository();
+        this.dfAuditLogs = new DfAuditLogRepository();
     }
 }
 

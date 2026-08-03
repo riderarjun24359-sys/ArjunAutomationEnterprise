@@ -22,6 +22,7 @@ const protectedRoutes = [
     ROUTES.knowledge,
     ROUTES.businessAnalyst,
     ROUTES.solutionArchitect,
+    ROUTES.developmentFactory,
 ];
 
 const authRoutes = [
