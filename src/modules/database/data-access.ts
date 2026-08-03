@@ -177,6 +177,26 @@ import {
     KnowledgeSolutionRepository,
     KnowledgeVersionRepository,
 } from "@/src/modules/database/repositories/knowledge-repositories";
+import {
+    BaAcceptanceCriterionRepository,
+    BaAuditLogRepository,
+    BaBrdRepository,
+    BaCostEstimateRepository,
+    BaEngagementRepository,
+    BaFeaturePriorityRepository,
+    BaFrsDocumentRepository,
+    BaGapAnalysisRepository,
+    BaInterviewRepository,
+    BaProcessMapRepository,
+    BaProposalRepository,
+    BaRequirementVersionRepository,
+    BaReviewApprovalRepository,
+    BaRiskRepository,
+    BaScopeItemRepository,
+    BaStakeholderRepository,
+    BaTimelineEstimateRepository,
+    BaUserStoryRepository,
+} from "@/src/modules/database/repositories/business-analyst-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -336,6 +356,24 @@ export class DatabaseAccessLayer {
     readonly knowledgePermissions: KnowledgePermissionRepository;
     readonly knowledgeCrossLinks: KnowledgeCrossLinkRepository;
     readonly knowledgeAuditLogs: KnowledgeAuditLogRepository;
+    readonly baEngagements: BaEngagementRepository;
+    readonly baInterviews: BaInterviewRepository;
+    readonly baBrds: BaBrdRepository;
+    readonly baFrsDocuments: BaFrsDocumentRepository;
+    readonly baUserStories: BaUserStoryRepository;
+    readonly baAcceptanceCriteria: BaAcceptanceCriterionRepository;
+    readonly baProcessMaps: BaProcessMapRepository;
+    readonly baGapAnalyses: BaGapAnalysisRepository;
+    readonly baFeaturePriorities: BaFeaturePriorityRepository;
+    readonly baRisks: BaRiskRepository;
+    readonly baStakeholders: BaStakeholderRepository;
+    readonly baScopeItems: BaScopeItemRepository;
+    readonly baProposals: BaProposalRepository;
+    readonly baCostEstimates: BaCostEstimateRepository;
+    readonly baTimelineEstimates: BaTimelineEstimateRepository;
+    readonly baRequirementVersions: BaRequirementVersionRepository;
+    readonly baReviewApprovals: BaReviewApprovalRepository;
+    readonly baAuditLogs: BaAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -495,6 +533,24 @@ export class DatabaseAccessLayer {
         this.knowledgePermissions = new KnowledgePermissionRepository();
         this.knowledgeCrossLinks = new KnowledgeCrossLinkRepository();
         this.knowledgeAuditLogs = new KnowledgeAuditLogRepository();
+        this.baEngagements = new BaEngagementRepository();
+        this.baInterviews = new BaInterviewRepository();
+        this.baBrds = new BaBrdRepository();
+        this.baFrsDocuments = new BaFrsDocumentRepository();
+        this.baUserStories = new BaUserStoryRepository();
+        this.baAcceptanceCriteria = new BaAcceptanceCriterionRepository();
+        this.baProcessMaps = new BaProcessMapRepository();
+        this.baGapAnalyses = new BaGapAnalysisRepository();
+        this.baFeaturePriorities = new BaFeaturePriorityRepository();
+        this.baRisks = new BaRiskRepository();
+        this.baStakeholders = new BaStakeholderRepository();
+        this.baScopeItems = new BaScopeItemRepository();
+        this.baProposals = new BaProposalRepository();
+        this.baCostEstimates = new BaCostEstimateRepository();
+        this.baTimelineEstimates = new BaTimelineEstimateRepository();
+        this.baRequirementVersions = new BaRequirementVersionRepository();
+        this.baReviewApprovals = new BaReviewApprovalRepository();
+        this.baAuditLogs = new BaAuditLogRepository();
     }
 }
 

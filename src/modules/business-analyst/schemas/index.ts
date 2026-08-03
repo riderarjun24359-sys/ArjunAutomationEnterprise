@@ -1,0 +1,37 @@
+import { z } from "zod";
+
+export const engagementFormSchema = z.object({ title: z.string().min(2), engagementKey: z.string().min(2), clientId: z.string().optional(), projectId: z.string().optional(), agentId: z.string().optional(), sessionId: z.string().optional(), summary: z.string().optional() });
+export const interviewFormSchema = z.object({ engagementId: z.string().min(1), interviewKey: z.string().min(2), stakeholderName: z.string().min(2) });
+export const brdFormSchema = z.object({ engagementId: z.string().min(1), title: z.string().min(2), executiveSummary: z.string().min(10), businessObjectives: z.string().optional(), scopeOverview: z.string().optional() });
+export const frsFormSchema = z.object({ engagementId: z.string().min(1), title: z.string().min(2), functionalRequirements: z.string().min(10), nonFunctionalRequirements: z.string().optional() });
+export const userStoryFormSchema = z.object({ engagementId: z.string().min(1), storyKey: z.string().min(2), title: z.string().min(2), description: z.string().optional(), persona: z.string().optional(), priority: z.string().optional() });
+export const acceptanceCriterionFormSchema = z.object({ userStoryId: z.string().min(1), criterionKey: z.string().min(2), description: z.string().min(5), testScenario: z.string().optional() });
+export const processMapFormSchema = z.object({ engagementId: z.string().min(1), name: z.string().min(2), processType: z.string().optional(), description: z.string().optional() });
+export const gapAnalysisFormSchema = z.object({ engagementId: z.string().min(1), currentState: z.string().min(10), desiredState: z.string().min(10), recommendations: z.string().optional() });
+export const featurePriorityFormSchema = z.object({ engagementId: z.string().min(1), featureName: z.string().min(2), priorityScore: z.number().min(0).max(100), rationale: z.string().optional() });
+export const riskFormSchema = z.object({ engagementId: z.string().min(1), riskKey: z.string().min(2), title: z.string().min(2), description: z.string().optional(), likelihood: z.string().optional(), impact: z.string().optional(), mitigation: z.string().optional() });
+export const stakeholderFormSchema = z.object({ engagementId: z.string().min(1), name: z.string().min(2), role: z.string().optional(), influence: z.string().optional(), interest: z.string().optional(), contactInfo: z.string().optional() });
+export const scopeItemFormSchema = z.object({ engagementId: z.string().min(1), itemKey: z.string().min(2), title: z.string().min(2), scopeType: z.string().optional(), description: z.string().optional() });
+export const proposalFormSchema = z.object({ engagementId: z.string().min(1), title: z.string().min(2), executiveSummary: z.string().min(10), deliverables: z.string().optional() });
+export const costEstimateFormSchema = z.object({ engagementId: z.string().min(1), estimateKey: z.string().min(2), totalAmount: z.number().min(0), currency: z.string().optional(), assumptions: z.string().optional() });
+export const timelineEstimateFormSchema = z.object({ engagementId: z.string().min(1), estimateKey: z.string().min(2), totalDurationDays: z.number().min(1), assumptions: z.string().optional() });
+export const versionFormSchema = z.object({ engagementId: z.string().min(1), entityType: z.string().min(1), entityId: z.string().min(1), content: z.string().min(10), changeSummary: z.string().min(5) });
+export const reviewApprovalFormSchema = z.object({ engagementId: z.string().min(1), entityType: z.string().min(1), entityId: z.string().optional(), reviewerId: z.string().optional(), comments: z.string().optional() });
+
+export type EngagementFormValues = z.infer<typeof engagementFormSchema>;
+export type InterviewFormValues = z.infer<typeof interviewFormSchema>;
+export type BrdFormValues = z.infer<typeof brdFormSchema>;
+export type FrsFormValues = z.infer<typeof frsFormSchema>;
+export type UserStoryFormValues = z.infer<typeof userStoryFormSchema>;
+export type AcceptanceCriterionFormValues = z.infer<typeof acceptanceCriterionFormSchema>;
+export type ProcessMapFormValues = z.infer<typeof processMapFormSchema>;
+export type GapAnalysisFormValues = z.infer<typeof gapAnalysisFormSchema>;
+export type FeaturePriorityFormValues = z.infer<typeof featurePriorityFormSchema>;
+export type RiskFormValues = z.infer<typeof riskFormSchema>;
+export type StakeholderFormValues = z.infer<typeof stakeholderFormSchema>;
+export type ScopeItemFormValues = z.infer<typeof scopeItemFormSchema>;
+export type ProposalFormValues = z.infer<typeof proposalFormSchema>;
+export type CostEstimateFormValues = z.infer<typeof costEstimateFormSchema>;
+export type TimelineEstimateFormValues = z.infer<typeof timelineEstimateFormSchema>;
+export type VersionFormValues = z.infer<typeof versionFormSchema>;
+export type ReviewApprovalFormValues = z.infer<typeof reviewApprovalFormSchema>;

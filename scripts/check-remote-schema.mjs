@@ -53,6 +53,7 @@ const requiredTables = [
     "ai_providers",
     "ai_orchestration_agents",
     "knowledge_entries",
+    "ba_engagements",
 ];
 
 const supabase = createClient(url, anonKey);

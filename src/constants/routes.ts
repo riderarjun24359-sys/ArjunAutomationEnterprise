@@ -16,6 +16,7 @@ export const ROUTES = {
     finance: "/finance",
     ai: "/ai",
     knowledge: "/knowledge",
+    businessAnalyst: "/business-analyst",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

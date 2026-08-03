@@ -2021,3 +2021,247 @@ export interface DbKnowledgeAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbBaEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaInterview {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    interview_key: string;
+    stakeholder_name: string;
+    questions: unknown[];
+    responses: unknown[];
+    status: string;
+    conducted_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaBrd {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    title: string;
+    executive_summary: string;
+    business_objectives: string;
+    scope_overview: string;
+    content: string;
+    status: string;
+    current_version: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaFrsDocument {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    brd_id?: string | null;
+    title: string;
+    functional_requirements: string;
+    non_functional_requirements: string;
+    content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaUserStory {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    frs_id?: string | null;
+    story_key: string;
+    title: string;
+    description: string;
+    persona: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaAcceptanceCriterion {
+    id: string;
+    organization_id: string;
+    user_story_id: string;
+    criterion_key: string;
+    description: string;
+    test_scenario: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbBaProcessMap {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    process_type: string;
+    steps: unknown[];
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaGapAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    current_state: string;
+    desired_state: string;
+    gaps: unknown[];
+    recommendations: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaFeaturePriority {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    feature_name: string;
+    priority_score: number;
+    priority_rank: number;
+    rationale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaRisk {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    risk_key: string;
+    title: string;
+    description: string;
+    likelihood: string;
+    impact: string;
+    mitigation: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaStakeholder {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    role: string;
+    influence: string;
+    interest: string;
+    contact_info: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaScopeItem {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    item_key: string;
+    title: string;
+    scope_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaProposal {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    title: string;
+    executive_summary: string;
+    deliverables: string;
+    content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaCostEstimate {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    estimate_key: string;
+    line_items: unknown[];
+    total_amount: number;
+    currency: string;
+    assumptions: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaTimelineEstimate {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    estimate_key: string;
+    phases: unknown[];
+    total_duration_days: number;
+    assumptions: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBaRequirementVersion {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    entity_type: string;
+    entity_id: string;
+    version_number: number;
+    content: string;
+    change_summary: string;
+    created_at: string;
+}
+
+export interface DbBaReviewApproval {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    reviewer_id?: string | null;
+    approval_status: string;
+    comments: string;
+    reviewed_at?: string | null;
+    created_at: string;
+}
+
+export interface DbBaAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}
