@@ -34,6 +34,7 @@ export const ROUTES = {
     executiveIntelligence: "/executive-intelligence",
     launchReadiness: "/launch-readiness",
     industryFramework: "/industry-framework",
+    businessProcess: "/business-process",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

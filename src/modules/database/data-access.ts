@@ -685,6 +685,41 @@ import {
     IfrFrameworkFailureRepository,
     IfrAuditLogRepository,
 } from "@/src/modules/database/repositories/industry-framework-repositories";
+import {
+    BpfProcessHubRepository,
+    BpfBusinessProcessRepository,
+    BpfProcessCategoryRepository,
+    BpfProcessVersionRepository,
+    BpfProcessDependencyRepository,
+    BpfProcessModelRepository,
+    BpfProcessStepRepository,
+    BpfDecisionPointRepository,
+    BpfReusableBlockRepository,
+    BpfApprovalRuleRepository,
+    BpfSequentialApprovalRepository,
+    BpfParallelApprovalRepository,
+    BpfEscalationRuleRepository,
+    BpfTaskAssignmentRepository,
+    BpfTaskTemplateRepository,
+    BpfRecurringTaskRepository,
+    BpfTaskSlaPolicyRepository,
+    BpfRuleConditionRepository,
+    BpfRuleValidationRepository,
+    BpfRuleCalculationRepository,
+    BpfReusableRuleRepository,
+    BpfProcessExecutionRepository,
+    BpfExecutionHistoryRepository,
+    BpfExecutionRetryRepository,
+    BpfExecutionAnalyticsRepository,
+    BpfBottleneckReportRepository,
+    BpfSlaPerformanceMetricRepository,
+    BpfProcessMetricRepository,
+    BpfProcessHealthRepository,
+    BpfFailedProcessRecordRepository,
+    BpfProcessFailureRepository,
+    BpfAuditLogRepository,
+} from "@/src/modules/database/repositories/business-process-repositories";
+
 
 
 export class DatabaseAccessLayer {
@@ -1317,6 +1352,38 @@ export class DatabaseAccessLayer {
     readonly ifrCompatibilityChecks: IfrCompatibilityCheckRepository;
     readonly ifrFrameworkFailures: IfrFrameworkFailureRepository;
     readonly ifrAuditLogs: IfrAuditLogRepository;
+    readonly bpfProcessHubs: BpfProcessHubRepository;
+    readonly bpfBusinessProcesses: BpfBusinessProcessRepository;
+    readonly bpfProcessCategories: BpfProcessCategoryRepository;
+    readonly bpfProcessVersions: BpfProcessVersionRepository;
+    readonly bpfProcessDependencies: BpfProcessDependencyRepository;
+    readonly bpfProcessModels: BpfProcessModelRepository;
+    readonly bpfProcessSteps: BpfProcessStepRepository;
+    readonly bpfDecisionPoints: BpfDecisionPointRepository;
+    readonly bpfReusableBlocks: BpfReusableBlockRepository;
+    readonly bpfApprovalRules: BpfApprovalRuleRepository;
+    readonly bpfSequentialApprovals: BpfSequentialApprovalRepository;
+    readonly bpfParallelApprovals: BpfParallelApprovalRepository;
+    readonly bpfEscalationRules: BpfEscalationRuleRepository;
+    readonly bpfTaskAssignments: BpfTaskAssignmentRepository;
+    readonly bpfTaskTemplates: BpfTaskTemplateRepository;
+    readonly bpfRecurringTasks: BpfRecurringTaskRepository;
+    readonly bpfTaskSlaPolicies: BpfTaskSlaPolicyRepository;
+    readonly bpfRuleConditions: BpfRuleConditionRepository;
+    readonly bpfRuleValidations: BpfRuleValidationRepository;
+    readonly bpfRuleCalculations: BpfRuleCalculationRepository;
+    readonly bpfReusableRules: BpfReusableRuleRepository;
+    readonly bpfProcessExecutions: BpfProcessExecutionRepository;
+    readonly bpfExecutionHistory: BpfExecutionHistoryRepository;
+    readonly bpfExecutionRetries: BpfExecutionRetryRepository;
+    readonly bpfExecutionAnalytics: BpfExecutionAnalyticsRepository;
+    readonly bpfBottleneckReports: BpfBottleneckReportRepository;
+    readonly bpfSlaPerformanceMetrics: BpfSlaPerformanceMetricRepository;
+    readonly bpfProcessMetrics: BpfProcessMetricRepository;
+    readonly bpfProcessHealth: BpfProcessHealthRepository;
+    readonly bpfFailedProcessRecords: BpfFailedProcessRecordRepository;
+    readonly bpfProcessFailures: BpfProcessFailureRepository;
+    readonly bpfAuditLogs: BpfAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1948,6 +2015,38 @@ export class DatabaseAccessLayer {
         this.ifrCompatibilityChecks = new IfrCompatibilityCheckRepository();
         this.ifrFrameworkFailures = new IfrFrameworkFailureRepository();
         this.ifrAuditLogs = new IfrAuditLogRepository();
+        this.bpfProcessHubs = new BpfProcessHubRepository();
+        this.bpfBusinessProcesses = new BpfBusinessProcessRepository();
+        this.bpfProcessCategories = new BpfProcessCategoryRepository();
+        this.bpfProcessVersions = new BpfProcessVersionRepository();
+        this.bpfProcessDependencies = new BpfProcessDependencyRepository();
+        this.bpfProcessModels = new BpfProcessModelRepository();
+        this.bpfProcessSteps = new BpfProcessStepRepository();
+        this.bpfDecisionPoints = new BpfDecisionPointRepository();
+        this.bpfReusableBlocks = new BpfReusableBlockRepository();
+        this.bpfApprovalRules = new BpfApprovalRuleRepository();
+        this.bpfSequentialApprovals = new BpfSequentialApprovalRepository();
+        this.bpfParallelApprovals = new BpfParallelApprovalRepository();
+        this.bpfEscalationRules = new BpfEscalationRuleRepository();
+        this.bpfTaskAssignments = new BpfTaskAssignmentRepository();
+        this.bpfTaskTemplates = new BpfTaskTemplateRepository();
+        this.bpfRecurringTasks = new BpfRecurringTaskRepository();
+        this.bpfTaskSlaPolicies = new BpfTaskSlaPolicyRepository();
+        this.bpfRuleConditions = new BpfRuleConditionRepository();
+        this.bpfRuleValidations = new BpfRuleValidationRepository();
+        this.bpfRuleCalculations = new BpfRuleCalculationRepository();
+        this.bpfReusableRules = new BpfReusableRuleRepository();
+        this.bpfProcessExecutions = new BpfProcessExecutionRepository();
+        this.bpfExecutionHistory = new BpfExecutionHistoryRepository();
+        this.bpfExecutionRetries = new BpfExecutionRetryRepository();
+        this.bpfExecutionAnalytics = new BpfExecutionAnalyticsRepository();
+        this.bpfBottleneckReports = new BpfBottleneckReportRepository();
+        this.bpfSlaPerformanceMetrics = new BpfSlaPerformanceMetricRepository();
+        this.bpfProcessMetrics = new BpfProcessMetricRepository();
+        this.bpfProcessHealth = new BpfProcessHealthRepository();
+        this.bpfFailedProcessRecords = new BpfFailedProcessRecordRepository();
+        this.bpfProcessFailures = new BpfProcessFailureRepository();
+        this.bpfAuditLogs = new BpfAuditLogRepository();
     }
 }
 

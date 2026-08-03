@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 634 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_*)
+// 666 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -642,6 +642,38 @@ const requiredTables = [
     "ifr_compatibility_checks",
     "ifr_framework_failures",
     "ifr_audit_logs",
+    "bpf_process_hubs",
+    "bpf_business_processes",
+    "bpf_process_categories",
+    "bpf_process_versions",
+    "bpf_process_dependencies",
+    "bpf_process_models",
+    "bpf_process_steps",
+    "bpf_decision_points",
+    "bpf_reusable_blocks",
+    "bpf_approval_rules",
+    "bpf_sequential_approvals",
+    "bpf_parallel_approvals",
+    "bpf_escalation_rules",
+    "bpf_task_assignments",
+    "bpf_task_templates",
+    "bpf_recurring_tasks",
+    "bpf_task_sla_policies",
+    "bpf_rule_conditions",
+    "bpf_rule_validations",
+    "bpf_rule_calculations",
+    "bpf_reusable_rules",
+    "bpf_process_executions",
+    "bpf_execution_history",
+    "bpf_execution_retries",
+    "bpf_execution_analytics",
+    "bpf_bottleneck_reports",
+    "bpf_sla_performance_metrics",
+    "bpf_process_metrics",
+    "bpf_process_health",
+    "bpf_failed_process_records",
+    "bpf_process_failures",
+    "bpf_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

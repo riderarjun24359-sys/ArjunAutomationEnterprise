@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T19:12:05.776Z
+-- Generated: 2026-08-03T19:37:23.669Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (33):
+--   Migrations (34):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -39,7 +39,8 @@
 --     - 202608020031_ai_executive_intelligence_platform.sql
 --     - 202608020032_enterprise_launch_readiness_platform.sql
 --     - 202608020033_enterprise_industry_framework_core.sql
---   Seeds (33):
+--     - 202608020034_enterprise_business_process_framework.sql
+--   Seeds (34):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -73,9 +74,10 @@
 --     - 031_ai_executive_intelligence_platform_seed.sql
 --     - 032_enterprise_launch_readiness_platform_seed.sql
 --     - 033_enterprise_industry_framework_core_seed.sql
+--     - 034_enterprise_business_process_framework_seed.sql
 --
--- Includes through V2 Program B Sprint 1:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core
+-- Includes through V2 Program B Sprint 2:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -13609,6 +13611,631 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020034_enterprise_business_process_framework.sql
+-- =============================================================================
+-- V2 Program B Sprint 2: Enterprise Business Process Framework
+
+-- ProcessHub
+create table if not exists public.bpf_process_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- BusinessProcess
+create table if not exists public.bpf_business_processes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  process_key text not null,
+  process_name text not null default '',
+  process_type text not null default 'operational',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, process_key)
+);
+
+-- ProcessCategory
+create table if not exists public.bpf_process_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_type text not null default 'general',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- ProcessVersion
+create table if not exists public.bpf_process_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '',
+  release_channel text not null default 'stable',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- ProcessDependency
+create table if not exists public.bpf_process_dependencies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  dependency_key text not null,
+  dependency_type text not null default 'process',
+  dependency_ref text not null default '',
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dependency_key)
+);
+
+-- ProcessModel
+create table if not exists public.bpf_process_models (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  model_key text not null,
+  model_name text not null default '',
+  model_type text not null default 'workflow',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, model_key)
+);
+
+-- ProcessStep
+create table if not exists public.bpf_process_steps (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  step_key text not null,
+  step_name text not null default '',
+  step_order integer not null default 0,
+  step_type text not null default 'action',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, step_key)
+);
+
+-- DecisionPoint
+create table if not exists public.bpf_decision_points (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  decision_key text not null,
+  decision_name text not null default '',
+  decision_type text not null default 'gateway',
+  decision_expression text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, decision_key)
+);
+
+-- ReusableBlock
+create table if not exists public.bpf_reusable_blocks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  block_key text not null,
+  block_name text not null default '',
+  block_type text not null default 'subprocess',
+  block_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, block_key)
+);
+
+-- ApprovalRule
+create table if not exists public.bpf_approval_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  rule_type text not null default 'sequential',
+  rule_expression text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- SequentialApproval
+create table if not exists public.bpf_sequential_approvals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  approval_key text not null,
+  approval_name text not null default '',
+  approval_order integer not null default 0,
+  approver_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, approval_key)
+);
+
+-- ParallelApproval
+create table if not exists public.bpf_parallel_approvals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  approval_key text not null,
+  approval_name text not null default '',
+  approver_count integer not null default 1,
+  quorum_required integer not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, approval_key)
+);
+
+-- EscalationRule
+create table if not exists public.bpf_escalation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  escalation_key text not null,
+  escalation_name text not null default '',
+  escalation_level integer not null default 1,
+  timeout_hours integer not null default 24,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, escalation_key)
+);
+
+-- TaskAssignment
+create table if not exists public.bpf_task_assignments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  assignment_key text not null,
+  assignment_name text not null default '',
+  assignee_ref text not null default '',
+  priority text not null default 'normal',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, assignment_key)
+);
+
+-- TaskTemplate
+create table if not exists public.bpf_task_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_type text not null default 'standard',
+  steps_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- RecurringTask
+create table if not exists public.bpf_recurring_tasks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  task_key text not null,
+  task_name text not null default '',
+  recurrence_pattern text not null default 'daily',
+  next_run_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, task_key)
+);
+
+-- TaskSlaPolicy
+create table if not exists public.bpf_task_sla_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  policy_key text not null,
+  policy_name text not null default '',
+  sla_hours integer not null default 24,
+  breach_action text not null default 'escalate',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, policy_key)
+);
+
+-- RuleCondition
+create table if not exists public.bpf_rule_conditions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  condition_key text not null,
+  condition_name text not null default '',
+  condition_type text not null default 'expression',
+  condition_expression text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, condition_key)
+);
+
+-- RuleValidation
+create table if not exists public.bpf_rule_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  validation_key text not null,
+  validation_name text not null default '',
+  validation_type text not null default 'schema',
+  validation_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- RuleCalculation
+create table if not exists public.bpf_rule_calculations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  calculation_key text not null,
+  calculation_name text not null default '',
+  calculation_type text not null default 'formula',
+  formula_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, calculation_key)
+);
+
+-- ReusableRule
+create table if not exists public.bpf_reusable_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  rule_type text not null default 'validation',
+  rule_expression text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- ProcessExecution
+create table if not exists public.bpf_process_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  execution_key text not null,
+  execution_name text not null default '',
+  execution_status text not null default 'pending',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, execution_key)
+);
+
+-- ExecutionHistory
+create table if not exists public.bpf_execution_history (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  history_key text not null,
+  history_type text not null default 'state_change',
+  history_summary text not null default '',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- ExecutionRetry
+create table if not exists public.bpf_execution_retries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  retry_key text not null,
+  retry_count integer not null default 0,
+  retry_reason text not null default '',
+  retried_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, retry_key)
+);
+
+-- ExecutionAnalytics
+create table if not exists public.bpf_execution_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'throughput',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- BottleneckReport
+create table if not exists public.bpf_bottleneck_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  report_key text not null,
+  report_name text not null default '',
+  bottleneck_score numeric(5, 2) not null default 0,
+  report_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- SlaPerformanceMetric
+create table if not exists public.bpf_sla_performance_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  metric_key text not null,
+  metric_name text not null default '',
+  sla_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metric_key)
+);
+
+-- ProcessMetric
+create table if not exists public.bpf_process_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  execution_count integer not null default 0,
+  average_duration_ms integer not null default 0,
+  success_rate numeric(5, 2) not null default 100,
+  failure_count integer not null default 0,
+  bottleneck_score numeric(5, 2) not null default 0,
+  sla_performance_score numeric(5, 2) not null default 100,
+  overall_process_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- ProcessHealth
+create table if not exists public.bpf_process_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  pending_approvals_count integer not null default 0,
+  active_process_count integer not null default 0,
+  task_queue_depth integer not null default 0,
+  framework_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- FailedProcessRecord
+create table if not exists public.bpf_failed_process_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  record_key text not null,
+  record_name text not null default '',
+  failure_type text not null default 'execution',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, record_key)
+);
+
+-- ProcessFailure
+create table if not exists public.bpf_process_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'execution',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.bpf_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_bpf_process_hubs_org on public.bpf_process_hubs(organization_id);
+create index if not exists idx_bpf_business_processes_org on public.bpf_business_processes(organization_id);
+create index if not exists idx_bpf_business_processes_hub on public.bpf_business_processes(hub_id);
+create index if not exists idx_bpf_process_categories_org on public.bpf_process_categories(organization_id);
+create index if not exists idx_bpf_process_categories_hub on public.bpf_process_categories(hub_id);
+create index if not exists idx_bpf_process_versions_org on public.bpf_process_versions(organization_id);
+create index if not exists idx_bpf_process_versions_hub on public.bpf_process_versions(hub_id);
+create index if not exists idx_bpf_process_dependencies_org on public.bpf_process_dependencies(organization_id);
+create index if not exists idx_bpf_process_dependencies_hub on public.bpf_process_dependencies(hub_id);
+create index if not exists idx_bpf_process_models_org on public.bpf_process_models(organization_id);
+create index if not exists idx_bpf_process_models_hub on public.bpf_process_models(hub_id);
+create index if not exists idx_bpf_process_steps_org on public.bpf_process_steps(organization_id);
+create index if not exists idx_bpf_process_steps_hub on public.bpf_process_steps(hub_id);
+create index if not exists idx_bpf_decision_points_org on public.bpf_decision_points(organization_id);
+create index if not exists idx_bpf_decision_points_hub on public.bpf_decision_points(hub_id);
+create index if not exists idx_bpf_reusable_blocks_org on public.bpf_reusable_blocks(organization_id);
+create index if not exists idx_bpf_reusable_blocks_hub on public.bpf_reusable_blocks(hub_id);
+create index if not exists idx_bpf_approval_rules_org on public.bpf_approval_rules(organization_id);
+create index if not exists idx_bpf_approval_rules_hub on public.bpf_approval_rules(hub_id);
+create index if not exists idx_bpf_sequential_approvals_org on public.bpf_sequential_approvals(organization_id);
+create index if not exists idx_bpf_sequential_approvals_hub on public.bpf_sequential_approvals(hub_id);
+create index if not exists idx_bpf_parallel_approvals_org on public.bpf_parallel_approvals(organization_id);
+create index if not exists idx_bpf_parallel_approvals_hub on public.bpf_parallel_approvals(hub_id);
+create index if not exists idx_bpf_escalation_rules_org on public.bpf_escalation_rules(organization_id);
+create index if not exists idx_bpf_escalation_rules_hub on public.bpf_escalation_rules(hub_id);
+create index if not exists idx_bpf_task_assignments_org on public.bpf_task_assignments(organization_id);
+create index if not exists idx_bpf_task_assignments_hub on public.bpf_task_assignments(hub_id);
+create index if not exists idx_bpf_task_templates_org on public.bpf_task_templates(organization_id);
+create index if not exists idx_bpf_task_templates_hub on public.bpf_task_templates(hub_id);
+create index if not exists idx_bpf_recurring_tasks_org on public.bpf_recurring_tasks(organization_id);
+create index if not exists idx_bpf_recurring_tasks_hub on public.bpf_recurring_tasks(hub_id);
+create index if not exists idx_bpf_task_sla_policies_org on public.bpf_task_sla_policies(organization_id);
+create index if not exists idx_bpf_task_sla_policies_hub on public.bpf_task_sla_policies(hub_id);
+create index if not exists idx_bpf_rule_conditions_org on public.bpf_rule_conditions(organization_id);
+create index if not exists idx_bpf_rule_conditions_hub on public.bpf_rule_conditions(hub_id);
+create index if not exists idx_bpf_rule_validations_org on public.bpf_rule_validations(organization_id);
+create index if not exists idx_bpf_rule_validations_hub on public.bpf_rule_validations(hub_id);
+create index if not exists idx_bpf_rule_calculations_org on public.bpf_rule_calculations(organization_id);
+create index if not exists idx_bpf_rule_calculations_hub on public.bpf_rule_calculations(hub_id);
+create index if not exists idx_bpf_reusable_rules_org on public.bpf_reusable_rules(organization_id);
+create index if not exists idx_bpf_reusable_rules_hub on public.bpf_reusable_rules(hub_id);
+create index if not exists idx_bpf_process_executions_org on public.bpf_process_executions(organization_id);
+create index if not exists idx_bpf_process_executions_hub on public.bpf_process_executions(hub_id);
+create index if not exists idx_bpf_execution_history_org on public.bpf_execution_history(organization_id);
+create index if not exists idx_bpf_execution_history_hub on public.bpf_execution_history(hub_id);
+create index if not exists idx_bpf_execution_retries_org on public.bpf_execution_retries(organization_id);
+create index if not exists idx_bpf_execution_retries_hub on public.bpf_execution_retries(hub_id);
+create index if not exists idx_bpf_execution_analytics_org on public.bpf_execution_analytics(organization_id);
+create index if not exists idx_bpf_execution_analytics_hub on public.bpf_execution_analytics(hub_id);
+create index if not exists idx_bpf_bottleneck_reports_org on public.bpf_bottleneck_reports(organization_id);
+create index if not exists idx_bpf_bottleneck_reports_hub on public.bpf_bottleneck_reports(hub_id);
+create index if not exists idx_bpf_sla_performance_metrics_org on public.bpf_sla_performance_metrics(organization_id);
+create index if not exists idx_bpf_sla_performance_metrics_hub on public.bpf_sla_performance_metrics(hub_id);
+create index if not exists idx_bpf_process_metrics_org on public.bpf_process_metrics(organization_id);
+create index if not exists idx_bpf_process_health_org on public.bpf_process_health(organization_id);
+create index if not exists idx_bpf_failed_process_records_org on public.bpf_failed_process_records(organization_id);
+create index if not exists idx_bpf_failed_process_records_hub on public.bpf_failed_process_records(hub_id);
+create index if not exists idx_bpf_process_failures_org on public.bpf_process_failures(organization_id);
+create index if not exists idx_bpf_process_failures_hub on public.bpf_process_failures(hub_id);
+create index if not exists idx_bpf_audit_logs_org on public.bpf_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'bpf_process_hubs','bpf_business_processes','bpf_process_categories','bpf_process_versions','bpf_process_dependencies','bpf_process_models','bpf_process_steps','bpf_decision_points','bpf_reusable_blocks','bpf_approval_rules','bpf_sequential_approvals','bpf_parallel_approvals','bpf_escalation_rules','bpf_task_assignments','bpf_task_templates','bpf_recurring_tasks','bpf_task_sla_policies','bpf_rule_conditions','bpf_rule_validations','bpf_rule_calculations','bpf_reusable_rules','bpf_process_executions','bpf_execution_history','bpf_execution_retries','bpf_execution_analytics','bpf_bottleneck_reports','bpf_sla_performance_metrics','bpf_process_metrics','bpf_process_health','bpf_failed_process_records','bpf_process_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.bpf_process_hubs enable row level security;
+alter table public.bpf_business_processes enable row level security;
+alter table public.bpf_process_categories enable row level security;
+alter table public.bpf_process_versions enable row level security;
+alter table public.bpf_process_dependencies enable row level security;
+alter table public.bpf_process_models enable row level security;
+alter table public.bpf_process_steps enable row level security;
+alter table public.bpf_decision_points enable row level security;
+alter table public.bpf_reusable_blocks enable row level security;
+alter table public.bpf_approval_rules enable row level security;
+alter table public.bpf_sequential_approvals enable row level security;
+alter table public.bpf_parallel_approvals enable row level security;
+alter table public.bpf_escalation_rules enable row level security;
+alter table public.bpf_task_assignments enable row level security;
+alter table public.bpf_task_templates enable row level security;
+alter table public.bpf_recurring_tasks enable row level security;
+alter table public.bpf_task_sla_policies enable row level security;
+alter table public.bpf_rule_conditions enable row level security;
+alter table public.bpf_rule_validations enable row level security;
+alter table public.bpf_rule_calculations enable row level security;
+alter table public.bpf_reusable_rules enable row level security;
+alter table public.bpf_process_executions enable row level security;
+alter table public.bpf_execution_history enable row level security;
+alter table public.bpf_execution_retries enable row level security;
+alter table public.bpf_execution_analytics enable row level security;
+alter table public.bpf_bottleneck_reports enable row level security;
+alter table public.bpf_sla_performance_metrics enable row level security;
+alter table public.bpf_process_metrics enable row level security;
+alter table public.bpf_process_health enable row level security;
+alter table public.bpf_failed_process_records enable row level security;
+alter table public.bpf_process_failures enable row level security;
+alter table public.bpf_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'bpf_process_hubs','bpf_business_processes','bpf_process_categories','bpf_process_versions','bpf_process_dependencies','bpf_process_models','bpf_process_steps','bpf_decision_points','bpf_reusable_blocks','bpf_approval_rules','bpf_sequential_approvals','bpf_parallel_approvals','bpf_escalation_rules','bpf_task_assignments','bpf_task_templates','bpf_recurring_tasks','bpf_task_sla_policies','bpf_rule_conditions','bpf_rule_validations','bpf_rule_calculations','bpf_reusable_rules','bpf_process_executions','bpf_execution_history','bpf_execution_retries','bpf_execution_analytics','bpf_bottleneck_reports','bpf_sla_performance_metrics','bpf_process_metrics','bpf_process_health','bpf_failed_process_records','bpf_process_failures','bpf_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('bpf.view', 'View enterprise business process framework data', 'enterprise_business_process_framework'),
+  ('bpf.manage', 'Manage process registry, designer, approvals, tasks, and framework outputs', 'enterprise_business_process_framework'),
+  ('bpf.approve', 'Approve business process gates and escalation rules', 'enterprise_business_process_framework'),
+  ('bpf.admin', 'Administer enterprise business process framework governance', 'enterprise_business_process_framework')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -17417,6 +18044,156 @@ on conflict (id) do nothing;
 
 insert into public.ifr_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00880088-0088-0088-0088-008800882101', '11111111-1111-1111-1111-111111111111', 'framework_hub', 'seed', 'Enterprise industry framework core seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 034_enterprise_business_process_framework_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a334', '11111111-1111-1111-1111-111111111111', 'Enterprise Business Process Orchestrator', 'enterprise_business_process_framework', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["process_registry","process_designer","approval_engine","task_engine","business_rule_engine","process_execution","process_analytics","process_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a534', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a334', 'northstar-business-process-001', 'enterprise_business_process_framework', 'process_hub', '006a006a-006a-006a-006a-006a006a0101', '{"objective":"Enterprise business process framework for northstar operational workflows"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Process Hub
+insert into public.bpf_process_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('006a006a-006a-006a-006a-006a006a0101', '11111111-1111-1111-1111-111111111111', 'northstar-business-process', 'Northstar Business Process Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+-- M1 Process Registry
+insert into public.bpf_business_processes (id, organization_id, hub_id, process_key, process_name, process_type, status)
+values ('006b006b-006b-006b-006b-006b006b0201', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'proc-onboard-0804', 'Customer Onboarding', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_categories (id, organization_id, hub_id, category_key, category_name, category_type, status)
+values ('006c006c-006c-006c-006c-006c006c0301', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'cat-ops-0804', 'Operations', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_versions (id, organization_id, hub_id, version_key, version_number, release_channel, status)
+values ('006d006d-006d-006d-006d-006d006d0401', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'ver-1-0-0', '1.0.0', 'stable', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_dependencies (id, organization_id, hub_id, dependency_key, dependency_type, dependency_ref, status)
+values ('006e006e-006e-006e-006e-006e006e0501', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'dep-crm-0804', 'process', 'crm-onboarding', 'active')
+on conflict (id) do nothing;
+
+-- M2 Process Designer
+insert into public.bpf_process_models (id, organization_id, hub_id, model_key, model_name, model_type, status)
+values ('006f006f-006f-006f-006f-006f006f0601', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'model-wf-0804', 'Onboarding Workflow', 'workflow', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_steps (id, organization_id, hub_id, step_key, step_name, step_order, status)
+values ('00700070-0070-0070-0070-007000700701', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'step-verify-0804', 'Verify Account', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_decision_points (id, organization_id, hub_id, decision_key, decision_name, decision_type, status)
+values ('00710071-0071-0071-0071-007100710801', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'dec-approve-0804', 'Approval Gateway', 'gateway', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_reusable_blocks (id, organization_id, hub_id, block_key, block_name, block_type, status)
+values ('00720072-0072-0072-0072-007200720901', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'block-kyc-0804', 'KYC Subprocess', 'subprocess', 'active')
+on conflict (id) do nothing;
+
+-- M3 Approval Engine
+insert into public.bpf_approval_rules (id, organization_id, hub_id, rule_key, rule_name, rule_type, status)
+values ('00730073-0073-0073-0073-007300730a01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'rule-seq-0804', 'Sequential Approval Rule', 'sequential', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_sequential_approvals (id, organization_id, hub_id, approval_key, approval_name, approval_order, status)
+values ('00740074-0074-0074-0074-007400740b01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'appr-mgr-0804', 'Manager Approval', 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_parallel_approvals (id, organization_id, hub_id, approval_key, approval_name, approver_count, status)
+values ('00750075-0075-0075-0075-007500750c01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'appr-par-0804', 'Parallel Review', 3, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_escalation_rules (id, organization_id, hub_id, escalation_key, escalation_name, escalation_level, status)
+values ('00760076-0076-0076-0076-007600760d01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'esc-l1-0804', 'Level 1 Escalation', 1, 'active')
+on conflict (id) do nothing;
+
+-- M4 Task Engine
+insert into public.bpf_task_assignments (id, organization_id, hub_id, assignment_key, assignment_name, assignee_ref, status)
+values ('00770077-0077-0077-0077-007700770e01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'asgn-rev-0804', 'Document Review', 'user-reviewer-001', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_task_templates (id, organization_id, hub_id, template_key, template_name, template_type, status)
+values ('00780078-0078-0078-0078-007800780f01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'tmpl-review-0804', 'Review Task Template', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_recurring_tasks (id, organization_id, hub_id, task_key, task_name, recurrence_pattern, status)
+values ('00790079-0079-0079-0079-007900791001', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'task-daily-0804', 'Daily Status Check', 'daily', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_task_sla_policies (id, organization_id, hub_id, policy_key, policy_name, sla_hours, status)
+values ('007a007a-007a-007a-007a-007a007a1101', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'sla-24h-0804', '24 Hour SLA', 24, 'active')
+on conflict (id) do nothing;
+
+-- M5 Business Rule Engine
+insert into public.bpf_rule_conditions (id, organization_id, hub_id, condition_key, condition_name, condition_type, status)
+values ('007b007b-007b-007b-007b-007b007b1201', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'cond-amt-0804', 'Amount Threshold', 'expression', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_rule_validations (id, organization_id, hub_id, validation_key, validation_name, validation_score, status)
+values ('007c007c-007c-007c-007c-007c007c1301', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'val-schema-0804', 'Schema Validation', 96.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_rule_calculations (id, organization_id, hub_id, calculation_key, calculation_name, calculation_type, status)
+values ('007d007d-007d-007d-007d-007d007d1401', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'calc-fee-0804', 'Fee Calculation', 'formula', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_reusable_rules (id, organization_id, hub_id, rule_key, rule_name, rule_type, status)
+values ('007e007e-007e-007e-007e-007e007e1501', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'rule-valid-0804', 'Validation Rule', 'validation', 'active')
+on conflict (id) do nothing;
+
+-- M6 Process Execution
+insert into public.bpf_process_executions (id, organization_id, hub_id, execution_key, execution_name, execution_status, status)
+values ('007f007f-007f-007f-007f-007f007f1601', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'exec-run-0804', 'Onboarding Run #42', 'running', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_execution_history (id, organization_id, hub_id, history_key, history_type, history_summary, status)
+values ('00800080-0080-0080-0080-008000801701', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'hist-state-0804', 'state_change', 'Process moved to approval stage', 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_execution_retries (id, organization_id, hub_id, retry_key, retry_count, retry_reason, status)
+values ('00810081-0081-0081-0081-008100811801', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'retry-1-0804', 1, 'Transient API failure', 'active')
+on conflict (id) do nothing;
+
+-- M7 Process Analytics
+insert into public.bpf_execution_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('00820082-0082-0082-0082-008200821901', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'anly-thru-0804', 'throughput', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_bottleneck_reports (id, organization_id, hub_id, report_key, report_name, bottleneck_score, status)
+values ('00830083-0083-0083-0083-008300831a01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'rpt-bneck-0804', 'Approval Bottleneck Report', 72.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_sla_performance_metrics (id, organization_id, hub_id, metric_key, metric_name, sla_score, status)
+values ('00840084-0084-0084-0084-008400841b01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'sla-perf-0804', 'SLA Performance', 98.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Business Process Dashboard
+insert into public.bpf_process_metrics (id, organization_id, metrics_key, execution_count, average_duration_ms, success_rate, failure_count, bottleneck_score, sla_performance_score, overall_process_score, status)
+values ('00850085-0085-0085-0085-008500851c01', '11111111-1111-1111-1111-111111111111', 'process-metrics-0804', 1250, 4500, 97.50, 12, 15.00, 98.00, 94.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, pending_approvals_count, active_process_count, task_queue_depth, framework_health_status, summary, status)
+values ('00860086-0086-0086-0086-008600861d01', '11111111-1111-1111-1111-111111111111', 'process-health-0804', 95.00, false, 3, 42, 8, 'healthy', 'Business process framework operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.bpf_failed_process_records (id, organization_id, hub_id, record_key, record_name, failure_type, error_message, status)
+values ('00870087-0087-0087-0087-008700871e01', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'fail-rec-0804', 'Failed Onboarding Step', 'execution', 'Timeout waiting for external API', 'open')
+on conflict (id) do nothing;
+
+insert into public.bpf_process_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00880088-0088-0088-0088-008800882001', '11111111-1111-1111-1111-111111111111', '006a006a-006a-006a-006a-006a006a0101', 'fail-exec-0804', 'execution', 'EXEC_TIMEOUT', 'Process execution timed out after 30 minutes', 'open')
+on conflict (id) do nothing;
+
+insert into public.bpf_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00890089-0089-0089-0089-008900892101', '11111111-1111-1111-1111-111111111111', 'process_hub', 'seed', 'Enterprise business process framework seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

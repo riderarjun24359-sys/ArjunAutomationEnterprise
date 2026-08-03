@@ -8737,3 +8737,428 @@ export interface DbIfrAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbBpfProcessHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfBusinessProcess {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    process_key: string;
+    process_name: string;
+    process_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessDependency {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dependency_key: string;
+    dependency_type: string;
+    dependency_ref: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessModel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    model_key: string;
+    model_name: string;
+    model_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessStep {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    step_key: string;
+    step_name: string;
+    step_order: number;
+    step_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfDecisionPoint {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    decision_key: string;
+    decision_name: string;
+    decision_type: string;
+    decision_expression: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfReusableBlock {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    block_key: string;
+    block_name: string;
+    block_type: string;
+    block_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfApprovalRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_type: string;
+    rule_expression: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfSequentialApproval {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    approval_key: string;
+    approval_name: string;
+    approval_order: number;
+    approver_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfParallelApproval {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    approval_key: string;
+    approval_name: string;
+    approver_count: number;
+    quorum_required: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfEscalationRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    escalation_key: string;
+    escalation_name: string;
+    escalation_level: number;
+    timeout_hours: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfTaskAssignment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    assignment_key: string;
+    assignment_name: string;
+    assignee_ref: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfTaskTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_type: string;
+    steps_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfRecurringTask {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    task_key: string;
+    task_name: string;
+    recurrence_pattern: string;
+    next_run_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfTaskSlaPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    sla_hours: number;
+    breach_action: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfRuleCondition {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    condition_key: string;
+    condition_name: string;
+    condition_type: string;
+    condition_expression: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfRuleValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_name: string;
+    validation_type: string;
+    validation_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfRuleCalculation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    calculation_key: string;
+    calculation_name: string;
+    calculation_type: string;
+    formula_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfReusableRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_type: string;
+    rule_expression: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessExecution {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    execution_key: string;
+    execution_name: string;
+    execution_status: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfExecutionHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_type: string;
+    history_summary: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfExecutionRetry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    retry_key: string;
+    retry_count: number;
+    retry_reason: string;
+    retried_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfExecutionAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfBottleneckReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_name: string;
+    bottleneck_score: number;
+    report_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfSlaPerformanceMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metric_key: string;
+    metric_name: string;
+    sla_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    execution_count: number;
+    average_duration_ms: number;
+    success_rate: number;
+    failure_count: number;
+    bottleneck_score: number;
+    sla_performance_score: number;
+    overall_process_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    pending_approvals_count: number;
+    active_process_count: number;
+    task_queue_depth: number;
+    framework_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfFailedProcessRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    record_key: string;
+    record_name: string;
+    failure_type: string;
+    error_message: string;
+    failed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfProcessFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbBpfAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}
