@@ -37,6 +37,7 @@ export const ROUTES = {
     businessProcess: "/business-process",
     formEngine: "/form-engine",
     workflowEngine: "/workflow-engine",
+    documentEngine: "/document-engine",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

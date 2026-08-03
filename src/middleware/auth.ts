@@ -41,6 +41,7 @@ const protectedRoutes = [
     ROUTES.businessProcess,
     ROUTES.formEngine,
     ROUTES.workflowEngine,
+    ROUTES.documentEngine,
 ];
 
 const authRoutes = [

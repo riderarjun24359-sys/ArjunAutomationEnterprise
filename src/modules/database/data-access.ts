@@ -787,6 +787,41 @@ import {
     DweWorkflowFailureRepository,
     DweAuditLogRepository,
 } from "@/src/modules/database/repositories/workflow-engine-repositories";
+import {
+    DdeDocumentHubRepository,
+    DdeDocumentTypeRepository,
+    DdeDocumentCategoryRepository,
+    DdeDocumentTemplateRepository,
+    DdeDocumentVersionRepository,
+    DdeTemplateHeaderRepository,
+    DdeTemplateFooterRepository,
+    DdeTemplateSectionRepository,
+    DdeTemplateVariableRepository,
+    DdePdfGenerationRepository,
+    DdeHtmlGenerationRepository,
+    DdeExportJobRepository,
+    DdeBatchGenerationRepository,
+    DdeElectronicSignatureRepository,
+    DdeApprovalSignatureRepository,
+    DdeSignatureVerificationRepository,
+    DdeSignatureAuditEntryRepository,
+    DdeVersionHistoryRepository,
+    DdeRetentionPolicyRepository,
+    DdeArchiveRecordRepository,
+    DdeSharingPolicyRepository,
+    DdeEmailDeliveryRepository,
+    DdeDownloadDeliveryRepository,
+    DdeWebhookDeliveryRepository,
+    DdeGenerationAnalyticsRepository,
+    DdeDeliveryAnalyticsRepository,
+    DdeStorageAnalyticsRepository,
+    DdeDocumentMetricRepository,
+    DdeDocumentHealthRepository,
+    DdePendingSignatureRepository,
+    DdeDocumentFailureRepository,
+    DdeAuditLogRepository,
+} from "@/src/modules/database/repositories/document-engine-repositories";
+
 
 
 
@@ -1518,6 +1553,38 @@ export class DatabaseAccessLayer {
     readonly dweFailedExecutions: DweFailedExecutionRepository;
     readonly dweWorkflowFailures: DweWorkflowFailureRepository;
     readonly dweAuditLogs: DweAuditLogRepository;
+    readonly ddeDocumentHubs: DdeDocumentHubRepository;
+    readonly ddeDocumentTypes: DdeDocumentTypeRepository;
+    readonly ddeDocumentCategories: DdeDocumentCategoryRepository;
+    readonly ddeDocumentTemplates: DdeDocumentTemplateRepository;
+    readonly ddeDocumentVersions: DdeDocumentVersionRepository;
+    readonly ddeTemplateHeaders: DdeTemplateHeaderRepository;
+    readonly ddeTemplateFooters: DdeTemplateFooterRepository;
+    readonly ddeTemplateSections: DdeTemplateSectionRepository;
+    readonly ddeTemplateVariables: DdeTemplateVariableRepository;
+    readonly ddePdfGenerations: DdePdfGenerationRepository;
+    readonly ddeHtmlGenerations: DdeHtmlGenerationRepository;
+    readonly ddeExportJobs: DdeExportJobRepository;
+    readonly ddeBatchGenerations: DdeBatchGenerationRepository;
+    readonly ddeElectronicSignatures: DdeElectronicSignatureRepository;
+    readonly ddeApprovalSignatures: DdeApprovalSignatureRepository;
+    readonly ddeSignatureVerifications: DdeSignatureVerificationRepository;
+    readonly ddeSignatureAuditEntries: DdeSignatureAuditEntryRepository;
+    readonly ddeVersionHistories: DdeVersionHistoryRepository;
+    readonly ddeRetentionPolicies: DdeRetentionPolicyRepository;
+    readonly ddeArchiveRecords: DdeArchiveRecordRepository;
+    readonly ddeSharingPolicies: DdeSharingPolicyRepository;
+    readonly ddeEmailDeliveries: DdeEmailDeliveryRepository;
+    readonly ddeDownloadDeliveries: DdeDownloadDeliveryRepository;
+    readonly ddeWebhookDeliveries: DdeWebhookDeliveryRepository;
+    readonly ddeGenerationAnalytics: DdeGenerationAnalyticsRepository;
+    readonly ddeDeliveryAnalytics: DdeDeliveryAnalyticsRepository;
+    readonly ddeStorageAnalytics: DdeStorageAnalyticsRepository;
+    readonly ddeDocumentMetrics: DdeDocumentMetricRepository;
+    readonly ddeDocumentHealth: DdeDocumentHealthRepository;
+    readonly ddePendingSignatures: DdePendingSignatureRepository;
+    readonly ddeDocumentFailures: DdeDocumentFailureRepository;
+    readonly ddeAuditLogs: DdeAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2245,6 +2312,38 @@ export class DatabaseAccessLayer {
         this.dweFailedExecutions = new DweFailedExecutionRepository();
         this.dweWorkflowFailures = new DweWorkflowFailureRepository();
         this.dweAuditLogs = new DweAuditLogRepository();
+        this.ddeDocumentHubs = new DdeDocumentHubRepository();
+        this.ddeDocumentTypes = new DdeDocumentTypeRepository();
+        this.ddeDocumentCategories = new DdeDocumentCategoryRepository();
+        this.ddeDocumentTemplates = new DdeDocumentTemplateRepository();
+        this.ddeDocumentVersions = new DdeDocumentVersionRepository();
+        this.ddeTemplateHeaders = new DdeTemplateHeaderRepository();
+        this.ddeTemplateFooters = new DdeTemplateFooterRepository();
+        this.ddeTemplateSections = new DdeTemplateSectionRepository();
+        this.ddeTemplateVariables = new DdeTemplateVariableRepository();
+        this.ddePdfGenerations = new DdePdfGenerationRepository();
+        this.ddeHtmlGenerations = new DdeHtmlGenerationRepository();
+        this.ddeExportJobs = new DdeExportJobRepository();
+        this.ddeBatchGenerations = new DdeBatchGenerationRepository();
+        this.ddeElectronicSignatures = new DdeElectronicSignatureRepository();
+        this.ddeApprovalSignatures = new DdeApprovalSignatureRepository();
+        this.ddeSignatureVerifications = new DdeSignatureVerificationRepository();
+        this.ddeSignatureAuditEntries = new DdeSignatureAuditEntryRepository();
+        this.ddeVersionHistories = new DdeVersionHistoryRepository();
+        this.ddeRetentionPolicies = new DdeRetentionPolicyRepository();
+        this.ddeArchiveRecords = new DdeArchiveRecordRepository();
+        this.ddeSharingPolicies = new DdeSharingPolicyRepository();
+        this.ddeEmailDeliveries = new DdeEmailDeliveryRepository();
+        this.ddeDownloadDeliveries = new DdeDownloadDeliveryRepository();
+        this.ddeWebhookDeliveries = new DdeWebhookDeliveryRepository();
+        this.ddeGenerationAnalytics = new DdeGenerationAnalyticsRepository();
+        this.ddeDeliveryAnalytics = new DdeDeliveryAnalyticsRepository();
+        this.ddeStorageAnalytics = new DdeStorageAnalyticsRepository();
+        this.ddeDocumentMetrics = new DdeDocumentMetricRepository();
+        this.ddeDocumentHealth = new DdeDocumentHealthRepository();
+        this.ddePendingSignatures = new DdePendingSignatureRepository();
+        this.ddeDocumentFailures = new DdeDocumentFailureRepository();
+        this.ddeAuditLogs = new DdeAuditLogRepository();
     }
 }
 

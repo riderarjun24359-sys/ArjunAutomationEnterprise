@@ -10009,3 +10009,426 @@ export interface DbDweAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbDdeDocumentHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentType {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    type_key: string;
+    type_name: string;
+    type_category: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeTemplateHeader {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    header_key: string;
+    header_name: string;
+    header_content: string;
+    position: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeTemplateFooter {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    footer_key: string;
+    footer_name: string;
+    footer_content: string;
+    position: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeTemplateSection {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    section_key: string;
+    section_name: string;
+    section_type: string;
+    section_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeTemplateVariable {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    variable_key: string;
+    variable_name: string;
+    variable_type: string;
+    default_value: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdePdfGeneration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generation_key: string;
+    generation_name: string;
+    generation_status: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeHtmlGeneration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generation_key: string;
+    generation_name: string;
+    generation_status: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeExportJob {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    job_key: string;
+    job_name: string;
+    job_status: string;
+    export_format: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeBatchGeneration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    batch_key: string;
+    batch_name: string;
+    batch_status: string;
+    total_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeElectronicSignature {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    signature_key: string;
+    signature_name: string;
+    signature_status: string;
+    signed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeApprovalSignature {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    signature_key: string;
+    signature_name: string;
+    signature_status: string;
+    approved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeSignatureVerification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    verification_key: string;
+    verification_status: string;
+    verification_result: string;
+    verified_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeSignatureAuditEntry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    audit_key: string;
+    audit_action: string;
+    audit_summary: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeVersionHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_version: string;
+    history_summary: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeRetentionPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    retention_days: number;
+    policy_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeArchiveRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    archive_key: string;
+    archive_name: string;
+    archive_status: string;
+    archived_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeSharingPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    sharing_scope: string;
+    access_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeEmailDelivery {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    delivery_key: string;
+    delivery_name: string;
+    delivery_status: string;
+    recipient_email: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDownloadDelivery {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    delivery_key: string;
+    delivery_name: string;
+    delivery_status: string;
+    download_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeWebhookDelivery {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    delivery_key: string;
+    delivery_name: string;
+    delivery_status: string;
+    webhook_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeGenerationAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDeliveryAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeStorageAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    generated_count: number;
+    download_count: number;
+    delivery_success_rate: number;
+    failure_count: number;
+    signature_pending_count: number;
+    storage_usage_mb: number;
+    overall_document_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    pending_signatures_count: number;
+    delivery_queue_depth: number;
+    framework_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdePendingSignature {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    signature_key: string;
+    signature_name: string;
+    signature_status: string;
+    requested_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeDocumentFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdeAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

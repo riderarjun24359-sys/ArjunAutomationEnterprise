@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 730 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_*)
+// 762 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -738,6 +738,38 @@ const requiredTables = [
     "dwe_failed_executions",
     "dwe_workflow_failures",
     "dwe_audit_logs",
+    "dde_document_hubs",
+    "dde_document_types",
+    "dde_document_categories",
+    "dde_document_templates",
+    "dde_document_versions",
+    "dde_template_headers",
+    "dde_template_footers",
+    "dde_template_sections",
+    "dde_template_variables",
+    "dde_pdf_generations",
+    "dde_html_generations",
+    "dde_export_jobs",
+    "dde_batch_generations",
+    "dde_electronic_signatures",
+    "dde_approval_signatures",
+    "dde_signature_verifications",
+    "dde_signature_audit_entries",
+    "dde_version_histories",
+    "dde_retention_policies",
+    "dde_archive_records",
+    "dde_sharing_policies",
+    "dde_email_deliveries",
+    "dde_download_deliveries",
+    "dde_webhook_deliveries",
+    "dde_generation_analytics",
+    "dde_delivery_analytics",
+    "dde_storage_analytics",
+    "dde_document_metrics",
+    "dde_document_health",
+    "dde_pending_signatures",
+    "dde_document_failures",
+    "dde_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
