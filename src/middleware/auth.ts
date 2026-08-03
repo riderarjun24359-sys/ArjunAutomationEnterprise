@@ -24,6 +24,7 @@ const protectedRoutes = [
     ROUTES.solutionArchitect,
     ROUTES.developmentFactory,
     ROUTES.qaEngineer,
+    ROUTES.devopsDeployment,
 ];
 
 const authRoutes = [

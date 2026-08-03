@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T00:53:01.254Z
+-- Generated: 2026-08-03T01:09:12.987Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (19):
+--   Migrations (20):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -25,7 +25,8 @@
 --     - 202608020017_enterprise_solution_architect.sql
 --     - 202608020018_enterprise_development_factory.sql
 --     - 202608020019_enterprise_ai_qa_engineer.sql
---   Seeds (19):
+--     - 202608020020_enterprise_ai_devops_deployment.sql
+--   Seeds (20):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -45,9 +46,10 @@
 --     - 017_enterprise_solution_architect_seed.sql
 --     - 018_enterprise_development_factory_seed.sql
 --     - 019_enterprise_ai_qa_engineer_seed.sql
+--     - 020_enterprise_ai_devops_deployment_seed.sql
 --
--- Includes through Sprint 26:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer
+-- Includes through Sprint 27:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -5516,6 +5518,409 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020020_enterprise_ai_devops_deployment.sql
+-- =============================================================================
+-- Sprint 27: AI DevOps & Deployment Engineer
+
+create table if not exists public.dd_engagements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  engagement_key text not null,
+  ba_engagement_id uuid references public.ba_engagements(id) on delete set null,
+  sa_engagement_id uuid references public.sa_engagements(id) on delete set null,
+  df_engagement_id uuid references public.df_engagements(id) on delete set null,
+  qa_engagement_id uuid references public.qa_engagements(id) on delete set null,
+  brd_id uuid references public.ba_brds(id) on delete set null,
+  frs_id uuid references public.ba_frs_documents(id) on delete set null,
+  solution_architecture_id uuid references public.sa_solution_architectures(id) on delete set null,
+  work_package_id uuid references public.df_work_packages(id) on delete set null,
+  qa_release_readiness_id uuid references public.qa_release_readiness(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  project_id uuid references public.projects(id) on delete set null,
+  agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
+  session_id uuid references public.ai_sessions(id) on delete set null,
+  knowledge_context_id uuid references public.knowledge_ai_contexts(id) on delete set null,
+  pipeline_stage text not null default 'devops_deployment',
+  status text not null default 'active',
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_key)
+);
+
+create table if not exists public.dd_cicd_pipelines (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  pipeline_key text not null,
+  name text not null,
+  platform text not null default 'github_actions',
+  stages jsonb not null default '[]'::jsonb,
+  triggers jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, pipeline_key)
+);
+
+create table if not exists public.dd_environments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  environment_key text not null,
+  name text not null,
+  environment_type text not null default 'staging',
+  config jsonb not null default '{}'::jsonb,
+  variables jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, environment_key)
+);
+
+create table if not exists public.dd_infrastructure_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  template_key text not null,
+  name text not null,
+  provider text not null default 'aws',
+  template_type text not null default 'terraform',
+  resources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, template_key)
+);
+
+create table if not exists public.dd_docker_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  config_key text not null,
+  name text not null,
+  base_image text not null default '',
+  dockerfile_content text not null default '',
+  compose_services jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, config_key)
+);
+
+create table if not exists public.dd_kubernetes_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  namespace text not null default 'default',
+  manifests jsonb not null default '[]'::jsonb,
+  resource_limits jsonb not null default '{}'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.dd_release_orchestrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  orchestration_key text not null,
+  name text not null,
+  release_steps jsonb not null default '[]'::jsonb,
+  dependencies jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, orchestration_key)
+);
+
+create table if not exists public.dd_rollback_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  rollback_triggers jsonb not null default '[]'::jsonb,
+  rollback_steps jsonb not null default '[]'::jsonb,
+  recovery_time_minutes integer not null default 15,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.dd_blue_green_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  blue_environment text not null default '',
+  green_environment text not null default '',
+  switch_criteria jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.dd_canary_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  canary_percentage numeric(5, 2) not null default 10,
+  promotion_criteria jsonb not null default '[]'::jsonb,
+  rollback_thresholds jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.dd_monitoring_integrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  integration_key text not null,
+  name text not null,
+  provider text not null default 'datadog',
+  metrics jsonb not null default '[]'::jsonb,
+  alerts jsonb not null default '[]'::jsonb,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, integration_key)
+);
+
+create table if not exists public.dd_logging_integrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  integration_key text not null,
+  name text not null,
+  provider text not null default 'cloudwatch',
+  log_sources jsonb not null default '[]'::jsonb,
+  retention_days integer not null default 30,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, integration_key)
+);
+
+create table if not exists public.dd_health_checks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  check_key text not null,
+  name text not null,
+  endpoint text not null default '',
+  check_interval_seconds integer not null default 60,
+  thresholds jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, check_key)
+);
+
+create table if not exists public.dd_backup_verifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  verification_key text not null,
+  name text not null,
+  backup_targets jsonb not null default '[]'::jsonb,
+  verification_results text not null default '',
+  last_verified_at timestamptz,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, verification_key)
+);
+
+create table if not exists public.dd_disaster_recovery_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  plan_key text not null,
+  name text not null,
+  rto_minutes integer not null default 60,
+  rpo_minutes integer not null default 15,
+  recovery_steps jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, plan_key)
+);
+
+create table if not exists public.dd_cost_estimates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  estimate_key text not null,
+  name text not null,
+  monthly_cost_usd numeric(12, 2) not null default 0,
+  cost_breakdown jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, estimate_key)
+);
+
+create table if not exists public.dd_deployment_approvals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  approval_key text not null,
+  title text not null,
+  approver_role text not null default 'release_manager',
+  approval_criteria jsonb not null default '[]'::jsonb,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, approval_key)
+);
+
+create table if not exists public.dd_release_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
+  version_key text not null,
+  version_number text not null,
+  release_notes text not null default '',
+  changelog jsonb not null default '[]'::jsonb,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, engagement_id, version_key)
+);
+
+create table if not exists public.dd_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_dd_engagements_org on public.dd_engagements(organization_id);
+create index if not exists idx_dd_cicd_pipelines_org on public.dd_cicd_pipelines(organization_id);
+create index if not exists idx_dd_environments_org on public.dd_environments(organization_id);
+create index if not exists idx_dd_infrastructure_templates_org on public.dd_infrastructure_templates(organization_id);
+create index if not exists idx_dd_docker_configs_org on public.dd_docker_configs(organization_id);
+create index if not exists idx_dd_kubernetes_plans_org on public.dd_kubernetes_plans(organization_id);
+create index if not exists idx_dd_release_orchestrations_org on public.dd_release_orchestrations(organization_id);
+create index if not exists idx_dd_rollback_plans_org on public.dd_rollback_plans(organization_id);
+create index if not exists idx_dd_blue_green_plans_org on public.dd_blue_green_plans(organization_id);
+create index if not exists idx_dd_canary_plans_org on public.dd_canary_plans(organization_id);
+create index if not exists idx_dd_monitoring_integrations_org on public.dd_monitoring_integrations(organization_id);
+create index if not exists idx_dd_logging_integrations_org on public.dd_logging_integrations(organization_id);
+create index if not exists idx_dd_health_checks_org on public.dd_health_checks(organization_id);
+create index if not exists idx_dd_backup_verifications_org on public.dd_backup_verifications(organization_id);
+create index if not exists idx_dd_disaster_recovery_plans_org on public.dd_disaster_recovery_plans(organization_id);
+create index if not exists idx_dd_cost_estimates_org on public.dd_cost_estimates(organization_id);
+create index if not exists idx_dd_deployment_approvals_org on public.dd_deployment_approvals(organization_id);
+create index if not exists idx_dd_release_versions_org on public.dd_release_versions(organization_id);
+create index if not exists idx_dd_audit_logs_org on public.dd_audit_logs(organization_id);
+
+drop trigger if exists trg_dd_engagements_updated_at on public.dd_engagements;
+create trigger trg_dd_engagements_updated_at before update on public.dd_engagements for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_cicd_pipelines_updated_at on public.dd_cicd_pipelines;
+create trigger trg_dd_cicd_pipelines_updated_at before update on public.dd_cicd_pipelines for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_environments_updated_at on public.dd_environments;
+create trigger trg_dd_environments_updated_at before update on public.dd_environments for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_infrastructure_templates_updated_at on public.dd_infrastructure_templates;
+create trigger trg_dd_infrastructure_templates_updated_at before update on public.dd_infrastructure_templates for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_docker_configs_updated_at on public.dd_docker_configs;
+create trigger trg_dd_docker_configs_updated_at before update on public.dd_docker_configs for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_kubernetes_plans_updated_at on public.dd_kubernetes_plans;
+create trigger trg_dd_kubernetes_plans_updated_at before update on public.dd_kubernetes_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_release_orchestrations_updated_at on public.dd_release_orchestrations;
+create trigger trg_dd_release_orchestrations_updated_at before update on public.dd_release_orchestrations for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_rollback_plans_updated_at on public.dd_rollback_plans;
+create trigger trg_dd_rollback_plans_updated_at before update on public.dd_rollback_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_blue_green_plans_updated_at on public.dd_blue_green_plans;
+create trigger trg_dd_blue_green_plans_updated_at before update on public.dd_blue_green_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_canary_plans_updated_at on public.dd_canary_plans;
+create trigger trg_dd_canary_plans_updated_at before update on public.dd_canary_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_monitoring_integrations_updated_at on public.dd_monitoring_integrations;
+create trigger trg_dd_monitoring_integrations_updated_at before update on public.dd_monitoring_integrations for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_logging_integrations_updated_at on public.dd_logging_integrations;
+create trigger trg_dd_logging_integrations_updated_at before update on public.dd_logging_integrations for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_health_checks_updated_at on public.dd_health_checks;
+create trigger trg_dd_health_checks_updated_at before update on public.dd_health_checks for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_backup_verifications_updated_at on public.dd_backup_verifications;
+create trigger trg_dd_backup_verifications_updated_at before update on public.dd_backup_verifications for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_disaster_recovery_plans_updated_at on public.dd_disaster_recovery_plans;
+create trigger trg_dd_disaster_recovery_plans_updated_at before update on public.dd_disaster_recovery_plans for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_cost_estimates_updated_at on public.dd_cost_estimates;
+create trigger trg_dd_cost_estimates_updated_at before update on public.dd_cost_estimates for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_deployment_approvals_updated_at on public.dd_deployment_approvals;
+create trigger trg_dd_deployment_approvals_updated_at before update on public.dd_deployment_approvals for each row execute function public.set_updated_at();
+drop trigger if exists trg_dd_release_versions_updated_at on public.dd_release_versions;
+create trigger trg_dd_release_versions_updated_at before update on public.dd_release_versions for each row execute function public.set_updated_at();
+
+alter table public.dd_engagements enable row level security;
+alter table public.dd_cicd_pipelines enable row level security;
+alter table public.dd_environments enable row level security;
+alter table public.dd_infrastructure_templates enable row level security;
+alter table public.dd_docker_configs enable row level security;
+alter table public.dd_kubernetes_plans enable row level security;
+alter table public.dd_release_orchestrations enable row level security;
+alter table public.dd_rollback_plans enable row level security;
+alter table public.dd_blue_green_plans enable row level security;
+alter table public.dd_canary_plans enable row level security;
+alter table public.dd_monitoring_integrations enable row level security;
+alter table public.dd_logging_integrations enable row level security;
+alter table public.dd_health_checks enable row level security;
+alter table public.dd_backup_verifications enable row level security;
+alter table public.dd_disaster_recovery_plans enable row level security;
+alter table public.dd_cost_estimates enable row level security;
+alter table public.dd_deployment_approvals enable row level security;
+alter table public.dd_release_versions enable row level security;
+alter table public.dd_audit_logs enable row level security;
+
+do $$
+declare
+  tbl text;
+begin
+  foreach tbl in array array[
+    'dd_engagements', 'dd_cicd_pipelines', 'dd_environments', 'dd_infrastructure_templates',
+    'dd_docker_configs', 'dd_kubernetes_plans', 'dd_release_orchestrations', 'dd_rollback_plans',
+    'dd_blue_green_plans', 'dd_canary_plans', 'dd_monitoring_integrations', 'dd_logging_integrations',
+    'dd_health_checks', 'dd_backup_verifications', 'dd_disaster_recovery_plans', 'dd_cost_estimates',
+    'dd_deployment_approvals', 'dd_release_versions', 'dd_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('dd.view', 'View AI DevOps & Deployment engagements and artifacts', 'devops_deployment'),
+  ('dd.manage', 'Create and edit DevOps deployment deliverables', 'devops_deployment'),
+  ('dd.approve', 'Review and approve deployment outputs', 'devops_deployment'),
+  ('dd.admin', 'Administer DevOps deployment pipeline and permissions', 'devops_deployment')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -7128,6 +7533,120 @@ insert into public.qa_audit_logs (id, organization_id, entity_type, entity_id, a
 values
   ('fa00000c-fa00-fa00-fa00-fa000000000c', '11111111-1111-1111-1111-111111111111', 'engagement', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f10101', 'create', 'Northstar Platform QA engagement created from DF handoff'),
   ('fa00000c-fa00-fa00-fa00-fa000000000d', '11111111-1111-1111-1111-111111111111', 'test_strategy', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f20101', 'generate', 'CRM-Project sync test strategy generated from BA/SA/DF outputs')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 020_enterprise_ai_devops_deployment_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a306', '11111111-1111-1111-1111-111111111111', 'DevOps Agent', 'devops', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["cicd","deployment","infrastructure"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a506', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a306', 'northstar-dd-001', 'devops_deployment', 'project', 'ffffffff-ffff-ffff-ffff-ffffffffff01', '{"objective":"devops deployment orchestration"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.knowledge_ai_contexts (id, organization_id, context_key, agent_id, session_id, entry_id, context_payload, status)
+values
+  ('cb000001-cb00-cb00-cb00-cb0000000005', '11111111-1111-1111-1111-111111111111', 'northstar-dd-context', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a306', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a506', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c10101', '{"includes":["client_memory","project_memory","ba_outputs","sa_outputs","df_outputs","qa_outputs"]}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.dd_engagements (id, organization_id, title, engagement_key, ba_engagement_id, sa_engagement_id, df_engagement_id, qa_engagement_id, brd_id, frs_id, solution_architecture_id, work_package_id, qa_release_readiness_id, client_id, project_id, agent_id, session_id, knowledge_context_id, pipeline_stage, status, summary)
+values
+  ('dd01dd01-dd01-dd01-dd01-dd01dd010101', '11111111-1111-1111-1111-111111111111', 'Northstar Platform DevOps Deployment', 'northstar-expansion-dd-001', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b10101', 'd1d1d1d1-d1d1-d1d1-d1d1-d1d1d1d10101', 'e1e1e1e1-e1e1-e1e1-e1e1-e1e1e1e10101', 'f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f10101', 'b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b30101', 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b40101', 'd2d2d2d2-d2d2-d2d2-d2d2-d2d2d2d20101', 'e2e2e2e2-e2e2-e2e2-e2e2-e2e2e2e20101', 'fa00000a-fa00-fa00-fa00-fa000000000a', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeee01', 'ffffffff-ffff-ffff-ffff-ffffffffff01', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a306', 'a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a506', 'cb000001-cb00-cb00-cb00-cb0000000005', 'devops_deployment', 'active', 'DevOps deployment orchestration for Northstar platform expansion from QA release readiness handoff')
+on conflict (id) do nothing;
+
+insert into public.dd_cicd_pipelines (id, organization_id, engagement_id, pipeline_key, name, platform, stages, triggers, status)
+values
+  ('dd02dd02-dd02-dd02-dd02-dd02dd020101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'pipeline-crm-sync', 'CRM-Project Sync CI/CD Pipeline', 'github_actions', '["build","test","staging_deploy","production_deploy"]'::jsonb, '["push:main","pull_request"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_environments (id, organization_id, engagement_id, environment_key, name, environment_type, config, variables, status)
+values
+  ('dd03dd03-dd03-dd03-dd03-dd03dd030101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'env-staging', 'Northstar Staging', 'staging', '{"region":"us-east-1","replicas":2}'::jsonb, '["SUPABASE_URL","SUPABASE_ANON_KEY"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.dd_infrastructure_templates (id, organization_id, engagement_id, template_key, name, provider, template_type, resources, status)
+values
+  ('dd04dd04-dd04-dd04-dd04-dd04dd040101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'infra-crm-sync', 'CRM Sync Infrastructure', 'aws', 'terraform', '["vpc","ecs_cluster","rds","elasticache"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_docker_configs (id, organization_id, engagement_id, config_key, name, base_image, dockerfile_content, compose_services, status)
+values
+  ('dd05dd05-dd05-dd05-dd05-dd05dd050101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'docker-sync-api', 'Sync API Container', 'node:20-alpine', 'FROM node:20-alpine\nWORKDIR /app\nCOPY . .\nRUN npm ci --production\nCMD ["node","server.js"]', '["sync-api","sync-worker"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_kubernetes_plans (id, organization_id, engagement_id, plan_key, name, namespace, manifests, resource_limits, status)
+values
+  ('dd06dd06-dd06-dd06-dd06-dd06dd060101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'k8s-sync', 'Sync Service Kubernetes Plan', 'northstar-sync', '["Deployment/sync-api","Service/sync-api","Ingress/sync-api"]'::jsonb, '{"cpu":"500m","memory":"512Mi"}'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_release_orchestrations (id, organization_id, engagement_id, orchestration_key, name, release_steps, dependencies, status)
+values
+  ('dd07dd07-dd07-dd07-dd07-dd07dd070101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'release-phase1', 'Phase 1 Release Orchestration', '["pre_deploy_checks","database_migration","deploy_staging","smoke_tests","deploy_production"]'::jsonb, '["qa_release_readiness","deployment_approval"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_rollback_plans (id, organization_id, engagement_id, plan_key, name, rollback_triggers, rollback_steps, recovery_time_minutes, status)
+values
+  ('dd08dd08-dd08-dd08-dd08-dd08dd080101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'rollback-sync', 'Sync Service Rollback Plan', '["error_rate_above_5pct","health_check_failure","manual_trigger"]'::jsonb, '["scale_down_new","restore_previous_image","verify_health"]'::jsonb, 15, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_blue_green_plans (id, organization_id, engagement_id, plan_key, name, blue_environment, green_environment, switch_criteria, status)
+values
+  ('dd09dd09-dd09-dd09-dd09-dd09dd090101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'bg-sync-api', 'Sync API Blue-Green Plan', 'northstar-sync-blue', 'northstar-sync-green', '["all_health_checks_pass","error_rate_below_1pct","manual_approval"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_canary_plans (id, organization_id, engagement_id, plan_key, name, canary_percentage, promotion_criteria, rollback_thresholds, status)
+values
+  ('dd0add0a-dd0a-dd0a-dd0a-dd0add0a0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'canary-sync', 'Sync API Canary Plan', 10.00, '["p95_latency_under_200ms","error_rate_under_0.5pct"]'::jsonb, '["error_rate_above_2pct","p95_latency_above_500ms"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_monitoring_integrations (id, organization_id, engagement_id, integration_key, name, provider, metrics, alerts, status)
+values
+  ('dd0bdd0b-dd0b-dd0b-dd0b-dd0bdd0b0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'monitor-sync', 'Sync Service Monitoring', 'datadog', '["sync.api.latency","sync.api.errors","sync.queue.depth"]'::jsonb, '["high_error_rate","latency_sla_breach"]'::jsonb, 'pending')
+on conflict (id) do nothing;
+
+insert into public.dd_logging_integrations (id, organization_id, engagement_id, integration_key, name, provider, log_sources, retention_days, status)
+values
+  ('dd0cdd0c-dd0c-dd0c-dd0c-dd0cdd0c0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'logs-sync', 'Sync Service Logging', 'cloudwatch', '["sync-api","sync-worker","ingress"]'::jsonb, 30, 'pending')
+on conflict (id) do nothing;
+
+insert into public.dd_health_checks (id, organization_id, engagement_id, check_key, name, endpoint, check_interval_seconds, thresholds, status)
+values
+  ('dd0ddd0d-dd0d-dd0d-dd0d-dd0ddd0d0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'health-sync-api', 'Sync API Health Check', '/api/sync/health', 60, '{"max_latency_ms":200,"min_success_rate":99.5}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.dd_backup_verifications (id, organization_id, engagement_id, verification_key, name, backup_targets, verification_results, last_verified_at, status)
+values
+  ('dd0edd0e-dd0e-dd0e-dd0e-dd0edd0e0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'backup-db', 'Database Backup Verification', '["supabase_postgres","sync_events_table"]'::jsonb, 'Last backup restore test succeeded in staging', '2026-08-01 12:00:00+00', 'passed')
+on conflict (id) do nothing;
+
+insert into public.dd_disaster_recovery_plans (id, organization_id, engagement_id, plan_key, name, rto_minutes, rpo_minutes, recovery_steps, status)
+values
+  ('dd0fdd0f-dd0f-dd0f-dd0f-dd0fdd0f0101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'dr-northstar', 'Northstar Disaster Recovery Plan', 60, 15, '["failover_dns","restore_database","redeploy_services","verify_integrations"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_cost_estimates (id, organization_id, engagement_id, estimate_key, name, monthly_cost_usd, cost_breakdown, status)
+values
+  ('dd10dd10-dd10-dd10-dd10-dd10dd100101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'cost-phase1', 'Phase 1 Infrastructure Cost', 2450.00, '[{"service":"ECS","cost_usd":800},{"service":"RDS","cost_usd":650},{"service":"CloudWatch","cost_usd":200},{"service":"DataTransfer","cost_usd":800}]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_deployment_approvals (id, organization_id, engagement_id, approval_key, title, approver_role, approval_criteria, status)
+values
+  ('dd11dd11-dd11-dd11-dd11-dd11dd110101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'approval-phase1', 'Phase 1 Production Deployment Approval', 'release_manager', '["QA release readiness passed","Rollback plan verified","Monitoring configured"]'::jsonb, 'pending')
+on conflict (id) do nothing;
+
+insert into public.dd_release_versions (id, organization_id, engagement_id, version_key, version_number, release_notes, changelog, status)
+values
+  ('dd12dd12-dd12-dd12-dd12-dd12dd120101', '11111111-1111-1111-1111-111111111111', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'version-1.0.0', '1.0.0', 'Initial CRM-Project sync release with DevOps pipeline', '["CRM sync API","Sync status panel","RLS policies"]'::jsonb, 'draft')
+on conflict (id) do nothing;
+
+insert into public.dd_audit_logs (id, organization_id, entity_type, entity_id, action, summary)
+values
+  ('da000001-da00-da00-da00-da0000000001', '11111111-1111-1111-1111-111111111111', 'engagement', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'create', 'Northstar Platform DevOps engagement created from QA handoff'),
+  ('da000002-da00-da00-da00-da0000000002', '11111111-1111-1111-1111-111111111111', 'cicd_pipeline', 'dd02dd02-dd02-dd02-dd02-dd02dd020101', 'generate', 'CRM-Project sync CI/CD pipeline generated from QA release readiness')
 on conflict (id) do nothing;
 
 -- =============================================================================

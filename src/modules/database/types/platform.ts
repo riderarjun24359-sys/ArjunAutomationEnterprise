@@ -3043,3 +3043,275 @@ export interface DbQaAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbDdEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    ba_engagement_id?: string | null;
+    sa_engagement_id?: string | null;
+    df_engagement_id?: string | null;
+    qa_engagement_id?: string | null;
+    brd_id?: string | null;
+    frs_id?: string | null;
+    solution_architecture_id?: string | null;
+    work_package_id?: string | null;
+    qa_release_readiness_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdCicdPipeline {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    pipeline_key: string;
+    name: string;
+    platform: string;
+    stages: unknown[];
+    triggers: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdEnvironment {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    environment_key: string;
+    name: string;
+    environment_type: string;
+    config: Record<string, unknown>;
+    variables: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdInfrastructureTemplate {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    template_key: string;
+    name: string;
+    provider: string;
+    template_type: string;
+    resources: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdDockerConfig {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    config_key: string;
+    name: string;
+    base_image: string;
+    dockerfile_content: string;
+    compose_services: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdKubernetesPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    namespace: string;
+    manifests: unknown[];
+    resource_limits: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdReleaseOrchestration {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    orchestration_key: string;
+    name: string;
+    release_steps: unknown[];
+    dependencies: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdRollbackPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    rollback_triggers: unknown[];
+    rollback_steps: unknown[];
+    recovery_time_minutes: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdBlueGreenPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    blue_environment: string;
+    green_environment: string;
+    switch_criteria: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdCanaryPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    canary_percentage: number;
+    promotion_criteria: unknown[];
+    rollback_thresholds: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdMonitoringIntegration {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    integration_key: string;
+    name: string;
+    provider: string;
+    metrics: unknown[];
+    alerts: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdLoggingIntegration {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    integration_key: string;
+    name: string;
+    provider: string;
+    log_sources: unknown[];
+    retention_days: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdHealthCheck {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    check_key: string;
+    name: string;
+    endpoint: string;
+    check_interval_seconds: number;
+    thresholds: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdBackupVerification {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    verification_key: string;
+    name: string;
+    backup_targets: unknown[];
+    verification_results: string;
+    last_verified_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdDisasterRecoveryPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    rto_minutes: number;
+    rpo_minutes: number;
+    recovery_steps: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdCostEstimate {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    estimate_key: string;
+    name: string;
+    monthly_cost_usd: number;
+    cost_breakdown: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdDeploymentApproval {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    approval_key: string;
+    title: string;
+    approver_role: string;
+    approval_criteria: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdReleaseVersion {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    version_key: string;
+    version_number: string;
+    release_notes: string;
+    changelog: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbDdAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

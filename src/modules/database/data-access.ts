@@ -260,6 +260,27 @@ import {
     QaUiValidationRepository,
     QaUnitTestPlanRepository,
 } from "@/src/modules/database/repositories/qa-engineer-repositories";
+import {
+    DdAuditLogRepository,
+    DdBackupVerificationRepository,
+    DdBlueGreenPlanRepository,
+    DdCanaryPlanRepository,
+    DdCicdPipelineRepository,
+    DdCostEstimateRepository,
+    DdDeploymentApprovalRepository,
+    DdDisasterRecoveryPlanRepository,
+    DdDockerConfigRepository,
+    DdEngagementRepository,
+    DdEnvironmentRepository,
+    DdHealthCheckRepository,
+    DdInfrastructureTemplateRepository,
+    DdKubernetesPlanRepository,
+    DdLoggingIntegrationRepository,
+    DdMonitoringIntegrationRepository,
+    DdReleaseOrchestrationRepository,
+    DdReleaseVersionRepository,
+    DdRollbackPlanRepository,
+} from "@/src/modules/database/repositories/devops-deployment-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -494,6 +515,25 @@ export class DatabaseAccessLayer {
     readonly qaReleaseReadiness: QaReleaseReadinessRepository;
     readonly qaQualityScores: QaQualityScoreRepository;
     readonly qaAuditLogs: QaAuditLogRepository;
+    readonly ddEngagements: DdEngagementRepository;
+    readonly ddCicdPipelines: DdCicdPipelineRepository;
+    readonly ddEnvironments: DdEnvironmentRepository;
+    readonly ddInfrastructureTemplates: DdInfrastructureTemplateRepository;
+    readonly ddDockerConfigs: DdDockerConfigRepository;
+    readonly ddKubernetesPlans: DdKubernetesPlanRepository;
+    readonly ddReleaseOrchestrations: DdReleaseOrchestrationRepository;
+    readonly ddRollbackPlans: DdRollbackPlanRepository;
+    readonly ddBlueGreenPlans: DdBlueGreenPlanRepository;
+    readonly ddCanaryPlans: DdCanaryPlanRepository;
+    readonly ddMonitoringIntegrations: DdMonitoringIntegrationRepository;
+    readonly ddLoggingIntegrations: DdLoggingIntegrationRepository;
+    readonly ddHealthChecks: DdHealthCheckRepository;
+    readonly ddBackupVerifications: DdBackupVerificationRepository;
+    readonly ddDisasterRecoveryPlans: DdDisasterRecoveryPlanRepository;
+    readonly ddCostEstimates: DdCostEstimateRepository;
+    readonly ddDeploymentApprovals: DdDeploymentApprovalRepository;
+    readonly ddReleaseVersions: DdReleaseVersionRepository;
+    readonly ddAuditLogs: DdAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -728,6 +768,25 @@ export class DatabaseAccessLayer {
         this.qaReleaseReadiness = new QaReleaseReadinessRepository();
         this.qaQualityScores = new QaQualityScoreRepository();
         this.qaAuditLogs = new QaAuditLogRepository();
+        this.ddEngagements = new DdEngagementRepository();
+        this.ddCicdPipelines = new DdCicdPipelineRepository();
+        this.ddEnvironments = new DdEnvironmentRepository();
+        this.ddInfrastructureTemplates = new DdInfrastructureTemplateRepository();
+        this.ddDockerConfigs = new DdDockerConfigRepository();
+        this.ddKubernetesPlans = new DdKubernetesPlanRepository();
+        this.ddReleaseOrchestrations = new DdReleaseOrchestrationRepository();
+        this.ddRollbackPlans = new DdRollbackPlanRepository();
+        this.ddBlueGreenPlans = new DdBlueGreenPlanRepository();
+        this.ddCanaryPlans = new DdCanaryPlanRepository();
+        this.ddMonitoringIntegrations = new DdMonitoringIntegrationRepository();
+        this.ddLoggingIntegrations = new DdLoggingIntegrationRepository();
+        this.ddHealthChecks = new DdHealthCheckRepository();
+        this.ddBackupVerifications = new DdBackupVerificationRepository();
+        this.ddDisasterRecoveryPlans = new DdDisasterRecoveryPlanRepository();
+        this.ddCostEstimates = new DdCostEstimateRepository();
+        this.ddDeploymentApprovals = new DdDeploymentApprovalRepository();
+        this.ddReleaseVersions = new DdReleaseVersionRepository();
+        this.ddAuditLogs = new DdAuditLogRepository();
     }
 }
 

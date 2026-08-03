@@ -57,6 +57,7 @@ const requiredTables = [
     "sa_engagements",
     "df_engagements",
     "qa_engagements",
+    "dd_engagements",
 ];
 
 const supabase = createClient(url, anonKey);
