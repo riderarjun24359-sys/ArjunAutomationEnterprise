@@ -923,6 +923,41 @@ import {
     HspHospitalFailureRepository,
     HspAuditLogRepository,
 } from "@/src/modules/database/repositories/hospital-repositories";
+import {
+    RtlRetailHubRepository,
+    RtlRetailBrandRepository,
+    RtlStoreRepository,
+    RtlCashRegisterRepository,
+    RtlStoreDepartmentRepository,
+    RtlProductRepository,
+    RtlProductCategoryRepository,
+    RtlProductVariantRepository,
+    RtlPromotionRepository,
+    RtlSalesOrderRepository,
+    RtlPosTransactionRepository,
+    RtlReturnsExchangeRepository,
+    RtlShiftClosingRepository,
+    RtlWarehouseRepository,
+    RtlStockLevelRepository,
+    RtlPurchaseOrderRepository,
+    RtlSupplierRepository,
+    RtlCustomerProfileRepository,
+    RtlLoyaltyProgramRepository,
+    RtlRewardPointRepository,
+    RtlCampaignRepository,
+    RtlDailyClosingRepository,
+    RtlBranchPerformanceRepository,
+    RtlCommissionRecordRepository,
+    RtlSalesAnalyticsRepository,
+    RtlInventoryAnalyticsRepository,
+    RtlProfitabilityAnalyticsRepository,
+    RtlRetailMetricRepository,
+    RtlRetailHealthRepository,
+    RtlExecutiveKpiRepository,
+    RtlRetailFailureRepository,
+    RtlAuditLogRepository,
+} from "@/src/modules/database/repositories/retail-repositories";
+
 
 
 
@@ -1786,6 +1821,38 @@ export class DatabaseAccessLayer {
     readonly hspExecutiveKpis: HspExecutiveKpiRepository;
     readonly hspHospitalFailures: HspHospitalFailureRepository;
     readonly hspAuditLogs: HspAuditLogRepository;
+    readonly rtlRetailHubs: RtlRetailHubRepository;
+    readonly rtlRetailBrands: RtlRetailBrandRepository;
+    readonly rtlStores: RtlStoreRepository;
+    readonly rtlCashRegisters: RtlCashRegisterRepository;
+    readonly rtlStoreDepartments: RtlStoreDepartmentRepository;
+    readonly rtlProducts: RtlProductRepository;
+    readonly rtlProductCategories: RtlProductCategoryRepository;
+    readonly rtlProductVariants: RtlProductVariantRepository;
+    readonly rtlPromotions: RtlPromotionRepository;
+    readonly rtlSalesOrders: RtlSalesOrderRepository;
+    readonly rtlPosTransactions: RtlPosTransactionRepository;
+    readonly rtlReturnsExchanges: RtlReturnsExchangeRepository;
+    readonly rtlShiftClosings: RtlShiftClosingRepository;
+    readonly rtlWarehouses: RtlWarehouseRepository;
+    readonly rtlStockLevels: RtlStockLevelRepository;
+    readonly rtlPurchaseOrders: RtlPurchaseOrderRepository;
+    readonly rtlSuppliers: RtlSupplierRepository;
+    readonly rtlCustomerProfiles: RtlCustomerProfileRepository;
+    readonly rtlLoyaltyPrograms: RtlLoyaltyProgramRepository;
+    readonly rtlRewardPoints: RtlRewardPointRepository;
+    readonly rtlCampaigns: RtlCampaignRepository;
+    readonly rtlDailyClosings: RtlDailyClosingRepository;
+    readonly rtlBranchPerformance: RtlBranchPerformanceRepository;
+    readonly rtlCommissionRecords: RtlCommissionRecordRepository;
+    readonly rtlSalesAnalytics: RtlSalesAnalyticsRepository;
+    readonly rtlInventoryAnalytics: RtlInventoryAnalyticsRepository;
+    readonly rtlProfitabilityAnalytics: RtlProfitabilityAnalyticsRepository;
+    readonly rtlRetailMetrics: RtlRetailMetricRepository;
+    readonly rtlRetailHealth: RtlRetailHealthRepository;
+    readonly rtlExecutiveKpis: RtlExecutiveKpiRepository;
+    readonly rtlRetailFailures: RtlRetailFailureRepository;
+    readonly rtlAuditLogs: RtlAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2641,6 +2708,38 @@ export class DatabaseAccessLayer {
         this.hspExecutiveKpis = new HspExecutiveKpiRepository();
         this.hspHospitalFailures = new HspHospitalFailureRepository();
         this.hspAuditLogs = new HspAuditLogRepository();
+        this.rtlRetailHubs = new RtlRetailHubRepository();
+        this.rtlRetailBrands = new RtlRetailBrandRepository();
+        this.rtlStores = new RtlStoreRepository();
+        this.rtlCashRegisters = new RtlCashRegisterRepository();
+        this.rtlStoreDepartments = new RtlStoreDepartmentRepository();
+        this.rtlProducts = new RtlProductRepository();
+        this.rtlProductCategories = new RtlProductCategoryRepository();
+        this.rtlProductVariants = new RtlProductVariantRepository();
+        this.rtlPromotions = new RtlPromotionRepository();
+        this.rtlSalesOrders = new RtlSalesOrderRepository();
+        this.rtlPosTransactions = new RtlPosTransactionRepository();
+        this.rtlReturnsExchanges = new RtlReturnsExchangeRepository();
+        this.rtlShiftClosings = new RtlShiftClosingRepository();
+        this.rtlWarehouses = new RtlWarehouseRepository();
+        this.rtlStockLevels = new RtlStockLevelRepository();
+        this.rtlPurchaseOrders = new RtlPurchaseOrderRepository();
+        this.rtlSuppliers = new RtlSupplierRepository();
+        this.rtlCustomerProfiles = new RtlCustomerProfileRepository();
+        this.rtlLoyaltyPrograms = new RtlLoyaltyProgramRepository();
+        this.rtlRewardPoints = new RtlRewardPointRepository();
+        this.rtlCampaigns = new RtlCampaignRepository();
+        this.rtlDailyClosings = new RtlDailyClosingRepository();
+        this.rtlBranchPerformance = new RtlBranchPerformanceRepository();
+        this.rtlCommissionRecords = new RtlCommissionRecordRepository();
+        this.rtlSalesAnalytics = new RtlSalesAnalyticsRepository();
+        this.rtlInventoryAnalytics = new RtlInventoryAnalyticsRepository();
+        this.rtlProfitabilityAnalytics = new RtlProfitabilityAnalyticsRepository();
+        this.rtlRetailMetrics = new RtlRetailMetricRepository();
+        this.rtlRetailHealth = new RtlRetailHealthRepository();
+        this.rtlExecutiveKpis = new RtlExecutiveKpiRepository();
+        this.rtlRetailFailures = new RtlRetailFailureRepository();
+        this.rtlAuditLogs = new RtlAuditLogRepository();
     }
 }
 

@@ -11731,3 +11731,433 @@ export interface DbHspAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbRtlRetailHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    retail_code: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlRetailBrand {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    brand_key: string;
+    brand_name: string;
+    brand_type: string;
+    region: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlStore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    store_key: string;
+    store_name: string;
+    store_type: string;
+    address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlCashRegister {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    register_key: string;
+    register_name: string;
+    register_status: string;
+    terminal_id: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlStoreDepartment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    department_key: string;
+    department_name: string;
+    department_type: string;
+    floor_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlProduct {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    product_key: string;
+    product_name: string;
+    product_type: string;
+    sku: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlProductCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_type: string;
+    parent_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlProductVariant {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    variant_key: string;
+    variant_name: string;
+    variant_type: string;
+    sku_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlPromotion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    promotion_key: string;
+    promotion_name: string;
+    promotion_status: string;
+    discount_pct: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlSalesOrder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    order_key: string;
+    order_name: string;
+    order_status: string;
+    order_type: string;
+    ordered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlPosTransaction {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    transaction_key: string;
+    transaction_name: string;
+    transaction_status: string;
+    amount: number;
+    transacted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlReturnsExchange {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    return_key: string;
+    return_name: string;
+    return_status: string;
+    return_type: string;
+    returned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlShiftClosing {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    closing_key: string;
+    closing_name: string;
+    closing_status: string;
+    closed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlWarehouse {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    warehouse_key: string;
+    warehouse_name: string;
+    warehouse_type: string;
+    location: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlStockLevel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    stock_key: string;
+    stock_name: string;
+    stock_quantity: number;
+    reorder_level: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlPurchaseOrder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    order_key: string;
+    order_name: string;
+    order_status: string;
+    supplier_ref: string;
+    ordered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlSupplier {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    supplier_key: string;
+    supplier_name: string;
+    supplier_type: string;
+    contact_info: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlCustomerProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_type: string;
+    loyalty_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlLoyaltyProgram {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    program_key: string;
+    program_name: string;
+    program_type: string;
+    points_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlRewardPoint {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    points_key: string;
+    points_name: string;
+    points_balance: number;
+    earned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlCampaign {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_key: string;
+    campaign_name: string;
+    campaign_status: string;
+    start_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlDailyClosing {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    closing_key: string;
+    closing_name: string;
+    closing_amount: number;
+    closed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlBranchPerformance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    performance_key: string;
+    performance_name: string;
+    performance_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlCommissionRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    commission_key: string;
+    commission_name: string;
+    commission_amount: number;
+    earned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlSalesAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlInventoryAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlProfitabilityAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_type: string;
+    analytics_score: number;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlRetailMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    revenue_total: number;
+    profit_total: number;
+    sales_count: number;
+    inventory_value: number;
+    customer_retention_rate: number;
+    store_performance_score: number;
+    top_product_score: number;
+    overall_retail_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlRetailHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    inventory_health_status: string;
+    financial_health_status: string;
+    operational_health_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlExecutiveKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlRetailFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbRtlAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

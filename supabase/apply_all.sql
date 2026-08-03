@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T21:40:38.718Z
+-- Generated: 2026-08-03T22:03:07.760Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (40):
+--   Migrations (41):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -46,7 +46,8 @@
 --     - 202608020038_enterprise_restaurant_business_os.sql
 --     - 202608020039_enterprise_school_business_os.sql
 --     - 202608020040_enterprise_hospital_business_os.sql
---   Seeds (40):
+--     - 202608020041_enterprise_retail_business_os.sql
+--   Seeds (41):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -87,9 +88,10 @@
 --     - 038_enterprise_restaurant_business_os_seed.sql
 --     - 039_enterprise_school_business_os_seed.sql
 --     - 040_enterprise_hospital_business_os_seed.sql
+--     - 041_enterprise_retail_business_os_seed.sql
 --
--- Includes through V2 Program B Sprint 8:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System
+-- Includes through V2 Program B Sprint 9:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -18017,6 +18019,636 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020041_enterprise_retail_business_os.sql
+-- =============================================================================
+-- V2 Program B Sprint 9: Enterprise Retail Business Operating System
+
+-- RetailHub
+create table if not exists public.rtl_retail_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  retail_code text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- RetailBrand
+create table if not exists public.rtl_retail_brands (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  brand_key text not null,
+  brand_name text not null default '',
+  brand_type text not null default 'flagship',
+  region text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, brand_key)
+);
+
+-- Store
+create table if not exists public.rtl_stores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  store_key text not null,
+  store_name text not null default '',
+  store_type text not null default 'retail',
+  address text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, store_key)
+);
+
+-- CashRegister
+create table if not exists public.rtl_cash_registers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  register_key text not null,
+  register_name text not null default '',
+  register_status text not null default 'active',
+  terminal_id text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, register_key)
+);
+
+-- StoreDepartment
+create table if not exists public.rtl_store_departments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  department_key text not null,
+  department_name text not null default '',
+  department_type text not null default 'sales',
+  floor_level text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, department_key)
+);
+
+-- Product
+create table if not exists public.rtl_products (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  product_key text not null,
+  product_name text not null default '',
+  product_type text not null default 'standard',
+  sku text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, product_key)
+);
+
+-- ProductCategory
+create table if not exists public.rtl_product_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_type text not null default 'general',
+  parent_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- ProductVariant
+create table if not exists public.rtl_product_variants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  variant_key text not null,
+  variant_name text not null default '',
+  variant_type text not null default 'size',
+  sku_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, variant_key)
+);
+
+-- Promotion
+create table if not exists public.rtl_promotions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  promotion_key text not null,
+  promotion_name text not null default '',
+  promotion_status text not null default 'draft',
+  discount_pct numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, promotion_key)
+);
+
+-- SalesOrder
+create table if not exists public.rtl_sales_orders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  order_key text not null,
+  order_name text not null default '',
+  order_status text not null default 'pending',
+  order_type text not null default 'in_store',
+  ordered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, order_key)
+);
+
+-- PosTransaction
+create table if not exists public.rtl_pos_transactions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  transaction_key text not null,
+  transaction_name text not null default '',
+  transaction_status text not null default 'completed',
+  amount numeric(12, 2) not null default 0,
+  transacted_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, transaction_key)
+);
+
+-- ReturnsExchange
+create table if not exists public.rtl_returns_exchanges (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  return_key text not null,
+  return_name text not null default '',
+  return_status text not null default 'pending',
+  return_type text not null default 'return',
+  returned_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, return_key)
+);
+
+-- ShiftClosing
+create table if not exists public.rtl_shift_closings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  closing_key text not null,
+  closing_name text not null default '',
+  closing_status text not null default 'open',
+  closed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, closing_key)
+);
+
+-- Warehouse
+create table if not exists public.rtl_warehouses (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  warehouse_key text not null,
+  warehouse_name text not null default '',
+  warehouse_type text not null default 'distribution',
+  location text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, warehouse_key)
+);
+
+-- StockLevel
+create table if not exists public.rtl_stock_levels (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  stock_key text not null,
+  stock_name text not null default '',
+  stock_quantity integer not null default 0,
+  reorder_level integer not null default 10,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, stock_key)
+);
+
+-- PurchaseOrder
+create table if not exists public.rtl_purchase_orders (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  order_key text not null,
+  order_name text not null default '',
+  order_status text not null default 'pending',
+  supplier_ref text not null default '',
+  ordered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, order_key)
+);
+
+-- Supplier
+create table if not exists public.rtl_suppliers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  supplier_key text not null,
+  supplier_name text not null default '',
+  supplier_type text not null default 'vendor',
+  contact_info text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, supplier_key)
+);
+
+-- CustomerProfile
+create table if not exists public.rtl_customer_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_type text not null default 'regular',
+  loyalty_tier text not null default 'bronze',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- LoyaltyProgram
+create table if not exists public.rtl_loyalty_programs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  program_key text not null,
+  program_name text not null default '',
+  program_type text not null default 'points',
+  points_rate numeric(5, 2) not null default 1,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, program_key)
+);
+
+-- RewardPoint
+create table if not exists public.rtl_reward_points (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  points_key text not null,
+  points_name text not null default '',
+  points_balance numeric(10, 2) not null default 0,
+  earned_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, points_key)
+);
+
+-- Campaign
+create table if not exists public.rtl_campaigns (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  campaign_key text not null,
+  campaign_name text not null default '',
+  campaign_status text not null default 'draft',
+  start_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, campaign_key)
+);
+
+-- DailyClosing
+create table if not exists public.rtl_daily_closings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  closing_key text not null,
+  closing_name text not null default '',
+  closing_amount numeric(12, 2) not null default 0,
+  closed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, closing_key)
+);
+
+-- BranchPerformance
+create table if not exists public.rtl_branch_performance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  performance_key text not null,
+  performance_name text not null default '',
+  performance_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, performance_key)
+);
+
+-- CommissionRecord
+create table if not exists public.rtl_commission_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  commission_key text not null,
+  commission_name text not null default '',
+  commission_amount numeric(12, 2) not null default 0,
+  earned_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, commission_key)
+);
+
+-- SalesAnalytics
+create table if not exists public.rtl_sales_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'sales',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- InventoryAnalytics
+create table if not exists public.rtl_inventory_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'inventory',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- ProfitabilityAnalytics
+create table if not exists public.rtl_profitability_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_type text not null default 'profitability',
+  analytics_score numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- RetailMetric
+create table if not exists public.rtl_retail_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  revenue_total numeric(12, 2) not null default 0,
+  profit_total numeric(12, 2) not null default 0,
+  sales_count integer not null default 0,
+  inventory_value numeric(12, 2) not null default 0,
+  customer_retention_rate numeric(5, 2) not null default 0,
+  store_performance_score numeric(5, 2) not null default 0,
+  top_product_score numeric(5, 2) not null default 0,
+  overall_retail_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- RetailHealth
+create table if not exists public.rtl_retail_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  inventory_health_status text not null default 'healthy',
+  financial_health_status text not null default 'healthy',
+  operational_health_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveKpi
+create table if not exists public.rtl_executive_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'executive',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- RetailFailure
+create table if not exists public.rtl_retail_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'pos',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.rtl_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_rtl_retail_hubs_org on public.rtl_retail_hubs(organization_id);
+create index if not exists idx_rtl_retail_brands_org on public.rtl_retail_brands(organization_id);
+create index if not exists idx_rtl_retail_brands_hub on public.rtl_retail_brands(hub_id);
+create index if not exists idx_rtl_stores_org on public.rtl_stores(organization_id);
+create index if not exists idx_rtl_stores_hub on public.rtl_stores(hub_id);
+create index if not exists idx_rtl_cash_registers_org on public.rtl_cash_registers(organization_id);
+create index if not exists idx_rtl_cash_registers_hub on public.rtl_cash_registers(hub_id);
+create index if not exists idx_rtl_store_departments_org on public.rtl_store_departments(organization_id);
+create index if not exists idx_rtl_store_departments_hub on public.rtl_store_departments(hub_id);
+create index if not exists idx_rtl_products_org on public.rtl_products(organization_id);
+create index if not exists idx_rtl_products_hub on public.rtl_products(hub_id);
+create index if not exists idx_rtl_product_categories_org on public.rtl_product_categories(organization_id);
+create index if not exists idx_rtl_product_categories_hub on public.rtl_product_categories(hub_id);
+create index if not exists idx_rtl_product_variants_org on public.rtl_product_variants(organization_id);
+create index if not exists idx_rtl_product_variants_hub on public.rtl_product_variants(hub_id);
+create index if not exists idx_rtl_promotions_org on public.rtl_promotions(organization_id);
+create index if not exists idx_rtl_promotions_hub on public.rtl_promotions(hub_id);
+create index if not exists idx_rtl_sales_orders_org on public.rtl_sales_orders(organization_id);
+create index if not exists idx_rtl_sales_orders_hub on public.rtl_sales_orders(hub_id);
+create index if not exists idx_rtl_pos_transactions_org on public.rtl_pos_transactions(organization_id);
+create index if not exists idx_rtl_pos_transactions_hub on public.rtl_pos_transactions(hub_id);
+create index if not exists idx_rtl_returns_exchanges_org on public.rtl_returns_exchanges(organization_id);
+create index if not exists idx_rtl_returns_exchanges_hub on public.rtl_returns_exchanges(hub_id);
+create index if not exists idx_rtl_shift_closings_org on public.rtl_shift_closings(organization_id);
+create index if not exists idx_rtl_shift_closings_hub on public.rtl_shift_closings(hub_id);
+create index if not exists idx_rtl_warehouses_org on public.rtl_warehouses(organization_id);
+create index if not exists idx_rtl_warehouses_hub on public.rtl_warehouses(hub_id);
+create index if not exists idx_rtl_stock_levels_org on public.rtl_stock_levels(organization_id);
+create index if not exists idx_rtl_stock_levels_hub on public.rtl_stock_levels(hub_id);
+create index if not exists idx_rtl_purchase_orders_org on public.rtl_purchase_orders(organization_id);
+create index if not exists idx_rtl_purchase_orders_hub on public.rtl_purchase_orders(hub_id);
+create index if not exists idx_rtl_suppliers_org on public.rtl_suppliers(organization_id);
+create index if not exists idx_rtl_suppliers_hub on public.rtl_suppliers(hub_id);
+create index if not exists idx_rtl_customer_profiles_org on public.rtl_customer_profiles(organization_id);
+create index if not exists idx_rtl_customer_profiles_hub on public.rtl_customer_profiles(hub_id);
+create index if not exists idx_rtl_loyalty_programs_org on public.rtl_loyalty_programs(organization_id);
+create index if not exists idx_rtl_loyalty_programs_hub on public.rtl_loyalty_programs(hub_id);
+create index if not exists idx_rtl_reward_points_org on public.rtl_reward_points(organization_id);
+create index if not exists idx_rtl_reward_points_hub on public.rtl_reward_points(hub_id);
+create index if not exists idx_rtl_campaigns_org on public.rtl_campaigns(organization_id);
+create index if not exists idx_rtl_campaigns_hub on public.rtl_campaigns(hub_id);
+create index if not exists idx_rtl_daily_closings_org on public.rtl_daily_closings(organization_id);
+create index if not exists idx_rtl_daily_closings_hub on public.rtl_daily_closings(hub_id);
+create index if not exists idx_rtl_branch_performance_org on public.rtl_branch_performance(organization_id);
+create index if not exists idx_rtl_branch_performance_hub on public.rtl_branch_performance(hub_id);
+create index if not exists idx_rtl_commission_records_org on public.rtl_commission_records(organization_id);
+create index if not exists idx_rtl_commission_records_hub on public.rtl_commission_records(hub_id);
+create index if not exists idx_rtl_sales_analytics_org on public.rtl_sales_analytics(organization_id);
+create index if not exists idx_rtl_sales_analytics_hub on public.rtl_sales_analytics(hub_id);
+create index if not exists idx_rtl_inventory_analytics_org on public.rtl_inventory_analytics(organization_id);
+create index if not exists idx_rtl_inventory_analytics_hub on public.rtl_inventory_analytics(hub_id);
+create index if not exists idx_rtl_profitability_analytics_org on public.rtl_profitability_analytics(organization_id);
+create index if not exists idx_rtl_profitability_analytics_hub on public.rtl_profitability_analytics(hub_id);
+create index if not exists idx_rtl_retail_metrics_org on public.rtl_retail_metrics(organization_id);
+create index if not exists idx_rtl_retail_health_org on public.rtl_retail_health(organization_id);
+create index if not exists idx_rtl_executive_kpis_org on public.rtl_executive_kpis(organization_id);
+create index if not exists idx_rtl_executive_kpis_hub on public.rtl_executive_kpis(hub_id);
+create index if not exists idx_rtl_retail_failures_org on public.rtl_retail_failures(organization_id);
+create index if not exists idx_rtl_retail_failures_hub on public.rtl_retail_failures(hub_id);
+create index if not exists idx_rtl_audit_logs_org on public.rtl_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'rtl_retail_hubs','rtl_retail_brands','rtl_stores','rtl_cash_registers','rtl_store_departments','rtl_products','rtl_product_categories','rtl_product_variants','rtl_promotions','rtl_sales_orders','rtl_pos_transactions','rtl_returns_exchanges','rtl_shift_closings','rtl_warehouses','rtl_stock_levels','rtl_purchase_orders','rtl_suppliers','rtl_customer_profiles','rtl_loyalty_programs','rtl_reward_points','rtl_campaigns','rtl_daily_closings','rtl_branch_performance','rtl_commission_records','rtl_sales_analytics','rtl_inventory_analytics','rtl_profitability_analytics','rtl_retail_metrics','rtl_retail_health','rtl_executive_kpis','rtl_retail_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.rtl_retail_hubs enable row level security;
+alter table public.rtl_retail_brands enable row level security;
+alter table public.rtl_stores enable row level security;
+alter table public.rtl_cash_registers enable row level security;
+alter table public.rtl_store_departments enable row level security;
+alter table public.rtl_products enable row level security;
+alter table public.rtl_product_categories enable row level security;
+alter table public.rtl_product_variants enable row level security;
+alter table public.rtl_promotions enable row level security;
+alter table public.rtl_sales_orders enable row level security;
+alter table public.rtl_pos_transactions enable row level security;
+alter table public.rtl_returns_exchanges enable row level security;
+alter table public.rtl_shift_closings enable row level security;
+alter table public.rtl_warehouses enable row level security;
+alter table public.rtl_stock_levels enable row level security;
+alter table public.rtl_purchase_orders enable row level security;
+alter table public.rtl_suppliers enable row level security;
+alter table public.rtl_customer_profiles enable row level security;
+alter table public.rtl_loyalty_programs enable row level security;
+alter table public.rtl_reward_points enable row level security;
+alter table public.rtl_campaigns enable row level security;
+alter table public.rtl_daily_closings enable row level security;
+alter table public.rtl_branch_performance enable row level security;
+alter table public.rtl_commission_records enable row level security;
+alter table public.rtl_sales_analytics enable row level security;
+alter table public.rtl_inventory_analytics enable row level security;
+alter table public.rtl_profitability_analytics enable row level security;
+alter table public.rtl_retail_metrics enable row level security;
+alter table public.rtl_retail_health enable row level security;
+alter table public.rtl_executive_kpis enable row level security;
+alter table public.rtl_retail_failures enable row level security;
+alter table public.rtl_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'rtl_retail_hubs','rtl_retail_brands','rtl_stores','rtl_cash_registers','rtl_store_departments','rtl_products','rtl_product_categories','rtl_product_variants','rtl_promotions','rtl_sales_orders','rtl_pos_transactions','rtl_returns_exchanges','rtl_shift_closings','rtl_warehouses','rtl_stock_levels','rtl_purchase_orders','rtl_suppliers','rtl_customer_profiles','rtl_loyalty_programs','rtl_reward_points','rtl_campaigns','rtl_daily_closings','rtl_branch_performance','rtl_commission_records','rtl_sales_analytics','rtl_inventory_analytics','rtl_profitability_analytics','rtl_retail_metrics','rtl_retail_health','rtl_executive_kpis','rtl_retail_failures','rtl_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('rtl.view', 'View enterprise retail business operating system data', 'enterprise_retail_business_os'),
+  ('rtl.manage', 'Manage retail foundation, product, sales, inventory, customer, finance, and framework outputs', 'enterprise_retail_business_os'),
+  ('rtl.approve', 'Approve retail sales and inventory gates', 'enterprise_retail_business_os'),
+  ('rtl.admin', 'Administer enterprise retail business operating system governance', 'enterprise_retail_business_os')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -22873,6 +23505,156 @@ on conflict (id) do nothing;
 
 insert into public.hsp_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('021e011e-021e-021e-021e-021e011e2001', '11111111-1111-1111-1111-111111111111', 'hospital_hub', 'seed', 'Enterprise hospital business operating system seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 041_enterprise_retail_business_os_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a341', '11111111-1111-1111-1111-111111111111', 'Enterprise Retail Orchestrator', 'enterprise_retail_business_os', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["retail_foundation","product_engine","sales_pos","inventory_engine","customer_engine","finance_engine","retail_analytics","retail_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a541', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a341', 'northstar-retail-os-001', 'enterprise_retail_business_os', 'retail_hub', '00710071-0071-0071-0071-007100710101', '{"objective":"Enterprise retail business operating system for northstar retail operations"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Retail Hub
+insert into public.rtl_retail_hubs (id, organization_id, hub_key, hub_name, environment, retail_code, status)
+values ('00710071-0071-0071-0071-007100710101', '11111111-1111-1111-1111-111111111111', 'northstar-retail-os', 'Northstar Retail OS Hub', 'production', 'RTL-0904-001', 'active')
+on conflict (id) do nothing;
+
+-- M1 Foundation
+insert into public.rtl_retail_brands (id, organization_id, hub_id, brand_key, brand_name, brand_type, status)
+values ('03000100-0300-0300-0300-030001000201', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'brand-flagship-0904', 'Northstar Flagship Brand', 'flagship', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_stores (id, organization_id, hub_id, store_key, store_name, store_type, status)
+values ('03010101-0301-0301-0301-030101010301', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'store-downtown-0904', 'Downtown Store', 'retail', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_cash_registers (id, organization_id, hub_id, register_key, register_name, register_status, status)
+values ('03020102-0302-0302-0302-030201020401', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'reg-pos-01-0904', 'POS Register 01', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_store_departments (id, organization_id, hub_id, department_key, department_name, department_type, status)
+values ('03030103-0303-0303-0303-030301030501', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'dept-apparel-0904', 'Apparel Department', 'sales', 'active')
+on conflict (id) do nothing;
+
+-- M2 Product
+insert into public.rtl_products (id, organization_id, hub_id, product_key, product_name, product_type, status)
+values ('03040104-0304-0304-0304-030401040601', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'prod-jacket-0904', 'Winter Jacket', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_product_categories (id, organization_id, hub_id, category_key, category_name, category_type, status)
+values ('03050105-0305-0305-0305-030501050701', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'cat-apparel-0904', 'Apparel Category', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_product_variants (id, organization_id, hub_id, variant_key, variant_name, variant_type, status)
+values ('03060106-0306-0306-0306-030601060801', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'var-jacket-lg-0904', 'Winter Jacket Large', 'size', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_promotions (id, organization_id, hub_id, promotion_key, promotion_name, promotion_status, status)
+values ('03070107-0307-0307-0307-030701070901', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'promo-winter-0904', 'Winter Sale Promotion', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M3 Sales & POS
+insert into public.rtl_sales_orders (id, organization_id, hub_id, order_key, order_name, order_status, status)
+values ('03080108-0308-0308-0308-030801080a01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'ord-smith-0904', 'Smith Sales Order', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_pos_transactions (id, organization_id, hub_id, transaction_key, transaction_name, transaction_status, status)
+values ('03090109-0309-0309-0309-030901090b01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'pos-smith-0904', 'Smith POS Transaction', 'completed', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_returns_exchanges (id, organization_id, hub_id, return_key, return_name, return_status, status)
+values ('030a010a-030a-030a-030a-030a010a0c01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'ret-smith-0904', 'Smith Return', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_shift_closings (id, organization_id, hub_id, closing_key, closing_name, closing_status, status)
+values ('030b010b-030b-030b-030b-030b010b0d01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'shift-close-0904', 'Evening Shift Closing', 'closed', 'active')
+on conflict (id) do nothing;
+
+-- M4 Inventory
+insert into public.rtl_warehouses (id, organization_id, hub_id, warehouse_key, warehouse_name, warehouse_type, status)
+values ('030c010c-030c-030c-030c-030c010c0e01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'wh-central-0904', 'Central Warehouse', 'distribution', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_stock_levels (id, organization_id, hub_id, stock_key, stock_name, stock_quantity, status)
+values ('030d010d-030d-030d-030d-030d010d0f01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'stk-jacket-0904', 'Jacket Stock Level', 150, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_purchase_orders (id, organization_id, hub_id, order_key, order_name, order_status, status)
+values ('030e010e-030e-030e-030e-030e010e1001', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'po-jacket-0904', 'Jacket Purchase Order', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_suppliers (id, organization_id, hub_id, supplier_key, supplier_name, supplier_type, status)
+values ('030f010f-030f-030f-030f-030f010f1101', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'sup-apparel-0904', 'Apparel Supplier Co', 'vendor', 'active')
+on conflict (id) do nothing;
+
+-- M5 Customer
+insert into public.rtl_customer_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_type, status)
+values ('03100110-0310-0310-0310-031001101201', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'cust-smith-0904', 'Smith Customer Profile', 'regular', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_loyalty_programs (id, organization_id, hub_id, program_key, program_name, program_type, status)
+values ('03110111-0311-0311-0311-031101111301', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'loyalty-gold-0904', 'Gold Loyalty Program', 'points', 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_reward_points (id, organization_id, hub_id, points_key, points_name, points_balance, status)
+values ('03120112-0312-0312-0312-031201121401', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'pts-smith-0904', 'Smith Reward Points', 250.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_campaigns (id, organization_id, hub_id, campaign_key, campaign_name, campaign_status, status)
+values ('03130113-0313-0313-0313-031301131501', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'camp-winter-0904', 'Winter Campaign', 'active', 'active')
+on conflict (id) do nothing;
+
+-- M6 Finance
+insert into public.rtl_daily_closings (id, organization_id, hub_id, closing_key, closing_name, closing_amount, status)
+values ('03140114-0314-0314-0314-031401141601', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'daily-close-0904', 'Daily Store Closing', 45000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_branch_performance (id, organization_id, hub_id, performance_key, performance_name, performance_score, status)
+values ('03150115-0315-0315-0315-031501151701', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'perf-downtown-0904', 'Downtown Branch Performance', 92.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_commission_records (id, organization_id, hub_id, commission_key, commission_name, commission_amount, status)
+values ('03160116-0316-0316-0316-031601161801', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'comm-smith-0904', 'Smith Commission Record', 1250.00, 'active')
+on conflict (id) do nothing;
+
+-- M7 Analytics
+insert into public.rtl_sales_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('03170117-0317-0317-0317-031701171901', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'anly-sales-0904', 'sales', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_inventory_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('03180118-0318-0318-0318-031801181a01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'anly-inv-0904', 'inventory', 88.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_profitability_analytics (id, organization_id, hub_id, analytics_key, analytics_type, analytics_score, status)
+values ('03190119-0319-0319-0319-031901191b01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'anly-profit-0904', 'profitability', 96.00, 'active')
+on conflict (id) do nothing;
+
+-- M8 Executive Dashboard
+insert into public.rtl_retail_metrics (id, organization_id, metrics_key, revenue_total, profit_total, sales_count, inventory_value, customer_retention_rate, store_performance_score, top_product_score, overall_retail_score, status)
+values ('031a011a-031a-031a-031a-031a011a1c01', '11111111-1111-1111-1111-111111111111', 'rtl-metrics-0904', 3500000.00, 875000.00, 12500, 980000.00, 87.50, 91.00, 93.50, 95.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_retail_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, inventory_health_status, financial_health_status, operational_health_status, summary, status)
+values ('031b011b-031b-031b-031b-031b011b1d01', '11111111-1111-1111-1111-111111111111', 'rtl-health-0904', 96.00, false, 'healthy', 'healthy', 'healthy', 'Retail business operating system operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.rtl_executive_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('031c011c-031c-031c-031c-031c011c1e01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'kpi-exec-0904', 'Executive KPI Score', 97.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.rtl_retail_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('031d011d-031d-031d-031d-031d011d1f01', '11111111-1111-1111-1111-111111111111', '00710071-0071-0071-0071-007100710101', 'fail-pos-0904', 'pos', 'POS_TIMEOUT', 'POS transaction processing timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.rtl_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('031e011e-031e-031e-031e-031e011e2001', '11111111-1111-1111-1111-111111111111', 'retail_hub', 'seed', 'Enterprise retail business operating system seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

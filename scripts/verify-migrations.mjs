@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 858 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_*)
+// 890 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -866,6 +866,38 @@ const requiredTables = [
     "hsp_executive_kpis",
     "hsp_hospital_failures",
     "hsp_audit_logs",
+    "rtl_retail_hubs",
+    "rtl_retail_brands",
+    "rtl_stores",
+    "rtl_cash_registers",
+    "rtl_store_departments",
+    "rtl_products",
+    "rtl_product_categories",
+    "rtl_product_variants",
+    "rtl_promotions",
+    "rtl_sales_orders",
+    "rtl_pos_transactions",
+    "rtl_returns_exchanges",
+    "rtl_shift_closings",
+    "rtl_warehouses",
+    "rtl_stock_levels",
+    "rtl_purchase_orders",
+    "rtl_suppliers",
+    "rtl_customer_profiles",
+    "rtl_loyalty_programs",
+    "rtl_reward_points",
+    "rtl_campaigns",
+    "rtl_daily_closings",
+    "rtl_branch_performance",
+    "rtl_commission_records",
+    "rtl_sales_analytics",
+    "rtl_inventory_analytics",
+    "rtl_profitability_analytics",
+    "rtl_retail_metrics",
+    "rtl_retail_health",
+    "rtl_executive_kpis",
+    "rtl_retail_failures",
+    "rtl_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
