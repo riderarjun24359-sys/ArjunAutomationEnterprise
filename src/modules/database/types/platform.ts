@@ -6937,3 +6937,454 @@ export interface DbIntgAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbEocOperationsCenter {
+    id: string;
+    organization_id: string;
+    center_key: string;
+    center_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocOverallHealth {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    health_key: string;
+    health_type: string;
+    health_score: number;
+    last_check_at: string;
+    check_details: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocModuleHealth {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    health_key: string;
+    module_name: string;
+    health_score: number;
+    last_check_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocDatabaseHealth {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    health_key: string;
+    connection_pool_used: number;
+    health_score: number;
+    last_check_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocJobScheduler {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    scheduler_key: string;
+    scheduler_name: string;
+    cron_expression: string;
+    worker_pool_size: number;
+    scheduler_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocRecurringJob {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    job_key: string;
+    job_name: string;
+    cron_expression: string;
+    job_status: string;
+    last_run_at?: string;
+    next_run_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocJobRetryQueue {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    queue_key: string;
+    job_ref: string;
+    retry_count: number;
+    max_retries: number;
+    priority: number;
+    next_retry_at?: string;
+    last_error: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocJobDeadLetter {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    dead_letter_key: string;
+    job_ref: string;
+    error_message: string;
+    dead_letter_status: string;
+    failed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocPlatformEvent {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    event_key: string;
+    event_type: string;
+    event_name: string;
+    payload: Record<string, unknown>;
+    event_status: string;
+    published_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocBusinessEvent {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    event_key: string;
+    event_type: string;
+    event_name: string;
+    payload: Record<string, unknown>;
+    event_status: string;
+    published_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocEventSubscription {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    subscription_key: string;
+    event_type: string;
+    subscriber_ref: string;
+    delivery_mode: string;
+    subscription_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocEventReplay {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    replay_key: string;
+    event_type: string;
+    from_timestamp: string;
+    to_timestamp?: string;
+    replay_status: string;
+    events_replayed: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocAlert {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    alert_key: string;
+    alert_title: string;
+    alert_severity: string;
+    alert_message: string;
+    silenced: boolean;
+    alert_status: string;
+    triggered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocEscalationRule {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    rule_key: string;
+    rule_name: string;
+    alert_severity: string;
+    escalation_delay_minutes: number;
+    notify_channels: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocAlertAcknowledgement {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    ack_key: string;
+    alert_id?: string;
+    acknowledged_by: string;
+    ack_note: string;
+    ack_status: string;
+    acknowledged_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocMaintenanceWindow {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    window_key: string;
+    window_name: string;
+    starts_at: string;
+    ends_at?: string;
+    suppress_alerts: boolean;
+    window_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocGlobalFlag {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    flag_key: string;
+    flag_name: string;
+    enabled: boolean;
+    kill_switch: boolean;
+    rollout_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocTenantFlag {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    flag_key: string;
+    flag_name: string;
+    enabled: boolean;
+    tenant_ref: string;
+    rollout_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocBetaFeature {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    feature_key: string;
+    feature_name: string;
+    beta_status: string;
+    enrolled_tenants: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocRolloutConfig {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    rollout_key: string;
+    flag_key: string;
+    rollout_percent: number;
+    target_criteria: Record<string, unknown>;
+    rollout_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocPlatformConfig {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    config_key: string;
+    config_name: string;
+    config_value: Record<string, unknown>;
+    environment_profile: string;
+    approval_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocTenantConfig {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    config_key: string;
+    config_name: string;
+    config_value: Record<string, unknown>;
+    tenant_ref: string;
+    approval_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocSecretsMetadata {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    secret_key: string;
+    secret_name: string;
+    vault_ref: string;
+    rotation_due_at?: string;
+    secret_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocConfigVersion {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    version_key: string;
+    version_number: string;
+    config_snapshot: Record<string, unknown>;
+    approved_by: string;
+    version_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocPlatformLog {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    log_key: string;
+    log_level: string;
+    service_name: string;
+    message: string;
+    logged_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocPlatformMetric {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    metrics_key: string;
+    metric_date: string;
+    dependency_health: number;
+    cpu_percent: number;
+    memory_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocTraceSummary {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    trace_key: string;
+    trace_id: string;
+    span_count: number;
+    duration_ms: number;
+    traced_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocServiceRegistry {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    service_key: string;
+    service_name: string;
+    service_url: string;
+    cache_status: string;
+    last_heartbeat_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocOperationsMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    operational_score: number;
+    active_jobs: number;
+    open_alerts: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocOperationsHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    uptime_percent: number;
+    disaster_recovery_mode: boolean;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocOperationsFailure {
+    id: string;
+    organization_id: string;
+    center_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEocAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

@@ -549,6 +549,40 @@ import {
     IntgWebhookDeadLetterRepository,
     IntgWebhookDeliveryLogRepository,
 } from "@/src/modules/database/repositories/integration-platform-repositories";
+import {
+    EocOperationsCenterRepository,
+    EocOverallHealthRepository,
+    EocModuleHealthRepository,
+    EocDatabaseHealthRepository,
+    EocJobSchedulerRepository,
+    EocRecurringJobRepository,
+    EocJobRetryQueueRepository,
+    EocJobDeadLetterRepository,
+    EocPlatformEventRepository,
+    EocBusinessEventRepository,
+    EocEventSubscriptionRepository,
+    EocEventReplayRepository,
+    EocAlertRepository,
+    EocEscalationRuleRepository,
+    EocAlertAcknowledgementRepository,
+    EocMaintenanceWindowRepository,
+    EocGlobalFlagRepository,
+    EocTenantFlagRepository,
+    EocBetaFeatureRepository,
+    EocRolloutConfigRepository,
+    EocPlatformConfigRepository,
+    EocTenantConfigRepository,
+    EocSecretsMetadataRepository,
+    EocConfigVersionRepository,
+    EocPlatformLogRepository,
+    EocPlatformMetricRepository,
+    EocTraceSummaryRepository,
+    EocServiceRegistryRepository,
+    EocOperationsMetricRepository,
+    EocOperationsHealthRepository,
+    EocOperationsFailureRepository,
+    EocAuditLogRepository,
+} from "@/src/modules/database/repositories/operations-center-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -1052,6 +1086,38 @@ export class DatabaseAccessLayer {
     readonly intgIntegrationHealth: IntgIntegrationHealthRepository;
     readonly intgIntegrationFailures: IntgIntegrationFailureRepository;
     readonly intgAuditLogs: IntgAuditLogRepository;
+    readonly eocOperationsCenters: EocOperationsCenterRepository;
+    readonly eocOverallHealth: EocOverallHealthRepository;
+    readonly eocModuleHealth: EocModuleHealthRepository;
+    readonly eocDatabaseHealth: EocDatabaseHealthRepository;
+    readonly eocJobSchedulers: EocJobSchedulerRepository;
+    readonly eocRecurringJobs: EocRecurringJobRepository;
+    readonly eocJobRetryQueue: EocJobRetryQueueRepository;
+    readonly eocJobDeadLetter: EocJobDeadLetterRepository;
+    readonly eocPlatformEvents: EocPlatformEventRepository;
+    readonly eocBusinessEvents: EocBusinessEventRepository;
+    readonly eocEventSubscriptions: EocEventSubscriptionRepository;
+    readonly eocEventReplays: EocEventReplayRepository;
+    readonly eocAlerts: EocAlertRepository;
+    readonly eocEscalationRules: EocEscalationRuleRepository;
+    readonly eocAlertAcknowledgements: EocAlertAcknowledgementRepository;
+    readonly eocMaintenanceWindows: EocMaintenanceWindowRepository;
+    readonly eocGlobalFlags: EocGlobalFlagRepository;
+    readonly eocTenantFlags: EocTenantFlagRepository;
+    readonly eocBetaFeatures: EocBetaFeatureRepository;
+    readonly eocRolloutConfigs: EocRolloutConfigRepository;
+    readonly eocPlatformConfigs: EocPlatformConfigRepository;
+    readonly eocTenantConfigs: EocTenantConfigRepository;
+    readonly eocSecretsMetadata: EocSecretsMetadataRepository;
+    readonly eocConfigVersions: EocConfigVersionRepository;
+    readonly eocPlatformLogs: EocPlatformLogRepository;
+    readonly eocPlatformMetrics: EocPlatformMetricRepository;
+    readonly eocTraceSummaries: EocTraceSummaryRepository;
+    readonly eocServiceRegistry: EocServiceRegistryRepository;
+    readonly eocOperationsMetrics: EocOperationsMetricRepository;
+    readonly eocOperationsHealth: EocOperationsHealthRepository;
+    readonly eocOperationsFailures: EocOperationsFailureRepository;
+    readonly eocAuditLogs: EocAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1555,6 +1621,38 @@ export class DatabaseAccessLayer {
         this.intgIntegrationHealth = new IntgIntegrationHealthRepository();
         this.intgIntegrationFailures = new IntgIntegrationFailureRepository();
         this.intgAuditLogs = new IntgAuditLogRepository();
+        this.eocOperationsCenters = new EocOperationsCenterRepository();
+        this.eocOverallHealth = new EocOverallHealthRepository();
+        this.eocModuleHealth = new EocModuleHealthRepository();
+        this.eocDatabaseHealth = new EocDatabaseHealthRepository();
+        this.eocJobSchedulers = new EocJobSchedulerRepository();
+        this.eocRecurringJobs = new EocRecurringJobRepository();
+        this.eocJobRetryQueue = new EocJobRetryQueueRepository();
+        this.eocJobDeadLetter = new EocJobDeadLetterRepository();
+        this.eocPlatformEvents = new EocPlatformEventRepository();
+        this.eocBusinessEvents = new EocBusinessEventRepository();
+        this.eocEventSubscriptions = new EocEventSubscriptionRepository();
+        this.eocEventReplays = new EocEventReplayRepository();
+        this.eocAlerts = new EocAlertRepository();
+        this.eocEscalationRules = new EocEscalationRuleRepository();
+        this.eocAlertAcknowledgements = new EocAlertAcknowledgementRepository();
+        this.eocMaintenanceWindows = new EocMaintenanceWindowRepository();
+        this.eocGlobalFlags = new EocGlobalFlagRepository();
+        this.eocTenantFlags = new EocTenantFlagRepository();
+        this.eocBetaFeatures = new EocBetaFeatureRepository();
+        this.eocRolloutConfigs = new EocRolloutConfigRepository();
+        this.eocPlatformConfigs = new EocPlatformConfigRepository();
+        this.eocTenantConfigs = new EocTenantConfigRepository();
+        this.eocSecretsMetadata = new EocSecretsMetadataRepository();
+        this.eocConfigVersions = new EocConfigVersionRepository();
+        this.eocPlatformLogs = new EocPlatformLogRepository();
+        this.eocPlatformMetrics = new EocPlatformMetricRepository();
+        this.eocTraceSummaries = new EocTraceSummaryRepository();
+        this.eocServiceRegistry = new EocServiceRegistryRepository();
+        this.eocOperationsMetrics = new EocOperationsMetricRepository();
+        this.eocOperationsHealth = new EocOperationsHealthRepository();
+        this.eocOperationsFailures = new EocOperationsFailureRepository();
+        this.eocAuditLogs = new EocAuditLogRepository();
     }
 }
 

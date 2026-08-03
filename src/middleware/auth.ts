@@ -34,6 +34,7 @@ const protectedRoutes = [
     ROUTES.billingRevenue,
     ROUTES.communicationHub,
     ROUTES.integrationPlatform,
+    ROUTES.operationsCenter,
 ];
 
 const authRoutes = [

@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 506 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_*)
+// 538 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -514,6 +514,38 @@ const requiredTables = [
     "intg_integration_health",
     "intg_integration_failures",
     "intg_audit_logs",
+    "eoc_operations_centers",
+    "eoc_overall_health",
+    "eoc_module_health",
+    "eoc_database_health",
+    "eoc_job_schedulers",
+    "eoc_recurring_jobs",
+    "eoc_job_retry_queue",
+    "eoc_job_dead_letter",
+    "eoc_platform_events",
+    "eoc_business_events",
+    "eoc_event_subscriptions",
+    "eoc_event_replays",
+    "eoc_alerts",
+    "eoc_escalation_rules",
+    "eoc_alert_acknowledgements",
+    "eoc_maintenance_windows",
+    "eoc_global_flags",
+    "eoc_tenant_flags",
+    "eoc_beta_features",
+    "eoc_rollout_configs",
+    "eoc_platform_configs",
+    "eoc_tenant_configs",
+    "eoc_secrets_metadata",
+    "eoc_config_versions",
+    "eoc_platform_logs",
+    "eoc_platform_metrics",
+    "eoc_trace_summaries",
+    "eoc_service_registry",
+    "eoc_operations_metrics",
+    "eoc_operations_health",
+    "eoc_operations_failures",
+    "eoc_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

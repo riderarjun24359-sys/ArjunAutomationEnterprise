@@ -30,6 +30,7 @@ export const ROUTES = {
     billingRevenue: "/billing-revenue",
     communicationHub: "/communication-hub",
     integrationPlatform: "/integration-platform",
+    operationsCenter: "/operations-center",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

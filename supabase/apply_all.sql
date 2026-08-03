@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T17:29:17.969Z
+-- Generated: 2026-08-03T17:50:53.648Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (29):
+--   Migrations (30):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -35,7 +35,8 @@
 --     - 202608020027_enterprise_billing_revenue.sql
 --     - 202608020028_enterprise_communication_hub.sql
 --     - 202608020029_enterprise_integration_platform.sql
---   Seeds (29):
+--     - 202608020030_enterprise_operations_center.sql
+--   Seeds (30):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -65,9 +66,10 @@
 --     - 027_enterprise_billing_revenue_seed.sql
 --     - 028_enterprise_communication_hub_seed.sql
 --     - 029_enterprise_integration_platform_seed.sql
+--     - 030_enterprise_operations_center_seed.sql
 --
--- Includes through V2 Program A Sprint 6:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform
+-- Includes through V2 Program A Sprint 7:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -11001,6 +11003,657 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020030_enterprise_operations_center.sql
+-- =============================================================================
+-- V2 Program A Sprint 7: Enterprise Operations Center
+
+-- OperationsCenter
+create table if not exists public.eoc_operations_centers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_key text not null,
+  center_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_key)
+);
+
+-- OverallHealth
+create table if not exists public.eoc_overall_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  health_key text not null,
+  health_type text not null default 'overall',
+  health_score numeric(5, 2) not null default 100,
+  last_check_at timestamptz not null default now(),
+  check_details jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, health_key)
+);
+
+-- ModuleHealth
+create table if not exists public.eoc_module_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  health_key text not null,
+  module_name text not null default '',
+  health_score numeric(5, 2) not null default 100,
+  last_check_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, health_key)
+);
+
+-- DatabaseHealth
+create table if not exists public.eoc_database_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  health_key text not null,
+  connection_pool_used integer not null default 0,
+  health_score numeric(5, 2) not null default 100,
+  last_check_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, health_key)
+);
+
+-- JobScheduler
+create table if not exists public.eoc_job_schedulers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  scheduler_key text not null,
+  scheduler_name text not null,
+  cron_expression text not null default '0 * * * *',
+  worker_pool_size integer not null default 4,
+  scheduler_status text not null default 'active',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, scheduler_key)
+);
+
+-- RecurringJob
+create table if not exists public.eoc_recurring_jobs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  job_key text not null,
+  job_name text not null,
+  cron_expression text not null default '0 0 * * *',
+  job_status text not null default 'active',
+  last_run_at timestamptz,
+  next_run_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, job_key)
+);
+
+-- JobRetryQueue
+create table if not exists public.eoc_job_retry_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  queue_key text not null,
+  job_ref text not null default '',
+  retry_count integer not null default 0,
+  max_retries integer not null default 3,
+  priority integer not null default 5,
+  next_retry_at timestamptz,
+  last_error text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, queue_key)
+);
+
+-- JobDeadLetter
+create table if not exists public.eoc_job_dead_letter (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  dead_letter_key text not null,
+  job_ref text not null default '',
+  error_message text not null default '',
+  dead_letter_status text not null default 'pending',
+  failed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, dead_letter_key)
+);
+
+-- PlatformEvent
+create table if not exists public.eoc_platform_events (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  event_key text not null,
+  event_type text not null default 'platform',
+  event_name text not null default '',
+  payload jsonb not null default '{}'::jsonb,
+  event_status text not null default 'published',
+  published_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, event_key)
+);
+
+-- BusinessEvent
+create table if not exists public.eoc_business_events (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  event_key text not null,
+  event_type text not null default 'business',
+  event_name text not null default '',
+  payload jsonb not null default '{}'::jsonb,
+  event_status text not null default 'published',
+  published_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, event_key)
+);
+
+-- EventSubscription
+create table if not exists public.eoc_event_subscriptions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  subscription_key text not null,
+  event_type text not null default 'platform',
+  subscriber_ref text not null default '',
+  delivery_mode text not null default 'push',
+  subscription_status text not null default 'active',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, subscription_key)
+);
+
+-- EventReplay
+create table if not exists public.eoc_event_replays (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  replay_key text not null,
+  event_type text not null default 'platform',
+  from_timestamp timestamptz not null default now(),
+  to_timestamp timestamptz,
+  replay_status text not null default 'pending',
+  events_replayed integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, replay_key)
+);
+
+-- Alert
+create table if not exists public.eoc_alerts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  alert_key text not null,
+  alert_title text not null default '',
+  alert_severity text not null default 'info',
+  alert_message text not null default '',
+  silenced boolean not null default false,
+  alert_status text not null default 'open',
+  triggered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, alert_key)
+);
+
+-- EscalationRule
+create table if not exists public.eoc_escalation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null,
+  alert_severity text not null default 'critical',
+  escalation_delay_minutes integer not null default 15,
+  notify_channels jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, rule_key)
+);
+
+-- AlertAcknowledgement
+create table if not exists public.eoc_alert_acknowledgements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  ack_key text not null,
+  alert_id uuid,
+  acknowledged_by text not null default '',
+  ack_note text not null default '',
+  ack_status text not null default 'acknowledged',
+  acknowledged_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, ack_key)
+);
+
+-- MaintenanceWindow
+create table if not exists public.eoc_maintenance_windows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  window_key text not null,
+  window_name text not null,
+  starts_at timestamptz not null default now(),
+  ends_at timestamptz,
+  suppress_alerts boolean not null default true,
+  window_status text not null default 'scheduled',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, window_key)
+);
+
+-- GlobalFlag
+create table if not exists public.eoc_global_flags (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  flag_key text not null,
+  flag_name text not null,
+  enabled boolean not null default false,
+  kill_switch boolean not null default false,
+  rollout_percent integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, flag_key)
+);
+
+-- TenantFlag
+create table if not exists public.eoc_tenant_flags (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  flag_key text not null,
+  flag_name text not null,
+  enabled boolean not null default false,
+  tenant_ref text not null default '',
+  rollout_percent integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, flag_key)
+);
+
+-- BetaFeature
+create table if not exists public.eoc_beta_features (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  feature_key text not null,
+  feature_name text not null,
+  beta_status text not null default 'beta',
+  enrolled_tenants integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, feature_key)
+);
+
+-- RolloutConfig
+create table if not exists public.eoc_rollout_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  rollout_key text not null,
+  flag_key text not null default '',
+  rollout_percent integer not null default 0,
+  target_criteria jsonb not null default '{}'::jsonb,
+  rollout_status text not null default 'active',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, rollout_key)
+);
+
+-- PlatformConfig
+create table if not exists public.eoc_platform_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  config_key text not null,
+  config_name text not null,
+  config_value jsonb not null default '{}'::jsonb,
+  environment_profile text not null default 'production',
+  approval_status text not null default 'approved',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, config_key)
+);
+
+-- TenantConfig
+create table if not exists public.eoc_tenant_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  config_key text not null,
+  config_name text not null,
+  config_value jsonb not null default '{}'::jsonb,
+  tenant_ref text not null default '',
+  approval_status text not null default 'pending',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, config_key)
+);
+
+-- SecretsMetadata
+create table if not exists public.eoc_secrets_metadata (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  secret_key text not null,
+  secret_name text not null,
+  vault_ref text not null default '',
+  rotation_due_at timestamptz,
+  secret_status text not null default 'active',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, secret_key)
+);
+
+-- ConfigVersion
+create table if not exists public.eoc_config_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '1.0.0',
+  config_snapshot jsonb not null default '{}'::jsonb,
+  approved_by text not null default '',
+  version_status text not null default 'draft',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, version_key)
+);
+
+-- PlatformLog
+create table if not exists public.eoc_platform_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  log_key text not null,
+  log_level text not null default 'info',
+  service_name text not null default '',
+  message text not null default '',
+  logged_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, log_key)
+);
+
+-- PlatformMetric
+create table if not exists public.eoc_platform_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  dependency_health numeric(5, 2) not null default 100,
+  cpu_percent numeric(5, 2) not null default 0,
+  memory_percent numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, metrics_key)
+);
+
+-- TraceSummary
+create table if not exists public.eoc_trace_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  trace_key text not null,
+  trace_id text not null default '',
+  span_count integer not null default 0,
+  duration_ms integer not null default 0,
+  traced_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, trace_key)
+);
+
+-- ServiceRegistry
+create table if not exists public.eoc_service_registry (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  service_key text not null,
+  service_name text not null,
+  service_url text not null default '',
+  cache_status text not null default 'healthy',
+  last_heartbeat_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, service_key)
+);
+
+-- OperationsMetric
+create table if not exists public.eoc_operations_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  operational_score numeric(5, 2) not null default 100,
+  active_jobs integer not null default 0,
+  open_alerts integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- OperationsHealth
+create table if not exists public.eoc_operations_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  uptime_percent numeric(5, 2) not null default 99.9,
+  disaster_recovery_mode boolean not null default false,
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- OperationsFailure
+create table if not exists public.eoc_operations_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'system',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, center_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.eoc_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_eoc_operations_centers_org on public.eoc_operations_centers(organization_id);
+create index if not exists idx_eoc_overall_health_org on public.eoc_overall_health(organization_id);
+create index if not exists idx_eoc_overall_health_center on public.eoc_overall_health(center_id);
+create index if not exists idx_eoc_module_health_org on public.eoc_module_health(organization_id);
+create index if not exists idx_eoc_module_health_center on public.eoc_module_health(center_id);
+create index if not exists idx_eoc_database_health_org on public.eoc_database_health(organization_id);
+create index if not exists idx_eoc_database_health_center on public.eoc_database_health(center_id);
+create index if not exists idx_eoc_job_schedulers_org on public.eoc_job_schedulers(organization_id);
+create index if not exists idx_eoc_job_schedulers_center on public.eoc_job_schedulers(center_id);
+create index if not exists idx_eoc_recurring_jobs_org on public.eoc_recurring_jobs(organization_id);
+create index if not exists idx_eoc_recurring_jobs_center on public.eoc_recurring_jobs(center_id);
+create index if not exists idx_eoc_job_retry_queue_org on public.eoc_job_retry_queue(organization_id);
+create index if not exists idx_eoc_job_retry_queue_center on public.eoc_job_retry_queue(center_id);
+create index if not exists idx_eoc_job_dead_letter_org on public.eoc_job_dead_letter(organization_id);
+create index if not exists idx_eoc_job_dead_letter_center on public.eoc_job_dead_letter(center_id);
+create index if not exists idx_eoc_platform_events_org on public.eoc_platform_events(organization_id);
+create index if not exists idx_eoc_platform_events_center on public.eoc_platform_events(center_id);
+create index if not exists idx_eoc_business_events_org on public.eoc_business_events(organization_id);
+create index if not exists idx_eoc_business_events_center on public.eoc_business_events(center_id);
+create index if not exists idx_eoc_event_subscriptions_org on public.eoc_event_subscriptions(organization_id);
+create index if not exists idx_eoc_event_subscriptions_center on public.eoc_event_subscriptions(center_id);
+create index if not exists idx_eoc_event_replays_org on public.eoc_event_replays(organization_id);
+create index if not exists idx_eoc_event_replays_center on public.eoc_event_replays(center_id);
+create index if not exists idx_eoc_alerts_org on public.eoc_alerts(organization_id);
+create index if not exists idx_eoc_alerts_center on public.eoc_alerts(center_id);
+create index if not exists idx_eoc_escalation_rules_org on public.eoc_escalation_rules(organization_id);
+create index if not exists idx_eoc_escalation_rules_center on public.eoc_escalation_rules(center_id);
+create index if not exists idx_eoc_alert_acknowledgements_org on public.eoc_alert_acknowledgements(organization_id);
+create index if not exists idx_eoc_alert_acknowledgements_center on public.eoc_alert_acknowledgements(center_id);
+create index if not exists idx_eoc_maintenance_windows_org on public.eoc_maintenance_windows(organization_id);
+create index if not exists idx_eoc_maintenance_windows_center on public.eoc_maintenance_windows(center_id);
+create index if not exists idx_eoc_global_flags_org on public.eoc_global_flags(organization_id);
+create index if not exists idx_eoc_global_flags_center on public.eoc_global_flags(center_id);
+create index if not exists idx_eoc_tenant_flags_org on public.eoc_tenant_flags(organization_id);
+create index if not exists idx_eoc_tenant_flags_center on public.eoc_tenant_flags(center_id);
+create index if not exists idx_eoc_beta_features_org on public.eoc_beta_features(organization_id);
+create index if not exists idx_eoc_beta_features_center on public.eoc_beta_features(center_id);
+create index if not exists idx_eoc_rollout_configs_org on public.eoc_rollout_configs(organization_id);
+create index if not exists idx_eoc_rollout_configs_center on public.eoc_rollout_configs(center_id);
+create index if not exists idx_eoc_platform_configs_org on public.eoc_platform_configs(organization_id);
+create index if not exists idx_eoc_platform_configs_center on public.eoc_platform_configs(center_id);
+create index if not exists idx_eoc_tenant_configs_org on public.eoc_tenant_configs(organization_id);
+create index if not exists idx_eoc_tenant_configs_center on public.eoc_tenant_configs(center_id);
+create index if not exists idx_eoc_secrets_metadata_org on public.eoc_secrets_metadata(organization_id);
+create index if not exists idx_eoc_secrets_metadata_center on public.eoc_secrets_metadata(center_id);
+create index if not exists idx_eoc_config_versions_org on public.eoc_config_versions(organization_id);
+create index if not exists idx_eoc_config_versions_center on public.eoc_config_versions(center_id);
+create index if not exists idx_eoc_platform_logs_org on public.eoc_platform_logs(organization_id);
+create index if not exists idx_eoc_platform_logs_center on public.eoc_platform_logs(center_id);
+create index if not exists idx_eoc_platform_metrics_org on public.eoc_platform_metrics(organization_id);
+create index if not exists idx_eoc_platform_metrics_center on public.eoc_platform_metrics(center_id);
+create index if not exists idx_eoc_trace_summaries_org on public.eoc_trace_summaries(organization_id);
+create index if not exists idx_eoc_trace_summaries_center on public.eoc_trace_summaries(center_id);
+create index if not exists idx_eoc_service_registry_org on public.eoc_service_registry(organization_id);
+create index if not exists idx_eoc_service_registry_center on public.eoc_service_registry(center_id);
+create index if not exists idx_eoc_operations_metrics_org on public.eoc_operations_metrics(organization_id);
+create index if not exists idx_eoc_operations_health_org on public.eoc_operations_health(organization_id);
+create index if not exists idx_eoc_operations_failures_org on public.eoc_operations_failures(organization_id);
+create index if not exists idx_eoc_operations_failures_center on public.eoc_operations_failures(center_id);
+create index if not exists idx_eoc_audit_logs_org on public.eoc_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'eoc_operations_centers','eoc_overall_health','eoc_module_health','eoc_database_health','eoc_job_schedulers','eoc_recurring_jobs','eoc_job_retry_queue','eoc_job_dead_letter','eoc_platform_events','eoc_business_events','eoc_event_subscriptions','eoc_event_replays','eoc_alerts','eoc_escalation_rules','eoc_alert_acknowledgements','eoc_maintenance_windows','eoc_global_flags','eoc_tenant_flags','eoc_beta_features','eoc_rollout_configs','eoc_platform_configs','eoc_tenant_configs','eoc_secrets_metadata','eoc_config_versions','eoc_platform_logs','eoc_platform_metrics','eoc_trace_summaries','eoc_service_registry','eoc_operations_metrics','eoc_operations_health','eoc_operations_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.eoc_operations_centers enable row level security;
+alter table public.eoc_overall_health enable row level security;
+alter table public.eoc_module_health enable row level security;
+alter table public.eoc_database_health enable row level security;
+alter table public.eoc_job_schedulers enable row level security;
+alter table public.eoc_recurring_jobs enable row level security;
+alter table public.eoc_job_retry_queue enable row level security;
+alter table public.eoc_job_dead_letter enable row level security;
+alter table public.eoc_platform_events enable row level security;
+alter table public.eoc_business_events enable row level security;
+alter table public.eoc_event_subscriptions enable row level security;
+alter table public.eoc_event_replays enable row level security;
+alter table public.eoc_alerts enable row level security;
+alter table public.eoc_escalation_rules enable row level security;
+alter table public.eoc_alert_acknowledgements enable row level security;
+alter table public.eoc_maintenance_windows enable row level security;
+alter table public.eoc_global_flags enable row level security;
+alter table public.eoc_tenant_flags enable row level security;
+alter table public.eoc_beta_features enable row level security;
+alter table public.eoc_rollout_configs enable row level security;
+alter table public.eoc_platform_configs enable row level security;
+alter table public.eoc_tenant_configs enable row level security;
+alter table public.eoc_secrets_metadata enable row level security;
+alter table public.eoc_config_versions enable row level security;
+alter table public.eoc_platform_logs enable row level security;
+alter table public.eoc_platform_metrics enable row level security;
+alter table public.eoc_trace_summaries enable row level security;
+alter table public.eoc_service_registry enable row level security;
+alter table public.eoc_operations_metrics enable row level security;
+alter table public.eoc_operations_health enable row level security;
+alter table public.eoc_operations_failures enable row level security;
+alter table public.eoc_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'eoc_operations_centers','eoc_overall_health','eoc_module_health','eoc_database_health','eoc_job_schedulers','eoc_recurring_jobs','eoc_job_retry_queue','eoc_job_dead_letter','eoc_platform_events','eoc_business_events','eoc_event_subscriptions','eoc_event_replays','eoc_alerts','eoc_escalation_rules','eoc_alert_acknowledgements','eoc_maintenance_windows','eoc_global_flags','eoc_tenant_flags','eoc_beta_features','eoc_rollout_configs','eoc_platform_configs','eoc_tenant_configs','eoc_secrets_metadata','eoc_config_versions','eoc_platform_logs','eoc_platform_metrics','eoc_trace_summaries','eoc_service_registry','eoc_operations_metrics','eoc_operations_health','eoc_operations_failures','eoc_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('eoc.view', 'View enterprise operations center data', 'enterprise_operations_center'),
+  ('eoc.manage', 'Manage background jobs, events, alerts, and platform configuration', 'enterprise_operations_center'),
+  ('eoc.approve', 'Approve configuration changes and maintenance windows', 'enterprise_operations_center'),
+  ('eoc.admin', 'Administer enterprise operations center governance', 'enterprise_operations_center')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -14206,6 +14859,161 @@ values
   ('ff000001-ff00-ff00-ff00-ff0000000001', '11111111-1111-1111-1111-111111111111', 'integration_hub', 'ff01ff01-ff01-ff01-ff01-ff01ff010101', 'create', 'Northstar integration hub provisioned in production environment', '{"hub_key":"northstar-integrations","environment":"production"}'::jsonb, 'standard'),
   ('ff000002-ff00-ff00-ff00-ff0000000002', '11111111-1111-1111-1111-111111111111', 'connected_service', 'ff02ff02-ff02-ff02-ff02-ff02ff020201', 'connect', 'Google Workspace connected with admin directory scope', '{"provider_type":"google_workspace","connector_status":"connected"}'::jsonb, 'elevated'),
   ('ff000003-ff00-ff00-ff00-ff0000000003', '11111111-1111-1111-1111-111111111111', 'webhook_delivery_log', 'ff20ff20-ff20-ff20-ff20-ff20ff202003', 'fail', 'Webhook delivery failed for payment.failed event — 503 Service Unavailable', '{"delivery_status":"failed","http_status":503,"event_type":"payment.failed"}'::jsonb, 'restricted')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 030_enterprise_operations_center_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a330', '11111111-1111-1111-1111-111111111111', 'Enterprise Operations Center Orchestrator', 'enterprise_operations_center', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["system_health","background_jobs","event_bus","alert_management","feature_flags","configuration_center","platform_diagnostics","operations_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a530', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a330', 'northstar-operations-001', 'enterprise_operations_center', 'operations_center', '00110011-0011-0011-0011-001100110101', '{"objective":"enterprise operations center for northstar platform"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M1 System Health Center
+insert into public.eoc_operations_centers (id, organization_id, center_key, center_name, environment, status)
+values ('00110011-0011-0011-0011-001100110101', '11111111-1111-1111-1111-111111111111', 'northstar-operations', 'Northstar Operations Center', 'production', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_overall_health (id, organization_id, center_id, health_key, health_type, health_score, status)
+values
+  ('00120012-0012-0012-0012-001200120201', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-overall-0803', 'overall', 98.50, 'healthy'),
+  ('00120012-0012-0012-0012-001200120202', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-storage-0803', 'storage', 97.00, 'healthy'),
+  ('00120012-0012-0012-0012-001200120203', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-ai-0803', 'ai', 99.00, 'healthy'),
+  ('00120012-0012-0012-0012-001200120204', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-api-0803', 'api', 98.00, 'healthy'),
+  ('00120012-0012-0012-0012-001200120205', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-integration-0803', 'integration', 96.50, 'healthy'),
+  ('00120012-0012-0012-0012-001200120206', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'health-queue-0803', 'queue', 98.00, 'healthy')
+on conflict (id) do nothing;
+
+insert into public.eoc_module_health (id, organization_id, center_id, health_key, module_name, health_score, status)
+values ('00130013-0013-0013-0013-001300130301', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'mod-crm-0803', 'CRM', 99.00, 'healthy')
+on conflict (id) do nothing;
+
+insert into public.eoc_database_health (id, organization_id, center_id, health_key, connection_pool_used, health_score, status)
+values ('00140014-0014-0014-0014-001400140401', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'db-primary-0803', 12, 99.50, 'healthy')
+on conflict (id) do nothing;
+
+-- M2 Background Job Platform
+insert into public.eoc_job_schedulers (id, organization_id, center_id, scheduler_key, scheduler_name, cron_expression, worker_pool_size, scheduler_status, status)
+values ('00160016-0016-0016-0016-001600160601', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'sched-daily-sync', 'Daily Sync Scheduler', '0 2 * * *', 8, 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_recurring_jobs (id, organization_id, center_id, job_key, job_name, cron_expression, job_status, status)
+values ('00170017-0017-0017-0017-001700170701', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'job-health-check', 'Health Check Job', '*/15 * * * *', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_job_retry_queue (id, organization_id, center_id, queue_key, job_ref, retry_count, max_retries, priority, last_error, status)
+values ('00180018-0018-0018-0018-001800180801', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'retry-job-0803', 'job-health-check', 1, 3, 5, 'timeout', 'pending')
+on conflict (id) do nothing;
+
+insert into public.eoc_job_dead_letter (id, organization_id, center_id, dead_letter_key, job_ref, error_message, dead_letter_status, status)
+values ('00190019-0019-0019-0019-001900190901', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'dlq-job-0803', 'job-export-failed', 'connection refused', 'pending', 'failed')
+on conflict (id) do nothing;
+
+-- M3 Event Bus
+insert into public.eoc_platform_events (id, organization_id, center_id, event_key, event_type, event_name, event_status, status)
+values ('00200020-0020-0020-0020-002000200a01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'evt-platform-startup', 'platform', 'Platform Startup', 'published', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_business_events (id, organization_id, center_id, event_key, event_type, event_name, event_status, status)
+values ('00210021-0021-0021-0021-002100210b01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'evt-customer-signup', 'customer', 'Customer Signup', 'published', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_event_subscriptions (id, organization_id, center_id, subscription_key, event_type, subscriber_ref, subscription_status, status)
+values ('00220022-0022-0022-0022-002200220c01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'sub-alerts-critical', 'platform', 'alert-manager', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_event_replays (id, organization_id, center_id, replay_key, event_type, replay_status, events_replayed, status)
+values ('00230023-0023-0023-0023-002300230d01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'replay-0803-am', 'audit', 'completed', 42, 'completed')
+on conflict (id) do nothing;
+
+-- M4 Alert Management
+insert into public.eoc_alerts (id, organization_id, center_id, alert_key, alert_title, alert_severity, alert_message, alert_status, status)
+values ('00240024-0024-0024-0024-002400240e01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'alert-queue-depth', 'Queue Depth Warning', 'warning', 'Job queue depth exceeded threshold', 'open', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_escalation_rules (id, organization_id, center_id, rule_key, rule_name, alert_severity, escalation_delay_minutes, status)
+values ('00250025-0025-0025-0025-002500250f01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'esc-critical-15m', 'Critical 15min Escalation', 'critical', 15, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_alert_acknowledgements (id, organization_id, center_id, ack_key, acknowledged_by, ack_status, status)
+values ('00260026-0026-0026-0026-002600261001', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'ack-alert-0803', 'ops-lead', 'acknowledged', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_maintenance_windows (id, organization_id, center_id, window_key, window_name, window_status, status)
+values ('00270027-0027-0027-0027-002700271101', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'maint-weekend', 'Weekend Maintenance', 'scheduled', 'active')
+on conflict (id) do nothing;
+
+-- M5 Feature Flag Platform
+insert into public.eoc_global_flags (id, organization_id, center_id, flag_key, flag_name, enabled, rollout_percent, status)
+values ('00280028-0028-0028-0028-002800281201', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'flag-new-dashboard', 'New Dashboard UI', true, 50, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_tenant_flags (id, organization_id, center_id, flag_key, flag_name, enabled, tenant_ref, status)
+values ('00290029-0029-0029-0029-002900291301', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'flag-beta-analytics', 'Beta Analytics', true, 'northstar', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_beta_features (id, organization_id, center_id, feature_key, feature_name, beta_status, enrolled_tenants, status)
+values ('002a002a-002a-002a-002a-002a002a1401', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'beta-ai-insights', 'AI Insights Beta', 'beta', 5, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_rollout_configs (id, organization_id, center_id, rollout_key, flag_key, rollout_percent, rollout_status, status)
+values ('002b002b-002b-002b-002b-002b002b1501', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'rollout-dashboard', 'flag-new-dashboard', 50, 'active', 'active')
+on conflict (id) do nothing;
+
+-- M6 Configuration Center
+insert into public.eoc_platform_configs (id, organization_id, center_id, config_key, config_name, environment_profile, approval_status, status)
+values ('002c002c-002c-002c-002c-002c002c1601', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'cfg-log-level', 'Platform Log Level', 'production', 'approved', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_tenant_configs (id, organization_id, center_id, config_key, config_name, tenant_ref, approval_status, status)
+values ('002d002d-002d-002d-002d-002d002d1701', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'cfg-tenant-limits', 'Tenant Rate Limits', 'northstar', 'approved', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_secrets_metadata (id, organization_id, center_id, secret_key, secret_name, vault_ref, secret_status, status)
+values ('002e002e-002e-002e-002e-002e002e1801', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'sec-db-credentials', 'Database Credentials', 'vault://db/northstar', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_config_versions (id, organization_id, center_id, version_key, version_number, version_status, status)
+values ('002f002f-002f-002f-002f-002f002f1901', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'ver-config-v2', '2.0.0', 'approved', 'active')
+on conflict (id) do nothing;
+
+-- M7 Platform Diagnostics
+insert into public.eoc_platform_logs (id, organization_id, center_id, log_key, log_level, service_name, message, status)
+values ('00300030-0030-0030-0030-003000301a01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'log-startup-0803', 'info', 'operations-center', 'Platform startup complete', 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_platform_metrics (id, organization_id, center_id, metrics_key, dependency_health, cpu_percent, memory_percent, status)
+values ('00310031-0031-0031-0031-003100311b01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'metrics-0803', 99.00, 35.00, 62.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_trace_summaries (id, organization_id, center_id, trace_key, trace_id, span_count, duration_ms, status)
+values ('00320032-0032-0032-0032-003200321c01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'trace-api-0803', 'tr-abc123', 12, 245, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_service_registry (id, organization_id, center_id, service_key, service_name, service_url, cache_status, status)
+values ('00330033-0033-0033-0033-003300331d01', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'svc-auth', 'Auth Service', 'http://auth:8080', 'healthy', 'active')
+on conflict (id) do nothing;
+
+-- M8 Enterprise Operations Dashboard
+insert into public.eoc_operations_metrics (id, organization_id, metrics_key, operational_score, active_jobs, open_alerts, status)
+values ('00340034-0034-0034-0034-003400341e01', '11111111-1111-1111-1111-111111111111', 'ops-metrics-0803', 97.50, 8, 1, 'active')
+on conflict (id) do nothing;
+
+insert into public.eoc_operations_health (id, organization_id, health_key, overall_score, uptime_percent, disaster_recovery_mode, summary, status)
+values ('00350035-0035-0035-0035-003500351f01', '11111111-1111-1111-1111-111111111111', 'ops-health-0803', 98.00, 99.95, false, 'All systems operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.eoc_operations_failures (id, organization_id, center_id, failure_key, failure_type, error_code, error_message, status)
+values ('00360036-0036-0036-0036-003600362001', '11111111-1111-1111-1111-111111111111', '00110011-0011-0011-0011-001100110101', 'fail-export-0803', 'background_job', 'TIMEOUT', 'Export job timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.eoc_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00370037-0037-0037-0037-003700372101', '11111111-1111-1111-1111-111111111111', 'operations_center', 'seed', 'Enterprise operations center seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================
