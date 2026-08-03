@@ -2265,3 +2265,260 @@ export interface DbBaAuditLog {
     performed_by?: string | null;
     created_at: string;
 }
+
+export interface DbSaEngagement {
+    id: string;
+    organization_id: string;
+    title: string;
+    engagement_key: string;
+    ba_engagement_id?: string | null;
+    brd_id?: string | null;
+    frs_id?: string | null;
+    client_id?: string | null;
+    project_id?: string | null;
+    agent_id?: string | null;
+    session_id?: string | null;
+    knowledge_context_id?: string | null;
+    pipeline_stage: string;
+    status: string;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaSolutionArchitecture {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    title: string;
+    architecture_type: string;
+    overview: string;
+    components: unknown[];
+    content: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaSystemDecomposition {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    decomposition_key: string;
+    layers: unknown[];
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaDomainModel {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    model_key: string;
+    entities: unknown[];
+    relationships: unknown[];
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaDatabaseSchema {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    schema_key: string;
+    tables: unknown[];
+    relationships: unknown[];
+    migration_notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaApiContract {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    contract_key: string;
+    endpoints: unknown[];
+    openapi_spec: string;
+    version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaModuleSelection {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    module_name: string;
+    module_key: string;
+    platform_module: string;
+    selection_rationale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaBuildReuseRecommendation {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    item_key: string;
+    component_name: string;
+    recommendation: string;
+    rationale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaIntegrationPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    plan_key: string;
+    integrations: unknown[];
+    data_flow: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaSecurityArchitecture {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    security_key: string;
+    auth_model: string;
+    encryption: string;
+    controls: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaScalabilityPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    plan_key: string;
+    scaling_strategy: string;
+    targets: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaPerformancePlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    plan_key: string;
+    performance_targets: unknown[];
+    optimization_notes: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaTechnologyDecision {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    decision_key: string;
+    title: string;
+    context: string;
+    decision: string;
+    consequences: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaDeploymentArchitecture {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    name: string;
+    deployment_key: string;
+    environments: unknown[];
+    infrastructure: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaSprintPlan {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    plan_key: string;
+    name: string;
+    sprints: unknown[];
+    total_sprints: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaDependencyAnalysis {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    analysis_key: string;
+    dependencies: unknown[];
+    critical_path: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbSaArchitectureReview {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    reviewer_id?: string | null;
+    review_status: string;
+    comments: string;
+    reviewed_at?: string | null;
+    created_at: string;
+}
+
+export interface DbSaArchitectureVersion {
+    id: string;
+    organization_id: string;
+    engagement_id: string;
+    entity_type: string;
+    entity_id: string;
+    version_number: number;
+    content: string;
+    change_summary: string;
+    created_at: string;
+}
+
+export interface DbSaAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    created_at: string;
+}

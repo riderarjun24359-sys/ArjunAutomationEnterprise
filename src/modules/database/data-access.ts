@@ -197,6 +197,27 @@ import {
     BaTimelineEstimateRepository,
     BaUserStoryRepository,
 } from "@/src/modules/database/repositories/business-analyst-repositories";
+import {
+    SaApiContractRepository,
+    SaArchitectureReviewRepository,
+    SaArchitectureVersionRepository,
+    SaAuditLogRepository,
+    SaBuildReuseRecommendationRepository,
+    SaDatabaseSchemaRepository,
+    SaDependencyAnalysisRepository,
+    SaDeploymentArchitectureRepository,
+    SaDomainModelRepository,
+    SaEngagementRepository,
+    SaIntegrationPlanRepository,
+    SaModuleSelectionRepository,
+    SaPerformancePlanRepository,
+    SaScalabilityPlanRepository,
+    SaSecurityArchitectureRepository,
+    SaSolutionArchitectureRepository,
+    SaSprintPlanRepository,
+    SaSystemDecompositionRepository,
+    SaTechnologyDecisionRepository,
+} from "@/src/modules/database/repositories/solution-architect-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -374,6 +395,25 @@ export class DatabaseAccessLayer {
     readonly baRequirementVersions: BaRequirementVersionRepository;
     readonly baReviewApprovals: BaReviewApprovalRepository;
     readonly baAuditLogs: BaAuditLogRepository;
+    readonly saEngagements: SaEngagementRepository;
+    readonly saSolutionArchitectures: SaSolutionArchitectureRepository;
+    readonly saSystemDecompositions: SaSystemDecompositionRepository;
+    readonly saDomainModels: SaDomainModelRepository;
+    readonly saDatabaseSchemas: SaDatabaseSchemaRepository;
+    readonly saApiContracts: SaApiContractRepository;
+    readonly saModuleSelections: SaModuleSelectionRepository;
+    readonly saBuildReuseRecommendations: SaBuildReuseRecommendationRepository;
+    readonly saIntegrationPlans: SaIntegrationPlanRepository;
+    readonly saSecurityArchitectures: SaSecurityArchitectureRepository;
+    readonly saScalabilityPlans: SaScalabilityPlanRepository;
+    readonly saPerformancePlans: SaPerformancePlanRepository;
+    readonly saTechnologyDecisions: SaTechnologyDecisionRepository;
+    readonly saDeploymentArchitectures: SaDeploymentArchitectureRepository;
+    readonly saSprintPlans: SaSprintPlanRepository;
+    readonly saDependencyAnalyses: SaDependencyAnalysisRepository;
+    readonly saArchitectureReviews: SaArchitectureReviewRepository;
+    readonly saArchitectureVersions: SaArchitectureVersionRepository;
+    readonly saAuditLogs: SaAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -551,6 +591,25 @@ export class DatabaseAccessLayer {
         this.baRequirementVersions = new BaRequirementVersionRepository();
         this.baReviewApprovals = new BaReviewApprovalRepository();
         this.baAuditLogs = new BaAuditLogRepository();
+        this.saEngagements = new SaEngagementRepository();
+        this.saSolutionArchitectures = new SaSolutionArchitectureRepository();
+        this.saSystemDecompositions = new SaSystemDecompositionRepository();
+        this.saDomainModels = new SaDomainModelRepository();
+        this.saDatabaseSchemas = new SaDatabaseSchemaRepository();
+        this.saApiContracts = new SaApiContractRepository();
+        this.saModuleSelections = new SaModuleSelectionRepository();
+        this.saBuildReuseRecommendations = new SaBuildReuseRecommendationRepository();
+        this.saIntegrationPlans = new SaIntegrationPlanRepository();
+        this.saSecurityArchitectures = new SaSecurityArchitectureRepository();
+        this.saScalabilityPlans = new SaScalabilityPlanRepository();
+        this.saPerformancePlans = new SaPerformancePlanRepository();
+        this.saTechnologyDecisions = new SaTechnologyDecisionRepository();
+        this.saDeploymentArchitectures = new SaDeploymentArchitectureRepository();
+        this.saSprintPlans = new SaSprintPlanRepository();
+        this.saDependencyAnalyses = new SaDependencyAnalysisRepository();
+        this.saArchitectureReviews = new SaArchitectureReviewRepository();
+        this.saArchitectureVersions = new SaArchitectureVersionRepository();
+        this.saAuditLogs = new SaAuditLogRepository();
     }
 }
 

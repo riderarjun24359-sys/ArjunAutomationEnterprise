@@ -17,6 +17,7 @@ export const ROUTES = {
     ai: "/ai",
     knowledge: "/knowledge",
     businessAnalyst: "/business-analyst",
+    solutionArchitect: "/solution-architect",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",
