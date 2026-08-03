@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T18:24:48.593Z
+-- Generated: 2026-08-03T18:41:29.596Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (31):
+--   Migrations (32):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -37,7 +37,8 @@
 --     - 202608020029_enterprise_integration_platform.sql
 --     - 202608020030_enterprise_operations_center.sql
 --     - 202608020031_ai_executive_intelligence_platform.sql
---   Seeds (31):
+--     - 202608020032_enterprise_launch_readiness_platform.sql
+--   Seeds (32):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -69,9 +70,10 @@
 --     - 029_enterprise_integration_platform_seed.sql
 --     - 030_enterprise_operations_center_seed.sql
 --     - 031_ai_executive_intelligence_platform_seed.sql
+--     - 032_enterprise_launch_readiness_platform_seed.sql
 --
--- Includes through V2 Program A Sprint 8:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform
+-- Includes through V2 Program A Sprint 9:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -12333,6 +12335,656 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020032_enterprise_launch_readiness_platform.sql
+-- =============================================================================
+-- V2 Program A Sprint 9: Enterprise Launch Readiness Platform
+
+-- ReadinessHub
+create table if not exists public.elr_readiness_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- EnvironmentValidation
+create table if not exists public.elr_environment_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  validation_key text not null,
+  validation_type text not null default 'infrastructure',
+  validation_score numeric(5, 2) not null default 0,
+  validation_summary text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- ConfigurationValidation
+create table if not exists public.elr_configuration_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  validation_key text not null,
+  config_type text not null default 'application',
+  validation_score numeric(5, 2) not null default 0,
+  config_ref text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- SecretsValidation
+create table if not exists public.elr_secrets_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  validation_key text not null,
+  secret_type text not null default 'api_key',
+  validation_score numeric(5, 2) not null default 0,
+  secret_ref text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- DeploymentPlan
+create table if not exists public.elr_deployment_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  plan_key text not null,
+  plan_name text not null default '',
+  target_version text not null default '',
+  deployment_strategy text not null default 'rolling',
+  scheduled_at timestamptz,
+  approved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, plan_key)
+);
+
+-- RollbackPlan
+create table if not exists public.elr_rollback_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  plan_key text not null,
+  rollback_version text not null default '',
+  rollback_reason text not null default '',
+  trigger_condition text not null default '',
+  prepared_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, plan_key)
+);
+
+-- VersionRegistry
+create table if not exists public.elr_version_registry (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '',
+  release_channel text not null default 'stable',
+  artifact_ref text not null default '',
+  registered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- ReleaseNote
+create table if not exists public.elr_release_notes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  note_key text not null,
+  version_ref text not null default '',
+  note_summary text not null default '',
+  change_log jsonb not null default '[]'::jsonb,
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, note_key)
+);
+
+-- BackupPolicy
+create table if not exists public.elr_backup_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  policy_key text not null,
+  policy_name text not null default '',
+  retention_days integer not null default 30,
+  backup_frequency text not null default 'daily',
+  storage_target text not null default 'primary',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, policy_key)
+);
+
+-- BackupVerification
+create table if not exists public.elr_backup_verifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  verification_key text not null,
+  backup_ref text not null default '',
+  verification_score numeric(5, 2) not null default 0,
+  verification_summary text not null default '',
+  verified_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, verification_key)
+);
+
+-- RestoreVerification
+create table if not exists public.elr_restore_verifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  verification_key text not null,
+  restore_ref text not null default '',
+  verification_score numeric(5, 2) not null default 0,
+  verification_summary text not null default '',
+  verified_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, verification_key)
+);
+
+-- RecoveryDrill
+create table if not exists public.elr_recovery_drills (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  drill_key text not null,
+  drill_type text not null default 'failover',
+  drill_score numeric(5, 2) not null default 0,
+  drill_summary text not null default '',
+  completed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, drill_key)
+);
+
+-- ObservabilityLog
+create table if not exists public.elr_observability_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  log_key text not null,
+  log_level text not null default 'info',
+  log_source text not null default '',
+  log_message text not null default '',
+  logged_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, log_key)
+);
+
+-- ObservabilityMetric
+create table if not exists public.elr_observability_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  metric_key text not null,
+  metric_name text not null default '',
+  metric_value numeric(14, 4) not null default 0,
+  metric_unit text not null default '',
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metric_key)
+);
+
+-- TraceRecord
+create table if not exists public.elr_trace_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  trace_key text not null,
+  trace_name text not null default '',
+  latency_ms numeric(10, 2) not null default 0,
+  span_count integer not null default 0,
+  traced_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trace_key)
+);
+
+-- SlaMonitor
+create table if not exists public.elr_sla_monitors (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  monitor_key text not null,
+  sla_target numeric(5, 2) not null default 99.9,
+  current_value numeric(5, 2) not null default 100,
+  service_ref text not null default '',
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, monitor_key)
+);
+
+-- SecurityChecklist
+create table if not exists public.elr_security_checklists (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  checklist_key text not null,
+  checklist_name text not null default '',
+  completion_score numeric(5, 2) not null default 0,
+  checklist_items jsonb not null default '[]'::jsonb,
+  reviewed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, checklist_key)
+);
+
+-- VulnerabilityReview
+create table if not exists public.elr_vulnerability_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  review_key text not null,
+  vulnerability_ref text not null default '',
+  severity text not null default 'info',
+  review_summary text not null default '',
+  reviewed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- PermissionAudit
+create table if not exists public.elr_permission_audits (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  audit_key text not null,
+  audit_scope text not null default 'platform',
+  finding_count integer not null default 0,
+  audit_summary text not null default '',
+  audited_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, audit_key)
+);
+
+-- ComplianceReview
+create table if not exists public.elr_compliance_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  review_key text not null,
+  compliance_type text not null default 'soc2',
+  review_score numeric(5, 2) not null default 0,
+  review_summary text not null default '',
+  reviewed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- AdminGuide
+create table if not exists public.elr_admin_guides (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  guide_key text not null,
+  guide_title text not null default '',
+  guide_version text not null default '1.0',
+  guide_content text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, guide_key)
+);
+
+-- UserGuide
+create table if not exists public.elr_user_guides (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  guide_key text not null,
+  guide_title text not null default '',
+  guide_version text not null default '1.0',
+  guide_content text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, guide_key)
+);
+
+-- DeploymentGuide
+create table if not exists public.elr_deployment_guides (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  guide_key text not null,
+  guide_title text not null default '',
+  guide_version text not null default '1.0',
+  guide_content text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, guide_key)
+);
+
+-- LaunchScoreMetric
+create table if not exists public.elr_launch_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  security_score numeric(5, 2) not null default 100,
+  reliability_score numeric(5, 2) not null default 100,
+  performance_score numeric(5, 2) not null default 100,
+  documentation_score numeric(5, 2) not null default 100,
+  operational_score numeric(5, 2) not null default 100,
+  overall_launch_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- ReadinessValidation
+create table if not exists public.elr_readiness_validations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  validation_key text not null,
+  validation_type text not null default 'launch_gate',
+  validation_score numeric(5, 2) not null default 0,
+  validation_summary text not null default '',
+  validated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, validation_key)
+);
+
+-- LaunchBlocker
+create table if not exists public.elr_launch_blockers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  blocker_key text not null,
+  blocker_title text not null default '',
+  blocker_severity text not null default 'warning',
+  blocker_summary text not null default '',
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, blocker_key)
+);
+
+-- ScoreSnapshot
+create table if not exists public.elr_score_snapshots (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  snapshot_key text not null,
+  snapshot_date date not null default current_date,
+  overall_launch_score numeric(5, 2) not null default 0,
+  score_breakdown jsonb not null default '{}'::jsonb,
+  captured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, snapshot_key)
+);
+
+-- LaunchHealth
+create table if not exists public.elr_launch_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  deployment_status text not null default 'ready',
+  backup_status text not null default 'healthy',
+  security_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- CriticalIssue
+create table if not exists public.elr_critical_issues (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  issue_key text not null,
+  issue_title text not null default '',
+  issue_severity text not null default 'critical',
+  issue_summary text not null default '',
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, issue_key)
+);
+
+-- ReadinessWarning
+create table if not exists public.elr_readiness_warnings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  warning_key text not null,
+  warning_type text not null default 'operational',
+  warning_message text not null default '',
+  due_date date,
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, warning_key)
+);
+
+-- LaunchFailure
+create table if not exists public.elr_launch_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'deployment',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.elr_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_elr_readiness_hubs_org on public.elr_readiness_hubs(organization_id);
+create index if not exists idx_elr_environment_validations_org on public.elr_environment_validations(organization_id);
+create index if not exists idx_elr_environment_validations_hub on public.elr_environment_validations(hub_id);
+create index if not exists idx_elr_configuration_validations_org on public.elr_configuration_validations(organization_id);
+create index if not exists idx_elr_configuration_validations_hub on public.elr_configuration_validations(hub_id);
+create index if not exists idx_elr_secrets_validations_org on public.elr_secrets_validations(organization_id);
+create index if not exists idx_elr_secrets_validations_hub on public.elr_secrets_validations(hub_id);
+create index if not exists idx_elr_deployment_plans_org on public.elr_deployment_plans(organization_id);
+create index if not exists idx_elr_deployment_plans_hub on public.elr_deployment_plans(hub_id);
+create index if not exists idx_elr_rollback_plans_org on public.elr_rollback_plans(organization_id);
+create index if not exists idx_elr_rollback_plans_hub on public.elr_rollback_plans(hub_id);
+create index if not exists idx_elr_version_registry_org on public.elr_version_registry(organization_id);
+create index if not exists idx_elr_version_registry_hub on public.elr_version_registry(hub_id);
+create index if not exists idx_elr_release_notes_org on public.elr_release_notes(organization_id);
+create index if not exists idx_elr_release_notes_hub on public.elr_release_notes(hub_id);
+create index if not exists idx_elr_backup_policies_org on public.elr_backup_policies(organization_id);
+create index if not exists idx_elr_backup_policies_hub on public.elr_backup_policies(hub_id);
+create index if not exists idx_elr_backup_verifications_org on public.elr_backup_verifications(organization_id);
+create index if not exists idx_elr_backup_verifications_hub on public.elr_backup_verifications(hub_id);
+create index if not exists idx_elr_restore_verifications_org on public.elr_restore_verifications(organization_id);
+create index if not exists idx_elr_restore_verifications_hub on public.elr_restore_verifications(hub_id);
+create index if not exists idx_elr_recovery_drills_org on public.elr_recovery_drills(organization_id);
+create index if not exists idx_elr_recovery_drills_hub on public.elr_recovery_drills(hub_id);
+create index if not exists idx_elr_observability_logs_org on public.elr_observability_logs(organization_id);
+create index if not exists idx_elr_observability_logs_hub on public.elr_observability_logs(hub_id);
+create index if not exists idx_elr_observability_metrics_org on public.elr_observability_metrics(organization_id);
+create index if not exists idx_elr_observability_metrics_hub on public.elr_observability_metrics(hub_id);
+create index if not exists idx_elr_trace_records_org on public.elr_trace_records(organization_id);
+create index if not exists idx_elr_trace_records_hub on public.elr_trace_records(hub_id);
+create index if not exists idx_elr_sla_monitors_org on public.elr_sla_monitors(organization_id);
+create index if not exists idx_elr_sla_monitors_hub on public.elr_sla_monitors(hub_id);
+create index if not exists idx_elr_security_checklists_org on public.elr_security_checklists(organization_id);
+create index if not exists idx_elr_security_checklists_hub on public.elr_security_checklists(hub_id);
+create index if not exists idx_elr_vulnerability_reviews_org on public.elr_vulnerability_reviews(organization_id);
+create index if not exists idx_elr_vulnerability_reviews_hub on public.elr_vulnerability_reviews(hub_id);
+create index if not exists idx_elr_permission_audits_org on public.elr_permission_audits(organization_id);
+create index if not exists idx_elr_permission_audits_hub on public.elr_permission_audits(hub_id);
+create index if not exists idx_elr_compliance_reviews_org on public.elr_compliance_reviews(organization_id);
+create index if not exists idx_elr_compliance_reviews_hub on public.elr_compliance_reviews(hub_id);
+create index if not exists idx_elr_admin_guides_org on public.elr_admin_guides(organization_id);
+create index if not exists idx_elr_admin_guides_hub on public.elr_admin_guides(hub_id);
+create index if not exists idx_elr_user_guides_org on public.elr_user_guides(organization_id);
+create index if not exists idx_elr_user_guides_hub on public.elr_user_guides(hub_id);
+create index if not exists idx_elr_deployment_guides_org on public.elr_deployment_guides(organization_id);
+create index if not exists idx_elr_deployment_guides_hub on public.elr_deployment_guides(hub_id);
+create index if not exists idx_elr_launch_scores_org on public.elr_launch_scores(organization_id);
+create index if not exists idx_elr_readiness_validations_org on public.elr_readiness_validations(organization_id);
+create index if not exists idx_elr_readiness_validations_hub on public.elr_readiness_validations(hub_id);
+create index if not exists idx_elr_launch_blockers_org on public.elr_launch_blockers(organization_id);
+create index if not exists idx_elr_launch_blockers_hub on public.elr_launch_blockers(hub_id);
+create index if not exists idx_elr_score_snapshots_org on public.elr_score_snapshots(organization_id);
+create index if not exists idx_elr_score_snapshots_hub on public.elr_score_snapshots(hub_id);
+create index if not exists idx_elr_launch_health_org on public.elr_launch_health(organization_id);
+create index if not exists idx_elr_critical_issues_org on public.elr_critical_issues(organization_id);
+create index if not exists idx_elr_critical_issues_hub on public.elr_critical_issues(hub_id);
+create index if not exists idx_elr_readiness_warnings_org on public.elr_readiness_warnings(organization_id);
+create index if not exists idx_elr_readiness_warnings_hub on public.elr_readiness_warnings(hub_id);
+create index if not exists idx_elr_launch_failures_org on public.elr_launch_failures(organization_id);
+create index if not exists idx_elr_launch_failures_hub on public.elr_launch_failures(hub_id);
+create index if not exists idx_elr_audit_logs_org on public.elr_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'elr_readiness_hubs','elr_environment_validations','elr_configuration_validations','elr_secrets_validations','elr_deployment_plans','elr_rollback_plans','elr_version_registry','elr_release_notes','elr_backup_policies','elr_backup_verifications','elr_restore_verifications','elr_recovery_drills','elr_observability_logs','elr_observability_metrics','elr_trace_records','elr_sla_monitors','elr_security_checklists','elr_vulnerability_reviews','elr_permission_audits','elr_compliance_reviews','elr_admin_guides','elr_user_guides','elr_deployment_guides','elr_launch_scores','elr_readiness_validations','elr_launch_blockers','elr_score_snapshots','elr_launch_health','elr_critical_issues','elr_readiness_warnings','elr_launch_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.elr_readiness_hubs enable row level security;
+alter table public.elr_environment_validations enable row level security;
+alter table public.elr_configuration_validations enable row level security;
+alter table public.elr_secrets_validations enable row level security;
+alter table public.elr_deployment_plans enable row level security;
+alter table public.elr_rollback_plans enable row level security;
+alter table public.elr_version_registry enable row level security;
+alter table public.elr_release_notes enable row level security;
+alter table public.elr_backup_policies enable row level security;
+alter table public.elr_backup_verifications enable row level security;
+alter table public.elr_restore_verifications enable row level security;
+alter table public.elr_recovery_drills enable row level security;
+alter table public.elr_observability_logs enable row level security;
+alter table public.elr_observability_metrics enable row level security;
+alter table public.elr_trace_records enable row level security;
+alter table public.elr_sla_monitors enable row level security;
+alter table public.elr_security_checklists enable row level security;
+alter table public.elr_vulnerability_reviews enable row level security;
+alter table public.elr_permission_audits enable row level security;
+alter table public.elr_compliance_reviews enable row level security;
+alter table public.elr_admin_guides enable row level security;
+alter table public.elr_user_guides enable row level security;
+alter table public.elr_deployment_guides enable row level security;
+alter table public.elr_launch_scores enable row level security;
+alter table public.elr_readiness_validations enable row level security;
+alter table public.elr_launch_blockers enable row level security;
+alter table public.elr_score_snapshots enable row level security;
+alter table public.elr_launch_health enable row level security;
+alter table public.elr_critical_issues enable row level security;
+alter table public.elr_readiness_warnings enable row level security;
+alter table public.elr_launch_failures enable row level security;
+alter table public.elr_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'elr_readiness_hubs','elr_environment_validations','elr_configuration_validations','elr_secrets_validations','elr_deployment_plans','elr_rollback_plans','elr_version_registry','elr_release_notes','elr_backup_policies','elr_backup_verifications','elr_restore_verifications','elr_recovery_drills','elr_observability_logs','elr_observability_metrics','elr_trace_records','elr_sla_monitors','elr_security_checklists','elr_vulnerability_reviews','elr_permission_audits','elr_compliance_reviews','elr_admin_guides','elr_user_guides','elr_deployment_guides','elr_launch_scores','elr_readiness_validations','elr_launch_blockers','elr_score_snapshots','elr_launch_health','elr_critical_issues','elr_readiness_warnings','elr_launch_failures','elr_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('elr.view', 'View enterprise launch readiness platform data', 'enterprise_launch_readiness_platform'),
+  ('elr.manage', 'Manage launch readiness validations, deployments, and readiness outputs', 'enterprise_launch_readiness_platform'),
+  ('elr.approve', 'Approve launch readiness gates and deployment actions', 'enterprise_launch_readiness_platform'),
+  ('elr.admin', 'Administer enterprise launch readiness platform governance', 'enterprise_launch_readiness_platform')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -15842,6 +16494,155 @@ on conflict (id) do nothing;
 
 insert into public.aix_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00670067-0067-0067-0067-006700672101', '11111111-1111-1111-1111-111111111111', 'intelligence_hub', 'seed', 'AI executive intelligence platform seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 032_enterprise_launch_readiness_platform_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a332', '11111111-1111-1111-1111-111111111111', 'Enterprise Launch Readiness Orchestrator', 'enterprise_launch_readiness_platform', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["production_validation","deployment_readiness","backup_recovery","observability","security_compliance","documentation","launch_scoring","launch_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a532', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a332', 'northstar-launch-readiness-001', 'enterprise_launch_readiness_platform', 'readiness_hub', '00680068-0068-0068-0068-006800680101', '{"objective":"Enterprise launch readiness platform for northstar production go-live"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M1 Production Readiness Hub
+insert into public.elr_readiness_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('00680068-0068-0068-0068-006800680101', '11111111-1111-1111-1111-111111111111', 'northstar-launch-readiness', 'Northstar Launch Readiness Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_environment_validations (id, organization_id, hub_id, validation_key, validation_type, validation_score, validation_summary, status)
+values ('00690069-0069-0069-0069-006900690201', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'env-prod-0804', 'infrastructure', 96.50, 'All production environment checks passed', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_configuration_validations (id, organization_id, hub_id, validation_key, config_type, validation_score, config_ref, status)
+values ('006a006a-006a-006a-006a-006a006a0301', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'cfg-app-0804', 'application', 94.00, 'app-config-prod', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_secrets_validations (id, organization_id, hub_id, validation_key, secret_type, validation_score, secret_ref, status)
+values ('006b006b-006b-006b-006b-006b006b0401', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'sec-api-0804', 'api_key', 98.00, 'vault/api-keys', 'active')
+on conflict (id) do nothing;
+
+-- M2 Deployment Readiness
+insert into public.elr_deployment_plans (id, organization_id, hub_id, plan_key, plan_name, target_version, deployment_strategy, status)
+values ('006c006c-006c-006c-006c-006c006c0501', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'deploy-v2-0804', 'Production v2.0 Rollout', '2.0.0', 'rolling', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_rollback_plans (id, organization_id, hub_id, plan_key, rollback_version, rollback_reason, status)
+values ('006d006d-006d-006d-006d-006d006d0601', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'rollback-v1-0804', '1.9.5', 'Automated rollback if error rate exceeds threshold', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_version_registry (id, organization_id, hub_id, version_key, version_number, release_channel, artifact_ref, status)
+values ('006e006e-006e-006e-006e-006e006e0701', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'ver-2-0-0', '2.0.0', 'stable', 'registry/northstar:2.0.0', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_release_notes (id, organization_id, hub_id, note_key, version_ref, note_summary, status)
+values ('006f006f-006f-006f-006f-006f006f0801', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'notes-v2-0804', '2.0.0', 'Major launch readiness release with backup and observability upgrades', 'active')
+on conflict (id) do nothing;
+
+-- M3 Backup & Recovery
+insert into public.elr_backup_policies (id, organization_id, hub_id, policy_key, policy_name, retention_days, backup_frequency, status)
+values ('00700070-0070-0070-0070-007000700901', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'backup-daily-0804', 'Daily Full Backup', 30, 'daily', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_backup_verifications (id, organization_id, hub_id, verification_key, backup_ref, verification_score, verification_summary, status)
+values ('00710071-0071-0071-0071-007100710a01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'bkp-verify-0804', 'backup-20260804', 99.00, 'Backup integrity verified', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_restore_verifications (id, organization_id, hub_id, verification_key, restore_ref, verification_score, verification_summary, status)
+values ('00720072-0072-0072-0072-007200720b01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'restore-verify-0804', 'restore-drill-0804', 97.50, 'Restore drill completed successfully', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_recovery_drills (id, organization_id, hub_id, drill_key, drill_type, drill_score, drill_summary, status)
+values ('00730073-0073-0073-0073-007300730c01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'drill-failover-0804', 'failover', 95.00, 'Regional failover drill passed', 'active')
+on conflict (id) do nothing;
+
+-- M4 Observability
+insert into public.elr_observability_logs (id, organization_id, hub_id, log_key, log_level, log_source, log_message, status)
+values ('00740074-0074-0074-0074-007400740d01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'log-health-0804', 'info', 'launch-monitor', 'All observability pipelines healthy', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_observability_metrics (id, organization_id, hub_id, metric_key, metric_name, metric_value, metric_unit, status)
+values ('00750075-0075-0075-0075-007500750e01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'metric-latency-0804', 'p99_latency', 120.5, 'ms', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_trace_records (id, organization_id, hub_id, trace_key, trace_name, latency_ms, span_count, status)
+values ('00760076-0076-0076-0076-007600760f01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'trace-api-0804', 'api-gateway-trace', 45.2, 12, 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_sla_monitors (id, organization_id, hub_id, monitor_key, sla_target, current_value, service_ref, status)
+values ('00770077-0077-0077-0077-007700771001', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'sla-uptime-0804', 99.95, 99.98, 'platform-api', 'active')
+on conflict (id) do nothing;
+
+-- M5 Security & Compliance
+insert into public.elr_security_checklists (id, organization_id, hub_id, checklist_key, checklist_name, completion_score, status)
+values ('00780078-0078-0078-0078-007800781101', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'sec-checklist-0804', 'Production Security Checklist', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_vulnerability_reviews (id, organization_id, hub_id, review_key, vulnerability_ref, severity, review_summary, status)
+values ('00790079-0079-0079-0079-007900791201', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'vuln-review-0804', 'CVE-2026-1234', 'warning', 'Patch scheduled for next maintenance window', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_permission_audits (id, organization_id, hub_id, audit_key, audit_scope, finding_count, audit_summary, status)
+values ('007a007a-007a-007a-007a-007a007a1301', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'perm-audit-0804', 'platform', 2, 'Two over-privileged service accounts identified', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_compliance_reviews (id, organization_id, hub_id, review_key, compliance_type, review_score, review_summary, status)
+values ('007b007b-007b-007b-007b-007b007b1401', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'compliance-soc2-0804', 'soc2', 94.50, 'SOC2 controls validated for launch', 'active')
+on conflict (id) do nothing;
+
+-- M6 Documentation
+insert into public.elr_admin_guides (id, organization_id, hub_id, guide_key, guide_title, guide_version, status)
+values ('007c007c-007c-007c-007c-007c007c1501', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'admin-guide-0804', 'Production Admin Guide', '2.0', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_user_guides (id, organization_id, hub_id, guide_key, guide_title, guide_version, status)
+values ('007d007d-007d-007d-007d-007d007d1601', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'user-guide-0804', 'End User Launch Guide', '2.0', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_deployment_guides (id, organization_id, hub_id, guide_key, guide_title, guide_version, status)
+values ('007e007e-007e-007e-007e-007e007e1701', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'deploy-guide-0804', 'Production Deployment Runbook', '2.0', 'active')
+on conflict (id) do nothing;
+
+-- M7 Launch Score
+insert into public.elr_launch_scores (id, organization_id, metrics_key, security_score, reliability_score, performance_score, documentation_score, operational_score, overall_launch_score, status)
+values ('007f007f-007f-007f-007f-007f007f1801', '11111111-1111-1111-1111-111111111111', 'launch-scores-0804', 94.00, 96.50, 95.00, 91.00, 97.00, 94.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_readiness_validations (id, organization_id, hub_id, validation_key, validation_type, validation_score, validation_summary, status)
+values ('00800080-0080-0080-0080-008000801901', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'readiness-gate-0804', 'launch_gate', 93.00, 'All launch gates passed except documentation review', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_launch_blockers (id, organization_id, hub_id, blocker_key, blocker_title, blocker_severity, blocker_summary, status)
+values ('00810081-0081-0081-0081-008100811a01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'blocker-docs-0804', 'Deployment guide review pending', 'warning', 'Admin guide needs final sign-off', 'open')
+on conflict (id) do nothing;
+
+insert into public.elr_score_snapshots (id, organization_id, hub_id, snapshot_key, snapshot_date, overall_launch_score, status)
+values ('00820082-0082-0082-0082-008200821b01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'snapshot-0804', current_date, 94.75, 'active')
+on conflict (id) do nothing;
+
+-- M8 Launch Dashboard
+insert into public.elr_launch_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, deployment_status, backup_status, security_status, summary, status)
+values ('00830083-0083-0083-0083-008300831c01', '11111111-1111-1111-1111-111111111111', 'launch-health-0804', 95.00, false, 'ready', 'healthy', 'healthy', 'Launch readiness platform operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.elr_critical_issues (id, organization_id, hub_id, issue_key, issue_title, issue_severity, issue_summary, status)
+values ('00840084-0084-0084-0084-008400841d01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'issue-drill-0804', 'Recovery drill scheduled for tonight', 'warning', 'Ensure on-call coverage during drill window', 'open')
+on conflict (id) do nothing;
+
+insert into public.elr_readiness_warnings (id, organization_id, hub_id, warning_key, warning_type, warning_message, status)
+values ('00850085-0085-0085-0085-008500851e01', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'warn-sla-0804', 'sla', 'SLA monitor approaching threshold for api-gateway', 'active')
+on conflict (id) do nothing;
+
+insert into public.elr_launch_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00860086-0086-0086-0086-008600862001', '11111111-1111-1111-1111-111111111111', '00680068-0068-0068-0068-006800680101', 'fail-deploy-0804', 'deployment', 'ROLLBACK', 'Canary deployment rolled back due to elevated error rate', 'open')
+on conflict (id) do nothing;
+
+insert into public.elr_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00870087-0087-0087-0087-008700872101', '11111111-1111-1111-1111-111111111111', 'readiness_hub', 'seed', 'Enterprise launch readiness platform seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 570 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_*)
+// 602 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -578,6 +578,38 @@ const requiredTables = [
     "aix_executive_health",
     "aix_executive_failures",
     "aix_audit_logs",
+    "elr_readiness_hubs",
+    "elr_environment_validations",
+    "elr_configuration_validations",
+    "elr_secrets_validations",
+    "elr_deployment_plans",
+    "elr_rollback_plans",
+    "elr_version_registry",
+    "elr_release_notes",
+    "elr_backup_policies",
+    "elr_backup_verifications",
+    "elr_restore_verifications",
+    "elr_recovery_drills",
+    "elr_observability_logs",
+    "elr_observability_metrics",
+    "elr_trace_records",
+    "elr_sla_monitors",
+    "elr_security_checklists",
+    "elr_vulnerability_reviews",
+    "elr_permission_audits",
+    "elr_compliance_reviews",
+    "elr_admin_guides",
+    "elr_user_guides",
+    "elr_deployment_guides",
+    "elr_launch_scores",
+    "elr_readiness_validations",
+    "elr_launch_blockers",
+    "elr_score_snapshots",
+    "elr_launch_health",
+    "elr_critical_issues",
+    "elr_readiness_warnings",
+    "elr_launch_failures",
+    "elr_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

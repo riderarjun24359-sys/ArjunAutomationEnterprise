@@ -7865,3 +7865,453 @@ export interface DbAixAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbElrReadinessHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrEnvironmentValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_type: string;
+    validation_score: number;
+    validation_summary: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrConfigurationValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    config_type: string;
+    validation_score: number;
+    config_ref: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrSecretsValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    secret_type: string;
+    validation_score: number;
+    secret_ref: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrDeploymentPlan {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    plan_key: string;
+    plan_name: string;
+    target_version: string;
+    deployment_strategy: string;
+    scheduled_at?: string;
+    approved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrRollbackPlan {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    plan_key: string;
+    rollback_version: string;
+    rollback_reason: string;
+    trigger_condition: string;
+    prepared_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrVersionRegistry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    artifact_ref: string;
+    registered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrReleaseNote {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    note_key: string;
+    version_ref: string;
+    note_summary: string;
+    change_log: Record<string, unknown>;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrBackupPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    retention_days: number;
+    backup_frequency: string;
+    storage_target: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrBackupVerification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    verification_key: string;
+    backup_ref: string;
+    verification_score: number;
+    verification_summary: string;
+    verified_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrRestoreVerification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    verification_key: string;
+    restore_ref: string;
+    verification_score: number;
+    verification_summary: string;
+    verified_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrRecoveryDrill {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    drill_key: string;
+    drill_type: string;
+    drill_score: number;
+    drill_summary: string;
+    completed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrObservabilityLog {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    log_key: string;
+    log_level: string;
+    log_source: string;
+    log_message: string;
+    logged_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrObservabilityMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metric_key: string;
+    metric_name: string;
+    metric_value: number;
+    metric_unit: string;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrTraceRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trace_key: string;
+    trace_name: string;
+    latency_ms: number;
+    span_count: number;
+    traced_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrSlaMonitor {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    monitor_key: string;
+    sla_target: number;
+    current_value: number;
+    service_ref: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrSecurityChecklist {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    checklist_key: string;
+    checklist_name: string;
+    completion_score: number;
+    checklist_items: Record<string, unknown>;
+    reviewed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrVulnerabilityReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    vulnerability_ref: string;
+    severity: string;
+    review_summary: string;
+    reviewed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrPermissionAudit {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    audit_key: string;
+    audit_scope: string;
+    finding_count: number;
+    audit_summary: string;
+    audited_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrComplianceReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    compliance_type: string;
+    review_score: number;
+    review_summary: string;
+    reviewed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrAdminGuide {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    guide_key: string;
+    guide_title: string;
+    guide_version: string;
+    guide_content: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrUserGuide {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    guide_key: string;
+    guide_title: string;
+    guide_version: string;
+    guide_content: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrDeploymentGuide {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    guide_key: string;
+    guide_title: string;
+    guide_version: string;
+    guide_content: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrLaunchScoreMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    security_score: number;
+    reliability_score: number;
+    performance_score: number;
+    documentation_score: number;
+    operational_score: number;
+    overall_launch_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrReadinessValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_type: string;
+    validation_score: number;
+    validation_summary: string;
+    validated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrLaunchBlocker {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    blocker_key: string;
+    blocker_title: string;
+    blocker_severity: string;
+    blocker_summary: string;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrScoreSnapshot {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    snapshot_key: string;
+    snapshot_date: string;
+    overall_launch_score: number;
+    score_breakdown: Record<string, unknown>;
+    captured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrLaunchHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    deployment_status: string;
+    backup_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrCriticalIssue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    issue_key: string;
+    issue_title: string;
+    issue_severity: string;
+    issue_summary: string;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrReadinessWarning {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    warning_key: string;
+    warning_type: string;
+    warning_message: string;
+    due_date?: string;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrLaunchFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbElrAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

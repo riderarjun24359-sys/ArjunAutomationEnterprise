@@ -32,6 +32,7 @@ export const ROUTES = {
     integrationPlatform: "/integration-platform",
     operationsCenter: "/operations-center",
     executiveIntelligence: "/executive-intelligence",
+    launchReadiness: "/launch-readiness",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",
