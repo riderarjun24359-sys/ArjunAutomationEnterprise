@@ -32,6 +32,7 @@ const protectedRoutes = [
     ROUTES.enterpriseIdentity,
     ROUTES.tenantLifecycle,
     ROUTES.billingRevenue,
+    ROUTES.communicationHub,
 ];
 
 const authRoutes = [

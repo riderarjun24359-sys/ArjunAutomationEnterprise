@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 442 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_*)
+// 474 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -450,6 +450,38 @@ const requiredTables = [
     "brv_financial_health",
     "brv_expansion_contraction",
     "brv_audit_logs",
+    "cnh_communication_hubs",
+    "cnh_notification_channels",
+    "cnh_notification_queue",
+    "cnh_retry_policies",
+    "cnh_message_templates",
+    "cnh_template_variables",
+    "cnh_template_localizations",
+    "cnh_template_approvals",
+    "cnh_automation_rules",
+    "cnh_automation_triggers",
+    "cnh_automation_schedules",
+    "cnh_automation_executions",
+    "cnh_preference_profiles",
+    "cnh_channel_preferences",
+    "cnh_opt_in_records",
+    "cnh_opt_out_records",
+    "cnh_announcements",
+    "cnh_announcement_schedules",
+    "cnh_pinned_announcements",
+    "cnh_announcement_acknowledgements",
+    "cnh_campaigns",
+    "cnh_audience_segments",
+    "cnh_campaign_deliveries",
+    "cnh_campaign_metrics",
+    "cnh_delivery_analytics",
+    "cnh_engagement_metrics",
+    "cnh_bounce_records",
+    "cnh_channel_performance",
+    "cnh_communication_metrics",
+    "cnh_system_health",
+    "cnh_delivery_failures",
+    "cnh_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T16:47:58.206Z
+-- Generated: 2026-08-03T17:10:47.556Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (27):
+--   Migrations (28):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -33,7 +33,8 @@
 --     - 202608020025_enterprise_identity_platform.sql
 --     - 202608020026_tenant_lifecycle_operations.sql
 --     - 202608020027_enterprise_billing_revenue.sql
---   Seeds (27):
+--     - 202608020028_enterprise_communication_hub.sql
+--   Seeds (28):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -61,9 +62,10 @@
 --     - 025_enterprise_identity_platform_seed.sql
 --     - 026_tenant_lifecycle_operations_seed.sql
 --     - 027_enterprise_billing_revenue_seed.sql
+--     - 028_enterprise_communication_hub_seed.sql
 --
--- Includes through V2 Program A Sprint 4:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform
+-- Includes through V2 Program A Sprint 5:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -9652,6 +9654,683 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020028_enterprise_communication_hub.sql
+-- =============================================================================
+-- V2 Program A Sprint 5: Enterprise Customer Communication & Notification Hub
+
+-- M1 Notification Engine
+create table if not exists public.cnh_communication_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  default_locale text not null default 'en-US',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+create table if not exists public.cnh_notification_channels (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  channel_key text not null,
+  channel_name text not null,
+  channel_type text not null default 'email',
+  provider_config jsonb not null default '{}'::jsonb,
+  is_enabled boolean not null default true,
+  priority_level text not null default 'normal',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, channel_key)
+);
+
+create table if not exists public.cnh_notification_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  queue_key text not null,
+  channel_id uuid references public.cnh_notification_channels(id) on delete set null,
+  channel_type text not null default 'email',
+  recipient text not null,
+  subject text not null default '',
+  body text not null default '',
+  priority_level text not null default 'normal',
+  delivery_status text not null default 'pending',
+  retry_count integer not null default 0,
+  scheduled_at timestamptz not null default now(),
+  delivered_at timestamptz,
+  failure_reason text not null default '',
+  status text not null default 'queued',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+create table if not exists public.cnh_retry_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  policy_key text not null,
+  policy_name text not null,
+  channel_type text not null default 'email',
+  max_retries integer not null default 3,
+  backoff_seconds integer not null default 60,
+  backoff_multiplier numeric(4, 2) not null default 2.0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, policy_key)
+);
+
+-- M2 Message Template Center
+create table if not exists public.cnh_message_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null,
+  channel_type text not null default 'email',
+  subject_template text not null default '',
+  body_template text not null default '',
+  version integer not null default 1,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+create table if not exists public.cnh_template_variables (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
+  variable_key text not null,
+  variable_name text not null,
+  default_value text not null default '',
+  is_required boolean not null default false,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_id, variable_key)
+);
+
+create table if not exists public.cnh_template_localizations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
+  locale text not null default 'en-US',
+  subject_template text not null default '',
+  body_template text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_id, locale)
+);
+
+create table if not exists public.cnh_template_approvals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
+  approval_key text not null,
+  approval_status text not null default 'pending',
+  approved_by uuid references public.user_profiles(id) on delete set null,
+  approved_at timestamptz,
+  rejection_reason text not null default '',
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, approval_key)
+);
+
+-- M3 Communication Automation
+create table if not exists public.cnh_automation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null,
+  trigger_type text not null default 'event',
+  action_type text not null default 'send_notification',
+  priority_level text not null default 'normal',
+  is_enabled boolean not null default true,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+create table if not exists public.cnh_automation_triggers (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
+  trigger_key text not null,
+  trigger_event text not null,
+  conditions jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_id, trigger_key)
+);
+
+create table if not exists public.cnh_automation_schedules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
+  schedule_key text not null,
+  cron_expression text not null default '0 9 * * *',
+  timezone text not null default 'UTC',
+  next_run_at timestamptz,
+  last_run_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, schedule_key)
+);
+
+create table if not exists public.cnh_automation_executions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  rule_id uuid references public.cnh_automation_rules(id) on delete set null,
+  execution_key text not null,
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  execution_status text not null default 'running',
+  notifications_sent integer not null default 0,
+  error_message text not null default '',
+  status text not null default 'running',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, execution_key)
+);
+
+-- M4 Customer Preference Center
+create table if not exists public.cnh_preference_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  profile_key text not null,
+  user_id uuid references public.user_profiles(id) on delete set null,
+  customer_email text not null default '',
+  preferred_locale text not null default 'en-US',
+  timezone text not null default 'UTC',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+create table if not exists public.cnh_channel_preferences (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  preference_profile_id uuid not null references public.cnh_preference_profiles(id) on delete cascade,
+  channel_type text not null default 'email',
+  is_enabled boolean not null default true,
+  frequency text not null default 'immediate',
+  quiet_hours_start time,
+  quiet_hours_end time,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, preference_profile_id, channel_type)
+);
+
+create table if not exists public.cnh_opt_in_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
+  opt_in_key text not null,
+  channel_type text not null default 'email',
+  source text not null default 'signup',
+  opted_in_at timestamptz not null default now(),
+  ip_address text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, opt_in_key)
+);
+
+create table if not exists public.cnh_opt_out_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
+  opt_out_key text not null,
+  channel_type text not null default 'email',
+  reason text not null default '',
+  opted_out_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, opt_out_key)
+);
+
+-- M5 Announcement Center
+create table if not exists public.cnh_announcements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  announcement_key text not null,
+  title text not null,
+  content text not null default '',
+  channel_type text not null default 'in_app',
+  priority_level text not null default 'normal',
+  requires_acknowledgement boolean not null default false,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, announcement_key)
+);
+
+create table if not exists public.cnh_announcement_schedules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
+  schedule_key text not null,
+  publish_at timestamptz not null default now(),
+  expire_at timestamptz,
+  status text not null default 'scheduled',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, schedule_key)
+);
+
+create table if not exists public.cnh_pinned_announcements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
+  pin_key text not null,
+  pin_order integer not null default 0,
+  pinned_at timestamptz not null default now(),
+  expires_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, pin_key)
+);
+
+create table if not exists public.cnh_announcement_acknowledgements (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
+  acknowledgement_key text not null,
+  user_id uuid references public.user_profiles(id) on delete set null,
+  acknowledged_at timestamptz not null default now(),
+  status text not null default 'acknowledged',
+  created_at timestamptz not null default now(),
+  unique (organization_id, hub_id, acknowledgement_key)
+);
+
+-- M6 Campaign Management
+create table if not exists public.cnh_campaigns (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  campaign_key text not null,
+  campaign_name text not null,
+  channel_type text not null default 'email',
+  template_id uuid references public.cnh_message_templates(id) on delete set null,
+  priority_level text not null default 'normal',
+  starts_at timestamptz,
+  ends_at timestamptz,
+  status text not null default 'draft',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, campaign_key)
+);
+
+create table if not exists public.cnh_audience_segments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  campaign_id uuid references public.cnh_campaigns(id) on delete set null,
+  segment_key text not null,
+  segment_name text not null,
+  criteria jsonb not null default '{}'::jsonb,
+  estimated_size integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, segment_key)
+);
+
+create table if not exists public.cnh_campaign_deliveries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
+  delivery_key text not null,
+  recipient text not null,
+  channel_type text not null default 'email',
+  delivery_status text not null default 'pending',
+  sent_at timestamptz,
+  delivered_at timestamptz,
+  opened_at timestamptz,
+  clicked_at timestamptz,
+  retry_count integer not null default 0,
+  status text not null default 'pending',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, delivery_key)
+);
+
+create table if not exists public.cnh_campaign_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  sent_count integer not null default 0,
+  delivered_count integer not null default 0,
+  open_rate numeric(5, 2) not null default 0,
+  click_rate numeric(5, 2) not null default 0,
+  bounce_rate numeric(5, 2) not null default 0,
+  unsubscribe_rate numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, campaign_id, metrics_key)
+);
+
+-- M7 Delivery Analytics
+create table if not exists public.cnh_delivery_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  analytics_key text not null,
+  metric_date date not null default current_date,
+  channel_type text not null default 'email',
+  total_sent integer not null default 0,
+  total_delivered integer not null default 0,
+  total_failed integer not null default 0,
+  delivery_rate numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+create table if not exists public.cnh_engagement_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  channel_type text not null default 'email',
+  open_rate numeric(5, 2) not null default 0,
+  click_rate numeric(5, 2) not null default 0,
+  unsubscribe_rate numeric(5, 2) not null default 0,
+  engagement_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metrics_key)
+);
+
+create table if not exists public.cnh_bounce_records (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  bounce_key text not null,
+  channel_type text not null default 'email',
+  recipient text not null,
+  bounce_type text not null default 'hard',
+  bounce_reason text not null default '',
+  bounced_at timestamptz not null default now(),
+  retry_count integer not null default 0,
+  status text not null default 'recorded',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, bounce_key)
+);
+
+create table if not exists public.cnh_channel_performance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  performance_key text not null,
+  metric_date date not null default current_date,
+  channel_type text not null default 'email',
+  delivery_rate numeric(5, 2) not null default 0,
+  open_rate numeric(5, 2) not null default 0,
+  click_rate numeric(5, 2) not null default 0,
+  avg_latency_ms integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, performance_key)
+);
+
+-- M8 Communication Ops Dashboard
+create table if not exists public.cnh_communication_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  total_sent integer not null default 0,
+  total_delivered integer not null default 0,
+  total_failed integer not null default 0,
+  delivery_rate numeric(5, 2) not null default 0,
+  open_rate numeric(5, 2) not null default 0,
+  click_rate numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+create table if not exists public.cnh_system_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 0,
+  uptime_percent numeric(5, 2) not null default 100,
+  queue_depth integer not null default 0,
+  avg_delivery_latency_ms integer not null default 0,
+  disaster_recovery_mode boolean not null default false,
+  summary text not null default '',
+  status text not null default 'healthy',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+create table if not exists public.cnh_delivery_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
+  failure_key text not null,
+  channel_type text not null default 'email',
+  recipient text not null default '',
+  error_code text not null default '',
+  error_message text not null default '',
+  retry_count integer not null default 0,
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'open',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+create table if not exists public.cnh_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  action text not null,
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid references public.user_profiles(id) on delete set null,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+-- indexes
+create index if not exists idx_cnh_communication_hubs_org on public.cnh_communication_hubs(organization_id);
+create index if not exists idx_cnh_notification_channels_org on public.cnh_notification_channels(organization_id);
+create index if not exists idx_cnh_notification_channels_hub on public.cnh_notification_channels(hub_id);
+create index if not exists idx_cnh_notification_queue_org on public.cnh_notification_queue(organization_id);
+create index if not exists idx_cnh_notification_queue_hub on public.cnh_notification_queue(hub_id);
+create index if not exists idx_cnh_notification_queue_status on public.cnh_notification_queue(delivery_status);
+create index if not exists idx_cnh_retry_policies_org on public.cnh_retry_policies(organization_id);
+create index if not exists idx_cnh_retry_policies_hub on public.cnh_retry_policies(hub_id);
+create index if not exists idx_cnh_message_templates_org on public.cnh_message_templates(organization_id);
+create index if not exists idx_cnh_message_templates_hub on public.cnh_message_templates(hub_id);
+create index if not exists idx_cnh_template_variables_org on public.cnh_template_variables(organization_id);
+create index if not exists idx_cnh_template_variables_hub on public.cnh_template_variables(hub_id);
+create index if not exists idx_cnh_template_localizations_org on public.cnh_template_localizations(organization_id);
+create index if not exists idx_cnh_template_localizations_hub on public.cnh_template_localizations(hub_id);
+create index if not exists idx_cnh_template_approvals_org on public.cnh_template_approvals(organization_id);
+create index if not exists idx_cnh_template_approvals_hub on public.cnh_template_approvals(hub_id);
+create index if not exists idx_cnh_automation_rules_org on public.cnh_automation_rules(organization_id);
+create index if not exists idx_cnh_automation_rules_hub on public.cnh_automation_rules(hub_id);
+create index if not exists idx_cnh_automation_triggers_org on public.cnh_automation_triggers(organization_id);
+create index if not exists idx_cnh_automation_triggers_hub on public.cnh_automation_triggers(hub_id);
+create index if not exists idx_cnh_automation_schedules_org on public.cnh_automation_schedules(organization_id);
+create index if not exists idx_cnh_automation_schedules_hub on public.cnh_automation_schedules(hub_id);
+create index if not exists idx_cnh_automation_executions_org on public.cnh_automation_executions(organization_id);
+create index if not exists idx_cnh_automation_executions_hub on public.cnh_automation_executions(hub_id);
+create index if not exists idx_cnh_preference_profiles_org on public.cnh_preference_profiles(organization_id);
+create index if not exists idx_cnh_preference_profiles_hub on public.cnh_preference_profiles(hub_id);
+create index if not exists idx_cnh_channel_preferences_org on public.cnh_channel_preferences(organization_id);
+create index if not exists idx_cnh_channel_preferences_hub on public.cnh_channel_preferences(hub_id);
+create index if not exists idx_cnh_opt_in_records_org on public.cnh_opt_in_records(organization_id);
+create index if not exists idx_cnh_opt_in_records_hub on public.cnh_opt_in_records(hub_id);
+create index if not exists idx_cnh_opt_out_records_org on public.cnh_opt_out_records(organization_id);
+create index if not exists idx_cnh_opt_out_records_hub on public.cnh_opt_out_records(hub_id);
+create index if not exists idx_cnh_announcements_org on public.cnh_announcements(organization_id);
+create index if not exists idx_cnh_announcements_hub on public.cnh_announcements(hub_id);
+create index if not exists idx_cnh_announcement_schedules_org on public.cnh_announcement_schedules(organization_id);
+create index if not exists idx_cnh_announcement_schedules_hub on public.cnh_announcement_schedules(hub_id);
+create index if not exists idx_cnh_pinned_announcements_org on public.cnh_pinned_announcements(organization_id);
+create index if not exists idx_cnh_pinned_announcements_hub on public.cnh_pinned_announcements(hub_id);
+create index if not exists idx_cnh_announcement_acknowledgements_org on public.cnh_announcement_acknowledgements(organization_id);
+create index if not exists idx_cnh_announcement_acknowledgements_hub on public.cnh_announcement_acknowledgements(hub_id);
+create index if not exists idx_cnh_campaigns_org on public.cnh_campaigns(organization_id);
+create index if not exists idx_cnh_campaigns_hub on public.cnh_campaigns(hub_id);
+create index if not exists idx_cnh_audience_segments_org on public.cnh_audience_segments(organization_id);
+create index if not exists idx_cnh_audience_segments_hub on public.cnh_audience_segments(hub_id);
+create index if not exists idx_cnh_campaign_deliveries_org on public.cnh_campaign_deliveries(organization_id);
+create index if not exists idx_cnh_campaign_deliveries_hub on public.cnh_campaign_deliveries(hub_id);
+create index if not exists idx_cnh_campaign_metrics_org on public.cnh_campaign_metrics(organization_id);
+create index if not exists idx_cnh_campaign_metrics_hub on public.cnh_campaign_metrics(hub_id);
+create index if not exists idx_cnh_delivery_analytics_org on public.cnh_delivery_analytics(organization_id);
+create index if not exists idx_cnh_delivery_analytics_hub on public.cnh_delivery_analytics(hub_id);
+create index if not exists idx_cnh_engagement_metrics_org on public.cnh_engagement_metrics(organization_id);
+create index if not exists idx_cnh_engagement_metrics_hub on public.cnh_engagement_metrics(hub_id);
+create index if not exists idx_cnh_bounce_records_org on public.cnh_bounce_records(organization_id);
+create index if not exists idx_cnh_bounce_records_hub on public.cnh_bounce_records(hub_id);
+create index if not exists idx_cnh_channel_performance_org on public.cnh_channel_performance(organization_id);
+create index if not exists idx_cnh_channel_performance_hub on public.cnh_channel_performance(hub_id);
+create index if not exists idx_cnh_communication_metrics_org on public.cnh_communication_metrics(organization_id);
+create index if not exists idx_cnh_system_health_org on public.cnh_system_health(organization_id);
+create index if not exists idx_cnh_delivery_failures_org on public.cnh_delivery_failures(organization_id);
+create index if not exists idx_cnh_delivery_failures_hub on public.cnh_delivery_failures(hub_id);
+create index if not exists idx_cnh_audit_logs_org on public.cnh_audit_logs(organization_id);
+
+-- updated_at triggers
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'cnh_communication_hubs','cnh_notification_channels','cnh_notification_queue','cnh_retry_policies',
+    'cnh_message_templates','cnh_template_variables','cnh_template_localizations','cnh_template_approvals',
+    'cnh_automation_rules','cnh_automation_triggers','cnh_automation_schedules','cnh_automation_executions',
+    'cnh_preference_profiles','cnh_channel_preferences','cnh_opt_in_records','cnh_opt_out_records',
+    'cnh_announcements','cnh_announcement_schedules','cnh_pinned_announcements',
+    'cnh_campaigns','cnh_audience_segments','cnh_campaign_deliveries','cnh_campaign_metrics',
+    'cnh_delivery_analytics','cnh_engagement_metrics','cnh_bounce_records','cnh_channel_performance',
+    'cnh_communication_metrics','cnh_system_health','cnh_delivery_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+-- RLS
+alter table public.cnh_communication_hubs enable row level security;
+alter table public.cnh_notification_channels enable row level security;
+alter table public.cnh_notification_queue enable row level security;
+alter table public.cnh_retry_policies enable row level security;
+alter table public.cnh_message_templates enable row level security;
+alter table public.cnh_template_variables enable row level security;
+alter table public.cnh_template_localizations enable row level security;
+alter table public.cnh_template_approvals enable row level security;
+alter table public.cnh_automation_rules enable row level security;
+alter table public.cnh_automation_triggers enable row level security;
+alter table public.cnh_automation_schedules enable row level security;
+alter table public.cnh_automation_executions enable row level security;
+alter table public.cnh_preference_profiles enable row level security;
+alter table public.cnh_channel_preferences enable row level security;
+alter table public.cnh_opt_in_records enable row level security;
+alter table public.cnh_opt_out_records enable row level security;
+alter table public.cnh_announcements enable row level security;
+alter table public.cnh_announcement_schedules enable row level security;
+alter table public.cnh_pinned_announcements enable row level security;
+alter table public.cnh_announcement_acknowledgements enable row level security;
+alter table public.cnh_campaigns enable row level security;
+alter table public.cnh_audience_segments enable row level security;
+alter table public.cnh_campaign_deliveries enable row level security;
+alter table public.cnh_campaign_metrics enable row level security;
+alter table public.cnh_delivery_analytics enable row level security;
+alter table public.cnh_engagement_metrics enable row level security;
+alter table public.cnh_bounce_records enable row level security;
+alter table public.cnh_channel_performance enable row level security;
+alter table public.cnh_communication_metrics enable row level security;
+alter table public.cnh_system_health enable row level security;
+alter table public.cnh_delivery_failures enable row level security;
+alter table public.cnh_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'cnh_communication_hubs','cnh_notification_channels','cnh_notification_queue','cnh_retry_policies',
+    'cnh_message_templates','cnh_template_variables','cnh_template_localizations','cnh_template_approvals',
+    'cnh_automation_rules','cnh_automation_triggers','cnh_automation_schedules','cnh_automation_executions',
+    'cnh_preference_profiles','cnh_channel_preferences','cnh_opt_in_records','cnh_opt_out_records',
+    'cnh_announcements','cnh_announcement_schedules','cnh_pinned_announcements','cnh_announcement_acknowledgements',
+    'cnh_campaigns','cnh_audience_segments','cnh_campaign_deliveries','cnh_campaign_metrics',
+    'cnh_delivery_analytics','cnh_engagement_metrics','cnh_bounce_records','cnh_channel_performance',
+    'cnh_communication_metrics','cnh_system_health','cnh_delivery_failures','cnh_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('cnh.view', 'View enterprise communication and notification hub data', 'enterprise_communication_hub'),
+  ('cnh.manage', 'Manage channels, templates, campaigns, and notification delivery', 'enterprise_communication_hub'),
+  ('cnh.approve', 'Approve message templates and campaign communications', 'enterprise_communication_hub'),
+  ('cnh.admin', 'Administer enterprise communication hub governance and configuration', 'enterprise_communication_hub')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -12474,6 +13153,194 @@ values
   ('dd000001-dd00-dd00-dd00-dd0000000001', '11111111-1111-1111-1111-111111111111', 'billing_account', 'dd01dd01-dd01-dd01-dd01-dd01dd010101', 'create', 'Northstar billing account provisioned with USD currency', '{"account_key":"northstar-billing","currency_code":"USD"}'::jsonb, 'standard'),
   ('dd000002-dd00-dd00-dd00-dd0000000002', '11111111-1111-1111-1111-111111111111', 'subscription_billing', 'dd03dd03-dd03-dd03-dd03-dd03dd030301', 'create', 'Starter monthly subscription activated — MRR $299, ARR $3,588', '{"plan_name":"Starter Plan","amount_usd":299,"mrr_usd":299,"arr_usd":3588}'::jsonb, 'elevated'),
   ('dd000003-dd00-dd00-dd00-dd0000000003', '11111111-1111-1111-1111-111111111111', 'invoice', 'dd13dd13-dd13-dd13-dd13-dd13dd131301', 'update', 'Invoice INV-NS-2026-0802 paid — $324.42 including 8.5% tax', '{"invoice_number":"INV-NS-2026-0802","total_usd":324.42,"payment_status":"paid"}'::jsonb, 'restricted')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 028_enterprise_communication_hub_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a328', '11111111-1111-1111-1111-111111111111', 'Enterprise Communication Hub Orchestrator', 'enterprise_communication_hub', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["notification_engine","message_template_center","communication_automation","customer_preference_center","announcement_center","campaign_management","delivery_analytics","communication_ops_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a528', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a328', 'northstar-comms-001', 'enterprise_communication_hub', 'communication_hub', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', '{"objective":"enterprise communication and notification hub for northstar-comms hub"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M1 Notification Engine
+insert into public.cnh_communication_hubs (id, organization_id, hub_key, hub_name, default_locale, status)
+values
+  ('ee01ee01-ee01-ee01-ee01-ee01ee010101', '11111111-1111-1111-1111-111111111111', 'northstar-comms', 'Northstar Communication Hub', 'en-US', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_notification_channels (id, organization_id, hub_id, channel_key, channel_name, channel_type, provider_config, is_enabled, priority_level, status)
+values
+  ('ee02ee02-ee02-ee02-ee02-ee02ee020201', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'email-primary', 'Primary Email Channel', 'email', '{"provider":"sendgrid","from":"noreply@northstar.example"}'::jsonb, true, 'normal', 'active'),
+  ('ee02ee02-ee02-ee02-ee02-ee02ee020202', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'in-app-default', 'In-App Notifications', 'in_app', '{"badge_enabled":true}'::jsonb, true, 'high', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_notification_queue (id, organization_id, hub_id, queue_key, channel_id, channel_type, recipient, subject, body, priority_level, delivery_status, retry_count, scheduled_at, delivered_at, failure_reason, status)
+values
+  ('ee03ee03-ee03-ee03-ee03-ee03ee030301', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'notif-welcome-delivered', 'ee02ee02-ee02-ee02-ee02-ee02ee020201', 'email', 'customer@northstar.example', 'Welcome to Northstar', 'Thank you for joining Northstar. Your account is ready.', 'normal', 'delivered', 0, '2026-08-02 09:00:00+00', '2026-08-02 09:00:05+00', '', 'completed'),
+  ('ee03ee03-ee03-ee03-ee03-ee03ee030302', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'notif-alert-failed', 'ee02ee02-ee02-ee02-ee02-ee02ee020201', 'email', 'invalid@bounce.example', 'Account Alert', 'Your account requires attention.', 'high', 'failed', 3, '2026-08-02 10:00:00+00', null, '550 5.1.1 User unknown', 'failed')
+on conflict (id) do nothing;
+
+insert into public.cnh_retry_policies (id, organization_id, hub_id, policy_key, policy_name, channel_type, max_retries, backoff_seconds, backoff_multiplier, status)
+values
+  ('ee04ee04-ee04-ee04-ee04-ee04ee040401', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'retry-email-standard', 'Standard Email Retry', 'email', 3, 60, 2.0, 'active')
+on conflict (id) do nothing;
+
+-- M2 Message Template Center
+insert into public.cnh_message_templates (id, organization_id, hub_id, template_key, template_name, channel_type, subject_template, body_template, version, status)
+values
+  ('ee05ee05-ee05-ee05-ee05-ee05ee050501', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'tpl-welcome-email', 'Welcome Email Template', 'email', 'Welcome to {{company_name}}', 'Hello {{first_name}}, welcome aboard!', 1, 'approved')
+on conflict (id) do nothing;
+
+insert into public.cnh_template_variables (id, organization_id, hub_id, template_id, variable_key, variable_name, default_value, is_required, status)
+values
+  ('ee06ee06-ee06-ee06-ee06-ee06ee060601', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee05ee05-ee05-ee05-ee05-ee05ee050501', 'var-first-name', 'first_name', '', true, 'active'),
+  ('ee06ee06-ee06-ee06-ee06-ee06ee060602', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee05ee05-ee05-ee05-ee05-ee05ee050501', 'var-company-name', 'company_name', 'Northstar', true, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_template_localizations (id, organization_id, hub_id, template_id, locale, subject_template, body_template, status)
+values
+  ('ee07ee07-ee07-ee07-ee07-ee07ee070701', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee05ee05-ee05-ee05-ee05-ee05ee050501', 'es-MX', 'Bienvenido a {{company_name}}', 'Hola {{first_name}}, ¡bienvenido!', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_template_approvals (id, organization_id, hub_id, template_id, approval_key, approval_status, approved_at, status)
+values
+  ('ee08ee08-ee08-ee08-ee08-ee08ee080801', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee05ee05-ee05-ee05-ee05-ee05ee050501', 'approval-welcome-v1', 'approved', '2026-08-01 14:00:00+00', 'approved')
+on conflict (id) do nothing;
+
+-- M3 Communication Automation
+insert into public.cnh_automation_rules (id, organization_id, hub_id, rule_key, rule_name, trigger_type, action_type, priority_level, is_enabled, status)
+values
+  ('ee09ee09-ee09-ee09-ee09-ee09ee090901', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'rule-onboarding-welcome', 'Onboarding Welcome Rule', 'event', 'send_notification', 'normal', true, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_automation_triggers (id, organization_id, hub_id, rule_id, trigger_key, trigger_event, conditions, status)
+values
+  ('ee10ee10-ee10-ee10-ee10-ee10ee101001', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee09ee09-ee09-ee09-ee09-ee09ee090901', 'trigger-user-signup', 'user.signup.completed', '{"plan":"any"}'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_automation_schedules (id, organization_id, hub_id, rule_id, schedule_key, cron_expression, timezone, next_run_at, status)
+values
+  ('ee11ee11-ee11-ee11-ee11-ee11ee111101', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee09ee09-ee09-ee09-ee09-ee09ee090901', 'schedule-daily-digest', '0 9 * * *', 'America/Los_Angeles', '2026-08-03 16:00:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_automation_executions (id, organization_id, hub_id, rule_id, execution_key, started_at, completed_at, execution_status, notifications_sent, status)
+values
+  ('ee12ee12-ee12-ee12-ee12-ee12ee121201', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee09ee09-ee09-ee09-ee09-ee09ee090901', 'exec-welcome-0802', '2026-08-02 09:00:00+00', '2026-08-02 09:00:06+00', 'completed', 1, 'completed')
+on conflict (id) do nothing;
+
+-- M4 Customer Preference Center
+insert into public.cnh_preference_profiles (id, organization_id, hub_id, profile_key, customer_email, preferred_locale, timezone, status)
+values
+  ('ee13ee13-ee13-ee13-ee13-ee13ee131301', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'pref-customer-demo', 'customer@northstar.example', 'en-US', 'America/Los_Angeles', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_channel_preferences (id, organization_id, hub_id, preference_profile_id, channel_type, is_enabled, frequency, status)
+values
+  ('ee14ee14-ee14-ee14-ee14-ee14ee141401', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee13ee13-ee13-ee13-ee13-ee13ee131301', 'email', true, 'immediate', 'active'),
+  ('ee14ee14-ee14-ee14-ee14-ee14ee141402', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee13ee13-ee13-ee13-ee13-ee13ee131301', 'sms', false, 'never', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_opt_in_records (id, organization_id, hub_id, preference_profile_id, opt_in_key, channel_type, source, opted_in_at, status)
+values
+  ('ee15ee15-ee15-ee15-ee15-ee15ee151501', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee13ee13-ee13-ee13-ee13-ee13ee131301', 'optin-email-signup', 'email', 'signup', '2026-08-01 12:00:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_opt_out_records (id, organization_id, hub_id, preference_profile_id, opt_out_key, channel_type, reason, opted_out_at, status)
+values
+  ('ee16ee16-ee16-ee16-ee16-ee16ee161601', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee13ee13-ee13-ee13-ee13-ee13ee131301', 'optout-sms-marketing', 'sms', 'User opted out of SMS marketing', '2026-08-01 12:05:00+00', 'active')
+on conflict (id) do nothing;
+
+-- M5 Announcement Center
+insert into public.cnh_announcements (id, organization_id, hub_id, announcement_key, title, content, channel_type, priority_level, requires_acknowledgement, status)
+values
+  ('ee17ee17-ee17-ee17-ee17-ee17ee171701', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'announce-maintenance-aug', 'Scheduled Maintenance — Aug 10', 'Platform maintenance window on August 10, 2026 from 02:00–04:00 UTC.', 'in_app', 'high', true, 'published')
+on conflict (id) do nothing;
+
+insert into public.cnh_announcement_schedules (id, organization_id, hub_id, announcement_id, schedule_key, publish_at, expire_at, status)
+values
+  ('ee18ee18-ee18-ee18-ee18-ee18ee181801', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee17ee17-ee17-ee17-ee17-ee17ee171701', 'schedule-maintenance-aug', '2026-08-02 08:00:00+00', '2026-08-10 06:00:00+00', 'published')
+on conflict (id) do nothing;
+
+insert into public.cnh_pinned_announcements (id, organization_id, hub_id, announcement_id, pin_key, pin_order, pinned_at, expires_at, status)
+values
+  ('ee19ee19-ee19-ee19-ee19-ee19ee191901', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee17ee17-ee17-ee17-ee17-ee17ee171701', 'pin-maintenance-aug', 1, '2026-08-02 08:00:00+00', '2026-08-10 06:00:00+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_announcement_acknowledgements (id, organization_id, hub_id, announcement_id, acknowledgement_key, acknowledged_at, status)
+values
+  ('ee20ee20-ee20-ee20-ee20-ee20ee202001', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee17ee17-ee17-ee17-ee17-ee17ee171701', 'ack-maintenance-demo', '2026-08-02 09:30:00+00', 'acknowledged')
+on conflict (id) do nothing;
+
+-- M6 Campaign Management
+insert into public.cnh_campaigns (id, organization_id, hub_id, campaign_key, campaign_name, channel_type, template_id, priority_level, starts_at, ends_at, status)
+values
+  ('ee21ee21-ee21-ee21-ee21-ee21ee212101', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'campaign-onboarding-aug', 'August Onboarding Campaign', 'email', 'ee05ee05-ee05-ee05-ee05-ee05ee050501', 'normal', '2026-08-01 00:00:00+00', '2026-08-31 23:59:59+00', 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_audience_segments (id, organization_id, hub_id, campaign_id, segment_key, segment_name, criteria, estimated_size, status)
+values
+  ('ee22ee22-ee22-ee22-ee22-ee22ee222201', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee21ee21-ee21-ee21-ee21-ee21ee212101', 'segment-new-signups', 'New Signups — Last 7 Days', '{"signup_days_lte":7,"plan":"starter"}'::jsonb, 42, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_campaign_deliveries (id, organization_id, hub_id, campaign_id, delivery_key, recipient, channel_type, delivery_status, sent_at, delivered_at, opened_at, retry_count, status)
+values
+  ('ee23ee23-ee23-ee23-ee23-ee23ee232301', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee21ee21-ee21-ee21-ee21-ee21ee212101', 'delivery-welcome-001', 'customer@northstar.example', 'email', 'delivered', '2026-08-02 09:00:00+00', '2026-08-02 09:00:05+00', '2026-08-02 09:15:00+00', 0, 'completed'),
+  ('ee23ee23-ee23-ee23-ee23-ee23ee232302', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee21ee21-ee21-ee21-ee21-ee21ee212101', 'delivery-welcome-failed', 'invalid@bounce.example', 'email', 'failed', '2026-08-02 10:00:00+00', null, null, 3, 'failed')
+on conflict (id) do nothing;
+
+insert into public.cnh_campaign_metrics (id, organization_id, hub_id, campaign_id, metrics_key, metric_date, sent_count, delivered_count, open_rate, click_rate, bounce_rate, unsubscribe_rate, status)
+values
+  ('ee24ee24-ee24-ee24-ee24-ee24ee242401', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'ee21ee21-ee21-ee21-ee21-ee21ee212101', 'metrics-onboarding-0802', '2026-08-02', 2, 1, 100.00, 0.00, 50.00, 0.00, 'active')
+on conflict (id) do nothing;
+
+-- M7 Delivery Analytics
+insert into public.cnh_delivery_analytics (id, organization_id, hub_id, analytics_key, metric_date, channel_type, total_sent, total_delivered, total_failed, delivery_rate, status)
+values
+  ('ee25ee25-ee25-ee25-ee25-ee25ee252501', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'analytics-email-0802', '2026-08-02', 'email', 2, 1, 1, 50.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_engagement_metrics (id, organization_id, hub_id, metrics_key, metric_date, channel_type, open_rate, click_rate, unsubscribe_rate, engagement_score, status)
+values
+  ('ee26ee26-ee26-ee26-ee26-ee26ee262601', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'engagement-email-0802', '2026-08-02', 'email', 100.00, 0.00, 0.00, 75.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_bounce_records (id, organization_id, hub_id, bounce_key, channel_type, recipient, bounce_type, bounce_reason, bounced_at, retry_count, status)
+values
+  ('ee27ee27-ee27-ee27-ee27-ee27ee272701', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'bounce-invalid-0802', 'email', 'invalid@bounce.example', 'hard', '550 5.1.1 User unknown', '2026-08-02 10:00:30+00', 3, 'recorded')
+on conflict (id) do nothing;
+
+insert into public.cnh_channel_performance (id, organization_id, hub_id, performance_key, metric_date, channel_type, delivery_rate, open_rate, click_rate, avg_latency_ms, status)
+values
+  ('ee28ee28-ee28-ee28-ee28-ee28ee282801', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'perf-email-0802', '2026-08-02', 'email', 50.00, 100.00, 0.00, 5200, 'active')
+on conflict (id) do nothing;
+
+-- M8 Communication Ops Dashboard (org-only tables)
+insert into public.cnh_communication_metrics (id, organization_id, metrics_key, metric_date, total_sent, total_delivered, total_failed, delivery_rate, open_rate, click_rate, status)
+values
+  ('ee29ee29-ee29-ee29-ee29-ee29ee292901', '11111111-1111-1111-1111-111111111111', 'comms-daily-0802', '2026-08-02', 2, 1, 1, 50.00, 100.00, 0.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.cnh_system_health (id, organization_id, health_key, health_date, overall_score, uptime_percent, queue_depth, avg_delivery_latency_ms, disaster_recovery_mode, summary, status)
+values
+  ('ee30ee30-ee30-ee30-ee30-ee30ee303001', '11111111-1111-1111-1111-111111111111', 'health-daily-0802', '2026-08-02', 92.50, 99.95, 0, 5200, false, 'Communication hub healthy — 50% delivery rate with 1 hard bounce under investigation', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.cnh_delivery_failures (id, organization_id, hub_id, failure_key, channel_type, recipient, error_code, error_message, retry_count, failed_at, status)
+values
+  ('ee31ee31-ee31-ee31-ee31-ee31ee313101', '11111111-1111-1111-1111-111111111111', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'failure-bounce-0802', 'email', 'invalid@bounce.example', '550', '550 5.1.1 User unknown', 3, '2026-08-02 10:00:30+00', 'open')
+on conflict (id) do nothing;
+
+insert into public.cnh_audit_logs (id, organization_id, entity_type, entity_id, action, summary, metadata, security_level)
+values
+  ('ee000001-ee00-ee00-ee00-ee0000000001', '11111111-1111-1111-1111-111111111111', 'communication_hub', 'ee01ee01-ee01-ee01-ee01-ee01ee010101', 'create', 'Northstar communication hub provisioned with en-US default locale', '{"hub_key":"northstar-comms","default_locale":"en-US"}'::jsonb, 'standard'),
+  ('ee000002-ee00-ee00-ee00-ee0000000002', '11111111-1111-1111-1111-111111111111', 'notification_queue', 'ee03ee03-ee03-ee03-ee03-ee03ee030301', 'deliver', 'Welcome notification delivered to customer@northstar.example', '{"delivery_status":"delivered","channel_type":"email"}'::jsonb, 'elevated'),
+  ('ee000003-ee00-ee00-ee00-ee0000000003', '11111111-1111-1111-1111-111111111111', 'notification_queue', 'ee03ee03-ee03-ee03-ee03-ee03ee030302', 'fail', 'Alert notification failed after 3 retries — hard bounce', '{"delivery_status":"failed","error":"550 5.1.1 User unknown","retry_count":3}'::jsonb, 'restricted')
 on conflict (id) do nothing;
 
 -- =============================================================================

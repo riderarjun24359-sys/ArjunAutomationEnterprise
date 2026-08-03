@@ -28,6 +28,7 @@ export const ROUTES = {
     enterpriseIdentity: "/enterprise-identity",
     tenantLifecycle: "/tenant-lifecycle",
     billingRevenue: "/billing-revenue",
+    communicationHub: "/communication-hub",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

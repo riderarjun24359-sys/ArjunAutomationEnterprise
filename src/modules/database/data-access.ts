@@ -481,6 +481,40 @@ import {
     BrvWalletBalanceRepository,
     BrvWriteOffRepository,
 } from "@/src/modules/database/repositories/billing-revenue-repositories";
+import {
+    CnhAnnouncementAcknowledgementRepository,
+    CnhAnnouncementRepository,
+    CnhAnnouncementScheduleRepository,
+    CnhAudienceSegmentRepository,
+    CnhAuditLogRepository,
+    CnhAutomationExecutionRepository,
+    CnhAutomationRuleRepository,
+    CnhAutomationScheduleRepository,
+    CnhAutomationTriggerRepository,
+    CnhBounceRecordRepository,
+    CnhCampaignDeliveryRepository,
+    CnhCampaignMetricRepository,
+    CnhCampaignRepository,
+    CnhChannelPerformanceRepository,
+    CnhChannelPreferenceRepository,
+    CnhCommunicationHubRepository,
+    CnhCommunicationMetricRepository,
+    CnhDeliveryAnalyticsRepository,
+    CnhDeliveryFailureRepository,
+    CnhEngagementMetricRepository,
+    CnhMessageTemplateRepository,
+    CnhNotificationChannelRepository,
+    CnhNotificationQueueRepository,
+    CnhOptInRecordRepository,
+    CnhOptOutRecordRepository,
+    CnhPinnedAnnouncementRepository,
+    CnhPreferenceProfileRepository,
+    CnhRetryPolicyRepository,
+    CnhSystemHealthRepository,
+    CnhTemplateApprovalRepository,
+    CnhTemplateLocalizationRepository,
+    CnhTemplateVariableRepository,
+} from "@/src/modules/database/repositories/communication-hub-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -920,6 +954,38 @@ export class DatabaseAccessLayer {
     readonly brvFinancialHealth: BrvFinancialHealthRepository;
     readonly brvExpansionContraction: BrvExpansionContractionRepository;
     readonly brvAuditLogs: BrvAuditLogRepository;
+    readonly cnhCommunicationHubs: CnhCommunicationHubRepository;
+    readonly cnhNotificationChannels: CnhNotificationChannelRepository;
+    readonly cnhNotificationQueue: CnhNotificationQueueRepository;
+    readonly cnhRetryPolicies: CnhRetryPolicyRepository;
+    readonly cnhMessageTemplates: CnhMessageTemplateRepository;
+    readonly cnhTemplateVariables: CnhTemplateVariableRepository;
+    readonly cnhTemplateLocalizations: CnhTemplateLocalizationRepository;
+    readonly cnhTemplateApprovals: CnhTemplateApprovalRepository;
+    readonly cnhAutomationRules: CnhAutomationRuleRepository;
+    readonly cnhAutomationTriggers: CnhAutomationTriggerRepository;
+    readonly cnhAutomationSchedules: CnhAutomationScheduleRepository;
+    readonly cnhAutomationExecutions: CnhAutomationExecutionRepository;
+    readonly cnhPreferenceProfiles: CnhPreferenceProfileRepository;
+    readonly cnhChannelPreferences: CnhChannelPreferenceRepository;
+    readonly cnhOptInRecords: CnhOptInRecordRepository;
+    readonly cnhOptOutRecords: CnhOptOutRecordRepository;
+    readonly cnhAnnouncements: CnhAnnouncementRepository;
+    readonly cnhAnnouncementSchedules: CnhAnnouncementScheduleRepository;
+    readonly cnhPinnedAnnouncements: CnhPinnedAnnouncementRepository;
+    readonly cnhAnnouncementAcknowledgements: CnhAnnouncementAcknowledgementRepository;
+    readonly cnhCampaigns: CnhCampaignRepository;
+    readonly cnhAudienceSegments: CnhAudienceSegmentRepository;
+    readonly cnhCampaignDeliveries: CnhCampaignDeliveryRepository;
+    readonly cnhCampaignMetrics: CnhCampaignMetricRepository;
+    readonly cnhDeliveryAnalytics: CnhDeliveryAnalyticsRepository;
+    readonly cnhEngagementMetrics: CnhEngagementMetricRepository;
+    readonly cnhBounceRecords: CnhBounceRecordRepository;
+    readonly cnhChannelPerformance: CnhChannelPerformanceRepository;
+    readonly cnhCommunicationMetrics: CnhCommunicationMetricRepository;
+    readonly cnhSystemHealth: CnhSystemHealthRepository;
+    readonly cnhDeliveryFailures: CnhDeliveryFailureRepository;
+    readonly cnhAuditLogs: CnhAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1359,6 +1425,38 @@ export class DatabaseAccessLayer {
         this.brvFinancialHealth = new BrvFinancialHealthRepository();
         this.brvExpansionContraction = new BrvExpansionContractionRepository();
         this.brvAuditLogs = new BrvAuditLogRepository();
+        this.cnhCommunicationHubs = new CnhCommunicationHubRepository();
+        this.cnhNotificationChannels = new CnhNotificationChannelRepository();
+        this.cnhNotificationQueue = new CnhNotificationQueueRepository();
+        this.cnhRetryPolicies = new CnhRetryPolicyRepository();
+        this.cnhMessageTemplates = new CnhMessageTemplateRepository();
+        this.cnhTemplateVariables = new CnhTemplateVariableRepository();
+        this.cnhTemplateLocalizations = new CnhTemplateLocalizationRepository();
+        this.cnhTemplateApprovals = new CnhTemplateApprovalRepository();
+        this.cnhAutomationRules = new CnhAutomationRuleRepository();
+        this.cnhAutomationTriggers = new CnhAutomationTriggerRepository();
+        this.cnhAutomationSchedules = new CnhAutomationScheduleRepository();
+        this.cnhAutomationExecutions = new CnhAutomationExecutionRepository();
+        this.cnhPreferenceProfiles = new CnhPreferenceProfileRepository();
+        this.cnhChannelPreferences = new CnhChannelPreferenceRepository();
+        this.cnhOptInRecords = new CnhOptInRecordRepository();
+        this.cnhOptOutRecords = new CnhOptOutRecordRepository();
+        this.cnhAnnouncements = new CnhAnnouncementRepository();
+        this.cnhAnnouncementSchedules = new CnhAnnouncementScheduleRepository();
+        this.cnhPinnedAnnouncements = new CnhPinnedAnnouncementRepository();
+        this.cnhAnnouncementAcknowledgements = new CnhAnnouncementAcknowledgementRepository();
+        this.cnhCampaigns = new CnhCampaignRepository();
+        this.cnhAudienceSegments = new CnhAudienceSegmentRepository();
+        this.cnhCampaignDeliveries = new CnhCampaignDeliveryRepository();
+        this.cnhCampaignMetrics = new CnhCampaignMetricRepository();
+        this.cnhDeliveryAnalytics = new CnhDeliveryAnalyticsRepository();
+        this.cnhEngagementMetrics = new CnhEngagementMetricRepository();
+        this.cnhBounceRecords = new CnhBounceRecordRepository();
+        this.cnhChannelPerformance = new CnhChannelPerformanceRepository();
+        this.cnhCommunicationMetrics = new CnhCommunicationMetricRepository();
+        this.cnhSystemHealth = new CnhSystemHealthRepository();
+        this.cnhDeliveryFailures = new CnhDeliveryFailureRepository();
+        this.cnhAuditLogs = new CnhAuditLogRepository();
     }
 }
 

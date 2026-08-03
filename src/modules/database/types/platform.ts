@@ -5979,3 +5979,486 @@ export interface DbBrvAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbCnhCommunicationHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    default_locale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhNotificationChannel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    channel_key: string;
+    channel_name: string;
+    channel_type: string;
+    provider_config: Record<string, unknown>;
+    is_enabled: boolean;
+    priority_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhNotificationQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    channel_id?: string | null;
+    channel_type: string;
+    recipient: string;
+    subject: string;
+    body: string;
+    priority_level: string;
+    delivery_status: string;
+    retry_count: number;
+    scheduled_at: string;
+    delivered_at?: string | null;
+    failure_reason: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhRetryPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    channel_type: string;
+    max_retries: number;
+    backoff_seconds: number;
+    backoff_multiplier: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhMessageTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    channel_type: string;
+    subject_template: string;
+    body_template: string;
+    version: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhTemplateVariable {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_id: string;
+    variable_key: string;
+    variable_name: string;
+    default_value: string;
+    is_required: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhTemplateLocalization {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_id: string;
+    locale: string;
+    subject_template: string;
+    body_template: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhTemplateApproval {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_id: string;
+    approval_key: string;
+    approval_status: string;
+    approved_by?: string | null;
+    approved_at?: string | null;
+    rejection_reason: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAutomationRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    trigger_type: string;
+    action_type: string;
+    priority_level: string;
+    is_enabled: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAutomationTrigger {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_id: string;
+    trigger_key: string;
+    trigger_event: string;
+    conditions: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAutomationSchedule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_id: string;
+    schedule_key: string;
+    cron_expression: string;
+    timezone: string;
+    next_run_at?: string | null;
+    last_run_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAutomationExecution {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_id?: string | null;
+    execution_key: string;
+    started_at: string;
+    completed_at?: string | null;
+    execution_status: string;
+    notifications_sent: number;
+    error_message: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhPreferenceProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    user_id?: string | null;
+    customer_email: string;
+    preferred_locale: string;
+    timezone: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhChannelPreference {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    preference_profile_id: string;
+    channel_type: string;
+    is_enabled: boolean;
+    frequency: string;
+    quiet_hours_start?: string | null;
+    quiet_hours_end?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhOptInRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    preference_profile_id?: string | null;
+    opt_in_key: string;
+    channel_type: string;
+    source: string;
+    opted_in_at: string;
+    ip_address: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhOptOutRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    preference_profile_id?: string | null;
+    opt_out_key: string;
+    channel_type: string;
+    reason: string;
+    opted_out_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAnnouncement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    announcement_key: string;
+    title: string;
+    content: string;
+    channel_type: string;
+    priority_level: string;
+    requires_acknowledgement: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAnnouncementSchedule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    announcement_id: string;
+    schedule_key: string;
+    publish_at: string;
+    expire_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhPinnedAnnouncement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    announcement_id: string;
+    pin_key: string;
+    pin_order: number;
+    pinned_at: string;
+    expires_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAnnouncementAcknowledgement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    announcement_id: string;
+    acknowledgement_key: string;
+    user_id?: string | null;
+    acknowledged_at: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbCnhCampaign {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_key: string;
+    campaign_name: string;
+    channel_type: string;
+    template_id?: string | null;
+    priority_level: string;
+    starts_at?: string | null;
+    ends_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAudienceSegment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_id?: string | null;
+    segment_key: string;
+    segment_name: string;
+    criteria: Record<string, unknown>;
+    estimated_size: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhCampaignDelivery {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_id: string;
+    delivery_key: string;
+    recipient: string;
+    channel_type: string;
+    delivery_status: string;
+    sent_at?: string | null;
+    delivered_at?: string | null;
+    opened_at?: string | null;
+    clicked_at?: string | null;
+    retry_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhCampaignMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_id: string;
+    metrics_key: string;
+    metric_date: string;
+    sent_count: number;
+    delivered_count: number;
+    open_rate: number;
+    click_rate: number;
+    bounce_rate: number;
+    unsubscribe_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhDeliveryAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    metric_date: string;
+    channel_type: string;
+    total_sent: number;
+    total_delivered: number;
+    total_failed: number;
+    delivery_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhEngagementMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metrics_key: string;
+    metric_date: string;
+    channel_type: string;
+    open_rate: number;
+    click_rate: number;
+    unsubscribe_rate: number;
+    engagement_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhBounceRecord {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    bounce_key: string;
+    channel_type: string;
+    recipient: string;
+    bounce_type: string;
+    bounce_reason: string;
+    bounced_at: string;
+    retry_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhChannelPerformance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    performance_key: string;
+    metric_date: string;
+    channel_type: string;
+    delivery_rate: number;
+    open_rate: number;
+    click_rate: number;
+    avg_latency_ms: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhCommunicationMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    total_sent: number;
+    total_delivered: number;
+    total_failed: number;
+    delivery_rate: number;
+    open_rate: number;
+    click_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhSystemHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    uptime_percent: number;
+    queue_depth: number;
+    avg_delivery_latency_ms: number;
+    disaster_recovery_mode: boolean;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhDeliveryFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    channel_type: string;
+    recipient: string;
+    error_code: string;
+    error_message: string;
+    retry_count: number;
+    failed_at: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCnhAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}
