@@ -378,6 +378,40 @@ import {
     SaasWelcomeExperienceRepository,
     SaasWorkspaceSetupRepository,
 } from "@/src/modules/database/repositories/commercial-saas-repositories";
+import {
+    IdpAbacPolicyRepository,
+    IdpActiveSessionRepository,
+    IdpAdminMetricRepository,
+    IdpAuditLogRepository,
+    IdpBackupCodeRepository,
+    IdpBulkInviteBatchRepository,
+    IdpBusinessUnitRepository,
+    IdpCompromisedAccountRepository,
+    IdpConcurrentLoginPolicyRepository,
+    IdpDepartmentRepository,
+    IdpDeviceRegistryRepository,
+    IdpIdentityHealthRepository,
+    IdpInvitationAuditRepository,
+    IdpInvitationRepository,
+    IdpInvitationRoleRepository,
+    IdpLoginHistoryRepository,
+    IdpMfaEnrollmentRepository,
+    IdpMfaPolicyRepository,
+    IdpOidcConfigRepository,
+    IdpPasswordPolicyRepository,
+    IdpPermissionGroupRepository,
+    IdpProviderRepository,
+    IdpRbacRoleRepository,
+    IdpRealmRepository,
+    IdpReportingStructureRepository,
+    IdpRiskEventRepository,
+    IdpSamlConfigRepository,
+    IdpSecurityAlertRepository,
+    IdpSessionPolicyRepository,
+    IdpTeamRepository,
+    IdpTemporaryAccessGrantRepository,
+    IdpTrustedDeviceRepository,
+} from "@/src/modules/database/repositories/enterprise-identity-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -720,6 +754,38 @@ export class DatabaseAccessLayer {
     readonly saasSupportSummaries: SaasSupportSummaryRepository;
     readonly saasAdminMetrics: SaasAdminMetricRepository;
     readonly saasAuditLogs: SaasAuditLogRepository;
+    readonly idpRealms: IdpRealmRepository;
+    readonly idpProviders: IdpProviderRepository;
+    readonly idpSamlConfigs: IdpSamlConfigRepository;
+    readonly idpOidcConfigs: IdpOidcConfigRepository;
+    readonly idpMfaPolicies: IdpMfaPolicyRepository;
+    readonly idpMfaEnrollments: IdpMfaEnrollmentRepository;
+    readonly idpBackupCodes: IdpBackupCodeRepository;
+    readonly idpTrustedDevices: IdpTrustedDeviceRepository;
+    readonly idpSessionPolicies: IdpSessionPolicyRepository;
+    readonly idpActiveSessions: IdpActiveSessionRepository;
+    readonly idpDeviceRegistry: IdpDeviceRegistryRepository;
+    readonly idpConcurrentLoginPolicies: IdpConcurrentLoginPolicyRepository;
+    readonly idpRbacRoles: IdpRbacRoleRepository;
+    readonly idpPermissionGroups: IdpPermissionGroupRepository;
+    readonly idpAbacPolicies: IdpAbacPolicyRepository;
+    readonly idpTemporaryAccessGrants: IdpTemporaryAccessGrantRepository;
+    readonly idpDepartments: IdpDepartmentRepository;
+    readonly idpTeams: IdpTeamRepository;
+    readonly idpBusinessUnits: IdpBusinessUnitRepository;
+    readonly idpReportingStructures: IdpReportingStructureRepository;
+    readonly idpInvitations: IdpInvitationRepository;
+    readonly idpBulkInviteBatches: IdpBulkInviteBatchRepository;
+    readonly idpInvitationRoles: IdpInvitationRoleRepository;
+    readonly idpInvitationAudit: IdpInvitationAuditRepository;
+    readonly idpLoginHistory: IdpLoginHistoryRepository;
+    readonly idpSecurityAlerts: IdpSecurityAlertRepository;
+    readonly idpRiskEvents: IdpRiskEventRepository;
+    readonly idpPasswordPolicies: IdpPasswordPolicyRepository;
+    readonly idpAdminMetrics: IdpAdminMetricRepository;
+    readonly idpIdentityHealth: IdpIdentityHealthRepository;
+    readonly idpCompromisedAccounts: IdpCompromisedAccountRepository;
+    readonly idpAuditLogs: IdpAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1062,6 +1128,38 @@ export class DatabaseAccessLayer {
         this.saasSupportSummaries = new SaasSupportSummaryRepository();
         this.saasAdminMetrics = new SaasAdminMetricRepository();
         this.saasAuditLogs = new SaasAuditLogRepository();
+        this.idpRealms = new IdpRealmRepository();
+        this.idpProviders = new IdpProviderRepository();
+        this.idpSamlConfigs = new IdpSamlConfigRepository();
+        this.idpOidcConfigs = new IdpOidcConfigRepository();
+        this.idpMfaPolicies = new IdpMfaPolicyRepository();
+        this.idpMfaEnrollments = new IdpMfaEnrollmentRepository();
+        this.idpBackupCodes = new IdpBackupCodeRepository();
+        this.idpTrustedDevices = new IdpTrustedDeviceRepository();
+        this.idpSessionPolicies = new IdpSessionPolicyRepository();
+        this.idpActiveSessions = new IdpActiveSessionRepository();
+        this.idpDeviceRegistry = new IdpDeviceRegistryRepository();
+        this.idpConcurrentLoginPolicies = new IdpConcurrentLoginPolicyRepository();
+        this.idpRbacRoles = new IdpRbacRoleRepository();
+        this.idpPermissionGroups = new IdpPermissionGroupRepository();
+        this.idpAbacPolicies = new IdpAbacPolicyRepository();
+        this.idpTemporaryAccessGrants = new IdpTemporaryAccessGrantRepository();
+        this.idpDepartments = new IdpDepartmentRepository();
+        this.idpTeams = new IdpTeamRepository();
+        this.idpBusinessUnits = new IdpBusinessUnitRepository();
+        this.idpReportingStructures = new IdpReportingStructureRepository();
+        this.idpInvitations = new IdpInvitationRepository();
+        this.idpBulkInviteBatches = new IdpBulkInviteBatchRepository();
+        this.idpInvitationRoles = new IdpInvitationRoleRepository();
+        this.idpInvitationAudit = new IdpInvitationAuditRepository();
+        this.idpLoginHistory = new IdpLoginHistoryRepository();
+        this.idpSecurityAlerts = new IdpSecurityAlertRepository();
+        this.idpRiskEvents = new IdpRiskEventRepository();
+        this.idpPasswordPolicies = new IdpPasswordPolicyRepository();
+        this.idpAdminMetrics = new IdpAdminMetricRepository();
+        this.idpIdentityHealth = new IdpIdentityHealthRepository();
+        this.idpCompromisedAccounts = new IdpCompromisedAccountRepository();
+        this.idpAuditLogs = new IdpAuditLogRepository();
     }
 }
 

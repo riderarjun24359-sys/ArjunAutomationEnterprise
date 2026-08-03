@@ -25,6 +25,7 @@ export const ROUTES = {
     founderOs: "/founder-os",
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",
+    enterpriseIdentity: "/enterprise-identity",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

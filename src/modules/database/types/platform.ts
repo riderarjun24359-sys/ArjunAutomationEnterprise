@@ -4562,3 +4562,443 @@ export interface DbSaasAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbIdpRealm {
+    id: string;
+    organization_id: string;
+    realm_key: string;
+    realm_name: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpProvider {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    provider_key: string;
+    provider_type: string;
+    display_name: string;
+    config: Record<string, unknown>;
+    is_default: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpSamlConfig {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    config_key: string;
+    entity_id: string;
+    sso_url: string;
+    certificate_pem: string;
+    attribute_mapping: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpOidcConfig {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    config_key: string;
+    client_id: string;
+    client_secret_hash: string;
+    issuer_url: string;
+    redirect_uris: unknown[];
+    scopes: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpMfaPolicy {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    policy_key: string;
+    name: string;
+    required_methods: unknown[];
+    grace_period_days: number;
+    enforce_for_admins: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpMfaEnrollment {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    enrollment_key: string;
+    user_id?: string | null;
+    mfa_type: string;
+    enrolled_at: string;
+    last_used_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpBackupCode {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    code_key: string;
+    user_id?: string | null;
+    code_hash: string;
+    used_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpTrustedDevice {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    device_key: string;
+    user_id?: string | null;
+    device_fingerprint: string;
+    device_name: string;
+    trusted_at: string;
+    expires_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpSessionPolicy {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    policy_key: string;
+    name: string;
+    idle_timeout_minutes: number;
+    absolute_timeout_hours: number;
+    require_reauth: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpActiveSession {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    session_key: string;
+    user_id?: string | null;
+    device_name: string;
+    ip_address: string;
+    user_agent: string;
+    last_active_at: string;
+    expires_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpDeviceRegistry {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    device_key: string;
+    user_id?: string | null;
+    device_name: string;
+    device_type: string;
+    os_name: string;
+    registered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpConcurrentLoginPolicy {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    policy_key: string;
+    max_concurrent_sessions: number;
+    action_on_exceed: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpRbacRole {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    role_key: string;
+    role_name: string;
+    permissions: unknown[];
+    is_system: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpPermissionGroup {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    group_key: string;
+    group_name: string;
+    permissions: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpAbacPolicy {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    policy_key: string;
+    name: string;
+    conditions: Record<string, unknown>;
+    effect: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpTemporaryAccessGrant {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    grant_key: string;
+    user_id?: string | null;
+    granted_by?: string | null;
+    permissions: unknown[];
+    starts_at: string;
+    expires_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpDepartment {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    department_key: string;
+    name: string;
+    parent_department_id?: string | null;
+    head_user_id?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpTeam {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    team_key: string;
+    name: string;
+    department_id?: string | null;
+    lead_user_id?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpBusinessUnit {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    unit_key: string;
+    name: string;
+    code: string;
+    parent_unit_id?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpReportingStructure {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    structure_key: string;
+    employee_user_id?: string | null;
+    manager_user_id?: string | null;
+    effective_from: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpInvitation {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    invitation_key: string;
+    email: string;
+    invited_by?: string | null;
+    role_name: string;
+    expires_at: string;
+    accepted_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpBulkInviteBatch {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    batch_key: string;
+    name: string;
+    total_count: number;
+    sent_count: number;
+    failed_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpInvitationRole {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    role_assignment_key: string;
+    invitation_id?: string | null;
+    role_id?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpInvitationAudit {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    audit_key: string;
+    invitation_id?: string | null;
+    action: string;
+    actor_user_id?: string | null;
+    details: Record<string, unknown>;
+    status: string;
+    created_at: string;
+}
+
+export interface DbIdpLoginHistory {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    login_key: string;
+    user_id?: string | null;
+    ip_address: string;
+    device_name: string;
+    login_method: string;
+    success: boolean;
+    logged_at: string;
+    status: string;
+    created_at: string;
+}
+
+export interface DbIdpSecurityAlert {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    alert_key: string;
+    alert_type: string;
+    severity: string;
+    title: string;
+    description: string;
+    resolved_at?: string | null;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpRiskEvent {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    event_key: string;
+    user_id?: string | null;
+    risk_score: number;
+    risk_factors: unknown[];
+    action_taken: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpPasswordPolicy {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    policy_key: string;
+    name: string;
+    min_length: number;
+    require_uppercase: boolean;
+    require_numbers: boolean;
+    require_symbols: boolean;
+    max_age_days: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpAdminMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    total_users: number;
+    mfa_adoption_percent: number;
+    active_sessions: number;
+    failed_logins_24h: number;
+    pending_invitations: number;
+    compromised_accounts: number;
+    open_security_alerts: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpIdentityHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    overall_score: number;
+    dimension_scores: unknown[];
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpCompromisedAccount {
+    id: string;
+    organization_id: string;
+    realm_id: string;
+    account_key: string;
+    user_id?: string | null;
+    detected_at: string;
+    remediation_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIdpAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

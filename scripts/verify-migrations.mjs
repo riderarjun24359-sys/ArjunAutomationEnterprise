@@ -6,6 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
+// 377 required tables (345 foundation + enterprise + 32 idp_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -352,6 +353,38 @@ const requiredTables = [
     "saas_support_summaries",
     "saas_admin_metrics",
     "saas_audit_logs",
+    "idp_realms",
+    "idp_providers",
+    "idp_saml_configs",
+    "idp_oidc_configs",
+    "idp_mfa_policies",
+    "idp_mfa_enrollments",
+    "idp_backup_codes",
+    "idp_trusted_devices",
+    "idp_session_policies",
+    "idp_active_sessions",
+    "idp_device_registry",
+    "idp_concurrent_login_policies",
+    "idp_rbac_roles",
+    "idp_permission_groups",
+    "idp_abac_policies",
+    "idp_temporary_access_grants",
+    "idp_departments",
+    "idp_teams",
+    "idp_business_units",
+    "idp_reporting_structures",
+    "idp_invitations",
+    "idp_bulk_invite_batches",
+    "idp_invitation_roles",
+    "idp_invitation_audit",
+    "idp_login_history",
+    "idp_security_alerts",
+    "idp_risk_events",
+    "idp_password_policies",
+    "idp_admin_metrics",
+    "idp_identity_health",
+    "idp_compromised_accounts",
+    "idp_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
