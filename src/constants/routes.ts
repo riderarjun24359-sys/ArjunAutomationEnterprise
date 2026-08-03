@@ -33,6 +33,7 @@ export const ROUTES = {
     operationsCenter: "/operations-center",
     executiveIntelligence: "/executive-intelligence",
     launchReadiness: "/launch-readiness",
+    industryFramework: "/industry-framework",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

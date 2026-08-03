@@ -8315,3 +8315,425 @@ export interface DbElrAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbIfrFrameworkHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryRegistration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    registration_key: string;
+    industry_code: string;
+    industry_name: string;
+    registered_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryMetadata {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metadata_key: string;
+    metadata_type: string;
+    metadata_value: Record<string, unknown>;
+    updated_at_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryVersion {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    version_key: string;
+    version_number: string;
+    release_channel: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryDependency {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dependency_key: string;
+    dependency_type: string;
+    dependency_ref: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrBusinessType {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    type_key: string;
+    type_name: string;
+    type_category: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrBusinessSize {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    size_key: string;
+    size_label: string;
+    employee_range: string;
+    revenue_range: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrOperatingModel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    model_key: string;
+    model_name: string;
+    model_type: string;
+    description: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_score: number;
+    profile_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrDashboardTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_version: string;
+    layout_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrWorkflowTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    workflow_type: string;
+    steps_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrRoleTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    role_name: string;
+    permissions_count: number;
+    role_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrReportTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    report_name: string;
+    report_format: string;
+    schedule_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrDynamicConfiguration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    config_key: string;
+    config_type: string;
+    config_value: Record<string, unknown>;
+    effective_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrFeatureConfiguration {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    feature_key: string;
+    feature_name: string;
+    enabled: boolean;
+    rollout_percentage: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrBusinessRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_type: string;
+    rule_expression: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrValidationRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    validation_type: string;
+    validation_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrIndustryContext {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    context_key: string;
+    context_type: string;
+    context_payload: Record<string, unknown>;
+    refreshed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrAiContext {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    context_key: string;
+    context_type: string;
+    model_ref: string;
+    token_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrTerminologyEntry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    term_key: string;
+    term_label: string;
+    term_definition: string;
+    locale: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrDemoProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    demo_duration_days: number;
+    seed_data_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrProductionProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    deployment_target: string;
+    scaling_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrEnterpriseProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    compliance_tier: string;
+    sla_target: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrSharedApi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key: string;
+    api_name: string;
+    api_version: string;
+    endpoint_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrContextApi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key: string;
+    api_name: string;
+    context_type: string;
+    endpoint_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrConfigurationApi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    api_key: string;
+    api_name: string;
+    config_scope: string;
+    endpoint_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrExtensionPoint {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    extension_key: string;
+    extension_name: string;
+    hook_type: string;
+    plugin_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrFrameworkMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    template_score: number;
+    profile_score: number;
+    compatibility_score: number;
+    sdk_score: number;
+    framework_health_score: number;
+    overall_framework_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrFrameworkHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    compatibility_status: string;
+    sdk_status: string;
+    template_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrCompatibilityCheck {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    check_key: string;
+    check_type: string;
+    check_score: number;
+    check_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrFrameworkFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbIfrAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

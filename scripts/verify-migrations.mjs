@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 602 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_*)
+// 634 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -610,6 +610,38 @@ const requiredTables = [
     "elr_readiness_warnings",
     "elr_launch_failures",
     "elr_audit_logs",
+    "ifr_framework_hubs",
+    "ifr_industry_registrations",
+    "ifr_industry_metadata",
+    "ifr_industry_versions",
+    "ifr_industry_dependencies",
+    "ifr_business_types",
+    "ifr_business_sizes",
+    "ifr_operating_models",
+    "ifr_industry_profiles",
+    "ifr_dashboard_templates",
+    "ifr_workflow_templates",
+    "ifr_role_templates",
+    "ifr_report_templates",
+    "ifr_dynamic_configurations",
+    "ifr_feature_configurations",
+    "ifr_business_rules",
+    "ifr_validation_rules",
+    "ifr_industry_contexts",
+    "ifr_ai_contexts",
+    "ifr_terminology_entries",
+    "ifr_demo_profiles",
+    "ifr_production_profiles",
+    "ifr_enterprise_profiles",
+    "ifr_shared_apis",
+    "ifr_context_apis",
+    "ifr_configuration_apis",
+    "ifr_extension_points",
+    "ifr_framework_metrics",
+    "ifr_framework_health",
+    "ifr_compatibility_checks",
+    "ifr_framework_failures",
+    "ifr_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

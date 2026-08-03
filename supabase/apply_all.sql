@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T18:41:29.596Z
+-- Generated: 2026-08-03T19:12:05.776Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (32):
+--   Migrations (33):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -38,7 +38,8 @@
 --     - 202608020030_enterprise_operations_center.sql
 --     - 202608020031_ai_executive_intelligence_platform.sql
 --     - 202608020032_enterprise_launch_readiness_platform.sql
---   Seeds (32):
+--     - 202608020033_enterprise_industry_framework_core.sql
+--   Seeds (33):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -71,9 +72,10 @@
 --     - 030_enterprise_operations_center_seed.sql
 --     - 031_ai_executive_intelligence_platform_seed.sql
 --     - 032_enterprise_launch_readiness_platform_seed.sql
+--     - 033_enterprise_industry_framework_core_seed.sql
 --
--- Includes through V2 Program A Sprint 9:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform
+-- Includes through V2 Program B Sprint 1:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -12985,6 +12987,628 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020033_enterprise_industry_framework_core.sql
+-- =============================================================================
+-- V2 Program B Sprint 1: Enterprise Industry Framework Core
+
+-- FrameworkHub
+create table if not exists public.ifr_framework_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- IndustryRegistration
+create table if not exists public.ifr_industry_registrations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  registration_key text not null,
+  industry_code text not null default '',
+  industry_name text not null default '',
+  registered_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, registration_key)
+);
+
+-- IndustryMetadata
+create table if not exists public.ifr_industry_metadata (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  metadata_key text not null,
+  metadata_type text not null default 'profile',
+  metadata_value jsonb not null default '{}'::jsonb,
+  updated_at_ref timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metadata_key)
+);
+
+-- IndustryVersion
+create table if not exists public.ifr_industry_versions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  version_key text not null,
+  version_number text not null default '',
+  release_channel text not null default 'stable',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, version_key)
+);
+
+-- IndustryDependency
+create table if not exists public.ifr_industry_dependencies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  dependency_key text not null,
+  dependency_type text not null default 'module',
+  dependency_ref text not null default '',
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dependency_key)
+);
+
+-- BusinessType
+create table if not exists public.ifr_business_types (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  type_key text not null,
+  type_name text not null default '',
+  type_category text not null default 'general',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, type_key)
+);
+
+-- BusinessSize
+create table if not exists public.ifr_business_sizes (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  size_key text not null,
+  size_label text not null default '',
+  employee_range text not null default '',
+  revenue_range text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, size_key)
+);
+
+-- OperatingModel
+create table if not exists public.ifr_operating_models (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  model_key text not null,
+  model_name text not null default '',
+  model_type text not null default 'saas',
+  description text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, model_key)
+);
+
+-- IndustryProfile
+create table if not exists public.ifr_industry_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_score numeric(5, 2) not null default 0,
+  profile_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- DashboardTemplate
+create table if not exists public.ifr_dashboard_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_version text not null default '1.0',
+  layout_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- WorkflowTemplate
+create table if not exists public.ifr_workflow_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  workflow_type text not null default 'automation',
+  steps_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- RoleTemplate
+create table if not exists public.ifr_role_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  template_key text not null,
+  role_name text not null default '',
+  permissions_count integer not null default 0,
+  role_level text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- ReportTemplate
+create table if not exists public.ifr_report_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  template_key text not null,
+  report_name text not null default '',
+  report_format text not null default 'pdf',
+  schedule_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- DynamicConfiguration
+create table if not exists public.ifr_dynamic_configurations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  config_key text not null,
+  config_type text not null default 'feature',
+  config_value jsonb not null default '{}'::jsonb,
+  effective_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, config_key)
+);
+
+-- FeatureConfiguration
+create table if not exists public.ifr_feature_configurations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  feature_key text not null,
+  feature_name text not null default '',
+  enabled boolean not null default true,
+  rollout_percentage numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, feature_key)
+);
+
+-- BusinessRule
+create table if not exists public.ifr_business_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  rule_type text not null default 'validation',
+  rule_expression text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- ValidationRule
+create table if not exists public.ifr_validation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  validation_type text not null default 'schema',
+  validation_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- IndustryContext
+create table if not exists public.ifr_industry_contexts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  context_key text not null,
+  context_type text not null default 'operational',
+  context_payload jsonb not null default '{}'::jsonb,
+  refreshed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, context_key)
+);
+
+-- AiContext
+create table if not exists public.ifr_ai_contexts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  context_key text not null,
+  context_type text not null default 'prompt',
+  model_ref text not null default '',
+  token_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, context_key)
+);
+
+-- TerminologyEntry
+create table if not exists public.ifr_terminology_entries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  term_key text not null,
+  term_label text not null default '',
+  term_definition text not null default '',
+  locale text not null default 'en',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, term_key)
+);
+
+-- DemoProfile
+create table if not exists public.ifr_demo_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  demo_duration_days integer not null default 14,
+  seed_data_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- ProductionProfile
+create table if not exists public.ifr_production_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  deployment_target text not null default 'cloud',
+  scaling_tier text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- EnterpriseProfile
+create table if not exists public.ifr_enterprise_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  compliance_tier text not null default 'enterprise',
+  sla_target numeric(5, 2) not null default 99.9,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- SharedApi
+create table if not exists public.ifr_shared_apis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  api_key text not null,
+  api_name text not null default '',
+  api_version text not null default 'v1',
+  endpoint_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, api_key)
+);
+
+-- ContextApi
+create table if not exists public.ifr_context_apis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  api_key text not null,
+  api_name text not null default '',
+  context_type text not null default 'industry',
+  endpoint_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, api_key)
+);
+
+-- ConfigurationApi
+create table if not exists public.ifr_configuration_apis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  api_key text not null,
+  api_name text not null default '',
+  config_scope text not null default 'tenant',
+  endpoint_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, api_key)
+);
+
+-- ExtensionPoint
+create table if not exists public.ifr_extension_points (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  extension_key text not null,
+  extension_name text not null default '',
+  hook_type text not null default 'pre_action',
+  plugin_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, extension_key)
+);
+
+-- FrameworkMetric
+create table if not exists public.ifr_framework_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  template_score numeric(5, 2) not null default 100,
+  profile_score numeric(5, 2) not null default 100,
+  compatibility_score numeric(5, 2) not null default 100,
+  sdk_score numeric(5, 2) not null default 100,
+  framework_health_score numeric(5, 2) not null default 100,
+  overall_framework_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- FrameworkHealth
+create table if not exists public.ifr_framework_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  compatibility_status text not null default 'healthy',
+  sdk_status text not null default 'healthy',
+  template_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- CompatibilityCheck
+create table if not exists public.ifr_compatibility_checks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  check_key text not null,
+  check_type text not null default 'version',
+  check_score numeric(5, 2) not null default 0,
+  check_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, check_key)
+);
+
+-- FrameworkFailure
+create table if not exists public.ifr_framework_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'compatibility',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.ifr_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_ifr_framework_hubs_org on public.ifr_framework_hubs(organization_id);
+create index if not exists idx_ifr_industry_registrations_org on public.ifr_industry_registrations(organization_id);
+create index if not exists idx_ifr_industry_registrations_hub on public.ifr_industry_registrations(hub_id);
+create index if not exists idx_ifr_industry_metadata_org on public.ifr_industry_metadata(organization_id);
+create index if not exists idx_ifr_industry_metadata_hub on public.ifr_industry_metadata(hub_id);
+create index if not exists idx_ifr_industry_versions_org on public.ifr_industry_versions(organization_id);
+create index if not exists idx_ifr_industry_versions_hub on public.ifr_industry_versions(hub_id);
+create index if not exists idx_ifr_industry_dependencies_org on public.ifr_industry_dependencies(organization_id);
+create index if not exists idx_ifr_industry_dependencies_hub on public.ifr_industry_dependencies(hub_id);
+create index if not exists idx_ifr_business_types_org on public.ifr_business_types(organization_id);
+create index if not exists idx_ifr_business_types_hub on public.ifr_business_types(hub_id);
+create index if not exists idx_ifr_business_sizes_org on public.ifr_business_sizes(organization_id);
+create index if not exists idx_ifr_business_sizes_hub on public.ifr_business_sizes(hub_id);
+create index if not exists idx_ifr_operating_models_org on public.ifr_operating_models(organization_id);
+create index if not exists idx_ifr_operating_models_hub on public.ifr_operating_models(hub_id);
+create index if not exists idx_ifr_industry_profiles_org on public.ifr_industry_profiles(organization_id);
+create index if not exists idx_ifr_industry_profiles_hub on public.ifr_industry_profiles(hub_id);
+create index if not exists idx_ifr_dashboard_templates_org on public.ifr_dashboard_templates(organization_id);
+create index if not exists idx_ifr_dashboard_templates_hub on public.ifr_dashboard_templates(hub_id);
+create index if not exists idx_ifr_workflow_templates_org on public.ifr_workflow_templates(organization_id);
+create index if not exists idx_ifr_workflow_templates_hub on public.ifr_workflow_templates(hub_id);
+create index if not exists idx_ifr_role_templates_org on public.ifr_role_templates(organization_id);
+create index if not exists idx_ifr_role_templates_hub on public.ifr_role_templates(hub_id);
+create index if not exists idx_ifr_report_templates_org on public.ifr_report_templates(organization_id);
+create index if not exists idx_ifr_report_templates_hub on public.ifr_report_templates(hub_id);
+create index if not exists idx_ifr_dynamic_configurations_org on public.ifr_dynamic_configurations(organization_id);
+create index if not exists idx_ifr_dynamic_configurations_hub on public.ifr_dynamic_configurations(hub_id);
+create index if not exists idx_ifr_feature_configurations_org on public.ifr_feature_configurations(organization_id);
+create index if not exists idx_ifr_feature_configurations_hub on public.ifr_feature_configurations(hub_id);
+create index if not exists idx_ifr_business_rules_org on public.ifr_business_rules(organization_id);
+create index if not exists idx_ifr_business_rules_hub on public.ifr_business_rules(hub_id);
+create index if not exists idx_ifr_validation_rules_org on public.ifr_validation_rules(organization_id);
+create index if not exists idx_ifr_validation_rules_hub on public.ifr_validation_rules(hub_id);
+create index if not exists idx_ifr_industry_contexts_org on public.ifr_industry_contexts(organization_id);
+create index if not exists idx_ifr_industry_contexts_hub on public.ifr_industry_contexts(hub_id);
+create index if not exists idx_ifr_ai_contexts_org on public.ifr_ai_contexts(organization_id);
+create index if not exists idx_ifr_ai_contexts_hub on public.ifr_ai_contexts(hub_id);
+create index if not exists idx_ifr_terminology_entries_org on public.ifr_terminology_entries(organization_id);
+create index if not exists idx_ifr_terminology_entries_hub on public.ifr_terminology_entries(hub_id);
+create index if not exists idx_ifr_demo_profiles_org on public.ifr_demo_profiles(organization_id);
+create index if not exists idx_ifr_demo_profiles_hub on public.ifr_demo_profiles(hub_id);
+create index if not exists idx_ifr_production_profiles_org on public.ifr_production_profiles(organization_id);
+create index if not exists idx_ifr_production_profiles_hub on public.ifr_production_profiles(hub_id);
+create index if not exists idx_ifr_enterprise_profiles_org on public.ifr_enterprise_profiles(organization_id);
+create index if not exists idx_ifr_enterprise_profiles_hub on public.ifr_enterprise_profiles(hub_id);
+create index if not exists idx_ifr_shared_apis_org on public.ifr_shared_apis(organization_id);
+create index if not exists idx_ifr_shared_apis_hub on public.ifr_shared_apis(hub_id);
+create index if not exists idx_ifr_context_apis_org on public.ifr_context_apis(organization_id);
+create index if not exists idx_ifr_context_apis_hub on public.ifr_context_apis(hub_id);
+create index if not exists idx_ifr_configuration_apis_org on public.ifr_configuration_apis(organization_id);
+create index if not exists idx_ifr_configuration_apis_hub on public.ifr_configuration_apis(hub_id);
+create index if not exists idx_ifr_extension_points_org on public.ifr_extension_points(organization_id);
+create index if not exists idx_ifr_extension_points_hub on public.ifr_extension_points(hub_id);
+create index if not exists idx_ifr_framework_metrics_org on public.ifr_framework_metrics(organization_id);
+create index if not exists idx_ifr_framework_health_org on public.ifr_framework_health(organization_id);
+create index if not exists idx_ifr_compatibility_checks_org on public.ifr_compatibility_checks(organization_id);
+create index if not exists idx_ifr_compatibility_checks_hub on public.ifr_compatibility_checks(hub_id);
+create index if not exists idx_ifr_framework_failures_org on public.ifr_framework_failures(organization_id);
+create index if not exists idx_ifr_framework_failures_hub on public.ifr_framework_failures(hub_id);
+create index if not exists idx_ifr_audit_logs_org on public.ifr_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'ifr_framework_hubs','ifr_industry_registrations','ifr_industry_metadata','ifr_industry_versions','ifr_industry_dependencies','ifr_business_types','ifr_business_sizes','ifr_operating_models','ifr_industry_profiles','ifr_dashboard_templates','ifr_workflow_templates','ifr_role_templates','ifr_report_templates','ifr_dynamic_configurations','ifr_feature_configurations','ifr_business_rules','ifr_validation_rules','ifr_industry_contexts','ifr_ai_contexts','ifr_terminology_entries','ifr_demo_profiles','ifr_production_profiles','ifr_enterprise_profiles','ifr_shared_apis','ifr_context_apis','ifr_configuration_apis','ifr_extension_points','ifr_framework_metrics','ifr_framework_health','ifr_compatibility_checks','ifr_framework_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.ifr_framework_hubs enable row level security;
+alter table public.ifr_industry_registrations enable row level security;
+alter table public.ifr_industry_metadata enable row level security;
+alter table public.ifr_industry_versions enable row level security;
+alter table public.ifr_industry_dependencies enable row level security;
+alter table public.ifr_business_types enable row level security;
+alter table public.ifr_business_sizes enable row level security;
+alter table public.ifr_operating_models enable row level security;
+alter table public.ifr_industry_profiles enable row level security;
+alter table public.ifr_dashboard_templates enable row level security;
+alter table public.ifr_workflow_templates enable row level security;
+alter table public.ifr_role_templates enable row level security;
+alter table public.ifr_report_templates enable row level security;
+alter table public.ifr_dynamic_configurations enable row level security;
+alter table public.ifr_feature_configurations enable row level security;
+alter table public.ifr_business_rules enable row level security;
+alter table public.ifr_validation_rules enable row level security;
+alter table public.ifr_industry_contexts enable row level security;
+alter table public.ifr_ai_contexts enable row level security;
+alter table public.ifr_terminology_entries enable row level security;
+alter table public.ifr_demo_profiles enable row level security;
+alter table public.ifr_production_profiles enable row level security;
+alter table public.ifr_enterprise_profiles enable row level security;
+alter table public.ifr_shared_apis enable row level security;
+alter table public.ifr_context_apis enable row level security;
+alter table public.ifr_configuration_apis enable row level security;
+alter table public.ifr_extension_points enable row level security;
+alter table public.ifr_framework_metrics enable row level security;
+alter table public.ifr_framework_health enable row level security;
+alter table public.ifr_compatibility_checks enable row level security;
+alter table public.ifr_framework_failures enable row level security;
+alter table public.ifr_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'ifr_framework_hubs','ifr_industry_registrations','ifr_industry_metadata','ifr_industry_versions','ifr_industry_dependencies','ifr_business_types','ifr_business_sizes','ifr_operating_models','ifr_industry_profiles','ifr_dashboard_templates','ifr_workflow_templates','ifr_role_templates','ifr_report_templates','ifr_dynamic_configurations','ifr_feature_configurations','ifr_business_rules','ifr_validation_rules','ifr_industry_contexts','ifr_ai_contexts','ifr_terminology_entries','ifr_demo_profiles','ifr_production_profiles','ifr_enterprise_profiles','ifr_shared_apis','ifr_context_apis','ifr_configuration_apis','ifr_extension_points','ifr_framework_metrics','ifr_framework_health','ifr_compatibility_checks','ifr_framework_failures','ifr_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('ifr.view', 'View enterprise industry framework core data', 'enterprise_industry_framework_core'),
+  ('ifr.manage', 'Manage industry registrations, profiles, templates, and framework outputs', 'enterprise_industry_framework_core'),
+  ('ifr.approve', 'Approve industry framework gates and deployment profiles', 'enterprise_industry_framework_core'),
+  ('ifr.admin', 'Administer enterprise industry framework core governance', 'enterprise_industry_framework_core')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -16643,6 +17267,156 @@ on conflict (id) do nothing;
 
 insert into public.elr_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00870087-0087-0087-0087-008700872101', '11111111-1111-1111-1111-111111111111', 'readiness_hub', 'seed', 'Enterprise launch readiness platform seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 033_enterprise_industry_framework_core_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a333', '11111111-1111-1111-1111-111111111111', 'Enterprise Industry Framework Orchestrator', 'enterprise_industry_framework_core', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["industry_registry","profile_engine","template_engine","configuration_engine","context_engine","deployment_profiles","industry_sdk","framework_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a533', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a333', 'northstar-industry-framework-001', 'enterprise_industry_framework_core', 'framework_hub', '00690069-0069-0069-0069-006900690101', '{"objective":"Enterprise industry framework core for northstar multi-industry deployment"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M0 Framework Hub
+insert into public.ifr_framework_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('00690069-0069-0069-0069-006900690101', '11111111-1111-1111-1111-111111111111', 'northstar-industry-framework', 'Northstar Industry Framework Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+-- M1 Industry Registry
+insert into public.ifr_industry_registrations (id, organization_id, hub_id, registration_key, industry_code, industry_name, status)
+values ('006a006a-006a-006a-006a-006a006a0201', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'reg-saas-0804', 'saas', 'Software as a Service', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_industry_metadata (id, organization_id, hub_id, metadata_key, metadata_type, status)
+values ('006b006b-006b-006b-006b-006b006b0301', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'meta-profile-0804', 'profile', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_industry_versions (id, organization_id, hub_id, version_key, version_number, release_channel, status)
+values ('006c006c-006c-006c-006c-006c006c0401', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'ver-1-0-0', '1.0.0', 'stable', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_industry_dependencies (id, organization_id, hub_id, dependency_key, dependency_type, dependency_ref, status)
+values ('006d006d-006d-006d-006d-006d006d0501', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'dep-crm-0804', 'module', 'crm-core', 'active')
+on conflict (id) do nothing;
+
+-- M2 Profile Engine
+insert into public.ifr_business_types (id, organization_id, hub_id, type_key, type_name, type_category, status)
+values ('006e006e-006e-006e-006e-006e006e0601', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'type-b2b-0804', 'B2B SaaS', 'technology', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_business_sizes (id, organization_id, hub_id, size_key, size_label, employee_range, status)
+values ('006f006f-006f-006f-006f-006f006f0701', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'size-mid-0804', 'Mid-Market', '50-500', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_operating_models (id, organization_id, hub_id, model_key, model_name, model_type, status)
+values ('00700070-0070-0070-0070-007000700801', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'model-sub-0804', 'Subscription', 'saas', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_industry_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_score, profile_summary, status)
+values ('00710071-0071-0071-0071-007100710901', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'profile-saas-0804', 'SaaS Growth Profile', 92.50, 'Optimized for B2B SaaS mid-market', 'active')
+on conflict (id) do nothing;
+
+-- M3 Template Engine
+insert into public.ifr_dashboard_templates (id, organization_id, hub_id, template_key, template_name, template_version, status)
+values ('00720072-0072-0072-0072-007200720a01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'dash-exec-0804', 'Executive Dashboard', '1.0', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_workflow_templates (id, organization_id, hub_id, template_key, template_name, workflow_type, status)
+values ('00730073-0073-0073-0073-007300730b01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'wf-onboard-0804', 'Customer Onboarding', 'automation', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_role_templates (id, organization_id, hub_id, template_key, role_name, permissions_count, status)
+values ('00740074-0074-0074-0074-007400740c01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'role-admin-0804', 'Industry Admin', 24, 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_report_templates (id, organization_id, hub_id, template_key, report_name, report_format, status)
+values ('00750075-0075-0075-0075-007500750d01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'rpt-kpi-0804', 'KPI Summary Report', 'pdf', 'active')
+on conflict (id) do nothing;
+
+-- M4 Configuration Engine
+insert into public.ifr_dynamic_configurations (id, organization_id, hub_id, config_key, config_type, status)
+values ('00760076-0076-0076-0076-007600760e01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'cfg-feature-0804', 'feature', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_feature_configurations (id, organization_id, hub_id, feature_key, feature_name, enabled, status)
+values ('00770077-0077-0077-0077-007700770f01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'feat-ai-0804', 'AI Copilot', true, 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_business_rules (id, organization_id, hub_id, rule_key, rule_name, rule_type, status)
+values ('00780078-0078-0078-0078-007800781001', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'rule-valid-0804', 'Profile Validation Rule', 'validation', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_validation_rules (id, organization_id, hub_id, rule_key, rule_name, validation_score, status)
+values ('00790079-0079-0079-0079-007900791101', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'val-schema-0804', 'Schema Validation', 96.00, 'active')
+on conflict (id) do nothing;
+
+-- M5 Context Engine
+insert into public.ifr_industry_contexts (id, organization_id, hub_id, context_key, context_type, status)
+values ('007a007a-007a-007a-007a-007a007a1201', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'ctx-ops-0804', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_ai_contexts (id, organization_id, hub_id, context_key, context_type, token_count, status)
+values ('007b007b-007b-007b-007b-007b007b1301', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'ctx-ai-0804', 'prompt', 4096, 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_terminology_entries (id, organization_id, hub_id, term_key, term_label, term_definition, status)
+values ('007c007c-007c-007c-007c-007c007c1401', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'term-mrr-0804', 'MRR', 'Monthly Recurring Revenue', 'active')
+on conflict (id) do nothing;
+
+-- M6 Deployment Profiles
+insert into public.ifr_demo_profiles (id, organization_id, hub_id, profile_key, profile_name, demo_duration_days, status)
+values ('007d007d-007d-007d-007d-007d007d1501', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'demo-saas-0804', 'SaaS Demo Profile', 14, 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_production_profiles (id, organization_id, hub_id, profile_key, profile_name, deployment_target, status)
+values ('007e007e-007e-007e-007e-007e007e1601', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'prod-cloud-0804', 'Cloud Production', 'cloud', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_enterprise_profiles (id, organization_id, hub_id, profile_key, profile_name, compliance_tier, status)
+values ('007f007f-007f-007f-007f-007f007f1701', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'ent-soc2-0804', 'Enterprise SOC2', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+-- M7 Industry SDK
+insert into public.ifr_shared_apis (id, organization_id, hub_id, api_key, api_name, api_version, status)
+values ('00800080-0080-0080-0080-008000801801', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'api-shared-0804', 'Framework Shared API', 'v1', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_context_apis (id, organization_id, hub_id, api_key, api_name, context_type, status)
+values ('00810081-0081-0081-0081-008100811901', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'api-ctx-0804', 'Context API', 'industry', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_configuration_apis (id, organization_id, hub_id, api_key, api_name, config_scope, status)
+values ('00820082-0082-0082-0082-008200821a01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'api-cfg-0804', 'Configuration API', 'tenant', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_extension_points (id, organization_id, hub_id, extension_key, extension_name, hook_type, status)
+values ('00830083-0083-0083-0083-008300831b01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'ext-pre-0804', 'Pre-Action Hook', 'pre_action', 'active')
+on conflict (id) do nothing;
+
+-- M8 Framework Dashboard
+insert into public.ifr_framework_metrics (id, organization_id, metrics_key, template_score, profile_score, compatibility_score, sdk_score, framework_health_score, overall_framework_score, status)
+values ('00840084-0084-0084-0084-008400841c01', '11111111-1111-1111-1111-111111111111', 'framework-metrics-0804', 94.00, 96.50, 95.00, 91.00, 97.00, 94.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_compatibility_checks (id, organization_id, hub_id, check_key, check_type, check_score, check_summary, status)
+values ('00850085-0085-0085-0085-008500851d01', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'compat-ver-0804', 'version', 93.00, 'All version compatibility checks passed', 'active')
+on conflict (id) do nothing;
+
+insert into public.ifr_framework_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, compatibility_status, sdk_status, template_status, summary, status)
+values ('00860086-0086-0086-0086-008600861e01', '11111111-1111-1111-1111-111111111111', 'framework-health-0804', 95.00, false, 'healthy', 'healthy', 'healthy', 'Industry framework core operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.ifr_framework_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00870087-0087-0087-0087-008700872001', '11111111-1111-1111-1111-111111111111', '00690069-0069-0069-0069-006900690101', 'fail-compat-0804', 'compatibility', 'VERSION_MISMATCH', 'Template version mismatch detected in workflow module', 'open')
+on conflict (id) do nothing;
+
+insert into public.ifr_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00880088-0088-0088-0088-008800882101', '11111111-1111-1111-1111-111111111111', 'framework_hub', 'seed', 'Enterprise industry framework core seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================
