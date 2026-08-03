@@ -31,6 +31,7 @@ export const ROUTES = {
     communicationHub: "/communication-hub",
     integrationPlatform: "/integration-platform",
     operationsCenter: "/operations-center",
+    executiveIntelligence: "/executive-intelligence",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

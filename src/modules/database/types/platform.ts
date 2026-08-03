@@ -7388,3 +7388,480 @@ export interface DbEocAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbAixIntelligenceHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixDailyExecutiveBrief {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    brief_key: string;
+    brief_date: string;
+    summary: string;
+    ai_confidence_score: number;
+    evidence_refs: Record<string, unknown>;
+    generated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixWeeklyBusinessReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    week_start: string;
+    summary: string;
+    ai_confidence_score: number;
+    evidence_refs: Record<string, unknown>;
+    generated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixMonthlyExecutiveSummary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    summary_key: string;
+    month_start: string;
+    summary: string;
+    ai_confidence_score: number;
+    evidence_refs: Record<string, unknown>;
+    generated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixTrialConversionScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    conversion_rate: number;
+    trial_count: number;
+    converted_count: number;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixRenewalProbability {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    probability_key: string;
+    renewal_probability: number;
+    account_ref: string;
+    contract_end_date?: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixChurnRisk {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    risk_key: string;
+    churn_score: number;
+    risk_level: string;
+    account_ref: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixExpansionOpportunity {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    opportunity_key: string;
+    expansion_score: number;
+    account_ref: string;
+    opportunity_type: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixMrrTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    mrr_amount: number;
+    trend_direction: string;
+    period_start: string;
+    ai_confidence_score: number;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixArrTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    arr_amount: number;
+    trend_direction: string;
+    period_start: string;
+    ai_confidence_score: number;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixRevenueGrowthMetric {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    metrics_key: string;
+    growth_rate: number;
+    period_start: string;
+    period_end: string;
+    ai_confidence_score: number;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixRevenueRisk {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    risk_key: string;
+    risk_amount: number;
+    risk_level: string;
+    risk_category: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixPlatformHealthIntel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    intel_key: string;
+    health_score: number;
+    component_summary: string;
+    ai_confidence_score: number;
+    last_check_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixQueueHealthIntel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    intel_key: string;
+    queue_depth: number;
+    health_score: number;
+    queue_name: string;
+    ai_confidence_score: number;
+    last_check_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixIntegrationHealthIntel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    intel_key: string;
+    integration_name: string;
+    health_score: number;
+    error_rate: number;
+    ai_confidence_score: number;
+    last_check_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixPerformanceTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    performance_score: number;
+    trend_direction: string;
+    metric_window: string;
+    ai_confidence_score: number;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixUnusualLoginActivity {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    activity_key: string;
+    login_count: number;
+    risk_level: string;
+    user_ref: string;
+    geo_anomaly: string;
+    ai_confidence_score: number;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixPermissionRisk {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    risk_key: string;
+    risk_type: string;
+    risk_level: string;
+    subject_ref: string;
+    permission_summary: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixTenantSecurityTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    security_score: number;
+    trend_direction: string;
+    tenant_ref: string;
+    ai_confidence_score: number;
+    recorded_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixComplianceWarning {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    warning_key: string;
+    compliance_type: string;
+    severity: string;
+    warning_message: string;
+    due_date?: string;
+    ai_confidence_score: number;
+    detected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixTodayPriority {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    priority_key: string;
+    priority_title: string;
+    priority_rank: number;
+    priority_category: string;
+    ai_confidence_score: number;
+    priority_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixRecommendedAction {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    action_key: string;
+    action_title: string;
+    action_type: string;
+    action_summary: string;
+    ai_confidence_score: number;
+    evidence_refs: Record<string, unknown>;
+    recommended_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixBusinessRisk {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    risk_key: string;
+    risk_title: string;
+    risk_level: string;
+    risk_category: string;
+    impact_summary: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixGrowthOpportunity {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    opportunity_key: string;
+    opportunity_title: string;
+    growth_score: number;
+    opportunity_category: string;
+    impact_summary: string;
+    ai_confidence_score: number;
+    scored_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixKnowledgeReasoningSession {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    session_key: string;
+    reasoning_type: string;
+    objective: string;
+    ai_confidence_score: number;
+    started_at: string;
+    completed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixEvidenceTrace {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trace_key: string;
+    source_module: string;
+    trace_summary: string;
+    evidence_refs: Record<string, unknown>;
+    traced_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixOrchestrationLink {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    link_key: string;
+    link_type: string;
+    target_ref: string;
+    link_context: Record<string, unknown>;
+    ai_confidence_score: number;
+    linked_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixRecommendationOutput {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    output_key: string;
+    recommendation_text: string;
+    recommendation_type: string;
+    ai_confidence_score: number;
+    evidence_refs: Record<string, unknown>;
+    generated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixExecutiveMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    business_score: number;
+    growth_score: number;
+    operational_score: number;
+    security_score: number;
+    customer_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixExecutiveHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    uptime_percent: number;
+    disaster_recovery_mode: boolean;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixExecutiveFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAixAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

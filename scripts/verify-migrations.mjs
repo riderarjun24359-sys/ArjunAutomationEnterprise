@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 538 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_*)
+// 570 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -546,6 +546,38 @@ const requiredTables = [
     "eoc_operations_health",
     "eoc_operations_failures",
     "eoc_audit_logs",
+    "aix_intelligence_hubs",
+    "aix_daily_executive_briefs",
+    "aix_weekly_business_reviews",
+    "aix_monthly_executive_summaries",
+    "aix_trial_conversion_scores",
+    "aix_renewal_probabilities",
+    "aix_churn_risks",
+    "aix_expansion_opportunities",
+    "aix_mrr_trends",
+    "aix_arr_trends",
+    "aix_revenue_growth_metrics",
+    "aix_revenue_risks",
+    "aix_platform_health_intel",
+    "aix_queue_health_intel",
+    "aix_integration_health_intel",
+    "aix_performance_trends",
+    "aix_unusual_login_activity",
+    "aix_permission_risks",
+    "aix_tenant_security_trends",
+    "aix_compliance_warnings",
+    "aix_today_priorities",
+    "aix_recommended_actions",
+    "aix_business_risks",
+    "aix_growth_opportunities",
+    "aix_knowledge_reasoning_sessions",
+    "aix_evidence_traces",
+    "aix_orchestration_links",
+    "aix_recommendation_outputs",
+    "aix_executive_metrics",
+    "aix_executive_health",
+    "aix_executive_failures",
+    "aix_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

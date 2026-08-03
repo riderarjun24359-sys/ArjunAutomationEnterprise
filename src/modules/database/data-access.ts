@@ -583,6 +583,40 @@ import {
     EocOperationsFailureRepository,
     EocAuditLogRepository,
 } from "@/src/modules/database/repositories/operations-center-repositories";
+import {
+    AixIntelligenceHubRepository,
+    AixDailyExecutiveBriefRepository,
+    AixWeeklyBusinessReviewRepository,
+    AixMonthlyExecutiveSummaryRepository,
+    AixTrialConversionScoreRepository,
+    AixRenewalProbabilityRepository,
+    AixChurnRiskRepository,
+    AixExpansionOpportunityRepository,
+    AixMrrTrendRepository,
+    AixArrTrendRepository,
+    AixRevenueGrowthMetricRepository,
+    AixRevenueRiskRepository,
+    AixPlatformHealthIntelRepository,
+    AixQueueHealthIntelRepository,
+    AixIntegrationHealthIntelRepository,
+    AixPerformanceTrendRepository,
+    AixUnusualLoginActivityRepository,
+    AixPermissionRiskRepository,
+    AixTenantSecurityTrendRepository,
+    AixComplianceWarningRepository,
+    AixTodayPriorityRepository,
+    AixRecommendedActionRepository,
+    AixBusinessRiskRepository,
+    AixGrowthOpportunityRepository,
+    AixKnowledgeReasoningSessionRepository,
+    AixEvidenceTraceRepository,
+    AixOrchestrationLinkRepository,
+    AixRecommendationOutputRepository,
+    AixExecutiveMetricRepository,
+    AixExecutiveHealthRepository,
+    AixExecutiveFailureRepository,
+    AixAuditLogRepository,
+} from "@/src/modules/database/repositories/executive-intelligence-repositories";
 
 export class DatabaseAccessLayer {
     readonly organizations: OrganizationRepository;
@@ -1118,6 +1152,38 @@ export class DatabaseAccessLayer {
     readonly eocOperationsHealth: EocOperationsHealthRepository;
     readonly eocOperationsFailures: EocOperationsFailureRepository;
     readonly eocAuditLogs: EocAuditLogRepository;
+    readonly aixIntelligenceHubs: AixIntelligenceHubRepository;
+    readonly aixDailyExecutiveBriefs: AixDailyExecutiveBriefRepository;
+    readonly aixWeeklyBusinessReviews: AixWeeklyBusinessReviewRepository;
+    readonly aixMonthlyExecutiveSummaries: AixMonthlyExecutiveSummaryRepository;
+    readonly aixTrialConversionScores: AixTrialConversionScoreRepository;
+    readonly aixRenewalProbabilities: AixRenewalProbabilityRepository;
+    readonly aixChurnRisks: AixChurnRiskRepository;
+    readonly aixExpansionOpportunities: AixExpansionOpportunityRepository;
+    readonly aixMrrTrends: AixMrrTrendRepository;
+    readonly aixArrTrends: AixArrTrendRepository;
+    readonly aixRevenueGrowthMetrics: AixRevenueGrowthMetricRepository;
+    readonly aixRevenueRisks: AixRevenueRiskRepository;
+    readonly aixPlatformHealthIntel: AixPlatformHealthIntelRepository;
+    readonly aixQueueHealthIntel: AixQueueHealthIntelRepository;
+    readonly aixIntegrationHealthIntel: AixIntegrationHealthIntelRepository;
+    readonly aixPerformanceTrends: AixPerformanceTrendRepository;
+    readonly aixUnusualLoginActivity: AixUnusualLoginActivityRepository;
+    readonly aixPermissionRisks: AixPermissionRiskRepository;
+    readonly aixTenantSecurityTrends: AixTenantSecurityTrendRepository;
+    readonly aixComplianceWarnings: AixComplianceWarningRepository;
+    readonly aixTodayPriorities: AixTodayPriorityRepository;
+    readonly aixRecommendedActions: AixRecommendedActionRepository;
+    readonly aixBusinessRisks: AixBusinessRiskRepository;
+    readonly aixGrowthOpportunities: AixGrowthOpportunityRepository;
+    readonly aixKnowledgeReasoningSessions: AixKnowledgeReasoningSessionRepository;
+    readonly aixEvidenceTraces: AixEvidenceTraceRepository;
+    readonly aixOrchestrationLinks: AixOrchestrationLinkRepository;
+    readonly aixRecommendationOutputs: AixRecommendationOutputRepository;
+    readonly aixExecutiveMetrics: AixExecutiveMetricRepository;
+    readonly aixExecutiveHealth: AixExecutiveHealthRepository;
+    readonly aixExecutiveFailures: AixExecutiveFailureRepository;
+    readonly aixAuditLogs: AixAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -1653,6 +1719,38 @@ export class DatabaseAccessLayer {
         this.eocOperationsHealth = new EocOperationsHealthRepository();
         this.eocOperationsFailures = new EocOperationsFailureRepository();
         this.eocAuditLogs = new EocAuditLogRepository();
+        this.aixIntelligenceHubs = new AixIntelligenceHubRepository();
+        this.aixDailyExecutiveBriefs = new AixDailyExecutiveBriefRepository();
+        this.aixWeeklyBusinessReviews = new AixWeeklyBusinessReviewRepository();
+        this.aixMonthlyExecutiveSummaries = new AixMonthlyExecutiveSummaryRepository();
+        this.aixTrialConversionScores = new AixTrialConversionScoreRepository();
+        this.aixRenewalProbabilities = new AixRenewalProbabilityRepository();
+        this.aixChurnRisks = new AixChurnRiskRepository();
+        this.aixExpansionOpportunities = new AixExpansionOpportunityRepository();
+        this.aixMrrTrends = new AixMrrTrendRepository();
+        this.aixArrTrends = new AixArrTrendRepository();
+        this.aixRevenueGrowthMetrics = new AixRevenueGrowthMetricRepository();
+        this.aixRevenueRisks = new AixRevenueRiskRepository();
+        this.aixPlatformHealthIntel = new AixPlatformHealthIntelRepository();
+        this.aixQueueHealthIntel = new AixQueueHealthIntelRepository();
+        this.aixIntegrationHealthIntel = new AixIntegrationHealthIntelRepository();
+        this.aixPerformanceTrends = new AixPerformanceTrendRepository();
+        this.aixUnusualLoginActivity = new AixUnusualLoginActivityRepository();
+        this.aixPermissionRisks = new AixPermissionRiskRepository();
+        this.aixTenantSecurityTrends = new AixTenantSecurityTrendRepository();
+        this.aixComplianceWarnings = new AixComplianceWarningRepository();
+        this.aixTodayPriorities = new AixTodayPriorityRepository();
+        this.aixRecommendedActions = new AixRecommendedActionRepository();
+        this.aixBusinessRisks = new AixBusinessRiskRepository();
+        this.aixGrowthOpportunities = new AixGrowthOpportunityRepository();
+        this.aixKnowledgeReasoningSessions = new AixKnowledgeReasoningSessionRepository();
+        this.aixEvidenceTraces = new AixEvidenceTraceRepository();
+        this.aixOrchestrationLinks = new AixOrchestrationLinkRepository();
+        this.aixRecommendationOutputs = new AixRecommendationOutputRepository();
+        this.aixExecutiveMetrics = new AixExecutiveMetricRepository();
+        this.aixExecutiveHealth = new AixExecutiveHealthRepository();
+        this.aixExecutiveFailures = new AixExecutiveFailureRepository();
+        this.aixAuditLogs = new AixAuditLogRepository();
     }
 }
 

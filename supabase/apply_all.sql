@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T17:50:53.648Z
+-- Generated: 2026-08-03T18:24:48.593Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (30):
+--   Migrations (31):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -36,7 +36,8 @@
 --     - 202608020028_enterprise_communication_hub.sql
 --     - 202608020029_enterprise_integration_platform.sql
 --     - 202608020030_enterprise_operations_center.sql
---   Seeds (30):
+--     - 202608020031_ai_executive_intelligence_platform.sql
+--   Seeds (31):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -67,9 +68,10 @@
 --     - 028_enterprise_communication_hub_seed.sql
 --     - 029_enterprise_integration_platform_seed.sql
 --     - 030_enterprise_operations_center_seed.sql
+--     - 031_ai_executive_intelligence_platform_seed.sql
 --
--- Includes through V2 Program A Sprint 7:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center
+-- Includes through V2 Program A Sprint 8:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -11654,6 +11656,683 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020031_ai_executive_intelligence_platform.sql
+-- =============================================================================
+-- V2 Program A Sprint 8: AI Executive Intelligence Platform
+
+-- IntelligenceHub
+create table if not exists public.aix_intelligence_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- DailyExecutiveBrief
+create table if not exists public.aix_daily_executive_briefs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  brief_key text not null,
+  brief_date date not null default current_date,
+  summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  evidence_refs jsonb not null default '[]'::jsonb,
+  generated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, brief_key)
+);
+
+-- WeeklyBusinessReview
+create table if not exists public.aix_weekly_business_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  review_key text not null,
+  week_start date not null default current_date,
+  summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  evidence_refs jsonb not null default '[]'::jsonb,
+  generated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- MonthlyExecutiveSummary
+create table if not exists public.aix_monthly_executive_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  summary_key text not null,
+  month_start date not null default current_date,
+  summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  evidence_refs jsonb not null default '[]'::jsonb,
+  generated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, summary_key)
+);
+
+-- TrialConversionScore
+create table if not exists public.aix_trial_conversion_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  score_key text not null,
+  conversion_rate numeric(5, 2) not null default 0,
+  trial_count integer not null default 0,
+  converted_count integer not null default 0,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- RenewalProbability
+create table if not exists public.aix_renewal_probabilities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  probability_key text not null,
+  renewal_probability numeric(5, 2) not null default 0,
+  account_ref text not null default '',
+  contract_end_date date,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, probability_key)
+);
+
+-- ChurnRisk
+create table if not exists public.aix_churn_risks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  risk_key text not null,
+  churn_score numeric(5, 2) not null default 0,
+  risk_level text not null default 'low',
+  account_ref text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, risk_key)
+);
+
+-- ExpansionOpportunity
+create table if not exists public.aix_expansion_opportunities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  opportunity_key text not null,
+  expansion_score numeric(5, 2) not null default 0,
+  account_ref text not null default '',
+  opportunity_type text not null default 'upsell',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, opportunity_key)
+);
+
+-- MrrTrend
+create table if not exists public.aix_mrr_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  trend_key text not null,
+  mrr_amount numeric(14, 2) not null default 0,
+  trend_direction text not null default 'flat',
+  period_start date not null default current_date,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- ArrTrend
+create table if not exists public.aix_arr_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  trend_key text not null,
+  arr_amount numeric(14, 2) not null default 0,
+  trend_direction text not null default 'flat',
+  period_start date not null default current_date,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- RevenueGrowthMetric
+create table if not exists public.aix_revenue_growth_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  metrics_key text not null,
+  growth_rate numeric(5, 2) not null default 0,
+  period_start date not null default current_date,
+  period_end date not null default current_date,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, metrics_key)
+);
+
+-- RevenueRisk
+create table if not exists public.aix_revenue_risks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  risk_key text not null,
+  risk_amount numeric(14, 2) not null default 0,
+  risk_level text not null default 'low',
+  risk_category text not null default 'concentration',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, risk_key)
+);
+
+-- PlatformHealthIntel
+create table if not exists public.aix_platform_health_intel (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  intel_key text not null,
+  health_score numeric(5, 2) not null default 100,
+  component_summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  last_check_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, intel_key)
+);
+
+-- QueueHealthIntel
+create table if not exists public.aix_queue_health_intel (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  intel_key text not null,
+  queue_depth integer not null default 0,
+  health_score numeric(5, 2) not null default 100,
+  queue_name text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  last_check_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, intel_key)
+);
+
+-- IntegrationHealthIntel
+create table if not exists public.aix_integration_health_intel (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  intel_key text not null,
+  integration_name text not null default '',
+  health_score numeric(5, 2) not null default 100,
+  error_rate numeric(5, 2) not null default 0,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  last_check_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, intel_key)
+);
+
+-- PerformanceTrend
+create table if not exists public.aix_performance_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  trend_key text not null,
+  performance_score numeric(5, 2) not null default 100,
+  trend_direction text not null default 'flat',
+  metric_window text not null default '24h',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- UnusualLoginActivity
+create table if not exists public.aix_unusual_login_activity (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  activity_key text not null,
+  login_count integer not null default 0,
+  risk_level text not null default 'low',
+  user_ref text not null default '',
+  geo_anomaly text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, activity_key)
+);
+
+-- PermissionRisk
+create table if not exists public.aix_permission_risks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  risk_key text not null,
+  risk_type text not null default 'over_privileged',
+  risk_level text not null default 'low',
+  subject_ref text not null default '',
+  permission_summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, risk_key)
+);
+
+-- TenantSecurityTrend
+create table if not exists public.aix_tenant_security_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  trend_key text not null,
+  security_score numeric(5, 2) not null default 100,
+  trend_direction text not null default 'flat',
+  tenant_ref text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  recorded_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- ComplianceWarning
+create table if not exists public.aix_compliance_warnings (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  warning_key text not null,
+  compliance_type text not null default 'policy',
+  severity text not null default 'info',
+  warning_message text not null default '',
+  due_date date,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  detected_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, warning_key)
+);
+
+-- TodayPriority
+create table if not exists public.aix_today_priorities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  priority_key text not null,
+  priority_title text not null default '',
+  priority_rank integer not null default 1,
+  priority_category text not null default 'operational',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  priority_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, priority_key)
+);
+
+-- RecommendedAction
+create table if not exists public.aix_recommended_actions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  action_key text not null,
+  action_title text not null default '',
+  action_type text not null default 'review',
+  action_summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  evidence_refs jsonb not null default '[]'::jsonb,
+  recommended_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, action_key)
+);
+
+-- BusinessRisk
+create table if not exists public.aix_business_risks (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  risk_key text not null,
+  risk_title text not null default '',
+  risk_level text not null default 'low',
+  risk_category text not null default 'operational',
+  impact_summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, risk_key)
+);
+
+-- GrowthOpportunity
+create table if not exists public.aix_growth_opportunities (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  opportunity_key text not null,
+  opportunity_title text not null default '',
+  growth_score numeric(5, 2) not null default 0,
+  opportunity_category text not null default 'expansion',
+  impact_summary text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  scored_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, opportunity_key)
+);
+
+-- KnowledgeReasoningSession
+create table if not exists public.aix_knowledge_reasoning_sessions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  session_key text not null,
+  reasoning_type text not null default 'executive',
+  objective text not null default '',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, session_key)
+);
+
+-- EvidenceTrace
+create table if not exists public.aix_evidence_traces (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  trace_key text not null,
+  source_module text not null default '',
+  trace_summary text not null default '',
+  evidence_refs jsonb not null default '[]'::jsonb,
+  traced_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trace_key)
+);
+
+-- OrchestrationLink
+create table if not exists public.aix_orchestration_links (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  link_key text not null,
+  link_type text not null default 'agent',
+  target_ref text not null default '',
+  link_context jsonb not null default '{}'::jsonb,
+  ai_confidence_score numeric(5, 2) not null default 0,
+  linked_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, link_key)
+);
+
+-- RecommendationOutput
+create table if not exists public.aix_recommendation_outputs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  output_key text not null,
+  recommendation_text text not null default '',
+  recommendation_type text not null default 'action',
+  ai_confidence_score numeric(5, 2) not null default 0,
+  evidence_refs jsonb not null default '[]'::jsonb,
+  generated_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, output_key)
+);
+
+-- ExecutiveMetric
+create table if not exists public.aix_executive_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  business_score numeric(5, 2) not null default 100,
+  growth_score numeric(5, 2) not null default 100,
+  operational_score numeric(5, 2) not null default 100,
+  security_score numeric(5, 2) not null default 100,
+  customer_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- ExecutiveHealth
+create table if not exists public.aix_executive_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  uptime_percent numeric(5, 2) not null default 99.9,
+  disaster_recovery_mode boolean not null default false,
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveFailure
+create table if not exists public.aix_executive_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'reasoning',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.aix_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_aix_intelligence_hubs_org on public.aix_intelligence_hubs(organization_id);
+create index if not exists idx_aix_daily_executive_briefs_org on public.aix_daily_executive_briefs(organization_id);
+create index if not exists idx_aix_daily_executive_briefs_hub on public.aix_daily_executive_briefs(hub_id);
+create index if not exists idx_aix_weekly_business_reviews_org on public.aix_weekly_business_reviews(organization_id);
+create index if not exists idx_aix_weekly_business_reviews_hub on public.aix_weekly_business_reviews(hub_id);
+create index if not exists idx_aix_monthly_executive_summaries_org on public.aix_monthly_executive_summaries(organization_id);
+create index if not exists idx_aix_monthly_executive_summaries_hub on public.aix_monthly_executive_summaries(hub_id);
+create index if not exists idx_aix_trial_conversion_scores_org on public.aix_trial_conversion_scores(organization_id);
+create index if not exists idx_aix_trial_conversion_scores_hub on public.aix_trial_conversion_scores(hub_id);
+create index if not exists idx_aix_renewal_probabilities_org on public.aix_renewal_probabilities(organization_id);
+create index if not exists idx_aix_renewal_probabilities_hub on public.aix_renewal_probabilities(hub_id);
+create index if not exists idx_aix_churn_risks_org on public.aix_churn_risks(organization_id);
+create index if not exists idx_aix_churn_risks_hub on public.aix_churn_risks(hub_id);
+create index if not exists idx_aix_expansion_opportunities_org on public.aix_expansion_opportunities(organization_id);
+create index if not exists idx_aix_expansion_opportunities_hub on public.aix_expansion_opportunities(hub_id);
+create index if not exists idx_aix_mrr_trends_org on public.aix_mrr_trends(organization_id);
+create index if not exists idx_aix_mrr_trends_hub on public.aix_mrr_trends(hub_id);
+create index if not exists idx_aix_arr_trends_org on public.aix_arr_trends(organization_id);
+create index if not exists idx_aix_arr_trends_hub on public.aix_arr_trends(hub_id);
+create index if not exists idx_aix_revenue_growth_metrics_org on public.aix_revenue_growth_metrics(organization_id);
+create index if not exists idx_aix_revenue_growth_metrics_hub on public.aix_revenue_growth_metrics(hub_id);
+create index if not exists idx_aix_revenue_risks_org on public.aix_revenue_risks(organization_id);
+create index if not exists idx_aix_revenue_risks_hub on public.aix_revenue_risks(hub_id);
+create index if not exists idx_aix_platform_health_intel_org on public.aix_platform_health_intel(organization_id);
+create index if not exists idx_aix_platform_health_intel_hub on public.aix_platform_health_intel(hub_id);
+create index if not exists idx_aix_queue_health_intel_org on public.aix_queue_health_intel(organization_id);
+create index if not exists idx_aix_queue_health_intel_hub on public.aix_queue_health_intel(hub_id);
+create index if not exists idx_aix_integration_health_intel_org on public.aix_integration_health_intel(organization_id);
+create index if not exists idx_aix_integration_health_intel_hub on public.aix_integration_health_intel(hub_id);
+create index if not exists idx_aix_performance_trends_org on public.aix_performance_trends(organization_id);
+create index if not exists idx_aix_performance_trends_hub on public.aix_performance_trends(hub_id);
+create index if not exists idx_aix_unusual_login_activity_org on public.aix_unusual_login_activity(organization_id);
+create index if not exists idx_aix_unusual_login_activity_hub on public.aix_unusual_login_activity(hub_id);
+create index if not exists idx_aix_permission_risks_org on public.aix_permission_risks(organization_id);
+create index if not exists idx_aix_permission_risks_hub on public.aix_permission_risks(hub_id);
+create index if not exists idx_aix_tenant_security_trends_org on public.aix_tenant_security_trends(organization_id);
+create index if not exists idx_aix_tenant_security_trends_hub on public.aix_tenant_security_trends(hub_id);
+create index if not exists idx_aix_compliance_warnings_org on public.aix_compliance_warnings(organization_id);
+create index if not exists idx_aix_compliance_warnings_hub on public.aix_compliance_warnings(hub_id);
+create index if not exists idx_aix_today_priorities_org on public.aix_today_priorities(organization_id);
+create index if not exists idx_aix_today_priorities_hub on public.aix_today_priorities(hub_id);
+create index if not exists idx_aix_recommended_actions_org on public.aix_recommended_actions(organization_id);
+create index if not exists idx_aix_recommended_actions_hub on public.aix_recommended_actions(hub_id);
+create index if not exists idx_aix_business_risks_org on public.aix_business_risks(organization_id);
+create index if not exists idx_aix_business_risks_hub on public.aix_business_risks(hub_id);
+create index if not exists idx_aix_growth_opportunities_org on public.aix_growth_opportunities(organization_id);
+create index if not exists idx_aix_growth_opportunities_hub on public.aix_growth_opportunities(hub_id);
+create index if not exists idx_aix_knowledge_reasoning_sessions_org on public.aix_knowledge_reasoning_sessions(organization_id);
+create index if not exists idx_aix_knowledge_reasoning_sessions_hub on public.aix_knowledge_reasoning_sessions(hub_id);
+create index if not exists idx_aix_evidence_traces_org on public.aix_evidence_traces(organization_id);
+create index if not exists idx_aix_evidence_traces_hub on public.aix_evidence_traces(hub_id);
+create index if not exists idx_aix_orchestration_links_org on public.aix_orchestration_links(organization_id);
+create index if not exists idx_aix_orchestration_links_hub on public.aix_orchestration_links(hub_id);
+create index if not exists idx_aix_recommendation_outputs_org on public.aix_recommendation_outputs(organization_id);
+create index if not exists idx_aix_recommendation_outputs_hub on public.aix_recommendation_outputs(hub_id);
+create index if not exists idx_aix_executive_metrics_org on public.aix_executive_metrics(organization_id);
+create index if not exists idx_aix_executive_health_org on public.aix_executive_health(organization_id);
+create index if not exists idx_aix_executive_failures_org on public.aix_executive_failures(organization_id);
+create index if not exists idx_aix_executive_failures_hub on public.aix_executive_failures(hub_id);
+create index if not exists idx_aix_audit_logs_org on public.aix_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aix_intelligence_hubs','aix_daily_executive_briefs','aix_weekly_business_reviews','aix_monthly_executive_summaries','aix_trial_conversion_scores','aix_renewal_probabilities','aix_churn_risks','aix_expansion_opportunities','aix_mrr_trends','aix_arr_trends','aix_revenue_growth_metrics','aix_revenue_risks','aix_platform_health_intel','aix_queue_health_intel','aix_integration_health_intel','aix_performance_trends','aix_unusual_login_activity','aix_permission_risks','aix_tenant_security_trends','aix_compliance_warnings','aix_today_priorities','aix_recommended_actions','aix_business_risks','aix_growth_opportunities','aix_knowledge_reasoning_sessions','aix_evidence_traces','aix_orchestration_links','aix_recommendation_outputs','aix_executive_metrics','aix_executive_health','aix_executive_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.aix_intelligence_hubs enable row level security;
+alter table public.aix_daily_executive_briefs enable row level security;
+alter table public.aix_weekly_business_reviews enable row level security;
+alter table public.aix_monthly_executive_summaries enable row level security;
+alter table public.aix_trial_conversion_scores enable row level security;
+alter table public.aix_renewal_probabilities enable row level security;
+alter table public.aix_churn_risks enable row level security;
+alter table public.aix_expansion_opportunities enable row level security;
+alter table public.aix_mrr_trends enable row level security;
+alter table public.aix_arr_trends enable row level security;
+alter table public.aix_revenue_growth_metrics enable row level security;
+alter table public.aix_revenue_risks enable row level security;
+alter table public.aix_platform_health_intel enable row level security;
+alter table public.aix_queue_health_intel enable row level security;
+alter table public.aix_integration_health_intel enable row level security;
+alter table public.aix_performance_trends enable row level security;
+alter table public.aix_unusual_login_activity enable row level security;
+alter table public.aix_permission_risks enable row level security;
+alter table public.aix_tenant_security_trends enable row level security;
+alter table public.aix_compliance_warnings enable row level security;
+alter table public.aix_today_priorities enable row level security;
+alter table public.aix_recommended_actions enable row level security;
+alter table public.aix_business_risks enable row level security;
+alter table public.aix_growth_opportunities enable row level security;
+alter table public.aix_knowledge_reasoning_sessions enable row level security;
+alter table public.aix_evidence_traces enable row level security;
+alter table public.aix_orchestration_links enable row level security;
+alter table public.aix_recommendation_outputs enable row level security;
+alter table public.aix_executive_metrics enable row level security;
+alter table public.aix_executive_health enable row level security;
+alter table public.aix_executive_failures enable row level security;
+alter table public.aix_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aix_intelligence_hubs','aix_daily_executive_briefs','aix_weekly_business_reviews','aix_monthly_executive_summaries','aix_trial_conversion_scores','aix_renewal_probabilities','aix_churn_risks','aix_expansion_opportunities','aix_mrr_trends','aix_arr_trends','aix_revenue_growth_metrics','aix_revenue_risks','aix_platform_health_intel','aix_queue_health_intel','aix_integration_health_intel','aix_performance_trends','aix_unusual_login_activity','aix_permission_risks','aix_tenant_security_trends','aix_compliance_warnings','aix_today_priorities','aix_recommended_actions','aix_business_risks','aix_growth_opportunities','aix_knowledge_reasoning_sessions','aix_evidence_traces','aix_orchestration_links','aix_recommendation_outputs','aix_executive_metrics','aix_executive_health','aix_executive_failures','aix_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('aix.view', 'View AI executive intelligence platform data', 'ai_executive_intelligence_platform'),
+  ('aix.manage', 'Manage executive briefs, recommendations, and intelligence outputs', 'ai_executive_intelligence_platform'),
+  ('aix.approve', 'Approve executive recommendations and intelligence actions', 'ai_executive_intelligence_platform'),
+  ('aix.admin', 'Administer AI executive intelligence platform governance', 'ai_executive_intelligence_platform')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -15014,6 +15693,155 @@ on conflict (id) do nothing;
 
 insert into public.eoc_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('00370037-0037-0037-0037-003700372101', '11111111-1111-1111-1111-111111111111', 'operations_center', 'seed', 'Enterprise operations center seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 031_ai_executive_intelligence_platform_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a331', '11111111-1111-1111-1111-111111111111', 'AI Executive Intelligence Orchestrator', 'ai_executive_intelligence_platform', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["executive_briefs","revenue_intelligence","platform_health","security_intelligence","priority_recommendations","knowledge_reasoning","executive_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a531', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a331', 'northstar-executive-intel-001', 'ai_executive_intelligence_platform', 'intelligence_hub', '00480048-0048-0048-0048-004800480101', '{"objective":"AI executive intelligence platform for northstar leadership"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- M1 Executive Intelligence Hub
+insert into public.aix_intelligence_hubs (id, organization_id, hub_key, hub_name, environment, status)
+values ('00480048-0048-0048-0048-004800480101', '11111111-1111-1111-1111-111111111111', 'northstar-executive-intel', 'Northstar Executive Intelligence Hub', 'production', 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_daily_executive_briefs (id, organization_id, hub_id, brief_key, brief_date, summary, ai_confidence_score, evidence_refs, status)
+values ('00490049-0049-0049-0049-004900490201', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'brief-daily-0803', current_date, 'Revenue up 4.2% WoW; churn risk elevated in enterprise segment.', 92.50, '[{"source":"mrr_trends","ref":"trend-mrr-0803"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_weekly_business_reviews (id, organization_id, hub_id, review_key, week_start, summary, ai_confidence_score, evidence_refs, status)
+values ('004a004a-004a-004a-004a-004a004a0301', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'wbr-week-31', date_trunc('week', current_date)::date, 'Strong trial conversion; integration health stable.', 88.00, '[{"source":"trial_conversion_scores","ref":"score-trial-0803"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_monthly_executive_summaries (id, organization_id, hub_id, summary_key, month_start, summary, ai_confidence_score, evidence_refs, status)
+values ('004b004b-004b-004b-004b-004b004b0401', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'summary-jul-2026', date_trunc('month', current_date)::date, 'July closed with 12% ARR growth and improved platform health.', 90.25, '[{"source":"arr_trends","ref":"trend-arr-0803"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+-- M2 Customer & Revenue Intelligence
+insert into public.aix_trial_conversion_scores (id, organization_id, hub_id, score_key, conversion_rate, trial_count, converted_count, ai_confidence_score, status)
+values ('004c004c-004c-004c-004c-004c004c0501', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'score-trial-0803', 34.50, 200, 69, 91.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_renewal_probabilities (id, organization_id, hub_id, probability_key, renewal_probability, account_ref, ai_confidence_score, status)
+values ('004d004d-004d-004d-004d-004d004d0601', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'renewal-acme-0803', 87.00, 'acme-corp', 89.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_churn_risks (id, organization_id, hub_id, risk_key, churn_score, risk_level, account_ref, ai_confidence_score, status)
+values ('004e004e-004e-004e-004e-004e004e0701', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'churn-enterprise-0803', 72.00, 'high', 'enterprise-co', 85.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_expansion_opportunities (id, organization_id, hub_id, opportunity_key, expansion_score, account_ref, opportunity_type, ai_confidence_score, status)
+values ('004f004f-004f-004f-004f-004f004f0801', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'expand-northstar-0803', 78.50, 'northstar', 'upsell', 86.00, 'active')
+on conflict (id) do nothing;
+
+-- M3 Revenue Analytics
+insert into public.aix_mrr_trends (id, organization_id, hub_id, trend_key, mrr_amount, trend_direction, ai_confidence_score, status)
+values ('00500050-0050-0050-0050-005000500901', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'trend-mrr-0803', 125000.00, 'up', 94.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_arr_trends (id, organization_id, hub_id, trend_key, arr_amount, trend_direction, ai_confidence_score, status)
+values ('00510051-0051-0051-0051-005100510a01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'trend-arr-0803', 1500000.00, 'up', 93.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_revenue_growth_metrics (id, organization_id, hub_id, metrics_key, growth_rate, ai_confidence_score, status)
+values ('00520052-0052-0052-0052-005200520b01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'growth-q3-0803', 12.00, 91.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_revenue_risks (id, organization_id, hub_id, risk_key, risk_amount, risk_level, risk_category, ai_confidence_score, status)
+values ('00530053-0053-0053-0053-005300530c01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'rev-risk-concentration', 250000.00, 'medium', 'concentration', 82.00, 'active')
+on conflict (id) do nothing;
+
+-- M4 Platform Health Intelligence
+insert into public.aix_platform_health_intel (id, organization_id, hub_id, intel_key, health_score, component_summary, ai_confidence_score, status)
+values ('00540054-0054-0054-0054-005400540d01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'platform-health-0803', 98.50, 'All core services healthy', 96.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_queue_health_intel (id, organization_id, hub_id, intel_key, queue_depth, health_score, queue_name, ai_confidence_score, status)
+values ('00550055-0055-0055-0055-005500550e01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'queue-health-0803', 3, 97.00, 'job-queue', 95.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_integration_health_intel (id, organization_id, hub_id, intel_key, integration_name, health_score, error_rate, ai_confidence_score, status)
+values ('00560056-0056-0056-0056-005600560f01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'integration-health-0803', 'Stripe Connector', 99.00, 0.10, 97.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_performance_trends (id, organization_id, hub_id, trend_key, performance_score, trend_direction, metric_window, ai_confidence_score, status)
+values ('00570057-0057-0057-0057-005700571001', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'perf-trend-0803', 96.00, 'up', '24h', 94.00, 'active')
+on conflict (id) do nothing;
+
+-- M5 Security & Compliance Intelligence
+insert into public.aix_unusual_login_activity (id, organization_id, hub_id, activity_key, login_count, risk_level, user_ref, geo_anomaly, ai_confidence_score, status)
+values ('00580058-0058-0058-0058-005800581101', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'login-anomaly-0803', 12, 'medium', 'user-ops-lead', 'unexpected geo: APAC', 88.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_permission_risks (id, organization_id, hub_id, risk_key, risk_type, risk_level, subject_ref, ai_confidence_score, status)
+values ('00590059-0059-0059-0059-005900591201', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'perm-risk-admin-0803', 'over_privileged', 'high', 'svc-admin-bot', 90.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_tenant_security_trends (id, organization_id, hub_id, trend_key, security_score, trend_direction, tenant_ref, ai_confidence_score, status)
+values ('005a005a-005a-005a-005a-005a005a1301', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'sec-trend-0803', 94.00, 'flat', 'northstar', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_compliance_warnings (id, organization_id, hub_id, warning_key, compliance_type, severity, warning_message, ai_confidence_score, status)
+values ('005b005b-005b-005b-005b-005b005b1401', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'compliance-soc2-0803', 'soc2', 'warning', 'Access review overdue for 3 admin accounts', 87.00, 'active')
+on conflict (id) do nothing;
+
+-- M6 Executive Priorities & Recommendations
+insert into public.aix_today_priorities (id, organization_id, hub_id, priority_key, priority_title, priority_rank, priority_category, ai_confidence_score, status)
+values ('005c005c-005c-005c-005c-005c005c1501', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'priority-churn-0803', 'Address enterprise churn risk', 1, 'customer', 93.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_recommended_actions (id, organization_id, hub_id, action_key, action_title, action_type, action_summary, ai_confidence_score, evidence_refs, status)
+values ('005d005d-005d-005d-005d-005d005d1601', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'action-renewal-0803', 'Schedule renewal call with Acme Corp', 'outreach', 'High renewal probability with contract ending in 30 days', 91.50, '[{"source":"renewal_probabilities","ref":"renewal-acme-0803"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_business_risks (id, organization_id, hub_id, risk_key, risk_title, risk_level, risk_category, impact_summary, ai_confidence_score, status)
+values ('005e005e-005e-005e-005e-005e005e1701', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'biz-risk-revenue', 'Revenue concentration in top 3 accounts', 'medium', 'revenue', '42% of MRR from 3 accounts', 89.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_growth_opportunities (id, organization_id, hub_id, opportunity_key, opportunity_title, growth_score, opportunity_category, impact_summary, ai_confidence_score, status)
+values ('005f005f-005f-005f-005f-005f005f1801', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'growth-upsell-0803', 'Expand analytics module to enterprise tier', 82.00, 'expansion', 'Potential $45K ARR uplift', 88.00, 'active')
+on conflict (id) do nothing;
+
+-- M7 Knowledge Reasoning & Evidence
+insert into public.aix_knowledge_reasoning_sessions (id, organization_id, hub_id, session_key, reasoning_type, objective, ai_confidence_score, status)
+values ('00600060-0060-0060-0060-006000601901', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'reasoning-q3-0803', 'executive', 'Synthesize Q3 revenue and risk signals for board prep', 90.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_evidence_traces (id, organization_id, hub_id, trace_key, source_module, trace_summary, evidence_refs, status)
+values ('00610061-0061-0061-0061-006100611a01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'trace-mrr-evidence', 'revenue_analytics', 'MRR trend corroborated by billing and CRM signals', '[{"source":"aix_mrr_trends","ref":"trend-mrr-0803"},{"source":"intg_payment_transactions","ref":"txn-batch-0803"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_orchestration_links (id, organization_id, hub_id, link_key, link_type, target_ref, ai_confidence_score, status)
+values ('00620062-0062-0062-0062-006200621b01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'link-agent-0803', 'agent', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a331', 95.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_recommendation_outputs (id, organization_id, hub_id, output_key, recommendation_text, recommendation_type, ai_confidence_score, evidence_refs, status)
+values ('00630063-0063-0063-0063-006300631c01', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'rec-churn-mitigation', 'Launch executive outreach program for at-risk enterprise accounts within 7 days', 'action', 92.75, '[{"source":"aix_churn_risks","ref":"churn-enterprise-0803"},{"source":"aix_evidence_traces","ref":"trace-mrr-evidence"}]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+-- M8 Executive Dashboard
+insert into public.aix_executive_metrics (id, organization_id, metrics_key, business_score, growth_score, operational_score, security_score, customer_score, status)
+values ('00640064-0064-0064-0064-006400641d01', '11111111-1111-1111-1111-111111111111', 'exec-metrics-0803', 94.50, 91.00, 97.00, 93.00, 89.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.aix_executive_health (id, organization_id, health_key, overall_score, uptime_percent, disaster_recovery_mode, summary, status)
+values ('00650065-0065-0065-0065-006500651e01', '11111111-1111-1111-1111-111111111111', 'exec-health-0803', 95.00, 99.95, false, 'Executive intelligence platform operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.aix_executive_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('00660066-0066-0066-0066-006600662001', '11111111-1111-1111-1111-111111111111', '00480048-0048-0048-0048-004800480101', 'fail-reasoning-0803', 'reasoning', 'TIMEOUT', 'Knowledge reasoning session timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.aix_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('00670067-0067-0067-0067-006700672101', '11111111-1111-1111-1111-111111111111', 'intelligence_hub', 'seed', 'AI executive intelligence platform seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================
