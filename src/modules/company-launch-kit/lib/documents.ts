@@ -5,6 +5,7 @@ const moduleRoot = join(process.cwd(), "src", "modules", "company-launch-kit");
 export const LAUNCH_KIT_DOCUMENT_FILES = [
     "proposal",
     "quotation",
+    "statement-of-work",
     "invoice",
     "client-agreement",
     "nda",

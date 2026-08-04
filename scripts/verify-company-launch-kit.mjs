@@ -80,6 +80,7 @@ for (const slug of requiredPortfolioSlugs) {
 const salesDocs = [
     "proposal",
     "quotation",
+    "statement-of-work",
     "invoice",
     "client-agreement",
     "nda",
