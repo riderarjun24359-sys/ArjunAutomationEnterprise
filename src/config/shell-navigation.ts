@@ -41,6 +41,7 @@ import {
     Workflow,
     GitBranch,
     ServerCog,
+    Cpu,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
 
@@ -60,6 +61,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Tasks", href: ROUTES.tasks, description: "Operational execution", icon: CheckSquare, section: "primary" },
     { label: "Clients", href: ROUTES.clients, description: "Client lifecycle", icon: Users, section: "primary" },
     { label: "Client Success", href: ROUTES.clientSuccess, description: "AI-first client success: onboarding, delivery, health, renewal, and multilingual portal", icon: HeartHandshake, section: "primary" },
+    { label: "Mission Core", href: ROUTES.missionCore, description: "Central orchestration layer: capabilities, workflows, events, AI routing, and shared services", icon: Cpu, section: "primary" },
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Sales", href: ROUTES.sales, description: "Pipeline and revenue operations", icon: TrendingUp, section: "secondary" },
     { label: "AI Orchestration", href: ROUTES.ai, description: "Core AI infrastructure and SDK", icon: Brain, section: "secondary" },

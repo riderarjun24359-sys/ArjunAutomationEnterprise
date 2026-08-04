@@ -1,3 +1,5 @@
+import type { CapabilityDefinition, OrchestrationRule, WorkflowStep } from "../types";
+
 export const MISSION_CORE_STORAGE_KEY = "aa-mission-core-state";
 
 export const MISSION_CORE_CAPABILITY_IDS = {
@@ -14,3 +16,194 @@ export const MISSION_CORE_WORKFLOWS = {
     trackDelivery: "track-delivery",
     healthMonitoring: "health-monitoring",
 } as const;
+
+export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
+    {
+        id: "sales",
+        name: "Sales",
+        route: "/sales",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "sales", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: [],
+        apis: ["pipeline", "deals", "forecast"],
+        events: ["ProposalApproved", "DealClosed"],
+    },
+    {
+        id: "clientSuccess",
+        name: "Client Success",
+        route: "/client-success",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "clientSuccess", status: "healthy", uptime: 99.8, lastCheck: new Date().toISOString() },
+        dependencies: ["sales"],
+        apis: ["onboarding", "health", "renewal"],
+        events: ["CustomerCreated", "RenewalDue"],
+    },
+    {
+        id: "businessAssets",
+        name: "Business Assets",
+        route: "/business-assets",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "businessAssets", status: "healthy", uptime: 99.7, lastCheck: new Date().toISOString() },
+        dependencies: [],
+        apis: ["proposals", "invoices", "agreements"],
+        events: ["ProposalApproved", "AgreementSigned"],
+    },
+    {
+        id: "brandOs",
+        name: "Brand OS",
+        route: "/brand-os",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "brandOs", status: "healthy", uptime: 99.5, lastCheck: new Date().toISOString() },
+        dependencies: [],
+        apis: ["brand", "messaging", "assets"],
+        events: ["BrandUpdated"],
+    },
+    {
+        id: "growthEngine",
+        name: "Growth Engine",
+        route: "/growth-engine",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "growthEngine", status: "healthy", uptime: 99.6, lastCheck: new Date().toISOString() },
+        dependencies: ["brandOs"],
+        apis: ["campaigns", "content", "analytics"],
+        events: ["CampaignLaunched", "LeadGenerated"],
+    },
+    {
+        id: "hios",
+        name: "Healthcare Intelligence OS",
+        route: "/hospital",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "hios", status: "healthy", uptime: 99.4, lastCheck: new Date().toISOString() },
+        dependencies: [],
+        apis: ["patients", "clinical", "pharmacy"],
+        events: ["PatientAdmitted", "TreatmentCompleted"],
+    },
+    {
+        id: "founderOs",
+        name: "Founder OS",
+        route: "/founder-os",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "founderOs", status: "healthy", uptime: 99.3, lastCheck: new Date().toISOString() },
+        dependencies: [],
+        apis: ["strategy", "metrics", "decisions"],
+        events: ["DecisionRequired", "MetricThreshold"],
+    },
+    {
+        id: "enterpriseIntelligence",
+        name: "Enterprise Intelligence Platform",
+        route: "/enterprise-intelligence-platform",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "enterpriseIntelligence", status: "healthy", uptime: 99.2, lastCheck: new Date().toISOString() },
+        dependencies: ["founderOs"],
+        apis: ["insights", "reports", "copilot"],
+        events: ["InsightGenerated", "ReportReady"],
+    },
+    {
+        id: "financeFuture",
+        name: "Finance",
+        route: "/finance",
+        version: "0.1",
+        status: "planned",
+        health: { capabilityId: "financeFuture", status: "offline", uptime: 0, lastCheck: new Date().toISOString(), message: "Planned for future release" },
+        dependencies: ["sales", "clientSuccess"],
+        apis: ["invoicing", "payments", "revenue"],
+        events: ["InvoicePaid", "PaymentReceived"],
+    },
+];
+
+export const PLATFORM_EVENTS = [
+    "CustomerCreated",
+    "ProposalApproved",
+    "AgreementSigned",
+    "ProjectCreated",
+    "DeploymentCompleted",
+    "InvoicePaid",
+    "RenewalDue",
+    "DealClosed",
+    "CampaignLaunched",
+    "LeadGenerated",
+    "PatientAdmitted",
+    "TreatmentCompleted",
+    "DecisionRequired",
+    "MetricThreshold",
+    "InsightGenerated",
+    "ReportReady",
+    "BrandUpdated",
+    "PaymentReceived",
+    "WorkflowCompleted",
+    "WorkflowFailed",
+] as const;
+
+export const SHARED_SERVICES = [
+    { id: "auth", name: "Authentication", module: "enterprise-identity", status: "available" as const },
+    { id: "notifications", name: "Notifications", module: "communication-hub", status: "available" as const },
+    { id: "documentEngine", name: "Document Engine", module: "document-engine", status: "available" as const },
+    { id: "gci", name: "Global Content Intelligence", module: "gci", status: "available" as const },
+    { id: "search", name: "Search", module: "knowledge", status: "available" as const },
+    { id: "audit", name: "Audit", module: "audit", status: "available" as const },
+    { id: "ai", name: "AI Orchestration", module: "ai-orchestration", status: "available" as const },
+    { id: "analytics", name: "Analytics", module: "analytics", status: "available" as const },
+    { id: "integrations", name: "Integrations", module: "integration-platform", status: "available" as const },
+];
+
+export const DEFAULT_WORKFLOW_TEMPLATE: WorkflowStep[] = [
+    { id: "step-lead", name: "Lead", capabilityId: "sales", action: "qualify-lead" },
+    { id: "step-proposal", name: "Proposal", capabilityId: "businessAssets", action: "generate-proposal" },
+    { id: "step-agreement", name: "Agreement", capabilityId: "businessAssets", action: "sign-agreement" },
+    { id: "step-onboarding", name: "Onboarding", capabilityId: "clientSuccess", action: "run-onboarding" },
+    { id: "step-delivery", name: "Delivery", capabilityId: "clientSuccess", action: "track-delivery" },
+    { id: "step-invoice", name: "Invoice", capabilityId: "financeFuture", action: "generate-invoice" },
+    { id: "step-support", name: "Support", capabilityId: "clientSuccess", action: "health-monitoring" },
+    { id: "step-renewal", name: "Renewal", capabilityId: "clientSuccess", action: "renewal-growth" },
+];
+
+export const MISSION_CORE_RULES: OrchestrationRule[] = [
+    {
+        id: "no-direct-capability-call",
+        name: "No Direct Capability-to-Capability Communication",
+        description: "All inter-capability communication must route through Mission Core event bus and workflow engine.",
+        enforced: true,
+    },
+    {
+        id: "centralized-orchestration",
+        name: "Centralized Orchestration",
+        description: "Mission Core is the single orchestration layer for platform workflows and events.",
+        enforced: true,
+    },
+    {
+        id: "shared-services-only",
+        name: "Shared Services Delegation",
+        description: "Cross-cutting concerns (auth, notifications, documents) use shared service registry only.",
+        enforced: true,
+    },
+];
+
+export const MISSION_CORE_TABS = {
+    capabilities: "capabilities",
+    workflows: "workflows",
+    events: "events",
+    aiDecisions: "ai-decisions",
+    sharedServices: "shared-services",
+    health: "health",
+    monitor: "monitor",
+    developer: "developer",
+} as const;
+
+export const MISSION_CORE_TAB_LIST = [
+    { id: MISSION_CORE_TABS.capabilities, label: "Capability Registry" },
+    { id: MISSION_CORE_TABS.workflows, label: "Workflow Engine" },
+    { id: MISSION_CORE_TABS.events, label: "Event Bus" },
+    { id: MISSION_CORE_TABS.aiDecisions, label: "AI Decisions" },
+    { id: MISSION_CORE_TABS.sharedServices, label: "Shared Services" },
+    { id: MISSION_CORE_TABS.health, label: "Health Dashboard" },
+    { id: MISSION_CORE_TABS.monitor, label: "Workflow Monitor" },
+    { id: MISSION_CORE_TABS.developer, label: "Developer Console" },
+] as const;

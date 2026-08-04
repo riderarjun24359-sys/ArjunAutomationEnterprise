@@ -1,6 +1,6 @@
 import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
 import { MISSION_CORE_CAPABILITY_IDS, MISSION_CORE_WORKFLOWS } from "@/src/modules/mission-core/constants";
-import type { CapabilityRegistration, WorkflowExecution } from "@/src/modules/mission-core/types";
+import type { CapabilityRegistration, PlatformEvent, WorkflowExecution } from "@/src/modules/mission-core/types";
 
 const client = createMissionCoreClient();
 
@@ -23,6 +23,25 @@ export function executeClientSuccessWorkflow(
 export function getClientSuccessCapabilityStatus() {
     const capability = ensureClientSuccessCapability();
     return client.getCapabilityStatus(capability.id);
+}
+
+export function publishClientSuccessEvent(
+    type: string,
+    payload?: Record<string, unknown>,
+): PlatformEvent {
+    ensureClientSuccessCapability();
+    return client.publishEvent({
+        type,
+        source: MISSION_CORE_CAPABILITY_IDS.clientSuccess,
+        payload,
+    });
+}
+
+export function subscribeClientSuccessEvents(eventTypes: string[]): void {
+    client.subscribeToEvents({
+        capabilityId: MISSION_CORE_CAPABILITY_IDS.clientSuccess,
+        eventTypes,
+    });
 }
 
 export { MISSION_CORE_CAPABILITY_IDS, MISSION_CORE_WORKFLOWS, createMissionCoreClient };

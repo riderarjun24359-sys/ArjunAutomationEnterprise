@@ -1,22 +1,52 @@
-import { MISSION_CORE_CAPABILITY_IDS } from "../constants";
+import { DEFAULT_WORKFLOW_TEMPLATE, MISSION_CORE_CAPABILITY_IDS } from "../constants";
+import * as capabilityRegistry from "../engine/capability-registry";
+import * as workflowEngine from "../engine/workflow-engine";
+import * as eventBus from "../engine/event-bus";
+import * as aiDecisionEngine from "../engine/ai-decision-engine";
+import * as sharedServiceRegistry from "../engine/shared-service-registry";
+import { ORCHESTRATION_RULES, validateNoDirectCapabilityCall } from "../lib/orchestration-rules";
 import type {
+    AiDecision,
+    AiDecisionContext,
+    CapabilityDefinition,
+    CapabilityHealth,
     CapabilityRegistration,
     CapabilityStatusReport,
+    CreateWorkflowInput,
+    DeveloperConsoleData,
     ExecuteWorkflowInput,
+    PlatformEvent,
+    PlatformHealth,
+    PublishEventInput,
     RegisterCapabilityInput,
+    SharedService,
+    SubscribeInput,
     WorkflowExecution,
+    WorkflowInstance,
 } from "../types";
 
-const capabilities = new Map<string, CapabilityRegistration>();
-const workflows = new Map<string, WorkflowExecution>();
+const legacyCapabilities = new Map<string, CapabilityRegistration>();
+const legacyWorkflows = new Map<string, WorkflowExecution>();
 
-function uid(prefix: string): string {
-    return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
+let initialized = false;
 
 export class MissionCoreService {
+    initializePlatform(): { capabilities: CapabilityDefinition[]; services: SharedService[] } {
+        if (!initialized) {
+            capabilityRegistry.registerAllCapabilities();
+            sharedServiceRegistry.registerAllServices();
+            workflowEngine.createWorkflow({ name: "Default Customer Lifecycle", steps: DEFAULT_WORKFLOW_TEMPLATE });
+            initialized = true;
+        }
+        return {
+            capabilities: capabilityRegistry.listCapabilities(),
+            services: sharedServiceRegistry.listServices(),
+        };
+    }
+
     registerCapability(input: RegisterCapabilityInput): CapabilityRegistration {
-        const id = uid("cap");
+        this.initializePlatform();
+        const { id } = capabilityRegistry.registerLegacyCapability(input.name, input.module, input.config ?? {});
         const registration: CapabilityRegistration = {
             id,
             name: input.name,
@@ -25,51 +55,181 @@ export class MissionCoreService {
             registeredAt: new Date().toISOString(),
             config: input.config ?? {},
         };
-        capabilities.set(id, registration);
+        legacyCapabilities.set(id, registration);
         return registration;
     }
 
+    registerAllPlatformCapabilities(): CapabilityDefinition[] {
+        this.initializePlatform();
+        return capabilityRegistry.registerAllCapabilities();
+    }
+
+    registerPlatformCapability(def: CapabilityDefinition): CapabilityDefinition {
+        this.initializePlatform();
+        return capabilityRegistry.registerCapability(def);
+    }
+
+    getCapability(id: string): CapabilityDefinition | undefined {
+        this.initializePlatform();
+        return capabilityRegistry.getCapability(id);
+    }
+
+    listPlatformCapabilities(): CapabilityDefinition[] {
+        this.initializePlatform();
+        return capabilityRegistry.listCapabilities();
+    }
+
+    publishEvent(input: PublishEventInput): PlatformEvent {
+        this.initializePlatform();
+        return eventBus.publish({ ...input, source: input.source || "mission-core" });
+    }
+
+    subscribeToEvents(input: SubscribeInput): void {
+        this.initializePlatform();
+        eventBus.subscribe(input.capabilityId, input.eventTypes);
+    }
+
+    getEventLog(limit?: number): PlatformEvent[] {
+        this.initializePlatform();
+        return eventBus.getEventLog(limit);
+    }
+
+    createAndRunWorkflow(input: CreateWorkflowInput): WorkflowInstance {
+        this.initializePlatform();
+        const def = workflowEngine.createWorkflow(input);
+        return workflowEngine.startWorkflow(def.id, input.input ?? {});
+    }
+
+    getWorkflowInstances(capabilityId?: string): WorkflowInstance[] {
+        this.initializePlatform();
+        return workflowEngine.listInstances(capabilityId);
+    }
+
+    advanceWorkflowStep(instanceId: string): WorkflowInstance {
+        this.initializePlatform();
+        return workflowEngine.advanceStep(instanceId);
+    }
+
+    retryWorkflow(instanceId: string): WorkflowInstance {
+        this.initializePlatform();
+        return workflowEngine.retryWorkflow(instanceId);
+    }
+
+    makeAiDecision(context: AiDecisionContext): AiDecision {
+        this.initializePlatform();
+        return aiDecisionEngine.decideRouting(context);
+    }
+
+    invokeSharedService(serviceId: string, method: string, args: unknown[] = []): unknown {
+        this.initializePlatform();
+        return sharedServiceRegistry.invokeService(serviceId, method, args);
+    }
+
+    listSharedServices(): SharedService[] {
+        this.initializePlatform();
+        return sharedServiceRegistry.listServices();
+    }
+
+    getPlatformHealth(): PlatformHealth {
+        this.initializePlatform();
+        const capabilities = capabilityRegistry.listCapabilities();
+        const capabilityHealths = capabilities.map((c) => c.health);
+        const degraded = capabilityHealths.filter((h) => h.status !== "healthy").length;
+        const overall = degraded === 0 ? "healthy" : degraded > 2 ? "critical" : "degraded";
+
+        return {
+            overall,
+            capabilities: capabilityHealths,
+            queues: [
+                { name: "events", pending: eventBus.getEventLog().length, processing: 0, failed: 0 },
+                { name: "workflows", pending: workflowEngine.listInstances().filter((w) => w.status === "running").length, processing: 0, failed: workflowEngine.listInstances().filter((w) => w.status === "failed").length },
+            ],
+            checkedAt: new Date().toISOString(),
+        };
+    }
+
+    getCapabilityHealths(): CapabilityHealth[] {
+        this.initializePlatform();
+        return capabilityRegistry.listCapabilities().map((c) => c.health);
+    }
+
+    updateCapabilityHealth(capabilityId: string, health: Partial<CapabilityHealth>): CapabilityHealth | null {
+        this.initializePlatform();
+        return capabilityRegistry.updateHealth(capabilityId, health);
+    }
+
+    getWorkflowMonitor(): WorkflowInstance[] {
+        this.initializePlatform();
+        return workflowEngine.listInstances();
+    }
+
+    getDeveloperConsoleData(): DeveloperConsoleData {
+        this.initializePlatform();
+        return {
+            capabilities: capabilityRegistry.listCapabilities(),
+            recentEvents: eventBus.getEventLog(20),
+            activeWorkflows: workflowEngine.listInstances().filter((w) => w.status === "running" || w.status === "pending"),
+            services: sharedServiceRegistry.listServices(),
+            rules: ORCHESTRATION_RULES,
+        };
+    }
+
+    enforceOrchestrationRule(from: string, to: string): void {
+        validateNoDirectCapabilityCall(from, to);
+    }
+
+    /** @deprecated Use createAndRunWorkflow — kept for client-success bridge */
     executeWorkflow(input: ExecuteWorkflowInput): WorkflowExecution {
-        const capability = capabilities.get(input.capabilityId);
+        this.initializePlatform();
+        const capability = legacyCapabilities.get(input.capabilityId);
         if (!capability) {
-            throw new Error(`Capability not found: ${input.capabilityId}`);
+            const platformCap = capabilityRegistry.getCapability(input.capabilityId);
+            if (!platformCap) throw new Error(`Capability not found: ${input.capabilityId}`);
         }
 
+        const instance = workflowEngine.runLegacyWorkflow(input.capabilityId, input.workflowName, input.payload ?? {});
+
         const execution: WorkflowExecution = {
-            id: uid("wf"),
+            id: instance.id,
             capabilityId: input.capabilityId,
             workflowName: input.workflowName,
-            status: "running",
-            startedAt: new Date().toISOString(),
+            status: instance.status === "failed" ? "failed" : instance.status === "completed" ? "completed" : "running",
+            startedAt: instance.startedAt,
+            completedAt: instance.completedAt,
             input: input.payload ?? {},
+            output: instance.output,
+            error: instance.error,
         };
 
-        workflows.set(execution.id, execution);
-        capability.status = "active";
+        if (capability) {
+            capability.status = execution.status === "completed" ? "completed" : "active";
+            legacyCapabilities.set(capability.id, capability);
+        }
 
-        const output = this.runWorkflowLogic(input.workflowName, input.payload ?? {});
-        execution.status = "completed";
-        execution.completedAt = new Date().toISOString();
-        execution.output = output;
-        capability.status = "completed";
-        workflows.set(execution.id, execution);
-
+        legacyWorkflows.set(execution.id, execution);
         return execution;
     }
 
     getCapabilityStatus(capabilityId: string): CapabilityStatusReport | null {
-        const capability = capabilities.get(capabilityId);
-        if (!capability) return null;
+        this.initializePlatform();
+        const capability = legacyCapabilities.get(capabilityId);
+        const platformCap = capabilityRegistry.getCapability(capabilityId);
 
-        const related = [...workflows.values()].filter((w) => w.capabilityId === capabilityId);
-        const active = related.filter((w) => w.status === "running" || w.status === "pending").length;
-        const completed = related.filter((w) => w.status === "completed").length;
-        const last = related.sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0];
+        if (!capability && !platformCap) return null;
+
+        const related = [...legacyWorkflows.values()].filter((w) => w.capabilityId === capabilityId);
+        const instances = workflowEngine.listInstances(capabilityId);
+        const active = related.filter((w) => w.status === "running" || w.status === "pending").length
+            + instances.filter((w) => w.status === "running" || w.status === "pending").length;
+        const completed = related.filter((w) => w.status === "completed").length
+            + instances.filter((w) => w.status === "completed").length;
+        const last = [...related, ...instances.map((i) => ({ startedAt: i.startedAt }))]
+            .sort((a, b) => b.startedAt.localeCompare(a.startedAt))[0];
 
         return {
             capabilityId,
-            name: capability.name,
-            status: capability.status,
+            name: capability?.name ?? platformCap?.name ?? capabilityId,
+            status: capability?.status ?? platformCap?.status ?? "idle",
             activeWorkflows: active,
             completedWorkflows: completed,
             lastExecutedAt: last?.startedAt,
@@ -77,7 +237,8 @@ export class MissionCoreService {
     }
 
     ensureClientSuccessCapability(): CapabilityRegistration {
-        const existing = [...capabilities.values()].find(
+        this.initializePlatform();
+        const existing = [...legacyCapabilities.values()].find(
             (c) => c.module === MISSION_CORE_CAPABILITY_IDS.clientSuccess,
         );
         if (existing) return existing;
@@ -89,27 +250,14 @@ export class MissionCoreService {
     }
 
     listCapabilities(): CapabilityRegistration[] {
-        return [...capabilities.values()];
+        this.initializePlatform();
+        return [...legacyCapabilities.values()];
     }
 
     listWorkflows(capabilityId?: string): WorkflowExecution[] {
-        const all = [...workflows.values()];
+        this.initializePlatform();
+        const all = [...legacyWorkflows.values()];
         return capabilityId ? all.filter((w) => w.capabilityId === capabilityId) : all;
-    }
-
-    private runWorkflowLogic(workflowName: string, payload: Record<string, unknown>): Record<string, unknown> {
-        switch (workflowName) {
-            case "run-onboarding":
-                return { phase: "onboarding", clientId: payload.clientId, stepsCompleted: 5 };
-            case "provision-workspace":
-                return { phase: "provisioning", projectId: uid("proj"), milestones: 4, tasks: 12 };
-            case "track-delivery":
-                return { phase: "delivery", checklistItems: 8, deploymentReady: true };
-            case "health-monitoring":
-                return { phase: "health", score: 82, alerts: 1 };
-            default:
-                return { phase: workflowName, processed: true };
-        }
     }
 }
 
