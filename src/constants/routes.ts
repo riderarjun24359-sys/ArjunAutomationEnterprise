@@ -22,6 +22,7 @@ export const ROUTES = {
     qaEngineer: "/qa-engineer",
     devopsDeployment: "/devops-deployment",
     customerSuccess: "/customer-success",
+    clientSuccess: "/client-success",
     founderOs: "/founder-os",
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",

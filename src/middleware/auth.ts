@@ -26,6 +26,7 @@ const protectedRoutes = [
     ROUTES.qaEngineer,
     ROUTES.devopsDeployment,
     ROUTES.customerSuccess,
+    ROUTES.clientSuccess,
     ROUTES.founderOs,
     ROUTES.autonomousCompany,
     ROUTES.commercialPlatform,

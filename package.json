@@ -40,6 +40,7 @@
     "premium-website:verify": "node scripts/verify-premium-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
     "business-assets:verify": "node scripts/verify-business-assets.mjs",
+    "client-success-capability:verify": "node scripts/verify-client-success-capability.mjs",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {
