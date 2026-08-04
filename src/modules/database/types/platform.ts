@@ -15745,3 +15745,454 @@ export interface DbAageAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbAagoOperationsHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    operations_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoBrandKnowledgeBase {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    knowledge_key: string;
+    knowledge_title: string;
+    knowledge_status: string;
+    knowledge_category: string;
+    content_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoBrandRulebook {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rulebook_key: string;
+    rulebook_name: string;
+    rulebook_status: string;
+    rulebook_version: string;
+    owner_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoMessagingLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    message_key: string;
+    message_title: string;
+    message_status: string;
+    message_type: string;
+    audience_segment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoServiceLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    service_key: string;
+    service_name: string;
+    service_status: string;
+    service_category: string;
+    pricing_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoIndustryLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    industry_key: string;
+    industry_name: string;
+    industry_status: string;
+    vertical: string;
+    segment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoFaqLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    faq_key: string;
+    faq_question: string;
+    faq_status: string;
+    faq_category: string;
+    answer_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoBrandApprovalRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_status: string;
+    approval_level: string;
+    entity_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoVideoProject {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    project_key: string;
+    project_name: string;
+    project_status: string;
+    video_format: string;
+    duration_seconds: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoThumbnailManager {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    thumbnail_key: string;
+    thumbnail_name: string;
+    thumbnail_status: string;
+    aspect_ratio: string;
+    style: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoVoiceoverManager {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    voiceover_key: string;
+    voiceover_name: string;
+    voiceover_status: string;
+    voice_type: string;
+    language: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCreativeAssetGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    asset_type: string;
+    output_format: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCampaignAssetBuilder {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    builder_key: string;
+    builder_name: string;
+    builder_status: string;
+    campaign_type: string;
+    asset_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCreativeWorkflow {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    workflow_key: string;
+    workflow_name: string;
+    workflow_status: string;
+    workflow_type: string;
+    step_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoDistributionContentQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_title: string;
+    queue_status: string;
+    content_type: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoDistributionPublishingQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_title: string;
+    queue_status: string;
+    content_type: string;
+    publish_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoChannelManager {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    channel_key: string;
+    channel_name: string;
+    channel_status: string;
+    platform: string;
+    post_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoApprovalCenter {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    approval_key: string;
+    approval_title: string;
+    approval_status: string;
+    content_type: string;
+    approver_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoPublishingHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_title: string;
+    history_status: string;
+    content_type: string;
+    published_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoDistributionAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_name: string;
+    analytics_score: number;
+    analytics_type: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCampaignDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    campaign_ref: string;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoContentPerformance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    performance_key: string;
+    performance_title: string;
+    performance_score: number;
+    content_type: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoLeadAttribution {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    attribution_key: string;
+    attribution_title: string;
+    attribution_status: string;
+    channel_ref: string;
+    conversion_rate: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoGrowthKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_value: number;
+    kpi_category: string;
+    target_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoRoiDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    roi_key: string;
+    roi_name: string;
+    roi_score: number;
+    campaign_ref: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoRecommendationEngine {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    recommendation_key: string;
+    recommendation_title: string;
+    recommendation_status: string;
+    recommendation_type: string;
+    confidence_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCommandCenterMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    mission_status_score: number;
+    content_status_score: number;
+    publishing_status_score: number;
+    growth_metrics_score: number;
+    campaign_health_score: number;
+    executive_summary_score: number;
+    overall_operations_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoCommandCenterHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    brand_os_status: string;
+    creative_studio_status: string;
+    distribution_status: string;
+    intelligence_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoMissionStatus {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    mission_key: string;
+    mission_name: string;
+    mission_status: string;
+    mission_type: string;
+    progress_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoExecutiveSummary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    summary_key: string;
+    summary_title: string;
+    summary_status: string;
+    summary_period: string;
+    author_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoOperationalFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagoAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

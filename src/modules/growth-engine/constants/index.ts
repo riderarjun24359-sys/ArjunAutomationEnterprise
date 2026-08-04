@@ -1,57 +1,88 @@
 export const AAGE_TABS = {
     overview: "overview",
-    growthHubs: "growthHubs",
-    brandProfiles: "brandProfiles",
-    brandVoice: "brandVoice",
-    coreMessaging: "coreMessaging",
-    brandGuidelines: "brandGuidelines",
-    logoLibrary: "logoLibrary",
-    colorSystems: "colorSystems",
-    youtubeTemplates: "youtubeTemplates",
-    socialTemplates: "socialTemplates",
-    blogTemplates: "blogTemplates",
-    websiteArticleTemplates: "websiteArticleTemplates",
-    emailCampaignTemplates: "emailCampaignTemplates",
-    caseStudyTemplates: "caseStudyTemplates",
-    imageAssets: "imageAssets",
-    videoAssets: "videoAssets",
-    iconAssets: "iconAssets",
-    voiceProfiles: "voiceProfiles",
-    musicAssets: "musicAssets",
-    thumbnailTemplates: "thumbnailTemplates",
-    ideaGenerators: "ideaGenerators",
-    scriptGenerators: "scriptGenerators",
-    captionGenerators: "captionGenerators",
-    blogGenerators: "blogGenerators",
-    seoAssistants: "seoAssistants",
-    ctaGenerators: "ctaGenerators",
-    growthMetrics: "growthMetrics",
-    growthHealth: "growthHealth",
-    contentCalendar: "contentCalendar",
-    draftQueue: "draftQueue",
-    approvalQueue: "approvalQueue",
-    publishingQueue: "publishingQueue",
+    operationsHubs: "operationsHubs",
+    brandKnowledgeBase: "brandKnowledgeBase",
+    brandRulebook: "brandRulebook",
+    messagingLibrary: "messagingLibrary",
+    serviceLibrary: "serviceLibrary",
+    industryLibrary: "industryLibrary",
+    faqLibrary: "faqLibrary",
+    brandApprovalRules: "brandApprovalRules",
+    videoProjects: "videoProjects",
+    thumbnailManager: "thumbnailManager",
+    voiceoverManager: "voiceoverManager",
+    creativeAssetGenerator: "creativeAssetGenerator",
+    campaignAssetBuilder: "campaignAssetBuilder",
+    creativeWorkflows: "creativeWorkflows",
+    distributionContentQueue: "distributionContentQueue",
+    distributionPublishingQueue: "distributionPublishingQueue",
+    channelManager: "channelManager",
+    approvalCenter: "approvalCenter",
+    publishingHistory: "publishingHistory",
+    distributionAnalytics: "distributionAnalytics",
+    campaignDashboard: "campaignDashboard",
+    contentPerformance: "contentPerformance",
+    leadAttribution: "leadAttribution",
+    growthKpis: "growthKpis",
+    roiDashboard: "roiDashboard",
+    recommendationEngine: "recommendationEngine",
+    commandCenterMetrics: "commandCenterMetrics",
+    commandCenterHealth: "commandCenterHealth",
+    missionStatus: "missionStatus",
+    executiveSummaries: "executiveSummaries",
+    operationalFailures: "operationalFailures",
     auditLogs: "auditLogs",
     api: "api",
 } as const;
 
-export const PROFILE_STATUS_OPTIONS = [
+export const KNOWLEDGE_STATUS_OPTIONS = [
     { value: "draft", label: "Draft" },
     { value: "active", label: "Active" },
     { value: "archived", label: "Archived" },
 ] as const;
 
-export const MESSAGING_STATUS_OPTIONS = [
+export const RULEBOOK_STATUS_OPTIONS = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
 ] as const;
 
-export const GUIDELINE_STATUS_OPTIONS = [
+export const MESSAGE_STATUS_OPTIONS = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
 ] as const;
 
-export const TEMPLATE_STATUS_OPTIONS = [
+export const SERVICE_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const INDUSTRY_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const FAQ_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const RULE_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const PROJECT_STATUS_OPTIONS = [
+    { value: "draft", label: "Draft" },
+    { value: "active", label: "Active" },
+    { value: "completed", label: "Completed" },
+] as const;
+
+export const THUMBNAIL_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const VOICEOVER_STATUS_OPTIONS = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
 ] as const;
@@ -61,7 +92,12 @@ export const GENERATOR_STATUS_OPTIONS = [
     { value: "inactive", label: "Inactive" },
 ] as const;
 
-export const ASSISTANT_STATUS_OPTIONS = [
+export const BUILDER_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const WORKFLOW_STATUS_OPTIONS = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
 ] as const;
@@ -73,17 +109,46 @@ export const QUEUE_STATUS_OPTIONS = [
     { value: "published", label: "Published" },
 ] as const;
 
-export const CALENDAR_STATUS_OPTIONS = [
+export const CHANNEL_STATUS_OPTIONS = [
     { value: "active", label: "Active" },
-    { value: "paused", label: "Paused" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const APPROVAL_STATUS_OPTIONS = [
+    { value: "pending", label: "Pending" },
+    { value: "approved", label: "Approved" },
+    { value: "rejected", label: "Rejected" },
+] as const;
+
+export const HISTORY_STATUS_OPTIONS = [
+    { value: "published", label: "Published" },
     { value: "archived", label: "Archived" },
 ] as const;
 
-export const ALERT_SEVERITY_OPTIONS = [
-    { value: "low", label: "Low" },
-    { value: "medium", label: "Medium" },
-    { value: "high", label: "High" },
-    { value: "critical", label: "Critical" },
+export const DASHBOARD_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const ATTRIBUTION_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const RECOMMENDATION_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+] as const;
+
+export const MISSION_STATUS_OPTIONS = [
+    { value: "active", label: "Active" },
+    { value: "completed", label: "Completed" },
+    { value: "paused", label: "Paused" },
+] as const;
+
+export const SUMMARY_STATUS_OPTIONS = [
+    { value: "draft", label: "Draft" },
+    { value: "published", label: "Published" },
 ] as const;
 
 export const AAGE_PERMISSIONS = ["aage.view", "aage.manage", "aage.approve", "aage.admin"] as const;

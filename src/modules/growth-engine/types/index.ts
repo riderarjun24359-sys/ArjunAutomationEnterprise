@@ -1,21 +1,23 @@
-export interface AageDashboardStats {
-    totalGrowthHubs: number;
-    activeGrowthHubs: number;
-    brandProfileCount: number;
-    youtubeTemplateCount: number;
-    imageAssetCount: number;
-    ideaGeneratorCount: number;
-    contentCalendarCount: number;
-    publishingQueueCount: number;
-    overallGrowthScore: number;
-    marketingOverviewScore: number;
-    brandHealthScore: number;
-    draftQueueCount: number;
-    approvalQueueCount: number;
+export interface AagoDashboardStats {
+    totalOperationsHubs: number;
+    activeOperationsHubs: number;
+    brandKnowledgeBaseCount: number;
+    videoProjectCount: number;
+    distributionContentQueueCount: number;
+    campaignDashboardCount: number;
+    missionStatusCount: number;
+    overallOperationsScore: number;
+    missionStatusScore: number;
+    contentStatusScore: number;
+    publishingStatusScore: number;
+    growthMetricsScore: number;
+    campaignHealthScore: number;
+    executiveSummaryScore: number;
+    openOperationalFailureCount: number;
     auditCount: number;
 }
 
-export interface AagePipelineInfo {
+export interface AagoPipelineInfo {
     stages: Array<{ key: string; label: string }>;
     currentStage: string;
     nextStage: string;
@@ -32,18 +34,18 @@ export interface AuditEntry {
     createdAt: string;
 }
 
-export interface AageSdkRunBrandServiceInput { growthHubId: string; profileKey?: string; profileName?: string; }
-export interface AageSdkRunBrandServiceResult { profileId: string; profileKey: string; status: string; }
-export interface AageSdkRunContentFoundationServiceInput { growthHubId: string; templateKey?: string; templateName?: string; }
-export interface AageSdkRunContentFoundationServiceResult { templateId: string; templateKey: string; status: string; }
-export interface AageSdkRunMediaFoundationServiceInput { growthHubId: string; assetKey?: string; assetName?: string; }
-export interface AageSdkRunMediaFoundationServiceResult { assetId: string; assetKey: string; status: string; }
-export interface AageSdkRunContentEngineServiceInput { growthHubId: string; generatorKey?: string; generatorName?: string; }
-export interface AageSdkRunContentEngineServiceResult { generatorId: string; generatorKey: string; status: string; }
-export interface AageSdkRunFounderDashboardServiceInput { growthHubId: string; queueKey?: string; queueTitle?: string; }
-export interface AageSdkRunFounderDashboardServiceResult { queueId: string; queueKey: string; status: string; }
+export interface AagoSdkRunBrandOsServiceInput { operationsHubId: string; knowledgeKey?: string; knowledgeTitle?: string; }
+export interface AagoSdkRunBrandOsServiceResult { knowledgeId: string; knowledgeKey: string; status: string; }
+export interface AagoSdkRunCreativeStudioServiceInput { operationsHubId: string; projectKey?: string; projectName?: string; }
+export interface AagoSdkRunCreativeStudioServiceResult { projectId: string; projectKey: string; status: string; }
+export interface AagoSdkRunDistributionServiceInput { operationsHubId: string; queueKey?: string; queueTitle?: string; }
+export interface AagoSdkRunDistributionServiceResult { queueId: string; queueKey: string; status: string; }
+export interface AagoSdkRunGrowthIntelligenceServiceInput { operationsHubId: string; dashboardKey?: string; dashboardName?: string; }
+export interface AagoSdkRunGrowthIntelligenceServiceResult { dashboardId: string; dashboardKey: string; status: string; }
+export interface AagoSdkRunCommandCenterServiceInput { operationsHubId: string; missionKey?: string; missionName?: string; }
+export interface AagoSdkRunCommandCenterServiceResult { missionId: string; missionKey: string; status: string; }
 
-export interface GrowthHubSummary {
+export interface OperationsHubSummary {
     id: string;
         hubKey: string;
     hubName: string;
@@ -51,301 +53,173 @@ export interface GrowthHubSummary {
     status: string;
 }
 
-export interface CreateGrowthHubInput {
+export interface CreateOperationsHubInput {
         hubKey?: string;
     hubName?: string;
     environment?: string;
 }
 
-export interface BrandProfileSummary {
+export interface BrandKnowledgeBaseSummary {
     id: string;
     hubName?: string;
-        profileKey: string;
-    profileName: string;
-    profileStatus: string;
+        knowledgeKey: string;
+    knowledgeTitle: string;
+    knowledgeStatus: string;
     status: string;
 }
 
-export interface CreateBrandProfileInput {
-        growthHubId: string;
-        profileKey?: string;
-    profileName?: string;
-    profileStatus?: string;
+export interface CreateBrandKnowledgeBaseInput {
+        operationsHubId: string;
+        knowledgeKey?: string;
+    knowledgeTitle?: string;
+    knowledgeStatus?: string;
 }
 
-export interface BrandVoiceSummary {
+export interface BrandRulebookSummary {
     id: string;
     hubName?: string;
-        voiceKey: string;
-    voiceName: string;
-    voiceTone: string;
+        rulebookKey: string;
+    rulebookName: string;
+    rulebookStatus: string;
     status: string;
 }
 
-export interface CreateBrandVoiceInput {
-        growthHubId: string;
-        voiceKey?: string;
-    voiceName?: string;
-    voiceTone?: string;
+export interface CreateBrandRulebookInput {
+        operationsHubId: string;
+        rulebookKey?: string;
+    rulebookName?: string;
+    rulebookStatus?: string;
 }
 
-export interface CoreMessagingSummary {
+export interface MessagingLibrarySummary {
     id: string;
     hubName?: string;
-        messagingKey: string;
-    messagingTitle: string;
-    messagingStatus: string;
+        messageKey: string;
+    messageTitle: string;
+    messageStatus: string;
     status: string;
 }
 
-export interface CreateCoreMessagingInput {
-        growthHubId: string;
-        messagingKey?: string;
-    messagingTitle?: string;
-    messagingStatus?: string;
+export interface CreateMessagingLibraryInput {
+        operationsHubId: string;
+        messageKey?: string;
+    messageTitle?: string;
+    messageStatus?: string;
 }
 
-export interface BrandGuidelineSummary {
+export interface ServiceLibrarySummary {
     id: string;
     hubName?: string;
-        guidelineKey: string;
-    guidelineName: string;
-    guidelineStatus: string;
+        serviceKey: string;
+    serviceName: string;
+    serviceStatus: string;
     status: string;
 }
 
-export interface CreateBrandGuidelineInput {
-        growthHubId: string;
-        guidelineKey?: string;
-    guidelineName?: string;
-    guidelineStatus?: string;
+export interface CreateServiceLibraryInput {
+        operationsHubId: string;
+        serviceKey?: string;
+    serviceName?: string;
+    serviceStatus?: string;
 }
 
-export interface LogoLibrarySummary {
+export interface IndustryLibrarySummary {
     id: string;
     hubName?: string;
-        logoKey: string;
-    logoName: string;
-    logoFormat: string;
+        industryKey: string;
+    industryName: string;
+    industryStatus: string;
     status: string;
 }
 
-export interface CreateLogoLibraryInput {
-        growthHubId: string;
-        logoKey?: string;
-    logoName?: string;
-    logoFormat?: string;
+export interface CreateIndustryLibraryInput {
+        operationsHubId: string;
+        industryKey?: string;
+    industryName?: string;
+    industryStatus?: string;
 }
 
-export interface ColorSystemSummary {
+export interface FaqLibrarySummary {
     id: string;
     hubName?: string;
-        colorKey: string;
-    colorName: string;
-    primaryHex: string;
+        faqKey: string;
+    faqQuestion: string;
+    faqStatus: string;
     status: string;
 }
 
-export interface CreateColorSystemInput {
-        growthHubId: string;
-        colorKey?: string;
-    colorName?: string;
-    primaryHex?: string;
+export interface CreateFaqLibraryInput {
+        operationsHubId: string;
+        faqKey?: string;
+    faqQuestion?: string;
+    faqStatus?: string;
 }
 
-export interface YoutubeTemplateSummary {
+export interface BrandApprovalRuleSummary {
     id: string;
     hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
+        ruleKey: string;
+    ruleName: string;
+    ruleStatus: string;
     status: string;
 }
 
-export interface CreateYoutubeTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
+export interface CreateBrandApprovalRuleInput {
+        operationsHubId: string;
+        ruleKey?: string;
+    ruleName?: string;
+    ruleStatus?: string;
 }
 
-export interface SocialTemplateSummary {
+export interface VideoProjectSummary {
     id: string;
     hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
+        projectKey: string;
+    projectName: string;
+    projectStatus: string;
     status: string;
 }
 
-export interface CreateSocialTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
+export interface CreateVideoProjectInput {
+        operationsHubId: string;
+        projectKey?: string;
+    projectName?: string;
+    projectStatus?: string;
 }
 
-export interface BlogTemplateSummary {
+export interface ThumbnailManagerSummary {
     id: string;
     hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
+        thumbnailKey: string;
+    thumbnailName: string;
+    thumbnailStatus: string;
     status: string;
 }
 
-export interface CreateBlogTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
+export interface CreateThumbnailManagerInput {
+        operationsHubId: string;
+        thumbnailKey?: string;
+    thumbnailName?: string;
+    thumbnailStatus?: string;
 }
 
-export interface WebsiteArticleTemplateSummary {
+export interface VoiceoverManagerSummary {
     id: string;
     hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
+        voiceoverKey: string;
+    voiceoverName: string;
+    voiceoverStatus: string;
     status: string;
 }
 
-export interface CreateWebsiteArticleTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
+export interface CreateVoiceoverManagerInput {
+        operationsHubId: string;
+        voiceoverKey?: string;
+    voiceoverName?: string;
+    voiceoverStatus?: string;
 }
 
-export interface EmailCampaignTemplateSummary {
-    id: string;
-    hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
-    status: string;
-}
-
-export interface CreateEmailCampaignTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
-}
-
-export interface CaseStudyTemplateSummary {
-    id: string;
-    hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
-    status: string;
-}
-
-export interface CreateCaseStudyTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
-}
-
-export interface ImageAssetSummary {
-    id: string;
-    hubName?: string;
-        assetKey: string;
-    assetName: string;
-    assetType: string;
-    status: string;
-}
-
-export interface CreateImageAssetInput {
-        growthHubId: string;
-        assetKey?: string;
-    assetName?: string;
-    assetType?: string;
-}
-
-export interface VideoAssetSummary {
-    id: string;
-    hubName?: string;
-        assetKey: string;
-    assetName: string;
-    assetType: string;
-    status: string;
-}
-
-export interface CreateVideoAssetInput {
-        growthHubId: string;
-        assetKey?: string;
-    assetName?: string;
-    assetType?: string;
-}
-
-export interface IconAssetSummary {
-    id: string;
-    hubName?: string;
-        assetKey: string;
-    assetName: string;
-    assetType: string;
-    status: string;
-}
-
-export interface CreateIconAssetInput {
-        growthHubId: string;
-        assetKey?: string;
-    assetName?: string;
-    assetType?: string;
-}
-
-export interface VoiceProfileSummary {
-    id: string;
-    hubName?: string;
-        profileKey: string;
-    profileName: string;
-    voiceType: string;
-    status: string;
-}
-
-export interface CreateVoiceProfileInput {
-        growthHubId: string;
-        profileKey?: string;
-    profileName?: string;
-    voiceType?: string;
-}
-
-export interface MusicAssetSummary {
-    id: string;
-    hubName?: string;
-        assetKey: string;
-    assetName: string;
-    genre: string;
-    status: string;
-}
-
-export interface CreateMusicAssetInput {
-        growthHubId: string;
-        assetKey?: string;
-    assetName?: string;
-    genre?: string;
-}
-
-export interface ThumbnailTemplateSummary {
-    id: string;
-    hubName?: string;
-        templateKey: string;
-    templateName: string;
-    templateStatus: string;
-    status: string;
-}
-
-export interface CreateThumbnailTemplateInput {
-        growthHubId: string;
-        templateKey?: string;
-    templateName?: string;
-    templateStatus?: string;
-}
-
-export interface IdeaGeneratorSummary {
+export interface CreativeAssetGeneratorSummary {
     id: string;
     hubName?: string;
         generatorKey: string;
@@ -354,184 +228,310 @@ export interface IdeaGeneratorSummary {
     status: string;
 }
 
-export interface CreateIdeaGeneratorInput {
-        growthHubId: string;
+export interface CreateCreativeAssetGeneratorInput {
+        operationsHubId: string;
         generatorKey?: string;
     generatorName?: string;
     generatorStatus?: string;
 }
 
-export interface ScriptGeneratorSummary {
+export interface CampaignAssetBuilderSummary {
     id: string;
     hubName?: string;
-        generatorKey: string;
-    generatorName: string;
-    generatorStatus: string;
+        builderKey: string;
+    builderName: string;
+    builderStatus: string;
     status: string;
 }
 
-export interface CreateScriptGeneratorInput {
-        growthHubId: string;
-        generatorKey?: string;
-    generatorName?: string;
-    generatorStatus?: string;
+export interface CreateCampaignAssetBuilderInput {
+        operationsHubId: string;
+        builderKey?: string;
+    builderName?: string;
+    builderStatus?: string;
 }
 
-export interface CaptionGeneratorSummary {
+export interface CreativeWorkflowSummary {
     id: string;
     hubName?: string;
-        generatorKey: string;
-    generatorName: string;
-    generatorStatus: string;
+        workflowKey: string;
+    workflowName: string;
+    workflowStatus: string;
     status: string;
 }
 
-export interface CreateCaptionGeneratorInput {
-        growthHubId: string;
-        generatorKey?: string;
-    generatorName?: string;
-    generatorStatus?: string;
+export interface CreateCreativeWorkflowInput {
+        operationsHubId: string;
+        workflowKey?: string;
+    workflowName?: string;
+    workflowStatus?: string;
 }
 
-export interface BlogGeneratorSummary {
+export interface DistributionContentQueueSummary {
     id: string;
     hubName?: string;
-        generatorKey: string;
-    generatorName: string;
-    generatorStatus: string;
+        queueKey: string;
+    queueTitle: string;
+    queueStatus: string;
     status: string;
 }
 
-export interface CreateBlogGeneratorInput {
-        growthHubId: string;
-        generatorKey?: string;
-    generatorName?: string;
-    generatorStatus?: string;
+export interface CreateDistributionContentQueueInput {
+        operationsHubId: string;
+        queueKey?: string;
+    queueTitle?: string;
+    queueStatus?: string;
 }
 
-export interface SeoAssistantSummary {
+export interface DistributionPublishingQueueSummary {
     id: string;
     hubName?: string;
-        assistantKey: string;
-    assistantName: string;
-    assistantStatus: string;
+        queueKey: string;
+    queueTitle: string;
+    queueStatus: string;
     status: string;
 }
 
-export interface CreateSeoAssistantInput {
-        growthHubId: string;
-        assistantKey?: string;
-    assistantName?: string;
-    assistantStatus?: string;
+export interface CreateDistributionPublishingQueueInput {
+        operationsHubId: string;
+        queueKey?: string;
+    queueTitle?: string;
+    queueStatus?: string;
 }
 
-export interface CtaGeneratorSummary {
+export interface ChannelManagerSummary {
     id: string;
     hubName?: string;
-        generatorKey: string;
-    generatorName: string;
-    generatorStatus: string;
+        channelKey: string;
+    channelName: string;
+    channelStatus: string;
     status: string;
 }
 
-export interface CreateCtaGeneratorInput {
-        growthHubId: string;
-        generatorKey?: string;
-    generatorName?: string;
-    generatorStatus?: string;
+export interface CreateChannelManagerInput {
+        operationsHubId: string;
+        channelKey?: string;
+    channelName?: string;
+    channelStatus?: string;
 }
 
-export interface GrowthMetricSummary {
+export interface ApprovalCenterSummary {
+    id: string;
+    hubName?: string;
+        approvalKey: string;
+    approvalTitle: string;
+    approvalStatus: string;
+    status: string;
+}
+
+export interface CreateApprovalCenterInput {
+        operationsHubId: string;
+        approvalKey?: string;
+    approvalTitle?: string;
+    approvalStatus?: string;
+}
+
+export interface PublishingHistorySummary {
+    id: string;
+    hubName?: string;
+        historyKey: string;
+    historyTitle: string;
+    historyStatus: string;
+    status: string;
+}
+
+export interface CreatePublishingHistoryInput {
+        operationsHubId: string;
+        historyKey?: string;
+    historyTitle?: string;
+    historyStatus?: string;
+}
+
+export interface DistributionAnalyticsSummary {
+    id: string;
+    hubName?: string;
+        analyticsKey: string;
+    analyticsName: string;
+    analyticsScore: number;
+    status: string;
+}
+
+export interface CreateDistributionAnalyticsInput {
+        operationsHubId: string;
+        analyticsKey?: string;
+    analyticsName?: string;
+    analyticsScore?: number;
+}
+
+export interface CampaignDashboardSummary {
+    id: string;
+    hubName?: string;
+        dashboardKey: string;
+    dashboardName: string;
+    dashboardStatus: string;
+    status: string;
+}
+
+export interface CreateCampaignDashboardInput {
+        operationsHubId: string;
+        dashboardKey?: string;
+    dashboardName?: string;
+    dashboardStatus?: string;
+}
+
+export interface ContentPerformanceSummary {
+    id: string;
+    hubName?: string;
+        performanceKey: string;
+    performanceTitle: string;
+    performanceScore: number;
+    status: string;
+}
+
+export interface CreateContentPerformanceInput {
+        operationsHubId: string;
+        performanceKey?: string;
+    performanceTitle?: string;
+    performanceScore?: number;
+}
+
+export interface LeadAttributionSummary {
+    id: string;
+    hubName?: string;
+        attributionKey: string;
+    attributionTitle: string;
+    attributionStatus: string;
+    status: string;
+}
+
+export interface CreateLeadAttributionInput {
+        operationsHubId: string;
+        attributionKey?: string;
+    attributionTitle?: string;
+    attributionStatus?: string;
+}
+
+export interface GrowthKpiSummary {
+    id: string;
+    hubName?: string;
+        kpiKey: string;
+    kpiName: string;
+    kpiValue: number;
+    status: string;
+}
+
+export interface CreateGrowthKpiInput {
+        operationsHubId: string;
+        kpiKey?: string;
+    kpiName?: string;
+    kpiValue?: number;
+}
+
+export interface RoiDashboardSummary {
+    id: string;
+    hubName?: string;
+        roiKey: string;
+    roiName: string;
+    roiScore: number;
+    status: string;
+}
+
+export interface CreateRoiDashboardInput {
+        operationsHubId: string;
+        roiKey?: string;
+    roiName?: string;
+    roiScore?: number;
+}
+
+export interface RecommendationEngineSummary {
+    id: string;
+    hubName?: string;
+        recommendationKey: string;
+    recommendationTitle: string;
+    recommendationStatus: string;
+    status: string;
+}
+
+export interface CreateRecommendationEngineInput {
+        operationsHubId: string;
+        recommendationKey?: string;
+    recommendationTitle?: string;
+    recommendationStatus?: string;
+}
+
+export interface CommandCenterMetricSummary {
     id: string;
     hubName?: string;
         metricsKey: string;
-    overallGrowthScore: number;
-    brandHealthScore: number;
+    overallOperationsScore: number;
+    missionStatusScore: number;
     status: string;
 }
 
-export interface CreateGrowthMetricInput {
+export interface CreateCommandCenterMetricInput {
         metricsKey?: string;
-    overallGrowthScore?: number;
-    brandHealthScore?: number;
+    overallOperationsScore?: number;
+    missionStatusScore?: number;
 }
 
-export interface GrowthHealthSummary {
+export interface CommandCenterHealthSummary {
     id: string;
     hubName?: string;
         healthKey: string;
     overallScore: number;
-    brandStatus: string;
+    brandOsStatus: string;
     status: string;
 }
 
-export interface CreateGrowthHealthInput {
+export interface CreateCommandCenterHealthInput {
         healthKey?: string;
     overallScore?: number;
-    brandStatus?: string;
+    brandOsStatus?: string;
 }
 
-export interface ContentCalendarSummary {
+export interface MissionStatusSummary {
     id: string;
     hubName?: string;
-        calendarKey: string;
-    calendarName: string;
-    calendarStatus: string;
+        missionKey: string;
+    missionName: string;
+    missionStatus: string;
     status: string;
 }
 
-export interface CreateContentCalendarInput {
-        growthHubId: string;
-        calendarKey?: string;
-    calendarName?: string;
-    calendarStatus?: string;
+export interface CreateMissionStatusInput {
+        operationsHubId: string;
+        missionKey?: string;
+    missionName?: string;
+    missionStatus?: string;
 }
 
-export interface DraftQueueSummary {
+export interface ExecutiveSummarySummary {
     id: string;
     hubName?: string;
-        queueKey: string;
-    queueTitle: string;
-    queueStatus: string;
+        summaryKey: string;
+    summaryTitle: string;
+    summaryStatus: string;
     status: string;
 }
 
-export interface CreateDraftQueueInput {
-        growthHubId: string;
-        queueKey?: string;
-    queueTitle?: string;
-    queueStatus?: string;
+export interface CreateExecutiveSummaryInput {
+        operationsHubId: string;
+        summaryKey?: string;
+    summaryTitle?: string;
+    summaryStatus?: string;
 }
 
-export interface ApprovalQueueSummary {
+export interface OperationalFailureSummary {
     id: string;
     hubName?: string;
-        queueKey: string;
-    queueTitle: string;
-    queueStatus: string;
+        failureKey: string;
+    failureType: string;
     status: string;
 }
 
-export interface CreateApprovalQueueInput {
-        growthHubId: string;
-        queueKey?: string;
-    queueTitle?: string;
-    queueStatus?: string;
-}
-
-export interface PublishingQueueSummary {
-    id: string;
-    hubName?: string;
-        queueKey: string;
-    queueTitle: string;
-    queueStatus: string;
-    status: string;
-}
-
-export interface CreatePublishingQueueInput {
-        growthHubId: string;
-        queueKey?: string;
-    queueTitle?: string;
-    queueStatus?: string;
+export interface CreateOperationalFailureInput {
+        operationsHubId: string;
+        failureKey?: string;
+    failureType?: string;
 }
 

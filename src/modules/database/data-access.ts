@@ -1230,6 +1230,41 @@ import {
     AagePublishingQueueRepository,
     AageAuditLogRepository,
 } from "@/src/modules/database/repositories/growth-engine-repositories";
+import {
+    AagoOperationsHubRepository,
+    AagoBrandKnowledgeBaseRepository,
+    AagoBrandRulebookRepository,
+    AagoMessagingLibraryRepository,
+    AagoServiceLibraryRepository,
+    AagoIndustryLibraryRepository,
+    AagoFaqLibraryRepository,
+    AagoBrandApprovalRuleRepository,
+    AagoVideoProjectRepository,
+    AagoThumbnailManagerRepository,
+    AagoVoiceoverManagerRepository,
+    AagoCreativeAssetGeneratorRepository,
+    AagoCampaignAssetBuilderRepository,
+    AagoCreativeWorkflowRepository,
+    AagoDistributionContentQueueRepository,
+    AagoDistributionPublishingQueueRepository,
+    AagoChannelManagerRepository,
+    AagoApprovalCenterRepository,
+    AagoPublishingHistoryRepository,
+    AagoDistributionAnalyticsRepository,
+    AagoCampaignDashboardRepository,
+    AagoContentPerformanceRepository,
+    AagoLeadAttributionRepository,
+    AagoGrowthKpiRepository,
+    AagoRoiDashboardRepository,
+    AagoRecommendationEngineRepository,
+    AagoCommandCenterMetricRepository,
+    AagoCommandCenterHealthRepository,
+    AagoMissionStatusRepository,
+    AagoExecutiveSummaryRepository,
+    AagoOperationalFailureRepository,
+    AagoAuditLogRepository,
+} from "@/src/modules/database/repositories/growth-engine-operations-repositories";
+
 
 
 
@@ -2389,6 +2424,38 @@ export class DatabaseAccessLayer {
     readonly aageApprovalQueue: AageApprovalQueueRepository;
     readonly aagePublishingQueue: AagePublishingQueueRepository;
     readonly aageAuditLogs: AageAuditLogRepository;
+    readonly aagoOperationsHubs: AagoOperationsHubRepository;
+    readonly aagoBrandKnowledgeBase: AagoBrandKnowledgeBaseRepository;
+    readonly aagoBrandRulebook: AagoBrandRulebookRepository;
+    readonly aagoMessagingLibrary: AagoMessagingLibraryRepository;
+    readonly aagoServiceLibrary: AagoServiceLibraryRepository;
+    readonly aagoIndustryLibrary: AagoIndustryLibraryRepository;
+    readonly aagoFaqLibrary: AagoFaqLibraryRepository;
+    readonly aagoBrandApprovalRules: AagoBrandApprovalRuleRepository;
+    readonly aagoVideoProjects: AagoVideoProjectRepository;
+    readonly aagoThumbnailManager: AagoThumbnailManagerRepository;
+    readonly aagoVoiceoverManager: AagoVoiceoverManagerRepository;
+    readonly aagoCreativeAssetGenerator: AagoCreativeAssetGeneratorRepository;
+    readonly aagoCampaignAssetBuilder: AagoCampaignAssetBuilderRepository;
+    readonly aagoCreativeWorkflows: AagoCreativeWorkflowRepository;
+    readonly aagoDistributionContentQueue: AagoDistributionContentQueueRepository;
+    readonly aagoDistributionPublishingQueue: AagoDistributionPublishingQueueRepository;
+    readonly aagoChannelManager: AagoChannelManagerRepository;
+    readonly aagoApprovalCenter: AagoApprovalCenterRepository;
+    readonly aagoPublishingHistory: AagoPublishingHistoryRepository;
+    readonly aagoDistributionAnalytics: AagoDistributionAnalyticsRepository;
+    readonly aagoCampaignDashboard: AagoCampaignDashboardRepository;
+    readonly aagoContentPerformance: AagoContentPerformanceRepository;
+    readonly aagoLeadAttribution: AagoLeadAttributionRepository;
+    readonly aagoGrowthKpis: AagoGrowthKpiRepository;
+    readonly aagoRoiDashboard: AagoRoiDashboardRepository;
+    readonly aagoRecommendationEngine: AagoRecommendationEngineRepository;
+    readonly aagoCommandCenterMetrics: AagoCommandCenterMetricRepository;
+    readonly aagoCommandCenterHealth: AagoCommandCenterHealthRepository;
+    readonly aagoMissionStatus: AagoMissionStatusRepository;
+    readonly aagoExecutiveSummaries: AagoExecutiveSummaryRepository;
+    readonly aagoOperationalFailures: AagoOperationalFailureRepository;
+    readonly aagoAuditLogs: AagoAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3532,6 +3599,38 @@ export class DatabaseAccessLayer {
         this.aageApprovalQueue = new AageApprovalQueueRepository();
         this.aagePublishingQueue = new AagePublishingQueueRepository();
         this.aageAuditLogs = new AageAuditLogRepository();
+        this.aagoOperationsHubs = new AagoOperationsHubRepository();
+        this.aagoBrandKnowledgeBase = new AagoBrandKnowledgeBaseRepository();
+        this.aagoBrandRulebook = new AagoBrandRulebookRepository();
+        this.aagoMessagingLibrary = new AagoMessagingLibraryRepository();
+        this.aagoServiceLibrary = new AagoServiceLibraryRepository();
+        this.aagoIndustryLibrary = new AagoIndustryLibraryRepository();
+        this.aagoFaqLibrary = new AagoFaqLibraryRepository();
+        this.aagoBrandApprovalRules = new AagoBrandApprovalRuleRepository();
+        this.aagoVideoProjects = new AagoVideoProjectRepository();
+        this.aagoThumbnailManager = new AagoThumbnailManagerRepository();
+        this.aagoVoiceoverManager = new AagoVoiceoverManagerRepository();
+        this.aagoCreativeAssetGenerator = new AagoCreativeAssetGeneratorRepository();
+        this.aagoCampaignAssetBuilder = new AagoCampaignAssetBuilderRepository();
+        this.aagoCreativeWorkflows = new AagoCreativeWorkflowRepository();
+        this.aagoDistributionContentQueue = new AagoDistributionContentQueueRepository();
+        this.aagoDistributionPublishingQueue = new AagoDistributionPublishingQueueRepository();
+        this.aagoChannelManager = new AagoChannelManagerRepository();
+        this.aagoApprovalCenter = new AagoApprovalCenterRepository();
+        this.aagoPublishingHistory = new AagoPublishingHistoryRepository();
+        this.aagoDistributionAnalytics = new AagoDistributionAnalyticsRepository();
+        this.aagoCampaignDashboard = new AagoCampaignDashboardRepository();
+        this.aagoContentPerformance = new AagoContentPerformanceRepository();
+        this.aagoLeadAttribution = new AagoLeadAttributionRepository();
+        this.aagoGrowthKpis = new AagoGrowthKpiRepository();
+        this.aagoRoiDashboard = new AagoRoiDashboardRepository();
+        this.aagoRecommendationEngine = new AagoRecommendationEngineRepository();
+        this.aagoCommandCenterMetrics = new AagoCommandCenterMetricRepository();
+        this.aagoCommandCenterHealth = new AagoCommandCenterHealthRepository();
+        this.aagoMissionStatus = new AagoMissionStatusRepository();
+        this.aagoExecutiveSummaries = new AagoExecutiveSummaryRepository();
+        this.aagoOperationalFailures = new AagoOperationalFailureRepository();
+        this.aagoAuditLogs = new AagoAuditLogRepository();
     }
 }
 

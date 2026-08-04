@@ -118,7 +118,7 @@ function buildMappers() {
     const typeImports = entities.flatMap((e) => [`Create${e.pascal}Input`, `${e.pascal}Summary`]).concat(["AageDashboardStats", "AagePipelineInfo", "AuditEntry"]).join(",\n    ");
 
     let m = `import type { ${dbImports} } from "@/src/modules/database/types/platform";
-import type { ${typeImports} } from "@/src/modules/growth-engine/types";
+import type { ${typeImports} } from "@/src/modules/growth-engine/types/aage-regression";
 
 export function buildGrowthHubLookupMaps(hubs: DbAageGrowthHub[]) {
     const hubNameById = new Map(hubs.map((h) => [h.id, h.hub_name]));
@@ -239,7 +239,7 @@ export function buildAageDashboardStats(input: {
 }
 
 mkdirSync(join(root, "src/modules/growth-engine/types"), { recursive: true });
-writeFileSync(join(root, "src/modules/growth-engine/types/index.ts"), buildTypes(), "utf8");
+writeFileSync(join(root, "src/modules/growth-engine/types/aage-regression.ts"), buildTypes(), "utf8");
 mkdirSync(join(root, "src/modules/database/lib"), { recursive: true });
 writeFileSync(join(root, "src/modules/database/lib/growth-engine-mappers.ts"), buildMappers(), "utf8");
 console.log("Generated AAGE types and mappers");

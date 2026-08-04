@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 1146 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_* + 32 egp_* + 32 aage_*)
+// 1178 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_* + 32 egp_* + 32 aage_* + 32 aago_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -1154,6 +1154,38 @@ const requiredTables = [
     "aage_approval_queue",
     "aage_publishing_queue",
     "aage_audit_logs",
+    "aago_operations_hubs",
+    "aago_brand_knowledge_base",
+    "aago_brand_rulebook",
+    "aago_messaging_library",
+    "aago_service_library",
+    "aago_industry_library",
+    "aago_faq_library",
+    "aago_brand_approval_rules",
+    "aago_video_projects",
+    "aago_thumbnail_manager",
+    "aago_voiceover_manager",
+    "aago_creative_asset_generator",
+    "aago_campaign_asset_builder",
+    "aago_creative_workflows",
+    "aago_distribution_content_queue",
+    "aago_distribution_publishing_queue",
+    "aago_channel_manager",
+    "aago_approval_center",
+    "aago_publishing_history",
+    "aago_distribution_analytics",
+    "aago_campaign_dashboard",
+    "aago_content_performance",
+    "aago_lead_attribution",
+    "aago_growth_kpis",
+    "aago_roi_dashboard",
+    "aago_recommendation_engine",
+    "aago_command_center_metrics",
+    "aago_command_center_health",
+    "aago_mission_status",
+    "aago_executive_summaries",
+    "aago_operational_failures",
+    "aago_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

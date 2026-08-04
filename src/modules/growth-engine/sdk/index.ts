@@ -1,35 +1,35 @@
 import { growthEngineService } from "@/src/modules/growth-engine/services/growth-engine.service";
 import type {
-    AageSdkRunBrandServiceInput,
-    AageSdkRunContentFoundationServiceInput,
-    AageSdkRunMediaFoundationServiceInput,
-    AageSdkRunContentEngineServiceInput,
-    AageSdkRunFounderDashboardServiceInput,
+    AagoSdkRunBrandOsServiceInput,
+    AagoSdkRunCreativeStudioServiceInput,
+    AagoSdkRunDistributionServiceInput,
+    AagoSdkRunGrowthIntelligenceServiceInput,
+    AagoSdkRunCommandCenterServiceInput,
 } from "@/src/modules/growth-engine/types";
 
-export class BrandService {
+export class BrandOsService {
     constructor(private readonly client: GrowthEngineClient) {}
-    async run(input: AageSdkRunBrandServiceInput) { return this.client.runBrandService(input); }
+    async run(input: AagoSdkRunBrandOsServiceInput) { return this.client.runBrandOsService(input); }
 }
 
-export class ContentFoundationService {
+export class CreativeStudioService {
     constructor(private readonly client: GrowthEngineClient) {}
-    async run(input: AageSdkRunContentFoundationServiceInput) { return this.client.runContentFoundationService(input); }
+    async run(input: AagoSdkRunCreativeStudioServiceInput) { return this.client.runCreativeStudioService(input); }
 }
 
-export class MediaFoundationService {
+export class DistributionService {
     constructor(private readonly client: GrowthEngineClient) {}
-    async run(input: AageSdkRunMediaFoundationServiceInput) { return this.client.runMediaFoundationService(input); }
+    async run(input: AagoSdkRunDistributionServiceInput) { return this.client.runDistributionService(input); }
 }
 
-export class ContentEngineService {
+export class GrowthIntelligenceService {
     constructor(private readonly client: GrowthEngineClient) {}
-    async run(input: AageSdkRunContentEngineServiceInput) { return this.client.runContentEngineService(input); }
+    async run(input: AagoSdkRunGrowthIntelligenceServiceInput) { return this.client.runGrowthIntelligenceService(input); }
 }
 
-export class FounderDashboardService {
+export class CommandCenterService {
     constructor(private readonly client: GrowthEngineClient) {}
-    async run(input: AageSdkRunFounderDashboardServiceInput) { return this.client.runFounderDashboardService(input); }
+    async run(input: AagoSdkRunCommandCenterServiceInput) { return this.client.runCommandCenterService(input); }
 }
 
 export class GrowthEngineClient {
@@ -39,34 +39,34 @@ export class GrowthEngineClient {
         private readonly fullName?: string | null,
     ) {}
 
-    readonly brandService = new BrandService(this);
-    readonly contentFoundationService = new ContentFoundationService(this);
-    readonly mediaFoundationService = new MediaFoundationService(this);
-    readonly contentEngineService = new ContentEngineService(this);
-    readonly founderDashboardService = new FounderDashboardService(this);
+    readonly brandOsService = new BrandOsService(this);
+    readonly creativeStudioService = new CreativeStudioService(this);
+    readonly distributionService = new DistributionService(this);
+    readonly growthIntelligenceService = new GrowthIntelligenceService(this);
+    readonly commandCenterService = new CommandCenterService(this);
 
-    async runBrandService(input: AageSdkRunBrandServiceInput) {
-        return growthEngineService.sdkRunBrandService(this.authUserId, this.email, input, this.fullName);
+    async runBrandOsService(input: AagoSdkRunBrandOsServiceInput) {
+        return growthEngineService.sdkRunBrandOsService(this.authUserId, this.email, input, this.fullName);
     }
 
-    async runContentFoundationService(input: AageSdkRunContentFoundationServiceInput) {
-        return growthEngineService.sdkRunContentFoundationService(this.authUserId, this.email, input, this.fullName);
+    async runCreativeStudioService(input: AagoSdkRunCreativeStudioServiceInput) {
+        return growthEngineService.sdkRunCreativeStudioService(this.authUserId, this.email, input, this.fullName);
     }
 
-    async runMediaFoundationService(input: AageSdkRunMediaFoundationServiceInput) {
-        return growthEngineService.sdkRunMediaFoundationService(this.authUserId, this.email, input, this.fullName);
+    async runDistributionService(input: AagoSdkRunDistributionServiceInput) {
+        return growthEngineService.sdkRunDistributionService(this.authUserId, this.email, input, this.fullName);
     }
 
-    async runContentEngineService(input: AageSdkRunContentEngineServiceInput) {
-        return growthEngineService.sdkRunContentEngineService(this.authUserId, this.email, input, this.fullName);
+    async runGrowthIntelligenceService(input: AagoSdkRunGrowthIntelligenceServiceInput) {
+        return growthEngineService.sdkRunGrowthIntelligenceService(this.authUserId, this.email, input, this.fullName);
     }
 
-    async runFounderDashboardService(input: AageSdkRunFounderDashboardServiceInput) {
-        return growthEngineService.sdkRunFounderDashboardService(this.authUserId, this.email, input, this.fullName);
+    async runCommandCenterService(input: AagoSdkRunCommandCenterServiceInput) {
+        return growthEngineService.sdkRunCommandCenterService(this.authUserId, this.email, input, this.fullName);
     }
 
-    async getGrowthHubs() {
-        return growthEngineService.getGrowthHubs(this.authUserId, this.email, this.fullName);
+    async getOperationsHubs() {
+        return growthEngineService.getOperationsHubs(this.authUserId, this.email, this.fullName);
     }
 
     async getDashboardStats() {

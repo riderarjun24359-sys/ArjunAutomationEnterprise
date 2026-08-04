@@ -1,277 +1,276 @@
 import { z } from "zod";
 
-export const growthHubsFormSchema = z.object({
+export const operationsHubsFormSchema = z.object({
     hubKey: z.string().min(1).optional(),
     hubName: z.string().min(1).optional(),
     environment: z.string().min(1).optional(),
 });
 
-export type growthHubsFormValues = z.infer<typeof growthHubsFormSchema>;
+export type operationsHubsFormValues = z.infer<typeof operationsHubsFormSchema>;
 
-export const brandProfilesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    profileKey: z.string().min(1).optional(),
-    profileName: z.string().min(1).optional(),
-    profileStatus: z.string().min(1).optional(),
+export const brandKnowledgeBaseFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    knowledgeKey: z.string().min(1).optional(),
+    knowledgeTitle: z.string().min(1).optional(),
+    knowledgeStatus: z.string().min(1).optional(),
 });
 
-export type brandProfilesFormValues = z.infer<typeof brandProfilesFormSchema>;
+export type brandKnowledgeBaseFormValues = z.infer<typeof brandKnowledgeBaseFormSchema>;
 
-export const brandVoiceFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    voiceKey: z.string().min(1).optional(),
-    voiceName: z.string().min(1).optional(),
-    voiceTone: z.string().min(1).optional(),
+export const brandRulebookFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    rulebookKey: z.string().min(1).optional(),
+    rulebookName: z.string().min(1).optional(),
+    rulebookStatus: z.string().min(1).optional(),
 });
 
-export type brandVoiceFormValues = z.infer<typeof brandVoiceFormSchema>;
+export type brandRulebookFormValues = z.infer<typeof brandRulebookFormSchema>;
 
-export const coreMessagingFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    messagingKey: z.string().min(1).optional(),
-    messagingTitle: z.string().min(1).optional(),
-    messagingStatus: z.string().min(1).optional(),
+export const messagingLibraryFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    messageKey: z.string().min(1).optional(),
+    messageTitle: z.string().min(1).optional(),
+    messageStatus: z.string().min(1).optional(),
 });
 
-export type coreMessagingFormValues = z.infer<typeof coreMessagingFormSchema>;
+export type messagingLibraryFormValues = z.infer<typeof messagingLibraryFormSchema>;
 
-export const brandGuidelinesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    guidelineKey: z.string().min(1).optional(),
-    guidelineName: z.string().min(1).optional(),
-    guidelineStatus: z.string().min(1).optional(),
+export const serviceLibraryFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    serviceKey: z.string().min(1).optional(),
+    serviceName: z.string().min(1).optional(),
+    serviceStatus: z.string().min(1).optional(),
 });
 
-export type brandGuidelinesFormValues = z.infer<typeof brandGuidelinesFormSchema>;
+export type serviceLibraryFormValues = z.infer<typeof serviceLibraryFormSchema>;
 
-export const logoLibraryFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    logoKey: z.string().min(1).optional(),
-    logoName: z.string().min(1).optional(),
-    logoFormat: z.string().min(1).optional(),
+export const industryLibraryFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    industryKey: z.string().min(1).optional(),
+    industryName: z.string().min(1).optional(),
+    industryStatus: z.string().min(1).optional(),
 });
 
-export type logoLibraryFormValues = z.infer<typeof logoLibraryFormSchema>;
+export type industryLibraryFormValues = z.infer<typeof industryLibraryFormSchema>;
 
-export const colorSystemsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    colorKey: z.string().min(1).optional(),
-    colorName: z.string().min(1).optional(),
-    primaryHex: z.string().min(1).optional(),
+export const faqLibraryFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    faqKey: z.string().min(1).optional(),
+    faqQuestion: z.string().min(1).optional(),
+    faqStatus: z.string().min(1).optional(),
 });
 
-export type colorSystemsFormValues = z.infer<typeof colorSystemsFormSchema>;
+export type faqLibraryFormValues = z.infer<typeof faqLibraryFormSchema>;
 
-export const youtubeTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
+export const brandApprovalRulesFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    ruleKey: z.string().min(1).optional(),
+    ruleName: z.string().min(1).optional(),
+    ruleStatus: z.string().min(1).optional(),
 });
 
-export type youtubeTemplatesFormValues = z.infer<typeof youtubeTemplatesFormSchema>;
+export type brandApprovalRulesFormValues = z.infer<typeof brandApprovalRulesFormSchema>;
 
-export const socialTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
+export const videoProjectsFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    projectKey: z.string().min(1).optional(),
+    projectName: z.string().min(1).optional(),
+    projectStatus: z.string().min(1).optional(),
 });
 
-export type socialTemplatesFormValues = z.infer<typeof socialTemplatesFormSchema>;
+export type videoProjectsFormValues = z.infer<typeof videoProjectsFormSchema>;
 
-export const blogTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
+export const thumbnailManagerFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    thumbnailKey: z.string().min(1).optional(),
+    thumbnailName: z.string().min(1).optional(),
+    thumbnailStatus: z.string().min(1).optional(),
 });
 
-export type blogTemplatesFormValues = z.infer<typeof blogTemplatesFormSchema>;
+export type thumbnailManagerFormValues = z.infer<typeof thumbnailManagerFormSchema>;
 
-export const websiteArticleTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
+export const voiceoverManagerFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    voiceoverKey: z.string().min(1).optional(),
+    voiceoverName: z.string().min(1).optional(),
+    voiceoverStatus: z.string().min(1).optional(),
 });
 
-export type websiteArticleTemplatesFormValues = z.infer<typeof websiteArticleTemplatesFormSchema>;
+export type voiceoverManagerFormValues = z.infer<typeof voiceoverManagerFormSchema>;
 
-export const emailCampaignTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
-});
-
-export type emailCampaignTemplatesFormValues = z.infer<typeof emailCampaignTemplatesFormSchema>;
-
-export const caseStudyTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
-});
-
-export type caseStudyTemplatesFormValues = z.infer<typeof caseStudyTemplatesFormSchema>;
-
-export const imageAssetsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    assetKey: z.string().min(1).optional(),
-    assetName: z.string().min(1).optional(),
-    assetType: z.string().min(1).optional(),
-});
-
-export type imageAssetsFormValues = z.infer<typeof imageAssetsFormSchema>;
-
-export const videoAssetsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    assetKey: z.string().min(1).optional(),
-    assetName: z.string().min(1).optional(),
-    assetType: z.string().min(1).optional(),
-});
-
-export type videoAssetsFormValues = z.infer<typeof videoAssetsFormSchema>;
-
-export const iconAssetsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    assetKey: z.string().min(1).optional(),
-    assetName: z.string().min(1).optional(),
-    assetType: z.string().min(1).optional(),
-});
-
-export type iconAssetsFormValues = z.infer<typeof iconAssetsFormSchema>;
-
-export const voiceProfilesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    profileKey: z.string().min(1).optional(),
-    profileName: z.string().min(1).optional(),
-    voiceType: z.string().min(1).optional(),
-});
-
-export type voiceProfilesFormValues = z.infer<typeof voiceProfilesFormSchema>;
-
-export const musicAssetsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    assetKey: z.string().min(1).optional(),
-    assetName: z.string().min(1).optional(),
-    genre: z.string().min(1).optional(),
-});
-
-export type musicAssetsFormValues = z.infer<typeof musicAssetsFormSchema>;
-
-export const thumbnailTemplatesFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    templateKey: z.string().min(1).optional(),
-    templateName: z.string().min(1).optional(),
-    templateStatus: z.string().min(1).optional(),
-});
-
-export type thumbnailTemplatesFormValues = z.infer<typeof thumbnailTemplatesFormSchema>;
-
-export const ideaGeneratorsFormSchema = z.object({
-    growthHubId: z.string().min(1),
+export const creativeAssetGeneratorFormSchema = z.object({
+    operationsHubId: z.string().min(1),
     generatorKey: z.string().min(1).optional(),
     generatorName: z.string().min(1).optional(),
     generatorStatus: z.string().min(1).optional(),
 });
 
-export type ideaGeneratorsFormValues = z.infer<typeof ideaGeneratorsFormSchema>;
+export type creativeAssetGeneratorFormValues = z.infer<typeof creativeAssetGeneratorFormSchema>;
 
-export const scriptGeneratorsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    generatorKey: z.string().min(1).optional(),
-    generatorName: z.string().min(1).optional(),
-    generatorStatus: z.string().min(1).optional(),
+export const campaignAssetBuilderFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    builderKey: z.string().min(1).optional(),
+    builderName: z.string().min(1).optional(),
+    builderStatus: z.string().min(1).optional(),
 });
 
-export type scriptGeneratorsFormValues = z.infer<typeof scriptGeneratorsFormSchema>;
+export type campaignAssetBuilderFormValues = z.infer<typeof campaignAssetBuilderFormSchema>;
 
-export const captionGeneratorsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    generatorKey: z.string().min(1).optional(),
-    generatorName: z.string().min(1).optional(),
-    generatorStatus: z.string().min(1).optional(),
+export const creativeWorkflowsFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    workflowKey: z.string().min(1).optional(),
+    workflowName: z.string().min(1).optional(),
+    workflowStatus: z.string().min(1).optional(),
 });
 
-export type captionGeneratorsFormValues = z.infer<typeof captionGeneratorsFormSchema>;
+export type creativeWorkflowsFormValues = z.infer<typeof creativeWorkflowsFormSchema>;
 
-export const blogGeneratorsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    generatorKey: z.string().min(1).optional(),
-    generatorName: z.string().min(1).optional(),
-    generatorStatus: z.string().min(1).optional(),
+export const distributionContentQueueFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    queueKey: z.string().min(1).optional(),
+    queueTitle: z.string().min(1).optional(),
+    queueStatus: z.string().min(1).optional(),
 });
 
-export type blogGeneratorsFormValues = z.infer<typeof blogGeneratorsFormSchema>;
+export type distributionContentQueueFormValues = z.infer<typeof distributionContentQueueFormSchema>;
 
-export const seoAssistantsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    assistantKey: z.string().min(1).optional(),
-    assistantName: z.string().min(1).optional(),
-    assistantStatus: z.string().min(1).optional(),
+export const distributionPublishingQueueFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    queueKey: z.string().min(1).optional(),
+    queueTitle: z.string().min(1).optional(),
+    queueStatus: z.string().min(1).optional(),
 });
 
-export type seoAssistantsFormValues = z.infer<typeof seoAssistantsFormSchema>;
+export type distributionPublishingQueueFormValues = z.infer<typeof distributionPublishingQueueFormSchema>;
 
-export const ctaGeneratorsFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    generatorKey: z.string().min(1).optional(),
-    generatorName: z.string().min(1).optional(),
-    generatorStatus: z.string().min(1).optional(),
+export const channelManagerFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    channelKey: z.string().min(1).optional(),
+    channelName: z.string().min(1).optional(),
+    channelStatus: z.string().min(1).optional(),
 });
 
-export type ctaGeneratorsFormValues = z.infer<typeof ctaGeneratorsFormSchema>;
+export type channelManagerFormValues = z.infer<typeof channelManagerFormSchema>;
 
-export const growthMetricsFormSchema = z.object({
+export const approvalCenterFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    approvalKey: z.string().min(1).optional(),
+    approvalTitle: z.string().min(1).optional(),
+    approvalStatus: z.string().min(1).optional(),
+});
+
+export type approvalCenterFormValues = z.infer<typeof approvalCenterFormSchema>;
+
+export const publishingHistoryFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    historyKey: z.string().min(1).optional(),
+    historyTitle: z.string().min(1).optional(),
+    historyStatus: z.string().min(1).optional(),
+});
+
+export type publishingHistoryFormValues = z.infer<typeof publishingHistoryFormSchema>;
+
+export const distributionAnalyticsFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    analyticsKey: z.string().min(1).optional(),
+    analyticsName: z.string().min(1).optional(),
+    analyticsScore: z.number().optional(),
+});
+
+export type distributionAnalyticsFormValues = z.infer<typeof distributionAnalyticsFormSchema>;
+
+export const campaignDashboardFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    dashboardKey: z.string().min(1).optional(),
+    dashboardName: z.string().min(1).optional(),
+    dashboardStatus: z.string().min(1).optional(),
+});
+
+export type campaignDashboardFormValues = z.infer<typeof campaignDashboardFormSchema>;
+
+export const contentPerformanceFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    performanceKey: z.string().min(1).optional(),
+    performanceTitle: z.string().min(1).optional(),
+    performanceScore: z.number().optional(),
+});
+
+export type contentPerformanceFormValues = z.infer<typeof contentPerformanceFormSchema>;
+
+export const leadAttributionFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    attributionKey: z.string().min(1).optional(),
+    attributionTitle: z.string().min(1).optional(),
+    attributionStatus: z.string().min(1).optional(),
+});
+
+export type leadAttributionFormValues = z.infer<typeof leadAttributionFormSchema>;
+
+export const growthKpisFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    kpiKey: z.string().min(1).optional(),
+    kpiName: z.string().min(1).optional(),
+    kpiValue: z.number().optional(),
+});
+
+export type growthKpisFormValues = z.infer<typeof growthKpisFormSchema>;
+
+export const roiDashboardFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    roiKey: z.string().min(1).optional(),
+    roiName: z.string().min(1).optional(),
+    roiScore: z.number().optional(),
+});
+
+export type roiDashboardFormValues = z.infer<typeof roiDashboardFormSchema>;
+
+export const recommendationEngineFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    recommendationKey: z.string().min(1).optional(),
+    recommendationTitle: z.string().min(1).optional(),
+    recommendationStatus: z.string().min(1).optional(),
+});
+
+export type recommendationEngineFormValues = z.infer<typeof recommendationEngineFormSchema>;
+
+export const commandCenterMetricsFormSchema = z.object({
     metricsKey: z.string().min(1).optional(),
-    overallGrowthScore: z.number().optional(),
-    brandHealthScore: z.number().optional(),
+    overallOperationsScore: z.number().optional(),
+    missionStatusScore: z.number().optional(),
 });
 
-export type growthMetricsFormValues = z.infer<typeof growthMetricsFormSchema>;
+export type commandCenterMetricsFormValues = z.infer<typeof commandCenterMetricsFormSchema>;
 
-export const growthHealthFormSchema = z.object({
+export const commandCenterHealthFormSchema = z.object({
     healthKey: z.string().min(1).optional(),
     overallScore: z.number().optional(),
-    brandStatus: z.string().min(1).optional(),
+    brandOsStatus: z.string().min(1).optional(),
 });
 
-export type growthHealthFormValues = z.infer<typeof growthHealthFormSchema>;
+export type commandCenterHealthFormValues = z.infer<typeof commandCenterHealthFormSchema>;
 
-export const contentCalendarFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    calendarKey: z.string().min(1).optional(),
-    calendarName: z.string().min(1).optional(),
-    calendarStatus: z.string().min(1).optional(),
+export const missionStatusFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    missionKey: z.string().min(1).optional(),
+    missionName: z.string().min(1).optional(),
+    missionStatus: z.string().min(1).optional(),
 });
 
-export type contentCalendarFormValues = z.infer<typeof contentCalendarFormSchema>;
+export type missionStatusFormValues = z.infer<typeof missionStatusFormSchema>;
 
-export const draftQueueFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    queueKey: z.string().min(1).optional(),
-    queueTitle: z.string().min(1).optional(),
-    queueStatus: z.string().min(1).optional(),
+export const executiveSummariesFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    summaryKey: z.string().min(1).optional(),
+    summaryTitle: z.string().min(1).optional(),
+    summaryStatus: z.string().min(1).optional(),
 });
 
-export type draftQueueFormValues = z.infer<typeof draftQueueFormSchema>;
+export type executiveSummariesFormValues = z.infer<typeof executiveSummariesFormSchema>;
 
-export const approvalQueueFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    queueKey: z.string().min(1).optional(),
-    queueTitle: z.string().min(1).optional(),
-    queueStatus: z.string().min(1).optional(),
+export const operationalFailuresFormSchema = z.object({
+    operationsHubId: z.string().min(1),
+    failureKey: z.string().min(1).optional(),
+    failureType: z.string().min(1).optional(),
 });
 
-export type approvalQueueFormValues = z.infer<typeof approvalQueueFormSchema>;
-
-export const publishingQueueFormSchema = z.object({
-    growthHubId: z.string().min(1),
-    queueKey: z.string().min(1).optional(),
-    queueTitle: z.string().min(1).optional(),
-    queueStatus: z.string().min(1).optional(),
-});
-
-export type publishingQueueFormValues = z.infer<typeof publishingQueueFormSchema>;
+export type operationalFailuresFormValues = z.infer<typeof operationalFailuresFormSchema>;

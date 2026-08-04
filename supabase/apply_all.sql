@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-04T04:24:24.215Z
+-- Generated: 2026-08-04T05:17:50.671Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (49):
+--   Migrations (50):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -55,7 +55,8 @@
 --     - 202608020047_ai_organization_foundation.sql
 --     - 202608020048_enterprise_governance_platform.sql
 --     - 202608020049_arjun_automation_growth_engine.sql
---   Seeds (49):
+--     - 202608020050_aage_operational_growth_engine.sql
+--   Seeds (50):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -105,8 +106,9 @@
 --     - 047_ai_organization_foundation_seed.sql
 --     - 048_enterprise_governance_platform_seed.sql
 --     - 049_arjun_automation_growth_engine_seed.sql
+--     - 050_aage_operational_growth_engine_seed.sql
 --
--- Includes through V2 Arjun Automation Growth Engine:
+-- Includes through V2 AAGE Operational Growth Engine:
 --   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform, Customer Operated Platform, Enterprise Intelligence Platform, AI Organization Foundation, Enterprise Governance Platform, Arjun Automation Growth Engine
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
@@ -23849,6 +23851,657 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020050_aage_operational_growth_engine.sql
+-- =============================================================================
+-- V2 AAGE Operational Growth Engine
+
+-- OperationsHub
+create table if not exists public.aago_operations_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  operations_tier text not null default 'operational',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- BrandKnowledgeBase
+create table if not exists public.aago_brand_knowledge_base (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  knowledge_key text not null,
+  knowledge_title text not null default '',
+  knowledge_status text not null default 'active',
+  knowledge_category text not null default 'general',
+  content_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, knowledge_key)
+);
+
+-- BrandRulebook
+create table if not exists public.aago_brand_rulebook (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  rulebook_key text not null,
+  rulebook_name text not null default '',
+  rulebook_status text not null default 'active',
+  rulebook_version text not null default '1.0',
+  owner_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rulebook_key)
+);
+
+-- MessagingLibrary
+create table if not exists public.aago_messaging_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  message_key text not null,
+  message_title text not null default '',
+  message_status text not null default 'active',
+  message_type text not null default 'value_prop',
+  audience_segment text not null default 'general',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, message_key)
+);
+
+-- ServiceLibrary
+create table if not exists public.aago_service_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  service_key text not null,
+  service_name text not null default '',
+  service_status text not null default 'active',
+  service_category text not null default 'core',
+  pricing_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, service_key)
+);
+
+-- IndustryLibrary
+create table if not exists public.aago_industry_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  industry_key text not null,
+  industry_name text not null default '',
+  industry_status text not null default 'active',
+  vertical text not null default 'technology',
+  segment text not null default 'enterprise',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, industry_key)
+);
+
+-- FaqLibrary
+create table if not exists public.aago_faq_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  faq_key text not null,
+  faq_question text not null default '',
+  faq_status text not null default 'active',
+  faq_category text not null default 'general',
+  answer_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, faq_key)
+);
+
+-- BrandApprovalRule
+create table if not exists public.aago_brand_approval_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  rule_status text not null default 'active',
+  approval_level text not null default 'manager',
+  entity_type text not null default 'brand',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- VideoProject
+create table if not exists public.aago_video_projects (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  project_key text not null,
+  project_name text not null default '',
+  project_status text not null default 'draft',
+  video_format text not null default 'long_form',
+  duration_seconds integer not null default 600,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, project_key)
+);
+
+-- ThumbnailManager
+create table if not exists public.aago_thumbnail_manager (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  thumbnail_key text not null,
+  thumbnail_name text not null default '',
+  thumbnail_status text not null default 'active',
+  aspect_ratio text not null default '16:9',
+  style text not null default 'bold',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, thumbnail_key)
+);
+
+-- VoiceoverManager
+create table if not exists public.aago_voiceover_manager (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  voiceover_key text not null,
+  voiceover_name text not null default '',
+  voiceover_status text not null default 'active',
+  voice_type text not null default 'narrator',
+  language text not null default 'en-US',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, voiceover_key)
+);
+
+-- CreativeAssetGenerator
+create table if not exists public.aago_creative_asset_generator (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  asset_type text not null default 'image',
+  output_format text not null default 'png',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- CampaignAssetBuilder
+create table if not exists public.aago_campaign_asset_builder (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  builder_key text not null,
+  builder_name text not null default '',
+  builder_status text not null default 'active',
+  campaign_type text not null default 'launch',
+  asset_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, builder_key)
+);
+
+-- CreativeWorkflow
+create table if not exists public.aago_creative_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  workflow_key text not null,
+  workflow_name text not null default '',
+  workflow_status text not null default 'active',
+  workflow_type text not null default 'production',
+  step_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, workflow_key)
+);
+
+-- DistributionContentQueue
+create table if not exists public.aago_distribution_content_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_title text not null default '',
+  queue_status text not null default 'draft',
+  content_type text not null default 'blog',
+  priority text not null default 'medium',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- DistributionPublishingQueue
+create table if not exists public.aago_distribution_publishing_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_title text not null default '',
+  queue_status text not null default 'scheduled',
+  content_type text not null default 'blog',
+  publish_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- ChannelManager
+create table if not exists public.aago_channel_manager (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  channel_key text not null,
+  channel_name text not null default '',
+  channel_status text not null default 'active',
+  platform text not null default 'linkedin',
+  post_type text not null default 'organic',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, channel_key)
+);
+
+-- ApprovalCenter
+create table if not exists public.aago_approval_center (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  approval_key text not null,
+  approval_title text not null default '',
+  approval_status text not null default 'pending',
+  content_type text not null default 'blog',
+  approver_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, approval_key)
+);
+
+-- PublishingHistory
+create table if not exists public.aago_publishing_history (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  history_key text not null,
+  history_title text not null default '',
+  history_status text not null default 'published',
+  content_type text not null default 'blog',
+  published_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, history_key)
+);
+
+-- DistributionAnalytics
+create table if not exists public.aago_distribution_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  analytics_key text not null,
+  analytics_name text not null default '',
+  analytics_score numeric(5, 2) not null default 0,
+  analytics_type text not null default 'reach',
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- CampaignDashboard
+create table if not exists public.aago_campaign_dashboard (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  dashboard_key text not null,
+  dashboard_name text not null default '',
+  dashboard_status text not null default 'active',
+  campaign_ref text not null default '',
+  refresh_cadence text not null default 'daily',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dashboard_key)
+);
+
+-- ContentPerformance
+create table if not exists public.aago_content_performance (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  performance_key text not null,
+  performance_title text not null default '',
+  performance_score numeric(5, 2) not null default 0,
+  content_type text not null default 'blog',
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, performance_key)
+);
+
+-- LeadAttribution
+create table if not exists public.aago_lead_attribution (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  attribution_key text not null,
+  attribution_title text not null default '',
+  attribution_status text not null default 'active',
+  channel_ref text not null default '',
+  conversion_rate numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, attribution_key)
+);
+
+-- GrowthKpi
+create table if not exists public.aago_growth_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_value numeric(12, 2) not null default 0,
+  kpi_category text not null default 'growth',
+  target_value numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- RoiDashboard
+create table if not exists public.aago_roi_dashboard (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  roi_key text not null,
+  roi_name text not null default '',
+  roi_score numeric(5, 2) not null default 0,
+  campaign_ref text not null default '',
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, roi_key)
+);
+
+-- RecommendationEngine
+create table if not exists public.aago_recommendation_engine (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  recommendation_key text not null,
+  recommendation_title text not null default '',
+  recommendation_status text not null default 'active',
+  recommendation_type text not null default 'content',
+  confidence_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, recommendation_key)
+);
+
+-- CommandCenterMetric
+create table if not exists public.aago_command_center_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  mission_status_score numeric(5, 2) not null default 0,
+  content_status_score numeric(5, 2) not null default 0,
+  publishing_status_score numeric(5, 2) not null default 0,
+  growth_metrics_score numeric(5, 2) not null default 0,
+  campaign_health_score numeric(5, 2) not null default 0,
+  executive_summary_score numeric(5, 2) not null default 0,
+  overall_operations_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- CommandCenterHealth
+create table if not exists public.aago_command_center_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  brand_os_status text not null default 'healthy',
+  creative_studio_status text not null default 'healthy',
+  distribution_status text not null default 'healthy',
+  intelligence_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- MissionStatus
+create table if not exists public.aago_mission_status (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  mission_key text not null,
+  mission_name text not null default '',
+  mission_status text not null default 'active',
+  mission_type text not null default 'growth',
+  progress_percent numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, mission_key)
+);
+
+-- ExecutiveSummary
+create table if not exists public.aago_executive_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  summary_key text not null,
+  summary_title text not null default '',
+  summary_status text not null default 'draft',
+  summary_period text not null default 'weekly',
+  author_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, summary_key)
+);
+
+-- OperationalFailure
+create table if not exists public.aago_operational_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'operational',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.aago_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_aago_operations_hubs_org on public.aago_operations_hubs(organization_id);
+create index if not exists idx_aago_brand_knowledge_base_org on public.aago_brand_knowledge_base(organization_id);
+create index if not exists idx_aago_brand_knowledge_base_hub on public.aago_brand_knowledge_base(hub_id);
+create index if not exists idx_aago_brand_rulebook_org on public.aago_brand_rulebook(organization_id);
+create index if not exists idx_aago_brand_rulebook_hub on public.aago_brand_rulebook(hub_id);
+create index if not exists idx_aago_messaging_library_org on public.aago_messaging_library(organization_id);
+create index if not exists idx_aago_messaging_library_hub on public.aago_messaging_library(hub_id);
+create index if not exists idx_aago_service_library_org on public.aago_service_library(organization_id);
+create index if not exists idx_aago_service_library_hub on public.aago_service_library(hub_id);
+create index if not exists idx_aago_industry_library_org on public.aago_industry_library(organization_id);
+create index if not exists idx_aago_industry_library_hub on public.aago_industry_library(hub_id);
+create index if not exists idx_aago_faq_library_org on public.aago_faq_library(organization_id);
+create index if not exists idx_aago_faq_library_hub on public.aago_faq_library(hub_id);
+create index if not exists idx_aago_brand_approval_rules_org on public.aago_brand_approval_rules(organization_id);
+create index if not exists idx_aago_brand_approval_rules_hub on public.aago_brand_approval_rules(hub_id);
+create index if not exists idx_aago_video_projects_org on public.aago_video_projects(organization_id);
+create index if not exists idx_aago_video_projects_hub on public.aago_video_projects(hub_id);
+create index if not exists idx_aago_thumbnail_manager_org on public.aago_thumbnail_manager(organization_id);
+create index if not exists idx_aago_thumbnail_manager_hub on public.aago_thumbnail_manager(hub_id);
+create index if not exists idx_aago_voiceover_manager_org on public.aago_voiceover_manager(organization_id);
+create index if not exists idx_aago_voiceover_manager_hub on public.aago_voiceover_manager(hub_id);
+create index if not exists idx_aago_creative_asset_generator_org on public.aago_creative_asset_generator(organization_id);
+create index if not exists idx_aago_creative_asset_generator_hub on public.aago_creative_asset_generator(hub_id);
+create index if not exists idx_aago_campaign_asset_builder_org on public.aago_campaign_asset_builder(organization_id);
+create index if not exists idx_aago_campaign_asset_builder_hub on public.aago_campaign_asset_builder(hub_id);
+create index if not exists idx_aago_creative_workflows_org on public.aago_creative_workflows(organization_id);
+create index if not exists idx_aago_creative_workflows_hub on public.aago_creative_workflows(hub_id);
+create index if not exists idx_aago_distribution_content_queue_org on public.aago_distribution_content_queue(organization_id);
+create index if not exists idx_aago_distribution_content_queue_hub on public.aago_distribution_content_queue(hub_id);
+create index if not exists idx_aago_distribution_publishing_queue_org on public.aago_distribution_publishing_queue(organization_id);
+create index if not exists idx_aago_distribution_publishing_queue_hub on public.aago_distribution_publishing_queue(hub_id);
+create index if not exists idx_aago_channel_manager_org on public.aago_channel_manager(organization_id);
+create index if not exists idx_aago_channel_manager_hub on public.aago_channel_manager(hub_id);
+create index if not exists idx_aago_approval_center_org on public.aago_approval_center(organization_id);
+create index if not exists idx_aago_approval_center_hub on public.aago_approval_center(hub_id);
+create index if not exists idx_aago_publishing_history_org on public.aago_publishing_history(organization_id);
+create index if not exists idx_aago_publishing_history_hub on public.aago_publishing_history(hub_id);
+create index if not exists idx_aago_distribution_analytics_org on public.aago_distribution_analytics(organization_id);
+create index if not exists idx_aago_distribution_analytics_hub on public.aago_distribution_analytics(hub_id);
+create index if not exists idx_aago_campaign_dashboard_org on public.aago_campaign_dashboard(organization_id);
+create index if not exists idx_aago_campaign_dashboard_hub on public.aago_campaign_dashboard(hub_id);
+create index if not exists idx_aago_content_performance_org on public.aago_content_performance(organization_id);
+create index if not exists idx_aago_content_performance_hub on public.aago_content_performance(hub_id);
+create index if not exists idx_aago_lead_attribution_org on public.aago_lead_attribution(organization_id);
+create index if not exists idx_aago_lead_attribution_hub on public.aago_lead_attribution(hub_id);
+create index if not exists idx_aago_growth_kpis_org on public.aago_growth_kpis(organization_id);
+create index if not exists idx_aago_growth_kpis_hub on public.aago_growth_kpis(hub_id);
+create index if not exists idx_aago_roi_dashboard_org on public.aago_roi_dashboard(organization_id);
+create index if not exists idx_aago_roi_dashboard_hub on public.aago_roi_dashboard(hub_id);
+create index if not exists idx_aago_recommendation_engine_org on public.aago_recommendation_engine(organization_id);
+create index if not exists idx_aago_recommendation_engine_hub on public.aago_recommendation_engine(hub_id);
+create index if not exists idx_aago_command_center_metrics_org on public.aago_command_center_metrics(organization_id);
+create index if not exists idx_aago_command_center_health_org on public.aago_command_center_health(organization_id);
+create index if not exists idx_aago_mission_status_org on public.aago_mission_status(organization_id);
+create index if not exists idx_aago_mission_status_hub on public.aago_mission_status(hub_id);
+create index if not exists idx_aago_executive_summaries_org on public.aago_executive_summaries(organization_id);
+create index if not exists idx_aago_executive_summaries_hub on public.aago_executive_summaries(hub_id);
+create index if not exists idx_aago_operational_failures_org on public.aago_operational_failures(organization_id);
+create index if not exists idx_aago_operational_failures_hub on public.aago_operational_failures(hub_id);
+create index if not exists idx_aago_audit_logs_org on public.aago_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aago_operations_hubs','aago_brand_knowledge_base','aago_brand_rulebook','aago_messaging_library','aago_service_library','aago_industry_library','aago_faq_library','aago_brand_approval_rules','aago_video_projects','aago_thumbnail_manager','aago_voiceover_manager','aago_creative_asset_generator','aago_campaign_asset_builder','aago_creative_workflows','aago_distribution_content_queue','aago_distribution_publishing_queue','aago_channel_manager','aago_approval_center','aago_publishing_history','aago_distribution_analytics','aago_campaign_dashboard','aago_content_performance','aago_lead_attribution','aago_growth_kpis','aago_roi_dashboard','aago_recommendation_engine','aago_command_center_metrics','aago_command_center_health','aago_mission_status','aago_executive_summaries','aago_operational_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.aago_operations_hubs enable row level security;
+alter table public.aago_brand_knowledge_base enable row level security;
+alter table public.aago_brand_rulebook enable row level security;
+alter table public.aago_messaging_library enable row level security;
+alter table public.aago_service_library enable row level security;
+alter table public.aago_industry_library enable row level security;
+alter table public.aago_faq_library enable row level security;
+alter table public.aago_brand_approval_rules enable row level security;
+alter table public.aago_video_projects enable row level security;
+alter table public.aago_thumbnail_manager enable row level security;
+alter table public.aago_voiceover_manager enable row level security;
+alter table public.aago_creative_asset_generator enable row level security;
+alter table public.aago_campaign_asset_builder enable row level security;
+alter table public.aago_creative_workflows enable row level security;
+alter table public.aago_distribution_content_queue enable row level security;
+alter table public.aago_distribution_publishing_queue enable row level security;
+alter table public.aago_channel_manager enable row level security;
+alter table public.aago_approval_center enable row level security;
+alter table public.aago_publishing_history enable row level security;
+alter table public.aago_distribution_analytics enable row level security;
+alter table public.aago_campaign_dashboard enable row level security;
+alter table public.aago_content_performance enable row level security;
+alter table public.aago_lead_attribution enable row level security;
+alter table public.aago_growth_kpis enable row level security;
+alter table public.aago_roi_dashboard enable row level security;
+alter table public.aago_recommendation_engine enable row level security;
+alter table public.aago_command_center_metrics enable row level security;
+alter table public.aago_command_center_health enable row level security;
+alter table public.aago_mission_status enable row level security;
+alter table public.aago_executive_summaries enable row level security;
+alter table public.aago_operational_failures enable row level security;
+alter table public.aago_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aago_operations_hubs','aago_brand_knowledge_base','aago_brand_rulebook','aago_messaging_library','aago_service_library','aago_industry_library','aago_faq_library','aago_brand_approval_rules','aago_video_projects','aago_thumbnail_manager','aago_voiceover_manager','aago_creative_asset_generator','aago_campaign_asset_builder','aago_creative_workflows','aago_distribution_content_queue','aago_distribution_publishing_queue','aago_channel_manager','aago_approval_center','aago_publishing_history','aago_distribution_analytics','aago_campaign_dashboard','aago_content_performance','aago_lead_attribution','aago_growth_kpis','aago_roi_dashboard','aago_recommendation_engine','aago_command_center_metrics','aago_command_center_health','aago_mission_status','aago_executive_summaries','aago_operational_failures','aago_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('aage.view', 'View Arjun Automation growth engine data', 'arjun_automation_growth_engine'),
+  ('aage.manage', 'Manage brand OS, creative studio, distribution, intelligence, and command center outputs', 'arjun_automation_growth_engine'),
+  ('aage.approve', 'Approve growth engine gates and actions', 'arjun_automation_growth_engine'),
+  ('aage.admin', 'Administer Arjun Automation growth engine', 'arjun_automation_growth_engine')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -30028,6 +30681,147 @@ on conflict (id) do nothing;
 
 insert into public.aage_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('04ae011e-04ae-04ae-04ae-04ae011e1e01', '11111111-1111-1111-1111-111111111111', 'growth_hub', 'seed', 'Arjun Automation growth engine seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 050_aage_operational_growth_engine_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a350', '11111111-1111-1111-1111-111111111111', 'AAGE Operational Growth Engine Orchestrator', 'arjun_automation_growth_engine', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["brand_os","creative_studio","distribution_hub","growth_intelligence","founder_command_center"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a550', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a350', 'northstar-operational-growth-001', 'arjun_automation_growth_engine', 'operations_hub', '007a007a-007a-007a-007a-007a007a0101', '{"objective":"Unified AAGE operational growth engine"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.aago_operations_hubs (id, organization_id, hub_key, hub_name, environment, operations_tier, status)
+values ('007a007a-007a-007a-007a-007a007a0101', '11111111-1111-1111-1111-111111111111', 'northstar-operations-hub', 'Northstar Operations Hub', 'production', 'operational', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_brand_knowledge_base (id, organization_id, hub_id, knowledge_key, knowledge_title, knowledge_status, status)
+values ('05010101-0501-0501-0501-050101010201', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'knowledge-0501', 'Brand Knowledge Base', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_brand_rulebook (id, organization_id, hub_id, rulebook_key, rulebook_name, rulebook_status, status)
+values ('05020102-0502-0502-0502-050201020301', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'rulebook-0502', 'Brand Rulebook', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_messaging_library (id, organization_id, hub_id, message_key, message_title, message_status, status)
+values ('05030103-0503-0503-0503-050301030401', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'message-0503', 'Messaging Library', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_service_library (id, organization_id, hub_id, service_key, service_name, service_status, status)
+values ('05040104-0504-0504-0504-050401040501', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'service-0504', 'Service Library', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_industry_library (id, organization_id, hub_id, industry_key, industry_name, industry_status, status)
+values ('05050105-0505-0505-0505-050501050601', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'industry-0505', 'Industry Library', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_faq_library (id, organization_id, hub_id, faq_key, faq_question, faq_status, status)
+values ('05060106-0506-0506-0506-050601060701', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'faq-0506', 'FAQ Library', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_brand_approval_rules (id, organization_id, hub_id, rule_key, rule_name, rule_status, status)
+values ('05070107-0507-0507-0507-050701070801', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'rule-0507', 'Brand Approval Rules', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_video_projects (id, organization_id, hub_id, project_key, project_name, project_status, status)
+values ('05080108-0508-0508-0508-050801080901', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'video-0508', 'Video Project', 'draft', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_thumbnail_manager (id, organization_id, hub_id, thumbnail_key, thumbnail_name, thumbnail_status, status)
+values ('05090109-0509-0509-0509-050901090a01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'thumb-0509', 'Thumbnail Manager', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_voiceover_manager (id, organization_id, hub_id, voiceover_key, voiceover_name, voiceover_status, status)
+values ('050a010a-050a-050a-050a-050a010a0b01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'voice-050a', 'Voiceover Manager', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_creative_asset_generator (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('050b010b-050b-050b-050b-050b010b0c01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'gen-050b', 'Creative Asset Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_campaign_asset_builder (id, organization_id, hub_id, builder_key, builder_name, builder_status, status)
+values ('050c010c-050c-050c-050c-050c010c0d01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'builder-050c', 'Campaign Asset Builder', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_creative_workflows (id, organization_id, hub_id, workflow_key, workflow_name, workflow_status, status)
+values ('050d010d-050d-050d-050d-050d010d0e01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'workflow-050d', 'Creative Workflow', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_distribution_content_queue (id, organization_id, hub_id, queue_key, queue_title, queue_status, status)
+values ('050e010e-050e-050e-050e-050e010e0f01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'content-q-050e', 'Content Queue', 'draft', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_distribution_publishing_queue (id, organization_id, hub_id, queue_key, queue_title, queue_status, status)
+values ('050f010f-050f-050f-050f-050f010f1001', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'publish-q-050f', 'Publishing Queue', 'scheduled', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_channel_manager (id, organization_id, hub_id, channel_key, channel_name, channel_status, status)
+values ('05100110-0510-0510-0510-051001101101', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'channel-0510', 'Channel Manager', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_approval_center (id, organization_id, hub_id, approval_key, approval_title, approval_status, status)
+values ('05110111-0511-0511-0511-051101111201', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'approval-0511', 'Approval Center', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_publishing_history (id, organization_id, hub_id, history_key, history_title, history_status, status)
+values ('05120112-0512-0512-0512-051201121301', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'history-0512', 'Publishing History', 'published', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_distribution_analytics (id, organization_id, hub_id, analytics_key, analytics_name, analytics_score, status)
+values ('05130113-0513-0513-0513-051301131401', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'analytics-0513', 'Distribution Analytics', 88.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_campaign_dashboard (id, organization_id, hub_id, dashboard_key, dashboard_name, dashboard_status, status)
+values ('05140114-0514-0514-0514-051401141501', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'campaign-0514', 'Campaign Dashboard', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_content_performance (id, organization_id, hub_id, performance_key, performance_title, performance_score, status)
+values ('05150115-0515-0515-0515-051501151601', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'perf-0515', 'Content Performance', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_lead_attribution (id, organization_id, hub_id, attribution_key, attribution_title, attribution_status, status)
+values ('05160116-0516-0516-0516-051601161701', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'attrib-0516', 'Lead Attribution', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_growth_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_value, status)
+values ('05170117-0517-0517-0517-051701171801', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'kpi-0517', 'Growth KPI', 100.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_roi_dashboard (id, organization_id, hub_id, roi_key, roi_name, roi_score, status)
+values ('05180118-0518-0518-0518-051801181901', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'roi-0518', 'ROI Dashboard', 85.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_recommendation_engine (id, organization_id, hub_id, recommendation_key, recommendation_title, recommendation_status, status)
+values ('05190119-0519-0519-0519-051901191a01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'rec-0519', 'Recommendation Engine', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_command_center_metrics (id, organization_id, metrics_key, mission_status_score, content_status_score, publishing_status_score, growth_metrics_score, campaign_health_score, executive_summary_score, overall_operations_score, status)
+values ('051a011a-051a-051a-051a-051a011a1b01', '11111111-1111-1111-1111-111111111111', 'aago-metrics-0501', 90.00, 88.00, 87.00, 91.00, 89.00, 92.00, 89.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_command_center_health (id, organization_id, health_key, overall_score, brand_os_status, creative_studio_status, distribution_status, intelligence_status, summary, status)
+values ('051b011b-051b-051b-051b-051b011b1c01', '11111111-1111-1111-1111-111111111111', 'aago-health-0501', 91.00, 'healthy', 'healthy', 'healthy', 'healthy', 'AAGE operational growth engine operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.aago_mission_status (id, organization_id, hub_id, mission_key, mission_name, mission_status, status)
+values ('051c011c-051c-051c-051c-051c011c1d01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'mission-051c', 'Mission Status', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_executive_summaries (id, organization_id, hub_id, summary_key, summary_title, summary_status, status)
+values ('051d011d-051d-051d-051d-051d011d1e01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'summary-051d', 'Executive Summary', 'draft', 'active')
+on conflict (id) do nothing;
+
+insert into public.aago_operational_failures (id, organization_id, hub_id, failure_key, failure_type, status)
+values ('051e011e-051e-051e-051e-051e011e1f01', '11111111-1111-1111-1111-111111111111', '007a007a-007a-007a-007a-007a007a0101', 'failure-051e', 'operational', 'open')
+on conflict (id) do nothing;
+
+insert into public.aago_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('051f011f-051f-051f-051f-051f011f2001', '11111111-1111-1111-1111-111111111111', 'operations_hub', 'seed', 'AAGE operational growth engine seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

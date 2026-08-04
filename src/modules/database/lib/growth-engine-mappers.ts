@@ -94,7 +94,7 @@ import type { CreateGrowthHubInput,
     PublishingQueueSummary,
     AageDashboardStats,
     AagePipelineInfo,
-    AuditEntry } from "@/src/modules/growth-engine/types";
+    AuditEntry } from "@/src/modules/growth-engine/types/aage-regression";
 
 export function buildGrowthHubLookupMaps(hubs: DbAageGrowthHub[]) {
     const hubNameById = new Map(hubs.map((h) => [h.id, h.hub_name]));

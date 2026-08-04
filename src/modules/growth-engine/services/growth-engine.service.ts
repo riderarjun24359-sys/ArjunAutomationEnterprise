@@ -1,80 +1,80 @@
 import {
-    buildGrowthHubLookupMaps,
-    buildAageAuditPayload,
-    buildAageDashboardStats,
-    buildAagePipelineInfo,
+    buildOperationsHubLookupMaps,
+    buildAagoAuditPayload,
+    buildAagoDashboardStats,
+    buildAagoPipelineInfo,
     mapAuditEntry,
-    buildGrowthHubPayload,
-    mapGrowthHubSummary,
-    buildBrandProfilePayload,
-    mapBrandProfileSummary,
-    buildBrandVoicePayload,
-    mapBrandVoiceSummary,
-    buildCoreMessagingPayload,
-    mapCoreMessagingSummary,
-    buildBrandGuidelinePayload,
-    mapBrandGuidelineSummary,
-    buildLogoLibraryPayload,
-    mapLogoLibrarySummary,
-    buildColorSystemPayload,
-    mapColorSystemSummary,
-    buildYoutubeTemplatePayload,
-    mapYoutubeTemplateSummary,
-    buildSocialTemplatePayload,
-    mapSocialTemplateSummary,
-    buildBlogTemplatePayload,
-    mapBlogTemplateSummary,
-    buildWebsiteArticleTemplatePayload,
-    mapWebsiteArticleTemplateSummary,
-    buildEmailCampaignTemplatePayload,
-    mapEmailCampaignTemplateSummary,
-    buildCaseStudyTemplatePayload,
-    mapCaseStudyTemplateSummary,
-    buildImageAssetPayload,
-    mapImageAssetSummary,
-    buildVideoAssetPayload,
-    mapVideoAssetSummary,
-    buildIconAssetPayload,
-    mapIconAssetSummary,
-    buildVoiceProfilePayload,
-    mapVoiceProfileSummary,
-    buildMusicAssetPayload,
-    mapMusicAssetSummary,
-    buildThumbnailTemplatePayload,
-    mapThumbnailTemplateSummary,
-    buildIdeaGeneratorPayload,
-    mapIdeaGeneratorSummary,
-    buildScriptGeneratorPayload,
-    mapScriptGeneratorSummary,
-    buildCaptionGeneratorPayload,
-    mapCaptionGeneratorSummary,
-    buildBlogGeneratorPayload,
-    mapBlogGeneratorSummary,
-    buildSeoAssistantPayload,
-    mapSeoAssistantSummary,
-    buildCtaGeneratorPayload,
-    mapCtaGeneratorSummary,
-    buildGrowthMetricPayload,
-    mapGrowthMetricSummary,
-    buildGrowthHealthPayload,
-    mapGrowthHealthSummary,
-    buildContentCalendarPayload,
-    mapContentCalendarSummary,
-    buildDraftQueuePayload,
-    mapDraftQueueSummary,
-    buildApprovalQueuePayload,
-    mapApprovalQueueSummary,
-    buildPublishingQueuePayload,
-    mapPublishingQueueSummary,
-    mapBrandProfileForStats,
-    mapYoutubeTemplateForStats,
-    mapImageAssetForStats,
-    mapIdeaGeneratorForStats,
-    mapContentCalendarForStats,
-    mapGrowthMetricForStats,
-    mapGrowthHealthForStats,
-    mapPublishingQueueForStats,
-} from "@/src/modules/database/lib/growth-engine-mappers";
+    buildOperationsHubPayload,
+    mapOperationsHubSummary,
+    buildBrandKnowledgeBasePayload,
+    mapBrandKnowledgeBaseSummary,
+    buildBrandRulebookPayload,
+    mapBrandRulebookSummary,
+    buildMessagingLibraryPayload,
+    mapMessagingLibrarySummary,
+    buildServiceLibraryPayload,
+    mapServiceLibrarySummary,
+    buildIndustryLibraryPayload,
+    mapIndustryLibrarySummary,
+    buildFaqLibraryPayload,
+    mapFaqLibrarySummary,
+    buildBrandApprovalRulePayload,
+    mapBrandApprovalRuleSummary,
+    buildVideoProjectPayload,
+    mapVideoProjectSummary,
+    buildThumbnailManagerPayload,
+    mapThumbnailManagerSummary,
+    buildVoiceoverManagerPayload,
+    mapVoiceoverManagerSummary,
+    buildCreativeAssetGeneratorPayload,
+    mapCreativeAssetGeneratorSummary,
+    buildCampaignAssetBuilderPayload,
+    mapCampaignAssetBuilderSummary,
+    buildCreativeWorkflowPayload,
+    mapCreativeWorkflowSummary,
+    buildDistributionContentQueuePayload,
+    mapDistributionContentQueueSummary,
+    buildDistributionPublishingQueuePayload,
+    mapDistributionPublishingQueueSummary,
+    buildChannelManagerPayload,
+    mapChannelManagerSummary,
+    buildApprovalCenterPayload,
+    mapApprovalCenterSummary,
+    buildPublishingHistoryPayload,
+    mapPublishingHistorySummary,
+    buildDistributionAnalyticsPayload,
+    mapDistributionAnalyticsSummary,
+    buildCampaignDashboardPayload,
+    mapCampaignDashboardSummary,
+    buildContentPerformancePayload,
+    mapContentPerformanceSummary,
+    buildLeadAttributionPayload,
+    mapLeadAttributionSummary,
+    buildGrowthKpiPayload,
+    mapGrowthKpiSummary,
+    buildRoiDashboardPayload,
+    mapRoiDashboardSummary,
+    buildRecommendationEnginePayload,
+    mapRecommendationEngineSummary,
+    buildCommandCenterMetricPayload,
+    mapCommandCenterMetricSummary,
+    buildCommandCenterHealthPayload,
+    mapCommandCenterHealthSummary,
+    buildMissionStatusPayload,
+    mapMissionStatusSummary,
+    buildExecutiveSummaryPayload,
+    mapExecutiveSummarySummary,
+    buildOperationalFailurePayload,
+    mapOperationalFailureSummary,
+    mapBrandKnowledgeBaseForStats,
+    mapVideoProjectForStats,
+    mapDistributionContentQueueForStats,
+    mapCampaignDashboardForStats,
+    mapMissionStatusForStats,
+    mapCommandCenterMetricForStats,
+    mapCommandCenterHealthForStats,
+    mapOperationalFailureForStats,
+} from "@/src/modules/database/lib/growth-engine-operations-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { createIndustryFrameworkClient } from "@/src/modules/industry-framework/sdk";
@@ -94,81 +94,81 @@ import { createEnterpriseIntelligencePlatformClient } from "@/src/modules/enterp
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
 import { crmService } from "@/src/modules/crm/services/crm.service";
 import type {
-    GrowthHubSummary,
-    CreateGrowthHubInput,
-    BrandProfileSummary,
-    CreateBrandProfileInput,
-    BrandVoiceSummary,
-    CreateBrandVoiceInput,
-    CoreMessagingSummary,
-    CreateCoreMessagingInput,
-    BrandGuidelineSummary,
-    CreateBrandGuidelineInput,
-    LogoLibrarySummary,
-    CreateLogoLibraryInput,
-    ColorSystemSummary,
-    CreateColorSystemInput,
-    YoutubeTemplateSummary,
-    CreateYoutubeTemplateInput,
-    SocialTemplateSummary,
-    CreateSocialTemplateInput,
-    BlogTemplateSummary,
-    CreateBlogTemplateInput,
-    WebsiteArticleTemplateSummary,
-    CreateWebsiteArticleTemplateInput,
-    EmailCampaignTemplateSummary,
-    CreateEmailCampaignTemplateInput,
-    CaseStudyTemplateSummary,
-    CreateCaseStudyTemplateInput,
-    ImageAssetSummary,
-    CreateImageAssetInput,
-    VideoAssetSummary,
-    CreateVideoAssetInput,
-    IconAssetSummary,
-    CreateIconAssetInput,
-    VoiceProfileSummary,
-    CreateVoiceProfileInput,
-    MusicAssetSummary,
-    CreateMusicAssetInput,
-    ThumbnailTemplateSummary,
-    CreateThumbnailTemplateInput,
-    IdeaGeneratorSummary,
-    CreateIdeaGeneratorInput,
-    ScriptGeneratorSummary,
-    CreateScriptGeneratorInput,
-    CaptionGeneratorSummary,
-    CreateCaptionGeneratorInput,
-    BlogGeneratorSummary,
-    CreateBlogGeneratorInput,
-    SeoAssistantSummary,
-    CreateSeoAssistantInput,
-    CtaGeneratorSummary,
-    CreateCtaGeneratorInput,
-    GrowthMetricSummary,
-    CreateGrowthMetricInput,
-    GrowthHealthSummary,
-    CreateGrowthHealthInput,
-    ContentCalendarSummary,
-    CreateContentCalendarInput,
-    DraftQueueSummary,
-    CreateDraftQueueInput,
-    ApprovalQueueSummary,
-    CreateApprovalQueueInput,
-    PublishingQueueSummary,
-    CreatePublishingQueueInput,
+    OperationsHubSummary,
+    CreateOperationsHubInput,
+    BrandKnowledgeBaseSummary,
+    CreateBrandKnowledgeBaseInput,
+    BrandRulebookSummary,
+    CreateBrandRulebookInput,
+    MessagingLibrarySummary,
+    CreateMessagingLibraryInput,
+    ServiceLibrarySummary,
+    CreateServiceLibraryInput,
+    IndustryLibrarySummary,
+    CreateIndustryLibraryInput,
+    FaqLibrarySummary,
+    CreateFaqLibraryInput,
+    BrandApprovalRuleSummary,
+    CreateBrandApprovalRuleInput,
+    VideoProjectSummary,
+    CreateVideoProjectInput,
+    ThumbnailManagerSummary,
+    CreateThumbnailManagerInput,
+    VoiceoverManagerSummary,
+    CreateVoiceoverManagerInput,
+    CreativeAssetGeneratorSummary,
+    CreateCreativeAssetGeneratorInput,
+    CampaignAssetBuilderSummary,
+    CreateCampaignAssetBuilderInput,
+    CreativeWorkflowSummary,
+    CreateCreativeWorkflowInput,
+    DistributionContentQueueSummary,
+    CreateDistributionContentQueueInput,
+    DistributionPublishingQueueSummary,
+    CreateDistributionPublishingQueueInput,
+    ChannelManagerSummary,
+    CreateChannelManagerInput,
+    ApprovalCenterSummary,
+    CreateApprovalCenterInput,
+    PublishingHistorySummary,
+    CreatePublishingHistoryInput,
+    DistributionAnalyticsSummary,
+    CreateDistributionAnalyticsInput,
+    CampaignDashboardSummary,
+    CreateCampaignDashboardInput,
+    ContentPerformanceSummary,
+    CreateContentPerformanceInput,
+    LeadAttributionSummary,
+    CreateLeadAttributionInput,
+    GrowthKpiSummary,
+    CreateGrowthKpiInput,
+    RoiDashboardSummary,
+    CreateRoiDashboardInput,
+    RecommendationEngineSummary,
+    CreateRecommendationEngineInput,
+    CommandCenterMetricSummary,
+    CreateCommandCenterMetricInput,
+    CommandCenterHealthSummary,
+    CreateCommandCenterHealthInput,
+    MissionStatusSummary,
+    CreateMissionStatusInput,
+    ExecutiveSummarySummary,
+    CreateExecutiveSummaryInput,
+    OperationalFailureSummary,
+    CreateOperationalFailureInput,
     AuditEntry,
-    AageDashboardStats,
-    AagePipelineInfo,
-    AageSdkRunBrandServiceInput,
-    AageSdkRunBrandServiceResult,
-    AageSdkRunContentFoundationServiceInput,
-    AageSdkRunContentFoundationServiceResult,
-    AageSdkRunMediaFoundationServiceInput,
-    AageSdkRunMediaFoundationServiceResult,
-    AageSdkRunContentEngineServiceInput,
-    AageSdkRunContentEngineServiceResult,
-    AageSdkRunFounderDashboardServiceInput,
-    AageSdkRunFounderDashboardServiceResult,
+    AagoDashboardStats,
+    AagoPipelineInfo,
+    AagoSdkRunBrandOsServiceInput,
+    AagoSdkRunBrandOsServiceResult,
+    AagoSdkRunCreativeStudioServiceInput,
+    AagoSdkRunCreativeStudioServiceResult,
+    AagoSdkRunDistributionServiceInput,
+    AagoSdkRunDistributionServiceResult,
+    AagoSdkRunGrowthIntelligenceServiceInput,
+    AagoSdkRunGrowthIntelligenceServiceResult,
+    AagoSdkRunCommandCenterServiceInput,
+    AagoSdkRunCommandCenterServiceResult,
 } from "@/src/modules/growth-engine/types";
 
 export class GrowthEngineService {
@@ -177,602 +177,598 @@ export class GrowthEngineService {
     }
 
     private async getMaps(organizationId: string) {
-        const growthHubs = await databaseService.aageGrowthHubs.listByOrganization(organizationId);
-        return buildGrowthHubLookupMaps(growthHubs);
+        const operationsHubs = await databaseService.aagoOperationsHubs.listByOrganization(organizationId);
+        return buildOperationsHubLookupMaps(operationsHubs);
     }
 
-    async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<AageDashboardStats> {
+    async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<AagoDashboardStats> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) return buildAageDashboardStats({ growthHubs: [], brandProfiles: [], youtubeTemplates: [], imageAssets: [], ideaGenerators: [], contentCalendars: [], growthMetrics: [], growthHealth: [], publishingQueues: [], auditLogs: [] });
-        const [growthHubs, brandProfilesRaw, youtubeTemplatesRaw, imageAssetsRaw, ideaGeneratorsRaw, contentCalendarsRaw, growthMetricsRaw, growthHealthRaw, publishingQueuesRaw, auditLogs] = await Promise.all([
-            this.getGrowthHubs(authUserId, email, fullName),
-            databaseService.aageBrandProfiles.listByOrganization(context.organizationId),
-            databaseService.aageYoutubeTemplates.listByOrganization(context.organizationId),
-            databaseService.aageImageAssets.listByOrganization(context.organizationId),
-            databaseService.aageIdeaGenerators.listByOrganization(context.organizationId),
-            databaseService.aageContentCalendar.listByOrganization(context.organizationId),
-            databaseService.aageGrowthMetrics.listByOrganization(context.organizationId),
-            databaseService.aageGrowthHealth.listByOrganization(context.organizationId),
-            databaseService.aagePublishingQueue.listByOrganization(context.organizationId),
+        if (!context) return buildAagoDashboardStats({ operationsHubs: [], brandKnowledgeBase: [], videoProjects: [], distributionContentQueue: [], campaignDashboard: [], missionStatus: [], commandCenterMetrics: [], commandCenterHealth: [], operationalFailures: [], auditLogs: [] });
+        const [operationsHubs, brandKnowledgeBaseRaw, videoProjectsRaw, distributionContentQueueRaw, campaignDashboardRaw, missionStatusRaw, commandCenterMetricsRaw, commandCenterHealthRaw, operationalFailuresRaw, auditLogs] = await Promise.all([
+            this.getOperationsHubs(authUserId, email, fullName),
+            databaseService.aagoBrandKnowledgeBase.listByOrganization(context.organizationId),
+            databaseService.aagoVideoProjects.listByOrganization(context.organizationId),
+            databaseService.aagoDistributionContentQueue.listByOrganization(context.organizationId),
+            databaseService.aagoCampaignDashboard.listByOrganization(context.organizationId),
+            databaseService.aagoMissionStatus.listByOrganization(context.organizationId),
+            databaseService.aagoCommandCenterMetrics.listByOrganization(context.organizationId),
+            databaseService.aagoCommandCenterHealth.listByOrganization(context.organizationId),
+            databaseService.aagoOperationalFailures.listByOrganization(context.organizationId),
             this.getAuditLogs(authUserId, email, fullName),
         ]);
-        return buildAageDashboardStats({
-            growthHubs,
-            brandProfiles: brandProfilesRaw.map(mapBrandProfileForStats),
-            youtubeTemplates: youtubeTemplatesRaw.map(mapYoutubeTemplateForStats),
-            imageAssets: imageAssetsRaw.map(mapImageAssetForStats),
-            ideaGenerators: ideaGeneratorsRaw.map(mapIdeaGeneratorForStats),
-            contentCalendars: contentCalendarsRaw.map(mapContentCalendarForStats),
-            growthMetrics: growthMetricsRaw.map(mapGrowthMetricForStats),
-            growthHealth: growthHealthRaw.map(mapGrowthHealthForStats),
-            publishingQueues: publishingQueuesRaw.map(mapPublishingQueueForStats),
+        return buildAagoDashboardStats({
+            operationsHubs,
+            brandKnowledgeBase: brandKnowledgeBaseRaw.map(mapBrandKnowledgeBaseForStats),
+            videoProjects: videoProjectsRaw.map(mapVideoProjectForStats),
+            distributionContentQueue: distributionContentQueueRaw.map(mapDistributionContentQueueForStats),
+            campaignDashboard: campaignDashboardRaw.map(mapCampaignDashboardForStats),
+            missionStatus: missionStatusRaw.map(mapMissionStatusForStats),
+            commandCenterMetrics: commandCenterMetricsRaw.map(mapCommandCenterMetricForStats),
+            commandCenterHealth: commandCenterHealthRaw.map(mapCommandCenterHealthForStats),
+            operationalFailures: operationalFailuresRaw.map(mapOperationalFailureForStats),
             auditLogs,
         });
     }
 
-    getPipelineInfo(): AagePipelineInfo {
-        return buildAagePipelineInfo();
+    getPipelineInfo(): AagoPipelineInfo {
+        return buildAagoPipelineInfo();
     }
 
-    async getGrowthHubs(authUserId: string, email: string, fullName?: string | null): Promise<GrowthHubSummary[]> {
+    async getOperationsHubs(authUserId: string, email: string, fullName?: string | null): Promise<OperationsHubSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) return [];
+        return (await databaseService.aagoOperationsHubs.listByOrganization(context.organizationId)).map(mapOperationsHubSummary);
+    }
+
+    async createOperationsHub(authUserId: string, email: string, input: CreateOperationsHubInput, fullName?: string | null): Promise<OperationsHubSummary> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) throw new Error("Unable to resolve organization context");
+        const created = await databaseService.aagoOperationsHubs.create(buildOperationsHubPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create operationsHubs");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "operations_hubs", "create", `OperationsHub created`, created.id));
+        return mapOperationsHubSummary(created);
+    }
+
+    async getBrandKnowledgeBases(authUserId: string, email: string, fullName?: string | null): Promise<BrandKnowledgeBaseSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageGrowthHubs.listByOrganization(context.organizationId)).map((r) => mapGrowthHubSummary(r));
+        return (await databaseService.aagoBrandKnowledgeBase.listByOrganization(context.organizationId)).map((r) => mapBrandKnowledgeBaseSummary(r, maps));
     }
 
-    async createGrowthHub(authUserId: string, email: string, input: CreateGrowthHubInput, fullName?: string | null): Promise<GrowthHubSummary> {
+    async createBrandKnowledgeBase(authUserId: string, email: string, input: CreateBrandKnowledgeBaseInput, fullName?: string | null): Promise<BrandKnowledgeBaseSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageGrowthHubs.create(buildGrowthHubPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create growthHubs");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "growth_hubs", "create", `GrowthHub created`, created.id));
+        const created = await databaseService.aagoBrandKnowledgeBase.create(buildBrandKnowledgeBasePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create brandKnowledgeBase");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "brand_knowledge_base", "create", `BrandKnowledgeBase created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapGrowthHubSummary(created);
+        return mapBrandKnowledgeBaseSummary(created, maps);
     }
 
-    async getBrandProfiles(authUserId: string, email: string, fullName?: string | null): Promise<BrandProfileSummary[]> {
+    async getBrandRulebooks(authUserId: string, email: string, fullName?: string | null): Promise<BrandRulebookSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageBrandProfiles.listByOrganization(context.organizationId)).map((r) => mapBrandProfileSummary(r, maps));
+        return (await databaseService.aagoBrandRulebook.listByOrganization(context.organizationId)).map((r) => mapBrandRulebookSummary(r, maps));
     }
 
-    async createBrandProfile(authUserId: string, email: string, input: CreateBrandProfileInput, fullName?: string | null): Promise<BrandProfileSummary> {
+    async createBrandRulebook(authUserId: string, email: string, input: CreateBrandRulebookInput, fullName?: string | null): Promise<BrandRulebookSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageBrandProfiles.create(buildBrandProfilePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create brandProfiles");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "brand_profiles", "create", `BrandProfile created`, created.id));
+        const created = await databaseService.aagoBrandRulebook.create(buildBrandRulebookPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create brandRulebook");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "brand_rulebook", "create", `BrandRulebook created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapBrandProfileSummary(created, maps);
+        return mapBrandRulebookSummary(created, maps);
     }
 
-    async getBrandVoices(authUserId: string, email: string, fullName?: string | null): Promise<BrandVoiceSummary[]> {
+    async getMessagingLibrarys(authUserId: string, email: string, fullName?: string | null): Promise<MessagingLibrarySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageBrandVoice.listByOrganization(context.organizationId)).map((r) => mapBrandVoiceSummary(r, maps));
+        return (await databaseService.aagoMessagingLibrary.listByOrganization(context.organizationId)).map((r) => mapMessagingLibrarySummary(r, maps));
     }
 
-    async createBrandVoice(authUserId: string, email: string, input: CreateBrandVoiceInput, fullName?: string | null): Promise<BrandVoiceSummary> {
+    async createMessagingLibrary(authUserId: string, email: string, input: CreateMessagingLibraryInput, fullName?: string | null): Promise<MessagingLibrarySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageBrandVoice.create(buildBrandVoicePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create brandVoice");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "brand_voice", "create", `BrandVoice created`, created.id));
+        const created = await databaseService.aagoMessagingLibrary.create(buildMessagingLibraryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create messagingLibrary");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "messaging_library", "create", `MessagingLibrary created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapBrandVoiceSummary(created, maps);
+        return mapMessagingLibrarySummary(created, maps);
     }
 
-    async getCoreMessagings(authUserId: string, email: string, fullName?: string | null): Promise<CoreMessagingSummary[]> {
+    async getServiceLibrarys(authUserId: string, email: string, fullName?: string | null): Promise<ServiceLibrarySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageCoreMessaging.listByOrganization(context.organizationId)).map((r) => mapCoreMessagingSummary(r, maps));
+        return (await databaseService.aagoServiceLibrary.listByOrganization(context.organizationId)).map((r) => mapServiceLibrarySummary(r, maps));
     }
 
-    async createCoreMessaging(authUserId: string, email: string, input: CreateCoreMessagingInput, fullName?: string | null): Promise<CoreMessagingSummary> {
+    async createServiceLibrary(authUserId: string, email: string, input: CreateServiceLibraryInput, fullName?: string | null): Promise<ServiceLibrarySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageCoreMessaging.create(buildCoreMessagingPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create coreMessaging");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "core_messaging", "create", `CoreMessaging created`, created.id));
+        const created = await databaseService.aagoServiceLibrary.create(buildServiceLibraryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create serviceLibrary");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "service_library", "create", `ServiceLibrary created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapCoreMessagingSummary(created, maps);
+        return mapServiceLibrarySummary(created, maps);
     }
 
-    async getBrandGuidelines(authUserId: string, email: string, fullName?: string | null): Promise<BrandGuidelineSummary[]> {
+    async getIndustryLibrarys(authUserId: string, email: string, fullName?: string | null): Promise<IndustryLibrarySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageBrandGuidelines.listByOrganization(context.organizationId)).map((r) => mapBrandGuidelineSummary(r, maps));
+        return (await databaseService.aagoIndustryLibrary.listByOrganization(context.organizationId)).map((r) => mapIndustryLibrarySummary(r, maps));
     }
 
-    async createBrandGuideline(authUserId: string, email: string, input: CreateBrandGuidelineInput, fullName?: string | null): Promise<BrandGuidelineSummary> {
+    async createIndustryLibrary(authUserId: string, email: string, input: CreateIndustryLibraryInput, fullName?: string | null): Promise<IndustryLibrarySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageBrandGuidelines.create(buildBrandGuidelinePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create brandGuidelines");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "brand_guidelines", "create", `BrandGuideline created`, created.id));
+        const created = await databaseService.aagoIndustryLibrary.create(buildIndustryLibraryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create industryLibrary");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "industry_library", "create", `IndustryLibrary created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapBrandGuidelineSummary(created, maps);
+        return mapIndustryLibrarySummary(created, maps);
     }
 
-    async getLogoLibrarys(authUserId: string, email: string, fullName?: string | null): Promise<LogoLibrarySummary[]> {
+    async getFaqLibrarys(authUserId: string, email: string, fullName?: string | null): Promise<FaqLibrarySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageLogoLibrary.listByOrganization(context.organizationId)).map((r) => mapLogoLibrarySummary(r, maps));
+        return (await databaseService.aagoFaqLibrary.listByOrganization(context.organizationId)).map((r) => mapFaqLibrarySummary(r, maps));
     }
 
-    async createLogoLibrary(authUserId: string, email: string, input: CreateLogoLibraryInput, fullName?: string | null): Promise<LogoLibrarySummary> {
+    async createFaqLibrary(authUserId: string, email: string, input: CreateFaqLibraryInput, fullName?: string | null): Promise<FaqLibrarySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageLogoLibrary.create(buildLogoLibraryPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create logoLibrary");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "logo_library", "create", `LogoLibrary created`, created.id));
+        const created = await databaseService.aagoFaqLibrary.create(buildFaqLibraryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create faqLibrary");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "faq_library", "create", `FaqLibrary created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapLogoLibrarySummary(created, maps);
+        return mapFaqLibrarySummary(created, maps);
     }
 
-    async getColorSystems(authUserId: string, email: string, fullName?: string | null): Promise<ColorSystemSummary[]> {
+    async getBrandApprovalRules(authUserId: string, email: string, fullName?: string | null): Promise<BrandApprovalRuleSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageColorSystems.listByOrganization(context.organizationId)).map((r) => mapColorSystemSummary(r, maps));
+        return (await databaseService.aagoBrandApprovalRules.listByOrganization(context.organizationId)).map((r) => mapBrandApprovalRuleSummary(r, maps));
     }
 
-    async createColorSystem(authUserId: string, email: string, input: CreateColorSystemInput, fullName?: string | null): Promise<ColorSystemSummary> {
+    async createBrandApprovalRule(authUserId: string, email: string, input: CreateBrandApprovalRuleInput, fullName?: string | null): Promise<BrandApprovalRuleSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageColorSystems.create(buildColorSystemPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create colorSystems");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "color_systems", "create", `ColorSystem created`, created.id));
+        const created = await databaseService.aagoBrandApprovalRules.create(buildBrandApprovalRulePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create brandApprovalRules");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "brand_approval_rules", "create", `BrandApprovalRule created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapColorSystemSummary(created, maps);
+        return mapBrandApprovalRuleSummary(created, maps);
     }
 
-    async getYoutubeTemplates(authUserId: string, email: string, fullName?: string | null): Promise<YoutubeTemplateSummary[]> {
+    async getVideoProjects(authUserId: string, email: string, fullName?: string | null): Promise<VideoProjectSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageYoutubeTemplates.listByOrganization(context.organizationId)).map((r) => mapYoutubeTemplateSummary(r, maps));
+        return (await databaseService.aagoVideoProjects.listByOrganization(context.organizationId)).map((r) => mapVideoProjectSummary(r, maps));
     }
 
-    async createYoutubeTemplate(authUserId: string, email: string, input: CreateYoutubeTemplateInput, fullName?: string | null): Promise<YoutubeTemplateSummary> {
+    async createVideoProject(authUserId: string, email: string, input: CreateVideoProjectInput, fullName?: string | null): Promise<VideoProjectSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageYoutubeTemplates.create(buildYoutubeTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create youtubeTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "youtube_templates", "create", `YoutubeTemplate created`, created.id));
+        const created = await databaseService.aagoVideoProjects.create(buildVideoProjectPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create videoProjects");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "video_projects", "create", `VideoProject created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapYoutubeTemplateSummary(created, maps);
+        return mapVideoProjectSummary(created, maps);
     }
 
-    async getSocialTemplates(authUserId: string, email: string, fullName?: string | null): Promise<SocialTemplateSummary[]> {
+    async getThumbnailManagers(authUserId: string, email: string, fullName?: string | null): Promise<ThumbnailManagerSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageSocialTemplates.listByOrganization(context.organizationId)).map((r) => mapSocialTemplateSummary(r, maps));
+        return (await databaseService.aagoThumbnailManager.listByOrganization(context.organizationId)).map((r) => mapThumbnailManagerSummary(r, maps));
     }
 
-    async createSocialTemplate(authUserId: string, email: string, input: CreateSocialTemplateInput, fullName?: string | null): Promise<SocialTemplateSummary> {
+    async createThumbnailManager(authUserId: string, email: string, input: CreateThumbnailManagerInput, fullName?: string | null): Promise<ThumbnailManagerSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageSocialTemplates.create(buildSocialTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create socialTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "social_templates", "create", `SocialTemplate created`, created.id));
+        const created = await databaseService.aagoThumbnailManager.create(buildThumbnailManagerPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create thumbnailManager");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "thumbnail_manager", "create", `ThumbnailManager created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapSocialTemplateSummary(created, maps);
+        return mapThumbnailManagerSummary(created, maps);
     }
 
-    async getBlogTemplates(authUserId: string, email: string, fullName?: string | null): Promise<BlogTemplateSummary[]> {
+    async getVoiceoverManagers(authUserId: string, email: string, fullName?: string | null): Promise<VoiceoverManagerSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageBlogTemplates.listByOrganization(context.organizationId)).map((r) => mapBlogTemplateSummary(r, maps));
+        return (await databaseService.aagoVoiceoverManager.listByOrganization(context.organizationId)).map((r) => mapVoiceoverManagerSummary(r, maps));
     }
 
-    async createBlogTemplate(authUserId: string, email: string, input: CreateBlogTemplateInput, fullName?: string | null): Promise<BlogTemplateSummary> {
+    async createVoiceoverManager(authUserId: string, email: string, input: CreateVoiceoverManagerInput, fullName?: string | null): Promise<VoiceoverManagerSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageBlogTemplates.create(buildBlogTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create blogTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "blog_templates", "create", `BlogTemplate created`, created.id));
+        const created = await databaseService.aagoVoiceoverManager.create(buildVoiceoverManagerPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create voiceoverManager");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "voiceover_manager", "create", `VoiceoverManager created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapBlogTemplateSummary(created, maps);
+        return mapVoiceoverManagerSummary(created, maps);
     }
 
-    async getWebsiteArticleTemplates(authUserId: string, email: string, fullName?: string | null): Promise<WebsiteArticleTemplateSummary[]> {
+    async getCreativeAssetGenerators(authUserId: string, email: string, fullName?: string | null): Promise<CreativeAssetGeneratorSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageWebsiteArticleTemplates.listByOrganization(context.organizationId)).map((r) => mapWebsiteArticleTemplateSummary(r, maps));
+        return (await databaseService.aagoCreativeAssetGenerator.listByOrganization(context.organizationId)).map((r) => mapCreativeAssetGeneratorSummary(r, maps));
     }
 
-    async createWebsiteArticleTemplate(authUserId: string, email: string, input: CreateWebsiteArticleTemplateInput, fullName?: string | null): Promise<WebsiteArticleTemplateSummary> {
+    async createCreativeAssetGenerator(authUserId: string, email: string, input: CreateCreativeAssetGeneratorInput, fullName?: string | null): Promise<CreativeAssetGeneratorSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageWebsiteArticleTemplates.create(buildWebsiteArticleTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create websiteArticleTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "website_article_templates", "create", `WebsiteArticleTemplate created`, created.id));
+        const created = await databaseService.aagoCreativeAssetGenerator.create(buildCreativeAssetGeneratorPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create creativeAssetGenerator");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "creative_asset_generator", "create", `CreativeAssetGenerator created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapWebsiteArticleTemplateSummary(created, maps);
+        return mapCreativeAssetGeneratorSummary(created, maps);
     }
 
-    async getEmailCampaignTemplates(authUserId: string, email: string, fullName?: string | null): Promise<EmailCampaignTemplateSummary[]> {
+    async getCampaignAssetBuilders(authUserId: string, email: string, fullName?: string | null): Promise<CampaignAssetBuilderSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageEmailCampaignTemplates.listByOrganization(context.organizationId)).map((r) => mapEmailCampaignTemplateSummary(r, maps));
+        return (await databaseService.aagoCampaignAssetBuilder.listByOrganization(context.organizationId)).map((r) => mapCampaignAssetBuilderSummary(r, maps));
     }
 
-    async createEmailCampaignTemplate(authUserId: string, email: string, input: CreateEmailCampaignTemplateInput, fullName?: string | null): Promise<EmailCampaignTemplateSummary> {
+    async createCampaignAssetBuilder(authUserId: string, email: string, input: CreateCampaignAssetBuilderInput, fullName?: string | null): Promise<CampaignAssetBuilderSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageEmailCampaignTemplates.create(buildEmailCampaignTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create emailCampaignTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "email_campaign_templates", "create", `EmailCampaignTemplate created`, created.id));
+        const created = await databaseService.aagoCampaignAssetBuilder.create(buildCampaignAssetBuilderPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create campaignAssetBuilder");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "campaign_asset_builder", "create", `CampaignAssetBuilder created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapEmailCampaignTemplateSummary(created, maps);
+        return mapCampaignAssetBuilderSummary(created, maps);
     }
 
-    async getCaseStudyTemplates(authUserId: string, email: string, fullName?: string | null): Promise<CaseStudyTemplateSummary[]> {
+    async getCreativeWorkflows(authUserId: string, email: string, fullName?: string | null): Promise<CreativeWorkflowSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageCaseStudyTemplates.listByOrganization(context.organizationId)).map((r) => mapCaseStudyTemplateSummary(r, maps));
+        return (await databaseService.aagoCreativeWorkflows.listByOrganization(context.organizationId)).map((r) => mapCreativeWorkflowSummary(r, maps));
     }
 
-    async createCaseStudyTemplate(authUserId: string, email: string, input: CreateCaseStudyTemplateInput, fullName?: string | null): Promise<CaseStudyTemplateSummary> {
+    async createCreativeWorkflow(authUserId: string, email: string, input: CreateCreativeWorkflowInput, fullName?: string | null): Promise<CreativeWorkflowSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageCaseStudyTemplates.create(buildCaseStudyTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create caseStudyTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "case_study_templates", "create", `CaseStudyTemplate created`, created.id));
+        const created = await databaseService.aagoCreativeWorkflows.create(buildCreativeWorkflowPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create creativeWorkflows");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "creative_workflows", "create", `CreativeWorkflow created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapCaseStudyTemplateSummary(created, maps);
+        return mapCreativeWorkflowSummary(created, maps);
     }
 
-    async getImageAssets(authUserId: string, email: string, fullName?: string | null): Promise<ImageAssetSummary[]> {
+    async getDistributionContentQueues(authUserId: string, email: string, fullName?: string | null): Promise<DistributionContentQueueSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageImageAssets.listByOrganization(context.organizationId)).map((r) => mapImageAssetSummary(r, maps));
+        return (await databaseService.aagoDistributionContentQueue.listByOrganization(context.organizationId)).map((r) => mapDistributionContentQueueSummary(r, maps));
     }
 
-    async createImageAsset(authUserId: string, email: string, input: CreateImageAssetInput, fullName?: string | null): Promise<ImageAssetSummary> {
+    async createDistributionContentQueue(authUserId: string, email: string, input: CreateDistributionContentQueueInput, fullName?: string | null): Promise<DistributionContentQueueSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageImageAssets.create(buildImageAssetPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create imageAssets");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "image_assets", "create", `ImageAsset created`, created.id));
+        const created = await databaseService.aagoDistributionContentQueue.create(buildDistributionContentQueuePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create distributionContentQueue");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "distribution_content_queue", "create", `DistributionContentQueue created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapImageAssetSummary(created, maps);
+        return mapDistributionContentQueueSummary(created, maps);
     }
 
-    async getVideoAssets(authUserId: string, email: string, fullName?: string | null): Promise<VideoAssetSummary[]> {
+    async getDistributionPublishingQueues(authUserId: string, email: string, fullName?: string | null): Promise<DistributionPublishingQueueSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageVideoAssets.listByOrganization(context.organizationId)).map((r) => mapVideoAssetSummary(r, maps));
+        return (await databaseService.aagoDistributionPublishingQueue.listByOrganization(context.organizationId)).map((r) => mapDistributionPublishingQueueSummary(r, maps));
     }
 
-    async createVideoAsset(authUserId: string, email: string, input: CreateVideoAssetInput, fullName?: string | null): Promise<VideoAssetSummary> {
+    async createDistributionPublishingQueue(authUserId: string, email: string, input: CreateDistributionPublishingQueueInput, fullName?: string | null): Promise<DistributionPublishingQueueSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageVideoAssets.create(buildVideoAssetPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create videoAssets");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "video_assets", "create", `VideoAsset created`, created.id));
+        const created = await databaseService.aagoDistributionPublishingQueue.create(buildDistributionPublishingQueuePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create distributionPublishingQueue");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "distribution_publishing_queue", "create", `DistributionPublishingQueue created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapVideoAssetSummary(created, maps);
+        return mapDistributionPublishingQueueSummary(created, maps);
     }
 
-    async getIconAssets(authUserId: string, email: string, fullName?: string | null): Promise<IconAssetSummary[]> {
+    async getChannelManagers(authUserId: string, email: string, fullName?: string | null): Promise<ChannelManagerSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageIconAssets.listByOrganization(context.organizationId)).map((r) => mapIconAssetSummary(r, maps));
+        return (await databaseService.aagoChannelManager.listByOrganization(context.organizationId)).map((r) => mapChannelManagerSummary(r, maps));
     }
 
-    async createIconAsset(authUserId: string, email: string, input: CreateIconAssetInput, fullName?: string | null): Promise<IconAssetSummary> {
+    async createChannelManager(authUserId: string, email: string, input: CreateChannelManagerInput, fullName?: string | null): Promise<ChannelManagerSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageIconAssets.create(buildIconAssetPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create iconAssets");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "icon_assets", "create", `IconAsset created`, created.id));
+        const created = await databaseService.aagoChannelManager.create(buildChannelManagerPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create channelManager");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "channel_manager", "create", `ChannelManager created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapIconAssetSummary(created, maps);
+        return mapChannelManagerSummary(created, maps);
     }
 
-    async getVoiceProfiles(authUserId: string, email: string, fullName?: string | null): Promise<VoiceProfileSummary[]> {
+    async getApprovalCenters(authUserId: string, email: string, fullName?: string | null): Promise<ApprovalCenterSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageVoiceProfiles.listByOrganization(context.organizationId)).map((r) => mapVoiceProfileSummary(r, maps));
+        return (await databaseService.aagoApprovalCenter.listByOrganization(context.organizationId)).map((r) => mapApprovalCenterSummary(r, maps));
     }
 
-    async createVoiceProfile(authUserId: string, email: string, input: CreateVoiceProfileInput, fullName?: string | null): Promise<VoiceProfileSummary> {
+    async createApprovalCenter(authUserId: string, email: string, input: CreateApprovalCenterInput, fullName?: string | null): Promise<ApprovalCenterSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageVoiceProfiles.create(buildVoiceProfilePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create voiceProfiles");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "voice_profiles", "create", `VoiceProfile created`, created.id));
+        const created = await databaseService.aagoApprovalCenter.create(buildApprovalCenterPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create approvalCenter");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "approval_center", "create", `ApprovalCenter created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapVoiceProfileSummary(created, maps);
+        return mapApprovalCenterSummary(created, maps);
     }
 
-    async getMusicAssets(authUserId: string, email: string, fullName?: string | null): Promise<MusicAssetSummary[]> {
+    async getPublishingHistorys(authUserId: string, email: string, fullName?: string | null): Promise<PublishingHistorySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageMusicAssets.listByOrganization(context.organizationId)).map((r) => mapMusicAssetSummary(r, maps));
+        return (await databaseService.aagoPublishingHistory.listByOrganization(context.organizationId)).map((r) => mapPublishingHistorySummary(r, maps));
     }
 
-    async createMusicAsset(authUserId: string, email: string, input: CreateMusicAssetInput, fullName?: string | null): Promise<MusicAssetSummary> {
+    async createPublishingHistory(authUserId: string, email: string, input: CreatePublishingHistoryInput, fullName?: string | null): Promise<PublishingHistorySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageMusicAssets.create(buildMusicAssetPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create musicAssets");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "music_assets", "create", `MusicAsset created`, created.id));
+        const created = await databaseService.aagoPublishingHistory.create(buildPublishingHistoryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create publishingHistory");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "publishing_history", "create", `PublishingHistory created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapMusicAssetSummary(created, maps);
+        return mapPublishingHistorySummary(created, maps);
     }
 
-    async getThumbnailTemplates(authUserId: string, email: string, fullName?: string | null): Promise<ThumbnailTemplateSummary[]> {
+    async getDistributionAnalyticss(authUserId: string, email: string, fullName?: string | null): Promise<DistributionAnalyticsSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageThumbnailTemplates.listByOrganization(context.organizationId)).map((r) => mapThumbnailTemplateSummary(r, maps));
+        return (await databaseService.aagoDistributionAnalytics.listByOrganization(context.organizationId)).map((r) => mapDistributionAnalyticsSummary(r, maps));
     }
 
-    async createThumbnailTemplate(authUserId: string, email: string, input: CreateThumbnailTemplateInput, fullName?: string | null): Promise<ThumbnailTemplateSummary> {
+    async createDistributionAnalytics(authUserId: string, email: string, input: CreateDistributionAnalyticsInput, fullName?: string | null): Promise<DistributionAnalyticsSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageThumbnailTemplates.create(buildThumbnailTemplatePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create thumbnailTemplates");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "thumbnail_templates", "create", `ThumbnailTemplate created`, created.id));
+        const created = await databaseService.aagoDistributionAnalytics.create(buildDistributionAnalyticsPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create distributionAnalytics");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "distribution_analytics", "create", `DistributionAnalytics created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapThumbnailTemplateSummary(created, maps);
+        return mapDistributionAnalyticsSummary(created, maps);
     }
 
-    async getIdeaGenerators(authUserId: string, email: string, fullName?: string | null): Promise<IdeaGeneratorSummary[]> {
+    async getCampaignDashboards(authUserId: string, email: string, fullName?: string | null): Promise<CampaignDashboardSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageIdeaGenerators.listByOrganization(context.organizationId)).map((r) => mapIdeaGeneratorSummary(r, maps));
+        return (await databaseService.aagoCampaignDashboard.listByOrganization(context.organizationId)).map((r) => mapCampaignDashboardSummary(r, maps));
     }
 
-    async createIdeaGenerator(authUserId: string, email: string, input: CreateIdeaGeneratorInput, fullName?: string | null): Promise<IdeaGeneratorSummary> {
+    async createCampaignDashboard(authUserId: string, email: string, input: CreateCampaignDashboardInput, fullName?: string | null): Promise<CampaignDashboardSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageIdeaGenerators.create(buildIdeaGeneratorPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create ideaGenerators");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "idea_generators", "create", `IdeaGenerator created`, created.id));
+        const created = await databaseService.aagoCampaignDashboard.create(buildCampaignDashboardPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create campaignDashboard");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "campaign_dashboard", "create", `CampaignDashboard created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapIdeaGeneratorSummary(created, maps);
+        return mapCampaignDashboardSummary(created, maps);
     }
 
-    async getScriptGenerators(authUserId: string, email: string, fullName?: string | null): Promise<ScriptGeneratorSummary[]> {
+    async getContentPerformances(authUserId: string, email: string, fullName?: string | null): Promise<ContentPerformanceSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageScriptGenerators.listByOrganization(context.organizationId)).map((r) => mapScriptGeneratorSummary(r, maps));
+        return (await databaseService.aagoContentPerformance.listByOrganization(context.organizationId)).map((r) => mapContentPerformanceSummary(r, maps));
     }
 
-    async createScriptGenerator(authUserId: string, email: string, input: CreateScriptGeneratorInput, fullName?: string | null): Promise<ScriptGeneratorSummary> {
+    async createContentPerformance(authUserId: string, email: string, input: CreateContentPerformanceInput, fullName?: string | null): Promise<ContentPerformanceSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageScriptGenerators.create(buildScriptGeneratorPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create scriptGenerators");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "script_generators", "create", `ScriptGenerator created`, created.id));
+        const created = await databaseService.aagoContentPerformance.create(buildContentPerformancePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create contentPerformance");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "content_performance", "create", `ContentPerformance created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapScriptGeneratorSummary(created, maps);
+        return mapContentPerformanceSummary(created, maps);
     }
 
-    async getCaptionGenerators(authUserId: string, email: string, fullName?: string | null): Promise<CaptionGeneratorSummary[]> {
+    async getLeadAttributions(authUserId: string, email: string, fullName?: string | null): Promise<LeadAttributionSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageCaptionGenerators.listByOrganization(context.organizationId)).map((r) => mapCaptionGeneratorSummary(r, maps));
+        return (await databaseService.aagoLeadAttribution.listByOrganization(context.organizationId)).map((r) => mapLeadAttributionSummary(r, maps));
     }
 
-    async createCaptionGenerator(authUserId: string, email: string, input: CreateCaptionGeneratorInput, fullName?: string | null): Promise<CaptionGeneratorSummary> {
+    async createLeadAttribution(authUserId: string, email: string, input: CreateLeadAttributionInput, fullName?: string | null): Promise<LeadAttributionSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageCaptionGenerators.create(buildCaptionGeneratorPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create captionGenerators");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "caption_generators", "create", `CaptionGenerator created`, created.id));
+        const created = await databaseService.aagoLeadAttribution.create(buildLeadAttributionPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create leadAttribution");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "lead_attribution", "create", `LeadAttribution created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapCaptionGeneratorSummary(created, maps);
+        return mapLeadAttributionSummary(created, maps);
     }
 
-    async getBlogGenerators(authUserId: string, email: string, fullName?: string | null): Promise<BlogGeneratorSummary[]> {
+    async getGrowthKpis(authUserId: string, email: string, fullName?: string | null): Promise<GrowthKpiSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageBlogGenerators.listByOrganization(context.organizationId)).map((r) => mapBlogGeneratorSummary(r, maps));
+        return (await databaseService.aagoGrowthKpis.listByOrganization(context.organizationId)).map((r) => mapGrowthKpiSummary(r, maps));
     }
 
-    async createBlogGenerator(authUserId: string, email: string, input: CreateBlogGeneratorInput, fullName?: string | null): Promise<BlogGeneratorSummary> {
+    async createGrowthKpi(authUserId: string, email: string, input: CreateGrowthKpiInput, fullName?: string | null): Promise<GrowthKpiSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageBlogGenerators.create(buildBlogGeneratorPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create blogGenerators");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "blog_generators", "create", `BlogGenerator created`, created.id));
+        const created = await databaseService.aagoGrowthKpis.create(buildGrowthKpiPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create growthKpis");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "growth_kpis", "create", `GrowthKpi created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapBlogGeneratorSummary(created, maps);
+        return mapGrowthKpiSummary(created, maps);
     }
 
-    async getSeoAssistants(authUserId: string, email: string, fullName?: string | null): Promise<SeoAssistantSummary[]> {
+    async getRoiDashboards(authUserId: string, email: string, fullName?: string | null): Promise<RoiDashboardSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageSeoAssistants.listByOrganization(context.organizationId)).map((r) => mapSeoAssistantSummary(r, maps));
+        return (await databaseService.aagoRoiDashboard.listByOrganization(context.organizationId)).map((r) => mapRoiDashboardSummary(r, maps));
     }
 
-    async createSeoAssistant(authUserId: string, email: string, input: CreateSeoAssistantInput, fullName?: string | null): Promise<SeoAssistantSummary> {
+    async createRoiDashboard(authUserId: string, email: string, input: CreateRoiDashboardInput, fullName?: string | null): Promise<RoiDashboardSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageSeoAssistants.create(buildSeoAssistantPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create seoAssistants");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "seo_assistants", "create", `SeoAssistant created`, created.id));
+        const created = await databaseService.aagoRoiDashboard.create(buildRoiDashboardPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create roiDashboard");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "roi_dashboard", "create", `RoiDashboard created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapSeoAssistantSummary(created, maps);
+        return mapRoiDashboardSummary(created, maps);
     }
 
-    async getCtaGenerators(authUserId: string, email: string, fullName?: string | null): Promise<CtaGeneratorSummary[]> {
+    async getRecommendationEngines(authUserId: string, email: string, fullName?: string | null): Promise<RecommendationEngineSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageCtaGenerators.listByOrganization(context.organizationId)).map((r) => mapCtaGeneratorSummary(r, maps));
+        return (await databaseService.aagoRecommendationEngine.listByOrganization(context.organizationId)).map((r) => mapRecommendationEngineSummary(r, maps));
     }
 
-    async createCtaGenerator(authUserId: string, email: string, input: CreateCtaGeneratorInput, fullName?: string | null): Promise<CtaGeneratorSummary> {
+    async createRecommendationEngine(authUserId: string, email: string, input: CreateRecommendationEngineInput, fullName?: string | null): Promise<RecommendationEngineSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageCtaGenerators.create(buildCtaGeneratorPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create ctaGenerators");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "cta_generators", "create", `CtaGenerator created`, created.id));
+        const created = await databaseService.aagoRecommendationEngine.create(buildRecommendationEnginePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create recommendationEngine");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "recommendation_engine", "create", `RecommendationEngine created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapCtaGeneratorSummary(created, maps);
+        return mapRecommendationEngineSummary(created, maps);
     }
 
-    async getGrowthMetrics(authUserId: string, email: string, fullName?: string | null): Promise<GrowthMetricSummary[]> {
+    async getCommandCenterMetrics(authUserId: string, email: string, fullName?: string | null): Promise<CommandCenterMetricSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
-        return (await databaseService.aageGrowthMetrics.listByOrganization(context.organizationId)).map(mapGrowthMetricSummary);
+        return (await databaseService.aagoCommandCenterMetrics.listByOrganization(context.organizationId)).map(mapCommandCenterMetricSummary);
     }
 
-    async createGrowthMetric(authUserId: string, email: string, input: CreateGrowthMetricInput, fullName?: string | null): Promise<GrowthMetricSummary> {
+    async createCommandCenterMetric(authUserId: string, email: string, input: CreateCommandCenterMetricInput, fullName?: string | null): Promise<CommandCenterMetricSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageGrowthMetrics.create(buildGrowthMetricPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create growthMetrics");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "growth_metrics", "create", `GrowthMetric created`, created.id));
-        return mapGrowthMetricSummary(created);
+        const created = await databaseService.aagoCommandCenterMetrics.create(buildCommandCenterMetricPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create commandCenterMetrics");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "command_center_metrics", "create", `CommandCenterMetric created`, created.id));
+        return mapCommandCenterMetricSummary(created);
     }
 
-    async getGrowthHealths(authUserId: string, email: string, fullName?: string | null): Promise<GrowthHealthSummary[]> {
+    async getCommandCenterHealths(authUserId: string, email: string, fullName?: string | null): Promise<CommandCenterHealthSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
-        return (await databaseService.aageGrowthHealth.listByOrganization(context.organizationId)).map(mapGrowthHealthSummary);
+        return (await databaseService.aagoCommandCenterHealth.listByOrganization(context.organizationId)).map(mapCommandCenterHealthSummary);
     }
 
-    async createGrowthHealth(authUserId: string, email: string, input: CreateGrowthHealthInput, fullName?: string | null): Promise<GrowthHealthSummary> {
+    async createCommandCenterHealth(authUserId: string, email: string, input: CreateCommandCenterHealthInput, fullName?: string | null): Promise<CommandCenterHealthSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageGrowthHealth.create(buildGrowthHealthPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create growthHealth");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "growth_health", "create", `GrowthHealth created`, created.id));
-        return mapGrowthHealthSummary(created);
+        const created = await databaseService.aagoCommandCenterHealth.create(buildCommandCenterHealthPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create commandCenterHealth");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "command_center_health", "create", `CommandCenterHealth created`, created.id));
+        return mapCommandCenterHealthSummary(created);
     }
 
-    async getContentCalendars(authUserId: string, email: string, fullName?: string | null): Promise<ContentCalendarSummary[]> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) return [];
-        const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageContentCalendar.listByOrganization(context.organizationId)).map((r) => mapContentCalendarSummary(r, maps));
-    }
-
-    async createContentCalendar(authUserId: string, email: string, input: CreateContentCalendarInput, fullName?: string | null): Promise<ContentCalendarSummary> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageContentCalendar.create(buildContentCalendarPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create contentCalendar");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "content_calendar", "create", `ContentCalendar created`, created.id));
-        const maps = await this.getMaps(context.organizationId);
-        return mapContentCalendarSummary(created, maps);
-    }
-
-    async getDraftQueues(authUserId: string, email: string, fullName?: string | null): Promise<DraftQueueSummary[]> {
+    async getMissionStatuss(authUserId: string, email: string, fullName?: string | null): Promise<MissionStatusSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageDraftQueue.listByOrganization(context.organizationId)).map((r) => mapDraftQueueSummary(r, maps));
+        return (await databaseService.aagoMissionStatus.listByOrganization(context.organizationId)).map((r) => mapMissionStatusSummary(r, maps));
     }
 
-    async createDraftQueue(authUserId: string, email: string, input: CreateDraftQueueInput, fullName?: string | null): Promise<DraftQueueSummary> {
+    async createMissionStatus(authUserId: string, email: string, input: CreateMissionStatusInput, fullName?: string | null): Promise<MissionStatusSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageDraftQueue.create(buildDraftQueuePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create draftQueue");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "draft_queue", "create", `DraftQueue created`, created.id));
+        const created = await databaseService.aagoMissionStatus.create(buildMissionStatusPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create missionStatus");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "mission_status", "create", `MissionStatus created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapDraftQueueSummary(created, maps);
+        return mapMissionStatusSummary(created, maps);
     }
 
-    async getApprovalQueues(authUserId: string, email: string, fullName?: string | null): Promise<ApprovalQueueSummary[]> {
+    async getExecutiveSummarys(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveSummarySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aageApprovalQueue.listByOrganization(context.organizationId)).map((r) => mapApprovalQueueSummary(r, maps));
+        return (await databaseService.aagoExecutiveSummaries.listByOrganization(context.organizationId)).map((r) => mapExecutiveSummarySummary(r, maps));
     }
 
-    async createApprovalQueue(authUserId: string, email: string, input: CreateApprovalQueueInput, fullName?: string | null): Promise<ApprovalQueueSummary> {
+    async createExecutiveSummary(authUserId: string, email: string, input: CreateExecutiveSummaryInput, fullName?: string | null): Promise<ExecutiveSummarySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aageApprovalQueue.create(buildApprovalQueuePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create approvalQueue");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "approval_queue", "create", `ApprovalQueue created`, created.id));
+        const created = await databaseService.aagoExecutiveSummaries.create(buildExecutiveSummaryPayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create executiveSummaries");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "executive_summaries", "create", `ExecutiveSummary created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapApprovalQueueSummary(created, maps);
+        return mapExecutiveSummarySummary(created, maps);
     }
 
-    async getPublishingQueues(authUserId: string, email: string, fullName?: string | null): Promise<PublishingQueueSummary[]> {
+    async getOperationalFailures(authUserId: string, email: string, fullName?: string | null): Promise<OperationalFailureSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         const maps = await this.getMaps(context.organizationId);
-        return (await databaseService.aagePublishingQueue.listByOrganization(context.organizationId)).map((r) => mapPublishingQueueSummary(r, maps));
+        return (await databaseService.aagoOperationalFailures.listByOrganization(context.organizationId)).map((r) => mapOperationalFailureSummary(r, maps));
     }
 
-    async createPublishingQueue(authUserId: string, email: string, input: CreatePublishingQueueInput, fullName?: string | null): Promise<PublishingQueueSummary> {
+    async createOperationalFailure(authUserId: string, email: string, input: CreateOperationalFailureInput, fullName?: string | null): Promise<OperationalFailureSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.aagePublishingQueue.create(buildPublishingQueuePayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create publishingQueue");
-        await databaseService.aageAuditLogs.create(buildAageAuditPayload(context.organizationId, "publishing_queue", "create", `PublishingQueue created`, created.id));
+        const created = await databaseService.aagoOperationalFailures.create(buildOperationalFailurePayload(context.organizationId, input));
+        if (!created) throw new Error("Failed to create operationalFailures");
+        await databaseService.aagoAuditLogs.create(buildAagoAuditPayload(context.organizationId, "operational_failures", "create", `OperationalFailure created`, created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapPublishingQueueSummary(created, maps);
+        return mapOperationalFailureSummary(created, maps);
     }
 
     async getAuditLogs(authUserId: string, email: string, fullName?: string | null): Promise<AuditEntry[]> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
-        return (await databaseService.aageAuditLogs.listByOrganization(context.organizationId)).map(mapAuditEntry);
+        return (await databaseService.aagoAuditLogs.listByOrganization(context.organizationId)).map(mapAuditEntry);
     }
 
-    async getGrowthHubOptions(authUserId: string, email: string, fullName?: string | null) {
+    async getOperationsHubOptions(authUserId: string, email: string, fullName?: string | null) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
-        return (await databaseService.aageGrowthHubs.listByOrganization(context.organizationId)).map((r) => ({ id: r.id, name: r.hub_name }));
+        return (await databaseService.aagoOperationsHubs.listByOrganization(context.organizationId)).map((r) => ({ id: r.id, name: r.hub_name }));
     }
 
-    async sdkRunBrandService(authUserId: string, email: string, input: AageSdkRunBrandServiceInput, fullName?: string | null): Promise<AageSdkRunBrandServiceResult> {
+    async sdkRunBrandOsService(authUserId: string, email: string, input: AagoSdkRunBrandOsServiceInput, fullName?: string | null): Promise<AagoSdkRunBrandOsServiceResult> {
         const ifr = createIndustryFrameworkClient(authUserId, email, fullName);
         await ifr.getFrameworkHubs();
         const dfe = createFormEngineClient(authUserId, email, fullName);
         await dfe.getFormHubs();
-        const company = createCompanyFoundationClient(authUserId, email, fullName);
-        await company.getCompanyHubs();
         await crmService.getClients(authUserId, email, fullName);
-        const created = await this.createBrandProfile(authUserId, email, { growthHubId: input.growthHubId, profileKey: input.profileKey, profileName: input.profileName }, fullName);
-        return { profileId: created.id, profileKey: created.profileKey, status: created.status };
+        const created = await this.createBrandKnowledgeBase(authUserId, email, { operationsHubId: input.operationsHubId, knowledgeKey: input.knowledgeKey, knowledgeTitle: input.knowledgeTitle }, fullName);
+        return { knowledgeId: created.id, knowledgeKey: created.knowledgeKey, status: created.status };
     }
 
-    async sdkRunContentFoundationService(authUserId: string, email: string, input: AageSdkRunContentFoundationServiceInput, fullName?: string | null): Promise<AageSdkRunContentFoundationServiceResult> {
+    async sdkRunCreativeStudioService(authUserId: string, email: string, input: AagoSdkRunCreativeStudioServiceInput, fullName?: string | null): Promise<AagoSdkRunCreativeStudioServiceResult> {
         const dwe = createWorkflowEngineClient(authUserId, email, fullName);
         await dwe.getWorkflowHubs();
         const dde = createDocumentEngineClient(authUserId, email, fullName);
         await dde.getDocumentHubs();
         const comm = createCommunicationHubClient(authUserId, email, fullName);
         await comm.getCommunicationHubs();
-        const created = await this.createYoutubeTemplate(authUserId, email, { growthHubId: input.growthHubId, templateKey: input.templateKey, templateName: input.templateName }, fullName);
-        return { templateId: created.id, templateKey: created.templateKey, status: created.status };
+        const created = await this.createVideoProject(authUserId, email, { operationsHubId: input.operationsHubId, projectKey: input.projectKey, projectName: input.projectName }, fullName);
+        return { projectId: created.id, projectKey: created.projectKey, status: created.status };
     }
 
-    async sdkRunMediaFoundationService(authUserId: string, email: string, input: AageSdkRunMediaFoundationServiceInput, fullName?: string | null): Promise<AageSdkRunMediaFoundationServiceResult> {
+    async sdkRunDistributionService(authUserId: string, email: string, input: AagoSdkRunDistributionServiceInput, fullName?: string | null): Promise<AagoSdkRunDistributionServiceResult> {
         const bpf = createBusinessProcessClient(authUserId, email, fullName);
         await bpf.getProcessHubs();
         const saas = createCommercialSaasClient(authUserId, email, fullName);
@@ -783,27 +779,29 @@ export class GrowthEngineService {
         await intg.getIntegrationHubs();
         const launch = createLaunchFoundationClient(authUserId, email, fullName);
         await launch.getLaunchHubs();
+        const company = createCompanyFoundationClient(authUserId, email, fullName);
+        await company.getCompanyHubs();
         const csd = createCustomerSuccessDeliveryClient(authUserId, email, fullName);
         await csd.getDeliveryHubs();
         const egp = createEnterpriseGovernancePlatformClient(authUserId, email, fullName);
         await egp.getGovernanceHubs();
+        await crmService.getDeals(authUserId, email, fullName);
+        const created = await this.createDistributionContentQueue(authUserId, email, { operationsHubId: input.operationsHubId, queueKey: input.queueKey, queueTitle: input.queueTitle }, fullName);
+        return { queueId: created.id, queueKey: created.queueKey, status: created.status };
+    }
+
+    async sdkRunGrowthIntelligenceService(authUserId: string, email: string, input: AagoSdkRunGrowthIntelligenceServiceInput, fullName?: string | null): Promise<AagoSdkRunGrowthIntelligenceServiceResult> {
         const eip = createEnterpriseIntelligencePlatformClient(authUserId, email, fullName);
         await eip.getIntelligenceHubs();
-        await crmService.getDeals(authUserId, email, fullName);
-        const created = await this.createImageAsset(authUserId, email, { growthHubId: input.growthHubId, assetKey: input.assetKey, assetName: input.assetName }, fullName);
-        return { assetId: created.id, assetKey: created.assetKey, status: created.status };
-    }
-
-    async sdkRunContentEngineService(authUserId: string, email: string, input: AageSdkRunContentEngineServiceInput, fullName?: string | null): Promise<AageSdkRunContentEngineServiceResult> {
         const ai = createAiOrchestrationClient(authUserId, email, fullName);
         await ai.getAgents();
-        const created = await this.createIdeaGenerator(authUserId, email, { growthHubId: input.growthHubId, generatorKey: input.generatorKey, generatorName: input.generatorName }, fullName);
-        return { generatorId: created.id, generatorKey: created.generatorKey, status: created.status };
+        const created = await this.createCampaignDashboard(authUserId, email, { operationsHubId: input.operationsHubId, dashboardKey: input.dashboardKey, dashboardName: input.dashboardName }, fullName);
+        return { dashboardId: created.id, dashboardKey: created.dashboardKey, status: created.status };
     }
 
-    async sdkRunFounderDashboardService(authUserId: string, email: string, input: AageSdkRunFounderDashboardServiceInput, fullName?: string | null): Promise<AageSdkRunFounderDashboardServiceResult> {
-        const created = await this.createPublishingQueue(authUserId, email, { growthHubId: input.growthHubId, queueKey: input.queueKey, queueTitle: input.queueTitle }, fullName);
-        return { queueId: created.id, queueKey: created.queueKey, status: created.status };
+    async sdkRunCommandCenterService(authUserId: string, email: string, input: AagoSdkRunCommandCenterServiceInput, fullName?: string | null): Promise<AagoSdkRunCommandCenterServiceResult> {
+        const created = await this.createMissionStatus(authUserId, email, { operationsHubId: input.operationsHubId, missionKey: input.missionKey, missionName: input.missionName }, fullName);
+        return { missionId: created.id, missionKey: created.missionKey, status: created.status };
     }
 }
 
