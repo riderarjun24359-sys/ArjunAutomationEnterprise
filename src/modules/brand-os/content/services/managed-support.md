@@ -45,11 +45,13 @@ Managed Support keeps your Arjun Automation OS deployment healthy, secure, and e
 
 ---
 
-## Onboarding & Contract
+## Timeline
 
 - **Onboarding:** AI-accelerated support channel setup, monitoring configuration, and runbook handoff after contract signing
 - **Ongoing:** Annual contract with monthly reporting and quarterly QBRs
 - **Renewal review:** 60 days before contract end
+
+Delivery follows the AI-First Delivery Policy for initial support configuration; ongoing managed support operates on subscription terms.
 
 ---
 
