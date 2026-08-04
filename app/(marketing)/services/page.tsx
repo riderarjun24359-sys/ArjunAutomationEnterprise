@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
+import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -45,37 +46,29 @@ const services = [
 export default function ServicesPage() {
     return (
         <>
-            <section className="bg-indigo-50 py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <h1 className="text-4xl font-semibold tracking-tight text-indigo-950">Services</h1>
-                    <p className="mt-4 max-w-3xl text-lg text-slate-600">
-                        Structured delivery from discovery to hypercare — with transparent timelines and milestone-based billing.
-                    </p>
+            <PremiumPageShell
+                title="Services"
+                description="Structured delivery from discovery to hypercare — with transparent timelines and milestone-based billing."
+            >
+                <div className="grid gap-8 lg:grid-cols-2">
+                    {services.map((service) => (
+                        <article key={service.title} className="premium-glass rounded-2xl p-8">
+                            <h2 className="text-xl font-semibold">{service.title}</h2>
+                            <p className="mt-3 text-[var(--premium-fg-muted)] leading-relaxed">{service.description}</p>
+                            <p className="mt-4 text-sm font-medium text-indigo-700 dark:text-indigo-400">Timeline: {service.timeline}</p>
+                            <h3 className="mt-4 text-sm font-semibold">Key Deliverables</h3>
+                            <ul className="mt-2 space-y-1">
+                                {service.deliverables.map((d) => (
+                                    <li key={d} className="flex items-center gap-2 text-sm text-[var(--premium-fg-muted)]">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-indigo-700" aria-hidden="true" />
+                                        {d}
+                                    </li>
+                                ))}
+                            </ul>
+                        </article>
+                    ))}
                 </div>
-            </section>
-
-            <section className="py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <div className="grid gap-8 lg:grid-cols-2">
-                        {services.map((service) => (
-                            <article key={service.title} className="rounded-2xl border border-slate-200 p-8">
-                                <h2 className="text-xl font-semibold text-indigo-950">{service.title}</h2>
-                                <p className="mt-3 text-slate-600 leading-relaxed">{service.description}</p>
-                                <p className="mt-4 text-sm font-medium text-indigo-700">Timeline: {service.timeline}</p>
-                                <h3 className="mt-4 text-sm font-semibold text-indigo-950">Key Deliverables</h3>
-                                <ul className="mt-2 space-y-1">
-                                    {service.deliverables.map((d) => (
-                                        <li key={d} className="flex items-center gap-2 text-sm text-slate-600">
-                                            <span className="h-1.5 w-1.5 rounded-full bg-indigo-700" aria-hidden="true" />
-                                            {d}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </article>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            </PremiumPageShell>
 
             <CtaSection />
         </>
