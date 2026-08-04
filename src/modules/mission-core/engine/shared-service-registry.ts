@@ -1,12 +1,17 @@
 import { SHARED_SERVICES } from "../constants";
 import type { SharedService } from "../types";
+import { createSecurityCenterClient } from "@/src/modules/security-center/sdk";
 
 const services = new Map<string, SharedService>();
+const securityClient = createSecurityCenterClient();
 
 const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unknown>> = {
     auth: {
         validateSession: () => ({ valid: true, userId: "platform-user" }),
-        getPermissions: () => ({ roles: ["admin", "operator"] }),
+        getPermissions: () => ({ roles: securityClient.getRoles() }),
+        checkPermission: (role: unknown, permission: unknown) =>
+            securityClient.hasPermission(role as import("@/src/modules/security-center/types").SecurityRole, permission as import("@/src/modules/security-center/types").Permission),
+        validateToken: (token: unknown) => securityClient.validateToken(String(token)),
     },
     notifications: {
         send: (payload: unknown) => ({ sent: true, channel: "email", payload }),

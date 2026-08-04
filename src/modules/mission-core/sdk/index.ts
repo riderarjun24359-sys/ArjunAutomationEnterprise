@@ -100,6 +100,14 @@ export class MissionCoreClient {
         return missionCoreService.enforceOrchestrationRule(from, to);
     }
 
+    enforceSecurityPolicy(
+        capabilityId: string,
+        action: string,
+        userContext: { userId: string; email: string; role: string; organizationId?: string | null },
+    ) {
+        return missionCoreService.enforceSecurityPolicy(capabilityId, action, userContext);
+    }
+
     executeWorkflow(input: ExecuteWorkflowInput): WorkflowExecution {
         return missionCoreService.executeWorkflow(input);
     }

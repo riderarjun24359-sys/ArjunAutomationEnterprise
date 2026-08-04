@@ -117,6 +117,17 @@ export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
         apis: ["invoicing", "payments", "revenue"],
         events: ["InvoicePaid", "PaymentReceived"],
     },
+    {
+        id: "securityCenter",
+        name: "Security Center",
+        route: "/security-center",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "securityCenter", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["enterpriseIdentity"],
+        apis: ["auth", "mfa", "rbac", "audit", "threats", "secrets"],
+        events: ["SecurityActionEnforced", "ThreatDetected", "AuditLogged"],
+    },
 ];
 
 export const PLATFORM_EVENTS = [
@@ -143,7 +154,7 @@ export const PLATFORM_EVENTS = [
 ] as const;
 
 export const SHARED_SERVICES = [
-    { id: "auth", name: "Authentication", module: "enterprise-identity", status: "available" as const },
+    { id: "auth", name: "Authentication", module: "security-center", status: "available" as const },
     { id: "notifications", name: "Notifications", module: "communication-hub", status: "available" as const },
     { id: "documentEngine", name: "Document Engine", module: "document-engine", status: "available" as const },
     { id: "gci", name: "Global Content Intelligence", module: "gci", status: "available" as const },

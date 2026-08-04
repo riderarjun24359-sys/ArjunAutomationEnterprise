@@ -5,6 +5,7 @@ import * as eventBus from "../engine/event-bus";
 import * as aiDecisionEngine from "../engine/ai-decision-engine";
 import * as sharedServiceRegistry from "../engine/shared-service-registry";
 import { ORCHESTRATION_RULES, validateNoDirectCapabilityCall } from "../lib/orchestration-rules";
+import { createSecurityCenterClient } from "@/src/modules/security-center/sdk";
 import type {
     AiDecision,
     AiDecisionContext,
@@ -176,6 +177,21 @@ export class MissionCoreService {
 
     enforceOrchestrationRule(from: string, to: string): void {
         validateNoDirectCapabilityCall(from, to);
+    }
+
+    enforceSecurityPolicy(
+        capabilityId: string,
+        action: string,
+        userContext: { userId: string; email: string; role: string; organizationId?: string | null },
+    ): { allowed: boolean; capabilityId: string; action: string; reason?: string | null } {
+        this.initializePlatform();
+        const client = createSecurityCenterClient();
+        return client.enforceViaMissionCore(action, {
+            userId: userContext.userId,
+            email: userContext.email,
+            role: userContext.role as import("@/src/modules/security-center/types").SecurityRole,
+            organizationId: userContext.organizationId,
+        });
     }
 
     /** @deprecated Use createAndRunWorkflow — kept for client-success bridge */

@@ -55,6 +55,7 @@ export const ROUTES = {
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
+    securityCenter: "/security-center",
     companyLaunchKit: "/company-launch-kit",
     analytics: "/analytics",
     automation: "/automation",
