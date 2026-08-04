@@ -33,7 +33,7 @@ A world where every organization — from a 10-location restaurant group to a re
 | **Enterprise Consulting** | Operating model design, automation strategy, transformation roadmap |
 | **Managed Support** | 24/7 platform monitoring, updates, and customer success |
 
-See the **Service Library** for detailed scope, timelines, and pricing structures.
+See the **Service Library** for detailed scope, delivery approach, and pricing structures.
 
 ---
 
@@ -66,45 +66,27 @@ Pre-built Restaurant OS, Hospital OS, School OS, and Retail OS packs include wor
 ### 4. Security by Architecture
 Row Level Security on every table, tenant isolation, enterprise identity with MFA, governance and compliance modules — not optional add-ons.
 
-### 5. Proven Delivery Methodology
-Structured discovery → configuration → UAT → go-live → hypercare. Average enterprise go-live: **90 days**.
+### 5. AI-First Delivery Methodology
+Structured AI-first delivery: requirement analysis → solution generation → expert review → customer validation → secure production deployment. Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
 ### 6. Transparent Partnership
 Fixed-scope proposals, milestone-based billing, dedicated customer success manager, and SLA-backed managed support.
 
 ---
 
-## Delivery Methodology
+## AI-First Delivery Policy
 
-### Phase 1: Discover (Week 1–2)
-- Stakeholder workshops and discovery questionnaire
-- Current-state process mapping
-- Module and industry pack selection
-- Success criteria definition
+Every engagement follows:
 
-### Phase 2: Design (Week 3–4)
-- Solution architecture and integration map
-- Data migration plan
-- UAT test scenarios
-- Training plan
+1. **AI Requirement Analysis** — Understand requirements, systems, integrations, and success criteria.
+2. **AI Solution Generation** — Generate the first complete working solution using our internal AI platform.
+3. **Expert Engineering Review** — Architecture review · Security review · Business validation · UX validation
+4. **Customer Validation** — Customer feedback · Minor revisions · Approval
+5. **Secure Production Deployment** — Deployment · Testing · Monitoring · Documentation
 
-### Phase 3: Configure & Build (Week 5–8)
-- Platform provisioning and tenant setup
-- Module configuration and workflow design
-- AI worker activation
-- Integration with existing systems (ERP, POS, etc.)
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
-### Phase 4: Validate (Week 9–10)
-- User acceptance testing
-- Security and performance validation
-- Training delivery
-- Go-live readiness checklist
-
-### Phase 5: Launch & Hypercare (Week 11–12+)
-- Production cutover
-- 30-day hypercare with daily standups
-- Transition to managed support
-- Success metrics review at Day 30, 60, 90
+**Post-Launch:** 30-day hypercare with daily standups, transition to managed support, and success metrics review at Day 30, 60, 90.
 
 ---
 

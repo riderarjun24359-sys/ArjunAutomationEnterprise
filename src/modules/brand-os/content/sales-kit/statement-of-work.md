@@ -46,17 +46,21 @@
 
 ---
 
-## 4. Timeline
+## 4. AI-First Delivery Policy
 
-| Phase | Start | End | Duration |
-|-------|-------|-----|----------|
-| Discover | [Date] | [Date] | 2 weeks |
-| Design | [Date] | [Date] | 2 weeks |
-| Configure | [Date] | [Date] | 4 weeks |
-| Validate | [Date] | [Date] | 2 weeks |
-| Launch | [Date] | [Date] | 2 weeks |
+Every engagement follows:
 
-**Target Go-Live:** [Date]
+| Step | Phase | Deliverables |
+|------|-------|--------------|
+| 1 | AI Requirement Analysis | Discovery complete; requirements and success criteria documented |
+| 2 | AI Solution Generation | First working solution generated on internal AI platform |
+| 3 | Expert Engineering Review | Architecture, security, and readiness validation passed |
+| 4 | Customer Validation | UAT complete; training delivered; client approval received |
+| 5 | Secure Production Deployment | Production cutover; hypercare initiated; documentation delivered |
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
+
+**Target Production Milestone:** [Date] (finalized after requirement analysis)
 
 ---
 

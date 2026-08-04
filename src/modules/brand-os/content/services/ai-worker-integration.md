@@ -47,14 +47,17 @@ This service configures, trains, and integrates AI workers into your delivery an
 
 ## Timeline
 
-| Phase | Duration | Activities |
-|-------|----------|------------|
-| Assess | 1 week | Worker selection, workflow mapping, knowledge audit |
-| Configure | 2 weeks | Worker activation, knowledge base, approval rules |
-| Integrate | 1–2 weeks | Pipeline embedding, trigger configuration |
-| Train & Tune | 1 week | Team training, initial tuning, performance baseline |
+Every engagement follows:
 
-**Total: 4–6 weeks**
+| Step | Phase | Activities |
+|------|-------|------------|
+| 1 | AI Requirement Analysis | Worker selection, workflow mapping, knowledge audit |
+| 2 | AI Solution Generation | Worker activation, knowledge base, approval rules |
+| 3 | Expert Engineering Review | Pipeline integration validation, security and governance gates |
+| 4 | Customer Validation | Team training, initial tuning, performance baseline |
+| 5 | Secure Production Deployment | Production embedding, monitoring, runbook handoff |
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
 ---
 

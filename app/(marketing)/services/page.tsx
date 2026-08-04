@@ -10,30 +10,32 @@ export const metadata: Metadata = buildMetadata({
     path: "/services",
 });
 
+import { AI_DELIVERY_SERVICE_LABEL } from "@/src/constants/ai-delivery-model";
+
 const services = [
     {
         title: "Platform Implementation",
         description: "Full Arjun Automation OS deployment, configuration, and integration with your existing systems.",
-        deliverables: ["Tenant provisioning", "Module configuration", "Integration setup", "UAT and go-live support"],
-        timeline: "8–12 weeks",
+        deliverables: ["Tenant provisioning", "Module configuration", "Integration setup", "UAT and production deployment"],
+        timeline: AI_DELIVERY_SERVICE_LABEL,
     },
     {
         title: "Industry Pack Deployment",
-        description: "Restaurant, Hospital, School, or Retail OS go-live with industry-specific workflows and dashboards.",
+        description: "Restaurant, Hospital, School, or Retail OS with industry-specific workflows and dashboards.",
         deliverables: ["Industry pack activation", "Location setup", "Workflow configuration", "Staff training"],
-        timeline: "6–10 weeks",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
     },
     {
         title: "AI Worker Integration",
         description: "Activate BA, Solution Architect, Dev Factory, QA, DevOps, and Customer Success AI agents.",
         deliverables: ["Worker configuration", "Approval workflows", "Audit trail setup", "Team training"],
-        timeline: "2–4 weeks",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
     },
     {
         title: "Enterprise Consulting",
         description: "Operating model design, automation strategy, and transformation roadmap for complex organizations.",
         deliverables: ["Current-state assessment", "Target architecture", "Roadmap and business case", "Executive workshops"],
-        timeline: "2–6 weeks",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
     },
     {
         title: "Managed Support",
@@ -48,14 +50,14 @@ export default function ServicesPage() {
         <>
             <PremiumPageShell
                 title="Services"
-                description="Structured delivery from discovery to hypercare — with transparent timelines and milestone-based billing."
+                description="AI-first delivery from requirement analysis to secure production deployment — milestone-based billing after validation."
             >
                 <div className="grid gap-8 lg:grid-cols-2">
                     {services.map((service) => (
                         <article key={service.title} className="premium-glass rounded-2xl p-8">
                             <h2 className="text-xl font-semibold">{service.title}</h2>
                             <p className="mt-3 text-[var(--premium-fg-muted)] leading-relaxed">{service.description}</p>
-                            <p className="mt-4 text-sm font-medium text-indigo-700 dark:text-indigo-400">Timeline: {service.timeline}</p>
+                            <p className="mt-4 text-sm font-medium text-indigo-700 dark:text-indigo-400">Delivery: {service.timeline}</p>
                             <h3 className="mt-4 text-sm font-semibold">Key Deliverables</h3>
                             <ul className="mt-2 space-y-1">
                                 {service.deliverables.map((d) => (

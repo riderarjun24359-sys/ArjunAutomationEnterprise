@@ -47,11 +47,13 @@ This is ideal for organizations in the planning phase or those needing expert gu
 
 ## Timeline
 
-| Engagement | Duration | Output |
-|------------|----------|--------|
-| **Rapid Assessment** | 2 weeks | Current-state report + top 5 recommendations |
-| **Operating Model Design** | 4–6 weeks | TOM document + roadmap |
-| **Full Transformation Advisory** | 6–8 weeks | Complete package including TCO and change plan |
+Every engagement follows the five-step AI-first delivery model. Delivery roadmap finalized after discovery scope and stakeholder availability are confirmed.
+
+| Engagement | Output |
+|------------|--------|
+| **Rapid Assessment** | Current-state report + top 5 recommendations |
+| **Operating Model Design** | TOM document + roadmap |
+| **Full Transformation Advisory** | Complete package including TCO and change plan |
 
 ---
 
@@ -67,11 +69,11 @@ This is ideal for organizations in the planning phase or those needing expert gu
 
 ## Pricing Structure
 
-| Engagement | Duration | Indicative Range |
-|------------|----------|------------------|
-| **Rapid Assessment** | 2 weeks | $15,000 – $25,000 |
-| **Operating Model Design** | 4–6 weeks | $35,000 – $60,000 |
-| **Full Transformation Advisory** | 6–8 weeks | $60,000 – $100,000 |
+| Engagement | Indicative Range |
+|------------|------------------|
+| **Rapid Assessment** | $15,000 – $25,000 |
+| **Operating Model Design** | $35,000 – $60,000 |
+| **Full Transformation Advisory** | $60,000 – $100,000 |
 
 - Billed weekly or at milestones (agreed in SOW)
 - Travel expenses billed at cost if on-site required

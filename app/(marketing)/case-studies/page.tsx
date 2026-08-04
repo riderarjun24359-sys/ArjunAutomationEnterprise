@@ -15,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
 const caseStudies = [
     {
         slug: "school-management",
-        title: "12-Campus School Chain Unified in 90 Days",
+        title: "12-Campus School Chain Unified on One Platform",
         industry: "Education",
         client: "Multi-campus education group, 8,000+ students",
         challenge: PORTFOLIO_ITEMS.find((p) => p.slug === "school-management")!.challenge,

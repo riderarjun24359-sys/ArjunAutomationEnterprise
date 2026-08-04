@@ -22,7 +22,7 @@ To democratize enterprise automation by delivering an integrated operating syste
 
 ## Vision
 
-A world where every business, regardless of size or industry, operates on intelligent automation — where humans focus on strategy and creativity while AI workers handle execution, and where launching a new digital operation takes weeks, not years.
+A world where every business, regardless of size or industry, operates on intelligent automation — where humans focus on strategy and creativity while AI workers handle execution, and where launching a new digital operation is AI-accelerated without sacrificing enterprise rigor.
 
 ---
 
@@ -55,7 +55,7 @@ For mid-market and enterprise organizations that need to modernize operations wi
 
 - **Unified Stack** — CRM, projects, finance, HR, inventory, and 40+ enterprise modules in one shell.
 - **AI Workers** — Pre-built BA, Solution Architect, Dev Factory, QA, DevOps, and Customer Success agents.
-- **Industry Packs** — Restaurant OS, Hospital OS, School OS, Retail OS — deploy in weeks.
+- **Industry Packs** — Restaurant OS, Hospital OS, School OS, Retail OS — AI-accelerated deployment.
 - **Enterprise Governance** — RLS, audit logs, compliance, and tenant isolation built in.
 - **Founder-Grade Intelligence** — Executive dashboards, KPI engines, and growth tooling included.
 
@@ -105,7 +105,7 @@ For mid-market and enterprise organizations that need to modernize operations wi
 ### Persona 3: Elena — The Transformation Founder
 - **Role:** CEO launching a hospital network in emerging markets
 - **Pain:** Cannot afford 18-month custom build; needs compliance-ready foundation
-- **Goal:** Go-live in 90 days with patient, clinical, and finance modules
+- **Goal:** Secure production deployment with patient, clinical, and finance modules via AI-first delivery
 - **Decision Driver:** Industry pack depth, managed support, total cost of ownership
 
 ---
@@ -137,7 +137,7 @@ For mid-market and enterprise organizations that need to modernize operations wi
 
 ### Example
 ❌ *"Our solution leverages synergistic AI capabilities to potentially optimize workflows."*
-✅ *"Deploy AI workers across your delivery pipeline in two weeks. BA agents draft requirements; Dev Factory generates code; QA agents run test suites — all auditable."*
+✅ *"Deploy AI workers across your delivery pipeline with AI-accelerated activation. BA agents draft requirements; Dev Factory generates code; QA agents run test suites — all auditable."*
 
 ---
 
@@ -146,7 +146,7 @@ For mid-market and enterprise organizations that need to modernize operations wi
 1. **Lead with the outcome** — Start with what the reader gains, not what we built.
 2. **Use the client's language** — Mirror industry terms (patient, guest, student) not internal codenames.
 3. **One idea per paragraph** — Especially in proposals and sales collateral.
-4. **Quantify when possible** — "40+ modules," "90-day go-live," "RLS on every table."
+4. **Quantify when possible** — "40+ modules," "AI-accelerated delivery," "RLS on every table."
 5. **Avoid acronyms on first use** — Spell out, then abbreviate: "Row Level Security (RLS)."
 6. **Active voice** — "We deploy" not "Deployment is performed."
 7. **Consistent naming** — Always "Arjun Automation" (not "Arjun," "AA," or "the platform" alone in formal docs).
@@ -165,7 +165,7 @@ For mid-market and enterprise organizations that need to modernize operations wi
 - **Proof Points:** BA, Architect, Dev, QA, DevOps, CS agents with audit trails
 
 ### Pillar 3: Industry-Ready Speed
-- **Message:** Go live in weeks with pre-built industry operating systems.
+- **Message:** Go live with AI-accelerated delivery using pre-built industry operating systems.
 - **Proof Points:** Restaurant, Hospital, School, Retail OS packs
 
 ### Pillar 4: Enterprise Trust
@@ -177,10 +177,10 @@ For mid-market and enterprise organizations that need to modernize operations wi
 ## Elevator Pitch
 
 **30-Second Version:**
-Arjun Automation is the enterprise operating system for companies that have outgrown spreadsheets and point tools. We combine CRM, projects, finance, AI workers, and industry-specific modules — like Restaurant OS and Hospital OS — into one secure platform. Most clients go live in 90 days. We handle the complexity so you can focus on growth.
+Arjun Automation is the enterprise operating system for companies that have outgrown spreadsheets and point tools. We combine CRM, projects, finance, AI workers, and industry-specific modules — like Restaurant OS and Hospital OS — into one secure platform. AI-generated first version within hours. We handle the complexity so you can focus on growth.
 
 **60-Second Version:**
-Mid-market and enterprise organizations face the same challenge: they need enterprise capabilities but can't afford 18-month custom builds or the integration debt of dozens of SaaS tools. Arjun Automation OS solves this with a unified platform — 40+ business modules, AI workers for delivery and operations, and industry packs for restaurants, healthcare, education, and retail. Everything runs on enterprise-grade security with tenant isolation and full audit trails. Whether you're a COO scaling locations, a CTO consolidating internal tools, or a founder launching a new operation, we get you to production in weeks, not years — with managed support to keep you running.
+Mid-market and enterprise organizations face the same challenge: they need enterprise capabilities but can't afford 18-month custom builds or the integration debt of dozens of SaaS tools. Arjun Automation OS solves this with a unified platform — 40+ business modules, AI workers for delivery and operations, and industry packs for restaurants, healthcare, education, and retail. Everything runs on enterprise-grade security with tenant isolation and full audit trails. Whether you're a COO scaling locations, a CTO consolidating internal tools, or a founder launching a new operation, we get you to production with AI-accelerated delivery — with managed support to keep you running.
 
 ---
 

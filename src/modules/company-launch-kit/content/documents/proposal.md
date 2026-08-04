@@ -16,10 +16,10 @@
 
 ## 1. Executive Summary
 
-Arjun Automation recommends a unified platform implementation to address [Client Name]'s operational challenges. By deploying Arjun Automation OS with [recommended modules/industry pack], we will deliver measurable outcomes within [X] weeks — including [specific outcome 1], [specific outcome 2], and [specific outcome 3].
+Arjun Automation recommends a unified platform implementation to address [Client Name]'s operational challenges. By deploying Arjun Automation OS with [recommended modules/industry pack], we will deliver measurable outcomes through AI-accelerated delivery — including [specific outcome 1], [specific outcome 2], and [specific outcome 3].
 
 **Recommended Engagement:** [Service Name]  
-**Estimated Timeline:** [X weeks]  
+**Delivery Model:** AI-First Delivery Policy — roadmap finalized after requirement analysis and integration assessment.  
 **Investment:** See Section 5
 
 ---
@@ -30,7 +30,7 @@ Arjun Automation recommends a unified platform implementation to address [Client
 [Summary from discovery — pain points, existing systems, team structure]
 
 ### Desired Future State
-[Client's stated goals and success criteria for 90 days and 12 months]
+[Client's stated goals and success criteria for first production milestone and 12 months]
 
 ### Key Challenges
 1. [Challenge 1]
@@ -62,14 +62,17 @@ Deploy Arjun Automation OS with [modules/packs] on a dedicated tenant with Row L
 
 ---
 
-## 4. Timeline & Milestones
+## 4. AI-First Delivery Policy & Milestones
 
-| Milestone | Week | Deliverable | Payment Trigger |
-|-----------|------|-------------|-----------------|
-| Kickoff | 1 | Project charter signed | 40% |
-| Design Complete | 4 | Architecture & migration plan | — |
-| UAT Start | 8 | Configured platform ready for testing | 30% |
-| Go-Live | 10–12 | Production cutover | 30% |
+| Step | Phase | Deliverable | Payment Trigger |
+|------|-------|-------------|-----------------|
+| 1 | AI Requirement Analysis | Project charter signed; discovery complete | 40% |
+| 2 | AI Solution Generation | First working solution delivered | — |
+| 3 | Expert Engineering Review | Architecture & migration plan approved | — |
+| 4 | Customer Validation | UAT complete; client approval received | 30% |
+| 5 | Secure Production Deployment | Production cutover accepted | 30% |
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
 ---
 
@@ -93,14 +96,14 @@ Annual platform subscription quoted separately.
 - **AI-Native** — Workers that execute with audit trails
 - **Industry Depth** — Pre-built OS packs for your vertical
 - **Security First** — RLS, tenant isolation, governance built in
-- **90-Day Go-Live** — Structured methodology with hypercare
+- **AI-First Delivery** — Structured five-step policy with hypercare
 
 ---
 
 ## 7. Next Steps
 
 1. Review and sign this proposal
-2. Schedule kickoff workshop (Week 1)
+2. Schedule kickoff workshop after contract signing
 3. Complete discovery questionnaire
 4. Begin platform provisioning
 

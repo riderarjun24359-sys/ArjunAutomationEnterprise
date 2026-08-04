@@ -49,7 +49,7 @@ export const DEFAULT_QUOTATION_TEMPLATE = `# Quotation Template
 | Milestone | % | Amount | Due |
 |-----------|---|--------|-----|
 | Contract Signing | 40% | \$[Amount] | Upon SOW execution |
-| UAT Commencement | 30% | \$[Amount] | Week [X] |
+| UAT Commencement | 30% | \$[Amount] | Upon UAT environment ready |
 | Go-Live | 30% | \$[Amount] | Production cutover |
 
 ---

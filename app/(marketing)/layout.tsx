@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     ...buildMetadata({
         title: "Arjun Automation — Enterprise Automation. Without the Enterprise Wait.",
         description:
-            "Arjun Automation OS unifies CRM, projects, finance, AI workers, and industry packs into one secure platform. Most clients go live in 90 days.",
+            "Arjun Automation OS unifies CRM, projects, finance, AI workers, and industry packs into one secure platform. AI-generated first version within hours.",
         path: "/",
     }),
     ...(env.NEXT_PUBLIC_GSC_VERIFICATION

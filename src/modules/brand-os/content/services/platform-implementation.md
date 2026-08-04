@@ -39,7 +39,7 @@ This service transforms fragmented tools and manual processes into a unified, AI
 ## Benefits
 
 - **Single source of truth** across sales, delivery, finance, and operations
-- **90-day average go-live** vs. 12–18 months for custom builds
+- **AI-accelerated delivery** vs. 12–18 months for custom builds
 - **Enterprise security** with RLS, audit logs, and tenant isolation from day one
 - **AI-ready foundation** — activate AI workers immediately after go-live
 - **Reduced TCO** — one platform subscription vs. 10+ point solutions
@@ -48,15 +48,15 @@ This service transforms fragmented tools and manual processes into a unified, AI
 
 ## Timeline
 
-| Phase | Duration | Activities |
-|-------|----------|------------|
-| Discover | 2 weeks | Workshops, process mapping, module selection |
-| Design | 2 weeks | Architecture, migration plan, UAT scenarios |
-| Configure | 4 weeks | Tenant setup, module config, integrations |
-| Validate | 2 weeks | UAT, training, readiness review |
-| Launch | 2 weeks | Cutover, hypercare, handoff |
+Every engagement follows:
 
-**Total: 8–12 weeks** (varies by module count and integration complexity)
+1. **AI Requirement Analysis** — Workshops, process mapping, module selection
+2. **AI Solution Generation** — First working solution on our internal AI platform (hours instead of weeks)
+3. **Expert Engineering Review** — Architecture, security, and readiness validation
+4. **Customer Validation** — UAT, training, feedback, and approval
+5. **Secure Production Deployment** — Cutover, monitoring, documentation, and hypercare
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability. Delivery roadmap is finalized after technical discovery and integration assessment.
 
 ---
 

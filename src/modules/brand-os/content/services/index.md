@@ -6,12 +6,12 @@
 
 ## Service Catalog
 
-| Service | Best For | Typical Timeline |
+| Service | Best For | Delivery |
 |---------|----------|------------------|
-| [Platform Implementation](./platform-implementation.md) | Organizations adopting the full Arjun Automation OS | 8–12 weeks |
-| [Industry Pack Deployment](./industry-pack-deployment.md) | Vertical-specific go-live (Restaurant, Hospital, School, Retail) | 6–10 weeks |
-| [AI Worker Integration](./ai-worker-integration.md) | Teams activating AI agents across delivery pipelines | 4–6 weeks |
-| [Enterprise Consulting](./enterprise-consulting.md) | Pre-platform strategy, operating model, and roadmap | 2–8 weeks |
+| [Platform Implementation](./platform-implementation.md) | Organizations adopting the full Arjun Automation OS | AI-accelerated |
+| [Industry Pack Deployment](./industry-pack-deployment.md) | Vertical-specific production deployment (Restaurant, Hospital, School, Retail) | AI-accelerated |
+| [AI Worker Integration](./ai-worker-integration.md) | Teams activating AI agents across delivery pipelines | AI-accelerated |
+| [Enterprise Consulting](./enterprise-consulting.md) | Pre-platform strategy, operating model, and roadmap | AI-accelerated |
 | [Managed Support](./managed-support.md) | Post-go-live operations, monitoring, and success | Ongoing (annual) |
 
 ---
@@ -27,7 +27,7 @@
 
 ## Engagement Models
 
-- **Fixed Scope** — Defined deliverables, timeline, and price (recommended for Platform Implementation and Industry Packs)
+- **Fixed Scope** — Defined deliverables, delivery roadmap, and price (recommended for Platform Implementation and Industry Packs)
 - **Time & Materials** — Consulting engagements with weekly caps and milestone reviews
 - **Retainer** — Managed Support with SLA tiers (Standard, Premium, Enterprise)
 

@@ -19,7 +19,7 @@
 [2–3 paragraphs summarizing the client's challenge, our recommended approach, and expected outcomes. Lead with the client's goals, not our features.]
 
 **Recommended Engagement:** [Service Name]  
-**Estimated Timeline:** [X weeks]  
+**Delivery Model:** AI-First Delivery Policy — timeline finalized after technical discovery and integration assessment.  
 **Investment Range:** [Amount or "See Section 5"]
 
 ---
@@ -63,14 +63,17 @@
 
 ---
 
-## 4. Timeline & Milestones
+## 4. AI-First Delivery Policy & Milestones
 
-| Milestone | Week | Deliverable | Payment Trigger |
-|-----------|------|-------------|-----------------|
-| Kickoff | 1 | Project charter signed | 40% |
-| Design Complete | 4 | Architecture & migration plan | — |
-| UAT Start | 8 | Configured platform ready for testing | 30% |
-| Go-Live | 10–12 | Production cutover | 30% |
+| Step | Phase | Deliverable | Payment Trigger |
+|------|-------|-------------|-----------------|
+| 1 | AI Requirement Analysis | Project charter signed; discovery complete | 40% |
+| 2 | AI Solution Generation | First working solution delivered | — |
+| 3 | Expert Engineering Review | Architecture & migration plan approved | — |
+| 4 | Customer Validation | UAT complete; client approval received | 30% |
+| 5 | Secure Production Deployment | Production cutover accepted | 30% |
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
 ---
 

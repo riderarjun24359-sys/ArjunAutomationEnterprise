@@ -12,7 +12,7 @@ Hi [First Name],
 
 I'm reaching out because [specific trigger — e.g., "your team is scaling locations" / "I noticed your hiring for ops roles"].
 
-Arjun Automation helps [industry] companies like [Company Name] replace fragmented tools with one enterprise operating system — CRM, projects, finance, and industry-specific workflows — with go-live in as little as 90 days.
+Arjun Automation helps [industry] companies like [Company Name] replace fragmented tools with one enterprise operating system — CRM, projects, finance, and industry-specific workflows — with AI-accelerated delivery and enterprise validation.
 
 Would a 20-minute call next [Day] work to explore if there's a fit?
 
@@ -33,7 +33,7 @@ Thank you for the discovery session yesterday. Based on our discussion, here's w
 
 **Challenge:** [1-sentence summary of their top pain point]  
 **Recommended Service:** [Service Name]  
-**Estimated Timeline:** [X weeks]  
+**Delivery Approach:** AI-accelerated · Roadmap after requirement analysis  
 **Next Step:** I'll send a formal proposal by [Date]
 
 Key outcomes we'd target:
@@ -58,7 +58,7 @@ Please find attached our proposal for [Project Name].
 
 **Summary:**
 - Engagement: [Service Name]
-- Timeline: [X weeks]
+- Delivery: AI-accelerated · Roadmap after requirement analysis
 - Investment: $[Amount] (professional services) + platform subscription
 
 The proposal is valid until [Date]. I'm available for a walkthrough call at your convenience — would [Day/Time] work?
@@ -80,7 +80,7 @@ I wanted to follow up on the proposal I sent on [Date]. I know timing and priori
 
 Would it be helpful to:
 - Schedule a 15-minute Q&A on the proposal?
-- Revise scope to fit a different timeline or budget?
+- Revise scope to fit a different budget or priority?
 - Pause and reconnect in [Month]?
 
 No pressure either way — just want to make sure you have what you need to decide.

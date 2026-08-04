@@ -47,7 +47,7 @@ Automation that bypasses governance creates compliance risk. Boards and auditors
 
 ## What Success Looks Like
 
-Organizations that go live in 90 days share three traits: executive sponsorship, a unified platform decision, and measurable success criteria defined before kickoff. Arjun Automation clients average 90-day enterprise go-live with structured discovery, UAT, and hypercare.
+Organizations that succeed with AI-first delivery share three traits: executive sponsorship, a unified platform decision, and measurable success criteria defined before requirement analysis. Arjun Automation delivers via AI Requirement Analysis → AI Solution Generation → Expert Engineering Review → Customer Validation → Secure Production Deployment.
 
 Ready to avoid the common pitfalls? [Contact our team](/contact) for a discovery conversation.`,
     },
@@ -85,7 +85,7 @@ Clients activating AI workers report 40% faster delivery cycles, consistent docu
 
 ## Getting Started
 
-AI worker activation is a structured service within Arjun Automation OS. Typical timeline: 2–4 weeks for initial worker deployment with training and approval workflow configuration.
+AI worker activation is a structured service within Arjun Automation OS. Delivery follows our AI-First Delivery Policy with AI-accelerated solution generation and enterprise validation gates.
 
 [Explore our AI Worker Integration service](/services) or [request a demo](/contact).`,
     },

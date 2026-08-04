@@ -23,7 +23,7 @@ const solutions = [
     },
     {
         title: "Industry Operating Systems",
-        description: "Go live in weeks with pre-built Restaurant OS, Hospital OS, School OS, and Retail OS packs.",
+        description: "Go live with AI-accelerated delivery using pre-built Restaurant OS, Hospital OS, School OS, and Retail OS packs.",
         features: ["Industry-specific workflows", "Pre-configured dashboards", "Compliance-ready forms", "Multi-location support"],
     },
     {
@@ -69,7 +69,7 @@ export default function SolutionsPage() {
             <section className="bg-slate-50 py-16">
                 <div className="mx-auto max-w-xl px-6 lg:px-8">
                     <h2 className="text-2xl font-semibold text-indigo-950 text-center">Request a solution briefing</h2>
-                    <p className="mt-2 text-center text-slate-600">Our team will map your requirements to the right modules and timeline.</p>
+                    <p className="mt-2 text-center text-slate-600">Our team will map your requirements to the right modules and delivery approach.</p>
                     <div className="mt-8">
                         <LeadForm source="solutions-page" />
                     </div>

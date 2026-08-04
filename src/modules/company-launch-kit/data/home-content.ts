@@ -1,19 +1,25 @@
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import {
+    AI_DELIVERY_FAQ_IMPLEMENTATION,
+    AI_DELIVERY_JOURNEY_STEPS,
+    AI_DELIVERY_MARKETING,
+    AI_DELIVERY_SERVICE_LABEL,
+} from "@/src/constants/ai-delivery-model";
 
 export const HERO_CONTENT = {
-    eyebrow: "Arjun Automation OS",
+    eyebrow: "Arjun Automation OS · AI-First",
     headline: "Enterprise automation. Without the enterprise wait.",
     subheadline:
-        "Arjun Automation is the enterprise operating system for companies that have outgrown spreadsheets and point tools. CRM, projects, finance, AI workers, and industry-specific modules — one secure platform.",
-    primaryCta: { label: "Schedule Discovery Call", href: MARKETING_ROUTES.contact },
+        "Arjun Automation is the AI-first enterprise operating system for companies that have outgrown spreadsheets and point tools. CRM, projects, finance, AI workers, and industry-specific modules — one secure platform. ⚡ AI-generated first version within hours.",
+    primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "Explore Solutions", href: MARKETING_ROUTES.solutions },
     stats: [
         { value: 40, suffix: "+", label: "Integrated Modules" },
-        { value: 90, suffix: " days", label: "Average Go-Live" },
+        { value: 5, suffix: "", label: "AI Delivery Steps" },
         { value: 99, suffix: ".9%", label: "Platform Uptime" },
         { value: 500, suffix: "+", label: "Automations Deployed" },
     ],
-    trustIndicators: ["SOC 2 Ready", "Row-Level Security", "Multi-Tenant", "AI-Native"],
+    trustIndicators: ["AI-First Delivery", "Row-Level Security", "Multi-Tenant", "Enterprise Validation"],
 };
 
 export const WHY_US_CONTENT = {
@@ -31,8 +37,8 @@ export const WHY_US_CONTENT = {
             icon: "brain",
         },
         {
-            title: "Industry-Ready Speed",
-            description: "Restaurant OS, Hospital OS, School OS, and Retail OS packs accelerate deployment by 60–70%.",
+            title: "AI-Accelerated Delivery",
+            description: "First working solution generated in hours on our internal AI platform — not traditional multi-month builds.",
             icon: "zap",
         },
         {
@@ -45,32 +51,32 @@ export const WHY_US_CONTENT = {
 
 export const SERVICES_CONTENT = {
     title: "Services built for outcomes",
-    subtitle: "Structured delivery from discovery to hypercare — transparent timelines and milestone-based billing.",
+    subtitle: "AI-first delivery from discovery to production — milestone-based billing after validation.",
     services: [
         {
             title: "Platform Implementation",
             description: "Full Arjun Automation OS deployment, configuration, and integration with your existing systems.",
-            timeline: "8–12 weeks",
+            timeline: AI_DELIVERY_SERVICE_LABEL,
         },
         {
             title: "Industry Pack Deployment",
-            description: "Restaurant, Hospital, School, or Retail OS go-live with industry-specific workflows and dashboards.",
-            timeline: "6–10 weeks",
+            description: "Restaurant, Hospital, School, or Retail OS with industry-specific workflows and dashboards.",
+            timeline: AI_DELIVERY_SERVICE_LABEL,
         },
         {
             title: "AI Worker Integration",
             description: "Activate BA, Solution Architect, Dev Factory, QA, DevOps, and Customer Success AI agents.",
-            timeline: "2–4 weeks",
+            timeline: AI_DELIVERY_SERVICE_LABEL,
         },
         {
             title: "Enterprise Consulting",
             description: "Operating model design, automation strategy, and transformation roadmap for complex organizations.",
-            timeline: "2–6 weeks",
+            timeline: AI_DELIVERY_SERVICE_LABEL,
         },
         {
             title: "Managed Support",
             description: "24/7 platform monitoring, updates, and customer success for production environments.",
-            timeline: "Ongoing",
+            timeline: "Ongoing subscription",
         },
     ],
 };
@@ -103,7 +109,7 @@ export const SOLUTIONS_CONTENT = {
 
 export const PORTFOLIO_CONTENT = {
     title: "Featured work",
-    subtitle: "Real outcomes from enterprise automation deployments.",
+    subtitle: "Real outcomes from AI-accelerated enterprise automation deployments.",
     cta: { label: "View all portfolio", href: MARKETING_ROUTES.portfolio },
 };
 
@@ -126,9 +132,9 @@ export const CASE_STUDIES_CONTENT = {
             href: MARKETING_ROUTES.caseStudies,
         },
         {
-            title: "12 locations live in 10 weeks",
+            title: "12 locations unified on one platform",
             client: "Restaurant Chain",
-            metric: "10 wks",
+            metric: "12 loc",
             description: "Restaurant OS deployment with inventory, scheduling, and guest feedback automation.",
             href: MARKETING_ROUTES.caseStudies,
         },
@@ -162,24 +168,19 @@ export const ENTERPRISE_PLATFORM_CONTENT = {
 };
 
 export const CUSTOMER_JOURNEY_CONTENT = {
-    title: "Your path to go-live",
-    subtitle: "A proven 90-day framework from discovery to hypercare.",
-    steps: [
-        { phase: "Week 1–2", title: "Discovery & Design", description: "Current-state assessment, target architecture, and success metrics." },
-        { phase: "Week 3–6", title: "Configuration & Integration", description: "Module setup, data migration, and third-party system connections." },
-        { phase: "Week 7–10", title: "UAT & Training", description: "User acceptance testing, staff training, and workflow validation." },
-        { phase: "Week 11–12", title: "Go-Live & Hypercare", description: "Production launch with dedicated support and performance monitoring." },
-        { phase: "Ongoing", title: "Optimize & Scale", description: "Continuous improvement, new automations, and expansion to additional locations." },
-    ],
+    title: "Your AI-first delivery path",
+    subtitle: AI_DELIVERY_MARKETING.tagline,
+    steps: AI_DELIVERY_JOURNEY_STEPS.map((s) => ({
+        phase: s.phase,
+        title: s.title,
+        description: s.description,
+    })),
 };
 
 export const FAQ_CONTENT = {
     title: "Frequently asked questions",
     items: [
-        {
-            question: "How long does implementation typically take?",
-            answer: "Most clients go live in 90 days. Industry pack deployments can be faster (6–10 weeks), while complex multi-system integrations may extend to 12–16 weeks.",
-        },
+        AI_DELIVERY_FAQ_IMPLEMENTATION,
         {
             question: "Can Arjun Automation integrate with our existing tools?",
             answer: "Yes. Our integration platform supports REST APIs, webhooks, and pre-built connectors for common ERP, accounting, and communication tools.",
@@ -200,9 +201,9 @@ export const FAQ_CONTENT = {
 };
 
 export const CTA_CONTENT = {
-    title: "Ready to transform your operations?",
-    subtitle: "Schedule a discovery call. Our team responds within one business day.",
-    primaryCta: { label: "Schedule Discovery Call", href: MARKETING_ROUTES.contact },
+    title: "Ready for AI-first enterprise automation?",
+    subtitle: "Start with AI Requirement Analysis. Our team responds within one business day.",
+    primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "View Case Studies", href: MARKETING_ROUTES.caseStudies },
 };
 

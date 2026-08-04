@@ -59,8 +59,8 @@ Pre-built Restaurant OS, Hospital OS, School OS, and Retail OS packs include wor
 ### 4. Security by Architecture
 Row Level Security on every table, tenant isolation, enterprise identity with MFA, governance and compliance modules — not optional add-ons.
 
-### 5. Proven Delivery Methodology
-Structured discovery → configuration → UAT → go-live → hypercare. Average enterprise go-live: **90 days**.
+### 5. AI-First Delivery
+Every engagement follows: AI Requirement Analysis → AI Solution Generation → Expert Engineering Review → Customer Validation → Secure Production Deployment. Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability.
 
 ### 6. Transparent Partnership
 Fixed-scope proposals, milestone-based billing, dedicated customer success manager, and SLA-backed managed support.`,
@@ -113,46 +113,45 @@ Each industry benefits from pre-built **Industry OS packs** that accelerate depl
     {
         id: "methodology",
         title: "Methodology",
-        content: `Our delivery methodology follows five structured phases designed for predictable outcomes:
+        content: `Every engagement follows the AI-First Delivery Policy:
 
-**Discover** — Stakeholder workshops, process mapping, module selection, success criteria
-**Design** — Solution architecture, integration map, data migration plan, UAT scenarios
-**Configure & Build** — Tenant provisioning, module configuration, AI worker activation, integrations
-**Validate** — User acceptance testing, security validation, training delivery, readiness checklist
-**Launch & Hypercare** — Production cutover, 30-day hypercare, transition to managed support`,
+1. **AI Requirement Analysis** — Understand requirements, systems, integrations, and success criteria
+2. **AI Solution Generation** — First complete working solution generated on our internal AI platform (hours instead of weeks)
+3. **Expert Engineering Review** — Architecture, security, business, and UX validation
+4. **Customer Validation** — Feedback, minor revisions, and approval
+5. **Secure Production Deployment** — Deployment, testing, monitoring, and documentation
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability. Delivery roadmap is finalized after technical discovery and integration assessment.`,
     },
     {
         id: "delivery-process",
         title: "Delivery Process",
-        content: `### Phase 1: Discover (Week 1–2)
-- Stakeholder workshops and discovery questionnaire
+        content: `### Step 1: AI Requirement Analysis
+- Stakeholder workshops and requirement capture
 - Current-state process mapping
 - Module and industry pack selection
 - Success criteria definition
 
-### Phase 2: Design (Week 3–4)
-- Solution architecture and integration map
-- Data migration plan
-- UAT test scenarios
-- Training plan
+### Step 2: AI Solution Generation
+- First working solution generated on internal AI platform
+- Integration scoping and data migration planning
+- Workflow and module configuration draft
 
-### Phase 3: Configure & Build (Week 5–8)
-- Platform provisioning and tenant setup
-- Module configuration and workflow design
-- AI worker activation
-- Integration with existing systems (ERP, POS, etc.)
+### Step 3: Expert Engineering Review
+- Solution architecture and security validation
+- Business and UX review gates
+- Readiness checklist before customer presentation
 
-### Phase 4: Validate (Week 9–10)
+### Step 4: Customer Validation
 - User acceptance testing
-- Security and performance validation
 - Training delivery
-- Go-live readiness checklist
+- Feedback, revisions, and formal approval
 
-### Phase 5: Launch & Hypercare (Week 11–12+)
-- Production cutover
-- 30-day hypercare with daily standups
+### Step 5: Secure Production Deployment
+- Production cutover with monitoring
+- Dedicated hypercare support period
 - Transition to managed support
-- Success metrics review at Day 30, 60, 90`,
+- Success metrics review post-launch`,
     },
     {
         id: "support-model",

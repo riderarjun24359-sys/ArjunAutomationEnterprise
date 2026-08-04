@@ -45,9 +45,9 @@ Managed Support keeps your Arjun Automation OS deployment healthy, secure, and e
 
 ---
 
-## Timeline
+## Onboarding & Contract
 
-- **Onboarding:** 1–2 weeks (support channel setup, monitoring configuration, runbook handoff)
+- **Onboarding:** AI-accelerated support channel setup, monitoring configuration, and runbook handoff after contract signing
 - **Ongoing:** Annual contract with monthly reporting and quarterly QBRs
 - **Renewal review:** 60 days before contract end
 

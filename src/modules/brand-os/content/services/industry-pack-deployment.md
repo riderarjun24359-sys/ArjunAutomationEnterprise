@@ -48,15 +48,17 @@ We customize the pack to your locations, branding, and specific operational requ
 
 ## Timeline
 
-| Phase | Duration | Activities |
-|-------|----------|------------|
-| Discover | 1–2 weeks | Location audit, pack selection, integration scoping |
-| Configure | 3–4 weeks | Pack deployment, location setup, branding |
-| Integrate | 2 weeks | POS/EMR/SIS connections, data sync |
-| Validate | 1–2 weeks | UAT with operators, training |
-| Launch | 1 week | Phased or big-bang cutover |
+Every engagement follows:
 
-**Total: 6–10 weeks**
+| Step | Phase | Activities |
+|------|-------|------------|
+| 1 | AI Requirement Analysis | Location audit, pack selection, integration scoping |
+| 2 | AI Solution Generation | Pack deployment, location setup, branding configuration |
+| 3 | Expert Engineering Review | POS/EMR/SIS integration validation, security and compliance gates |
+| 4 | Customer Validation | UAT with operators, training, feedback and approval |
+| 5 | Secure Production Deployment | Phased or big-bang cutover, hypercare, monitoring |
+
+Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability. Delivery roadmap finalized after requirement analysis and integration assessment.
 
 ---
 

@@ -44,7 +44,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         ],
         results: [
             "70% reduction in manual processing",
-            "Go-live in 8 weeks",
+            "Go-live with AI-accelerated delivery and enterprise validation",
             "12 automated workflows in production",
             "Zero security incidents post-launch",
         ],
@@ -81,7 +81,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         results: [
             "35% increase in qualified pipeline",
             "Quote-to-cash cycle reduced by 40%",
-            "100% sales team adoption in 3 weeks",
+            "100% sales team adoption after rollout",
             "Integrated with finance in single tenant",
         ],
     },
@@ -117,7 +117,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         results: [
             "80% reduction in reconciliation time",
             "Live sync across 4 ERP modules",
-            "Deployed in 10 weeks",
+            "AI-accelerated deployment with full validation",
             "Zero data loss during migration",
         ],
     },
@@ -151,7 +151,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/school-management/parent-portal.png", alt: "Parent portal home screen" },
         ],
         results: [
-            "12 campuses live in 90 days",
+            "12 campuses unified on single platform",
             "60% faster enrollment processing",
             "Parent satisfaction up 28 points NPS",
             "Single student record across all campuses",
@@ -188,7 +188,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         ],
         results: [
             "50% faster approval cycles",
-            "25 locations standardized in 12 weeks",
+            "25 locations standardized with centralized governance",
             "Regional reporting automated daily",
             "Operational variance reduced by 45%",
         ],
@@ -260,7 +260,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/integrations/health-status.png", alt: "Integration health status view" },
         ],
         results: [
-            "8 critical integrations live in 6 weeks",
+            "8 critical integrations live with bi-directional sync",
             "99.7% integration uptime post-launch",
             "Zero middleware maintenance overhead",
             "Integration errors resolved 3x faster",

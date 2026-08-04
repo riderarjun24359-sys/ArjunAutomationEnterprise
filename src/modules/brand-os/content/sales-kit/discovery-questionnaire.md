@@ -31,7 +31,7 @@
 
 ## Section C: Desired Outcomes
 
-11. **What does success look like in 90 days? In 12 months?**
+11. **What does success look like at your first production milestone? In 12 months?**
 12. **Which departments must be live at go-live?**
 13. **Must-have vs. nice-to-have features?**
 14. **Are you evaluating build vs. buy? What's your lean?**

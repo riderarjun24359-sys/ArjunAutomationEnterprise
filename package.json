@@ -39,7 +39,8 @@
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",
     "premium-website:verify": "node scripts/verify-premium-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
-    "business-assets:verify": "node scripts/verify-business-assets.mjs"
+    "business-assets:verify": "node scripts/verify-business-assets.mjs",
+    "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

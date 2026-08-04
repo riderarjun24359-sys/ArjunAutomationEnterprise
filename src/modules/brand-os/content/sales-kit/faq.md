@@ -55,7 +55,7 @@ A: Primary hosting in secure cloud infrastructure. Region options available for 
 ## Implementation & Timeline
 
 **Q: How long does implementation take?**  
-A: Platform Implementation: 8–12 weeks. Industry Pack Deployment: 6–10 weeks. AI Worker Integration: 4–6 weeks.
+A: Every engagement follows our AI-First Delivery Policy: (1) AI Requirement Analysis, (2) AI Solution Generation, (3) Expert Engineering Review, (4) Customer Validation, (5) Secure Production Deployment. Customers receive AI-accelerated delivery without compromising enterprise quality, security, or reliability. Delivery roadmap is finalized after requirement analysis and integration assessment.
 
 **Q: What does the client need to provide?**  
 A: A dedicated sponsor, 5–10 hours/week stakeholder time, system access for integration, and UAT participation.

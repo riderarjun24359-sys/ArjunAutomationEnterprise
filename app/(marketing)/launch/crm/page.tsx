@@ -6,7 +6,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
     title: "CRM Transformation Guide",
-    description: "Free guide: Unified CRM implementation — from pipeline chaos to quote-to-cash in 8 weeks.",
+    description: "Free guide: Unified CRM implementation — from pipeline chaos to quote-to-cash with AI-first delivery.",
     path: "/launch/crm",
 });
 

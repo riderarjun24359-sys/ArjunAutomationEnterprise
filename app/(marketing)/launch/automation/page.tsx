@@ -6,7 +6,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
     title: "Enterprise Automation Guide",
-    description: "Free guide: How mid-market organizations deploy enterprise automation in 90 days without integration debt.",
+    description: "Free guide: How mid-market organizations deploy AI-first enterprise automation without integration debt.",
     path: "/launch/automation",
 });
 
@@ -17,10 +17,10 @@ export default function LaunchAutomationPage() {
                 <div className="mx-auto max-w-3xl px-6 text-center lg:px-8">
                     <p className="text-sm font-medium uppercase tracking-[0.24em] text-indigo-200">Free Guide</p>
                     <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-                        Enterprise Automation in 90 Days
+                        AI-First Enterprise Automation
                     </h1>
                     <p className="mt-6 text-lg text-indigo-100">
-                        How mid-market organizations escape tool sprawl, deploy AI workers, and go live on a unified platform — without 18-month custom builds.
+                        How mid-market organizations escape tool sprawl, deploy AI workers, and reach production on a unified platform — with AI-generated first versions within hours.
                     </p>
                 </div>
             </section>
@@ -33,7 +33,7 @@ export default function LaunchAutomationPage() {
                             {[
                                 "Why 50%+ of automation projects fail — and the four patterns to avoid",
                                 "Platform vs. point solution: calculating true total cost of ownership",
-                                "The 90-day go-live methodology: Discover, Design, Configure, Validate, Launch",
+                                "The AI-First Delivery Policy: Requirement Analysis → Solution Generation → Expert Review → Customer Validation → Secure Production Deployment",
                                 "AI workers vs. chatbots: why execution beats conversation",
                                 "Industry OS packs: Restaurant, Hospital, School, and Retail acceleration",
                                 "Security checklist: RLS, tenant isolation, and audit trails before go-live",

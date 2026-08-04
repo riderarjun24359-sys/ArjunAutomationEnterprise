@@ -3,7 +3,7 @@ export const LAUNCH_KIT_SEO = {
     siteUrl: process.env.NEXT_PUBLIC_APP_URL ?? "https://www.arjunautomation.com",
     defaultTitle: "Arjun Automation — Enterprise Automation. Without the Enterprise Wait.",
     defaultDescription:
-        "Arjun Automation OS unifies CRM, projects, finance, AI workers, and industry packs into one secure platform. Most clients go live in 90 days.",
+        "Arjun Automation OS unifies CRM, projects, finance, AI workers, and industry packs into one secure platform. AI-generated first version within hours.",
     defaultKeywords: [
         "enterprise automation",
         "business operating system",

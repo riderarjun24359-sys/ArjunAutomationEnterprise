@@ -1,4 +1,5 @@
 import type { ServiceCatalogItem } from "../types";
+import { AI_DELIVERY_FAQ_IMPLEMENTATION, AI_DELIVERY_SERVICE_LABEL } from "@/src/constants/ai-delivery-model";
 
 export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
     {
@@ -8,7 +9,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
         overview: "Full Arjun Automation OS deployment, configuration, and integration. We provision your tenant, configure core modules (CRM, Projects, Finance, HR, Tasks, Documents), set up enterprise identity and governance, integrate with your existing systems, and train your team for go-live.",
         benefits: [
             "Single source of truth across sales, delivery, finance, and operations",
-            "90-day average go-live vs. 12–18 months for custom builds",
+            "AI-accelerated delivery vs. 12–18 months for traditional custom builds",
             "Enterprise security with RLS, audit logs, and tenant isolation from day one",
             "AI-ready foundation — activate AI workers immediately after go-live",
             "Reduced TCO — one platform subscription vs. 10+ point solutions",
@@ -24,12 +25,12 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "30-day hypercare post-launch",
             "Go-live documentation and runbook",
         ],
-        timeline: "8–12 weeks: Discover (2w) → Design (2w) → Configure (4w) → Validate (2w) → Launch (2w)",
-        pricingPlaceholder: "Essential $45K–$75K | Professional $75K–$120K | Enterprise $120K–$200K. 40% signing, 30% UAT, 30% go-live.",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
+        pricingPlaceholder: "Essential $45K–$75K | Professional $75K–$120K | Enterprise $120K–$200K. 40% signing, 30% validation, 30% production deployment.",
         industries: ["Professional Services", "Technology & SaaS", "Multi-location Operations", "Growth-stage Companies"],
         technology: ["Arjun Automation OS", "Enterprise Identity", "CRM", "Projects", "Finance", "AI Workers", "REST API Integrations"],
         faq: [
-            { question: "How long does implementation take?", answer: "Most implementations complete in 8–12 weeks depending on module count and integration complexity." },
+            { question: "How long does implementation take?", answer: AI_DELIVERY_FAQ_IMPLEMENTATION.answer },
             { question: "Do you migrate our existing data?", answer: "Yes — data migration is included in Professional and Enterprise tiers up to agreed record volumes." },
             { question: "What training is included?", answer: "Up to 40 hours of virtual admin and end-user training, plus go-live documentation and runbooks." },
         ],
@@ -56,7 +57,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Staff training for industry workflows",
             "Go-live support and 30-day hypercare",
         ],
-        timeline: "6–10 weeks: Pack selection (1w) → Configuration (3–4w) → Customization (2w) → UAT & Launch (2–3w)",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
         pricingPlaceholder: "Restaurant OS $35K–$65K | Hospital OS $55K–$95K | School OS $40K–$70K | Retail OS $35K–$60K per deployment.",
         industries: ["Restaurants & Hospitality", "Healthcare", "Education", "Retail"],
         technology: ["Restaurant OS", "Hospital OS", "School OS", "Retail OS", "Arjun Automation OS Core", "Industry Analytics"],
@@ -88,7 +89,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Team training on AI worker collaboration",
             "30-day optimization period post-activation",
         ],
-        timeline: "4–8 weeks: Assessment (1w) → Configuration (2–3w) → Integration (2w) → Training & Optimization (1–2w)",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
         pricingPlaceholder: "Starter (2 workers) $25K–$40K | Professional (4 workers) $45K–$70K | Enterprise (all 6) $70K–$110K.",
         industries: ["Technology & SaaS", "Professional Services", "System Integrators", "Enterprise IT"],
         technology: ["AI Workers (BA, Architect, Dev, QA, DevOps, CS)", "Knowledge Engine", "Workflow Engine", "Audit & Governance"],
@@ -120,7 +121,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Executive presentation for leadership alignment",
             "Optional: proof-of-concept scope definition",
         ],
-        timeline: "3–6 weeks: Discovery (1–2w) → Analysis (1–2w) → Design & Roadmap (1–2w) → Presentation (1w)",
+        timeline: AI_DELIVERY_SERVICE_LABEL,
         pricingPlaceholder: "Assessment $15K–$25K | Operating Model Design $25K–$45K | Full Transformation Roadmap $45K–$75K.",
         industries: ["All Industries", "Mid-market (100–2000 employees)", "Growth-stage Companies", "Enterprise IT"],
         technology: ["Process Mapping", "TCO Modeling", "Automation Opportunity Framework", "Change Management Toolkit"],
@@ -154,7 +155,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Feature release notes and upgrade guidance",
             "Priority escalation channel for P1 incidents",
         ],
-        timeline: "Ongoing monthly subscription — onboarding within 1 week of contract signing",
+        timeline: "Ongoing monthly subscription — rapid onboarding after contract signing",
         pricingPlaceholder: "Standard $2K–$4K/mo | Premium $5K–$10K/mo | Enterprise $10K–$20K/mo (based on user count and SLA tier).",
         industries: ["All Industries with active Arjun Automation OS deployment"],
         technology: ["Platform Monitoring", "Alerting & Incident Management", "Backup & DR", "Security Patching", "Analytics & Reporting"],

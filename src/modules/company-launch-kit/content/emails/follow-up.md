@@ -12,7 +12,7 @@ I wanted to follow up on our conversation about [topic/project]. I know evaluati
 
 - **Challenge:** [Primary pain point]
 - **Recommended approach:** [Service/module/pack]
-- **Expected timeline:** [X weeks]
+- **Delivery model:** AI-First Delivery Policy — timeline finalized after discovery
 
 **Resources that might help:**
 

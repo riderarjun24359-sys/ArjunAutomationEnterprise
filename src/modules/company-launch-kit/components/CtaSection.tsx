@@ -11,8 +11,8 @@ export interface CtaSectionProps {
 }
 
 export function CtaSection({
-    title = "Ready to launch in 90 days?",
-    description = "Schedule a discovery call with our team. We will map your automation goals to a concrete go-live plan.",
+    title = "Ready for AI-first enterprise automation?",
+    description = "Start with AI Requirement Analysis. We will map your automation goals to a delivery roadmap after technical assessment.",
     primaryLabel = "Contact Us",
     primaryHref = MARKETING_ROUTES.contact,
     secondaryLabel = "View Portfolio",

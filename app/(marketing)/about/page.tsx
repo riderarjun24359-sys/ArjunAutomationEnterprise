@@ -38,7 +38,7 @@ export default function AboutPage() {
                     <div>
                         <h2 className="text-2xl font-semibold">Vision</h2>
                         <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
-                            A world where every business, regardless of size or industry, operates on intelligent automation — where humans focus on strategy and creativity while AI workers handle execution, and where launching a new digital operation takes weeks, not years.
+                            A world where every business, regardless of size or industry, operates on intelligent automation — where humans focus on strategy and creativity while AI workers handle execution, and where launching a new digital operation is AI-accelerated without sacrificing enterprise rigor.
                         </p>
                     </div>
 

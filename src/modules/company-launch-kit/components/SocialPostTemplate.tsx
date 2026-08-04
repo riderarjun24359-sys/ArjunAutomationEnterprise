@@ -10,7 +10,7 @@ export interface SocialPostTemplateProps {
 
 export function SocialPostTemplate({
     headline = "Enterprise automation. Without the enterprise wait.",
-    body = "Arjun Automation OS unifies CRM, AI workers, and industry packs into one secure platform. Most clients go live in 90 days.",
+    body = "Arjun Automation OS unifies CRM, AI workers, and industry packs into one secure platform. AI-generated first version within hours.",
     cta = "Learn more at arjunautomation.com",
 }: SocialPostTemplateProps) {
     return (
