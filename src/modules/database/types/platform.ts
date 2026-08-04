@@ -13032,3 +13032,455 @@ export interface DbCmpAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbCsdDeliveryHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    delivery_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdCustomerHealthScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    customer_ref: string;
+    health_score: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdAdoptionAnalytic {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    feature_name: string;
+    adoption_rate: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdSuccessPlan {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    plan_key: string;
+    plan_name: string;
+    plan_status: string;
+    customer_ref: string;
+    target_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdCustomerTimeline {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    timeline_key: string;
+    timeline_name: string;
+    timeline_type: string;
+    event_date: string;
+    event_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdRenewalForecast {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    forecast_key: string;
+    customer_ref: string;
+    forecast_status: string;
+    renewal_date: string;
+    forecast_value: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdSupportTicket {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    ticket_key: string;
+    ticket_title: string;
+    ticket_status: string;
+    priority: string;
+    opened_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdLiveChatSession {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    session_key: string;
+    session_title: string;
+    session_status: string;
+    agent_ref: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdKnowledgeBaseArticle {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    article_key: string;
+    article_title: string;
+    article_category: string;
+    article_summary: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdSlaPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    response_time_minutes: number;
+    resolution_time_hours: number;
+    policy_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdEscalationRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    escalation_level: number;
+    trigger_condition: string;
+    rule_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdDeploymentAutomation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    automation_key: string;
+    automation_name: string;
+    automation_type: string;
+    automation_status: string;
+    last_run_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdEnvironmentManagement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    environment_key: string;
+    environment_name: string;
+    environment_type: string;
+    region: string;
+    managed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdDeploymentTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    tracking_key: string;
+    deployment_name: string;
+    deployment_status: string;
+    target_version: string;
+    deployed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdUpgradeManagement {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    upgrade_key: string;
+    upgrade_name: string;
+    upgrade_status: string;
+    from_version: string;
+    to_version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdReleaseTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    release_key: string;
+    release_name: string;
+    release_version: string;
+    release_status: string;
+    released_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdTrainingPortal {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    portal_key: string;
+    portal_name: string;
+    portal_type: string;
+    course_count: number;
+    portal_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdVideoLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    video_key: string;
+    video_title: string;
+    video_category: string;
+    duration_minutes: number;
+    video_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdProductTour {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    tour_key: string;
+    tour_name: string;
+    tour_type: string;
+    step_count: number;
+    tour_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdCertification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    certification_key: string;
+    certification_name: string;
+    certification_type: string;
+    validity_days: number;
+    certification_summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdProgressTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    progress_key: string;
+    learner_ref: string;
+    progress_percent: number;
+    course_ref: string;
+    last_activity_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdLearningAnalytic {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    metric_name: string;
+    completion_rate: number;
+    metric_date: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdDeliveryWorkflow {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    workflow_key: string;
+    workflow_name: string;
+    workflow_type: string;
+    workflow_status: string;
+    step_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdOnboardingAutomation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    automation_key: string;
+    automation_name: string;
+    automation_status: string;
+    customer_ref: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdImplementationTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    tracking_key: string;
+    implementation_name: string;
+    implementation_status: string;
+    completion_percent: number;
+    target_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdResourceAssignment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    assignment_key: string;
+    resource_name: string;
+    resource_type: string;
+    assigned_to: string;
+    assigned_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdMilestoneTracking {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    milestone_key: string;
+    milestone_name: string;
+    milestone_status: string;
+    target_date: string;
+    completed_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdOperationsMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    customer_health_score: number;
+    open_ticket_count: number;
+    sla_compliance_score: number;
+    deployment_status_score: number;
+    renewal_forecast_count: number;
+    adoption_rate: number;
+    overall_delivery_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdOperationsHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    customer_success_status: string;
+    support_status: string;
+    deployment_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdExecutiveKpi {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_score: number;
+    kpi_type: string;
+    metric_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdDeliveryFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCsdAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

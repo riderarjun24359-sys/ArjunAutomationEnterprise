@@ -28,7 +28,8 @@
     "sprint-b8:verify": "node scripts/verify-sprint-b8.mjs",
     "sprint-b9:verify": "node scripts/verify-sprint-b9.mjs",
     "program-c-sprint4:verify": "node scripts/verify-program-c-sprint4.mjs",
-    "program-f-wave1:verify": "node scripts/verify-program-f-wave1.mjs"
+    "program-f-wave1:verify": "node scripts/verify-program-f-wave1.mjs",
+    "program-f-wave3:verify": "node scripts/verify-program-f-wave3.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

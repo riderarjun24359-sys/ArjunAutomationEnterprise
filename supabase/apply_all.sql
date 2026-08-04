@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-03T23:13:41.484Z
+-- Generated: 2026-08-03T23:50:59.393Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (43):
+--   Migrations (44):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -49,7 +49,8 @@
 --     - 202608020041_enterprise_retail_business_os.sql
 --     - 202608020042_enterprise_launch_foundation.sql
 --     - 202608020043_company_foundation.sql
---   Seeds (43):
+--     - 202608020044_customer_success_delivery_platform.sql
+--   Seeds (44):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -93,9 +94,10 @@
 --     - 041_enterprise_retail_business_os_seed.sql
 --     - 042_enterprise_launch_foundation_seed.sql
 --     - 043_company_foundation_seed.sql
+--     - 044_customer_success_delivery_platform_seed.sql
 --
--- Includes through V2 Program F Capability Wave 1:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation
+-- Includes through V2 Program F Capability Wave 3:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -19924,6 +19926,658 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020044_customer_success_delivery_platform.sql
+-- =============================================================================
+-- V2 Program F Capability Wave 3: Customer Success & Delivery Platform
+
+-- DeliveryHub
+create table if not exists public.csd_delivery_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  delivery_tier text not null default 'enterprise',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- CustomerHealthScore
+create table if not exists public.csd_customer_health_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  score_key text not null,
+  customer_ref text not null default '',
+  health_score numeric(5, 2) not null default 100,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- AdoptionAnalytic
+create table if not exists public.csd_adoption_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  analytics_key text not null,
+  feature_name text not null default '',
+  adoption_rate numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- SuccessPlan
+create table if not exists public.csd_success_plans (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  plan_key text not null,
+  plan_name text not null default '',
+  plan_status text not null default 'active',
+  customer_ref text not null default '',
+  target_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, plan_key)
+);
+
+-- CustomerTimeline
+create table if not exists public.csd_customer_timelines (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  timeline_key text not null,
+  timeline_name text not null default '',
+  timeline_type text not null default 'milestone',
+  event_date date not null default current_date,
+  event_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, timeline_key)
+);
+
+-- RenewalForecast
+create table if not exists public.csd_renewal_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  forecast_key text not null,
+  customer_ref text not null default '',
+  forecast_status text not null default 'pending',
+  renewal_date date not null default current_date,
+  forecast_value numeric(12, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, forecast_key)
+);
+
+-- SupportTicket
+create table if not exists public.csd_support_tickets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  ticket_key text not null,
+  ticket_title text not null default '',
+  ticket_status text not null default 'open',
+  priority text not null default 'normal',
+  opened_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, ticket_key)
+);
+
+-- LiveChatSession
+create table if not exists public.csd_live_chat_sessions (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  session_key text not null,
+  session_title text not null default '',
+  session_status text not null default 'active',
+  agent_ref text not null default '',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, session_key)
+);
+
+-- KnowledgeBaseArticle
+create table if not exists public.csd_knowledge_base_articles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  article_key text not null,
+  article_title text not null default '',
+  article_category text not null default 'general',
+  article_summary text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, article_key)
+);
+
+-- SlaPolicy
+create table if not exists public.csd_sla_policies (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  policy_key text not null,
+  policy_name text not null default '',
+  response_time_minutes integer not null default 60,
+  resolution_time_hours integer not null default 24,
+  policy_type text not null default 'standard',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, policy_key)
+);
+
+-- EscalationRule
+create table if not exists public.csd_escalation_rules (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  rule_key text not null,
+  rule_name text not null default '',
+  escalation_level integer not null default 1,
+  trigger_condition text not null default '',
+  rule_type text not null default 'time_based',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, rule_key)
+);
+
+-- DeploymentAutomation
+create table if not exists public.csd_deployment_automations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  automation_key text not null,
+  automation_name text not null default '',
+  automation_type text not null default 'pipeline',
+  automation_status text not null default 'active',
+  last_run_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, automation_key)
+);
+
+-- EnvironmentManagement
+create table if not exists public.csd_environment_management (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  environment_key text not null,
+  environment_name text not null default '',
+  environment_type text not null default 'production',
+  region text not null default '',
+  managed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, environment_key)
+);
+
+-- DeploymentTracking
+create table if not exists public.csd_deployment_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  tracking_key text not null,
+  deployment_name text not null default '',
+  deployment_status text not null default 'pending',
+  target_version text not null default '',
+  deployed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, tracking_key)
+);
+
+-- UpgradeManagement
+create table if not exists public.csd_upgrade_management (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  upgrade_key text not null,
+  upgrade_name text not null default '',
+  upgrade_status text not null default 'scheduled',
+  from_version text not null default '',
+  to_version text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, upgrade_key)
+);
+
+-- ReleaseTracking
+create table if not exists public.csd_release_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  release_key text not null,
+  release_name text not null default '',
+  release_version text not null default '1.0.0',
+  release_status text not null default 'planned',
+  released_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, release_key)
+);
+
+-- TrainingPortal
+create table if not exists public.csd_training_portals (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  portal_key text not null,
+  portal_name text not null default '',
+  portal_type text not null default 'customer',
+  course_count integer not null default 0,
+  portal_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, portal_key)
+);
+
+-- VideoLibrary
+create table if not exists public.csd_video_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  video_key text not null,
+  video_title text not null default '',
+  video_category text not null default 'onboarding',
+  duration_minutes integer not null default 0,
+  video_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, video_key)
+);
+
+-- ProductTour
+create table if not exists public.csd_product_tours (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  tour_key text not null,
+  tour_name text not null default '',
+  tour_type text not null default 'guided',
+  step_count integer not null default 0,
+  tour_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, tour_key)
+);
+
+-- Certification
+create table if not exists public.csd_certifications (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  certification_key text not null,
+  certification_name text not null default '',
+  certification_type text not null default 'product',
+  validity_days integer not null default 365,
+  certification_summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, certification_key)
+);
+
+-- ProgressTracking
+create table if not exists public.csd_progress_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  progress_key text not null,
+  learner_ref text not null default '',
+  progress_percent numeric(5, 2) not null default 0,
+  course_ref text not null default '',
+  last_activity_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, progress_key)
+);
+
+-- LearningAnalytic
+create table if not exists public.csd_learning_analytics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  analytics_key text not null,
+  metric_name text not null default '',
+  completion_rate numeric(5, 2) not null default 0,
+  metric_date date not null default current_date,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, analytics_key)
+);
+
+-- DeliveryWorkflow
+create table if not exists public.csd_delivery_workflows (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  workflow_key text not null,
+  workflow_name text not null default '',
+  workflow_type text not null default 'onboarding',
+  workflow_status text not null default 'active',
+  step_count integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, workflow_key)
+);
+
+-- OnboardingAutomation
+create table if not exists public.csd_onboarding_automation (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  automation_key text not null,
+  automation_name text not null default '',
+  automation_status text not null default 'active',
+  customer_ref text not null default '',
+  started_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, automation_key)
+);
+
+-- ImplementationTracking
+create table if not exists public.csd_implementation_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  tracking_key text not null,
+  implementation_name text not null default '',
+  implementation_status text not null default 'in_progress',
+  completion_percent numeric(5, 2) not null default 0,
+  target_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, tracking_key)
+);
+
+-- ResourceAssignment
+create table if not exists public.csd_resource_assignments (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  assignment_key text not null,
+  resource_name text not null default '',
+  resource_type text not null default 'consultant',
+  assigned_to text not null default '',
+  assigned_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, assignment_key)
+);
+
+-- MilestoneTracking
+create table if not exists public.csd_milestone_tracking (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  milestone_key text not null,
+  milestone_name text not null default '',
+  milestone_status text not null default 'pending',
+  target_date date not null default current_date,
+  completed_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, milestone_key)
+);
+
+-- OperationsMetric
+create table if not exists public.csd_operations_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  customer_health_score numeric(5, 2) not null default 100,
+  open_ticket_count integer not null default 0,
+  sla_compliance_score numeric(5, 2) not null default 100,
+  deployment_status_score numeric(5, 2) not null default 100,
+  renewal_forecast_count integer not null default 0,
+  adoption_rate numeric(5, 2) not null default 0,
+  overall_delivery_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- OperationsHealth
+create table if not exists public.csd_operations_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  customer_success_status text not null default 'healthy',
+  support_status text not null default 'healthy',
+  deployment_status text not null default 'healthy',
+  security_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ExecutiveKpi
+create table if not exists public.csd_executive_kpis (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_score numeric(5, 2) not null default 0,
+  kpi_type text not null default 'executive',
+  metric_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- DeliveryFailure
+create table if not exists public.csd_delivery_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'deployment',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.csd_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_csd_delivery_hubs_org on public.csd_delivery_hubs(organization_id);
+create index if not exists idx_csd_customer_health_scores_org on public.csd_customer_health_scores(organization_id);
+create index if not exists idx_csd_customer_health_scores_hub on public.csd_customer_health_scores(hub_id);
+create index if not exists idx_csd_adoption_analytics_org on public.csd_adoption_analytics(organization_id);
+create index if not exists idx_csd_adoption_analytics_hub on public.csd_adoption_analytics(hub_id);
+create index if not exists idx_csd_success_plans_org on public.csd_success_plans(organization_id);
+create index if not exists idx_csd_success_plans_hub on public.csd_success_plans(hub_id);
+create index if not exists idx_csd_customer_timelines_org on public.csd_customer_timelines(organization_id);
+create index if not exists idx_csd_customer_timelines_hub on public.csd_customer_timelines(hub_id);
+create index if not exists idx_csd_renewal_forecasts_org on public.csd_renewal_forecasts(organization_id);
+create index if not exists idx_csd_renewal_forecasts_hub on public.csd_renewal_forecasts(hub_id);
+create index if not exists idx_csd_support_tickets_org on public.csd_support_tickets(organization_id);
+create index if not exists idx_csd_support_tickets_hub on public.csd_support_tickets(hub_id);
+create index if not exists idx_csd_live_chat_sessions_org on public.csd_live_chat_sessions(organization_id);
+create index if not exists idx_csd_live_chat_sessions_hub on public.csd_live_chat_sessions(hub_id);
+create index if not exists idx_csd_knowledge_base_articles_org on public.csd_knowledge_base_articles(organization_id);
+create index if not exists idx_csd_knowledge_base_articles_hub on public.csd_knowledge_base_articles(hub_id);
+create index if not exists idx_csd_sla_policies_org on public.csd_sla_policies(organization_id);
+create index if not exists idx_csd_sla_policies_hub on public.csd_sla_policies(hub_id);
+create index if not exists idx_csd_escalation_rules_org on public.csd_escalation_rules(organization_id);
+create index if not exists idx_csd_escalation_rules_hub on public.csd_escalation_rules(hub_id);
+create index if not exists idx_csd_deployment_automations_org on public.csd_deployment_automations(organization_id);
+create index if not exists idx_csd_deployment_automations_hub on public.csd_deployment_automations(hub_id);
+create index if not exists idx_csd_environment_management_org on public.csd_environment_management(organization_id);
+create index if not exists idx_csd_environment_management_hub on public.csd_environment_management(hub_id);
+create index if not exists idx_csd_deployment_tracking_org on public.csd_deployment_tracking(organization_id);
+create index if not exists idx_csd_deployment_tracking_hub on public.csd_deployment_tracking(hub_id);
+create index if not exists idx_csd_upgrade_management_org on public.csd_upgrade_management(organization_id);
+create index if not exists idx_csd_upgrade_management_hub on public.csd_upgrade_management(hub_id);
+create index if not exists idx_csd_release_tracking_org on public.csd_release_tracking(organization_id);
+create index if not exists idx_csd_release_tracking_hub on public.csd_release_tracking(hub_id);
+create index if not exists idx_csd_training_portals_org on public.csd_training_portals(organization_id);
+create index if not exists idx_csd_training_portals_hub on public.csd_training_portals(hub_id);
+create index if not exists idx_csd_video_library_org on public.csd_video_library(organization_id);
+create index if not exists idx_csd_video_library_hub on public.csd_video_library(hub_id);
+create index if not exists idx_csd_product_tours_org on public.csd_product_tours(organization_id);
+create index if not exists idx_csd_product_tours_hub on public.csd_product_tours(hub_id);
+create index if not exists idx_csd_certifications_org on public.csd_certifications(organization_id);
+create index if not exists idx_csd_certifications_hub on public.csd_certifications(hub_id);
+create index if not exists idx_csd_progress_tracking_org on public.csd_progress_tracking(organization_id);
+create index if not exists idx_csd_progress_tracking_hub on public.csd_progress_tracking(hub_id);
+create index if not exists idx_csd_learning_analytics_org on public.csd_learning_analytics(organization_id);
+create index if not exists idx_csd_learning_analytics_hub on public.csd_learning_analytics(hub_id);
+create index if not exists idx_csd_delivery_workflows_org on public.csd_delivery_workflows(organization_id);
+create index if not exists idx_csd_delivery_workflows_hub on public.csd_delivery_workflows(hub_id);
+create index if not exists idx_csd_onboarding_automation_org on public.csd_onboarding_automation(organization_id);
+create index if not exists idx_csd_onboarding_automation_hub on public.csd_onboarding_automation(hub_id);
+create index if not exists idx_csd_implementation_tracking_org on public.csd_implementation_tracking(organization_id);
+create index if not exists idx_csd_implementation_tracking_hub on public.csd_implementation_tracking(hub_id);
+create index if not exists idx_csd_resource_assignments_org on public.csd_resource_assignments(organization_id);
+create index if not exists idx_csd_resource_assignments_hub on public.csd_resource_assignments(hub_id);
+create index if not exists idx_csd_milestone_tracking_org on public.csd_milestone_tracking(organization_id);
+create index if not exists idx_csd_milestone_tracking_hub on public.csd_milestone_tracking(hub_id);
+create index if not exists idx_csd_operations_metrics_org on public.csd_operations_metrics(organization_id);
+create index if not exists idx_csd_operations_health_org on public.csd_operations_health(organization_id);
+create index if not exists idx_csd_executive_kpis_org on public.csd_executive_kpis(organization_id);
+create index if not exists idx_csd_executive_kpis_hub on public.csd_executive_kpis(hub_id);
+create index if not exists idx_csd_delivery_failures_org on public.csd_delivery_failures(organization_id);
+create index if not exists idx_csd_delivery_failures_hub on public.csd_delivery_failures(hub_id);
+create index if not exists idx_csd_audit_logs_org on public.csd_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'csd_delivery_hubs','csd_customer_health_scores','csd_adoption_analytics','csd_success_plans','csd_customer_timelines','csd_renewal_forecasts','csd_support_tickets','csd_live_chat_sessions','csd_knowledge_base_articles','csd_sla_policies','csd_escalation_rules','csd_deployment_automations','csd_environment_management','csd_deployment_tracking','csd_upgrade_management','csd_release_tracking','csd_training_portals','csd_video_library','csd_product_tours','csd_certifications','csd_progress_tracking','csd_learning_analytics','csd_delivery_workflows','csd_onboarding_automation','csd_implementation_tracking','csd_resource_assignments','csd_milestone_tracking','csd_operations_metrics','csd_operations_health','csd_executive_kpis','csd_delivery_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.csd_delivery_hubs enable row level security;
+alter table public.csd_customer_health_scores enable row level security;
+alter table public.csd_adoption_analytics enable row level security;
+alter table public.csd_success_plans enable row level security;
+alter table public.csd_customer_timelines enable row level security;
+alter table public.csd_renewal_forecasts enable row level security;
+alter table public.csd_support_tickets enable row level security;
+alter table public.csd_live_chat_sessions enable row level security;
+alter table public.csd_knowledge_base_articles enable row level security;
+alter table public.csd_sla_policies enable row level security;
+alter table public.csd_escalation_rules enable row level security;
+alter table public.csd_deployment_automations enable row level security;
+alter table public.csd_environment_management enable row level security;
+alter table public.csd_deployment_tracking enable row level security;
+alter table public.csd_upgrade_management enable row level security;
+alter table public.csd_release_tracking enable row level security;
+alter table public.csd_training_portals enable row level security;
+alter table public.csd_video_library enable row level security;
+alter table public.csd_product_tours enable row level security;
+alter table public.csd_certifications enable row level security;
+alter table public.csd_progress_tracking enable row level security;
+alter table public.csd_learning_analytics enable row level security;
+alter table public.csd_delivery_workflows enable row level security;
+alter table public.csd_onboarding_automation enable row level security;
+alter table public.csd_implementation_tracking enable row level security;
+alter table public.csd_resource_assignments enable row level security;
+alter table public.csd_milestone_tracking enable row level security;
+alter table public.csd_operations_metrics enable row level security;
+alter table public.csd_operations_health enable row level security;
+alter table public.csd_executive_kpis enable row level security;
+alter table public.csd_delivery_failures enable row level security;
+alter table public.csd_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'csd_delivery_hubs','csd_customer_health_scores','csd_adoption_analytics','csd_success_plans','csd_customer_timelines','csd_renewal_forecasts','csd_support_tickets','csd_live_chat_sessions','csd_knowledge_base_articles','csd_sla_policies','csd_escalation_rules','csd_deployment_automations','csd_environment_management','csd_deployment_tracking','csd_upgrade_management','csd_release_tracking','csd_training_portals','csd_video_library','csd_product_tours','csd_certifications','csd_progress_tracking','csd_learning_analytics','csd_delivery_workflows','csd_onboarding_automation','csd_implementation_tracking','csd_resource_assignments','csd_milestone_tracking','csd_operations_metrics','csd_operations_health','csd_executive_kpis','csd_delivery_failures','csd_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('csd.view', 'View customer success and delivery data', 'customer_success_delivery'),
+  ('csd.manage', 'Manage customer success, support, deployment, learning, ADO, and dashboard outputs', 'customer_success_delivery'),
+  ('csd.approve', 'Approve customer success and delivery gates and actions', 'customer_success_delivery'),
+  ('csd.admin', 'Administer customer success and delivery governance', 'customer_success_delivery')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -25230,6 +25884,154 @@ on conflict (id) do nothing;
 
 insert into public.cmp_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('044e011e-044e-044e-044e-044e011e1f01', '11111111-1111-1111-1111-111111111111', 'company_hub', 'seed', 'Company foundation seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 044_customer_success_delivery_platform_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a344', '11111111-1111-1111-1111-111111111111', 'Customer Success & Delivery Orchestrator', 'customer_success_delivery', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["customer_success","support","deployment","learning","ado","dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a544', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a344', 'northstar-customer-success-delivery-001', 'customer_success_delivery', 'delivery_hub', '00740074-0074-0074-0074-007400740101', '{"objective":"Customer success and delivery for northstar platform onboarding, support, and deployment"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- G0 Delivery Hub
+insert into public.csd_delivery_hubs (id, organization_id, hub_key, hub_name, environment, delivery_tier, status)
+values ('00740074-0074-0074-0074-007400740101', '11111111-1111-1111-1111-111111111111', 'northstar-customer-success-delivery', 'Northstar Customer Success & Delivery Hub', 'production', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+-- G1 Customer Success
+insert into public.csd_customer_health_scores (id, organization_id, hub_id, score_key, customer_ref, health_score, status)
+values ('04400100-0440-0440-0440-044001000101', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'health-score-0904', 'northstar-corp', 92.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_adoption_analytics (id, organization_id, hub_id, analytics_key, feature_name, adoption_rate, status)
+values ('04410101-0441-0441-0441-044101010201', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'adopt-analytics-0904', 'Workflow Engine', 78.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_success_plans (id, organization_id, hub_id, plan_key, plan_name, plan_status, status)
+values ('04420102-0442-0442-0442-044201020301', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'success-plan-0904', 'Enterprise Success Plan', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_customer_timelines (id, organization_id, hub_id, timeline_key, timeline_name, timeline_type, status)
+values ('04430103-0443-0443-0443-044301030401', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'timeline-onboard-0904', 'Onboarding Timeline', 'milestone', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_renewal_forecasts (id, organization_id, hub_id, forecast_key, customer_ref, forecast_status, status)
+values ('04440104-0444-0444-0444-044401040501', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'renewal-forecast-0904', 'northstar-corp', 'pending', 'active')
+on conflict (id) do nothing;
+
+-- G2 Support
+insert into public.csd_support_tickets (id, organization_id, hub_id, ticket_key, ticket_title, ticket_status, status)
+values ('04450105-0445-0445-0445-044501050601', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'ticket-0904', 'Integration Support Request', 'open', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_live_chat_sessions (id, organization_id, hub_id, session_key, session_title, session_status, status)
+values ('04460106-0446-0446-0446-044601060701', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'chat-session-0904', 'Live Support Session', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_knowledge_base_articles (id, organization_id, hub_id, article_key, article_title, article_category, status)
+values ('04470107-0447-0447-0447-044701070801', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'kb-article-0904', 'Getting Started Guide', 'general', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_sla_policies (id, organization_id, hub_id, policy_key, policy_name, policy_type, status)
+values ('04480108-0448-0448-0448-044801080901', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'sla-enterprise-0904', 'Enterprise SLA', 'standard', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_escalation_rules (id, organization_id, hub_id, rule_key, rule_name, rule_type, status)
+values ('04490109-0449-0449-0449-044901090a01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'escalation-0904', 'Critical Escalation Rule', 'time_based', 'active')
+on conflict (id) do nothing;
+
+-- G3 Deployment
+insert into public.csd_deployment_automations (id, organization_id, hub_id, automation_key, automation_name, automation_status, status)
+values ('044a010a-044a-044a-044a-044a010a0b01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'deploy-auto-0904', 'Production Pipeline', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_environment_management (id, organization_id, hub_id, environment_key, environment_name, environment_type, status)
+values ('044b010b-044b-044b-044b-044b010b0c01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'env-prod-0904', 'Production Environment', 'production', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_deployment_tracking (id, organization_id, hub_id, tracking_key, deployment_name, deployment_status, status)
+values ('044c010c-044c-044c-044c-044c010c0d01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'deploy-track-0904', 'Platform Deployment', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_upgrade_management (id, organization_id, hub_id, upgrade_key, upgrade_name, upgrade_status, status)
+values ('044d010d-044d-044d-044d-044d010d0e01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'upgrade-0904', 'Version 2.0 Upgrade', 'scheduled', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_release_tracking (id, organization_id, hub_id, release_key, release_name, release_status, status)
+values ('044e010e-044e-044e-044e-044e010e0f01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'release-0904', 'Platform Release 2.0', 'planned', 'active')
+on conflict (id) do nothing;
+
+-- G4 Learning
+insert into public.csd_training_portals (id, organization_id, hub_id, portal_key, portal_name, portal_type, status)
+values ('044f010f-044f-044f-044f-044f010f1001', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'training-portal-0904', 'Customer Training Portal', 'customer', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_video_library (id, organization_id, hub_id, video_key, video_title, video_category, status)
+values ('04500110-0450-0450-0450-045001101101', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'video-onboard-0904', 'Platform Onboarding Video', 'onboarding', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_product_tours (id, organization_id, hub_id, tour_key, tour_name, tour_type, status)
+values ('04510111-0451-0451-0451-045101111201', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'tour-guided-0904', 'Guided Product Tour', 'guided', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_certifications (id, organization_id, hub_id, certification_key, certification_name, certification_type, status)
+values ('04520112-0452-0452-0452-045201121301', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'cert-product-0904', 'Platform Certification', 'product', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_progress_tracking (id, organization_id, hub_id, progress_key, learner_ref, progress_percent, status)
+values ('04530113-0453-0453-0453-045301131401', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'progress-0904', 'learner-001', 65.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_learning_analytics (id, organization_id, hub_id, analytics_key, metric_name, completion_rate, status)
+values ('04540114-0454-0454-0454-045401141501', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'learn-analytics-0904', 'Course Completion Rate', 82.00, 'active')
+on conflict (id) do nothing;
+
+-- G5 ADO
+insert into public.csd_delivery_workflows (id, organization_id, hub_id, workflow_key, workflow_name, workflow_status, status)
+values ('04550115-0455-0455-0455-045501151601', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'workflow-onboard-0904', 'Onboarding Workflow', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_onboarding_automation (id, organization_id, hub_id, automation_key, automation_name, automation_status, status)
+values ('04560116-0456-0456-0456-045601161701', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'onboard-auto-0904', 'Customer Onboarding Automation', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_implementation_tracking (id, organization_id, hub_id, tracking_key, implementation_name, implementation_status, status)
+values ('04570117-0457-0457-0457-045701171801', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'impl-track-0904', 'Enterprise Implementation', 'in_progress', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_resource_assignments (id, organization_id, hub_id, assignment_key, resource_name, resource_type, status)
+values ('04580118-0458-0458-0458-045801181901', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'resource-0904', 'Senior Implementation Consultant', 'consultant', 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_milestone_tracking (id, organization_id, hub_id, milestone_key, milestone_name, milestone_status, status)
+values ('04590119-0459-0459-0459-045901191a01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'milestone-go-live-0904', 'Go-Live Milestone', 'pending', 'active')
+on conflict (id) do nothing;
+
+-- G6 Dashboard
+insert into public.csd_operations_metrics (id, organization_id, metrics_key, customer_health_score, open_ticket_count, sla_compliance_score, deployment_status_score, renewal_forecast_count, adoption_rate, overall_delivery_score, status)
+values ('045a011a-045a-045a-045a-045a011a1b01', '11111111-1111-1111-1111-111111111111', 'csd-metrics-0904', 92.00, 8, 96.00, 94.00, 12, 78.50, 93.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_operations_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, customer_success_status, support_status, deployment_status, security_status, summary, status)
+values ('045b011b-045b-045b-045b-045b011b1c01', '11111111-1111-1111-1111-111111111111', 'csd-health-0904', 94.00, false, 'healthy', 'healthy', 'healthy', 'healthy', 'Customer success and delivery operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.csd_executive_kpis (id, organization_id, hub_id, kpi_key, kpi_name, kpi_score, status)
+values ('045c011c-045c-045c-045c-045c011c1d01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'kpi-exec-0904', 'Executive Delivery KPI', 95.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.csd_delivery_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('045d011d-045d-045d-045d-045d011d1e01', '11111111-1111-1111-1111-111111111111', '00740074-0074-0074-0074-007400740101', 'fail-deploy-0904', 'deployment', 'DEPLOY_TIMEOUT', 'Production deployment timed out', 'open')
+on conflict (id) do nothing;
+
+insert into public.csd_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('045e011e-045e-045e-045e-045e011e1f01', '11111111-1111-1111-1111-111111111111', 'delivery_hub', 'seed', 'Customer success and delivery seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

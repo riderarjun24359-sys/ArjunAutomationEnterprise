@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 954 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_*)
+// 986 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -962,6 +962,38 @@ const requiredTables = [
     "cmp_executive_kpis",
     "cmp_company_failures",
     "cmp_audit_logs",
+    "csd_delivery_hubs",
+    "csd_customer_health_scores",
+    "csd_adoption_analytics",
+    "csd_success_plans",
+    "csd_customer_timelines",
+    "csd_renewal_forecasts",
+    "csd_support_tickets",
+    "csd_live_chat_sessions",
+    "csd_knowledge_base_articles",
+    "csd_sla_policies",
+    "csd_escalation_rules",
+    "csd_deployment_automations",
+    "csd_environment_management",
+    "csd_deployment_tracking",
+    "csd_upgrade_management",
+    "csd_release_tracking",
+    "csd_training_portals",
+    "csd_video_library",
+    "csd_product_tours",
+    "csd_certifications",
+    "csd_progress_tracking",
+    "csd_learning_analytics",
+    "csd_delivery_workflows",
+    "csd_onboarding_automation",
+    "csd_implementation_tracking",
+    "csd_resource_assignments",
+    "csd_milestone_tracking",
+    "csd_operations_metrics",
+    "csd_operations_health",
+    "csd_executive_kpis",
+    "csd_delivery_failures",
+    "csd_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

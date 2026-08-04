@@ -44,6 +44,7 @@ export const ROUTES = {
     retail: "/retail",
     launchFoundation: "/launch-foundation",
     companyFoundation: "/company-foundation",
+    customerSuccessDelivery: "/customer-success-delivery",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

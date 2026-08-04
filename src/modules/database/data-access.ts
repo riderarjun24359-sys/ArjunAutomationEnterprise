@@ -1025,6 +1025,42 @@ import {
     CmpCompanyFailureRepository,
     CmpAuditLogRepository,
 } from "@/src/modules/database/repositories/company-foundation-repositories";
+import {
+    CsdDeliveryHubRepository,
+    CsdCustomerHealthScoreRepository,
+    CsdAdoptionAnalyticRepository,
+    CsdSuccessPlanRepository,
+    CsdCustomerTimelineRepository,
+    CsdRenewalForecastRepository,
+    CsdSupportTicketRepository,
+    CsdLiveChatSessionRepository,
+    CsdKnowledgeBaseArticleRepository,
+    CsdSlaPolicyRepository,
+    CsdEscalationRuleRepository,
+    CsdDeploymentAutomationRepository,
+    CsdEnvironmentManagementRepository,
+    CsdDeploymentTrackingRepository,
+    CsdUpgradeManagementRepository,
+    CsdReleaseTrackingRepository,
+    CsdTrainingPortalRepository,
+    CsdVideoLibraryRepository,
+    CsdProductTourRepository,
+    CsdCertificationRepository,
+    CsdProgressTrackingRepository,
+    CsdLearningAnalyticRepository,
+    CsdDeliveryWorkflowRepository,
+    CsdOnboardingAutomationRepository,
+    CsdImplementationTrackingRepository,
+    CsdResourceAssignmentRepository,
+    CsdMilestoneTrackingRepository,
+    CsdOperationsMetricRepository,
+    CsdOperationsHealthRepository,
+    CsdExecutiveKpiRepository,
+    CsdDeliveryFailureRepository,
+    CsdAuditLogRepository,
+}
+from "@/src/modules/database/repositories/customer-success-delivery-repositories";
+
 
 
 
@@ -1987,6 +2023,38 @@ export class DatabaseAccessLayer {
     readonly cmpExecutiveKpis: CmpExecutiveKpiRepository;
     readonly cmpCompanyFailures: CmpCompanyFailureRepository;
     readonly cmpAuditLogs: CmpAuditLogRepository;
+    readonly csdDeliveryHubs: CsdDeliveryHubRepository;
+    readonly csdCustomerHealthScores: CsdCustomerHealthScoreRepository;
+    readonly csdAdoptionAnalytics: CsdAdoptionAnalyticRepository;
+    readonly csdSuccessPlans: CsdSuccessPlanRepository;
+    readonly csdCustomerTimelines: CsdCustomerTimelineRepository;
+    readonly csdRenewalForecasts: CsdRenewalForecastRepository;
+    readonly csdSupportTickets: CsdSupportTicketRepository;
+    readonly csdLiveChatSessions: CsdLiveChatSessionRepository;
+    readonly csdKnowledgeBaseArticles: CsdKnowledgeBaseArticleRepository;
+    readonly csdSlaPolicies: CsdSlaPolicyRepository;
+    readonly csdEscalationRules: CsdEscalationRuleRepository;
+    readonly csdDeploymentAutomations: CsdDeploymentAutomationRepository;
+    readonly csdEnvironmentManagement: CsdEnvironmentManagementRepository;
+    readonly csdDeploymentTracking: CsdDeploymentTrackingRepository;
+    readonly csdUpgradeManagement: CsdUpgradeManagementRepository;
+    readonly csdReleaseTracking: CsdReleaseTrackingRepository;
+    readonly csdTrainingPortals: CsdTrainingPortalRepository;
+    readonly csdVideoLibrary: CsdVideoLibraryRepository;
+    readonly csdProductTours: CsdProductTourRepository;
+    readonly csdCertifications: CsdCertificationRepository;
+    readonly csdProgressTracking: CsdProgressTrackingRepository;
+    readonly csdLearningAnalytics: CsdLearningAnalyticRepository;
+    readonly csdDeliveryWorkflows: CsdDeliveryWorkflowRepository;
+    readonly csdOnboardingAutomation: CsdOnboardingAutomationRepository;
+    readonly csdImplementationTracking: CsdImplementationTrackingRepository;
+    readonly csdResourceAssignments: CsdResourceAssignmentRepository;
+    readonly csdMilestoneTracking: CsdMilestoneTrackingRepository;
+    readonly csdOperationsMetrics: CsdOperationsMetricRepository;
+    readonly csdOperationsHealth: CsdOperationsHealthRepository;
+    readonly csdExecutiveKpis: CsdExecutiveKpiRepository;
+    readonly csdDeliveryFailures: CsdDeliveryFailureRepository;
+    readonly csdAuditLogs: CsdAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -2938,6 +3006,38 @@ export class DatabaseAccessLayer {
         this.cmpExecutiveKpis = new CmpExecutiveKpiRepository();
         this.cmpCompanyFailures = new CmpCompanyFailureRepository();
         this.cmpAuditLogs = new CmpAuditLogRepository();
+        this.csdDeliveryHubs = new CsdDeliveryHubRepository();
+        this.csdCustomerHealthScores = new CsdCustomerHealthScoreRepository();
+        this.csdAdoptionAnalytics = new CsdAdoptionAnalyticRepository();
+        this.csdSuccessPlans = new CsdSuccessPlanRepository();
+        this.csdCustomerTimelines = new CsdCustomerTimelineRepository();
+        this.csdRenewalForecasts = new CsdRenewalForecastRepository();
+        this.csdSupportTickets = new CsdSupportTicketRepository();
+        this.csdLiveChatSessions = new CsdLiveChatSessionRepository();
+        this.csdKnowledgeBaseArticles = new CsdKnowledgeBaseArticleRepository();
+        this.csdSlaPolicies = new CsdSlaPolicyRepository();
+        this.csdEscalationRules = new CsdEscalationRuleRepository();
+        this.csdDeploymentAutomations = new CsdDeploymentAutomationRepository();
+        this.csdEnvironmentManagement = new CsdEnvironmentManagementRepository();
+        this.csdDeploymentTracking = new CsdDeploymentTrackingRepository();
+        this.csdUpgradeManagement = new CsdUpgradeManagementRepository();
+        this.csdReleaseTracking = new CsdReleaseTrackingRepository();
+        this.csdTrainingPortals = new CsdTrainingPortalRepository();
+        this.csdVideoLibrary = new CsdVideoLibraryRepository();
+        this.csdProductTours = new CsdProductTourRepository();
+        this.csdCertifications = new CsdCertificationRepository();
+        this.csdProgressTracking = new CsdProgressTrackingRepository();
+        this.csdLearningAnalytics = new CsdLearningAnalyticRepository();
+        this.csdDeliveryWorkflows = new CsdDeliveryWorkflowRepository();
+        this.csdOnboardingAutomation = new CsdOnboardingAutomationRepository();
+        this.csdImplementationTracking = new CsdImplementationTrackingRepository();
+        this.csdResourceAssignments = new CsdResourceAssignmentRepository();
+        this.csdMilestoneTracking = new CsdMilestoneTrackingRepository();
+        this.csdOperationsMetrics = new CsdOperationsMetricRepository();
+        this.csdOperationsHealth = new CsdOperationsHealthRepository();
+        this.csdExecutiveKpis = new CsdExecutiveKpiRepository();
+        this.csdDeliveryFailures = new CsdDeliveryFailureRepository();
+        this.csdAuditLogs = new CsdAuditLogRepository();
     }
 }
 
