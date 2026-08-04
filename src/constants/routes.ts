@@ -49,6 +49,7 @@ export const ROUTES = {
     enterpriseIntelligencePlatform: "/enterprise-intelligence-platform",
     aiOrganizationFoundation: "/ai-organization-foundation",
     enterpriseGovernancePlatform: "/enterprise-governance-platform",
+    growthEngine: "/growth-engine",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

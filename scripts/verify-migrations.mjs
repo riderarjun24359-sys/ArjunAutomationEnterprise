@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 1114 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_* + 32 egp_*)
+// 1146 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_* + 32 egp_* + 32 aage_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -1122,6 +1122,38 @@ const requiredTables = [
     "egp_mission_progress",
     "egp_governance_failures",
     "egp_audit_logs",
+    "aage_growth_hubs",
+    "aage_brand_profiles",
+    "aage_brand_voice",
+    "aage_core_messaging",
+    "aage_brand_guidelines",
+    "aage_logo_library",
+    "aage_color_systems",
+    "aage_youtube_templates",
+    "aage_social_templates",
+    "aage_blog_templates",
+    "aage_website_article_templates",
+    "aage_email_campaign_templates",
+    "aage_case_study_templates",
+    "aage_image_assets",
+    "aage_video_assets",
+    "aage_icon_assets",
+    "aage_voice_profiles",
+    "aage_music_assets",
+    "aage_thumbnail_templates",
+    "aage_idea_generators",
+    "aage_script_generators",
+    "aage_caption_generators",
+    "aage_blog_generators",
+    "aage_seo_assistants",
+    "aage_cta_generators",
+    "aage_growth_metrics",
+    "aage_growth_health",
+    "aage_content_calendar",
+    "aage_draft_queue",
+    "aage_approval_queue",
+    "aage_publishing_queue",
+    "aage_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

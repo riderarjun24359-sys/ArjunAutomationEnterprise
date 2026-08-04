@@ -1196,6 +1196,41 @@ import {
     EgpGovernanceFailureRepository,
     EgpAuditLogRepository,
 } from "@/src/modules/database/repositories/enterprise-governance-platform-repositories";
+import {
+    AageGrowthHubRepository,
+    AageBrandProfileRepository,
+    AageBrandVoiceRepository,
+    AageCoreMessagingRepository,
+    AageBrandGuidelineRepository,
+    AageLogoLibraryRepository,
+    AageColorSystemRepository,
+    AageYoutubeTemplateRepository,
+    AageSocialTemplateRepository,
+    AageBlogTemplateRepository,
+    AageWebsiteArticleTemplateRepository,
+    AageEmailCampaignTemplateRepository,
+    AageCaseStudyTemplateRepository,
+    AageImageAssetRepository,
+    AageVideoAssetRepository,
+    AageIconAssetRepository,
+    AageVoiceProfileRepository,
+    AageMusicAssetRepository,
+    AageThumbnailTemplateRepository,
+    AageIdeaGeneratorRepository,
+    AageScriptGeneratorRepository,
+    AageCaptionGeneratorRepository,
+    AageBlogGeneratorRepository,
+    AageSeoAssistantRepository,
+    AageCtaGeneratorRepository,
+    AageGrowthMetricRepository,
+    AageGrowthHealthRepository,
+    AageContentCalendarRepository,
+    AageDraftQueueRepository,
+    AageApprovalQueueRepository,
+    AagePublishingQueueRepository,
+    AageAuditLogRepository,
+} from "@/src/modules/database/repositories/growth-engine-repositories";
+
 
 
 
@@ -2322,6 +2357,38 @@ export class DatabaseAccessLayer {
     readonly egpMissionProgress: EgpMissionProgressRepository;
     readonly egpGovernanceFailures: EgpGovernanceFailureRepository;
     readonly egpAuditLogs: EgpAuditLogRepository;
+    readonly aageGrowthHubs: AageGrowthHubRepository;
+    readonly aageBrandProfiles: AageBrandProfileRepository;
+    readonly aageBrandVoice: AageBrandVoiceRepository;
+    readonly aageCoreMessaging: AageCoreMessagingRepository;
+    readonly aageBrandGuidelines: AageBrandGuidelineRepository;
+    readonly aageLogoLibrary: AageLogoLibraryRepository;
+    readonly aageColorSystems: AageColorSystemRepository;
+    readonly aageYoutubeTemplates: AageYoutubeTemplateRepository;
+    readonly aageSocialTemplates: AageSocialTemplateRepository;
+    readonly aageBlogTemplates: AageBlogTemplateRepository;
+    readonly aageWebsiteArticleTemplates: AageWebsiteArticleTemplateRepository;
+    readonly aageEmailCampaignTemplates: AageEmailCampaignTemplateRepository;
+    readonly aageCaseStudyTemplates: AageCaseStudyTemplateRepository;
+    readonly aageImageAssets: AageImageAssetRepository;
+    readonly aageVideoAssets: AageVideoAssetRepository;
+    readonly aageIconAssets: AageIconAssetRepository;
+    readonly aageVoiceProfiles: AageVoiceProfileRepository;
+    readonly aageMusicAssets: AageMusicAssetRepository;
+    readonly aageThumbnailTemplates: AageThumbnailTemplateRepository;
+    readonly aageIdeaGenerators: AageIdeaGeneratorRepository;
+    readonly aageScriptGenerators: AageScriptGeneratorRepository;
+    readonly aageCaptionGenerators: AageCaptionGeneratorRepository;
+    readonly aageBlogGenerators: AageBlogGeneratorRepository;
+    readonly aageSeoAssistants: AageSeoAssistantRepository;
+    readonly aageCtaGenerators: AageCtaGeneratorRepository;
+    readonly aageGrowthMetrics: AageGrowthMetricRepository;
+    readonly aageGrowthHealth: AageGrowthHealthRepository;
+    readonly aageContentCalendar: AageContentCalendarRepository;
+    readonly aageDraftQueue: AageDraftQueueRepository;
+    readonly aageApprovalQueue: AageApprovalQueueRepository;
+    readonly aagePublishingQueue: AagePublishingQueueRepository;
+    readonly aageAuditLogs: AageAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3433,6 +3500,38 @@ export class DatabaseAccessLayer {
         this.egpMissionProgress = new EgpMissionProgressRepository();
         this.egpGovernanceFailures = new EgpGovernanceFailureRepository();
         this.egpAuditLogs = new EgpAuditLogRepository();
+        this.aageGrowthHubs = new AageGrowthHubRepository();
+        this.aageBrandProfiles = new AageBrandProfileRepository();
+        this.aageBrandVoice = new AageBrandVoiceRepository();
+        this.aageCoreMessaging = new AageCoreMessagingRepository();
+        this.aageBrandGuidelines = new AageBrandGuidelineRepository();
+        this.aageLogoLibrary = new AageLogoLibraryRepository();
+        this.aageColorSystems = new AageColorSystemRepository();
+        this.aageYoutubeTemplates = new AageYoutubeTemplateRepository();
+        this.aageSocialTemplates = new AageSocialTemplateRepository();
+        this.aageBlogTemplates = new AageBlogTemplateRepository();
+        this.aageWebsiteArticleTemplates = new AageWebsiteArticleTemplateRepository();
+        this.aageEmailCampaignTemplates = new AageEmailCampaignTemplateRepository();
+        this.aageCaseStudyTemplates = new AageCaseStudyTemplateRepository();
+        this.aageImageAssets = new AageImageAssetRepository();
+        this.aageVideoAssets = new AageVideoAssetRepository();
+        this.aageIconAssets = new AageIconAssetRepository();
+        this.aageVoiceProfiles = new AageVoiceProfileRepository();
+        this.aageMusicAssets = new AageMusicAssetRepository();
+        this.aageThumbnailTemplates = new AageThumbnailTemplateRepository();
+        this.aageIdeaGenerators = new AageIdeaGeneratorRepository();
+        this.aageScriptGenerators = new AageScriptGeneratorRepository();
+        this.aageCaptionGenerators = new AageCaptionGeneratorRepository();
+        this.aageBlogGenerators = new AageBlogGeneratorRepository();
+        this.aageSeoAssistants = new AageSeoAssistantRepository();
+        this.aageCtaGenerators = new AageCtaGeneratorRepository();
+        this.aageGrowthMetrics = new AageGrowthMetricRepository();
+        this.aageGrowthHealth = new AageGrowthHealthRepository();
+        this.aageContentCalendar = new AageContentCalendarRepository();
+        this.aageDraftQueue = new AageDraftQueueRepository();
+        this.aageApprovalQueue = new AageApprovalQueueRepository();
+        this.aagePublishingQueue = new AagePublishingQueueRepository();
+        this.aageAuditLogs = new AageAuditLogRepository();
     }
 }
 

@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-04T02:51:42.807Z
+-- Generated: 2026-08-04T04:24:24.215Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (48):
+--   Migrations (49):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -54,7 +54,8 @@
 --     - 202608020046_enterprise_intelligence_platform.sql
 --     - 202608020047_ai_organization_foundation.sql
 --     - 202608020048_enterprise_governance_platform.sql
---   Seeds (48):
+--     - 202608020049_arjun_automation_growth_engine.sql
+--   Seeds (49):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -103,9 +104,10 @@
 --     - 046_enterprise_intelligence_platform_seed.sql
 --     - 047_ai_organization_foundation_seed.sql
 --     - 048_enterprise_governance_platform_seed.sql
+--     - 049_arjun_automation_growth_engine_seed.sql
 --
--- Includes through V2 Enterprise Governance Platform:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform, Customer Operated Platform, Enterprise Intelligence Platform, AI Organization Foundation, Enterprise Governance Platform
+-- Includes through V2 Arjun Automation Growth Engine:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform, Customer Operated Platform, Enterprise Intelligence Platform, AI Organization Foundation, Enterprise Governance Platform, Arjun Automation Growth Engine
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -23197,6 +23199,656 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020049_arjun_automation_growth_engine.sql
+-- =============================================================================
+-- V2 Arjun Automation Growth Engine
+
+-- GrowthHub
+create table if not exists public.aage_growth_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  growth_tier text not null default 'growth',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- BrandProfile
+create table if not exists public.aage_brand_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  profile_status text not null default 'active',
+  brand_tagline text not null default '',
+  target_audience text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- BrandVoice
+create table if not exists public.aage_brand_voice (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  voice_key text not null,
+  voice_name text not null default '',
+  voice_tone text not null default 'professional',
+  voice_style text not null default 'conversational',
+  formality_level text not null default 'medium',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, voice_key)
+);
+
+-- CoreMessaging
+create table if not exists public.aage_core_messaging (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  messaging_key text not null,
+  messaging_title text not null default '',
+  messaging_status text not null default 'active',
+  messaging_type text not null default 'value_prop',
+  audience_segment text not null default 'general',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, messaging_key)
+);
+
+-- BrandGuideline
+create table if not exists public.aage_brand_guidelines (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  guideline_key text not null,
+  guideline_name text not null default '',
+  guideline_status text not null default 'active',
+  guideline_category text not null default 'visual',
+  version text not null default '1.0',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, guideline_key)
+);
+
+-- LogoLibrary
+create table if not exists public.aage_logo_library (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  logo_key text not null,
+  logo_name text not null default '',
+  logo_format text not null default 'svg',
+  logo_variant text not null default 'primary',
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, logo_key)
+);
+
+-- ColorSystem
+create table if not exists public.aage_color_systems (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  color_key text not null,
+  color_name text not null default '',
+  primary_hex text not null default '#db2777',
+  secondary_hex text not null default '#831843',
+  accent_hex text not null default '#f472b6',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, color_key)
+);
+
+-- YoutubeTemplate
+create table if not exists public.aage_youtube_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  video_format text not null default 'long_form',
+  duration_seconds integer not null default 600,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- SocialTemplate
+create table if not exists public.aage_social_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  platform text not null default 'linkedin',
+  post_type text not null default 'carousel',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- BlogTemplate
+create table if not exists public.aage_blog_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  word_count_target integer not null default 1200,
+  content_type text not null default 'thought_leadership',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- WebsiteArticleTemplate
+create table if not exists public.aage_website_article_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  page_type text not null default 'landing',
+  seo_focus text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- EmailCampaignTemplate
+create table if not exists public.aage_email_campaign_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  campaign_type text not null default 'nurture',
+  subject_line text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- CaseStudyTemplate
+create table if not exists public.aage_case_study_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  industry text not null default 'technology',
+  outcome_type text not null default 'roi',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- ImageAsset
+create table if not exists public.aage_image_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  asset_type text not null default 'hero',
+  asset_format text not null default 'png',
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- VideoAsset
+create table if not exists public.aage_video_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  asset_type text not null default 'promo',
+  duration_seconds integer not null default 60,
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- IconAsset
+create table if not exists public.aage_icon_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  asset_type text not null default 'feature',
+  icon_style text not null default 'outline',
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- VoiceProfile
+create table if not exists public.aage_voice_profiles (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  profile_key text not null,
+  profile_name text not null default '',
+  voice_type text not null default 'narrator',
+  language text not null default 'en-US',
+  sample_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, profile_key)
+);
+
+-- MusicAsset
+create table if not exists public.aage_music_assets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  asset_key text not null,
+  asset_name text not null default '',
+  genre text not null default 'corporate',
+  mood text not null default 'uplifting',
+  asset_url text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, asset_key)
+);
+
+-- ThumbnailTemplate
+create table if not exists public.aage_thumbnail_templates (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  template_key text not null,
+  template_name text not null default '',
+  template_status text not null default 'active',
+  aspect_ratio text not null default '16:9',
+  style text not null default 'bold',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, template_key)
+);
+
+-- IdeaGenerator
+create table if not exists public.aage_idea_generators (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  content_type text not null default 'blog',
+  output_format text not null default 'outline',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- ScriptGenerator
+create table if not exists public.aage_script_generators (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  script_type text not null default 'video',
+  target_length integer not null default 500,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- CaptionGenerator
+create table if not exists public.aage_caption_generators (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  platform text not null default 'instagram',
+  tone text not null default 'engaging',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- BlogGenerator
+create table if not exists public.aage_blog_generators (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  topic_category text not null default 'automation',
+  word_count integer not null default 1000,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- SeoAssistant
+create table if not exists public.aage_seo_assistants (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  assistant_key text not null,
+  assistant_name text not null default '',
+  assistant_status text not null default 'active',
+  keyword_focus text not null default '',
+  search_intent text not null default 'informational',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, assistant_key)
+);
+
+-- CtaGenerator
+create table if not exists public.aage_cta_generators (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  generator_key text not null,
+  generator_name text not null default '',
+  generator_status text not null default 'active',
+  cta_type text not null default 'button',
+  conversion_goal text not null default 'signup',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, generator_key)
+);
+
+-- GrowthMetric
+create table if not exists public.aage_growth_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  marketing_overview_score numeric(5, 2) not null default 0,
+  content_calendar_count integer not null default 0,
+  draft_queue_count integer not null default 0,
+  approval_queue_count integer not null default 0,
+  publishing_queue_count integer not null default 0,
+  brand_health_score numeric(5, 2) not null default 100,
+  overall_growth_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- GrowthHealth
+create table if not exists public.aage_growth_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  brand_status text not null default 'healthy',
+  content_status text not null default 'healthy',
+  media_status text not null default 'healthy',
+  engine_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- ContentCalendar
+create table if not exists public.aage_content_calendar (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  calendar_key text not null,
+  calendar_name text not null default '',
+  calendar_status text not null default 'active',
+  scheduled_date date not null default current_date,
+  content_type text not null default 'blog',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, calendar_key)
+);
+
+-- DraftQueue
+create table if not exists public.aage_draft_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_title text not null default '',
+  queue_status text not null default 'draft',
+  content_type text not null default 'blog',
+  priority text not null default 'medium',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- ApprovalQueue
+create table if not exists public.aage_approval_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_title text not null default '',
+  queue_status text not null default 'pending',
+  content_type text not null default 'blog',
+  approver_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- PublishingQueue
+create table if not exists public.aage_publishing_queue (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
+  queue_key text not null,
+  queue_title text not null default '',
+  queue_status text not null default 'scheduled',
+  content_type text not null default 'blog',
+  publish_date date not null default current_date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, queue_key)
+);
+
+-- Audit Logs
+create table if not exists public.aage_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_aage_growth_hubs_org on public.aage_growth_hubs(organization_id);
+create index if not exists idx_aage_brand_profiles_org on public.aage_brand_profiles(organization_id);
+create index if not exists idx_aage_brand_profiles_hub on public.aage_brand_profiles(hub_id);
+create index if not exists idx_aage_brand_voice_org on public.aage_brand_voice(organization_id);
+create index if not exists idx_aage_brand_voice_hub on public.aage_brand_voice(hub_id);
+create index if not exists idx_aage_core_messaging_org on public.aage_core_messaging(organization_id);
+create index if not exists idx_aage_core_messaging_hub on public.aage_core_messaging(hub_id);
+create index if not exists idx_aage_brand_guidelines_org on public.aage_brand_guidelines(organization_id);
+create index if not exists idx_aage_brand_guidelines_hub on public.aage_brand_guidelines(hub_id);
+create index if not exists idx_aage_logo_library_org on public.aage_logo_library(organization_id);
+create index if not exists idx_aage_logo_library_hub on public.aage_logo_library(hub_id);
+create index if not exists idx_aage_color_systems_org on public.aage_color_systems(organization_id);
+create index if not exists idx_aage_color_systems_hub on public.aage_color_systems(hub_id);
+create index if not exists idx_aage_youtube_templates_org on public.aage_youtube_templates(organization_id);
+create index if not exists idx_aage_youtube_templates_hub on public.aage_youtube_templates(hub_id);
+create index if not exists idx_aage_social_templates_org on public.aage_social_templates(organization_id);
+create index if not exists idx_aage_social_templates_hub on public.aage_social_templates(hub_id);
+create index if not exists idx_aage_blog_templates_org on public.aage_blog_templates(organization_id);
+create index if not exists idx_aage_blog_templates_hub on public.aage_blog_templates(hub_id);
+create index if not exists idx_aage_website_article_templates_org on public.aage_website_article_templates(organization_id);
+create index if not exists idx_aage_website_article_templates_hub on public.aage_website_article_templates(hub_id);
+create index if not exists idx_aage_email_campaign_templates_org on public.aage_email_campaign_templates(organization_id);
+create index if not exists idx_aage_email_campaign_templates_hub on public.aage_email_campaign_templates(hub_id);
+create index if not exists idx_aage_case_study_templates_org on public.aage_case_study_templates(organization_id);
+create index if not exists idx_aage_case_study_templates_hub on public.aage_case_study_templates(hub_id);
+create index if not exists idx_aage_image_assets_org on public.aage_image_assets(organization_id);
+create index if not exists idx_aage_image_assets_hub on public.aage_image_assets(hub_id);
+create index if not exists idx_aage_video_assets_org on public.aage_video_assets(organization_id);
+create index if not exists idx_aage_video_assets_hub on public.aage_video_assets(hub_id);
+create index if not exists idx_aage_icon_assets_org on public.aage_icon_assets(organization_id);
+create index if not exists idx_aage_icon_assets_hub on public.aage_icon_assets(hub_id);
+create index if not exists idx_aage_voice_profiles_org on public.aage_voice_profiles(organization_id);
+create index if not exists idx_aage_voice_profiles_hub on public.aage_voice_profiles(hub_id);
+create index if not exists idx_aage_music_assets_org on public.aage_music_assets(organization_id);
+create index if not exists idx_aage_music_assets_hub on public.aage_music_assets(hub_id);
+create index if not exists idx_aage_thumbnail_templates_org on public.aage_thumbnail_templates(organization_id);
+create index if not exists idx_aage_thumbnail_templates_hub on public.aage_thumbnail_templates(hub_id);
+create index if not exists idx_aage_idea_generators_org on public.aage_idea_generators(organization_id);
+create index if not exists idx_aage_idea_generators_hub on public.aage_idea_generators(hub_id);
+create index if not exists idx_aage_script_generators_org on public.aage_script_generators(organization_id);
+create index if not exists idx_aage_script_generators_hub on public.aage_script_generators(hub_id);
+create index if not exists idx_aage_caption_generators_org on public.aage_caption_generators(organization_id);
+create index if not exists idx_aage_caption_generators_hub on public.aage_caption_generators(hub_id);
+create index if not exists idx_aage_blog_generators_org on public.aage_blog_generators(organization_id);
+create index if not exists idx_aage_blog_generators_hub on public.aage_blog_generators(hub_id);
+create index if not exists idx_aage_seo_assistants_org on public.aage_seo_assistants(organization_id);
+create index if not exists idx_aage_seo_assistants_hub on public.aage_seo_assistants(hub_id);
+create index if not exists idx_aage_cta_generators_org on public.aage_cta_generators(organization_id);
+create index if not exists idx_aage_cta_generators_hub on public.aage_cta_generators(hub_id);
+create index if not exists idx_aage_growth_metrics_org on public.aage_growth_metrics(organization_id);
+create index if not exists idx_aage_growth_health_org on public.aage_growth_health(organization_id);
+create index if not exists idx_aage_content_calendar_org on public.aage_content_calendar(organization_id);
+create index if not exists idx_aage_content_calendar_hub on public.aage_content_calendar(hub_id);
+create index if not exists idx_aage_draft_queue_org on public.aage_draft_queue(organization_id);
+create index if not exists idx_aage_draft_queue_hub on public.aage_draft_queue(hub_id);
+create index if not exists idx_aage_approval_queue_org on public.aage_approval_queue(organization_id);
+create index if not exists idx_aage_approval_queue_hub on public.aage_approval_queue(hub_id);
+create index if not exists idx_aage_publishing_queue_org on public.aage_publishing_queue(organization_id);
+create index if not exists idx_aage_publishing_queue_hub on public.aage_publishing_queue(hub_id);
+create index if not exists idx_aage_audit_logs_org on public.aage_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aage_growth_hubs','aage_brand_profiles','aage_brand_voice','aage_core_messaging','aage_brand_guidelines','aage_logo_library','aage_color_systems','aage_youtube_templates','aage_social_templates','aage_blog_templates','aage_website_article_templates','aage_email_campaign_templates','aage_case_study_templates','aage_image_assets','aage_video_assets','aage_icon_assets','aage_voice_profiles','aage_music_assets','aage_thumbnail_templates','aage_idea_generators','aage_script_generators','aage_caption_generators','aage_blog_generators','aage_seo_assistants','aage_cta_generators','aage_growth_metrics','aage_growth_health','aage_content_calendar','aage_draft_queue','aage_approval_queue','aage_publishing_queue'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.aage_growth_hubs enable row level security;
+alter table public.aage_brand_profiles enable row level security;
+alter table public.aage_brand_voice enable row level security;
+alter table public.aage_core_messaging enable row level security;
+alter table public.aage_brand_guidelines enable row level security;
+alter table public.aage_logo_library enable row level security;
+alter table public.aage_color_systems enable row level security;
+alter table public.aage_youtube_templates enable row level security;
+alter table public.aage_social_templates enable row level security;
+alter table public.aage_blog_templates enable row level security;
+alter table public.aage_website_article_templates enable row level security;
+alter table public.aage_email_campaign_templates enable row level security;
+alter table public.aage_case_study_templates enable row level security;
+alter table public.aage_image_assets enable row level security;
+alter table public.aage_video_assets enable row level security;
+alter table public.aage_icon_assets enable row level security;
+alter table public.aage_voice_profiles enable row level security;
+alter table public.aage_music_assets enable row level security;
+alter table public.aage_thumbnail_templates enable row level security;
+alter table public.aage_idea_generators enable row level security;
+alter table public.aage_script_generators enable row level security;
+alter table public.aage_caption_generators enable row level security;
+alter table public.aage_blog_generators enable row level security;
+alter table public.aage_seo_assistants enable row level security;
+alter table public.aage_cta_generators enable row level security;
+alter table public.aage_growth_metrics enable row level security;
+alter table public.aage_growth_health enable row level security;
+alter table public.aage_content_calendar enable row level security;
+alter table public.aage_draft_queue enable row level security;
+alter table public.aage_approval_queue enable row level security;
+alter table public.aage_publishing_queue enable row level security;
+alter table public.aage_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'aage_growth_hubs','aage_brand_profiles','aage_brand_voice','aage_core_messaging','aage_brand_guidelines','aage_logo_library','aage_color_systems','aage_youtube_templates','aage_social_templates','aage_blog_templates','aage_website_article_templates','aage_email_campaign_templates','aage_case_study_templates','aage_image_assets','aage_video_assets','aage_icon_assets','aage_voice_profiles','aage_music_assets','aage_thumbnail_templates','aage_idea_generators','aage_script_generators','aage_caption_generators','aage_blog_generators','aage_seo_assistants','aage_cta_generators','aage_growth_metrics','aage_growth_health','aage_content_calendar','aage_draft_queue','aage_approval_queue','aage_publishing_queue','aage_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('aage.view', 'View Arjun Automation growth engine data', 'arjun_automation_growth_engine'),
+  ('aage.manage', 'Manage brand, content, media, content engine, and founder dashboard outputs', 'arjun_automation_growth_engine'),
+  ('aage.approve', 'Approve growth engine gates and actions', 'arjun_automation_growth_engine'),
+  ('aage.admin', 'Administer Arjun Automation growth engine', 'arjun_automation_growth_engine')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -29235,6 +29887,147 @@ on conflict (id) do nothing;
 
 insert into public.egp_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('049e011e-049e-049e-049e-049e011e1e01', '11111111-1111-1111-1111-111111111111', 'governance_hub', 'seed', 'Enterprise governance platform seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 049_arjun_automation_growth_engine_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a349', '11111111-1111-1111-1111-111111111111', 'Arjun Automation Growth Engine Orchestrator', 'arjun_automation_growth_engine', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["brand","content","media","content_engine","founder_dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a549', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a349', 'northstar-growth-engine-001', 'arjun_automation_growth_engine', 'growth_hub', '00790079-0079-0079-0079-007900790101', '{"objective":"Unified Arjun Automation growth engine"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+insert into public.aage_growth_hubs (id, organization_id, hub_key, hub_name, environment, growth_tier, status)
+values ('00790079-0079-0079-0079-007900790101', '11111111-1111-1111-1111-111111111111', 'northstar-growth-engine', 'Northstar Growth Engine Hub', 'production', 'growth', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_brand_profiles (id, organization_id, hub_id, profile_key, profile_name, profile_status, status)
+values ('04900100-0490-0490-0490-049001000101', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'brand-profile-0909', 'Brand Profile', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_brand_voice (id, organization_id, hub_id, voice_key, voice_name, voice_tone, status)
+values ('04910101-0491-0491-0491-049101010201', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'brand-voice-0909', 'Brand Voice', 'professional', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_core_messaging (id, organization_id, hub_id, messaging_key, messaging_title, messaging_status, status)
+values ('04920102-0492-0492-0492-049201020301', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'core-msg-0909', 'Core Messaging', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_brand_guidelines (id, organization_id, hub_id, guideline_key, guideline_name, guideline_status, status)
+values ('04930103-0493-0493-0493-049301030401', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'brand-guide-0909', 'Brand Guidelines', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_logo_library (id, organization_id, hub_id, logo_key, logo_name, logo_format, status)
+values ('04940104-0494-0494-0494-049401040501', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'logo-0909', 'Primary Logo', 'svg', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_color_systems (id, organization_id, hub_id, color_key, color_name, primary_hex, status)
+values ('04950105-0495-0495-0495-049501050601', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'color-0909', 'Brand Colors', '#db2777', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_youtube_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('04960106-0496-0496-0496-049601060701', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'yt-template-0909', 'YouTube Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_social_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('04970107-0497-0497-0497-049701070801', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'social-template-0909', 'Social Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_blog_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('04980108-0498-0498-0498-049801080901', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'blog-template-0909', 'Blog Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_website_article_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('04990109-0499-0499-0499-049901090a01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'web-template-0909', 'Website Article Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_email_campaign_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('049a010a-049a-049a-049a-049a010a0b01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'email-template-0909', 'Email Campaign Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_case_study_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('049b010b-049b-049b-049b-049b010b0c01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'case-template-0909', 'Case Study Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_image_assets (id, organization_id, hub_id, asset_key, asset_name, asset_type, status)
+values ('049c010c-049c-049c-049c-049c010c0d01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'image-0909', 'Hero Image', 'hero', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_video_assets (id, organization_id, hub_id, asset_key, asset_name, asset_type, status)
+values ('049d010d-049d-049d-049d-049d010d0e01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'video-0909', 'Promo Video', 'promo', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_icon_assets (id, organization_id, hub_id, asset_key, asset_name, asset_type, status)
+values ('049e010e-049e-049e-049e-049e010e0f01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'icon-0909', 'Feature Icon', 'feature', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_voice_profiles (id, organization_id, hub_id, profile_key, profile_name, voice_type, status)
+values ('049f010f-049f-049f-049f-049f010f1001', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'voice-0909', 'Narrator Voice', 'narrator', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_music_assets (id, organization_id, hub_id, asset_key, asset_name, genre, status)
+values ('04a00110-04a0-04a0-04a0-04a001101101', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'music-0909', 'Brand Music', 'corporate', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_thumbnail_templates (id, organization_id, hub_id, template_key, template_name, template_status, status)
+values ('04a10111-04a1-04a1-04a1-04a101111201', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'thumb-template-0909', 'Thumbnail Template', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_idea_generators (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('04a20112-04a2-04a2-04a2-04a201121301', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'idea-gen-0909', 'Idea Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_script_generators (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('04a30113-04a3-04a3-04a3-04a301131401', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'script-gen-0909', 'Script Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_caption_generators (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('04a40114-04a4-04a4-04a4-04a401141501', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'caption-gen-0909', 'Caption Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_blog_generators (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('04a50115-04a5-04a5-04a5-04a501151601', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'blog-gen-0909', 'Blog Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_seo_assistants (id, organization_id, hub_id, assistant_key, assistant_name, assistant_status, status)
+values ('04a60116-04a6-04a6-04a6-04a601161701', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'seo-0909', 'SEO Assistant', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_cta_generators (id, organization_id, hub_id, generator_key, generator_name, generator_status, status)
+values ('04a70117-04a7-04a7-04a7-04a701171801', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'cta-gen-0909', 'CTA Generator', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_growth_metrics (id, organization_id, metrics_key, marketing_overview_score, content_calendar_count, draft_queue_count, approval_queue_count, publishing_queue_count, brand_health_score, overall_growth_score, status)
+values ('04a80118-04a8-04a8-04a8-04a801181901', '11111111-1111-1111-1111-111111111111', 'aage-metrics-0909', 88.50, 12, 5, 3, 2, 92.00, 89.75, 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_growth_health (id, organization_id, health_key, overall_score, brand_status, content_status, media_status, engine_status, summary, status)
+values ('04a90119-04a9-04a9-04a9-04a901191a01', '11111111-1111-1111-1111-111111111111', 'aage-health-0909', 90.00, 'healthy', 'healthy', 'healthy', 'healthy', 'Arjun Automation growth engine operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.aage_content_calendar (id, organization_id, hub_id, calendar_key, calendar_name, calendar_status, status)
+values ('04aa011a-04aa-04aa-04aa-04aa011a1b01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'calendar-0909', 'Content Calendar', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_draft_queue (id, organization_id, hub_id, queue_key, queue_title, queue_status, status)
+values ('04ab011b-04ab-04ab-04ab-04ab011b1c01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'draft-0909', 'Draft Content', 'draft', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_approval_queue (id, organization_id, hub_id, queue_key, queue_title, queue_status, status)
+values ('04ac011c-04ac-04ac-04ac-04ac011c1d01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'approval-0909', 'Pending Approval', 'pending', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_publishing_queue (id, organization_id, hub_id, queue_key, queue_title, queue_status, status)
+values ('04ad011d-04ad-04ad-04ad-04ad011d1d01', '11111111-1111-1111-1111-111111111111', '00790079-0079-0079-0079-007900790101', 'publish-0909', 'Scheduled Publish', 'scheduled', 'active')
+on conflict (id) do nothing;
+
+insert into public.aage_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('04ae011e-04ae-04ae-04ae-04ae011e1e01', '11111111-1111-1111-1111-111111111111', 'growth_hub', 'seed', 'Arjun Automation growth engine seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

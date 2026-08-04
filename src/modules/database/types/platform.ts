@@ -15295,3 +15295,453 @@ export interface DbEgpAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbAageGrowthHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    growth_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageBrandProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_status: string;
+    brand_tagline: string;
+    target_audience: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageBrandVoice {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    voice_key: string;
+    voice_name: string;
+    voice_tone: string;
+    voice_style: string;
+    formality_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageCoreMessaging {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    messaging_key: string;
+    messaging_title: string;
+    messaging_status: string;
+    messaging_type: string;
+    audience_segment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageBrandGuideline {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    guideline_key: string;
+    guideline_name: string;
+    guideline_status: string;
+    guideline_category: string;
+    version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageLogoLibrary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    logo_key: string;
+    logo_name: string;
+    logo_format: string;
+    logo_variant: string;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageColorSystem {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    color_key: string;
+    color_name: string;
+    primary_hex: string;
+    secondary_hex: string;
+    accent_hex: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageYoutubeTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    video_format: string;
+    duration_seconds: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageSocialTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    platform: string;
+    post_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageBlogTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    word_count_target: number;
+    content_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageWebsiteArticleTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    page_type: string;
+    seo_focus: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageEmailCampaignTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    campaign_type: string;
+    subject_line: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageCaseStudyTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    industry: string;
+    outcome_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageImageAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    asset_type: string;
+    asset_format: string;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageVideoAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    asset_type: string;
+    duration_seconds: number;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageIconAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    asset_type: string;
+    icon_style: string;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageVoiceProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    voice_type: string;
+    language: string;
+    sample_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageMusicAsset {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    asset_key: string;
+    asset_name: string;
+    genre: string;
+    mood: string;
+    asset_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageThumbnailTemplate {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    template_key: string;
+    template_name: string;
+    template_status: string;
+    aspect_ratio: string;
+    style: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageIdeaGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    content_type: string;
+    output_format: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageScriptGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    script_type: string;
+    target_length: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageCaptionGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    platform: string;
+    tone: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageBlogGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    topic_category: string;
+    word_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageSeoAssistant {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    assistant_key: string;
+    assistant_name: string;
+    assistant_status: string;
+    keyword_focus: string;
+    search_intent: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageCtaGenerator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    generator_key: string;
+    generator_name: string;
+    generator_status: string;
+    cta_type: string;
+    conversion_goal: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageGrowthMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    marketing_overview_score: number;
+    content_calendar_count: number;
+    draft_queue_count: number;
+    approval_queue_count: number;
+    publishing_queue_count: number;
+    brand_health_score: number;
+    overall_growth_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageGrowthHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    brand_status: string;
+    content_status: string;
+    media_status: string;
+    engine_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageContentCalendar {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    calendar_key: string;
+    calendar_name: string;
+    calendar_status: string;
+    scheduled_date: string;
+    content_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageDraftQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_title: string;
+    queue_status: string;
+    content_type: string;
+    priority: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageApprovalQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_title: string;
+    queue_status: string;
+    content_type: string;
+    approver_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAagePublishingQueue {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    queue_key: string;
+    queue_title: string;
+    queue_status: string;
+    content_type: string;
+    publish_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAageAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}
