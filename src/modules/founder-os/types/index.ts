@@ -19,6 +19,7 @@ export type FounderOsTab =
     | "companyMilestones"
     | "founderInsights"
     | "phase3"
+    | "phase4"
     | "audit"
     | "api";
 
@@ -56,6 +57,17 @@ export interface FoPhase3Stats {
     platformAvailability: number;
     customerSatisfactionOverview: number;
     overallOperatedScore: number;
+}
+
+export interface FoPhase4Stats {
+    unifiedEnterpriseDashboard: number;
+    crossPlatformKpis: number;
+    executiveIntelligence: number;
+    predictiveInsights: number;
+    revenueForecast: number;
+    customerForecast: number;
+    riskOverview: number;
+    missionProgress: number;
 }
 
 export interface FoPipelineInfo {

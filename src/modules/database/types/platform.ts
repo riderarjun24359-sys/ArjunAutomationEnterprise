@@ -13937,3 +13937,456 @@ export interface DbCopAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbEipIntelligenceHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    intelligence_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiRegistry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    kpi_key: string;
+    kpi_name: string;
+    kpi_status: string;
+    kpi_category: string;
+    kpi_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiAggregation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    aggregation_key: string;
+    aggregation_name: string;
+    aggregation_type: string;
+    window_size: string;
+    computed_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiCategory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    category_key: string;
+    category_name: string;
+    category_status: string;
+    parent_category: string;
+    sort_order: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiTarget {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    target_key: string;
+    target_name: string;
+    target_value: number;
+    target_period: string;
+    kpi_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiThreshold {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    threshold_key: string;
+    threshold_name: string;
+    threshold_value: number;
+    threshold_type: string;
+    kpi_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiSnapshot {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    snapshot_key: string;
+    snapshot_name: string;
+    snapshot_value: number;
+    snapshot_date: string;
+    kpi_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipExecutiveDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    widget_count: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipCrossModuleInsight {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    insight_key: string;
+    insight_title: string;
+    insight_type: string;
+    source_modules: Record<string, unknown>;
+    confidence_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipBusinessHealthScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    score_name: string;
+    health_score: number;
+    score_date: string;
+    dimension: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipOperationalEfficiencyScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    score_name: string;
+    efficiency_score: number;
+    score_date: string;
+    process_area: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipGrowthScore {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    score_key: string;
+    score_name: string;
+    growth_score: number;
+    score_date: string;
+    growth_dimension: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipStrategicInsight {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    insight_key: string;
+    insight_title: string;
+    insight_priority: string;
+    insight_type: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipRevenueForecast {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    forecast_key: string;
+    forecast_name: string;
+    forecast_total: number;
+    forecast_horizon: string;
+    confidence_level: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipCustomerGrowthForecast {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    forecast_key: string;
+    forecast_name: string;
+    growth_total: number;
+    forecast_horizon: string;
+    segment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipRenewalForecast {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    forecast_key: string;
+    forecast_name: string;
+    renewal_rate: number;
+    forecast_horizon: string;
+    cohort_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipCapacityPlanning {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    plan_key: string;
+    plan_name: string;
+    capacity_units: number;
+    plan_horizon: string;
+    resource_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipOperationalTrend {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trend_key: string;
+    trend_name: string;
+    trend_direction: string;
+    trend_value: number;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipRiskForecast {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    forecast_key: string;
+    forecast_name: string;
+    risk_score: number;
+    risk_category: string;
+    forecast_horizon: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipDailyExecutiveBrief {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    brief_key: string;
+    brief_title: string;
+    brief_date: string;
+    summary: string;
+    priority_items: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipWeeklyBusinessSummary {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    summary_key: string;
+    summary_title: string;
+    summary_week: string;
+    highlights: string;
+    kpi_summary: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipMonthlyPerformanceReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_title: string;
+    report_month: string;
+    executive_summary: string;
+    performance_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipQuarterlyExecutiveReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    review_title: string;
+    review_quarter: string;
+    strategic_summary: string;
+    board_ready: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipAnnualBusinessReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_title: string;
+    report_year: string;
+    annual_summary: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipKpiServiceConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    config_key: string;
+    config_name: string;
+    config_status: string;
+    service_endpoint: string;
+    refresh_interval: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipIntelligenceServiceConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    config_key: string;
+    config_name: string;
+    config_status: string;
+    service_endpoint: string;
+    insight_types: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipForecastServiceConfig {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    config_key: string;
+    config_name: string;
+    config_status: string;
+    service_endpoint: string;
+    forecast_models: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipIntelligenceMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    unified_kpi_score: number;
+    business_health_score: number;
+    operational_efficiency_score: number;
+    growth_score: number;
+    revenue_forecast_total: number;
+    customer_forecast_total: number;
+    risk_score: number;
+    overall_intelligence_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipIntelligenceHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    kpi_status: string;
+    intelligence_status: string;
+    forecast_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipMissionProgress {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    progress_key: string;
+    progress_name: string;
+    progress_percent: number;
+    mission_ref: string;
+    target_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipIntelligenceFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEipAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

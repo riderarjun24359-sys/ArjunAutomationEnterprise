@@ -46,6 +46,7 @@ import { databaseService } from "@/src/modules/database/services/database-servic
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
 import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import { createCustomerOperatedPlatformClient } from "@/src/modules/customer-operated-platform/sdk";
+import { createEnterpriseIntelligencePlatformClient } from "@/src/modules/enterprise-intelligence-platform/sdk";
 import type {
     AuditEntry,
     BoardReportSummary,
@@ -73,6 +74,7 @@ import type {
     ExecutiveDashboardSummary,
     FoDashboardStats,
     FoPhase3Stats,
+    FoPhase4Stats,
     FoPipelineInfo,
     FoSdkGenerateArtifactInput,
     FoSdkGenerateArtifactResult,
@@ -493,6 +495,38 @@ export class FounderOsService {
             platformAvailability: stats.platformAvailabilityScore,
             customerSatisfactionOverview: stats.customerSatisfactionScore,
             overallOperatedScore: stats.overallOperatedScore,
+        };
+    }
+
+    async getPhase4Stats(authUserId: string, email: string, fullName?: string | null): Promise<FoPhase4Stats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return {
+                unifiedEnterpriseDashboard: 0,
+                crossPlatformKpis: 0,
+                executiveIntelligence: 0,
+                predictiveInsights: 0,
+                revenueForecast: 0,
+                customerForecast: 0,
+                riskOverview: 0,
+                missionProgress: 0,
+            };
+        }
+        const eip = createEnterpriseIntelligencePlatformClient(authUserId, email, fullName);
+        const [stats, missionRecords] = await Promise.all([
+            eip.getDashboardStats(),
+            databaseService.eipMissionProgress.listByOrganization(context.organizationId),
+        ]);
+        const latestMission = missionRecords[0];
+        return {
+            unifiedEnterpriseDashboard: stats.overallIntelligenceScore,
+            crossPlatformKpis: stats.unifiedKpiScore,
+            executiveIntelligence: stats.businessHealthScore,
+            predictiveInsights: stats.crossModuleInsightCount,
+            revenueForecast: stats.revenueForecastTotal,
+            customerForecast: stats.customerForecastTotal,
+            riskOverview: stats.riskScore,
+            missionProgress: latestMission?.progress_percent ?? 0,
         };
     }
 

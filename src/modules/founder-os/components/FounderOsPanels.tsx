@@ -533,3 +533,23 @@ export function FounderOsPhase3Panel({ data }: { data: FounderOsData }) {
         </div>
     );
 }
+
+export function FounderOsPhase4Panel({ data }: { data: FounderOsData }) {
+    const p4 = data.phase4Stats;
+    if (!p4) return <EmptyState title="Phase 4 data unavailable" description="Enterprise intelligence platform metrics will appear once EIP is configured." />;
+    return (
+        <div className="grid gap-6 xl:grid-cols-2">
+            <Card hover><SectionHeader title="Unified enterprise dashboard" description="Cross-platform intelligence score from EIP SDK" /><div className="mt-6 space-y-3">
+                <ListCard title="Overall intelligence score" subtitle={`${p4.unifiedEnterpriseDashboard.toFixed(1)}`} meta={`Cross-platform KPIs ${p4.crossPlatformKpis.toFixed(1)}`} />
+                <ListCard title="Executive intelligence" subtitle={`${p4.executiveIntelligence.toFixed(1)}`} meta={`${p4.predictiveInsights} predictive insights`} />
+            </div></Card>
+            <Card hover><SectionHeader title="Forecasts & risk" description="Predictive analytics from enterprise intelligence platform" /><div className="mt-6 space-y-3">
+                <ListCard title="Revenue forecast" subtitle={`$${p4.revenueForecast.toLocaleString()}`} meta={`Customer forecast ${p4.customerForecast.toLocaleString()}`} />
+                <ListCard title="Risk overview" subtitle={`${p4.riskOverview.toFixed(1)}`} meta={`Mission progress ${p4.missionProgress.toFixed(1)}%`} />
+            </div></Card>
+            <Card hover className="xl:col-span-2"><SectionHeader title="Enterprise intelligence summary" description="Unified KPI, executive, predictive, and mission metrics" /><div className="mt-6">
+                <ListCard title="Enterprise Intelligence Platform" subtitle="Unified enterprise dashboard with cross-platform KPIs and executive intelligence" meta="Powered by createEnterpriseIntelligencePlatformClient" />
+            </div></Card>
+        </div>
+    );
+}

@@ -50,6 +50,7 @@ const protectedRoutes = [
     ROUTES.companyFoundation,
     ROUTES.customerSuccessDelivery,
     ROUTES.customerOperatedPlatform,
+    ROUTES.enterpriseIntelligencePlatform,
 ];
 
 const authRoutes = [

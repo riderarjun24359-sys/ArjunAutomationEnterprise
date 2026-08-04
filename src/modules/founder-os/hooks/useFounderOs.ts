@@ -31,6 +31,7 @@ import type {
     ExecutiveDashboardSummary,
     FoDashboardStats,
     FoPhase3Stats,
+    FoPhase4Stats,
     FoPipelineInfo,
     FounderAgendaSummary,
     FounderInsightSummary,
@@ -52,6 +53,7 @@ export function useFounderOs() {
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState<FoDashboardStats | null>(null);
     const [phase3Stats, setPhase3Stats] = useState<FoPhase3Stats | null>(null);
+    const [phase4Stats, setPhase4Stats] = useState<FoPhase4Stats | null>(null);
     const [pipeline, setPipeline] = useState<FoPipelineInfo | null>(null);
     const [workspaces, setWorkspaces] = useState<WorkspaceSummary[]>([]);
     const [strategicOkrs, setStrategicOkrs] = useState<StrategicOkrSummary[]>([]);
@@ -119,6 +121,7 @@ export function useFounderOs() {
             agents,
             sessions,
             phase3Stats,
+            phase4Stats,
         ] = await Promise.all([
             founderOsService.getPipelineInfo(),
             founderOsService.getWorkspaces(user.id, user.email, user.fullName),
@@ -152,6 +155,7 @@ export function useFounderOs() {
             founderOsService.getAgentOptions(user.id, user.email, user.fullName),
             founderOsService.getSessionOptions(user.id, user.email, user.fullName),
             founderOsService.getPhase3Stats(user.id, user.email, user.fullName),
+            founderOsService.getPhase4Stats(user.id, user.email, user.fullName),
         ]);
         const dashboardStats = buildFoDashboardStats({
             workspaces: workspaceList,
@@ -208,6 +212,7 @@ export function useFounderOs() {
             agents,
             sessions,
             phase3Stats,
+            phase4Stats,
         };
     }, [user]);
 
@@ -216,6 +221,7 @@ export function useFounderOs() {
         setPipeline(data.pipelineInfo);
         setStats(data.dashboardStats);
         setPhase3Stats(data.phase3Stats);
+        setPhase4Stats(data.phase4Stats);
         setWorkspaces(data.workspaceList);
         setStrategicOkrs(data.strategicOkrList);
         setExecutiveDashboards(data.executiveDashboardList);
@@ -280,6 +286,7 @@ export function useFounderOs() {
         loading,
         stats,
         phase3Stats,
+        phase4Stats,
         pipeline,
         workspaces,
         strategicOkrs,

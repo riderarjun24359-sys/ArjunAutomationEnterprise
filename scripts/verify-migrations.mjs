@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 1018 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_*)
+// 1050 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -1026,6 +1026,38 @@ const requiredTables = [
     "cop_executive_briefings",
     "cop_platform_failures",
     "cop_audit_logs",
+    "eip_intelligence_hubs",
+    "eip_kpi_registry",
+    "eip_kpi_aggregations",
+    "eip_kpi_categories",
+    "eip_kpi_targets",
+    "eip_kpi_thresholds",
+    "eip_kpi_snapshots",
+    "eip_executive_dashboards",
+    "eip_cross_module_insights",
+    "eip_business_health_scores",
+    "eip_operational_efficiency_scores",
+    "eip_growth_scores",
+    "eip_strategic_insights",
+    "eip_revenue_forecasts",
+    "eip_customer_growth_forecasts",
+    "eip_renewal_forecasts",
+    "eip_capacity_planning",
+    "eip_operational_trends",
+    "eip_risk_forecasts",
+    "eip_daily_executive_briefs",
+    "eip_weekly_business_summaries",
+    "eip_monthly_performance_reports",
+    "eip_quarterly_executive_reviews",
+    "eip_annual_business_reports",
+    "eip_kpi_service_configs",
+    "eip_intelligence_service_configs",
+    "eip_forecast_service_configs",
+    "eip_intelligence_metrics",
+    "eip_intelligence_health",
+    "eip_mission_progress",
+    "eip_intelligence_failures",
+    "eip_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

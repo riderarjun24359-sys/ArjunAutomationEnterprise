@@ -30,7 +30,8 @@
     "program-c-sprint4:verify": "node scripts/verify-program-c-sprint4.mjs",
     "program-f-wave1:verify": "node scripts/verify-program-f-wave1.mjs",
     "program-f-wave3:verify": "node scripts/verify-program-f-wave3.mjs",
-    "customer-operated:verify": "node scripts/verify-customer-operated.mjs"
+    "customer-operated:verify": "node scripts/verify-customer-operated.mjs",
+    "enterprise-intelligence:verify": "node scripts/verify-enterprise-intelligence.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

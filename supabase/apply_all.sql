@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-04T00:35:18.279Z
+-- Generated: 2026-08-04T01:17:37.200Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (45):
+--   Migrations (46):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -51,7 +51,8 @@
 --     - 202608020043_company_foundation.sql
 --     - 202608020044_customer_success_delivery_platform.sql
 --     - 202608020045_customer_operated_platform.sql
---   Seeds (45):
+--     - 202608020046_enterprise_intelligence_platform.sql
+--   Seeds (46):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
 --     - 003_project_seed.sql
@@ -97,9 +98,10 @@
 --     - 043_company_foundation_seed.sql
 --     - 044_customer_success_delivery_platform_seed.sql
 --     - 045_customer_operated_platform_seed.sql
+--     - 046_enterprise_intelligence_platform_seed.sql
 --
--- Includes through V2 Launch Ready to Customer Operated:
---   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform, Customer Operated Platform
+-- Includes through V2 Enterprise Intelligence Platform:
+--   Foundation, CRM, Projects, Data Platform, Finance, AI Automation & Workflows, Analytics, Settings & Administration, HRMS & Employee Management, Inventory & Asset Management, Customer Support & Service Management, Sales Pipeline & Revenue Operations, Document & Content Management, AI Orchestration Layer, Enterprise Knowledge & Memory Engine, AI Business Analyst, AI Solution Architect, AI Development Factory, AI QA Engineer, AI DevOps & Deployment Engineer, AI Customer Success Manager, Founder Operating System, Autonomous Company v1, Commercial Multi-Tenant SaaS Platform, Enterprise Identity Platform, Customer Lifecycle & Tenant Operations Platform, Enterprise Billing & Revenue Platform, Enterprise Customer Communication & Notification Hub, Enterprise Integration Platform, Enterprise Operations Center, AI Executive Intelligence Platform, Enterprise Launch Readiness Platform, Enterprise Industry Framework Core, Enterprise Business Process Framework, Enterprise Dynamic Form Engine, Enterprise Dynamic Workflow Engine, Enterprise Dynamic Document Engine, Enterprise Restaurant Business Operating System, Enterprise School Business Operating System, Enterprise Hospital Business Operating System, Enterprise Retail Business Operating System, Enterprise Launch Foundation, Company Foundation, Customer Success & Delivery Platform, Customer Operated Platform, Enterprise Intelligence Platform
 --
 -- Idempotent: uses IF NOT EXISTS / ON CONFLICT DO NOTHING where applicable.
 -- Safe to run on a project that already has core Sprint 10 tables.
@@ -21233,6 +21235,659 @@ values
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
 
 -- =============================================================================
+-- MIGRATION: 202608020046_enterprise_intelligence_platform.sql
+-- =============================================================================
+-- V2 Enterprise Intelligence Platform
+
+-- IntelligenceHub
+create table if not exists public.eip_intelligence_hubs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_key text not null,
+  hub_name text not null,
+  environment text not null default 'production',
+  intelligence_tier text not null default 'enterprise',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_key)
+);
+
+-- KpiRegistry
+create table if not exists public.eip_kpi_registry (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  kpi_key text not null,
+  kpi_name text not null default '',
+  kpi_status text not null default 'active',
+  kpi_category text not null default 'general',
+  kpi_type text not null default 'counter',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, kpi_key)
+);
+
+-- KpiAggregation
+create table if not exists public.eip_kpi_aggregations (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  aggregation_key text not null,
+  aggregation_name text not null default '',
+  aggregation_type text not null default 'sum',
+  window_size text not null default 'daily',
+  computed_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, aggregation_key)
+);
+
+-- KpiCategory
+create table if not exists public.eip_kpi_categories (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  category_key text not null,
+  category_name text not null default '',
+  category_status text not null default 'active',
+  parent_category text not null default '',
+  sort_order integer not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, category_key)
+);
+
+-- KpiTarget
+create table if not exists public.eip_kpi_targets (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  target_key text not null,
+  target_name text not null default '',
+  target_value numeric(12, 2) not null default 0,
+  target_period text not null default 'monthly',
+  kpi_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, target_key)
+);
+
+-- KpiThreshold
+create table if not exists public.eip_kpi_thresholds (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  threshold_key text not null,
+  threshold_name text not null default '',
+  threshold_value numeric(12, 2) not null default 0,
+  threshold_type text not null default 'warning',
+  kpi_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, threshold_key)
+);
+
+-- KpiSnapshot
+create table if not exists public.eip_kpi_snapshots (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  snapshot_key text not null,
+  snapshot_name text not null default '',
+  snapshot_value numeric(12, 2) not null default 0,
+  snapshot_date date not null default current_date,
+  kpi_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, snapshot_key)
+);
+
+-- ExecutiveDashboard
+create table if not exists public.eip_executive_dashboards (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  dashboard_key text not null,
+  dashboard_name text not null default '',
+  dashboard_status text not null default 'active',
+  widget_count integer not null default 0,
+  refresh_cadence text not null default 'daily',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, dashboard_key)
+);
+
+-- CrossModuleInsight
+create table if not exists public.eip_cross_module_insights (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  insight_key text not null,
+  insight_title text not null default '',
+  insight_type text not null default 'cross_module',
+  source_modules jsonb not null default '[]'::jsonb,
+  confidence_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, insight_key)
+);
+
+-- BusinessHealthScore
+create table if not exists public.eip_business_health_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  score_key text not null,
+  score_name text not null default '',
+  health_score numeric(5, 2) not null default 100,
+  score_date date not null default current_date,
+  dimension text not null default 'overall',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- OperationalEfficiencyScore
+create table if not exists public.eip_operational_efficiency_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  score_key text not null,
+  score_name text not null default '',
+  efficiency_score numeric(5, 2) not null default 100,
+  score_date date not null default current_date,
+  process_area text not null default 'operations',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- GrowthScore
+create table if not exists public.eip_growth_scores (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  score_key text not null,
+  score_name text not null default '',
+  growth_score numeric(5, 2) not null default 100,
+  score_date date not null default current_date,
+  growth_dimension text not null default 'revenue',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, score_key)
+);
+
+-- StrategicInsight
+create table if not exists public.eip_strategic_insights (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  insight_key text not null,
+  insight_title text not null default '',
+  insight_priority text not null default 'medium',
+  insight_type text not null default 'strategic',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, insight_key)
+);
+
+-- RevenueForecast
+create table if not exists public.eip_revenue_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  forecast_key text not null,
+  forecast_name text not null default '',
+  forecast_total numeric(14, 2) not null default 0,
+  forecast_horizon text not null default 'quarterly',
+  confidence_level numeric(5, 2) not null default 80,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, forecast_key)
+);
+
+-- CustomerGrowthForecast
+create table if not exists public.eip_customer_growth_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  forecast_key text not null,
+  forecast_name text not null default '',
+  growth_total numeric(12, 2) not null default 0,
+  forecast_horizon text not null default 'quarterly',
+  segment text not null default 'all',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, forecast_key)
+);
+
+-- RenewalForecast
+create table if not exists public.eip_renewal_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  forecast_key text not null,
+  forecast_name text not null default '',
+  renewal_rate numeric(5, 2) not null default 0,
+  forecast_horizon text not null default 'annual',
+  cohort_ref text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, forecast_key)
+);
+
+-- CapacityPlanning
+create table if not exists public.eip_capacity_planning (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  plan_key text not null,
+  plan_name text not null default '',
+  capacity_units numeric(12, 2) not null default 0,
+  plan_horizon text not null default 'quarterly',
+  resource_type text not null default 'compute',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, plan_key)
+);
+
+-- OperationalTrend
+create table if not exists public.eip_operational_trends (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  trend_key text not null,
+  trend_name text not null default '',
+  trend_direction text not null default 'stable',
+  trend_value numeric(12, 2) not null default 0,
+  measured_at timestamptz not null default now(),
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, trend_key)
+);
+
+-- RiskForecast
+create table if not exists public.eip_risk_forecasts (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  forecast_key text not null,
+  forecast_name text not null default '',
+  risk_score numeric(5, 2) not null default 0,
+  risk_category text not null default 'operational',
+  forecast_horizon text not null default 'quarterly',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, forecast_key)
+);
+
+-- DailyExecutiveBrief
+create table if not exists public.eip_daily_executive_briefs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  brief_key text not null,
+  brief_title text not null default '',
+  brief_date date not null default current_date,
+  summary text not null default '',
+  priority_items jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, brief_key)
+);
+
+-- WeeklyBusinessSummary
+create table if not exists public.eip_weekly_business_summaries (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  summary_key text not null,
+  summary_title text not null default '',
+  summary_week text not null default '',
+  highlights text not null default '',
+  kpi_summary jsonb not null default '{}'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, summary_key)
+);
+
+-- MonthlyPerformanceReport
+create table if not exists public.eip_monthly_performance_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  report_key text not null,
+  report_title text not null default '',
+  report_month text not null default '',
+  executive_summary text not null default '',
+  performance_score numeric(5, 2) not null default 0,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- QuarterlyExecutiveReview
+create table if not exists public.eip_quarterly_executive_reviews (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  review_key text not null,
+  review_title text not null default '',
+  review_quarter text not null default '',
+  strategic_summary text not null default '',
+  board_ready boolean not null default false,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, review_key)
+);
+
+-- AnnualBusinessReport
+create table if not exists public.eip_annual_business_reports (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  report_key text not null,
+  report_title text not null default '',
+  report_year text not null default '',
+  annual_summary text not null default '',
+  published_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, report_key)
+);
+
+-- KpiServiceConfig
+create table if not exists public.eip_kpi_service_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  config_key text not null,
+  config_name text not null default '',
+  config_status text not null default 'active',
+  service_endpoint text not null default '',
+  refresh_interval text not null default 'hourly',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, config_key)
+);
+
+-- IntelligenceServiceConfig
+create table if not exists public.eip_intelligence_service_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  config_key text not null,
+  config_name text not null default '',
+  config_status text not null default 'active',
+  service_endpoint text not null default '',
+  insight_types jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, config_key)
+);
+
+-- ForecastServiceConfig
+create table if not exists public.eip_forecast_service_configs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  config_key text not null,
+  config_name text not null default '',
+  config_status text not null default 'active',
+  service_endpoint text not null default '',
+  forecast_models jsonb not null default '[]'::jsonb,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, config_key)
+);
+
+-- IntelligenceMetric
+create table if not exists public.eip_intelligence_metrics (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metrics_key text not null,
+  metric_date date not null default current_date,
+  unified_kpi_score numeric(5, 2) not null default 100,
+  business_health_score numeric(5, 2) not null default 100,
+  operational_efficiency_score numeric(5, 2) not null default 100,
+  growth_score numeric(5, 2) not null default 100,
+  revenue_forecast_total numeric(14, 2) not null default 0,
+  customer_forecast_total numeric(12, 2) not null default 0,
+  risk_score numeric(5, 2) not null default 0,
+  overall_intelligence_score numeric(5, 2) not null default 100,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, metrics_key)
+);
+
+-- IntelligenceHealth
+create table if not exists public.eip_intelligence_health (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  health_key text not null,
+  health_date date not null default current_date,
+  overall_score numeric(5, 2) not null default 100,
+  disaster_recovery_mode boolean not null default false,
+  kpi_status text not null default 'healthy',
+  intelligence_status text not null default 'healthy',
+  forecast_status text not null default 'healthy',
+  security_status text not null default 'healthy',
+  summary text not null default '',
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, health_key)
+);
+
+-- MissionProgress
+create table if not exists public.eip_mission_progress (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  progress_key text not null,
+  progress_name text not null default '',
+  progress_percent numeric(5, 2) not null default 0,
+  mission_ref text not null default '',
+  target_date date,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, progress_key)
+);
+
+-- IntelligenceFailure
+create table if not exists public.eip_intelligence_failures (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
+  failure_key text not null,
+  failure_type text not null default 'kpi',
+  error_code text not null default '',
+  error_message text not null default '',
+  failed_at timestamptz not null default now(),
+  resolved_at timestamptz,
+  status text not null default 'active',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, hub_id, failure_key)
+);
+
+-- Audit Logs
+create table if not exists public.eip_audit_logs (
+  id uuid primary key default uuid_generate_v4(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null default '',
+  entity_id uuid,
+  action text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}'::jsonb,
+  performed_by uuid,
+  security_level text not null default 'standard',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_eip_intelligence_hubs_org on public.eip_intelligence_hubs(organization_id);
+create index if not exists idx_eip_kpi_registry_org on public.eip_kpi_registry(organization_id);
+create index if not exists idx_eip_kpi_registry_hub on public.eip_kpi_registry(hub_id);
+create index if not exists idx_eip_kpi_aggregations_org on public.eip_kpi_aggregations(organization_id);
+create index if not exists idx_eip_kpi_aggregations_hub on public.eip_kpi_aggregations(hub_id);
+create index if not exists idx_eip_kpi_categories_org on public.eip_kpi_categories(organization_id);
+create index if not exists idx_eip_kpi_categories_hub on public.eip_kpi_categories(hub_id);
+create index if not exists idx_eip_kpi_targets_org on public.eip_kpi_targets(organization_id);
+create index if not exists idx_eip_kpi_targets_hub on public.eip_kpi_targets(hub_id);
+create index if not exists idx_eip_kpi_thresholds_org on public.eip_kpi_thresholds(organization_id);
+create index if not exists idx_eip_kpi_thresholds_hub on public.eip_kpi_thresholds(hub_id);
+create index if not exists idx_eip_kpi_snapshots_org on public.eip_kpi_snapshots(organization_id);
+create index if not exists idx_eip_kpi_snapshots_hub on public.eip_kpi_snapshots(hub_id);
+create index if not exists idx_eip_executive_dashboards_org on public.eip_executive_dashboards(organization_id);
+create index if not exists idx_eip_executive_dashboards_hub on public.eip_executive_dashboards(hub_id);
+create index if not exists idx_eip_cross_module_insights_org on public.eip_cross_module_insights(organization_id);
+create index if not exists idx_eip_cross_module_insights_hub on public.eip_cross_module_insights(hub_id);
+create index if not exists idx_eip_business_health_scores_org on public.eip_business_health_scores(organization_id);
+create index if not exists idx_eip_business_health_scores_hub on public.eip_business_health_scores(hub_id);
+create index if not exists idx_eip_operational_efficiency_scores_org on public.eip_operational_efficiency_scores(organization_id);
+create index if not exists idx_eip_operational_efficiency_scores_hub on public.eip_operational_efficiency_scores(hub_id);
+create index if not exists idx_eip_growth_scores_org on public.eip_growth_scores(organization_id);
+create index if not exists idx_eip_growth_scores_hub on public.eip_growth_scores(hub_id);
+create index if not exists idx_eip_strategic_insights_org on public.eip_strategic_insights(organization_id);
+create index if not exists idx_eip_strategic_insights_hub on public.eip_strategic_insights(hub_id);
+create index if not exists idx_eip_revenue_forecasts_org on public.eip_revenue_forecasts(organization_id);
+create index if not exists idx_eip_revenue_forecasts_hub on public.eip_revenue_forecasts(hub_id);
+create index if not exists idx_eip_customer_growth_forecasts_org on public.eip_customer_growth_forecasts(organization_id);
+create index if not exists idx_eip_customer_growth_forecasts_hub on public.eip_customer_growth_forecasts(hub_id);
+create index if not exists idx_eip_renewal_forecasts_org on public.eip_renewal_forecasts(organization_id);
+create index if not exists idx_eip_renewal_forecasts_hub on public.eip_renewal_forecasts(hub_id);
+create index if not exists idx_eip_capacity_planning_org on public.eip_capacity_planning(organization_id);
+create index if not exists idx_eip_capacity_planning_hub on public.eip_capacity_planning(hub_id);
+create index if not exists idx_eip_operational_trends_org on public.eip_operational_trends(organization_id);
+create index if not exists idx_eip_operational_trends_hub on public.eip_operational_trends(hub_id);
+create index if not exists idx_eip_risk_forecasts_org on public.eip_risk_forecasts(organization_id);
+create index if not exists idx_eip_risk_forecasts_hub on public.eip_risk_forecasts(hub_id);
+create index if not exists idx_eip_daily_executive_briefs_org on public.eip_daily_executive_briefs(organization_id);
+create index if not exists idx_eip_daily_executive_briefs_hub on public.eip_daily_executive_briefs(hub_id);
+create index if not exists idx_eip_weekly_business_summaries_org on public.eip_weekly_business_summaries(organization_id);
+create index if not exists idx_eip_weekly_business_summaries_hub on public.eip_weekly_business_summaries(hub_id);
+create index if not exists idx_eip_monthly_performance_reports_org on public.eip_monthly_performance_reports(organization_id);
+create index if not exists idx_eip_monthly_performance_reports_hub on public.eip_monthly_performance_reports(hub_id);
+create index if not exists idx_eip_quarterly_executive_reviews_org on public.eip_quarterly_executive_reviews(organization_id);
+create index if not exists idx_eip_quarterly_executive_reviews_hub on public.eip_quarterly_executive_reviews(hub_id);
+create index if not exists idx_eip_annual_business_reports_org on public.eip_annual_business_reports(organization_id);
+create index if not exists idx_eip_annual_business_reports_hub on public.eip_annual_business_reports(hub_id);
+create index if not exists idx_eip_kpi_service_configs_org on public.eip_kpi_service_configs(organization_id);
+create index if not exists idx_eip_kpi_service_configs_hub on public.eip_kpi_service_configs(hub_id);
+create index if not exists idx_eip_intelligence_service_configs_org on public.eip_intelligence_service_configs(organization_id);
+create index if not exists idx_eip_intelligence_service_configs_hub on public.eip_intelligence_service_configs(hub_id);
+create index if not exists idx_eip_forecast_service_configs_org on public.eip_forecast_service_configs(organization_id);
+create index if not exists idx_eip_forecast_service_configs_hub on public.eip_forecast_service_configs(hub_id);
+create index if not exists idx_eip_intelligence_metrics_org on public.eip_intelligence_metrics(organization_id);
+create index if not exists idx_eip_intelligence_health_org on public.eip_intelligence_health(organization_id);
+create index if not exists idx_eip_mission_progress_org on public.eip_mission_progress(organization_id);
+create index if not exists idx_eip_mission_progress_hub on public.eip_mission_progress(hub_id);
+create index if not exists idx_eip_intelligence_failures_org on public.eip_intelligence_failures(organization_id);
+create index if not exists idx_eip_intelligence_failures_hub on public.eip_intelligence_failures(hub_id);
+create index if not exists idx_eip_audit_logs_org on public.eip_audit_logs(organization_id);
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'eip_intelligence_hubs','eip_kpi_registry','eip_kpi_aggregations','eip_kpi_categories','eip_kpi_targets','eip_kpi_thresholds','eip_kpi_snapshots','eip_executive_dashboards','eip_cross_module_insights','eip_business_health_scores','eip_operational_efficiency_scores','eip_growth_scores','eip_strategic_insights','eip_revenue_forecasts','eip_customer_growth_forecasts','eip_renewal_forecasts','eip_capacity_planning','eip_operational_trends','eip_risk_forecasts','eip_daily_executive_briefs','eip_weekly_business_summaries','eip_monthly_performance_reports','eip_quarterly_executive_reviews','eip_annual_business_reports','eip_kpi_service_configs','eip_intelligence_service_configs','eip_forecast_service_configs','eip_intelligence_metrics','eip_intelligence_health','eip_mission_progress','eip_intelligence_failures'
+  ]
+  loop
+    execute format('drop trigger if exists trg_%I_updated_at on public.%I', tbl, tbl);
+    execute format('create trigger trg_%I_updated_at before update on public.%I for each row execute function public.set_updated_at()', tbl, tbl);
+  end loop;
+end $$;
+
+alter table public.eip_intelligence_hubs enable row level security;
+alter table public.eip_kpi_registry enable row level security;
+alter table public.eip_kpi_aggregations enable row level security;
+alter table public.eip_kpi_categories enable row level security;
+alter table public.eip_kpi_targets enable row level security;
+alter table public.eip_kpi_thresholds enable row level security;
+alter table public.eip_kpi_snapshots enable row level security;
+alter table public.eip_executive_dashboards enable row level security;
+alter table public.eip_cross_module_insights enable row level security;
+alter table public.eip_business_health_scores enable row level security;
+alter table public.eip_operational_efficiency_scores enable row level security;
+alter table public.eip_growth_scores enable row level security;
+alter table public.eip_strategic_insights enable row level security;
+alter table public.eip_revenue_forecasts enable row level security;
+alter table public.eip_customer_growth_forecasts enable row level security;
+alter table public.eip_renewal_forecasts enable row level security;
+alter table public.eip_capacity_planning enable row level security;
+alter table public.eip_operational_trends enable row level security;
+alter table public.eip_risk_forecasts enable row level security;
+alter table public.eip_daily_executive_briefs enable row level security;
+alter table public.eip_weekly_business_summaries enable row level security;
+alter table public.eip_monthly_performance_reports enable row level security;
+alter table public.eip_quarterly_executive_reviews enable row level security;
+alter table public.eip_annual_business_reports enable row level security;
+alter table public.eip_kpi_service_configs enable row level security;
+alter table public.eip_intelligence_service_configs enable row level security;
+alter table public.eip_forecast_service_configs enable row level security;
+alter table public.eip_intelligence_metrics enable row level security;
+alter table public.eip_intelligence_health enable row level security;
+alter table public.eip_mission_progress enable row level security;
+alter table public.eip_intelligence_failures enable row level security;
+alter table public.eip_audit_logs enable row level security;
+
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'eip_intelligence_hubs','eip_kpi_registry','eip_kpi_aggregations','eip_kpi_categories','eip_kpi_targets','eip_kpi_thresholds','eip_kpi_snapshots','eip_executive_dashboards','eip_cross_module_insights','eip_business_health_scores','eip_operational_efficiency_scores','eip_growth_scores','eip_strategic_insights','eip_revenue_forecasts','eip_customer_growth_forecasts','eip_renewal_forecasts','eip_capacity_planning','eip_operational_trends','eip_risk_forecasts','eip_daily_executive_briefs','eip_weekly_business_summaries','eip_monthly_performance_reports','eip_quarterly_executive_reviews','eip_annual_business_reports','eip_kpi_service_configs','eip_intelligence_service_configs','eip_forecast_service_configs','eip_intelligence_metrics','eip_intelligence_health','eip_mission_progress','eip_intelligence_failures','eip_audit_logs'
+  ]
+  loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('create policy %I_select on public.%I for select using (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('create policy %I_insert on public.%I for insert with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+    execute format('create policy %I_update on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))', tbl, tbl);
+    execute format('drop policy if exists %I_delete on public.%I', tbl, tbl);
+    execute format('create policy %I_delete on public.%I for delete using (public.is_organization_member(organization_id))', tbl, tbl);
+  end loop;
+end $$;
+
+insert into public.permissions (key, description, resource)
+values
+  ('eip.view', 'View enterprise intelligence platform data', 'enterprise_intelligence_platform'),
+  ('eip.manage', 'Manage KPI engine, executive intelligence, predictive analytics, reporting, SDK, and dashboard outputs', 'enterprise_intelligence_platform'),
+  ('eip.approve', 'Approve enterprise intelligence platform gates and actions', 'enterprise_intelligence_platform'),
+  ('eip.admin', 'Administer enterprise intelligence platform governance', 'enterprise_intelligence_platform')
+on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
 -- SEED: 001_enterprise_seed.sql
 -- =============================================================================
 insert into public.organizations (id, name, slug, status, metadata)
@@ -26835,6 +27490,154 @@ on conflict (id) do nothing;
 
 insert into public.cop_audit_logs (id, organization_id, entity_type, action, summary, security_level)
 values ('046e011e-046e-046e-046e-046e011e1f01', '11111111-1111-1111-1111-111111111111', 'operated_hub', 'seed', 'Customer operated platform seed data loaded', 'standard')
+on conflict (id) do nothing;
+
+-- =============================================================================
+-- SEED: 046_enterprise_intelligence_platform_seed.sql
+-- =============================================================================
+insert into public.ai_orchestration_agents (id, organization_id, name, agent_type, workflow_agent_id, provider_id, model_route_id, capabilities, status)
+values
+  ('a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a346', '11111111-1111-1111-1111-111111111111', 'Enterprise Intelligence Platform Orchestrator', 'enterprise_intelligence_platform', null, 'a1a1a1a1-a1a1-a1a1-a1a1-a1a1a1a1a101', 'a2a2a2a2-a2a2-a2a2-a2a2-a2a2a2a2a201', '["kpi","executive","predictive","reporting","sdk","dashboard"]'::jsonb, 'active')
+on conflict (id) do nothing;
+
+insert into public.ai_sessions (id, organization_id, agent_id, session_key, module_source, entity_type, entity_id, context, status, expires_at)
+values
+  ('a5a5a5a5-a5a5-a5a5-a5a5-a5a5a5a5a546', '11111111-1111-1111-1111-111111111111', 'a3a3a3a3-a3a3-a3a3-a3a3-a3a3a3a3a346', 'northstar-enterprise-intelligence-001', 'enterprise_intelligence_platform', 'intelligence_hub', '00760076-0076-0076-0076-007600760101', '{"objective":"Unified enterprise intelligence platform KPI, executive, predictive, and reporting orchestration"}'::jsonb, 'active', '2026-12-31 23:59:59+00')
+on conflict (id) do nothing;
+
+-- G0 Intelligence Hub
+insert into public.eip_intelligence_hubs (id, organization_id, hub_key, hub_name, environment, intelligence_tier, status)
+values ('00760076-0076-0076-0076-007600760101', '11111111-1111-1111-1111-111111111111', 'northstar-enterprise-intelligence', 'Northstar Enterprise Intelligence Hub', 'production', 'enterprise', 'active')
+on conflict (id) do nothing;
+
+-- G1 KPI Engine
+insert into public.eip_kpi_registry (id, organization_id, hub_id, kpi_key, kpi_name, kpi_status, status)
+values ('04700100-0470-0470-0470-047001000101', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'kpi-revenue-0906', 'Revenue KPI', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_kpi_aggregations (id, organization_id, hub_id, aggregation_key, aggregation_name, aggregation_type, status)
+values ('04710101-0471-0471-0471-047101010201', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'agg-daily-0906', 'Daily Revenue Aggregation', 'sum', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_kpi_categories (id, organization_id, hub_id, category_key, category_name, category_status, status)
+values ('04720102-0472-0472-0472-047201020301', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'cat-revenue-0906', 'Revenue Category', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_kpi_targets (id, organization_id, hub_id, target_key, target_name, target_value, status)
+values ('04730103-0473-0473-0473-047301030401', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'target-revenue-0906', 'Q3 Revenue Target', 500000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_kpi_thresholds (id, organization_id, hub_id, threshold_key, threshold_name, threshold_value, status)
+values ('04740104-0474-0474-0474-047401040501', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'threshold-revenue-0906', 'Revenue Warning Threshold', 400000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_kpi_snapshots (id, organization_id, hub_id, snapshot_key, snapshot_name, snapshot_value, status)
+values ('04750105-0475-0475-0475-047501050601', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'snapshot-revenue-0906', 'Revenue Snapshot', 425000.00, 'active')
+on conflict (id) do nothing;
+
+-- G2 Executive Intelligence
+insert into public.eip_executive_dashboards (id, organization_id, hub_id, dashboard_key, dashboard_name, dashboard_status, status)
+values ('04760106-0476-0476-0476-047601060701', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'dash-exec-0906', 'Executive Command Center', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_cross_module_insights (id, organization_id, hub_id, insight_key, insight_title, insight_type, status)
+values ('04770107-0477-0477-0477-047701070801', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'insight-cross-0906', 'Cross-Module Revenue Insight', 'cross_module', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_business_health_scores (id, organization_id, hub_id, score_key, score_name, health_score, status)
+values ('04780108-0478-0478-0478-047801080901', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'health-biz-0906', 'Business Health Score', 92.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_operational_efficiency_scores (id, organization_id, hub_id, score_key, score_name, efficiency_score, status)
+values ('04790109-0479-0479-0479-047901090a01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'efficiency-ops-0906', 'Operational Efficiency Score', 88.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_growth_scores (id, organization_id, hub_id, score_key, score_name, growth_score, status)
+values ('047a010a-047a-047a-047a-047a010a0b01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'growth-score-0906', 'Growth Score', 85.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_strategic_insights (id, organization_id, hub_id, insight_key, insight_title, insight_priority, status)
+values ('047b010b-047b-047b-047b-047b010b0c01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'insight-strat-0906', 'Strategic Market Expansion', 'high', 'active')
+on conflict (id) do nothing;
+
+-- G3 Predictive Analytics
+insert into public.eip_revenue_forecasts (id, organization_id, hub_id, forecast_key, forecast_name, forecast_total, status)
+values ('047c010c-047c-047c-047c-047c010c0d01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'forecast-revenue-0906', 'Q4 Revenue Forecast', 650000.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_customer_growth_forecasts (id, organization_id, hub_id, forecast_key, forecast_name, growth_total, status)
+values ('047d010d-047d-047d-047d-047d010d0e01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'forecast-customer-0906', 'Customer Growth Forecast', 1250.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_renewal_forecasts (id, organization_id, hub_id, forecast_key, forecast_name, renewal_rate, status)
+values ('047e010e-047e-047e-047e-047e010e0f01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'forecast-renewal-0906', 'Annual Renewal Forecast', 94.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_capacity_planning (id, organization_id, hub_id, plan_key, plan_name, capacity_units, status)
+values ('047f010f-047f-047f-047f-047f010f1001', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'plan-capacity-0906', 'Q4 Capacity Plan', 500.00, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_operational_trends (id, organization_id, hub_id, trend_key, trend_name, trend_direction, status)
+values ('04800110-0480-0480-0480-048001101101', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'trend-ops-0906', 'Operational Throughput Trend', 'up', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_risk_forecasts (id, organization_id, hub_id, forecast_key, forecast_name, risk_score, status)
+values ('04810111-0481-0481-0481-048101111201', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'forecast-risk-0906', 'Enterprise Risk Forecast', 18.50, 'active')
+on conflict (id) do nothing;
+
+-- G4 Enterprise Reporting
+insert into public.eip_daily_executive_briefs (id, organization_id, hub_id, brief_key, brief_title, brief_date, status)
+values ('04820112-0482-0482-0482-048201121301', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'brief-daily-0906', 'Daily Executive Brief', current_date, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_weekly_business_summaries (id, organization_id, hub_id, summary_key, summary_title, summary_week, status)
+values ('04830113-0483-0483-0483-048301131401', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'summary-weekly-0906', 'Weekly Business Summary', '2026-W32', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_monthly_performance_reports (id, organization_id, hub_id, report_key, report_title, report_month, status)
+values ('04840114-0484-0484-0484-048401141501', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'report-monthly-0906', 'August Performance Report', '2026-08', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_quarterly_executive_reviews (id, organization_id, hub_id, review_key, review_title, review_quarter, status)
+values ('04850115-0485-0485-0485-048501151601', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'review-quarterly-0906', 'Q3 Executive Review', '2026-Q3', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_annual_business_reports (id, organization_id, hub_id, report_key, report_title, report_year, status)
+values ('04860116-0486-0486-0486-048601161701', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'report-annual-0906', '2026 Annual Business Report', '2026', 'active')
+on conflict (id) do nothing;
+
+-- G5 Intelligence SDK
+insert into public.eip_kpi_service_configs (id, organization_id, hub_id, config_key, config_name, config_status, status)
+values ('04870117-0487-0487-0487-048701171801', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'config-kpi-0906', 'KPI Service Config', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_intelligence_service_configs (id, organization_id, hub_id, config_key, config_name, config_status, status)
+values ('04880118-0488-0488-0488-048801181901', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'config-intel-0906', 'Intelligence Service Config', 'active', 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_forecast_service_configs (id, organization_id, hub_id, config_key, config_name, config_status, status)
+values ('04890119-0489-0489-0489-048901191a01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'config-forecast-0906', 'Forecast Service Config', 'active', 'active')
+on conflict (id) do nothing;
+
+-- G6 Dashboard
+insert into public.eip_intelligence_metrics (id, organization_id, metrics_key, unified_kpi_score, business_health_score, operational_efficiency_score, growth_score, revenue_forecast_total, customer_forecast_total, risk_score, overall_intelligence_score, status)
+values ('048a011a-048a-048a-048a-048a011a1b01', '11111111-1111-1111-1111-111111111111', 'eip-metrics-0906', 94.00, 92.50, 88.00, 85.50, 650000.00, 1250.00, 18.50, 91.25, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_intelligence_health (id, organization_id, health_key, overall_score, disaster_recovery_mode, kpi_status, intelligence_status, forecast_status, security_status, summary, status)
+values ('048b011b-048b-048b-048b-048b011b1c01', '11111111-1111-1111-1111-111111111111', 'eip-health-0906', 91.00, false, 'healthy', 'healthy', 'healthy', 'healthy', 'Enterprise intelligence platform operational', 'healthy')
+on conflict (id) do nothing;
+
+insert into public.eip_mission_progress (id, organization_id, hub_id, progress_key, progress_name, progress_percent, status)
+values ('048c011c-048c-048c-048c-048c011c1d01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'mission-progress-0906', 'Enterprise Intelligence Mission', 78.50, 'active')
+on conflict (id) do nothing;
+
+insert into public.eip_intelligence_failures (id, organization_id, hub_id, failure_key, failure_type, error_code, error_message, status)
+values ('048d011d-048d-048d-048d-048d011d1e01', '11111111-1111-1111-1111-111111111111', '00760076-0076-0076-0076-007600760101', 'fail-kpi-0906', 'kpi', 'KPI_SYNC_FAIL', 'KPI aggregation sync failed', 'open')
+on conflict (id) do nothing;
+
+insert into public.eip_audit_logs (id, organization_id, entity_type, action, summary, security_level)
+values ('048e011e-048e-048e-048e-048e011e1f01', '11111111-1111-1111-1111-111111111111', 'intelligence_hub', 'seed', 'Enterprise intelligence platform seed data loaded', 'standard')
 on conflict (id) do nothing;
 
 -- =============================================================================

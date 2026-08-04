@@ -1094,6 +1094,41 @@ import {
     CopPlatformFailureRepository,
     CopAuditLogRepository,
 } from "@/src/modules/database/repositories/customer-operated-platform-repositories";
+import {
+    EipIntelligenceHubRepository,
+    EipKpiRegistryRepository,
+    EipKpiAggregationRepository,
+    EipKpiCategoryRepository,
+    EipKpiTargetRepository,
+    EipKpiThresholdRepository,
+    EipKpiSnapshotRepository,
+    EipExecutiveDashboardRepository,
+    EipCrossModuleInsightRepository,
+    EipBusinessHealthScoreRepository,
+    EipOperationalEfficiencyScoreRepository,
+    EipGrowthScoreRepository,
+    EipStrategicInsightRepository,
+    EipRevenueForecastRepository,
+    EipCustomerGrowthForecastRepository,
+    EipRenewalForecastRepository,
+    EipCapacityPlanningRepository,
+    EipOperationalTrendRepository,
+    EipRiskForecastRepository,
+    EipDailyExecutiveBriefRepository,
+    EipWeeklyBusinessSummaryRepository,
+    EipMonthlyPerformanceReportRepository,
+    EipQuarterlyExecutiveReviewRepository,
+    EipAnnualBusinessReportRepository,
+    EipKpiServiceConfigRepository,
+    EipIntelligenceServiceConfigRepository,
+    EipForecastServiceConfigRepository,
+    EipIntelligenceMetricRepository,
+    EipIntelligenceHealthRepository,
+    EipMissionProgressRepository,
+    EipIntelligenceFailureRepository,
+    EipAuditLogRepository,
+} from "@/src/modules/database/repositories/enterprise-intelligence-platform-repositories";
+
 
 
 
@@ -2121,6 +2156,38 @@ export class DatabaseAccessLayer {
     readonly copExecutiveBriefings: CopExecutiveBriefingRepository;
     readonly copPlatformFailures: CopPlatformFailureRepository;
     readonly copAuditLogs: CopAuditLogRepository;
+    readonly eipIntelligenceHubs: EipIntelligenceHubRepository;
+    readonly eipKpiRegistry: EipKpiRegistryRepository;
+    readonly eipKpiAggregations: EipKpiAggregationRepository;
+    readonly eipKpiCategories: EipKpiCategoryRepository;
+    readonly eipKpiTargets: EipKpiTargetRepository;
+    readonly eipKpiThresholds: EipKpiThresholdRepository;
+    readonly eipKpiSnapshots: EipKpiSnapshotRepository;
+    readonly eipExecutiveDashboards: EipExecutiveDashboardRepository;
+    readonly eipCrossModuleInsights: EipCrossModuleInsightRepository;
+    readonly eipBusinessHealthScores: EipBusinessHealthScoreRepository;
+    readonly eipOperationalEfficiencyScores: EipOperationalEfficiencyScoreRepository;
+    readonly eipGrowthScores: EipGrowthScoreRepository;
+    readonly eipStrategicInsights: EipStrategicInsightRepository;
+    readonly eipRevenueForecasts: EipRevenueForecastRepository;
+    readonly eipCustomerGrowthForecasts: EipCustomerGrowthForecastRepository;
+    readonly eipRenewalForecasts: EipRenewalForecastRepository;
+    readonly eipCapacityPlanning: EipCapacityPlanningRepository;
+    readonly eipOperationalTrends: EipOperationalTrendRepository;
+    readonly eipRiskForecasts: EipRiskForecastRepository;
+    readonly eipDailyExecutiveBriefs: EipDailyExecutiveBriefRepository;
+    readonly eipWeeklyBusinessSummaries: EipWeeklyBusinessSummaryRepository;
+    readonly eipMonthlyPerformanceReports: EipMonthlyPerformanceReportRepository;
+    readonly eipQuarterlyExecutiveReviews: EipQuarterlyExecutiveReviewRepository;
+    readonly eipAnnualBusinessReports: EipAnnualBusinessReportRepository;
+    readonly eipKpiServiceConfigs: EipKpiServiceConfigRepository;
+    readonly eipIntelligenceServiceConfigs: EipIntelligenceServiceConfigRepository;
+    readonly eipForecastServiceConfigs: EipForecastServiceConfigRepository;
+    readonly eipIntelligenceMetrics: EipIntelligenceMetricRepository;
+    readonly eipIntelligenceHealth: EipIntelligenceHealthRepository;
+    readonly eipMissionProgress: EipMissionProgressRepository;
+    readonly eipIntelligenceFailures: EipIntelligenceFailureRepository;
+    readonly eipAuditLogs: EipAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3136,6 +3203,38 @@ export class DatabaseAccessLayer {
         this.copExecutiveBriefings = new CopExecutiveBriefingRepository();
         this.copPlatformFailures = new CopPlatformFailureRepository();
         this.copAuditLogs = new CopAuditLogRepository();
+        this.eipIntelligenceHubs = new EipIntelligenceHubRepository();
+        this.eipKpiRegistry = new EipKpiRegistryRepository();
+        this.eipKpiAggregations = new EipKpiAggregationRepository();
+        this.eipKpiCategories = new EipKpiCategoryRepository();
+        this.eipKpiTargets = new EipKpiTargetRepository();
+        this.eipKpiThresholds = new EipKpiThresholdRepository();
+        this.eipKpiSnapshots = new EipKpiSnapshotRepository();
+        this.eipExecutiveDashboards = new EipExecutiveDashboardRepository();
+        this.eipCrossModuleInsights = new EipCrossModuleInsightRepository();
+        this.eipBusinessHealthScores = new EipBusinessHealthScoreRepository();
+        this.eipOperationalEfficiencyScores = new EipOperationalEfficiencyScoreRepository();
+        this.eipGrowthScores = new EipGrowthScoreRepository();
+        this.eipStrategicInsights = new EipStrategicInsightRepository();
+        this.eipRevenueForecasts = new EipRevenueForecastRepository();
+        this.eipCustomerGrowthForecasts = new EipCustomerGrowthForecastRepository();
+        this.eipRenewalForecasts = new EipRenewalForecastRepository();
+        this.eipCapacityPlanning = new EipCapacityPlanningRepository();
+        this.eipOperationalTrends = new EipOperationalTrendRepository();
+        this.eipRiskForecasts = new EipRiskForecastRepository();
+        this.eipDailyExecutiveBriefs = new EipDailyExecutiveBriefRepository();
+        this.eipWeeklyBusinessSummaries = new EipWeeklyBusinessSummaryRepository();
+        this.eipMonthlyPerformanceReports = new EipMonthlyPerformanceReportRepository();
+        this.eipQuarterlyExecutiveReviews = new EipQuarterlyExecutiveReviewRepository();
+        this.eipAnnualBusinessReports = new EipAnnualBusinessReportRepository();
+        this.eipKpiServiceConfigs = new EipKpiServiceConfigRepository();
+        this.eipIntelligenceServiceConfigs = new EipIntelligenceServiceConfigRepository();
+        this.eipForecastServiceConfigs = new EipForecastServiceConfigRepository();
+        this.eipIntelligenceMetrics = new EipIntelligenceMetricRepository();
+        this.eipIntelligenceHealth = new EipIntelligenceHealthRepository();
+        this.eipMissionProgress = new EipMissionProgressRepository();
+        this.eipIntelligenceFailures = new EipIntelligenceFailureRepository();
+        this.eipAuditLogs = new EipAuditLogRepository();
     }
 }
 
