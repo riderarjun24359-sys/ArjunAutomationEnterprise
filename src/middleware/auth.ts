@@ -30,6 +30,7 @@ const protectedRoutes = [
     ROUTES.missionCore,
     ROUTES.securityCenter,
     ROUTES.platformOperations,
+    ROUTES.aiFoundation,
     ROUTES.founderOs,
     ROUTES.autonomousCompany,
     ROUTES.commercialPlatform,

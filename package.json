@@ -44,6 +44,7 @@
     "mission-core:verify": "node scripts/verify-mission-core.mjs",
     "security-center:verify": "node scripts/verify-security-center.mjs",
     "platform-operations:verify": "node scripts/verify-platform-operations.mjs",
+    "ai-foundation:verify": "node scripts/verify-ai-foundation.mjs",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {

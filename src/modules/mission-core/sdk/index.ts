@@ -60,6 +60,30 @@ export class MissionCoreClient {
         return missionCoreService.publishRecoveryEvent(payload);
     }
 
+    publishAiRoutingEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishAiRoutingEvent(payload);
+    }
+
+    publishAgentSelectedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishAgentSelectedEvent(payload);
+    }
+
+    publishAiWorkflowExecutedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishAiWorkflowExecutedEvent(payload);
+    }
+
+    publishMemoryAccessEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishMemoryAccessEvent(payload);
+    }
+
+    publishKnowledgeAccessEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishKnowledgeAccessEvent(payload);
+    }
+
+    publishPolicyEnforcedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishPolicyEnforcedEvent(payload);
+    }
+
     subscribeToEvents(input: SubscribeInput): void {
         return missionCoreService.subscribeToEvents(input);
     }

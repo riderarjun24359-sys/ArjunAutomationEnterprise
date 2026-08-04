@@ -57,6 +57,7 @@ export const ROUTES = {
     businessAssets: "/business-assets",
     securityCenter: "/security-center",
     platformOperations: "/platform-operations",
+    aiFoundation: "/ai-foundation",
     companyLaunchKit: "/company-launch-kit",
     analytics: "/analytics",
     automation: "/automation",

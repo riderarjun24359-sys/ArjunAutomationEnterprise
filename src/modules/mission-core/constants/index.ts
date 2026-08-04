@@ -139,6 +139,17 @@ export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
         apis: ["health", "observability", "errors", "queues", "backups", "performance", "status"],
         events: ["HealthEvent", "WorkflowEvent", "PerformanceMetric", "FailureEvent", "RecoveryEvent"],
     },
+    {
+        id: "aiFoundation",
+        name: "AI Foundation",
+        route: "/ai-foundation",
+        version: "2.0",
+        status: "active",
+        health: { capabilityId: "aiFoundation", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["missionCore"],
+        apis: ["memory", "knowledgeGraph", "prompts", "agents", "workflows", "evaluation", "governance", "costUsage", "learning"],
+        events: ["AiRoutingEvent", "AgentSelectedEvent", "AiWorkflowExecutedEvent", "MemoryAccessEvent", "KnowledgeAccessEvent", "PolicyEnforcedEvent"],
+    },
 ];
 
 export const PLATFORM_EVENTS = [
@@ -166,6 +177,12 @@ export const PLATFORM_EVENTS = [
     "PerformanceMetricPublished",
     "FailureEvent",
     "RecoveryEvent",
+    "AiRoutingEvent",
+    "AgentSelectedEvent",
+    "AiWorkflowExecutedEvent",
+    "MemoryAccessEvent",
+    "KnowledgeAccessEvent",
+    "PolicyEnforcedEvent",
 ] as const;
 
 export const SHARED_SERVICES = [

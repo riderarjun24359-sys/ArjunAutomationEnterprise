@@ -65,6 +65,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Mission Core", href: ROUTES.missionCore, description: "Central orchestration layer: capabilities, workflows, events, AI routing, and shared services", icon: Cpu, section: "primary" },
     { label: "Security Center", href: ROUTES.securityCenter, description: "Enterprise security and identity: authentication, MFA, RBAC, org isolation, API security, secrets, audit, and threat detection", icon: ShieldCheck, section: "primary" },
     { label: "Platform Operations", href: ROUTES.platformOperations, description: "Self-monitoring production platform: health, observability, errors, queues, retries, backups, disaster recovery, performance, and service status", icon: Gauge, section: "primary" },
+    { label: "AI Foundation", href: ROUTES.aiFoundation, description: "Governed AI layer: memory, knowledge graph, prompts, agents, workflows, evaluation, governance, cost tracking, and learning pipeline", icon: Brain, section: "primary" },
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Sales", href: ROUTES.sales, description: "Pipeline and revenue operations", icon: TrendingUp, section: "secondary" },
     { label: "AI Orchestration", href: ROUTES.ai, description: "Core AI infrastructure and SDK", icon: Brain, section: "secondary" },

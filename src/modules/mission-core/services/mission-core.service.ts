@@ -101,6 +101,30 @@ export class MissionCoreService {
         return this.publishEvent({ type: "RecoveryEvent", source: "platformOperations", payload });
     }
 
+    publishAiRoutingEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "AiRoutingEvent", source: "aiFoundation", payload });
+    }
+
+    publishAgentSelectedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "AgentSelectedEvent", source: "aiFoundation", payload });
+    }
+
+    publishAiWorkflowExecutedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "AiWorkflowExecutedEvent", source: "aiFoundation", payload });
+    }
+
+    publishMemoryAccessEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "MemoryAccessEvent", source: "aiFoundation", payload });
+    }
+
+    publishKnowledgeAccessEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "KnowledgeAccessEvent", source: "aiFoundation", payload });
+    }
+
+    publishPolicyEnforcedEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "PolicyEnforcedEvent", source: "aiFoundation", payload });
+    }
+
     subscribeToEvents(input: SubscribeInput): void {
         this.initializePlatform();
         eventBus.subscribe(input.capabilityId, input.eventTypes);
