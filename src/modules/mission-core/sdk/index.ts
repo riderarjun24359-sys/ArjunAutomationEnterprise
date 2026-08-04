@@ -44,6 +44,22 @@ export class MissionCoreClient {
         return missionCoreService.publishEvent(input);
     }
 
+    publishHealthEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishHealthEvent(payload);
+    }
+
+    publishPerformanceMetric(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishPerformanceMetric(payload);
+    }
+
+    publishFailureEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishFailureEvent(payload);
+    }
+
+    publishRecoveryEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return missionCoreService.publishRecoveryEvent(payload);
+    }
+
     subscribeToEvents(input: SubscribeInput): void {
         return missionCoreService.subscribeToEvents(input);
     }

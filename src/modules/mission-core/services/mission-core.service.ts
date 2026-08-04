@@ -85,6 +85,22 @@ export class MissionCoreService {
         return eventBus.publish({ ...input, source: input.source || "mission-core" });
     }
 
+    publishHealthEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "HealthEvent", source: "platformOperations", payload });
+    }
+
+    publishPerformanceMetric(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "PerformanceMetricPublished", source: "platformOperations", payload });
+    }
+
+    publishFailureEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "FailureEvent", source: "platformOperations", payload });
+    }
+
+    publishRecoveryEvent(payload?: Record<string, unknown>): PlatformEvent {
+        return this.publishEvent({ type: "RecoveryEvent", source: "platformOperations", payload });
+    }
+
     subscribeToEvents(input: SubscribeInput): void {
         this.initializePlatform();
         eventBus.subscribe(input.capabilityId, input.eventTypes);

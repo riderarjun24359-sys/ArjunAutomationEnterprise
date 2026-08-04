@@ -128,6 +128,17 @@ export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
         apis: ["auth", "mfa", "rbac", "audit", "threats", "secrets"],
         events: ["SecurityActionEnforced", "ThreatDetected", "AuditLogged"],
     },
+    {
+        id: "platformOperations",
+        name: "Platform Operations",
+        route: "/platform-operations",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "platformOperations", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["missionCore"],
+        apis: ["health", "observability", "errors", "queues", "backups", "performance", "status"],
+        events: ["HealthEvent", "WorkflowEvent", "PerformanceMetric", "FailureEvent", "RecoveryEvent"],
+    },
 ];
 
 export const PLATFORM_EVENTS = [
@@ -151,6 +162,10 @@ export const PLATFORM_EVENTS = [
     "PaymentReceived",
     "WorkflowCompleted",
     "WorkflowFailed",
+    "HealthEvent",
+    "PerformanceMetricPublished",
+    "FailureEvent",
+    "RecoveryEvent",
 ] as const;
 
 export const SHARED_SERVICES = [
