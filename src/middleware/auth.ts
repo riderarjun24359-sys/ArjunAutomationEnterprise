@@ -56,6 +56,7 @@ const protectedRoutes = [
     ROUTES.growthEngine,
     ROUTES.brandOs,
     ROUTES.designOs,
+    ROUTES.businessAssets,
     ROUTES.companyLaunchKit,
 ];
 
