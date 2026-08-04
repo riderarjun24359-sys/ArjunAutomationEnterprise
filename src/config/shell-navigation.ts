@@ -95,6 +95,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "AI Organization", href: ROUTES.aiOrganizationFoundation, description: "Unified AI organization foundation: AGO growth, ADO delivery, AIO innovation, AI orchestration, and organization dashboard", icon: Bot, section: "secondary" },
     { label: "Enterprise Governance", href: ROUTES.enterpriseGovernancePlatform, description: "Unified enterprise governance platform: governance, compliance, audit, data governance, risk management, and dashboard", icon: ShieldCheck, section: "secondary" },
     { label: "Brand OS", href: ROUTES.brandOs, description: "Official Arjun Automation brand foundation: brand book, visual identity, service library, sales kit, and asset library", icon: Palette, section: "secondary" },
+    { label: "Launch Kit", href: ROUTES.companyLaunchKit, description: "Complete company launch kit: public website, portfolio, sales documents, emails, marketing assets, and SEO", icon: Rocket, section: "secondary" },
     { label: "Growth Engine", href: ROUTES.growthEngine, description: "Internal Arjun Automation growth engine: brand foundation, content templates, media assets, content engine, and founder dashboard", icon: TrendingUp, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
