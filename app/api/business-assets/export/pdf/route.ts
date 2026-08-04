@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { jsPDF } from "jspdf";
+import { secureApiRoute, logApiAudit } from "@/src/lib/api-security";
 
 export async function POST(request: Request) {
+    const { context, error } = await secureApiRoute(request, { permission: "clientsManage", rateLimit: 30 });
+    if (error || !context) return error ?? NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     try {
         const body = await request.json();
         const { title, content, signatureDataUrl } = body as {
@@ -44,6 +48,13 @@ export async function POST(request: Request) {
                 /* skip invalid signature */
             }
         }
+
+        await logApiAudit({
+            action: "pdf_export",
+            userId: context.user.id,
+            organizationId: context.organizationId,
+            metadata: { title },
+        });
 
         const pdfBuffer = doc.output("arraybuffer");
         return new NextResponse(pdfBuffer, {

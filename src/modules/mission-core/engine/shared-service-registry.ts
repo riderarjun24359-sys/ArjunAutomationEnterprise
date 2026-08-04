@@ -1,9 +1,15 @@
 import { SHARED_SERVICES } from "../constants";
 import type { SharedService } from "../types";
 import { createSecurityCenterClient } from "@/src/modules/security-center/sdk";
+import { createGciClient } from "@/src/modules/gci/sdk";
+import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
+import { AuditRepository } from "@/src/modules/database/repositories/audit-repository";
+import type { AiSdkExecuteInput } from "@/src/modules/ai-orchestration/types";
 
 const services = new Map<string, SharedService>();
 const securityClient = createSecurityCenterClient();
+const gciClient = createGciClient();
+const auditRepo = new AuditRepository();
 
 const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unknown>> = {
     auth: {
@@ -22,19 +28,39 @@ const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unk
         listTemplates: () => ({ templates: ["proposal", "invoice", "agreement"] }),
     },
     gci: {
-        translate: (content: unknown, locale: unknown) => ({ content, locale, translated: true }),
-        resolveLocale: (clientId: unknown) => ({ clientId, locale: "en" }),
+        translate: (input: unknown) => {
+            const payload = input as { content: string; title?: string; targetLocale: import("@/src/modules/gci/types").SupportedLanguage };
+            return gciClient.translate(payload);
+        },
+        resolveLocale: (clientId: unknown) => ({ clientId, locale: gciClient.resolveClientLocale(String(clientId)) }),
     },
     search: {
         query: (q: unknown) => ({ results: [], query: q }),
     },
     audit: {
-        log: (entry: unknown) => ({ logged: true, entry, timestamp: new Date().toISOString() }),
+        log: async (entry: unknown) => {
+            const payload = entry as { organization_id?: string; user_id?: string; action: string; metadata?: Record<string, unknown> };
+            await auditRepo.create({
+                organization_id: payload.organization_id ?? null,
+                user_id: payload.user_id ?? null,
+                entity_type: "shared_service",
+                action: payload.action as import("@/src/modules/database/types/core").AuditAction,
+                metadata: payload.metadata ?? null,
+            });
+            return { logged: true, entry, timestamp: new Date().toISOString() };
+        },
         listRecent: () => ({ entries: [] }),
     },
     ai: {
-        prompt: (prompt: unknown) => ({ response: "AI orchestration response", prompt }),
-        routeAgent: (agentId: unknown) => ({ agentId, status: "ready" }),
+        executeTask: async (...args: unknown[]) => {
+            const [authUserId, email, input, fullName] = args;
+            return aiOrchestrationService.executeTask(String(authUserId), String(email), input as AiSdkExecuteInput, fullName as string | null | undefined);
+        },
+        resolveRoute: async (...args: unknown[]) => {
+            const [authUserId, email, strategy, fullName] = args;
+            return aiOrchestrationService.resolveRoute(String(authUserId), String(email), strategy as string | undefined, fullName as string | null | undefined);
+        },
+        routeAgent: (agentId: unknown) => ({ agentId, status: "ready", routedVia: "missionCore" }),
     },
     analytics: {
         track: (event: unknown) => ({ tracked: true, event }),

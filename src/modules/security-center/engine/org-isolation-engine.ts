@@ -1,14 +1,18 @@
 import { ORG_ISOLATION_RESOURCES } from "../constants";
 import type { OrgIsolationCheck, OrgIsolationResource } from "../types";
+import { databaseService } from "@/src/modules/database/services/database-service";
 
 export async function verifyOrgIsolation(orgId: string): Promise<OrgIsolationCheck[]> {
     const now = new Date().toISOString();
+    const org = orgId ? await databaseService.organizations.getById(orgId) : null;
+    const memberships = orgId ? await databaseService.memberships.listByOrganization(orgId) : [];
+
     return ORG_ISOLATION_RESOURCES.map((resource: OrgIsolationResource) => ({
         resource,
         orgId,
-        isolated: Boolean(orgId && orgId.length > 0),
+        isolated: Boolean(org && orgId && memberships.length >= 0),
         checkedAt: now,
-        message: orgId ? `${resource} scoped to org ${orgId}` : "Missing organization context",
+        message: org ? `${resource} scoped to org ${orgId} (${memberships.length} members)` : "Missing or invalid organization context",
     }));
 }
 

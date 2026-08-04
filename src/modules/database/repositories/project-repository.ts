@@ -41,6 +41,14 @@ export class ProjectRepository extends BaseRepository<DbProject> {
         return (data as DbProject | null) ?? null;
     }
 
+    async create(payload: Partial<DbProject>): Promise<DbProject | null> {
+        const client = await import("@/src/modules/database/lib/repository-client").then((m) => m.getRepositoryClientAsync());
+        if (!client) return null;
+        const { data, error } = await client.from(this.table).insert(payload).select("*").maybeSingle();
+        mapRepositoryError(error, "Failed to create project");
+        return (data as DbProject | null) ?? null;
+    }
+
     async listByClientId(clientId: string): Promise<DbProject[]> {
         const client = getRepositoryClient();
         if (!client) {

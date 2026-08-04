@@ -1,7 +1,10 @@
-import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
+import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
 import type { AiSdkExecuteInput, AiSdkExecuteResult, AiSdkRouteResult } from "@/src/modules/ai-orchestration/types";
 
+/** All AI access routes through Mission Core shared AI service — no direct orchestration bypass. */
 export class AiOrchestrationClient {
+    private readonly missionCore = createMissionCoreClient();
+
     constructor(
         private readonly authUserId: string,
         private readonly email: string,
@@ -9,22 +12,25 @@ export class AiOrchestrationClient {
     ) {}
 
     async resolveRoute(strategy?: string): Promise<AiSdkRouteResult | null> {
-        return aiOrchestrationService.resolveRoute(this.authUserId, this.email, strategy, this.fullName);
+        return this.missionCore.invokeSharedService("ai", "resolveRoute", [this.authUserId, this.email, strategy, this.fullName]) as Promise<AiSdkRouteResult | null>;
     }
 
     async executeTask(input: AiSdkExecuteInput): Promise<AiSdkExecuteResult> {
-        return aiOrchestrationService.executeTask(this.authUserId, this.email, input, this.fullName);
+        return this.missionCore.invokeSharedService("ai", "executeTask", [this.authUserId, this.email, input, this.fullName]) as Promise<AiSdkExecuteResult>;
     }
 
     async getProviders() {
+        const { aiOrchestrationService } = await import("@/src/modules/ai-orchestration/services/ai-orchestration.service");
         return aiOrchestrationService.getProviders(this.authUserId, this.email, this.fullName);
     }
 
     async getAgents() {
+        const { aiOrchestrationService } = await import("@/src/modules/ai-orchestration/services/ai-orchestration.service");
         return aiOrchestrationService.getAgents(this.authUserId, this.email, this.fullName);
     }
 
     async getPromptTemplates() {
+        const { aiOrchestrationService } = await import("@/src/modules/ai-orchestration/services/ai-orchestration.service");
         return aiOrchestrationService.getPromptTemplates(this.authUserId, this.email, this.fullName);
     }
 }
@@ -33,4 +39,4 @@ export function createAiOrchestrationClient(authUserId: string, email: string, f
     return new AiOrchestrationClient(authUserId, email, fullName);
 }
 
-export { aiOrchestrationService };
+export { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";

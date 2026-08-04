@@ -231,9 +231,9 @@ create policy role_perms_select on public.role_permissions for select using (tru
 drop policy if exists role_perms_insert on public.role_permissions;
 create policy role_perms_insert on public.role_permissions for insert with check (true);
 drop policy if exists audit_logs_select on public.audit_logs;
-create policy audit_logs_select on public.audit_logs for select using (true);
+create policy audit_logs_select on public.audit_logs for select using (organization_id is null or public.is_organization_member(organization_id));
 drop policy if exists audit_logs_insert on public.audit_logs;
-create policy audit_logs_insert on public.audit_logs for insert with check (true);
+create policy audit_logs_insert on public.audit_logs for insert with check (organization_id is null or public.is_organization_member(organization_id));
 drop policy if exists storage_select on public.storage_objects;
 create policy storage_select on public.storage_objects for select using (true);
 drop policy if exists storage_insert on public.storage_objects;

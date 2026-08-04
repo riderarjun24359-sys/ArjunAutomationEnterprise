@@ -73,11 +73,11 @@ for (const engine of engines) {
 }
 
 const constantsSource = readSafe(join(modRoot, "constants", "index.ts"));
-const capabilityIds = ["sales", "clientSuccess", "businessAssets", "brandOs", "growthEngine", "hios", "founderOs", "enterpriseIntelligence", "financeFuture"];
+const capabilityIds = ["sales", "clientSuccess", "businessAssets", "brandOs", "growthEngine", "hios", "founderOs", "enterpriseIntelligence", "projects", "finance", "securityCenter", "platformOperations", "aiFoundation"];
 for (const id of capabilityIds) {
     pass(`capability:${id}`, constantsSource.includes(`id: "${id}"`));
 }
-pass("capability:financeFuture_planned", constantsSource.includes('status: "planned"') && constantsSource.includes("financeFuture"));
+pass("capability:finance_active", constantsSource.includes('id: "finance"') && constantsSource.includes('status: "active"'));
 
 const capabilityRegistry = readSafe(join(modRoot, "engine", "capability-registry.ts"));
 pass("engine:registerAllCapabilities", capabilityRegistry.includes("registerAllCapabilities"));

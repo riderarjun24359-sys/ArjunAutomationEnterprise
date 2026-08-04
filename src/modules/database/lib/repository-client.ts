@@ -1,11 +1,27 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseBrowser } from "@/src/lib/supabase-browser";
 
-export const getRepositoryClient = (): SupabaseClient | null => supabaseBrowser();
+export const getRepositoryClient = (): SupabaseClient | null => {
+    if (typeof window !== "undefined") {
+        return supabaseBrowser();
+    }
+    return null;
+};
+
+export async function getRepositoryClientAsync(): Promise<SupabaseClient | null> {
+    if (typeof window !== "undefined") {
+        return supabaseBrowser();
+    }
+    try {
+        const { supabaseServer } = await import("@/src/lib/supabase-server");
+        return supabaseServer();
+    } catch {
+        return null;
+    }
+}
 
 const isRecoverableRepositoryError = (error: { message: string; code?: string }): boolean => {
     const message = error.message.toLowerCase();
-
     return (
         message.includes("schema cache") ||
         message.includes("could not find the table") ||
@@ -16,14 +32,10 @@ const isRecoverableRepositoryError = (error: { message: string; code?: string })
 };
 
 export const mapRepositoryError = (error: { message: string; code?: string } | null, context: string): void => {
-    if (!error) {
-        return;
-    }
-
+    if (!error) return;
     if (isRecoverableRepositoryError(error)) {
         console.warn(`[repository] ${context}: ${error.message}`);
         return;
     }
-
     throw new Error(`${context}: ${error.message}`);
 };

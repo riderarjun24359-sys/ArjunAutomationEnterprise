@@ -1,5 +1,6 @@
 import { DEFAULT_WORKFLOW_TEMPLATE } from "../constants";
-import { getCapability, resolveCapabilityAction } from "./capability-registry";
+import { getCapability } from "./capability-registry";
+import { executeCapabilityAction, type CapabilityExecutionContext } from "./capability-executor";
 import type { CreateWorkflowInput, WorkflowDefinition, WorkflowInstance, WorkflowStep } from "../types";
 
 const definitions = new Map<string, WorkflowDefinition>();
@@ -36,10 +37,10 @@ export function startWorkflow(definitionId: string, input: Record<string, unknow
         input,
     };
     instances.set(instance.id, instance);
-    return advanceStep(instance.id);
+    return instance;
 }
 
-export function advanceStep(instanceId: string): WorkflowInstance {
+export async function advanceStepAsync(instanceId: string): Promise<WorkflowInstance> {
     const instance = instances.get(instanceId);
     if (!instance) throw new Error(`Workflow instance not found: ${instanceId}`);
 
@@ -66,8 +67,25 @@ export function advanceStep(instanceId: string): WorkflowInstance {
             [step.id]: { skipped: true, reason: "Capability planned for future", capabilityId: step.capabilityId },
         };
     } else {
-        const result = resolveCapabilityAction(step.capabilityId, step.action);
+        const flatPayload: Record<string, unknown> = { ...(instance.input ?? {}) };
+        for (const val of Object.values(instance.output ?? {})) {
+            if (val && typeof val === "object") Object.assign(flatPayload, val as Record<string, unknown>);
+        }
+        const ctx: CapabilityExecutionContext = {
+            authUserId: String(instance.input?.authUserId ?? "platform-system"),
+            email: String(instance.input?.email ?? "system@arjunautomation.local"),
+            fullName: instance.input?.fullName as string | null | undefined,
+            organizationId: instance.input?.organizationId as string | null | undefined,
+            payload: flatPayload,
+        };
+        const result = await executeCapabilityAction(step.capabilityId, step.action, ctx);
         instance.output = { ...(instance.output ?? {}), [step.id]: result };
+        if (result.processed === false) {
+            instance.status = "failed";
+            instance.error = String(result.error ?? "Step execution failed");
+            instances.set(instanceId, instance);
+            return instance;
+        }
     }
 
     instance.currentStepIndex += 1;
@@ -83,15 +101,31 @@ export function advanceStep(instanceId: string): WorkflowInstance {
     return instance;
 }
 
+export function advanceStep(instanceId: string): WorkflowInstance {
+    const instance = instances.get(instanceId);
+    if (!instance) throw new Error(`Workflow instance not found: ${instanceId}`);
+    void advanceStepAsync(instanceId);
+    return instance;
+}
+
+export async function runWorkflowToCompletion(definitionId: string, input: Record<string, unknown> = {}): Promise<WorkflowInstance> {
+    const instance = startWorkflow(definitionId, input);
+    let current = instance;
+    while (current.status === "running") {
+        current = await advanceStepAsync(current.id);
+    }
+    return current;
+}
+
 export function retryWorkflow(instanceId: string): WorkflowInstance {
     const instance = instances.get(instanceId);
     if (!instance) throw new Error(`Workflow instance not found: ${instanceId}`);
     if (instance.status !== "failed") return instance;
-
     instance.status = "retrying";
     instance.error = undefined;
     instances.set(instanceId, instance);
-    return advanceStep(instanceId);
+    void advanceStepAsync(instanceId);
+    return instance;
 }
 
 export function listInstances(capabilityId?: string): WorkflowInstance[] {

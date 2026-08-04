@@ -7,19 +7,19 @@ import {
 } from "@/src/constants/ai-delivery-model";
 
 export const HERO_CONTENT = {
-    eyebrow: "Arjun Automation OS · AI-First",
+    eyebrow: "Arjun Automation OS · Enterprise Platform",
     headline: "Enterprise automation. Without the enterprise wait.",
     subheadline:
-        "Arjun Automation is the AI-first enterprise operating system for companies that have outgrown spreadsheets and point tools. CRM, projects, finance, AI workers, and industry-specific modules — one secure platform. ⚡ AI-generated first version within hours.",
+        "Arjun Automation is the enterprise operating system for companies that have outgrown spreadsheets and point tools. CRM, projects, finance, industry modules, and expert engineering — one secure platform built for professional organizations.",
     primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "Explore Solutions", href: MARKETING_ROUTES.solutions },
     stats: [
         { value: 40, suffix: "+", label: "Integrated Modules" },
-        { value: 5, suffix: "", label: "AI Delivery Steps" },
+        { value: 5, suffix: "", label: "Delivery Milestones" },
         { value: 99, suffix: ".9%", label: "Platform Uptime" },
         { value: 500, suffix: "+", label: "Automations Deployed" },
     ],
-    trustIndicators: ["AI-First Delivery", "Row-Level Security", "Multi-Tenant", "Enterprise Validation"],
+    trustIndicators: ["Expert Engineering", "Row-Level Security", "Multi-Tenant", "Enterprise Validation"],
 };
 
 export const WHY_US_CONTENT = {
@@ -51,7 +51,7 @@ export const WHY_US_CONTENT = {
 
 export const SERVICES_CONTENT = {
     title: "Services built for outcomes",
-    subtitle: "AI-first delivery from discovery to production — milestone-based billing after validation.",
+    subtitle: "Expert-led delivery from discovery to production — milestone-based billing after validation.",
     services: [
         {
             title: "Platform Implementation",
@@ -168,7 +168,7 @@ export const ENTERPRISE_PLATFORM_CONTENT = {
 };
 
 export const CUSTOMER_JOURNEY_CONTENT = {
-    title: "Your AI-first delivery path",
+    title: "Your enterprise delivery path",
     subtitle: AI_DELIVERY_MARKETING.tagline,
     steps: AI_DELIVERY_JOURNEY_STEPS.map((s) => ({
         phase: s.phase,
@@ -201,8 +201,8 @@ export const FAQ_CONTENT = {
 };
 
 export const CTA_CONTENT = {
-    title: "Ready for AI-first enterprise automation?",
-    subtitle: "Start with AI Requirement Analysis. Our team responds within one business day.",
+    title: "Ready for enterprise automation?",
+    subtitle: "Start with a requirement analysis. Our engineering team responds within one business day.",
     primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "View Case Studies", href: MARKETING_ROUTES.caseStudies },
 };

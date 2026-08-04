@@ -1,10 +1,9 @@
 import { AppShell } from "@/src/components/layout/AppShell";
-import { ProtectedRoute } from "@/src/modules/auth/components/ProtectedRoute";
+import { authServerService } from "@/src/services/auth.server";
+import { requireAuth } from "@/src/modules/auth/lib/auth-guards";
 
-export default function ShellLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <ProtectedRoute>
-            <AppShell>{children}</AppShell>
-        </ProtectedRoute>
-    );
+export default async function ShellLayout({ children }: { children: React.ReactNode }) {
+    const user = await authServerService.getUser();
+    requireAuth(user);
+    return <AppShell>{children}</AppShell>;
 }

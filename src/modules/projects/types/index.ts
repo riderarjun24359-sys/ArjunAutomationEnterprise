@@ -83,3 +83,12 @@ export interface ProjectDashboardStats {
   upcomingDeadlines: string[];
   recentActivity: string[];
 }
+
+export interface CreateProjectInput {
+  name: string;
+  clientId?: string;
+  clientName?: string;
+  description?: string;
+  status?: ProjectStatus;
+  priority?: ProjectPriority;
+}

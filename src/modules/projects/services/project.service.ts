@@ -13,6 +13,7 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { databaseService } from "@/src/modules/database/services/database-service";
 import type {
     CommentSummary,
+    CreateProjectInput,
     FileSummary,
     MilestoneSummary,
     ProjectDashboardStats,
@@ -85,6 +86,33 @@ export class ProjectService {
         const project = await databaseService.projects.getById(projectId);
         const milestones = project ? await databaseService.projects.listMilestones(projectId) : [];
         return buildProjectDashboardStats(project, milestones);
+    }
+
+    async createProject(authUserId: string, email: string, input: CreateProjectInput, fullName?: string | null): Promise<ProjectSummary> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) throw new Error("Unable to resolve organization context");
+
+        const now = new Date().toISOString();
+        const created = await databaseService.projects.create({
+            organization_id: context.organizationId,
+            client_id: input.clientId ?? null,
+            name: input.name,
+            status: input.status ?? "planning",
+            priority: input.priority ?? "medium",
+            progress: 0,
+            budget: "$0",
+            timeline: "Planning",
+            owner_name: fullName ?? email,
+            owner_id: context.profileId,
+            description: input.description ?? "",
+            template: "standard",
+            client_name: input.clientName ?? "",
+            team_size: 1,
+            created_at: now,
+            updated_at: now,
+        });
+        if (!created) throw new Error("Failed to create project");
+        return mapProjectSummary(created);
     }
 }
 

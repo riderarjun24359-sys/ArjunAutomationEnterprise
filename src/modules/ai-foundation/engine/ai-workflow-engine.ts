@@ -1,4 +1,5 @@
 import type { AiWorkflow, AiWorkflowStep } from "../types";
+import { executeMissionCoreWorkflow } from "../integrations/mission-core-bridge";
 
 const WORKFLOWS: AiWorkflow[] = [
     {
@@ -35,6 +36,7 @@ export function executeWorkflow(id: string, mode?: "sequential" | "parallel" | "
     if (!wf) return null;
     wf.status = "running";
     wf.mode = mode ?? wf.mode;
+    executeMissionCoreWorkflow(wf.name, { workflowId: id, mode });
     return wf;
 }
 

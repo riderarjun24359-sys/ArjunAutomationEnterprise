@@ -56,7 +56,10 @@ export function registerLegacyCapability(name: string, module: string, config: R
     return { id, capabilityId: id };
 }
 
-export function resolveCapabilityAction(capabilityId: string, action: string): Record<string, unknown> {
+export function resolveCapabilityAction(capabilityId: string, action: string, context?: import("./capability-executor").CapabilityExecutionContext): Record<string, unknown> {
+    if (context) {
+        throw new Error("Use executeCapabilityAction for real execution. resolveCapabilityAction is metadata-only.");
+    }
     const cap = capabilities.get(capabilityId);
     if (!cap) {
         return { error: `Capability not found: ${capabilityId}`, action, processed: false };
@@ -67,7 +70,8 @@ export function resolveCapabilityAction(capabilityId: string, action: string): R
         capabilityName: cap.name,
         action,
         handler: handler ?? "generic",
-        processed: true,
+        processed: false,
+        requiresExecutor: true,
         timestamp: new Date().toISOString(),
     };
 }

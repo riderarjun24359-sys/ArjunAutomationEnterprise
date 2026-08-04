@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { secureApiRoute, logApiAudit } from "@/src/lib/api-security";
+import { customerJourneyService } from "@/src/modules/mission-core/services/customer-journey.service";
 
 const contactSchema = z.object({
     name: z.string().min(1, "Name is required").max(200),
@@ -11,6 +13,14 @@ const contactSchema = z.object({
 });
 
 export async function POST(request: Request) {
+    const { context, error } = await secureApiRoute(request, {
+        allowPublic: true,
+        publicApiKeyEnv: "PLATFORM_LEAD_API_KEY",
+        rateLimit: 10,
+        rateLimitKey: "lead-intake",
+    });
+    if (error || !context) return error ?? NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     try {
         const body: unknown = await request.json();
         const parsed = contactSchema.safeParse(body);
@@ -22,19 +32,26 @@ export async function POST(request: Request) {
 
         const { name, email, company, phone, message, source } = parsed.data;
 
-        // Log lead submission (no secrets, no external API calls)
-        console.info("[launch-kit/contact]", {
-            timestamp: new Date().toISOString(),
-            source,
-            name,
-            email,
-            company: company || undefined,
-            phone: phone || undefined,
-            messageLength: message.length,
+        const leadResult = await customerJourneyService.intakeLead(
+            { name, email, company, phone, message, source },
+            {
+                authUserId: context.user.id,
+                email: context.user.email,
+                fullName: context.user.fullName,
+                organizationId: context.organizationId,
+            },
+        );
+
+        await logApiAudit({
+            action: "lead_captured",
+            userId: context.user.id,
+            organizationId: context.organizationId,
+            metadata: { email, source, processed: leadResult.processed },
         });
 
-        return NextResponse.json({ success: true });
-    } catch {
-        return NextResponse.json({ success: false, error: "Invalid request" }, { status: 400 });
+        return NextResponse.json({ success: true, lead: leadResult });
+    } catch (err) {
+        const message = err instanceof Error ? err.message : "Invalid request";
+        return NextResponse.json({ success: false, error: message }, { status: 400 });
     }
 }
