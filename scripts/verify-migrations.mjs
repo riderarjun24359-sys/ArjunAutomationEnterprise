@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 1050 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_*)
+// 1082 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -1058,6 +1058,38 @@ const requiredTables = [
     "eip_mission_progress",
     "eip_intelligence_failures",
     "eip_audit_logs",
+    "aof_organization_hubs",
+    "aof_growth_orchestrators",
+    "aof_campaign_intelligence",
+    "aof_lead_prioritization",
+    "aof_opportunity_recommendations",
+    "aof_pipeline_health",
+    "aof_growth_analytics",
+    "aof_executive_growth_dashboards",
+    "aof_delivery_orchestrators",
+    "aof_resource_planners",
+    "aof_implementation_schedulers",
+    "aof_deployment_coordination",
+    "aof_delivery_intelligence",
+    "aof_customer_success_automation",
+    "aof_executive_delivery_dashboards",
+    "aof_idea_registry",
+    "aof_innovation_pipeline",
+    "aof_experiment_tracker",
+    "aof_validation_workflow",
+    "aof_outcome_evaluation",
+    "aof_knowledge_repository",
+    "aof_ai_task_routers",
+    "aof_human_approval_engine",
+    "aof_policy_engine",
+    "aof_execution_history",
+    "aof_ai_governance_rules",
+    "aof_organization_metrics",
+    "aof_organization_health",
+    "aof_innovation_dashboards",
+    "aof_mission_progress",
+    "aof_organization_failures",
+    "aof_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

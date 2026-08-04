@@ -14390,3 +14390,456 @@ export interface DbEipAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbAofOrganizationHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    organization_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofGrowthOrchestrator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    orchestrator_key: string;
+    orchestrator_name: string;
+    orchestrator_status: string;
+    campaign_ref: string;
+    priority_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofCampaignIntelligence {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    campaign_key: string;
+    campaign_name: string;
+    campaign_status: string;
+    channel_type: string;
+    audience_segment: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofLeadPrioritization {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    lead_key: string;
+    lead_name: string;
+    priority_score: number;
+    lead_source: string;
+    qualification_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofOpportunityRecommendation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    recommendation_key: string;
+    recommendation_title: string;
+    recommendation_type: string;
+    confidence_score: number;
+    pipeline_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofPipelineHealth {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    health_key: string;
+    health_name: string;
+    health_score: number;
+    pipeline_stage: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofGrowthAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_name: string;
+    analytics_type: string;
+    metric_value: number;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofExecutiveGrowthDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    widget_count: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofDeliveryOrchestrator {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    orchestrator_key: string;
+    orchestrator_name: string;
+    orchestrator_status: string;
+    delivery_ref: string;
+    priority_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofResourcePlanner {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    planner_key: string;
+    planner_name: string;
+    planner_status: string;
+    resource_type: string;
+    capacity_units: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofImplementationScheduler {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    scheduler_key: string;
+    scheduler_name: string;
+    scheduler_status: string;
+    schedule_cadence: string;
+    milestone_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofDeploymentCoordination {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    coordination_key: string;
+    coordination_name: string;
+    coordination_status: string;
+    deployment_env: string;
+    release_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofDeliveryIntelligence {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    intelligence_key: string;
+    intelligence_title: string;
+    intelligence_type: string;
+    insight_score: number;
+    source_module: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofCustomerSuccessAutomation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    automation_key: string;
+    automation_name: string;
+    automation_status: string;
+    trigger_type: string;
+    workflow_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofExecutiveDeliveryDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    widget_count: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofIdeaRegistry {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    idea_key: string;
+    idea_title: string;
+    idea_status: string;
+    idea_category: string;
+    submitter_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofInnovationPipeline {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    pipeline_key: string;
+    pipeline_name: string;
+    pipeline_status: string;
+    stage_count: number;
+    current_stage: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofExperimentTracker {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    experiment_key: string;
+    experiment_name: string;
+    experiment_status: string;
+    hypothesis_ref: string;
+    started_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofValidationWorkflow {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    workflow_key: string;
+    workflow_name: string;
+    workflow_status: string;
+    validation_type: string;
+    approval_required: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofOutcomeEvaluation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    evaluation_key: string;
+    evaluation_title: string;
+    evaluation_score: number;
+    outcome_type: string;
+    evaluated_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofKnowledgeRepository {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    repository_key: string;
+    repository_name: string;
+    repository_status: string;
+    content_count: number;
+    taxonomy_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofAiTaskRouter {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    router_key: string;
+    router_name: string;
+    router_status: string;
+    routing_policy: string;
+    agent_pool: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofHumanApprovalEngine {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    approval_key: string;
+    approval_name: string;
+    approval_status: string;
+    approval_type: string;
+    escalation_policy: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofPolicyEngine {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    policy_status: string;
+    policy_scope: string;
+    rule_set: Record<string, unknown>;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofExecutionHistory {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    history_key: string;
+    history_title: string;
+    execution_status: string;
+    executed_at: string;
+    task_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofAiGovernanceRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    rule_status: string;
+    governance_level: string;
+    compliance_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofOrganizationMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    growth_score: number;
+    delivery_score: number;
+    innovation_score: number;
+    pending_ai_approval_count: number;
+    pipeline_health_score: number;
+    mission_progress_score: number;
+    overall_organization_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofOrganizationHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    ago_status: string;
+    ado_status: string;
+    aio_status: string;
+    orchestration_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofInnovationDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    innovation_score: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofMissionProgress {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    progress_key: string;
+    progress_name: string;
+    progress_percent: number;
+    mission_ref: string;
+    target_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofOrganizationFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbAofAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

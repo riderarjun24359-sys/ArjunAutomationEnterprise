@@ -56,6 +56,7 @@ import {
     type TeamCapacityFormValues,
     type WorkspaceFormValues,
 } from "@/src/modules/founder-os/schemas";
+import type { FoPhase5Stats } from "@/src/modules/founder-os/types";
 
 type FounderOsData = ReturnType<typeof useFounderOs>;
 const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-amber-500/20 focus:ring-4 dark:border-slate-800 dark:bg-slate-950";
@@ -549,6 +550,35 @@ export function FounderOsPhase4Panel({ data }: { data: FounderOsData }) {
             </div></Card>
             <Card hover className="xl:col-span-2"><SectionHeader title="Enterprise intelligence summary" description="Unified KPI, executive, predictive, and mission metrics" /><div className="mt-6">
                 <ListCard title="Enterprise Intelligence Platform" subtitle="Unified enterprise dashboard with cross-platform KPIs and executive intelligence" meta="Powered by createEnterpriseIntelligencePlatformClient" />
+            </div></Card>
+        </div>
+    );
+}
+
+export function FoPhase5Stats({ stats }: { stats: FoPhase5Stats | null }) {
+    if (!stats) return null;
+    return (
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <ListCard title="Unified AI org" subtitle={`${stats.unifiedAiOrgDashboard.toFixed(1)}`} meta="Overall organization score" />
+            <ListCard title="Pending AI approvals" subtitle={`${stats.pendingAiApprovals}`} meta={`Mission ${stats.missionProgress.toFixed(1)}%`} />
+        </section>
+    );
+}
+
+export function FounderOsPhase5Panel({ data }: { data: FounderOsData }) {
+    const p5 = data.phase5Stats;
+    if (!p5) return <EmptyState title="Phase 5 data unavailable" description="AI organization foundation metrics will appear once AOF is configured." />;
+    return (
+        <div className="grid gap-6 xl:grid-cols-2">
+            <Card hover><SectionHeader title="Unified AI organization dashboard" description="Cross-domain organization score from AOF SDK" /><div className="mt-6 space-y-3">
+                <ListCard title="Overall organization score" subtitle={`${p5.unifiedAiOrgDashboard.toFixed(1)}`} meta={`Growth ${p5.growthInsights.toFixed(1)} • Delivery ${p5.deliveryInsights.toFixed(1)} • Innovation ${p5.innovationInsights.toFixed(1)}`} />
+                <ListCard title="Pending AI approvals" subtitle={`${p5.pendingAiApprovals}`} meta={`Executive brief score ${p5.aiExecutiveBrief.toFixed(1)}`} />
+            </div></Card>
+            <Card hover><SectionHeader title="Mission & recommendations" description="Strategic mission progress and AI opportunity recommendations" /><div className="mt-6 space-y-3">
+                <ListCard title="Mission progress" subtitle={`${p5.missionProgress.toFixed(1)}%`} meta={`${p5.strategicRecommendations} strategic recommendations`} />
+            </div></Card>
+            <Card hover className="xl:col-span-2"><SectionHeader title="AI organization summary" description="Unified growth, delivery, innovation, orchestration, and mission metrics" /><div className="mt-6">
+                <ListCard title="AI Organization Foundation" subtitle="Unified AI org dashboard with growth/delivery/innovation insights and pending AI approvals" meta="Powered by createAiOrganizationFoundationClient" />
             </div></Card>
         </div>
     );

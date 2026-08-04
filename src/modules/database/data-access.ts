@@ -1128,6 +1128,41 @@ import {
     EipIntelligenceFailureRepository,
     EipAuditLogRepository,
 } from "@/src/modules/database/repositories/enterprise-intelligence-platform-repositories";
+import {
+    AofOrganizationHubRepository,
+    AofGrowthOrchestratorRepository,
+    AofCampaignIntelligenceRepository,
+    AofLeadPrioritizationRepository,
+    AofOpportunityRecommendationRepository,
+    AofPipelineHealthRepository,
+    AofGrowthAnalyticsRepository,
+    AofExecutiveGrowthDashboardRepository,
+    AofDeliveryOrchestratorRepository,
+    AofResourcePlannerRepository,
+    AofImplementationSchedulerRepository,
+    AofDeploymentCoordinationRepository,
+    AofDeliveryIntelligenceRepository,
+    AofCustomerSuccessAutomationRepository,
+    AofExecutiveDeliveryDashboardRepository,
+    AofIdeaRegistryRepository,
+    AofInnovationPipelineRepository,
+    AofExperimentTrackerRepository,
+    AofValidationWorkflowRepository,
+    AofOutcomeEvaluationRepository,
+    AofKnowledgeRepositoryRepository,
+    AofAiTaskRouterRepository,
+    AofHumanApprovalEngineRepository,
+    AofPolicyEngineRepository,
+    AofExecutionHistoryRepository,
+    AofAiGovernanceRuleRepository,
+    AofOrganizationMetricRepository,
+    AofOrganizationHealthRepository,
+    AofInnovationDashboardRepository,
+    AofMissionProgressRepository,
+    AofOrganizationFailureRepository,
+    AofAuditLogRepository,
+} from "@/src/modules/database/repositories/ai-organization-foundation-repositories";
+
 
 
 
@@ -2188,6 +2223,38 @@ export class DatabaseAccessLayer {
     readonly eipMissionProgress: EipMissionProgressRepository;
     readonly eipIntelligenceFailures: EipIntelligenceFailureRepository;
     readonly eipAuditLogs: EipAuditLogRepository;
+    readonly aofOrganizationHubs: AofOrganizationHubRepository;
+    readonly aofGrowthOrchestrators: AofGrowthOrchestratorRepository;
+    readonly aofCampaignIntelligence: AofCampaignIntelligenceRepository;
+    readonly aofLeadPrioritization: AofLeadPrioritizationRepository;
+    readonly aofOpportunityRecommendations: AofOpportunityRecommendationRepository;
+    readonly aofPipelineHealth: AofPipelineHealthRepository;
+    readonly aofGrowthAnalytics: AofGrowthAnalyticsRepository;
+    readonly aofExecutiveGrowthDashboards: AofExecutiveGrowthDashboardRepository;
+    readonly aofDeliveryOrchestrators: AofDeliveryOrchestratorRepository;
+    readonly aofResourcePlanners: AofResourcePlannerRepository;
+    readonly aofImplementationSchedulers: AofImplementationSchedulerRepository;
+    readonly aofDeploymentCoordination: AofDeploymentCoordinationRepository;
+    readonly aofDeliveryIntelligence: AofDeliveryIntelligenceRepository;
+    readonly aofCustomerSuccessAutomation: AofCustomerSuccessAutomationRepository;
+    readonly aofExecutiveDeliveryDashboards: AofExecutiveDeliveryDashboardRepository;
+    readonly aofIdeaRegistry: AofIdeaRegistryRepository;
+    readonly aofInnovationPipeline: AofInnovationPipelineRepository;
+    readonly aofExperimentTracker: AofExperimentTrackerRepository;
+    readonly aofValidationWorkflow: AofValidationWorkflowRepository;
+    readonly aofOutcomeEvaluation: AofOutcomeEvaluationRepository;
+    readonly aofKnowledgeRepository: AofKnowledgeRepositoryRepository;
+    readonly aofAiTaskRouters: AofAiTaskRouterRepository;
+    readonly aofHumanApprovalEngine: AofHumanApprovalEngineRepository;
+    readonly aofPolicyEngine: AofPolicyEngineRepository;
+    readonly aofExecutionHistory: AofExecutionHistoryRepository;
+    readonly aofAiGovernanceRules: AofAiGovernanceRuleRepository;
+    readonly aofOrganizationMetrics: AofOrganizationMetricRepository;
+    readonly aofOrganizationHealth: AofOrganizationHealthRepository;
+    readonly aofInnovationDashboards: AofInnovationDashboardRepository;
+    readonly aofMissionProgress: AofMissionProgressRepository;
+    readonly aofOrganizationFailures: AofOrganizationFailureRepository;
+    readonly aofAuditLogs: AofAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3235,6 +3302,38 @@ export class DatabaseAccessLayer {
         this.eipMissionProgress = new EipMissionProgressRepository();
         this.eipIntelligenceFailures = new EipIntelligenceFailureRepository();
         this.eipAuditLogs = new EipAuditLogRepository();
+        this.aofOrganizationHubs = new AofOrganizationHubRepository();
+        this.aofGrowthOrchestrators = new AofGrowthOrchestratorRepository();
+        this.aofCampaignIntelligence = new AofCampaignIntelligenceRepository();
+        this.aofLeadPrioritization = new AofLeadPrioritizationRepository();
+        this.aofOpportunityRecommendations = new AofOpportunityRecommendationRepository();
+        this.aofPipelineHealth = new AofPipelineHealthRepository();
+        this.aofGrowthAnalytics = new AofGrowthAnalyticsRepository();
+        this.aofExecutiveGrowthDashboards = new AofExecutiveGrowthDashboardRepository();
+        this.aofDeliveryOrchestrators = new AofDeliveryOrchestratorRepository();
+        this.aofResourcePlanners = new AofResourcePlannerRepository();
+        this.aofImplementationSchedulers = new AofImplementationSchedulerRepository();
+        this.aofDeploymentCoordination = new AofDeploymentCoordinationRepository();
+        this.aofDeliveryIntelligence = new AofDeliveryIntelligenceRepository();
+        this.aofCustomerSuccessAutomation = new AofCustomerSuccessAutomationRepository();
+        this.aofExecutiveDeliveryDashboards = new AofExecutiveDeliveryDashboardRepository();
+        this.aofIdeaRegistry = new AofIdeaRegistryRepository();
+        this.aofInnovationPipeline = new AofInnovationPipelineRepository();
+        this.aofExperimentTracker = new AofExperimentTrackerRepository();
+        this.aofValidationWorkflow = new AofValidationWorkflowRepository();
+        this.aofOutcomeEvaluation = new AofOutcomeEvaluationRepository();
+        this.aofKnowledgeRepository = new AofKnowledgeRepositoryRepository();
+        this.aofAiTaskRouters = new AofAiTaskRouterRepository();
+        this.aofHumanApprovalEngine = new AofHumanApprovalEngineRepository();
+        this.aofPolicyEngine = new AofPolicyEngineRepository();
+        this.aofExecutionHistory = new AofExecutionHistoryRepository();
+        this.aofAiGovernanceRules = new AofAiGovernanceRuleRepository();
+        this.aofOrganizationMetrics = new AofOrganizationMetricRepository();
+        this.aofOrganizationHealth = new AofOrganizationHealthRepository();
+        this.aofInnovationDashboards = new AofInnovationDashboardRepository();
+        this.aofMissionProgress = new AofMissionProgressRepository();
+        this.aofOrganizationFailures = new AofOrganizationFailureRepository();
+        this.aofAuditLogs = new AofAuditLogRepository();
     }
 }
 

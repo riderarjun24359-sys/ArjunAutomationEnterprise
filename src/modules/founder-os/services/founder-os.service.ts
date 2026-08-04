@@ -47,6 +47,7 @@ import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk"
 import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import { createCustomerOperatedPlatformClient } from "@/src/modules/customer-operated-platform/sdk";
 import { createEnterpriseIntelligencePlatformClient } from "@/src/modules/enterprise-intelligence-platform/sdk";
+import { createAiOrganizationFoundationClient } from "@/src/modules/ai-organization-foundation/sdk";
 import type {
     AuditEntry,
     BoardReportSummary,
@@ -75,6 +76,7 @@ import type {
     FoDashboardStats,
     FoPhase3Stats,
     FoPhase4Stats,
+    FoPhase5Stats,
     FoPipelineInfo,
     FoSdkGenerateArtifactInput,
     FoSdkGenerateArtifactResult,
@@ -527,6 +529,39 @@ export class FounderOsService {
             customerForecast: stats.customerForecastTotal,
             riskOverview: stats.riskScore,
             missionProgress: latestMission?.progress_percent ?? 0,
+        };
+    }
+
+    async getPhase5Stats(authUserId: string, email: string, fullName?: string | null): Promise<FoPhase5Stats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return {
+                unifiedAiOrgDashboard: 0,
+                growthInsights: 0,
+                deliveryInsights: 0,
+                innovationInsights: 0,
+                pendingAiApprovals: 0,
+                aiExecutiveBrief: 0,
+                missionProgress: 0,
+                strategicRecommendations: 0,
+            };
+        }
+        const aof = createAiOrganizationFoundationClient(authUserId, email, fullName);
+        const [stats, missionRecords, opportunityRecords] = await Promise.all([
+            aof.getDashboardStats(),
+            databaseService.aofMissionProgress.listByOrganization(context.organizationId),
+            databaseService.aofOpportunityRecommendations.listByOrganization(context.organizationId),
+        ]);
+        const latestMission = missionRecords[0];
+        return {
+            unifiedAiOrgDashboard: stats.overallOrganizationScore,
+            growthInsights: stats.growthScore,
+            deliveryInsights: stats.deliveryScore,
+            innovationInsights: stats.innovationScore,
+            pendingAiApprovals: stats.pendingAiApprovalCount,
+            aiExecutiveBrief: stats.pipelineHealthScore,
+            missionProgress: latestMission?.progress_percent ?? stats.missionProgressScore,
+            strategicRecommendations: opportunityRecords.length,
         };
     }
 

@@ -20,6 +20,7 @@ export type FounderOsTab =
     | "founderInsights"
     | "phase3"
     | "phase4"
+    | "phase5"
     | "audit"
     | "api";
 
@@ -68,6 +69,17 @@ export interface FoPhase4Stats {
     customerForecast: number;
     riskOverview: number;
     missionProgress: number;
+}
+
+export interface FoPhase5Stats {
+    unifiedAiOrgDashboard: number;
+    growthInsights: number;
+    deliveryInsights: number;
+    innovationInsights: number;
+    pendingAiApprovals: number;
+    aiExecutiveBrief: number;
+    missionProgress: number;
+    strategicRecommendations: number;
 }
 
 export interface FoPipelineInfo {

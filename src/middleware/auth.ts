@@ -51,6 +51,7 @@ const protectedRoutes = [
     ROUTES.customerSuccessDelivery,
     ROUTES.customerOperatedPlatform,
     ROUTES.enterpriseIntelligencePlatform,
+    ROUTES.aiOrganizationFoundation,
 ];
 
 const authRoutes = [

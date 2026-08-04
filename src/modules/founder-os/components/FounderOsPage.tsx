@@ -16,6 +16,7 @@ import {
     FounderOsOverviewPanel,
     FounderOsPhase3Panel,
     FounderOsPhase4Panel,
+    FounderOsPhase5Panel,
     FounderOsSdkPanel,
     GrowthMetricsPanel,
     InvestorRelationsPanel,
@@ -54,6 +55,7 @@ const tabs = [
     { id: FOUNDER_OS_TABS.founderInsights, label: "Founder Insights" },
     { id: FOUNDER_OS_TABS.phase3, label: "Phase 3 Dashboard" },
     { id: FOUNDER_OS_TABS.phase4, label: "Phase 4 Dashboard" },
+    { id: FOUNDER_OS_TABS.phase5, label: "Phase 5 Dashboard" },
     { id: FOUNDER_OS_TABS.audit, label: "Audit" },
     { id: FOUNDER_OS_TABS.api, label: "SDK" },
 ] as const;
@@ -102,6 +104,7 @@ export function FounderOsPage() {
             {activeTab === FOUNDER_OS_TABS.founderInsights ? <FounderInsightsPanel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.phase3 ? <FounderOsPhase3Panel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.phase4 ? <FounderOsPhase4Panel data={founderOs} /> : null}
+            {activeTab === FOUNDER_OS_TABS.phase5 ? <FounderOsPhase5Panel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.audit ? <FoAuditPanel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.api ? <FounderOsSdkPanel data={founderOs} /> : null}
         </div>
