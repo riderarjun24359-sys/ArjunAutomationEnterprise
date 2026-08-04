@@ -14,6 +14,7 @@ import {
     FounderAgendaPanel,
     FounderInsightsPanel,
     FounderOsOverviewPanel,
+    FounderOsPhase3Panel,
     FounderOsSdkPanel,
     GrowthMetricsPanel,
     InvestorRelationsPanel,
@@ -50,6 +51,7 @@ const tabs = [
     { id: FOUNDER_OS_TABS.capitalPlans, label: "Capital Plans" },
     { id: FOUNDER_OS_TABS.companyMilestones, label: "Company Milestones" },
     { id: FOUNDER_OS_TABS.founderInsights, label: "Founder Insights" },
+    { id: FOUNDER_OS_TABS.phase3, label: "Phase 3 Dashboard" },
     { id: FOUNDER_OS_TABS.audit, label: "Audit" },
     { id: FOUNDER_OS_TABS.api, label: "SDK" },
 ] as const;
@@ -71,7 +73,7 @@ export function FounderOsPage() {
                     Strategic execution workspace for founders: OKRs, executive dashboards, revenue runway, team capacity, product roadmaps, investor relations, board reports, decision logs, priorities, resource allocations, risk register, growth metrics, founder agenda, stakeholders, capital plans, company milestones, founder insights, audit history, and the shared Founder OS SDK. Pipeline: All AI Workers + Enterprise Modules → Founder Operating System → Strategic Execution.
                 </p>
             </motion.header>
-            <FounderOsStats stats={founderOs.stats} />
+            <FounderOsStats stats={founderOs.stats} phase3Stats={founderOs.phase3Stats} />
             <div className="flex flex-wrap gap-2">
                 {tabs.map((tab) => (
                     <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${activeTab === tab.id ? "bg-amber-600 text-white" : "border border-slate-200 text-slate-600 hover:border-amber-300 dark:border-slate-800 dark:text-slate-300"}`}>{tab.label}</button>
@@ -96,6 +98,7 @@ export function FounderOsPage() {
             {activeTab === FOUNDER_OS_TABS.capitalPlans ? <CapitalPlansPanel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.companyMilestones ? <CompanyMilestonesPanel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.founderInsights ? <FounderInsightsPanel data={founderOs} /> : null}
+            {activeTab === FOUNDER_OS_TABS.phase3 ? <FounderOsPhase3Panel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.audit ? <FoAuditPanel data={founderOs} /> : null}
             {activeTab === FOUNDER_OS_TABS.api ? <FounderOsSdkPanel data={founderOs} /> : null}
         </div>

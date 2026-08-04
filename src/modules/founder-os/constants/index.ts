@@ -18,6 +18,7 @@ export const FOUNDER_OS_TABS = {
     capitalPlans: "capitalPlans",
     companyMilestones: "companyMilestones",
     founderInsights: "founderInsights",
+    phase3: "phase3",
     audit: "audit",
     api: "api",
 } as const;

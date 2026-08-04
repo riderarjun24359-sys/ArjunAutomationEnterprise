@@ -13484,3 +13484,456 @@ export interface DbCsdAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbCopOperatedHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    operated_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopSignupFlow {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    flow_key: string;
+    flow_name: string;
+    flow_status: string;
+    signup_type: string;
+    started_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopOrgProvisioning {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    provision_key: string;
+    provision_name: string;
+    provision_status: string;
+    org_ref: string;
+    provisioned_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopDomainOnboarding {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    domain_key: string;
+    domain_name: string;
+    domain_status: string;
+    verification_method: string;
+    verified_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopEmailVerification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    verification_key: string;
+    email_address: string;
+    verification_status: string;
+    sent_at: string;
+    verified_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopOnboardingWizard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    wizard_key: string;
+    wizard_name: string;
+    wizard_status: string;
+    step_count: number;
+    completion_percent: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopProductionProfile {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    profile_key: string;
+    profile_name: string;
+    profile_status: string;
+    environment: string;
+    region: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopDeploymentJob {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    job_key: string;
+    job_name: string;
+    job_status: string;
+    target_version: string;
+    started_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopHealthValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    validation_key: string;
+    validation_name: string;
+    validation_status: string;
+    health_score: number;
+    validated_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopRollbackAutomation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rollback_key: string;
+    rollback_name: string;
+    rollback_status: string;
+    from_version: string;
+    to_version: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopDeploymentAudit {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    audit_key: string;
+    audit_name: string;
+    audit_status: string;
+    deployment_ref: string;
+    audited_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopCentralLog {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    log_key: string;
+    log_source: string;
+    log_level: string;
+    log_message: string;
+    logged_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopMetricsCollector {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    collector_key: string;
+    collector_name: string;
+    collector_status: string;
+    metric_type: string;
+    last_scraped_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopDistributedTrace {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    trace_key: string;
+    trace_name: string;
+    trace_status: string;
+    span_count: number;
+    duration_ms: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopAlertRule {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    rule_key: string;
+    rule_name: string;
+    severity: string;
+    threshold_value: number;
+    rule_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopIncidentTimeline {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    incident_key: string;
+    incident_title: string;
+    incident_status: string;
+    severity: string;
+    opened_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopBackupScheduler {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    schedule_key: string;
+    schedule_name: string;
+    schedule_status: string;
+    cron_expression: string;
+    retention_days: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopRestoreValidation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    restore_key: string;
+    restore_name: string;
+    restore_status: string;
+    backup_ref: string;
+    validated_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopMaintenanceMode {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    maintenance_key: string;
+    maintenance_name: string;
+    maintenance_status: string;
+    starts_at?: string;
+    ends_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopFeatureFlagOp {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    flag_key: string;
+    flag_name: string;
+    flag_status: string;
+    rollout_percent: number;
+    flag_type: boolean;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopPlatformDiagnostic {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    diagnostic_key: string;
+    diagnostic_name: string;
+    diagnostic_status: string;
+    diagnostic_type: string;
+    ran_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopBetaOrganization {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    org_key: string;
+    org_name: string;
+    beta_status: string;
+    cohort_ref: string;
+    enrolled_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopBetaInvitation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    invitation_key: string;
+    invitee_email: string;
+    invitation_status: string;
+    cohort_ref: string;
+    sent_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopFeedbackCollection {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    feedback_key: string;
+    feedback_title: string;
+    feedback_type: string;
+    rating: number;
+    collected_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopFeatureRequest {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    request_key: string;
+    request_title: string;
+    request_status: string;
+    priority: string;
+    submitted_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopBugReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    bug_key: string;
+    bug_title: string;
+    bug_status: string;
+    severity: string;
+    reported_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopReleaseChannel {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    channel_key: string;
+    channel_name: string;
+    channel_status: string;
+    release_version: string;
+    published_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopOperatedMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    production_status_score: number;
+    onboarding_completion_rate: number;
+    revenue_today: number;
+    active_incident_count: number;
+    pending_approval_count: number;
+    platform_availability_score: number;
+    customer_satisfaction_score: number;
+    overall_operated_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopOperatedHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    production_status: string;
+    onboarding_status: string;
+    observability_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopExecutiveBriefing {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    briefing_key: string;
+    briefing_title: string;
+    briefing_type: string;
+    briefing_date: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopPlatformFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbCopAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

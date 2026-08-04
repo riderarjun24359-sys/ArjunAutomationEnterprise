@@ -79,6 +79,12 @@ export function FounderOsOverviewPanel({ data }: { data: FounderOsData }) {
                 <ListCard title="Board & Investor" subtitle={`${data.stats?.boardReportCount ?? 0} board reports • ${data.stats?.investorRelationCount ?? 0} investor relations`} meta={`${data.stats?.capitalPlanCount ?? 0} capital plans • ${data.stats?.stakeholderCount ?? 0} stakeholders`} />
                 <ListCard title="Execution & Risk" subtitle={`${data.stats?.priorityCount ?? 0} priorities • ${data.stats?.decisionLogCount ?? 0} decisions`} meta={`${data.stats?.riskRegisterCount ?? 0} risks • ${data.stats?.founderInsightCount ?? 0} insights`} />
             </div></Card>
+            {data.phase3Stats ? <Card hover><SectionHeader title="Phase 3 executive dashboard" description="Live customer operated platform metrics from COP SDK" /><div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <ListCard title="Live production status" subtitle={data.phase3Stats.liveProductionStatus} meta={`Overall score ${data.phase3Stats.overallOperatedScore.toFixed(1)}`} />
+                <ListCard title="Customer onboarding" subtitle={data.phase3Stats.customerOnboardingStatus} meta={`${data.phase3Stats.pendingApprovals} pending approvals`} />
+                <ListCard title="Revenue today" subtitle={`$${data.phase3Stats.revenueToday.toLocaleString()}`} meta={`${data.phase3Stats.activeIncidents} active incidents`} />
+                <ListCard title="Daily executive briefing" subtitle={data.phase3Stats.dailyExecutiveBriefing} meta={`Platform ${data.phase3Stats.platformAvailability.toFixed(0)}% • CSAT ${data.phase3Stats.customerSatisfactionOverview.toFixed(0)}%`} />
+            </div></Card> : null}
             <Card hover><SectionHeader title="AI worker pipeline" description={`${pipeline?.previousWorker ?? "AI Customer Success Manager"} → ${pipeline?.currentWorker ?? "Founder Operating System"} → ${pipeline?.nextWorker ?? "Strategic Execution"}`} /><div className="mt-6 space-y-3">
                 {pipeline?.stages?.length ? pipeline.stages.map((stage) => (
                     <ListCard key={stage.key} title={stage.label} subtitle={stage.key} meta={PIPELINE_STAGE_OPTIONS.find((o) => o.value === stage.key)?.label ?? stage.label} />
@@ -505,5 +511,25 @@ const context = await knowledge.resolveContext({ contextKey: "fo-q1-strategic", 
 const okr = await fo.generateArtifact({ workspaceId: workspace.workspaceId, artifactType: "strategic_okr", title: "Q1 Revenue OKR", content: "Achieve $1M ARR" });
 const runway = await fo.runAnalysis({ workspaceId: workspace.workspaceId, analysisType: "runway", inputPayload: { runwayKey: "RUNWAY-001", name: "Q1 Runway", monthlyBurnUsd: 50000, cashBalanceUsd: 500000, runwayMonths: 10 } });`}</pre>
         </div></Card>
+    );
+}
+
+export function FounderOsPhase3Panel({ data }: { data: FounderOsData }) {
+    const p3 = data.phase3Stats;
+    if (!p3) return <EmptyState title="Phase 3 data unavailable" description="Customer operated platform metrics will appear once COP is configured." />;
+    return (
+        <div className="grid gap-6 xl:grid-cols-2">
+            <Card hover><SectionHeader title="Live production status" description="Real-time production health from customer operated platform" /><div className="mt-6 space-y-3">
+                <ListCard title="Production status" subtitle={p3.liveProductionStatus} meta={`Score ${p3.overallOperatedScore.toFixed(1)}`} />
+                <ListCard title="Platform availability" subtitle={`${p3.platformAvailability.toFixed(1)}%`} meta={`${p3.activeIncidents} active incidents`} />
+            </div></Card>
+            <Card hover><SectionHeader title="Customer & revenue" description="Onboarding progress and daily revenue" /><div className="mt-6 space-y-3">
+                <ListCard title="Customer onboarding" subtitle={p3.customerOnboardingStatus} meta={`${p3.pendingApprovals} pending approvals`} />
+                <ListCard title="Revenue today" subtitle={`$${p3.revenueToday.toLocaleString()}`} meta={`CSAT ${p3.customerSatisfactionOverview.toFixed(0)}%`} />
+            </div></Card>
+            <Card hover className="xl:col-span-2"><SectionHeader title="Daily executive briefing" description="Executive summary from customer operated platform" /><div className="mt-6">
+                <ListCard title={p3.dailyExecutiveBriefing} subtitle="Customer operated platform executive briefing" meta="Powered by createCustomerOperatedPlatformClient" />
+            </div></Card>
+        </div>
     );
 }

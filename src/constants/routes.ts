@@ -45,6 +45,7 @@ export const ROUTES = {
     launchFoundation: "/launch-foundation",
     companyFoundation: "/company-foundation",
     customerSuccessDelivery: "/customer-success-delivery",
+    customerOperatedPlatform: "/customer-operated-platform",
     analytics: "/analytics",
     automation: "/automation",
     settings: "/settings",

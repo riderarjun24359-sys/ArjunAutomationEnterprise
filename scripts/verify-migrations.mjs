@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 986 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_*)
+// 1018 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -994,6 +994,38 @@ const requiredTables = [
     "csd_executive_kpis",
     "csd_delivery_failures",
     "csd_audit_logs",
+    "cop_operated_hubs",
+    "cop_signup_flows",
+    "cop_org_provisioning",
+    "cop_domain_onboarding",
+    "cop_email_verifications",
+    "cop_onboarding_wizards",
+    "cop_production_profiles",
+    "cop_deployment_jobs",
+    "cop_health_validations",
+    "cop_rollback_automations",
+    "cop_deployment_audits",
+    "cop_central_logs",
+    "cop_metrics_collectors",
+    "cop_distributed_traces",
+    "cop_alert_rules",
+    "cop_incident_timelines",
+    "cop_backup_schedulers",
+    "cop_restore_validations",
+    "cop_maintenance_modes",
+    "cop_feature_flag_ops",
+    "cop_platform_diagnostics",
+    "cop_beta_organizations",
+    "cop_beta_invitations",
+    "cop_feedback_collection",
+    "cop_feature_requests",
+    "cop_bug_reports",
+    "cop_release_channels",
+    "cop_operated_metrics",
+    "cop_operated_health",
+    "cop_executive_briefings",
+    "cop_platform_failures",
+    "cop_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)

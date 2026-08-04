@@ -45,6 +45,7 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
 import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
+import { createCustomerOperatedPlatformClient } from "@/src/modules/customer-operated-platform/sdk";
 import type {
     AuditEntry,
     BoardReportSummary,
@@ -71,6 +72,7 @@ import type {
     DecisionLogSummary,
     ExecutiveDashboardSummary,
     FoDashboardStats,
+    FoPhase3Stats,
     FoPipelineInfo,
     FoSdkGenerateArtifactInput,
     FoSdkGenerateArtifactResult,
@@ -430,10 +432,6 @@ export class FounderOsService {
         return (await databaseService.foAuditLogs.listByOrganization(context.organizationId, { orderBy: "created_at", orderDirection: "desc" })).map(mapAuditEntry);
     }
 
-    async getPipelineInfo(): Promise<FoPipelineInfo> {
-        return buildFoPipelineInfo();
-    }
-
     async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<FoDashboardStats> {
         const [workspaces, strategicOkrs, executiveDashboards, revenueRunway, teamCapacity, productRoadmaps, investorRelations, boardReports, decisionLog, priorities, resourceAllocations, riskRegister, growthMetrics, founderAgenda, stakeholders, capitalPlans, companyMilestones, founderInsights] = await Promise.all([
             this.getWorkspaces(authUserId, email, fullName),
@@ -456,6 +454,46 @@ export class FounderOsService {
             this.getFounderInsights(authUserId, email, fullName),
         ]);
         return buildFoDashboardStats({ workspaces, strategicOkrs, executiveDashboards, revenueRunway, teamCapacity, productRoadmaps, investorRelations, boardReports, decisionLog, priorities, resourceAllocations, riskRegister, growthMetrics, founderAgenda, stakeholders, capitalPlans, companyMilestones, founderInsights });
+    }
+
+    async getPipelineInfo(): Promise<FoPipelineInfo> {
+        return buildFoPipelineInfo();
+    }
+
+    async getPhase3Stats(authUserId: string, email: string, fullName?: string | null): Promise<FoPhase3Stats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return {
+                liveProductionStatus: "unknown",
+                customerOnboardingStatus: "unknown",
+                revenueToday: 0,
+                activeIncidents: 0,
+                pendingApprovals: 0,
+                dailyExecutiveBriefing: "No briefing available",
+                platformAvailability: 0,
+                customerSatisfactionOverview: 0,
+                overallOperatedScore: 0,
+            };
+        }
+        const cop = createCustomerOperatedPlatformClient(authUserId, email, fullName);
+        const [stats, healthRecords, briefingRecords] = await Promise.all([
+            cop.getDashboardStats(),
+            databaseService.copOperatedHealth.listByOrganization(context.organizationId),
+            databaseService.copExecutiveBriefings.listByOrganization(context.organizationId),
+        ]);
+        const latestHealth = healthRecords[0];
+        const latestBriefing = briefingRecords[0];
+        return {
+            liveProductionStatus: latestHealth?.production_status ?? (stats.productionStatusScore >= 90 ? "healthy" : "degraded"),
+            customerOnboardingStatus: latestHealth?.onboarding_status ?? (stats.onboardingCompletionRate >= 80 ? "healthy" : "in_progress"),
+            revenueToday: stats.revenueToday,
+            activeIncidents: stats.activeIncidentCount,
+            pendingApprovals: stats.pendingApprovalCount,
+            dailyExecutiveBriefing: latestBriefing?.briefing_title ?? "Daily executive briefing pending",
+            platformAvailability: stats.platformAvailabilityScore,
+            customerSatisfactionOverview: stats.customerSatisfactionScore,
+            overallOperatedScore: stats.overallOperatedScore,
+        };
     }
 
     async sdkStartWorkspace(authUserId: string, email: string, input: FoSdkStartWorkspaceInput, fullName?: string | null): Promise<FoSdkStartWorkspaceResult> {

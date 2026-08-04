@@ -1060,6 +1060,40 @@ import {
     CsdAuditLogRepository,
 }
 from "@/src/modules/database/repositories/customer-success-delivery-repositories";
+import {
+    CopOperatedHubRepository,
+    CopSignupFlowRepository,
+    CopOrgProvisioningRepository,
+    CopDomainOnboardingRepository,
+    CopEmailVerificationRepository,
+    CopOnboardingWizardRepository,
+    CopProductionProfileRepository,
+    CopDeploymentJobRepository,
+    CopHealthValidationRepository,
+    CopRollbackAutomationRepository,
+    CopDeploymentAuditRepository,
+    CopCentralLogRepository,
+    CopMetricsCollectorRepository,
+    CopDistributedTraceRepository,
+    CopAlertRuleRepository,
+    CopIncidentTimelineRepository,
+    CopBackupSchedulerRepository,
+    CopRestoreValidationRepository,
+    CopMaintenanceModeRepository,
+    CopFeatureFlagOpRepository,
+    CopPlatformDiagnosticRepository,
+    CopBetaOrganizationRepository,
+    CopBetaInvitationRepository,
+    CopFeedbackCollectionRepository,
+    CopFeatureRequestRepository,
+    CopBugReportRepository,
+    CopReleaseChannelRepository,
+    CopOperatedMetricRepository,
+    CopOperatedHealthRepository,
+    CopExecutiveBriefingRepository,
+    CopPlatformFailureRepository,
+    CopAuditLogRepository,
+} from "@/src/modules/database/repositories/customer-operated-platform-repositories";
 
 
 
@@ -2055,6 +2089,38 @@ export class DatabaseAccessLayer {
     readonly csdExecutiveKpis: CsdExecutiveKpiRepository;
     readonly csdDeliveryFailures: CsdDeliveryFailureRepository;
     readonly csdAuditLogs: CsdAuditLogRepository;
+    readonly copOperatedHubs: CopOperatedHubRepository;
+    readonly copSignupFlows: CopSignupFlowRepository;
+    readonly copOrgProvisioning: CopOrgProvisioningRepository;
+    readonly copDomainOnboarding: CopDomainOnboardingRepository;
+    readonly copEmailVerifications: CopEmailVerificationRepository;
+    readonly copOnboardingWizards: CopOnboardingWizardRepository;
+    readonly copProductionProfiles: CopProductionProfileRepository;
+    readonly copDeploymentJobs: CopDeploymentJobRepository;
+    readonly copHealthValidations: CopHealthValidationRepository;
+    readonly copRollbackAutomations: CopRollbackAutomationRepository;
+    readonly copDeploymentAudits: CopDeploymentAuditRepository;
+    readonly copCentralLogs: CopCentralLogRepository;
+    readonly copMetricsCollectors: CopMetricsCollectorRepository;
+    readonly copDistributedTraces: CopDistributedTraceRepository;
+    readonly copAlertRules: CopAlertRuleRepository;
+    readonly copIncidentTimelines: CopIncidentTimelineRepository;
+    readonly copBackupSchedulers: CopBackupSchedulerRepository;
+    readonly copRestoreValidations: CopRestoreValidationRepository;
+    readonly copMaintenanceModes: CopMaintenanceModeRepository;
+    readonly copFeatureFlagOps: CopFeatureFlagOpRepository;
+    readonly copPlatformDiagnostics: CopPlatformDiagnosticRepository;
+    readonly copBetaOrganizations: CopBetaOrganizationRepository;
+    readonly copBetaInvitations: CopBetaInvitationRepository;
+    readonly copFeedbackCollection: CopFeedbackCollectionRepository;
+    readonly copFeatureRequests: CopFeatureRequestRepository;
+    readonly copBugReports: CopBugReportRepository;
+    readonly copReleaseChannels: CopReleaseChannelRepository;
+    readonly copOperatedMetrics: CopOperatedMetricRepository;
+    readonly copOperatedHealth: CopOperatedHealthRepository;
+    readonly copExecutiveBriefings: CopExecutiveBriefingRepository;
+    readonly copPlatformFailures: CopPlatformFailureRepository;
+    readonly copAuditLogs: CopAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3038,6 +3104,38 @@ export class DatabaseAccessLayer {
         this.csdExecutiveKpis = new CsdExecutiveKpiRepository();
         this.csdDeliveryFailures = new CsdDeliveryFailureRepository();
         this.csdAuditLogs = new CsdAuditLogRepository();
+        this.copOperatedHubs = new CopOperatedHubRepository();
+        this.copSignupFlows = new CopSignupFlowRepository();
+        this.copOrgProvisioning = new CopOrgProvisioningRepository();
+        this.copDomainOnboarding = new CopDomainOnboardingRepository();
+        this.copEmailVerifications = new CopEmailVerificationRepository();
+        this.copOnboardingWizards = new CopOnboardingWizardRepository();
+        this.copProductionProfiles = new CopProductionProfileRepository();
+        this.copDeploymentJobs = new CopDeploymentJobRepository();
+        this.copHealthValidations = new CopHealthValidationRepository();
+        this.copRollbackAutomations = new CopRollbackAutomationRepository();
+        this.copDeploymentAudits = new CopDeploymentAuditRepository();
+        this.copCentralLogs = new CopCentralLogRepository();
+        this.copMetricsCollectors = new CopMetricsCollectorRepository();
+        this.copDistributedTraces = new CopDistributedTraceRepository();
+        this.copAlertRules = new CopAlertRuleRepository();
+        this.copIncidentTimelines = new CopIncidentTimelineRepository();
+        this.copBackupSchedulers = new CopBackupSchedulerRepository();
+        this.copRestoreValidations = new CopRestoreValidationRepository();
+        this.copMaintenanceModes = new CopMaintenanceModeRepository();
+        this.copFeatureFlagOps = new CopFeatureFlagOpRepository();
+        this.copPlatformDiagnostics = new CopPlatformDiagnosticRepository();
+        this.copBetaOrganizations = new CopBetaOrganizationRepository();
+        this.copBetaInvitations = new CopBetaInvitationRepository();
+        this.copFeedbackCollection = new CopFeedbackCollectionRepository();
+        this.copFeatureRequests = new CopFeatureRequestRepository();
+        this.copBugReports = new CopBugReportRepository();
+        this.copReleaseChannels = new CopReleaseChannelRepository();
+        this.copOperatedMetrics = new CopOperatedMetricRepository();
+        this.copOperatedHealth = new CopOperatedHealthRepository();
+        this.copExecutiveBriefings = new CopExecutiveBriefingRepository();
+        this.copPlatformFailures = new CopPlatformFailureRepository();
+        this.copAuditLogs = new CopAuditLogRepository();
     }
 }
 

@@ -38,6 +38,7 @@ import {
     FileEdit,
     Workflow,
     GitBranch,
+    ServerCog,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
 
@@ -88,6 +89,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Launch Foundation", href: ROUTES.launchFoundation, description: "Enterprise launch foundation: provisioning, config wizard, data import, go-live, customer success, support ops, platform admin, and mission control", icon: Rocket, section: "secondary" },
     { label: "Company Foundation", href: ROUTES.companyFoundation, description: "Company foundation: brand, website, pricing, proposal, customer portal, documentation, demo, and dashboard", icon: Building2, section: "secondary" },
     { label: "Customer Success & Delivery", href: ROUTES.customerSuccessDelivery, description: "Customer success and delivery platform: health scores, support, deployment, learning, ADO workflows, and operations dashboard", icon: LifeBuoy, section: "secondary" },
+    { label: "Customer Operated", href: ROUTES.customerOperatedPlatform, description: "Launch ready to customer operated platform: onboarding, production, observability, operations, beta, and executive dashboard", icon: ServerCog, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
