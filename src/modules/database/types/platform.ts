@@ -14843,3 +14843,455 @@ export interface DbAofAuditLog {
     security_level: string;
     created_at: string;
 }
+
+export interface DbEgpGovernanceHub {
+    id: string;
+    organization_id: string;
+    hub_key: string;
+    hub_name: string;
+    environment: string;
+    governance_tier: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpOrganizationGovernance {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    governance_key: string;
+    governance_name: string;
+    governance_status: string;
+    governance_scope: string;
+    owner_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernancePolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    policy_status: string;
+    policy_type: string;
+    effective_date: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceFramework {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    framework_key: string;
+    framework_name: string;
+    framework_status: string;
+    framework_version: string;
+    control_count: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceReview {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    review_key: string;
+    review_title: string;
+    review_status: string;
+    review_type: string;
+    scheduled_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    widget_count: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceFramework {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    framework_key: string;
+    framework_name: string;
+    framework_status: string;
+    regulatory_body: string;
+    certification_level: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceControl {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    control_key: string;
+    control_name: string;
+    control_status: string;
+    control_type: string;
+    framework_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceEvidence {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    evidence_key: string;
+    evidence_title: string;
+    evidence_status: string;
+    evidence_type: string;
+    control_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceReport {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    report_key: string;
+    report_title: string;
+    report_status: string;
+    report_period: string;
+    compliance_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceCalendar {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    calendar_key: string;
+    calendar_name: string;
+    calendar_status: string;
+    due_date: string;
+    obligation_type: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpAuditCenter {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    audit_key: string;
+    audit_name: string;
+    audit_status: string;
+    audit_type: string;
+    scheduled_start: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpAuditFinding {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    finding_key: string;
+    finding_title: string;
+    finding_severity: string;
+    finding_status: string;
+    audit_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpCorrectiveAction {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    action_key: string;
+    action_title: string;
+    action_status: string;
+    finding_ref: string;
+    due_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpAuditEvidence {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    evidence_key: string;
+    evidence_title: string;
+    evidence_status: string;
+    evidence_type: string;
+    audit_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpAuditAnalytics {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    analytics_key: string;
+    analytics_name: string;
+    analytics_score: number;
+    analytics_type: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpDataClassification {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    classification_key: string;
+    classification_name: string;
+    classification_level: string;
+    data_domain: string;
+    retention_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpRetentionPolicy {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    policy_key: string;
+    policy_name: string;
+    policy_status: string;
+    retention_days: number;
+    data_class_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpDataLifecycle {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    lifecycle_key: string;
+    lifecycle_name: string;
+    lifecycle_stage: string;
+    data_domain: string;
+    transition_policy: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpDataOwnership {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    ownership_key: string;
+    ownership_name: string;
+    ownership_status: string;
+    owner_ref: string;
+    data_domain: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpDataQuality {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    quality_key: string;
+    quality_name: string;
+    quality_score: number;
+    quality_dimension: string;
+    measured_at: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpRiskRegister {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    risk_key: string;
+    risk_title: string;
+    risk_severity: string;
+    risk_category: string;
+    risk_status: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpRiskAssessment {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    assessment_key: string;
+    assessment_title: string;
+    assessment_score: number;
+    assessment_type: string;
+    risk_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpRiskMitigation {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    mitigation_key: string;
+    mitigation_title: string;
+    mitigation_status: string;
+    risk_ref: string;
+    effectiveness_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpRiskMonitoring {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    monitoring_key: string;
+    monitoring_name: string;
+    monitoring_status: string;
+    alert_threshold: number;
+    risk_ref: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpBusinessContinuity {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    continuity_key: string;
+    continuity_name: string;
+    continuity_status: string;
+    recovery_tier: string;
+    rto_hours: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceMetric {
+    id: string;
+    organization_id: string;
+    metrics_key: string;
+    metric_date: string;
+    governance_health_score: number;
+    compliance_score: number;
+    enterprise_risk_score: number;
+    audit_summary_score: number;
+    data_governance_health_score: number;
+    overall_governance_score: number;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceHealth {
+    id: string;
+    organization_id: string;
+    health_key: string;
+    health_date: string;
+    overall_score: number;
+    disaster_recovery_mode: boolean;
+    governance_status: string;
+    compliance_status: string;
+    audit_status: string;
+    data_governance_status: string;
+    security_status: string;
+    summary: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpComplianceDashboard {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    dashboard_key: string;
+    dashboard_name: string;
+    dashboard_status: string;
+    compliance_score: number;
+    refresh_cadence: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpMissionProgress {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    progress_key: string;
+    progress_name: string;
+    progress_percent: number;
+    mission_ref: string;
+    target_date?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpGovernanceFailure {
+    id: string;
+    organization_id: string;
+    hub_id: string;
+    failure_key: string;
+    failure_type: string;
+    error_code: string;
+    error_message: string;
+    failed_at: string;
+    resolved_at?: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface DbEgpAuditLog {
+    id: string;
+    organization_id: string;
+    entity_type: string;
+    entity_id?: string | null;
+    action: string;
+    summary: string;
+    metadata: Record<string, unknown>;
+    performed_by?: string | null;
+    security_level: string;
+    created_at: string;
+}

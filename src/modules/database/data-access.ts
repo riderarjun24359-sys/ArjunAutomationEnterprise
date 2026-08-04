@@ -1162,6 +1162,41 @@ import {
     AofOrganizationFailureRepository,
     AofAuditLogRepository,
 } from "@/src/modules/database/repositories/ai-organization-foundation-repositories";
+import {
+    EgpGovernanceHubRepository,
+    EgpOrganizationGovernanceRepository,
+    EgpGovernancePolicyRepository,
+    EgpGovernanceFrameworkRepository,
+    EgpGovernanceReviewRepository,
+    EgpGovernanceDashboardRepository,
+    EgpComplianceFrameworkRepository,
+    EgpComplianceControlRepository,
+    EgpComplianceEvidenceRepository,
+    EgpComplianceReportRepository,
+    EgpComplianceCalendarRepository,
+    EgpAuditCenterRepository,
+    EgpAuditFindingRepository,
+    EgpCorrectiveActionRepository,
+    EgpAuditEvidenceRepository,
+    EgpAuditAnalyticsRepository,
+    EgpDataClassificationRepository,
+    EgpRetentionPolicyRepository,
+    EgpDataLifecycleRepository,
+    EgpDataOwnershipRepository,
+    EgpDataQualityRepository,
+    EgpRiskRegisterRepository,
+    EgpRiskAssessmentRepository,
+    EgpRiskMitigationRepository,
+    EgpRiskMonitoringRepository,
+    EgpBusinessContinuityRepository,
+    EgpGovernanceMetricRepository,
+    EgpGovernanceHealthRepository,
+    EgpComplianceDashboardRepository,
+    EgpMissionProgressRepository,
+    EgpGovernanceFailureRepository,
+    EgpAuditLogRepository,
+} from "@/src/modules/database/repositories/enterprise-governance-platform-repositories";
+
 
 
 
@@ -2255,6 +2290,38 @@ export class DatabaseAccessLayer {
     readonly aofMissionProgress: AofMissionProgressRepository;
     readonly aofOrganizationFailures: AofOrganizationFailureRepository;
     readonly aofAuditLogs: AofAuditLogRepository;
+    readonly egpGovernanceHubs: EgpGovernanceHubRepository;
+    readonly egpOrganizationGovernance: EgpOrganizationGovernanceRepository;
+    readonly egpGovernancePolicies: EgpGovernancePolicyRepository;
+    readonly egpGovernanceFramework: EgpGovernanceFrameworkRepository;
+    readonly egpGovernanceReviews: EgpGovernanceReviewRepository;
+    readonly egpGovernanceDashboards: EgpGovernanceDashboardRepository;
+    readonly egpComplianceFramework: EgpComplianceFrameworkRepository;
+    readonly egpComplianceControls: EgpComplianceControlRepository;
+    readonly egpComplianceEvidence: EgpComplianceEvidenceRepository;
+    readonly egpComplianceReports: EgpComplianceReportRepository;
+    readonly egpComplianceCalendar: EgpComplianceCalendarRepository;
+    readonly egpAuditCenter: EgpAuditCenterRepository;
+    readonly egpAuditFindings: EgpAuditFindingRepository;
+    readonly egpCorrectiveActions: EgpCorrectiveActionRepository;
+    readonly egpAuditEvidence: EgpAuditEvidenceRepository;
+    readonly egpAuditAnalytics: EgpAuditAnalyticsRepository;
+    readonly egpDataClassification: EgpDataClassificationRepository;
+    readonly egpRetentionPolicies: EgpRetentionPolicyRepository;
+    readonly egpDataLifecycle: EgpDataLifecycleRepository;
+    readonly egpDataOwnership: EgpDataOwnershipRepository;
+    readonly egpDataQuality: EgpDataQualityRepository;
+    readonly egpRiskRegister: EgpRiskRegisterRepository;
+    readonly egpRiskAssessment: EgpRiskAssessmentRepository;
+    readonly egpRiskMitigation: EgpRiskMitigationRepository;
+    readonly egpRiskMonitoring: EgpRiskMonitoringRepository;
+    readonly egpBusinessContinuity: EgpBusinessContinuityRepository;
+    readonly egpGovernanceMetrics: EgpGovernanceMetricRepository;
+    readonly egpGovernanceHealth: EgpGovernanceHealthRepository;
+    readonly egpComplianceDashboards: EgpComplianceDashboardRepository;
+    readonly egpMissionProgress: EgpMissionProgressRepository;
+    readonly egpGovernanceFailures: EgpGovernanceFailureRepository;
+    readonly egpAuditLogs: EgpAuditLogRepository;
 
     constructor() {
         this.organizations = new OrganizationRepository();
@@ -3334,6 +3401,38 @@ export class DatabaseAccessLayer {
         this.aofMissionProgress = new AofMissionProgressRepository();
         this.aofOrganizationFailures = new AofOrganizationFailureRepository();
         this.aofAuditLogs = new AofAuditLogRepository();
+        this.egpGovernanceHubs = new EgpGovernanceHubRepository();
+        this.egpOrganizationGovernance = new EgpOrganizationGovernanceRepository();
+        this.egpGovernancePolicies = new EgpGovernancePolicyRepository();
+        this.egpGovernanceFramework = new EgpGovernanceFrameworkRepository();
+        this.egpGovernanceReviews = new EgpGovernanceReviewRepository();
+        this.egpGovernanceDashboards = new EgpGovernanceDashboardRepository();
+        this.egpComplianceFramework = new EgpComplianceFrameworkRepository();
+        this.egpComplianceControls = new EgpComplianceControlRepository();
+        this.egpComplianceEvidence = new EgpComplianceEvidenceRepository();
+        this.egpComplianceReports = new EgpComplianceReportRepository();
+        this.egpComplianceCalendar = new EgpComplianceCalendarRepository();
+        this.egpAuditCenter = new EgpAuditCenterRepository();
+        this.egpAuditFindings = new EgpAuditFindingRepository();
+        this.egpCorrectiveActions = new EgpCorrectiveActionRepository();
+        this.egpAuditEvidence = new EgpAuditEvidenceRepository();
+        this.egpAuditAnalytics = new EgpAuditAnalyticsRepository();
+        this.egpDataClassification = new EgpDataClassificationRepository();
+        this.egpRetentionPolicies = new EgpRetentionPolicyRepository();
+        this.egpDataLifecycle = new EgpDataLifecycleRepository();
+        this.egpDataOwnership = new EgpDataOwnershipRepository();
+        this.egpDataQuality = new EgpDataQualityRepository();
+        this.egpRiskRegister = new EgpRiskRegisterRepository();
+        this.egpRiskAssessment = new EgpRiskAssessmentRepository();
+        this.egpRiskMitigation = new EgpRiskMitigationRepository();
+        this.egpRiskMonitoring = new EgpRiskMonitoringRepository();
+        this.egpBusinessContinuity = new EgpBusinessContinuityRepository();
+        this.egpGovernanceMetrics = new EgpGovernanceMetricRepository();
+        this.egpGovernanceHealth = new EgpGovernanceHealthRepository();
+        this.egpComplianceDashboards = new EgpComplianceDashboardRepository();
+        this.egpMissionProgress = new EgpMissionProgressRepository();
+        this.egpGovernanceFailures = new EgpGovernanceFailureRepository();
+        this.egpAuditLogs = new EgpAuditLogRepository();
     }
 }
 

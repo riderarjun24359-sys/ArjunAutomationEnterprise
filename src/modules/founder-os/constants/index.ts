@@ -21,6 +21,7 @@ export const FOUNDER_OS_TABS = {
     phase3: "phase3",
     phase4: "phase4",
     phase5: "phase5",
+    phase6: "phase6",
     audit: "audit",
     api: "api",
 } as const;

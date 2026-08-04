@@ -56,7 +56,7 @@ import {
     type TeamCapacityFormValues,
     type WorkspaceFormValues,
 } from "@/src/modules/founder-os/schemas";
-import type { FoPhase5Stats } from "@/src/modules/founder-os/types";
+import type { FoPhase5Stats, FoPhase6Stats } from "@/src/modules/founder-os/types";
 
 type FounderOsData = ReturnType<typeof useFounderOs>;
 const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-amber-500/20 focus:ring-4 dark:border-slate-800 dark:bg-slate-950";
@@ -579,6 +579,35 @@ export function FounderOsPhase5Panel({ data }: { data: FounderOsData }) {
             </div></Card>
             <Card hover className="xl:col-span-2"><SectionHeader title="AI organization summary" description="Unified growth, delivery, innovation, orchestration, and mission metrics" /><div className="mt-6">
                 <ListCard title="AI Organization Foundation" subtitle="Unified AI org dashboard with growth/delivery/innovation insights and pending AI approvals" meta="Powered by createAiOrganizationFoundationClient" />
+            </div></Card>
+        </div>
+    );
+}
+
+export function FoPhase6Stats({ stats }: { stats: FoPhase6Stats | null }) {
+    if (!stats) return null;
+    return (
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <ListCard title="Governance overview" subtitle={`${stats.governanceOverview.toFixed(1)}`} meta={`Compliance ${stats.complianceScore.toFixed(1)}`} />
+            <ListCard title="Enterprise risk" subtitle={`${stats.enterpriseRiskScore.toFixed(1)}`} meta={`Audit summary ${stats.auditSummary.toFixed(1)}`} />
+        </section>
+    );
+}
+
+export function FounderOsPhase6Panel({ data }: { data: FounderOsData }) {
+    const p6 = data.phase6Stats;
+    if (!p6) return <EmptyState title="Phase 6 data unavailable" description="Enterprise governance platform metrics will appear once EGP is configured." />;
+    return (
+        <div className="grid gap-6 xl:grid-cols-2">
+            <Card hover><SectionHeader title="Governance overview" description="Cross-domain governance score from EGP SDK" /><div className="mt-6 space-y-3">
+                <ListCard title="Overall governance score" subtitle={`${p6.governanceOverview.toFixed(1)}`} meta={`Compliance ${p6.complianceScore.toFixed(1)} • Risk ${p6.enterpriseRiskScore.toFixed(1)}`} />
+                <ListCard title="Audit summary" subtitle={`${p6.auditSummary.toFixed(1)}`} meta={`Data governance health ${p6.dataGovernanceHealth.toFixed(1)}`} />
+            </div></Card>
+            <Card hover><SectionHeader title="Executive governance brief" description="Mission-aligned governance progress and executive brief score" /><div className="mt-6 space-y-3">
+                <ListCard title="Executive governance brief" subtitle={`${p6.executiveGovernanceBrief.toFixed(1)}`} meta="Mission-aligned governance progress" />
+            </div></Card>
+            <Card hover className="xl:col-span-2"><SectionHeader title="Enterprise governance summary" description="Unified governance, compliance, audit, data governance, and risk metrics" /><div className="mt-6">
+                <ListCard title="Enterprise Governance Platform" subtitle="Unified governance dashboard with compliance, audit, data governance, and enterprise risk insights" meta="Powered by createEnterpriseGovernancePlatformClient" />
             </div></Card>
         </div>
     );

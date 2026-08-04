@@ -21,6 +21,7 @@ export type FounderOsTab =
     | "phase3"
     | "phase4"
     | "phase5"
+    | "phase6"
     | "audit"
     | "api";
 
@@ -80,6 +81,15 @@ export interface FoPhase5Stats {
     aiExecutiveBrief: number;
     missionProgress: number;
     strategicRecommendations: number;
+}
+
+export interface FoPhase6Stats {
+    governanceOverview: number;
+    complianceScore: number;
+    enterpriseRiskScore: number;
+    auditSummary: number;
+    dataGovernanceHealth: number;
+    executiveGovernanceBrief: number;
 }
 
 export interface FoPipelineInfo {

@@ -32,7 +32,8 @@
     "program-f-wave3:verify": "node scripts/verify-program-f-wave3.mjs",
     "customer-operated:verify": "node scripts/verify-customer-operated.mjs",
     "enterprise-intelligence:verify": "node scripts/verify-enterprise-intelligence.mjs",
-    "ai-organization-foundation:verify": "node scripts/verify-ai-organization-foundation.mjs"
+    "ai-organization-foundation:verify": "node scripts/verify-ai-organization-foundation.mjs",
+    "enterprise-governance:verify": "node scripts/verify-enterprise-governance.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

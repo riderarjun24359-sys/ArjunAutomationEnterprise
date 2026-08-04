@@ -48,6 +48,7 @@ import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import { createCustomerOperatedPlatformClient } from "@/src/modules/customer-operated-platform/sdk";
 import { createEnterpriseIntelligencePlatformClient } from "@/src/modules/enterprise-intelligence-platform/sdk";
 import { createAiOrganizationFoundationClient } from "@/src/modules/ai-organization-foundation/sdk";
+import { createEnterpriseGovernancePlatformClient } from "@/src/modules/enterprise-governance-platform/sdk";
 import type {
     AuditEntry,
     BoardReportSummary,
@@ -77,6 +78,7 @@ import type {
     FoPhase3Stats,
     FoPhase4Stats,
     FoPhase5Stats,
+    FoPhase6Stats,
     FoPipelineInfo,
     FoSdkGenerateArtifactInput,
     FoSdkGenerateArtifactResult,
@@ -562,6 +564,34 @@ export class FounderOsService {
             aiExecutiveBrief: stats.pipelineHealthScore,
             missionProgress: latestMission?.progress_percent ?? stats.missionProgressScore,
             strategicRecommendations: opportunityRecords.length,
+        };
+    }
+
+    async getPhase6Stats(authUserId: string, email: string, fullName?: string | null): Promise<FoPhase6Stats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) {
+            return {
+                governanceOverview: 0,
+                complianceScore: 0,
+                enterpriseRiskScore: 0,
+                auditSummary: 0,
+                dataGovernanceHealth: 0,
+                executiveGovernanceBrief: 0,
+            };
+        }
+        const egp = createEnterpriseGovernancePlatformClient(authUserId, email, fullName);
+        const [stats, missionRecords] = await Promise.all([
+            egp.getDashboardStats(),
+            databaseService.egpMissionProgress.listByOrganization(context.organizationId),
+        ]);
+        const latestMission = missionRecords[0];
+        return {
+            governanceOverview: stats.overallGovernanceScore,
+            complianceScore: stats.complianceScore,
+            enterpriseRiskScore: stats.enterpriseRiskScore,
+            auditSummary: stats.auditSummaryScore,
+            dataGovernanceHealth: stats.dataGovernanceHealthScore,
+            executiveGovernanceBrief: latestMission?.progress_percent ?? stats.governanceHealthScore,
         };
     }
 

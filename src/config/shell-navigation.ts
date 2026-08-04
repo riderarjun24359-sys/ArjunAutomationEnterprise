@@ -92,6 +92,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Customer Operated", href: ROUTES.customerOperatedPlatform, description: "Launch ready to customer operated platform: onboarding, production, observability, operations, beta, and executive dashboard", icon: ServerCog, section: "secondary" },
     { label: "Enterprise Intelligence", href: ROUTES.enterpriseIntelligencePlatform, description: "Unified enterprise intelligence platform: KPI engine, executive intelligence, predictive analytics, reporting, SDK, and dashboard", icon: Brain, section: "secondary" },
     { label: "AI Organization", href: ROUTES.aiOrganizationFoundation, description: "Unified AI organization foundation: AGO growth, ADO delivery, AIO innovation, AI orchestration, and organization dashboard", icon: Bot, section: "secondary" },
+    { label: "Enterprise Governance", href: ROUTES.enterpriseGovernancePlatform, description: "Unified enterprise governance platform: governance, compliance, audit, data governance, risk management, and dashboard", icon: ShieldCheck, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },

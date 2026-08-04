@@ -6,7 +6,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const migrationsDir = join(root, "supabase", "migrations");
 
-// 1082 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_*)
+// 1114 required tables (377 foundation + enterprise + idp + 33 tlo_* + 32 brv_* + 32 cnh_* + 32 intg_* + 32 eoc_* + 32 aix_* + 32 elr_* + 32 ifr_* + 32 bpf_* + 32 dfe_* + 32 dwe_* + 32 dde_* + 32 rst_* + 32 sch_* + 32 hsp_* + 32 rtl_* + 32 elf_* + 32 cmp_* + 32 csd_* + 32 cop_* + 32 eip_* + 32 aof_* + 32 egp_*)
 const requiredTables = [
     "organizations",
     "organization_members",
@@ -1090,6 +1090,38 @@ const requiredTables = [
     "aof_mission_progress",
     "aof_organization_failures",
     "aof_audit_logs",
+    "egp_governance_hubs",
+    "egp_organization_governance",
+    "egp_governance_policies",
+    "egp_governance_framework",
+    "egp_governance_reviews",
+    "egp_governance_dashboards",
+    "egp_compliance_framework",
+    "egp_compliance_controls",
+    "egp_compliance_evidence",
+    "egp_compliance_reports",
+    "egp_compliance_calendar",
+    "egp_audit_center",
+    "egp_audit_findings",
+    "egp_corrective_actions",
+    "egp_audit_evidence",
+    "egp_audit_analytics",
+    "egp_data_classification",
+    "egp_retention_policies",
+    "egp_data_lifecycle",
+    "egp_data_ownership",
+    "egp_data_quality",
+    "egp_risk_register",
+    "egp_risk_assessment",
+    "egp_risk_mitigation",
+    "egp_risk_monitoring",
+    "egp_business_continuity",
+    "egp_governance_metrics",
+    "egp_governance_health",
+    "egp_compliance_dashboards",
+    "egp_mission_progress",
+    "egp_governance_failures",
+    "egp_audit_logs",
 ];
 
 const migrationFiles = readdirSync(migrationsDir)
