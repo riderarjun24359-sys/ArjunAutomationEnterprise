@@ -6,7 +6,7 @@
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { runTsc, runLint, spawnVerify } from "./_verify-spawn-helper.mjs";
 
 const root = process.cwd();
 const modRoot = join(root, "src", "modules", "client-success-capability");
@@ -22,10 +22,10 @@ function readSafe(path) {
     try { return readFileSync(path, "utf8"); } catch { return ""; }
 }
 
-const tsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const tsc = runTsc(root);
 pass("regression:tsc", tsc.status === 0, tsc.status !== 0 ? (tsc.stderr || tsc.stdout || "").slice(0, 300) : "");
 
-const lint = spawnSync("npm", ["run", "lint"], { cwd: root, shell: true, encoding: "utf8" });
+const lint = runLint(root);
 pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || lint.stdout || "").slice(0, 300) : "");
 
 const routePath = join(root, "app", "(shell)", "client-success", "page.tsx");
@@ -138,10 +138,10 @@ pass("ui:Tabs", pageSource.includes("Tabs"));
 pass("ui:gci_language_selector", pageSource.includes("gci-language") && pageSource.includes("SUPPORTED_LANGUAGES"));
 pass("ui:client_selector", pageSource.includes("client-select"));
 
-const aiDeliveryTsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const aiDeliveryTsc = runTsc(root);
 pass("regression:ai_delivery_model_tsc", aiDeliveryTsc.status === 0);
 
-const aiDeliveryVerify = spawnSync("node", ["scripts/verify-ai-delivery-model.mjs"], { cwd: root, shell: true, encoding: "utf8" });
+const aiDeliveryVerify = spawnVerify(root, "scripts/verify-ai-delivery-model.mjs");
 const aiDeliveryOut = aiDeliveryVerify.stdout || "";
 const aiDeliveryPassCount = (aiDeliveryOut.match(/PASS/g) || []).length;
 pass("regression:ai_delivery_model_verify", aiDeliveryVerify.status === 0, aiDeliveryVerify.status !== 0 ? aiDeliveryOut.slice(-200) : `${aiDeliveryPassCount} checks`);

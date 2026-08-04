@@ -5,7 +5,7 @@
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { runTsc, runLint, spawnVerify } from "./_verify-spawn-helper.mjs";
 
 const root = process.cwd();
 const moduleRoot = join(root, "src", "modules", "company-launch-kit");
@@ -38,10 +38,10 @@ function grepDir(dir, pattern) {
     return found;
 }
 
-const tsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const tsc = runTsc(root);
 pass("regression:tsc", tsc.status === 0, tsc.status !== 0 ? (tsc.stderr || tsc.stdout || "").slice(0, 200) : "");
 
-const lint = spawnSync("npm", ["run", "lint"], { cwd: root, shell: true, encoding: "utf8" });
+const lint = runLint(root);
 pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || lint.stdout || "").slice(0, 200) : "");
 
 pass("design:tokens", existsSync(join(moduleRoot, "design-system", "tokens.ts")));
@@ -159,7 +159,7 @@ pass("layout:dynamic_ssr_false", layoutSource.includes("ssr: false"));
 
 pass("package:premium_website_verify", readFileSync(join(root, "package.json"), "utf8").includes('"premium-website:verify"'));
 
-const clkVerify = spawnSync("npm", ["run", "company-launch-kit:verify"], { cwd: root, shell: true, encoding: "utf8" });
+const clkVerify = spawnVerify(root, "scripts/verify-company-launch-kit.mjs");
 pass("regression:company_launch_kit_verify", clkVerify.status === 0, clkVerify.status !== 0 ? (clkVerify.stderr || clkVerify.stdout || "").slice(-200) : "");
 
 const passed = results.filter((r) => r.pass).length;

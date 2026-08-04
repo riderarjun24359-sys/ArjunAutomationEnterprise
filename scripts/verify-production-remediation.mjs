@@ -4,7 +4,7 @@
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { runTsc, runLint, spawnVerify } from "./_verify-spawn-helper.mjs";
 
 const root = process.cwd();
 const results = [];
@@ -17,7 +17,7 @@ function readSafe(path) {
     try { return readFileSync(path, "utf8"); } catch { return ""; }
 }
 
-const tsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const tsc = runTsc(root);
 pass("regression:tsc", tsc.status === 0, tsc.status !== 0 ? (tsc.stderr || tsc.stdout || "").slice(0, 300) : "");
 
 // Phase 1 — Security
@@ -73,7 +73,7 @@ pass("brand:no_ai_first_hero", !home.includes("AI-first enterprise operating sys
 pass("brand:enterprise_positioning", home.includes("Enterprise Platform") || home.includes("enterprise operating system"));
 
 // Regression
-const mcVerify = spawnSync("npm", ["run", "mission-core:verify"], { cwd: root, shell: true, encoding: "utf8" });
+const mcVerify = spawnVerify(root, "scripts/verify-mission-core.mjs");
 pass("regression:mission_core", mcVerify.status === 0);
 
 const passed = results.filter((r) => r.pass).length;

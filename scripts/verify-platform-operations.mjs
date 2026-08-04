@@ -7,7 +7,7 @@
  */
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { runTsc, runLint, spawnVerify } from "./_verify-spawn-helper.mjs";
 
 const root = process.cwd();
 const modRoot = join(root, "src", "modules", "platform-operations");
@@ -32,10 +32,10 @@ function readModuleSources(dir) {
     return combined;
 }
 
-const tsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const tsc = runTsc(root);
 pass("regression:tsc", tsc.status === 0, tsc.status !== 0 ? (tsc.stderr || tsc.stdout || "").slice(0, 300) : "");
 
-const lint = spawnSync("npm", ["run", "lint"], { cwd: root, shell: true, encoding: "utf8" });
+const lint = runLint(root);
 pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || lint.stdout || "").slice(0, 300) : "");
 
 const routePath = join(root, "app", "(shell)", "platform-operations", "page.tsx");
@@ -192,10 +192,10 @@ pass("ai:aiAssisted", errorEngine.includes("aiAssisted"));
 
 pass("package:platform_operations_verify", readSafe(join(root, "package.json")).includes('"platform-operations:verify"'));
 
-const mcVerify = spawnSync("npm", ["run", "mission-core:verify"], { cwd: root, shell: true, encoding: "utf8" });
+const mcVerify = spawnVerify(root, "scripts/verify-mission-core.mjs");
 pass("regression:mission_core_verify", mcVerify.status === 0, mcVerify.status !== 0 ? "mission-core verify failed" : "");
 
-const scTsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const scTsc = runTsc(root);
 pass("regression:security_center_tsc", scTsc.status === 0);
 
 const passed = results.filter((r) => r.pass).length;

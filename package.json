@@ -46,6 +46,7 @@
     "platform-operations:verify": "node scripts/verify-platform-operations.mjs",
     "ai-foundation:verify": "node scripts/verify-ai-foundation.mjs",
     "production-remediation:verify": "node scripts/verify-production-remediation.mjs",
+    "launch-readiness:verify": "node scripts/verify-launch-readiness.mjs",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {

@@ -5,7 +5,7 @@
  */
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { spawnSync } from "node:child_process";
+import { runTsc, runLint } from "./_verify-spawn-helper.mjs";
 
 const root = process.cwd();
 const moduleRoot = join(root, "src", "modules", "brand-os");
@@ -15,10 +15,10 @@ function pass(check, ok, detail = "") {
     results.push({ check, pass: ok, detail });
 }
 
-const tsc = spawnSync("npx", ["tsc", "--noEmit"], { cwd: root, shell: true, encoding: "utf8" });
+const tsc = runTsc(root);
 pass("regression:tsc", tsc.status === 0, tsc.status !== 0 ? (tsc.stderr || tsc.stdout || "").slice(0, 200) : "");
 
-const lint = spawnSync("npm", ["run", "lint"], { cwd: root, shell: true, encoding: "utf8" });
+const lint = runLint(root);
 pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || lint.stdout || "").slice(0, 200) : "");
 
 const routePath = join(root, "app", "(shell)", "brand-os", "page.tsx");
