@@ -37,7 +37,8 @@
     "growth-engine:verify": "node scripts/verify-growth-engine.mjs",
     "brand-os:verify": "node scripts/verify-brand-os.mjs",
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",
-    "premium-website:verify": "node scripts/verify-premium-website.mjs"
+    "premium-website:verify": "node scripts/verify-premium-website.mjs",
+    "design-os:verify": "node scripts/verify-design-os.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.6.0",

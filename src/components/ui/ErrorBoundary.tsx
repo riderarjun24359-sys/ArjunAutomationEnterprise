@@ -1,6 +1,7 @@
 "use client";
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { ErrorState } from "@/src/design-os/components/ErrorState";
 
 interface ErrorBoundaryProps {
     children: ReactNode;
@@ -24,10 +25,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     render() {
         if (this.state.hasError) {
             return (
-                <div className="rounded-3xl border border-rose-200 bg-rose-50 p-8 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300">
-                    <p className="font-semibold">Dashboard temporarily unavailable</p>
-                    <p className="mt-2">We could not render the executive overview. Please try again shortly.</p>
-                </div>
+                <ErrorState
+                    title="Dashboard temporarily unavailable"
+                    description="We could not render the executive overview. Please try again shortly."
+                    onRetry={() => this.setState({ hasError: false })}
+                />
             );
         }
 

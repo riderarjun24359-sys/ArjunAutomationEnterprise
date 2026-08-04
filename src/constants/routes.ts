@@ -51,6 +51,7 @@ export const ROUTES = {
     enterpriseGovernancePlatform: "/enterprise-governance-platform",
     growthEngine: "/growth-engine",
     brandOs: "/brand-os",
+    designOs: "/design-os",
     companyLaunchKit: "/company-launch-kit",
     analytics: "/analytics",
     automation: "/automation",

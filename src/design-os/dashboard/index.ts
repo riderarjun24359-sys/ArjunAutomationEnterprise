@@ -1,0 +1,12 @@
+export { DashboardShell } from "./DashboardShell";
+export { PremiumSidebar } from "./PremiumSidebar";
+export { CommandPalette } from "./CommandPalette";
+export { DockNav } from "./DockNav";
+export { KpiCard } from "./KpiCard";
+export { GlassWidget } from "./GlassWidget";
+export { ActivityFeed } from "./ActivityFeed";
+export { NotificationCenter } from "./NotificationCenter";
+export { AiAssistantPanel } from "./AiAssistantPanel";
+export { SmartSearch } from "./SmartSearch";
+export { KeyboardShortcuts } from "./KeyboardShortcuts";
+export { DashboardToolbar } from "./DashboardToolbar";

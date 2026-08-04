@@ -1,0 +1,145 @@
+:root {
+    /* Brand */
+    --dos-brand-primary: #4338ca;
+    --dos-brand-primary-hover: #3730a3;
+    --dos-brand-secondary: #06b6d4;
+    --dos-brand-accent: #8b5cf6;
+
+    /* Semantic */
+    --dos-success: #10b981;
+    --dos-success-muted: #d1fae5;
+    --dos-warning: #f59e0b;
+    --dos-warning-muted: #fef3c7;
+    --dos-error: #ef4444;
+    --dos-error-muted: #fee2e2;
+    --dos-info: #3b82f6;
+    --dos-info-muted: #dbeafe;
+
+    /* Surface */
+    --dos-surface: #ffffff;
+    --dos-surface-secondary: #f8fafc;
+    --dos-surface-tertiary: #f1f5f9;
+    --dos-surface-elevated: #ffffff;
+    --dos-surface-overlay: rgba(15, 23, 42, 0.4);
+
+    /* Border */
+    --dos-border: rgba(15, 23, 42, 0.1);
+    --dos-border-subtle: rgba(15, 23, 42, 0.06);
+    --dos-border-strong: rgba(15, 23, 42, 0.16);
+    --dos-border-focus: #6366f1;
+
+    /* Text */
+    --dos-text-primary: #0f172a;
+    --dos-text-secondary: #475569;
+    --dos-text-tertiary: #94a3b8;
+    --dos-text-inverse: #f8fafc;
+    --dos-text-link: #4338ca;
+
+    /* Typography */
+    --dos-font-sans: var(--font-geist-sans, system-ui, sans-serif);
+    --dos-font-display: var(--font-geist-sans, system-ui, sans-serif);
+    --dos-font-mono: var(--font-geist-mono, ui-monospace, monospace);
+
+    /* Spacing (8pt system) */
+    --dos-space-1: 8px;
+    --dos-space-2: 16px;
+    --dos-space-3: 24px;
+    --dos-space-4: 32px;
+    --dos-space-6: 48px;
+    --dos-space-8: 64px;
+
+    /* Radii */
+    --dos-radius-sm: 0.375rem;
+    --dos-radius-md: 0.5rem;
+    --dos-radius-lg: 0.75rem;
+    --dos-radius-xl: 1rem;
+    --dos-radius-2xl: 1.25rem;
+    --dos-radius-3xl: 1.5rem;
+    --dos-radius-full: 9999px;
+
+    /* Shadows */
+    --dos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --dos-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --dos-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1);
+    --dos-shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12);
+    --dos-shadow-glow: 0 0 24px rgba(99, 102, 241, 0.25);
+
+    /* Blur & Glass */
+    --dos-blur-sm: 4px;
+    --dos-blur-md: 8px;
+    --dos-blur-lg: 16px;
+    --dos-blur-xl: 24px;
+    --dos-glass-bg: rgba(255, 255, 255, 0.72);
+    --dos-glass-border: rgba(255, 255, 255, 0.4);
+    --dos-glass-blur: 20px;
+    --dos-glass-shadow: var(--dos-shadow-md);
+
+    /* Motion */
+    --dos-duration-fast: 150ms;
+    --dos-duration-normal: 250ms;
+    --dos-duration-slow: 400ms;
+    --dos-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --dos-easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Z-index */
+    --dos-z-dropdown: 1000;
+    --dos-z-sticky: 1100;
+    --dos-z-overlay: 1200;
+    --dos-z-modal: 1300;
+    --dos-z-toast: 1500;
+    --dos-z-command: 1700;
+}
+
+.dark {
+    --dos-surface: #0a0a0f;
+    --dos-surface-secondary: #12121a;
+    --dos-surface-tertiary: #1a1a24;
+    --dos-surface-elevated: #151520;
+    --dos-surface-overlay: rgba(0, 0, 0, 0.6);
+
+    --dos-border: rgba(248, 250, 252, 0.08);
+    --dos-border-subtle: rgba(248, 250, 252, 0.04);
+    --dos-border-strong: rgba(248, 250, 252, 0.16);
+    --dos-border-focus: #818cf8;
+
+    --dos-text-primary: #f8fafc;
+    --dos-text-secondary: #94a3b8;
+    --dos-text-tertiary: #64748b;
+    --dos-text-inverse: #0f172a;
+    --dos-text-link: #818cf8;
+
+    --dos-success-muted: rgba(16, 185, 129, 0.15);
+    --dos-warning-muted: rgba(245, 158, 11, 0.15);
+    --dos-error-muted: rgba(239, 68, 68, 0.15);
+    --dos-info-muted: rgba(59, 130, 246, 0.15);
+
+    --dos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --dos-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --dos-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --dos-shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6);
+    --dos-shadow-glow: 0 0 24px rgba(129, 140, 248, 0.3);
+
+    --dos-glass-bg: rgba(15, 15, 25, 0.65);
+    --dos-glass-border: rgba(255, 255, 255, 0.06);
+}
+
+.dos-glass {
+    background: var(--dos-glass-bg);
+    backdrop-filter: blur(var(--dos-glass-blur));
+    -webkit-backdrop-filter: blur(var(--dos-glass-blur));
+    border: 1px solid var(--dos-glass-border);
+    box-shadow: var(--dos-glass-shadow);
+}
+
+.dos-surface {
+    background: var(--dos-surface);
+    color: var(--dos-text-primary);
+}
+
+.dos-text-display { font-size: 3.75rem; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; }
+.dos-text-h1 { font-size: 3rem; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; }
+.dos-text-h2 { font-size: 2.25rem; line-height: 1.2; letter-spacing: -0.015em; font-weight: 600; }
+.dos-text-h3 { font-size: 1.875rem; line-height: 1.25; font-weight: 600; }
+.dos-text-body { font-size: 1rem; line-height: 1.6; }
+.dos-text-caption { font-size: 0.75rem; line-height: 1.4; letter-spacing: 0.02em; }
+.dos-text-mono { font-family: var(--dos-font-mono); font-size: 0.875rem; line-height: 1.6; }
