@@ -1,17 +1,6 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
-import { PremiumHeader } from "@/src/modules/company-launch-kit/components/premium/PremiumHeader";
-import { PremiumFooter } from "@/src/modules/company-launch-kit/components/premium/PremiumFooter";
-import { PageTransition } from "@/src/modules/company-launch-kit/components/premium/ui/PageTransition";
-import { ScrollProgress } from "@/src/modules/company-launch-kit/components/premium/ui/ScrollProgress";
-import { AnalyticsScripts } from "@/src/modules/company-launch-kit/components/AnalyticsScripts";
-
-const CursorGlow = dynamic(
-    () => import("@/src/modules/company-launch-kit/components/premium/ui/CursorGlow").then((m) => m.CursorGlow),
-    { ssr: false },
-);
+import { MarketingFooterStatic } from "@/src/modules/company-launch-kit/components/MarketingFooterStatic";
+import { MarketingHeaderStatic } from "@/src/modules/company-launch-kit/components/MarketingHeaderStatic";
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
     return (
@@ -22,14 +11,11 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
             >
                 Skip to main content
             </a>
-            <ScrollProgress />
-            <CursorGlow />
-            <PremiumHeader />
+            <MarketingHeaderStatic />
             <main id="main-content" className="premium-theme min-h-[60vh]">
-                <PageTransition>{children}</PageTransition>
+                {children}
             </main>
-            <PremiumFooter />
-            <AnalyticsScripts />
+            <MarketingFooterStatic />
         </>
     );
 }

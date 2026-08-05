@@ -34,7 +34,7 @@ const mapSession = (session: { access_token: string; refresh_token?: string | nu
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { initialize, hydrate, clearAuth, isHydrated } = useAuth();
+    const { initialize, hydrate, clearAuth } = useAuth();
 
     useEffect(() => {
         void initialize();
@@ -61,10 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             subscription.unsubscribe();
         };
     }, [hydrate, clearAuth]);
-
-    if (!isHydrated) {
-        return null;
-    }
 
     return <>{children}</>;
 }

@@ -1,6 +1,26 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ROUTES } from "@/src/constants/routes";
+import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { createSupabaseMiddlewareClient } from "@/src/lib/supabase-middleware";
+
+const publicMarketingRoutes = [
+    MARKETING_ROUTES.home,
+    MARKETING_ROUTES.about,
+    MARKETING_ROUTES.services,
+    MARKETING_ROUTES.industries,
+    MARKETING_ROUTES.solutions,
+    MARKETING_ROUTES.portfolio,
+    MARKETING_ROUTES.caseStudies,
+    MARKETING_ROUTES.blog,
+    MARKETING_ROUTES.careers,
+    MARKETING_ROUTES.contact,
+    MARKETING_ROUTES.privacy,
+    MARKETING_ROUTES.terms,
+    MARKETING_ROUTES.cookies,
+    MARKETING_ROUTES.thankYou,
+    MARKETING_ROUTES.launchAutomation,
+    MARKETING_ROUTES.launchCrm,
+];
 
 const protectedRoutes = [
     ROUTES.dashboard,
@@ -77,6 +97,14 @@ export async function authMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
     const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+    const isPublicMarketingRoute =
+        publicMarketingRoutes.some((route) => pathname === route || (route !== "/" && pathname.startsWith(`${route}/`))) ||
+        pathname.startsWith("/portfolio/") ||
+        pathname.startsWith("/blog/");
+
+    if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute) {
+        return NextResponse.next();
+    }
 
     const supabaseContext = createSupabaseMiddlewareClient(request);
 

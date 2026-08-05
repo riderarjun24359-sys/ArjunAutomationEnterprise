@@ -38,6 +38,8 @@
     "brand-os:verify": "node scripts/verify-brand-os.mjs",
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",
     "premium-website:verify": "node scripts/verify-premium-website.mjs",
+    "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
+    "verify": "node scripts/verify-trust-conversion.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
     "business-assets:verify": "node scripts/verify-business-assets.mjs",
     "client-success-capability:verify": "node scripts/verify-client-success-capability.mjs",

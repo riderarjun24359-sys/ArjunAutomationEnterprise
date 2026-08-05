@@ -1,0 +1,140 @@
+/* Trust & Conversion module — CSS-only microinteractions, zero layout shift */
+
+.tc-card {
+    border: 1px solid var(--premium-border);
+    border-radius: 1rem;
+    background: var(--premium-glass);
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.tc-card:hover,
+.tc-card:focus-within {
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 12px 32px rgba(99, 102, 241, 0.12);
+    transform: translateY(-2px);
+}
+
+.tc-card:active {
+    transform: translateY(0);
+}
+
+.tc-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    border: 1px solid var(--premium-border);
+    background: var(--premium-bg);
+    color: var(--premium-fg-muted);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.tc-logo:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    color: var(--premium-fg);
+}
+
+.tc-badge {
+    border-radius: 0.75rem;
+    border: 1px solid var(--premium-border);
+    background: var(--premium-bg);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+.tc-badge:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+}
+
+.tc-timeline-line {
+    position: absolute;
+    left: 1.25rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #6366f1, #06b6d4);
+    opacity: 0.35;
+}
+
+.tc-step-dot {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    background: #4338ca;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px var(--premium-bg);
+}
+
+@keyframes tc-reveal-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tc-reveal {
+    animation: tc-reveal-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tc-reveal-delay-1 { animation-delay: 0.08s; }
+.tc-reveal-delay-2 { animation-delay: 0.16s; }
+.tc-reveal-delay-3 { animation-delay: 0.24s; }
+.tc-reveal-delay-4 { animation-delay: 0.32s; }
+
+@supports (animation-timeline: view()) {
+    .tc-reveal {
+        animation: tc-reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 28%;
+        animation-delay: 0s;
+    }
+    .tc-reveal-delay-1,
+    .tc-reveal-delay-2,
+    .tc-reveal-delay-3,
+    .tc-reveal-delay-4 {
+        animation-delay: 0s;
+    }
+}
+
+.tc-stat-value {
+    display: inline-block;
+    animation: tc-stat-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tc-stat-pop {
+    from { transform: scale(0.92); opacity: 0.6; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tc-card,
+    .tc-logo,
+    .tc-badge,
+    .tc-reveal,
+    .tc-reveal-delay-1,
+    .tc-reveal-delay-2,
+    .tc-reveal-delay-3,
+    .tc-reveal-delay-4,
+    .tc-stat-value {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}

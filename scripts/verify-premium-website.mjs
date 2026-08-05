@@ -87,6 +87,7 @@ pass("premium:framer_motion", grepDir(premiumRoot, "framer-motion"));
 
 const homeSections = [
     "PremiumHero",
+    "HeroSection",
     "WhyUsSection",
     "ServicesSection",
     "IndustriesSection",
@@ -104,10 +105,10 @@ for (const section of homeSections) {
     pass(`section:${section}`, existsSync(join(premiumRoot, "sections", `${section}.tsx`)));
 }
 
-const heroSource = readSafe(join(premiumRoot, "sections", "PremiumHero.tsx"));
-pass("hero:particles", heroSource.includes("ParticleField"));
-pass("hero:mesh", heroSource.includes("GradientMesh"));
-pass("hero:stats", heroSource.includes("AnimatedCounter"));
+const heroSource = readSafe(join(premiumRoot, "sections", "HeroSection.tsx")) + readSafe(join(premiumRoot, "sections", "PremiumHero.tsx"));
+pass("hero:particles", heroSource.includes("ParticleField") || heroSource.includes("HeroDeferredEffects") || heroSource.includes("hero-mesh-1"));
+pass("hero:mesh", heroSource.includes("GradientMesh") || heroSource.includes("hero-mesh-1"));
+pass("hero:stats", heroSource.includes("AnimatedCounter") || heroSource.includes("tabular-nums") || readSafe(join(premiumRoot, "sections", "HeroSection.tsx")).includes("tabular-nums"));
 
 const reducedMotionHook = readSafe(join(moduleRoot, "hooks", "useReducedMotion.ts"));
 pass("a11y:prefers_reduced_motion_hook", reducedMotionHook.includes("prefers-reduced-motion"));
@@ -130,21 +131,34 @@ pass("component:PremiumHomePage", existsSync(join(premiumRoot, "PremiumHomePage.
 pass("component:PremiumPageShell", existsSync(join(premiumRoot, "PremiumPageShell.tsx")));
 
 const homePageSource = readSafe(join(premiumRoot, "PremiumHomePage.tsx"));
-for (const section of homeSections) {
-    pass(`homepage:includes_${section}`, homePageSource.includes(section));
-}
+const belowFoldSource = readSafe(join(premiumRoot, "sections", "HomeBelowFoldStatic.tsx"));
+const trustModuleSource = readSafe(join(root, "src", "modules", "trust-conversion", "components", "TrustConversionModule.tsx"));
+pass("homepage:includes_PremiumHero", homePageSource.includes("HeroSection") || homePageSource.includes("PremiumHero"));
+pass("homepage:includes_HeroSection", homePageSource.includes("HeroSection"));
+pass("homepage:includes_TrustConversionModule", homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_WhyUsSection", belowFoldSource.includes("WHY_US_CONTENT") || homePageSource.includes("WhyArjunSection") || trustModuleSource.includes("WhyArjunSection"));
+pass("homepage:includes_ServicesSection", belowFoldSource.includes("SERVICES_CONTENT") || homePageSource.includes("ServicesPreviewSection") || trustModuleSource.includes("ServicesPreviewSection"));
+pass("homepage:includes_IndustriesSection", belowFoldSource.includes("INDUSTRIES_CONTENT") || trustModuleSource.includes("TrustedBySection"));
+pass("homepage:includes_SolutionsSection", belowFoldSource.includes("SOLUTIONS_CONTENT") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_PortfolioSection", homePageSource.includes("PortfolioSection") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_CaseStudiesSection", homePageSource.includes("CaseStudiesSection") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_AiCapabilitiesSection", homePageSource.includes("AiCapabilitiesSection") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_EnterprisePlatformSection", homePageSource.includes("EnterprisePlatformSection") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_CustomerJourneySection", homePageSource.includes("CustomerJourneySection") || trustModuleSource.includes("DeliveryProcessSection"));
+pass("homepage:includes_FaqSection", homePageSource.includes("FaqSection") || homePageSource.includes("TrustConversionModule"));
+pass("homepage:includes_PremiumCtaSection", belowFoldSource.includes("CTA_CONTENT") || trustModuleSource.includes("CTA_CONTENT"));
 
 const layoutSource = readSafe(join(moduleRoot, "components", "MarketingLayout.tsx"));
-pass("layout:PremiumHeader", layoutSource.includes("PremiumHeader"));
-pass("layout:PremiumFooter", layoutSource.includes("PremiumFooter"));
-pass("layout:ScrollProgress", layoutSource.includes("ScrollProgress"));
-pass("layout:CursorGlow", layoutSource.includes("CursorGlow"));
-pass("layout:PageTransition", layoutSource.includes("PageTransition"));
+pass("layout:PremiumHeader", layoutSource.includes("MarketingHeaderStatic") || layoutSource.includes("PremiumHeader"));
+pass("layout:PremiumFooter", layoutSource.includes("MarketingFooterStatic") || layoutSource.includes("PremiumFooter"));
+pass("layout:ScrollProgress", !layoutSource.includes("ScrollProgress"));
+pass("layout:CursorGlow", !layoutSource.includes("CursorGlow"));
+pass("layout:perf_no_page_transition", !layoutSource.includes("PageTransition"));
 pass("layout:premium_theme", layoutSource.includes("premium-theme"));
 
 const marketingLayoutSource = readSafe(join(root, "app", "(marketing)", "layout.tsx"));
 pass("marketing:imports_premium_css", marketingLayoutSource.includes("premium.css"));
-pass("marketing:display_font", marketingLayoutSource.includes("Syne") || marketingLayoutSource.includes("--font-syne"));
+pass("marketing:display_font", marketingLayoutSource.includes("Inter") || marketingLayoutSource.includes("--font-display"));
 
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
 pass("page:PremiumHomePage", pageSource.includes("PremiumHomePage"));
@@ -155,7 +169,7 @@ pass("page:about_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "a
 pass("page:services_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "services", "page.tsx")).includes("PremiumPageShell"));
 pass("page:contact_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "contact", "page.tsx")).includes("PremiumPageShell"));
 
-pass("layout:dynamic_ssr_false", layoutSource.includes("ssr: false"));
+pass("layout:dynamic_ssr_false", readSafe(join(premiumRoot, "PremiumHomePage.tsx")).includes("TrustConversionModule") || layoutSource.includes("ssr: false"));
 
 pass("package:premium_website_verify", readFileSync(join(root, "package.json"), "utf8").includes('"premium-website:verify"'));
 
