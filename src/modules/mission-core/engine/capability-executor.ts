@@ -134,6 +134,14 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "QualityGatePassed", source: "missionCore", payload: { passed: payload.passed } });
                 return { capabilityId, action, processed: true, qualityGate: true, timestamp };
             }
+            case "executiveAiEcosystem:orchestrate": {
+                missionCore().publishEvent({ type: "ExecutiveBriefGenerated", source: "missionCore", payload: { taskType: payload.taskType } });
+                return { capabilityId, action, processed: true, orchestrated: true, timestamp };
+            }
+            case "executiveAiEcosystem:approve-recommendation": {
+                missionCore().publishEvent({ type: "RecommendationApproved", source: "missionCore", payload: { recommendationId: payload.recommendationId } });
+                return { capabilityId, action, processed: true, approved: true, timestamp };
+            }
             default: {
                 const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {

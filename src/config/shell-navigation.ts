@@ -70,6 +70,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Security Center", href: ROUTES.securityCenter, description: "Enterprise security and identity: authentication, MFA, RBAC, org isolation, API security, secrets, audit, and threat detection", icon: ShieldCheck, section: "primary" },
     { label: "Platform Operations", href: ROUTES.platformOperations, description: "Self-monitoring production platform: health, observability, errors, queues, retries, backups, disaster recovery, performance, and service status", icon: Gauge, section: "primary" },
     { label: "Production Readiness", href: ROUTES.productionReadiness, description: "Enterprise production hardening: observability, resilience, security, scalability, CTO audit dashboard", icon: ShieldCheck, section: "primary" },
+    { label: "Executive AI", href: ROUTES.executiveAiEcosystem, description: "Coordinated executive AI organization: CTO, CEO, COO, CFO, CMO, CSO, CS, Security, Analytics with orchestrator", icon: Bot, section: "primary" },
     { label: "AI Foundation", href: ROUTES.aiFoundation, description: "Governed AI layer: memory, knowledge graph, prompts, agents, workflows, evaluation, governance, cost tracking, and learning pipeline", icon: Brain, section: "primary" },
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Sales", href: ROUTES.sales, description: "Pipeline and revenue operations", icon: TrendingUp, section: "secondary" },

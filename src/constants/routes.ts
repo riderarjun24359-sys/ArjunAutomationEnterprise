@@ -69,6 +69,7 @@ export const ROUTES = {
     businessPlatform: "/business-platform",
     deliveryEngine: "/delivery-engine",
     productionReadiness: "/production-readiness",
+    executiveAiEcosystem: "/executive-ai-ecosystem",
     documents: "/documents",
 } as const;
 

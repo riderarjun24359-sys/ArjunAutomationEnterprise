@@ -43,6 +43,7 @@
     "executive-command-center:verify": "node scripts/verify-executive-command-center.mjs",
     "delivery-engine:verify": "node scripts/verify-delivery-engine.mjs",
     "production-readiness:verify": "node scripts/verify-production-readiness.mjs",
+    "executive-ai-ecosystem:verify": "node scripts/verify-executive-ai-ecosystem.mjs",
     "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
     "verify": "node scripts/verify-public-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",

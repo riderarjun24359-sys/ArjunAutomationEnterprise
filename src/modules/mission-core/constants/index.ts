@@ -19,6 +19,17 @@ export const MISSION_CORE_WORKFLOWS = {
 
 export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
     {
+        id: "executiveAiEcosystem",
+        name: "Executive AI Ecosystem",
+        route: "/executive-ai-ecosystem",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "executiveAiEcosystem", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["businessPlatform", "executiveIntelligence", "deliveryEngine", "productionReadiness"],
+        apis: ["orchestrate", "approve-recommendation", "shared-knowledge"],
+        events: ["ExecutiveBriefGenerated", "RecommendationApproved", "AgentTaskRouted", "ConflictResolved"],
+    },
+    {
         id: "productionReadiness",
         name: "Production Readiness",
         route: "/production-readiness",
