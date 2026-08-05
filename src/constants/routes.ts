@@ -67,6 +67,7 @@ export const ROUTES = {
     support: "/support",
     sales: "/sales",
     businessPlatform: "/business-platform",
+    deliveryEngine: "/delivery-engine",
     documents: "/documents",
 } as const;
 

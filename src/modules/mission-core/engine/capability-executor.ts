@@ -110,6 +110,22 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "RenewalDue", source: "missionCore", payload: { clientId: payload.clientId } });
                 return { capabilityId, action, processed: true, renewalInitiated: true, clientId: payload.clientId, timestamp };
             }
+            case "deliveryEngine:start-engagement": {
+                missionCore().publishEvent({ type: "DeliveryEngagementStarted", source: "missionCore", payload: { title: payload.title, blueprintKey: payload.blueprintKey } });
+                return { capabilityId, action, processed: true, engagementStarted: true, timestamp };
+            }
+            case "deliveryEngine:run-pipeline": {
+                missionCore().publishEvent({ type: "DeliveryPipelineCompleted", source: "missionCore", payload: { engagementId: payload.engagementId, pipelineType: payload.pipelineType } });
+                return { capabilityId, action, processed: true, pipelineRun: true, timestamp };
+            }
+            case "deliveryEngine:verify-quality": {
+                missionCore().publishEvent({ type: "QualityVerified", source: "missionCore", payload: { engagementId: payload.engagementId } });
+                return { capabilityId, action, processed: true, qualityVerified: true, timestamp };
+            }
+            case "deliveryEngine:advance-playbook": {
+                missionCore().publishEvent({ type: "WorkflowCompleted", source: "missionCore", payload: { stage: payload.stage, engagementId: payload.engagementId } });
+                return { capabilityId, action, processed: true, stageAdvanced: true, timestamp };
+            }
             default: {
                 const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {

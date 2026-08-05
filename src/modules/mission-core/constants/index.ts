@@ -19,6 +19,17 @@ export const MISSION_CORE_WORKFLOWS = {
 
 export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
     {
+        id: "deliveryEngine",
+        name: "Delivery Engine",
+        route: "/delivery-engine",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "deliveryEngine", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["businessPlatform", "projects", "developmentFactory"],
+        apis: ["start-engagement", "run-pipeline", "verify-quality", "advance-playbook"],
+        events: ["DeliveryEngagementStarted", "DeliveryPipelineCompleted", "QualityVerified", "DeliveryHandover"],
+    },
+    {
         id: "businessPlatform",
         name: "Business Platform",
         route: "/business-platform",

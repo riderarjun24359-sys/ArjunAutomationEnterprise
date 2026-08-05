@@ -41,6 +41,7 @@
     "public-website:verify": "node scripts/verify-public-website.mjs",
     "business-platform:verify": "node scripts/verify-business-platform.mjs",
     "executive-command-center:verify": "node scripts/verify-executive-command-center.mjs",
+    "delivery-engine:verify": "node scripts/verify-delivery-engine.mjs",
     "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
     "verify": "node scripts/verify-public-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
