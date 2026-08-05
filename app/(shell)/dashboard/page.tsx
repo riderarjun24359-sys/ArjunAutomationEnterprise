@@ -1,5 +1,5 @@
-import { DashboardShell } from "@/src/modules/dashboard";
+import { ExecutiveCommandCenterPage } from "@/src/modules/executive-command-center";
 
 export default function DashboardPage() {
-    return <DashboardShell />;
+    return <ExecutiveCommandCenterPage />;
 }

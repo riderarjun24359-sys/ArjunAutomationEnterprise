@@ -1,0 +1,12 @@
+export { ExecutiveCommandCenterPage } from "./components/ExecutiveCommandCenterPage";
+export { ExecutiveCopilot } from "./components/ExecutiveCopilot";
+export { UnifiedKpiStrip } from "./components/UnifiedKpiStrip";
+export { IntelligenceModuleGrid } from "./components/IntelligenceModuleGrid";
+export { executiveCommandCenterService } from "./services/executive-command-center.service";
+export { searchEverything, buildStaticSearchIndex } from "./services/smart-search.service";
+export { executiveCommands, searchCommands, parseNaturalLanguageCommand } from "./services/command-registry";
+export { useExecutiveCommandCenter } from "./hooks/useExecutiveCommandCenter";
+export { useSmartSearch } from "./hooks/useSmartSearch";
+export { useExecutiveCopilot } from "./hooks/useExecutiveCopilot";
+export * from "./types";
+export * from "./constants";

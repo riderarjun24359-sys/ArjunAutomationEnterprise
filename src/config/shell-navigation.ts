@@ -56,7 +56,7 @@ export interface ShellNavigationItem {
 }
 
 export const shellNavigation: ShellNavigationItem[] = [
-    { label: "Dashboard", href: ROUTES.dashboard, description: "Executive overview", icon: LayoutDashboard, section: "primary" },
+    { label: "Dashboard", href: ROUTES.dashboard, description: "Executive Command Center — attention, risks, opportunities, and next steps", icon: LayoutDashboard, section: "primary" },
     { label: "Business Platform", href: ROUTES.businessPlatform, description: "Unified client lifecycle: leads, consultation, proposals, delivery", icon: Network, section: "primary" },
     { label: "Organization", href: ROUTES.organization, description: "Governance and workspaces", icon: Building2, section: "primary" },
     { label: "CRM", href: ROUTES.crm, description: "Client and revenue operations", icon: BriefcaseBusiness, section: "primary" },

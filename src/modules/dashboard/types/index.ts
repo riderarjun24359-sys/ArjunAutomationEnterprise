@@ -22,6 +22,8 @@ export interface DashboardOverview {
     activities: DashboardActivityItem[];
     teamCount: number;
     auditCount: number;
+    taskCount: number;
+    openTasks: number;
     source: "supabase" | "fallback";
 }
 

@@ -44,6 +44,8 @@ const buildOverview = (input: DashboardOverviewInput): DashboardOverview => {
         organization,
         teamCount: membershipsCount,
         auditCount: auditLogs.length,
+        taskCount,
+        openTasks,
         source: hasSupabaseData ? "supabase" : "fallback",
         kpis: [
             {
