@@ -126,6 +126,14 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "WorkflowCompleted", source: "missionCore", payload: { stage: payload.stage, engagementId: payload.engagementId } });
                 return { capabilityId, action, processed: true, stageAdvanced: true, timestamp };
             }
+            case "productionReadiness:health-check": {
+                missionCore().publishEvent({ type: "HealthEvent", source: "missionCore", payload: { score: payload.score } });
+                return { capabilityId, action, processed: true, healthChecked: true, timestamp };
+            }
+            case "productionReadiness:quality-gate": {
+                missionCore().publishEvent({ type: "QualityGatePassed", source: "missionCore", payload: { passed: payload.passed } });
+                return { capabilityId, action, processed: true, qualityGate: true, timestamp };
+            }
             default: {
                 const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {

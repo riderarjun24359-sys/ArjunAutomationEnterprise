@@ -19,6 +19,17 @@ export const MISSION_CORE_WORKFLOWS = {
 
 export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
     {
+        id: "productionReadiness",
+        name: "Production Readiness",
+        route: "/production-readiness",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "productionReadiness", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["platformOperations", "securityCenter", "deliveryEngine"],
+        apis: ["health-check", "readiness-snapshot", "quality-gate"],
+        events: ["ReadinessSnapshotCreated", "QualityGatePassed", "SystemAlertRaised"],
+    },
+    {
         id: "deliveryEngine",
         name: "Delivery Engine",
         route: "/delivery-engine",
