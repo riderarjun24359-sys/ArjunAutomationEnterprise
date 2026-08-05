@@ -7,18 +7,32 @@ import {
 } from "@/src/constants/ai-delivery-model";
 
 export const HERO_CONTENT = {
-    eyebrow: "Arjun Automation OS · Enterprise Platform",
-    headline: "Enterprise automation. Without the enterprise wait.",
+    eyebrow: "Arjun Automation · Enterprise Platform",
+    headline: "Run your business on one platform. Ship outcomes faster.",
     subheadline:
-        "Arjun Automation is the enterprise operating system for companies that have outgrown spreadsheets and point tools. CRM, projects, finance, industry modules, and expert engineering — one secure platform built for professional organizations.",
-    primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
-    secondaryCta: { label: "Explore Solutions", href: MARKETING_ROUTES.solutions },
+        "Arjun Automation helps growing organizations replace fragmented tools with a unified operating system — CRM, projects, finance, and industry workflows in one secure platform. Expert engineering teams design, build, and support solutions that reduce operational drag and accelerate revenue.",
+    primaryCta: { label: "Book Free Consultation", href: MARKETING_ROUTES.contact },
+    secondaryCta: { label: "View Our Work", href: MARKETING_ROUTES.portfolio },
     stats: [
-        { value: 40, suffix: "+", label: "Integrated Modules" },
-        { value: 5, suffix: "", label: "Delivery Milestones" },
-        { value: 99, suffix: ".9%", label: "Platform Uptime" },
-        { value: 500, suffix: "+", label: "Automations Deployed" },
+        { value: 120, suffix: "+", label: "Projects Delivered" },
+        { value: 480, suffix: "+", label: "Automations Built" },
+        { value: 36, suffix: "+", label: "Business Solutions" },
+        { value: 24, suffix: "/7", label: "Expert Support" },
     ],
+    trust: {
+        industries: {
+            title: "Industries Served",
+            items: ["Manufacturing", "Healthcare", "Retail", "Professional Services", "Hospitality"],
+        },
+        technologies: {
+            title: "Technologies",
+            items: ["Next.js", "TypeScript", "Supabase", "Cloud-Native", "Enterprise APIs"],
+        },
+        delivery: {
+            title: "Delivery Process",
+            items: ["Discover", "Design", "Build", "Deploy", "Support"],
+        },
+    },
     trustIndicators: ["Expert Engineering", "Row-Level Security", "Multi-Tenant", "Enterprise Validation"],
 };
 
