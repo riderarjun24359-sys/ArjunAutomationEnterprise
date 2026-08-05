@@ -1,18 +1,18 @@
 import Link from "next/link";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
 
-/** Zero-JS marketing header — critical path stays server-rendered. */
+/** Zero-JS marketing header — official brand logo from Identity System v1.0 */
 export function MarketingHeaderStatic() {
     return (
         <header className="sticky top-0 z-50 border-b border-transparent bg-[var(--premium-bg)]/80 backdrop-blur-md">
             <div className="premium-container flex items-center justify-between py-4">
                 <Link
                     href={MARKETING_ROUTES.home}
-                    className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                    className="flex items-center rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
                 >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
-                    <span className="font-display text-lg font-semibold">Arjun Automation</span>
+                    <BrandLogo variant="secondary" priority className="max-h-8" />
                 </Link>
 
                 <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">

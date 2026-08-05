@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 396" fill="none">
+  <rect width="1584" height="396" fill="#0F172A"/>
+  <rect x="0" y="320" width="1584" height="76" fill="#4338CA"/>
+  <g transform="translate(80,80) scale(2)">
+    <path d="M8 36 L24 8 L40 36" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M13 28 H35" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M10 36 C16 42 32 42 38 36" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <text x="200" y="130" font-family="Inter, sans-serif" font-size="42" font-weight="700" fill="#FFFFFF">Arjun Automation Enterprises</text>
+  <text x="200" y="175" font-family="Inter, sans-serif" font-size="18" font-weight="400" fill="#94A3B8">Enterprise automation. Without the enterprise wait.</text>
+  <text x="80" y="360" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#FFFFFF" letter-spacing="0.15em">ENTERPRISE AUTOMATION OS · AI-NATIVE · SECURE BY DESIGN</text>
+</svg>

@@ -1,6 +1,6 @@
 # Arjun Automation — Visual Identity Guide
 
-> **Document Type:** Visual Identity · **Version:** 2.0 · **Status:** Official · **PDF-Ready:** Yes
+> **Document Type:** Visual Identity · **Version:** 1.0 · **Status:** Official · **PDF-Ready:** Yes
 
 ---
 

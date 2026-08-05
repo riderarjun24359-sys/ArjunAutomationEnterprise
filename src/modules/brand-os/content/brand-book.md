@@ -122,6 +122,31 @@ For mid-market and enterprise organizations that need to modernize operations wi
 
 ---
 
+## Emotional Experience
+
+| Stage | Desired Feeling |
+|-------|-----------------|
+| **Discovery** | Clarity — the visitor understands we solve their complexity |
+| **Evaluation** | Confidence — evidence of enterprise-grade delivery |
+| **Onboarding** | Momentum — faster progress than expected |
+| **Daily Use** | Control — one system, full operational visibility |
+| **Support** | Partnership — invested in long-term client success |
+
+---
+
+## Competitive Differentiation
+
+| Dimension | Arjun Automation | Typical Alternatives |
+|-----------|------------------|----------------------|
+| Architecture | Unified OS, 40+ modules | Fragmented SaaS stack |
+| AI | Executable workers with audit trails | Chatbots and copilots |
+| Industry | Restaurant, Hospital, School, Retail OS | Horizontal-only tools |
+| Security | RLS and governance built-in | Compliance add-ons |
+| Delivery | AI-accelerated, enterprise validation | 12–18 month custom builds |
+| Identity | Timeless Vertex Arc Mark | Generic startup aesthetics |
+
+---
+
 ## Tone of Voice
 
 ### We Sound Like

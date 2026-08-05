@@ -1,26 +1,32 @@
-# Logos
+# Logos — Vertex Arc Mark
 
-Official Arjun Automation logo assets for all brand and marketing materials.
+Official Arjun Automation Enterprises logo assets. **Production files included.**
 
 ## Contents
 
-- `primary-horizontal.svg` — Full wordmark + symbol (default)
-- `symbol-only.svg` — Icon for favicons, app icons, small spaces
-- `monochrome-white.svg` — White version for dark backgrounds
-- `monochrome-indigo.svg` — Indigo version for light backgrounds
+| File | Description |
+|------|-------------|
+| `primary-horizontal.svg` | Symbol + wordmark + ENTERPRISES subline |
+| `secondary-horizontal.svg` | Symbol + wordmark (compact) |
+| `primary-vertical.svg` | Stacked vertical layout |
+| `symbol-only.svg` | Mark only — default indigo |
+| `symbol-only-light.svg` | White mark for dark backgrounds |
+| `symbol-only-dark.svg` | Dark indigo mark |
+| `monogram.svg` | Mark on indigo rounded square |
+| `monochrome-white.svg` | Full logo white |
+| `monochrome-indigo.svg` | Full logo indigo |
+| `app-icon.svg` | 512×512 app store icon |
+| `favicon.svg` | 32×32 browser favicon |
 
-## Usage Rules
+Public copies: `/public/brand/logos/`
 
-1. Maintain minimum clear space equal to the height of the "A" in Arjun on all sides
-2. Minimum digital width: 120px (full logo), 24px (symbol only)
-3. Do not stretch, rotate, recolor, or add effects
-4. Use monochrome variants on backgrounds where primary logo lacks contrast
-5. Do not place on busy imagery without a contrast overlay
+## React Usage
 
-## Format Guidelines
+```tsx
+import { BrandLogo, BrandSymbol } from "@/src/modules/brand-os";
 
-- **Web:** SVG preferred; PNG @2x for fallback
-- **Print:** PDF or EPS vector; minimum 30mm width
-- **Favicon:** Symbol only, 32×32 and 180×180 PNG
+<BrandLogo variant="secondary" />
+<BrandSymbol className="h-8 w-8" light />
+```
 
-*Place production logo files in this directory. Currently placeholder — add approved assets before external use.*
+See `content/logo-system.md` for complete rules.

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48" fill="none" role="img" aria-label="Arjun Automation primary logo">
+  <title>Arjun Automation  Primary Horizontal Logo</title>
+  <g transform="translate(0,0)">
+    <path d="M8 36 L24 8 L40 36" stroke="#4338CA" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M13 28 H35" stroke="#4338CA" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M10 36 C16 42 32 42 38 36" stroke="#4338CA" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <text x="56" y="22" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#0F172A" letter-spacing="-0.02em">Arjun Automation</text>
+  <text x="56" y="38" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="9.5" font-weight="500" fill="#64748B" letter-spacing="0.22em">ENTERPRISES</text>
+</svg>

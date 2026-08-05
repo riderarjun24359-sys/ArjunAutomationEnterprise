@@ -170,6 +170,69 @@ pass("api:document_route", existsSync(apiRoutePath));
 
 pass("package:brand_os_verify_script", readFileSync(join(root, "package.json"), "utf8").includes('"brand-os:verify"'));
 
+const identityDocs = [
+    "content/enterprise-brand-book-v1.md",
+    "content/logo-system.md",
+    "content/brand-applications.md",
+    "content/digital-design-language.md",
+];
+for (const file of identityDocs) {
+    pass(`identity:${file.replace(/\//g, "_")}`, existsSync(join(moduleRoot, file)));
+}
+
+const logoFiles = [
+    "primary-horizontal.svg",
+    "secondary-horizontal.svg",
+    "primary-vertical.svg",
+    "symbol-only.svg",
+    "monogram.svg",
+    "monochrome-white.svg",
+    "monochrome-indigo.svg",
+    "app-icon.svg",
+    "favicon.svg",
+];
+for (const file of logoFiles) {
+    pass(`logo:${file.replace(".svg", "")}`, existsSync(join(moduleRoot, "brand-assets", "logos", file)));
+}
+
+pass("public:brand_logos", existsSync(join(root, "public", "brand", "logos", "symbol-only.svg")));
+pass("public:favicon", existsSync(join(root, "app", "icon.svg")));
+pass("component:BrandLogo", existsSync(join(moduleRoot, "components", "BrandLogo.tsx")));
+pass("identity:tokens", existsSync(join(moduleRoot, "identity", "tokens.ts")));
+
+const brandLogoSource = readSafe(join(moduleRoot, "components", "BrandLogo.tsx"));
+pass("brand_logo:BrandSymbol", brandLogoSource.includes("BrandSymbol"));
+pass("brand_logo:variants", brandLogoSource.includes("secondary"));
+
+const headerSource = readSafe(join(root, "src", "modules", "company-launch-kit", "components", "MarketingHeaderStatic.tsx"));
+pass("marketing:uses_BrandLogo", headerSource.includes("BrandLogo"));
+pass("marketing:no_AA_placeholder", !headerSource.includes(">AA<"));
+
+const enterpriseBook = readSafe(join(moduleRoot, "content", "enterprise-brand-book-v1.md"));
+pass("identity:vertex_arc_mark", enterpriseBook.includes("Vertex Arc Mark"));
+pass("identity:phase_strategy", enterpriseBook.includes("Brand Strategy"));
+pass("identity:phase_logo", enterpriseBook.includes("Logo System"));
+pass("identity:phase_visual", enterpriseBook.includes("Visual Language"));
+pass("identity:phase_applications", enterpriseBook.includes("Brand Applications"));
+pass("identity:phase_digital", enterpriseBook.includes("Digital Design Language"));
+
+const templates = ["business-card.svg", "letterhead.svg", "proposal-cover.svg", "invoice-header.svg"];
+for (const file of templates) {
+    pass(`template:${file.replace(".svg", "")}`, existsSync(join(moduleRoot, "brand-assets", "templates", file)));
+}
+
+pass("social:linkedin_banner", existsSync(join(moduleRoot, "brand-assets", "social", "linkedin-banner.svg")));
+pass("social:avatar", existsSync(join(moduleRoot, "brand-assets", "social", "social-avatar.svg")));
+pass("public:og_default", existsSync(join(root, "public", "launch-kit", "og-default.svg")));
+
+function readSafe(path) {
+    try {
+        return readFileSync(path, "utf8");
+    } catch {
+        return "";
+    }
+}
+
 const passed = results.filter((r) => r.pass).length;
 const failed = results.filter((r) => !r.pass);
 

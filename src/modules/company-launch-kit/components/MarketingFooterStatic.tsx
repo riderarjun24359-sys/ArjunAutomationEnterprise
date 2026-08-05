@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 
 const FOOTER_LINKS = {
@@ -33,9 +34,8 @@ export function MarketingFooterStatic() {
             <div className="premium-container py-16">
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
                     <div className="lg:col-span-2">
-                        <Link href={MARKETING_ROUTES.home} className="flex items-center gap-2">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
-                            <span className="font-display text-lg font-semibold text-white">Arjun Automation</span>
+                        <Link href={MARKETING_ROUTES.home} className="inline-block">
+                            <BrandLogo variant="inverse" className="max-h-8" label="Arjun Automation Enterprises" />
                         </Link>
                         <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
                             Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 794 1123" fill="none">
+  <rect width="794" height="1123" fill="#FFFFFF"/>
+  <g transform="translate(60,48) scale(0.85)">
+    <path d="M8 36 L24 8 L40 36" stroke="#4338CA" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M13 28 H35" stroke="#4338CA" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M10 36 C16 42 32 42 38 36" stroke="#4338CA" stroke-width="2.4" stroke-linecap="round"/>
+    <text x="56" y="30" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#0F172A">Arjun Automation</text>
+  </g>
+  <text x="580" y="70" font-family="Inter, sans-serif" font-size="10" fill="#64748B" text-anchor="end">Arjun Automation Enterprises</text>
+  <text x="580" y="88" font-family="Inter, sans-serif" font-size="10" fill="#64748B" text-anchor="end">sales@arjunautomation.com</text>
+  <line x1="60" y1="110" x2="734" y2="110" stroke="#E2E8F0" stroke-width="1"/>
+  <g transform="translate(360,900) scale(2)" opacity="0.04">
+    <path d="M8 36 L24 8 L40 36" stroke="#4338CA" stroke-width="3.2"/>
+  </g>
+  <text x="397" y="1060" font-family="Inter, sans-serif" font-size="9" fill="#94A3B8" text-anchor="middle">© Arjun Automation Enterprises · Confidential</text>
+</svg>

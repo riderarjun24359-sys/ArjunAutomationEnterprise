@@ -155,6 +155,38 @@ export const BRAND_DOCUMENTS: BrandDocumentRegistry = {
         path: "content/sales-kit/email-templates.md",
         pdfReady: true,
     },
+    "enterprise-brand-book-v1": {
+        id: "enterprise-brand-book-v1",
+        title: "Enterprise Brand Book v1.0",
+        category: "foundation",
+        description: "Complete Enterprise Brand Identity System — strategy, logo, visual language, applications, digital rules.",
+        path: "content/enterprise-brand-book-v1.md",
+        pdfReady: true,
+    },
+    "logo-system": {
+        id: "logo-system",
+        title: "Logo System",
+        category: "foundation",
+        description: "Vertex Arc Mark specifications, variants, safe area, and usage rules.",
+        path: "content/logo-system.md",
+        pdfReady: true,
+    },
+    "brand-applications": {
+        id: "brand-applications",
+        title: "Brand Applications",
+        category: "foundation",
+        description: "Business card, letterhead, proposal, invoice, social, and presentation standards.",
+        path: "content/brand-applications.md",
+        pdfReady: true,
+    },
+    "digital-design-language": {
+        id: "digital-design-language",
+        title: "Digital Design Language",
+        category: "foundation",
+        description: "Product UI rules for buttons, inputs, cards, navigation, and animations.",
+        path: "content/digital-design-language.md",
+        pdfReady: true,
+    },
 };
 
 export const BRAND_ASSET_FOLDERS = [

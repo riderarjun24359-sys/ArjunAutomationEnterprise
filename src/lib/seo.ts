@@ -12,7 +12,7 @@ export interface PageMetadataInput {
 
 export function buildMetadata(input: PageMetadataInput): Metadata {
     const url = input.path ? `${LAUNCH_KIT_SEO.siteUrl}${input.path}` : LAUNCH_KIT_SEO.siteUrl;
-    const image = input.image ?? `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/og-default.png`;
+    const image = input.image ?? `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/og-default.svg`;
     const title = input.title.includes(LAUNCH_KIT_SEO.siteName)
         ? input.title
         : `${input.title} | ${LAUNCH_KIT_SEO.siteName}`;
@@ -48,7 +48,7 @@ export function buildOrganizationJsonLd() {
         "@type": "Organization",
         name: LAUNCH_KIT_SEO.siteName,
         url: LAUNCH_KIT_SEO.siteUrl,
-        logo: `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/logo.png`,
+        logo: `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/logo.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
         email: "sales@arjunautomation.com",
         sameAs: [
