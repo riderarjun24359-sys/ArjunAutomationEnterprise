@@ -43,6 +43,7 @@ import {
     ServerCog,
     Cpu,
     Gauge,
+    Network,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
 
@@ -56,6 +57,7 @@ export interface ShellNavigationItem {
 
 export const shellNavigation: ShellNavigationItem[] = [
     { label: "Dashboard", href: ROUTES.dashboard, description: "Executive overview", icon: LayoutDashboard, section: "primary" },
+    { label: "Business Platform", href: ROUTES.businessPlatform, description: "Unified client lifecycle: leads, consultation, proposals, delivery", icon: Network, section: "primary" },
     { label: "Organization", href: ROUTES.organization, description: "Governance and workspaces", icon: Building2, section: "primary" },
     { label: "CRM", href: ROUTES.crm, description: "Client and revenue operations", icon: BriefcaseBusiness, section: "primary" },
     { label: "Projects", href: ROUTES.projects, description: "Delivery and execution", icon: BarChart3, section: "primary" },

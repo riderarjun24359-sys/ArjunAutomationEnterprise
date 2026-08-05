@@ -3,7 +3,7 @@ import { financeService } from "@/src/modules/finance/services/finance.service";
 import { projectService } from "@/src/modules/projects/services/project.service";
 import { businessAssetsService } from "@/src/modules/business-assets/services/business-assets.service";
 import { clientSuccessCapabilityService, buildDefaultClientSuccessState } from "@/src/modules/client-success-capability/services/client-success-capability.service";
-import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
+import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 import { validateNoDirectCapabilityCall } from "../lib/orchestration-rules";
 import type { ClientSuccessServiceContext } from "@/src/modules/client-success-capability/types";
 
@@ -15,7 +15,7 @@ export interface CapabilityExecutionContext {
     payload?: Record<string, unknown>;
 }
 
-const missionCore = createMissionCoreClient();
+const missionCore = () => lazyMissionCoreClient();
 
 export async function executeCapabilityAction(
     capabilityId: string,
@@ -28,6 +28,15 @@ export async function executeCapabilityAction(
 
     try {
         switch (`${capabilityId}:${action}`) {
+            case "businessPlatform:schedule-consultation": {
+                missionCore().publishEvent({ type: "ConsultationScheduled", source: "missionCore", payload: { consultationId: payload.consultationId, title: payload.title } });
+                return { capabilityId, action, processed: true, consultationId: payload.consultationId, timestamp };
+            }
+            case "businessPlatform:generate-proposal": {
+                const proposalResult = await executeCapabilityAction("businessAssets", "generate-proposal", context);
+                missionCore().publishEvent({ type: "ProposalCreated", source: "missionCore", payload: { proposalId: payload.proposalId, ...proposalResult } });
+                return { capabilityId, action, processed: true, proposalId: payload.proposalId, timestamp };
+            }
             case "sales:qualify-lead": {
                 const lead = await salesService.createLead(authUserId, email, {
                     leadName: String(payload.leadName ?? payload.name ?? "Website Lead"),
@@ -36,16 +45,16 @@ export async function executeCapabilityAction(
                     phone: String(payload.phone ?? ""),
                     source: String(payload.source ?? "website"),
                 }, fullName);
-                missionCore.publishEvent({ type: "LeadGenerated", source: "missionCore", payload: { leadId: lead.id } });
+                missionCore().publishEvent({ type: "LeadGenerated", source: "missionCore", payload: { leadId: lead.id } });
                 return { capabilityId, action, processed: true, leadId: lead.id, timestamp };
             }
             case "businessAssets:generate-proposal": {
                 const state = businessAssetsService.getDefaultState();
-                missionCore.publishEvent({ type: "ProposalApproved", source: "missionCore", payload: { proposalRef: state.proposal.reference, clientId: payload.clientId } });
+                missionCore().publishEvent({ type: "ProposalApproved", source: "missionCore", payload: { proposalRef: state.proposal.reference, clientId: payload.clientId } });
                 return { capabilityId, action, processed: true, proposalRef: state.proposal.reference, timestamp };
             }
             case "businessAssets:sign-agreement": {
-                missionCore.publishEvent({ type: "AgreementSigned", source: "missionCore", payload: { clientId: payload.clientId, agreementId: payload.agreementId } });
+                missionCore().publishEvent({ type: "AgreementSigned", source: "missionCore", payload: { clientId: payload.clientId, agreementId: payload.agreementId } });
                 return { capabilityId, action, processed: true, signed: true, clientId: payload.clientId, timestamp };
             }
             case "projects:create-project": {
@@ -55,7 +64,7 @@ export async function executeCapabilityAction(
                     clientName: String(payload.clientName ?? payload.company ?? ""),
                     description: String(payload.description ?? "Customer project provisioned by Mission Core"),
                 }, fullName);
-                missionCore.publishEvent({ type: "ProjectCreated", source: "missionCore", payload: { projectId: project.id } });
+                missionCore().publishEvent({ type: "ProjectCreated", source: "missionCore", payload: { projectId: project.id } });
                 return { capabilityId, action, processed: true, projectId: project.id, timestamp };
             }
             case "clientSuccess:run-onboarding": {
@@ -64,7 +73,7 @@ export async function executeCapabilityAction(
                 return { capabilityId, action, processed: true, onboarding: result.profile, timestamp };
             }
             case "clientSuccess:track-delivery": {
-                missionCore.publishEvent({ type: "WorkflowCompleted", source: "missionCore", payload: { stage: "delivery", clientId: payload.clientId } });
+                missionCore().publishEvent({ type: "WorkflowCompleted", source: "missionCore", payload: { stage: "delivery", clientId: payload.clientId } });
                 return { capabilityId, action, processed: true, deliveryTracked: true, clientId: payload.clientId, timestamp };
             }
             case "finance:generate-invoice": {
@@ -90,19 +99,19 @@ export async function executeCapabilityAction(
                     method: "ach",
                     reference: String(payload.reference ?? `PAY-${Date.now()}`),
                 }, fullName);
-                missionCore.publishEvent({ type: "PaymentReceived", source: "missionCore", payload: { paymentId: payment.id, invoiceId: payload.invoiceId } });
+                missionCore().publishEvent({ type: "PaymentReceived", source: "missionCore", payload: { paymentId: payment.id, invoiceId: payload.invoiceId } });
                 return { capabilityId, action, processed: true, paymentId: payment.id, timestamp };
             }
             case "clientSuccess:health-monitoring": {
-                missionCore.publishEvent({ type: "HealthEvent", source: "missionCore", payload: { clientId: payload.clientId, stage: "support" } });
+                missionCore().publishEvent({ type: "HealthEvent", source: "missionCore", payload: { clientId: payload.clientId, stage: "support" } });
                 return { capabilityId, action, processed: true, healthMonitored: true, clientId: payload.clientId, timestamp };
             }
             case "clientSuccess:renewal-growth": {
-                missionCore.publishEvent({ type: "RenewalDue", source: "missionCore", payload: { clientId: payload.clientId } });
+                missionCore().publishEvent({ type: "RenewalDue", source: "missionCore", payload: { clientId: payload.clientId } });
                 return { capabilityId, action, processed: true, renewalInitiated: true, clientId: payload.clientId, timestamp };
             }
             default: {
-                const cap = missionCore.getCapability(capabilityId);
+                const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {
                     return { capabilityId, action, processed: false, error: `Capability not found: ${capabilityId}`, timestamp };
                 }
@@ -111,7 +120,7 @@ export async function executeCapabilityAction(
         }
     } catch (err) {
         const message = err instanceof Error ? err.message : "Execution failed";
-        missionCore.publishFailureEvent({ capabilityId, action, error: message });
+        missionCore().publishFailureEvent({ capabilityId, action, error: message });
         return { capabilityId, action, processed: false, error: message, timestamp };
     }
 }

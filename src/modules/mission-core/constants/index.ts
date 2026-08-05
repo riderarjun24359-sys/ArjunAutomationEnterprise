@@ -19,6 +19,17 @@ export const MISSION_CORE_WORKFLOWS = {
 
 export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
     {
+        id: "businessPlatform",
+        name: "Business Platform",
+        route: "/business-platform",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "businessPlatform", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["sales", "clientSuccess", "businessAssets", "projects", "finance"],
+        apis: ["intake-lead", "schedule-consultation", "generate-proposal", "provision-portal", "create-project"],
+        events: ["ConsultationScheduled", "ProposalCreated", "LeadConverted", "AiRecommendationApproved"],
+    },
+    {
         id: "sales",
         name: "Sales",
         route: "/sales",

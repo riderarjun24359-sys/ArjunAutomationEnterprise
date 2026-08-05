@@ -29,6 +29,7 @@ export const mapProjectSummary = (project: DbProject): ProjectSummary => ({
     budget: project.budget,
     timeline: project.timeline,
     owner: project.owner_name,
+    clientName: project.client_name,
     updatedAt: formatRelativeTimestamp(project.updated_at),
 });
 

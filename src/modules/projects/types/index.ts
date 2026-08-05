@@ -15,6 +15,7 @@ export interface ProjectSummary {
   budget: string;
   timeline: string;
   owner: string;
+  clientName?: string;
   updatedAt: string;
 }
 

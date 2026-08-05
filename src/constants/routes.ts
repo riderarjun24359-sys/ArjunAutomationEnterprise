@@ -66,6 +66,7 @@ export const ROUTES = {
     inventory: "/inventory",
     support: "/support",
     sales: "/sales",
+    businessPlatform: "/business-platform",
     documents: "/documents",
 } as const;
 
