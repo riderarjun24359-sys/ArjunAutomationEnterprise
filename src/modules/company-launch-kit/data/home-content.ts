@@ -225,10 +225,9 @@ export const NAV_ITEMS = [
     { label: "About", href: MARKETING_ROUTES.about },
     { label: "Services", href: MARKETING_ROUTES.services },
     { label: "Industries", href: MARKETING_ROUTES.industries },
-    { label: "Solutions", href: MARKETING_ROUTES.solutions },
-    { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
     { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
-    { label: "Blog", href: MARKETING_ROUTES.blog },
-    { label: "Careers", href: MARKETING_ROUTES.careers },
+    { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
+    { label: "Pricing", href: MARKETING_ROUTES.pricing },
+    { label: "Resources", href: MARKETING_ROUTES.resources },
     { label: "Contact", href: MARKETING_ROUTES.contact },
 ];

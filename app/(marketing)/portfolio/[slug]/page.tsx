@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
+import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
+import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
+import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { PORTFOLIO_ITEMS, getPortfolioItem } from "@/src/modules/company-launch-kit/data/portfolio";
 import { buildMetadata } from "@/src/lib/seo";
@@ -25,87 +28,113 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     });
 }
 
+function getCaseStudySections(item: NonNullable<ReturnType<typeof getPortfolioItem>>) {
+    return {
+        implementation: `We deployed ${item.features.length} core capabilities including ${item.features.slice(0, 3).join(", ")}.`,
+        outcome: item.results.join(". "),
+        businessImpact: item.benefits.join(". "),
+    };
+}
+
 export default async function PortfolioDetailPage({ params }: Props) {
     const { slug } = await params;
     const item = getPortfolioItem(slug);
     if (!item) notFound();
 
+    const path = MARKETING_ROUTES.portfolioItem(slug);
+    const sections = getCaseStudySections(item);
+    const breadcrumbs = [
+        { name: "Home", path: MARKETING_ROUTES.home },
+        { name: "Portfolio", path: MARKETING_ROUTES.portfolio },
+        { name: item.title, path },
+    ];
+
     return (
         <>
-            <section className="bg-indigo-50 py-16">
-                <div className="mx-auto max-w-4xl px-6 lg:px-8">
-                    <Link href={MARKETING_ROUTES.portfolio} className="text-sm font-medium text-indigo-700 hover:text-indigo-600">
-                        &larr; Back to Portfolio
-                    </Link>
-                    <span className="mt-4 block text-xs font-medium uppercase tracking-wider text-indigo-700">{item.category}</span>
-                    <h1 className="mt-2 text-4xl font-semibold tracking-tight text-indigo-950">{item.title}</h1>
-                    <p className="mt-4 text-lg text-slate-600">{item.tagline}</p>
-                </div>
-            </section>
+            <MarketingStructuredData title={item.title} description={item.overview} path={path} breadcrumbs={breadcrumbs} />
+            <PremiumPageShell title={item.title} description={item.tagline}>
+                <MarketingBreadcrumbs items={breadcrumbs} />
+                <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{item.category}</span>
 
-            <section className="py-16">
-                <div className="mx-auto max-w-4xl px-6 lg:px-8 space-y-12">
-                    <div>
-                        <h2 className="text-xl font-semibold text-indigo-950">Overview</h2>
-                        <p className="mt-3 text-slate-600 leading-relaxed">{item.overview}</p>
-                    </div>
-                    <div className="grid gap-8 lg:grid-cols-2">
-                        <div>
-                            <h2 className="text-xl font-semibold text-indigo-950">Challenge</h2>
-                            <p className="mt-3 text-slate-600 leading-relaxed">{item.challenge}</p>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-semibold text-indigo-950">Solution</h2>
-                            <p className="mt-3 text-slate-600 leading-relaxed">{item.solution}</p>
-                        </div>
-                    </div>
-                    <div className="grid gap-8 lg:grid-cols-2">
-                        <div>
-                            <h2 className="text-xl font-semibold text-indigo-950">Features</h2>
-                            <ul className="mt-3 space-y-2">
-                                {item.features.map((f) => (
-                                    <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
-                                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-700" aria-hidden="true" />
-                                        {f}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-semibold text-indigo-950">Benefits</h2>
-                            <ul className="mt-3 space-y-2">
-                                {item.benefits.map((b) => (
-                                    <li key={b} className="flex items-start gap-2 text-sm text-slate-600">
-                                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-700" aria-hidden="true" />
-                                        {b}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-semibold text-indigo-950">Results</h2>
-                        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <div className="mt-8 space-y-12">
+                    <section aria-labelledby="overview-heading">
+                        <h2 id="overview-heading" className="text-xl font-semibold">
+                            Overview
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{item.overview}</p>
+                    </section>
+
+                    <section aria-labelledby="challenge-heading">
+                        <h2 id="challenge-heading" className="text-xl font-semibold">
+                            Challenge
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{item.challenge}</p>
+                    </section>
+
+                    <section aria-labelledby="solution-heading">
+                        <h2 id="solution-heading" className="text-xl font-semibold">
+                            Solution
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{item.solution}</p>
+                    </section>
+
+                    <section aria-labelledby="implementation-heading">
+                        <h2 id="implementation-heading" className="text-xl font-semibold">
+                            Implementation
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{sections.implementation}</p>
+                        <ul className="mt-4 space-y-2">
+                            {item.features.map((f) => (
+                                <li key={f} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
+                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-700" aria-hidden="true" />
+                                    {f}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    <section aria-labelledby="outcome-heading">
+                        <h2 id="outcome-heading" className="text-xl font-semibold">
+                            Outcome
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{sections.outcome}</p>
+                        <div className="mt-6 grid gap-4 sm:grid-cols-2">
                             {item.results.map((r) => (
-                                <div key={r} className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-medium text-indigo-900">
+                                <div key={r} className="premium-glass rounded-xl px-4 py-3 text-sm font-medium">
                                     {r}
                                 </div>
                             ))}
                         </div>
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-semibold text-indigo-950">Screenshots</h2>
+                    </section>
+
+                    <section aria-labelledby="impact-heading">
+                        <h2 id="impact-heading" className="text-xl font-semibold">
+                            Business impact
+                        </h2>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{sections.businessImpact}</p>
+                    </section>
+
+                    <section aria-labelledby="screenshots-heading">
+                        <h2 id="screenshots-heading" className="text-xl font-semibold">
+                            Screenshots
+                        </h2>
                         <div className="mt-4 grid gap-4 sm:grid-cols-3">
                             {item.screenshotSlots.map((slot) => (
-                                <div key={slot.path} className="rounded-xl border border-slate-200 bg-slate-50 aspect-video flex items-center justify-center p-4">
-                                    <p className="text-xs text-center text-slate-500">{slot.alt}</p>
+                                <div
+                                    key={slot.path}
+                                    className="flex aspect-video items-center justify-center rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] p-4"
+                                >
+                                    <p className="text-center text-xs text-[var(--premium-fg-muted)]">{slot.alt}</p>
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </div>
-            </section>
+                    </section>
 
+                    <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-indigo-700 hover:text-indigo-600">
+                        Read case study format →
+                    </Link>
+                </div>
+            </PremiumPageShell>
             <CtaSection />
         </>
     );

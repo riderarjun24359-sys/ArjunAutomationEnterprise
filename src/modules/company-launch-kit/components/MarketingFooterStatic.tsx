@@ -5,20 +5,21 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 const FOOTER_LINKS = {
     company: [
         { label: "About", href: MARKETING_ROUTES.about },
+        { label: "Pricing", href: MARKETING_ROUTES.pricing },
         { label: "Careers", href: MARKETING_ROUTES.careers },
         { label: "Contact", href: MARKETING_ROUTES.contact },
     ],
     solutions: [
         { label: "Services", href: MARKETING_ROUTES.services },
         { label: "Industries", href: MARKETING_ROUTES.industries },
-        { label: "Solutions", href: MARKETING_ROUTES.solutions },
         { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
+        { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
     ],
     resources: [
+        { label: "Resources Hub", href: MARKETING_ROUTES.resources },
         { label: "Blog", href: MARKETING_ROUTES.blog },
-        { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
-        { label: "Automation Guide", href: MARKETING_ROUTES.launchAutomation },
-        { label: "CRM Guide", href: MARKETING_ROUTES.launchCrm },
+        { label: "FAQ", href: MARKETING_ROUTES.faq },
+        { label: "Sitemap", href: MARKETING_ROUTES.sitemap },
     ],
     legal: [
         { label: "Privacy Policy", href: MARKETING_ROUTES.privacy },

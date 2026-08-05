@@ -74,3 +74,53 @@ export function buildWebPageJsonLd(input: { title: string; description: string; 
         isPartOf: { "@type": "WebSite", name: LAUNCH_KIT_SEO.siteName, url: LAUNCH_KIT_SEO.siteUrl },
     };
 }
+
+export interface BreadcrumbItem {
+    name: string;
+    path: string;
+}
+
+export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: items.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: item.name,
+            item: `${LAUNCH_KIT_SEO.siteUrl}${item.path}`,
+        })),
+    };
+}
+
+export function buildFaqJsonLd(items: { question: string; answer: string }[]) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+    };
+}
+
+export function buildServiceJsonLd(input: {
+    name: string;
+    description: string;
+    path: string;
+    provider?: string;
+}) {
+    return {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        name: input.name,
+        description: input.description,
+        url: `${LAUNCH_KIT_SEO.siteUrl}${input.path}`,
+        provider: {
+            "@type": "Organization",
+            name: input.provider ?? LAUNCH_KIT_SEO.siteName,
+            url: LAUNCH_KIT_SEO.siteUrl,
+        },
+    };
+}

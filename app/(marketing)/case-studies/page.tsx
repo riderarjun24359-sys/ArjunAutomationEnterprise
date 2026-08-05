@@ -1,80 +1,77 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CaseStudyLayout } from "@/src/modules/company-launch-kit/components/CaseStudyLayout";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
+import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
+import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
+import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
-import { PORTFOLIO_ITEMS } from "@/src/modules/company-launch-kit/data/portfolio";
+import { CASE_STUDY_ITEMS } from "@/src/modules/company-launch-kit/data/case-studies";
 import { buildMetadata } from "@/src/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
+const PAGE = {
     title: "Case Studies",
     description: "Enterprise automation case studies from Arjun Automation — measurable outcomes across industries.",
-    path: "/case-studies",
+    path: MARKETING_ROUTES.caseStudies,
+};
+
+export const metadata: Metadata = buildMetadata({
+    title: PAGE.title,
+    description: PAGE.description,
+    path: PAGE.path,
 });
 
-const caseStudies = [
-    {
-        slug: "school-management",
-        title: "12-Campus School Chain Unified on One Platform",
-        industry: "Education",
-        client: "Multi-campus education group, 8,000+ students",
-        challenge: PORTFOLIO_ITEMS.find((p) => p.slug === "school-management")!.challenge,
-        solution: PORTFOLIO_ITEMS.find((p) => p.slug === "school-management")!.solution,
-        results: PORTFOLIO_ITEMS.find((p) => p.slug === "school-management")!.results,
-    },
-    {
-        slug: "ai-agents",
-        title: "AI Worker Workforce Cuts Delivery Time 40%",
-        industry: "Technology",
-        client: "Series B SaaS company, 200 employees",
-        challenge: PORTFOLIO_ITEMS.find((p) => p.slug === "ai-agents")!.challenge,
-        solution: PORTFOLIO_ITEMS.find((p) => p.slug === "ai-agents")!.solution,
-        results: PORTFOLIO_ITEMS.find((p) => p.slug === "ai-agents")!.results,
-    },
-    {
-        slug: "business-automation",
-        title: "25-Location Retail Group Standardizes Operations",
-        industry: "Retail",
-        client: "Regional retail group, 25 locations",
-        challenge: PORTFOLIO_ITEMS.find((p) => p.slug === "business-automation")!.challenge,
-        solution: PORTFOLIO_ITEMS.find((p) => p.slug === "business-automation")!.solution,
-        results: PORTFOLIO_ITEMS.find((p) => p.slug === "business-automation")!.results,
-    },
+const breadcrumbs = [
+    { name: "Home", path: MARKETING_ROUTES.home },
+    { name: "Case Studies", path: PAGE.path },
 ];
 
 export default function CaseStudiesPage() {
     return (
         <>
-            <section className="bg-indigo-50 py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <h1 className="text-4xl font-semibold tracking-tight text-indigo-950">Case Studies</h1>
-                    <p className="mt-4 max-w-3xl text-lg text-slate-600">
-                        Measurable outcomes from enterprise automation deployments.
-                    </p>
-                </div>
-            </section>
-
-            <section className="py-16 space-y-16">
-                {caseStudies.map((study) => (
-                    <div key={study.slug}>
-                        <CaseStudyLayout
-                            title={study.title}
-                            industry={study.industry}
-                            client={study.client}
-                            challenge={study.challenge}
-                            solution={study.solution}
-                            results={study.results}
-                        />
-                        <div className="mx-auto max-w-4xl px-6 lg:px-8 mt-4">
-                            <Link href={MARKETING_ROUTES.portfolioItem(study.slug)} className="text-sm font-medium text-indigo-700 hover:text-indigo-600">
-                                View full portfolio entry &rarr;
+            <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
+            <PremiumPageShell
+                title="Case Studies"
+                description="Measurable outcomes from enterprise automation deployments."
+            >
+                <MarketingBreadcrumbs items={breadcrumbs} />
+                <div className="space-y-12">
+                    {CASE_STUDY_ITEMS.map((study) => (
+                        <article key={study.slug} className="premium-glass rounded-2xl p-8">
+                            <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{study.industry}</span>
+                            <h2 className="mt-2 text-2xl font-semibold">
+                                <Link href={MARKETING_ROUTES.caseStudyItem(study.slug)} className="hover:text-indigo-700">
+                                    {study.title}
+                                </Link>
+                            </h2>
+                            <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">{study.client}</p>
+                            <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                                <div>
+                                    <h3 className="text-sm font-semibold">Challenge</h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{study.challenge}</p>
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-semibold">Solution</h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{study.solution}</p>
+                                </div>
+                            </div>
+                            <div className="mt-6 flex flex-wrap gap-2">
+                                {study.results.slice(0, 3).map((result) => (
+                                    <span key={result} className="rounded-full bg-indigo-700/10 px-3 py-1 text-xs font-medium text-indigo-700">
+                                        {result}
+                                    </span>
+                                ))}
+                            </div>
+                            <Link
+                                href={MARKETING_ROUTES.caseStudyItem(study.slug)}
+                                className="mt-4 inline-block text-sm font-medium text-indigo-700 hover:text-indigo-600"
+                            >
+                                Read full case study →
                             </Link>
-                        </div>
-                    </div>
-                ))}
-            </section>
-
-            <CtaSection />
+                        </article>
+                    ))}
+                </div>
+            </PremiumPageShell>
+            <CtaSection secondaryLabel="View Portfolio" secondaryHref={MARKETING_ROUTES.portfolio} />
         </>
     );
 }
