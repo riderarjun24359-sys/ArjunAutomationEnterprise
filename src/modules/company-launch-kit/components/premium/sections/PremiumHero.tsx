@@ -146,7 +146,7 @@ export function PremiumHero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8, duration: 0.55 }}
                 >
-                    {HERO_CONTENT.stats.map((stat, i) => (
+                    {HERO_CONTENT.stats.map((stat) => (
                         <div
                             key={stat.label}
                             className="text-center sm:text-left"
