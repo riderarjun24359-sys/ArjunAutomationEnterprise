@@ -2,7 +2,7 @@
 
 -- WorkflowHub
 create table if not exists public.dwe_workflow_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.dwe_workflow_hubs (
 
 -- WorkflowDefinition
 create table if not exists public.dwe_workflow_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.dwe_workflow_definitions (
 
 -- WorkflowCategory
 create table if not exists public.dwe_workflow_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   category_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.dwe_workflow_categories (
 
 -- WorkflowTemplate
 create table if not exists public.dwe_workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   template_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.dwe_workflow_templates (
 
 -- WorkflowVersion
 create table if not exists public.dwe_workflow_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   version_key text not null,
@@ -75,7 +75,7 @@ create table if not exists public.dwe_workflow_versions (
 
 -- WorkflowNode
 create table if not exists public.dwe_workflow_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   node_key text not null,
@@ -90,7 +90,7 @@ create table if not exists public.dwe_workflow_nodes (
 
 -- WorkflowTransition
 create table if not exists public.dwe_workflow_transitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   transition_key text not null,
@@ -105,7 +105,7 @@ create table if not exists public.dwe_workflow_transitions (
 
 -- DecisionNode
 create table if not exists public.dwe_decision_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   decision_key text not null,
@@ -120,7 +120,7 @@ create table if not exists public.dwe_decision_nodes (
 
 -- ReusableSubflow
 create table if not exists public.dwe_reusable_subflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   subflow_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.dwe_reusable_subflows (
 
 -- WorkflowExecution
 create table if not exists public.dwe_workflow_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   execution_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.dwe_workflow_executions (
 
 -- ExecutionHistory
 create table if not exists public.dwe_execution_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   history_key text not null,
@@ -165,7 +165,7 @@ create table if not exists public.dwe_execution_history (
 
 -- ExecutionRetry
 create table if not exists public.dwe_execution_retries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   retry_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.dwe_execution_retries (
 
 -- ExecutionRollback
 create table if not exists public.dwe_execution_rollbacks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   rollback_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.dwe_execution_rollbacks (
 
 -- TimeTrigger
 create table if not exists public.dwe_time_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.dwe_time_triggers (
 
 -- BusinessEventTrigger
 create table if not exists public.dwe_business_event_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.dwe_business_event_triggers (
 
 -- WebhookTrigger
 create table if not exists public.dwe_webhook_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.dwe_webhook_triggers (
 
 -- ScheduledTrigger
 create table if not exists public.dwe_scheduled_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.dwe_scheduled_triggers (
 
 -- ManualReview
 create table if not exists public.dwe_manual_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   review_key text not null,
@@ -270,7 +270,7 @@ create table if not exists public.dwe_manual_reviews (
 
 -- ApprovalTask
 create table if not exists public.dwe_approval_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   task_key text not null,
@@ -285,7 +285,7 @@ create table if not exists public.dwe_approval_tasks (
 
 -- EscalationRule
 create table if not exists public.dwe_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   rule_key text not null,
@@ -300,7 +300,7 @@ create table if not exists public.dwe_escalation_rules (
 
 -- SlaTracking
 create table if not exists public.dwe_sla_trackings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   sla_key text not null,
@@ -315,7 +315,7 @@ create table if not exists public.dwe_sla_trackings (
 
 -- AutomationNotification
 create table if not exists public.dwe_automation_notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   notification_key text not null,
@@ -330,7 +330,7 @@ create table if not exists public.dwe_automation_notifications (
 
 -- AutomationApiCall
 create table if not exists public.dwe_automation_api_calls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   api_key text not null,
@@ -345,7 +345,7 @@ create table if not exists public.dwe_automation_api_calls (
 
 -- AutomationIntegration
 create table if not exists public.dwe_automation_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   integration_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.dwe_automation_integrations (
 
 -- ExecutionAnalytics
 create table if not exists public.dwe_execution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.dwe_execution_analytics (
 
 -- BottleneckReport
 create table if not exists public.dwe_bottleneck_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   report_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.dwe_bottleneck_reports (
 
 -- SlaComplianceMetric
 create table if not exists public.dwe_sla_compliance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   metric_key text not null,
@@ -405,7 +405,7 @@ create table if not exists public.dwe_sla_compliance_metrics (
 
 -- WorkflowMetric
 create table if not exists public.dwe_workflow_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -424,7 +424,7 @@ create table if not exists public.dwe_workflow_metrics (
 
 -- WorkflowHealth
 create table if not exists public.dwe_workflow_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -443,7 +443,7 @@ create table if not exists public.dwe_workflow_health (
 
 -- FailedExecution
 create table if not exists public.dwe_failed_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   failure_key text not null,
@@ -459,7 +459,7 @@ create table if not exists public.dwe_failed_executions (
 
 -- WorkflowFailure
 create table if not exists public.dwe_workflow_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   failure_key text not null,
@@ -476,7 +476,7 @@ create table if not exists public.dwe_workflow_failures (
 
 -- Audit Logs
 create table if not exists public.dwe_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

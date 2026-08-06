@@ -1,7 +1,7 @@
 -- V2 Program A Sprint 2: Enterprise Identity Platform
 
 create table if not exists public.idp_realms (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_key text not null,
   realm_name text not null,
@@ -13,7 +13,7 @@ create table if not exists public.idp_realms (
 );
 
 create table if not exists public.idp_providers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   provider_key text not null,
@@ -28,7 +28,7 @@ create table if not exists public.idp_providers (
 );
 
 create table if not exists public.idp_saml_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   config_key text not null,
@@ -43,7 +43,7 @@ create table if not exists public.idp_saml_configs (
 );
 
 create table if not exists public.idp_oidc_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   config_key text not null,
@@ -59,7 +59,7 @@ create table if not exists public.idp_oidc_configs (
 );
 
 create table if not exists public.idp_mfa_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -74,7 +74,7 @@ create table if not exists public.idp_mfa_policies (
 );
 
 create table if not exists public.idp_mfa_enrollments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   enrollment_key text not null,
@@ -89,7 +89,7 @@ create table if not exists public.idp_mfa_enrollments (
 );
 
 create table if not exists public.idp_backup_codes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   code_key text not null,
@@ -103,7 +103,7 @@ create table if not exists public.idp_backup_codes (
 );
 
 create table if not exists public.idp_trusted_devices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   device_key text not null,
@@ -119,7 +119,7 @@ create table if not exists public.idp_trusted_devices (
 );
 
 create table if not exists public.idp_session_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -134,7 +134,7 @@ create table if not exists public.idp_session_policies (
 );
 
 create table if not exists public.idp_active_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   session_key text not null,
@@ -151,7 +151,7 @@ create table if not exists public.idp_active_sessions (
 );
 
 create table if not exists public.idp_device_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   device_key text not null,
@@ -167,7 +167,7 @@ create table if not exists public.idp_device_registry (
 );
 
 create table if not exists public.idp_concurrent_login_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.idp_concurrent_login_policies (
 );
 
 create table if not exists public.idp_rbac_roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   role_key text not null,
@@ -194,7 +194,7 @@ create table if not exists public.idp_rbac_roles (
 );
 
 create table if not exists public.idp_permission_groups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   group_key text not null,
@@ -207,7 +207,7 @@ create table if not exists public.idp_permission_groups (
 );
 
 create table if not exists public.idp_abac_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -221,7 +221,7 @@ create table if not exists public.idp_abac_policies (
 );
 
 create table if not exists public.idp_temporary_access_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   grant_key text not null,
@@ -237,7 +237,7 @@ create table if not exists public.idp_temporary_access_grants (
 );
 
 create table if not exists public.idp_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   department_key text not null,
@@ -251,7 +251,7 @@ create table if not exists public.idp_departments (
 );
 
 create table if not exists public.idp_teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   team_key text not null,
@@ -265,7 +265,7 @@ create table if not exists public.idp_teams (
 );
 
 create table if not exists public.idp_business_units (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   unit_key text not null,
@@ -279,7 +279,7 @@ create table if not exists public.idp_business_units (
 );
 
 create table if not exists public.idp_reporting_structures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   structure_key text not null,
@@ -293,7 +293,7 @@ create table if not exists public.idp_reporting_structures (
 );
 
 create table if not exists public.idp_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   invitation_key text not null,
@@ -309,7 +309,7 @@ create table if not exists public.idp_invitations (
 );
 
 create table if not exists public.idp_bulk_invite_batches (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   batch_key text not null,
@@ -324,7 +324,7 @@ create table if not exists public.idp_bulk_invite_batches (
 );
 
 create table if not exists public.idp_invitation_roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   role_assignment_key text not null,
@@ -337,7 +337,7 @@ create table if not exists public.idp_invitation_roles (
 );
 
 create table if not exists public.idp_invitation_audit (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   audit_key text not null,
@@ -350,7 +350,7 @@ create table if not exists public.idp_invitation_audit (
 );
 
 create table if not exists public.idp_login_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   login_key text not null,
@@ -365,7 +365,7 @@ create table if not exists public.idp_login_history (
 );
 
 create table if not exists public.idp_security_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   alert_key text not null,
@@ -381,7 +381,7 @@ create table if not exists public.idp_security_alerts (
 );
 
 create table if not exists public.idp_risk_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   event_key text not null,
@@ -396,7 +396,7 @@ create table if not exists public.idp_risk_events (
 );
 
 create table if not exists public.idp_password_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -413,7 +413,7 @@ create table if not exists public.idp_password_policies (
 );
 
 create table if not exists public.idp_admin_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -431,7 +431,7 @@ create table if not exists public.idp_admin_metrics (
 );
 
 create table if not exists public.idp_identity_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   overall_score numeric(5, 2) not null default 0,
@@ -443,7 +443,7 @@ create table if not exists public.idp_identity_health (
 );
 
 create table if not exists public.idp_compromised_accounts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   account_key text not null,
@@ -457,7 +457,7 @@ create table if not exists public.idp_compromised_accounts (
 );
 
 create table if not exists public.idp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

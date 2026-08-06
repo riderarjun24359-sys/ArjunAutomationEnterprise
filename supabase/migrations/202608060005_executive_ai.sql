@@ -1,7 +1,7 @@
 -- Executive AI v1.0 — full enterprise AI leadership layer
 
 create table if not exists public.executive_agents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_key text not null,
   name text not null,
@@ -17,7 +17,7 @@ create table if not exists public.executive_agents (
 );
 
 create table if not exists public.executive_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_key text not null,
   task_type text not null,
@@ -31,7 +31,7 @@ create table if not exists public.executive_tasks (
 );
 
 create table if not exists public.executive_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_key text not null,
   title text not null,
@@ -47,7 +47,7 @@ create table if not exists public.executive_recommendations (
 );
 
 create table if not exists public.executive_collaboration (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   event_type text not null check (event_type in ('discussion', 'vote', 'consensus', 'conflict_resolved', 'task_routed', 'approval_requested')),
   agent_keys text not null default '',
@@ -57,7 +57,7 @@ create table if not exists public.executive_collaboration (
 );
 
 create table if not exists public.executive_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   recommendation_id uuid references public.executive_recommendations(id) on delete set null,
   agent_key text not null,
@@ -65,13 +65,13 @@ create table if not exists public.executive_approvals (
   policy_key text not null default 'critical_action',
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   requested_by text not null default 'orchestrator',
-  resolved_by uuid references public.profiles(id) on delete set null,
+  resolved_by uuid references public.user_profiles(id) on delete set null,
   created_at timestamptz not null default now(),
   resolved_at timestamptz
 );
 
 create table if not exists public.executive_memory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   source_module text not null,
   memory_key text not null,
@@ -81,7 +81,7 @@ create table if not exists public.executive_memory (
 );
 
 create table if not exists public.executive_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_health_score numeric(5,2) not null default 0,
   agent_health jsonb not null default '{}',
@@ -89,7 +89,7 @@ create table if not exists public.executive_health (
 );
 
 create table if not exists public.executive_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_key text not null default 'system',
   action text not null,
@@ -99,7 +99,7 @@ create table if not exists public.executive_audit_logs (
 );
 
 create table if not exists public.executive_agent_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_key text not null,
   metric_key text not null,
@@ -127,12 +127,30 @@ alter table public.executive_health enable row level security;
 alter table public.executive_audit_logs enable row level security;
 alter table public.executive_agent_metrics enable row level security;
 
-create policy "executive_agents_org" on public.executive_agents for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_tasks_org" on public.executive_tasks for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_recommendations_org" on public.executive_recommendations for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_collaboration_org" on public.executive_collaboration for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_approvals_org" on public.executive_approvals for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_memory_org" on public.executive_memory for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_health_org" on public.executive_health for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_audit_logs_org" on public.executive_audit_logs for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "executive_agent_metrics_org" on public.executive_agent_metrics for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));

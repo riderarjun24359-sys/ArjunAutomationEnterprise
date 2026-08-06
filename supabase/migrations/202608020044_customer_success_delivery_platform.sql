@@ -2,7 +2,7 @@
 
 -- DeliveryHub
 create table if not exists public.csd_delivery_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.csd_delivery_hubs (
 
 -- CustomerHealthScore
 create table if not exists public.csd_customer_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   score_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.csd_customer_health_scores (
 
 -- AdoptionAnalytic
 create table if not exists public.csd_adoption_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.csd_adoption_analytics (
 
 -- SuccessPlan
 create table if not exists public.csd_success_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   plan_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.csd_success_plans (
 
 -- CustomerTimeline
 create table if not exists public.csd_customer_timelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   timeline_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.csd_customer_timelines (
 
 -- RenewalForecast
 create table if not exists public.csd_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.csd_renewal_forecasts (
 
 -- SupportTicket
 create table if not exists public.csd_support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   ticket_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.csd_support_tickets (
 
 -- LiveChatSession
 create table if not exists public.csd_live_chat_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   session_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.csd_live_chat_sessions (
 
 -- KnowledgeBaseArticle
 create table if not exists public.csd_knowledge_base_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   article_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.csd_knowledge_base_articles (
 
 -- SlaPolicy
 create table if not exists public.csd_sla_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   policy_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.csd_sla_policies (
 
 -- EscalationRule
 create table if not exists public.csd_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   rule_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.csd_escalation_rules (
 
 -- DeploymentAutomation
 create table if not exists public.csd_deployment_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   automation_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.csd_deployment_automations (
 
 -- EnvironmentManagement
 create table if not exists public.csd_environment_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   environment_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.csd_environment_management (
 
 -- DeploymentTracking
 create table if not exists public.csd_deployment_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tracking_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.csd_deployment_tracking (
 
 -- UpgradeManagement
 create table if not exists public.csd_upgrade_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   upgrade_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.csd_upgrade_management (
 
 -- ReleaseTracking
 create table if not exists public.csd_release_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   release_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.csd_release_tracking (
 
 -- TrainingPortal
 create table if not exists public.csd_training_portals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   portal_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.csd_training_portals (
 
 -- VideoLibrary
 create table if not exists public.csd_video_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   video_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.csd_video_library (
 
 -- ProductTour
 create table if not exists public.csd_product_tours (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tour_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.csd_product_tours (
 
 -- Certification
 create table if not exists public.csd_certifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   certification_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.csd_certifications (
 
 -- ProgressTracking
 create table if not exists public.csd_progress_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   progress_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.csd_progress_tracking (
 
 -- LearningAnalytic
 create table if not exists public.csd_learning_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.csd_learning_analytics (
 
 -- DeliveryWorkflow
 create table if not exists public.csd_delivery_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.csd_delivery_workflows (
 
 -- OnboardingAutomation
 create table if not exists public.csd_onboarding_automation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   automation_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.csd_onboarding_automation (
 
 -- ImplementationTracking
 create table if not exists public.csd_implementation_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tracking_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.csd_implementation_tracking (
 
 -- ResourceAssignment
 create table if not exists public.csd_resource_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.csd_resource_assignments (
 
 -- MilestoneTracking
 create table if not exists public.csd_milestone_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   milestone_key text not null,
@@ -432,7 +432,7 @@ create table if not exists public.csd_milestone_tracking (
 
 -- OperationsMetric
 create table if not exists public.csd_operations_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -451,7 +451,7 @@ create table if not exists public.csd_operations_metrics (
 
 -- OperationsHealth
 create table if not exists public.csd_operations_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -470,7 +470,7 @@ create table if not exists public.csd_operations_health (
 
 -- ExecutiveKpi
 create table if not exists public.csd_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -486,7 +486,7 @@ create table if not exists public.csd_executive_kpis (
 
 -- DeliveryFailure
 create table if not exists public.csd_delivery_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   failure_key text not null,
@@ -503,7 +503,7 @@ create table if not exists public.csd_delivery_failures (
 
 -- Audit Logs
 create table if not exists public.csd_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

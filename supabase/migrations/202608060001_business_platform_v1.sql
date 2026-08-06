@@ -1,7 +1,7 @@
 -- Business Platform v1.0 — unified client lifecycle
 
 create table if not exists public.business_consultations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   lead_id uuid references public.sales_leads(id) on delete set null,
   client_id uuid references public.clients(id) on delete set null,
@@ -19,7 +19,7 @@ create table if not exists public.business_consultations (
 );
 
 create table if not exists public.business_proposals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   lead_id uuid references public.sales_leads(id) on delete set null,
   client_id uuid references public.clients(id) on delete set null,
@@ -38,19 +38,19 @@ create table if not exists public.business_proposals (
 );
 
 create table if not exists public.business_lifecycle_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid not null,
   stage text not null,
   event_type text not null,
   notes text not null default '',
-  created_by uuid references public.profiles(id) on delete set null,
+  created_by uuid references public.user_profiles(id) on delete set null,
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.business_ai_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -74,14 +74,30 @@ alter table public.business_proposals enable row level security;
 alter table public.business_lifecycle_events enable row level security;
 alter table public.business_ai_recommendations enable row level security;
 
-create policy "business_consultations_org_access" on public.business_consultations
-  for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
 
-create policy "business_proposals_org_access" on public.business_proposals
-  for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
 
-create policy "business_lifecycle_events_org_access" on public.business_lifecycle_events
-  for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
 
-create policy "business_ai_recommendations_org_access" on public.business_ai_recommendations
-  for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));

@@ -3,7 +3,7 @@ import { authServerService } from "@/src/services/auth.server";
 import { hasPermission, type PermissionKey } from "@/src/config/permissions";
 import type { UserRole } from "@/src/constants/roles";
 import { checkRateLimit } from "@/src/modules/security-center/engine/api-security-engine";
-import { AuditRepository } from "@/src/modules/database/repositories/audit-repository";
+import { logApiAudit } from "@/src/lib/api-audit";
 
 export interface ApiSecurityContext {
     user: { id: string; email: string; fullName: string | null; role: UserRole };
@@ -18,7 +18,7 @@ export interface SecureApiOptions {
     publicApiKeyEnv?: string;
 }
 
-const auditRepo = new AuditRepository();
+export { logApiAudit } from "@/src/lib/api-audit";
 
 async function resolveUserRole(userId: string, _email: string): Promise<UserRole> {
     try {
@@ -44,25 +44,6 @@ async function resolveOrganizationId(userId: string, email: string): Promise<str
         return ctx?.organizationId ?? null;
     } catch {
         return null;
-    }
-}
-
-export async function logApiAudit(input: {
-    action: string;
-    userId?: string | null;
-    organizationId?: string | null;
-    metadata?: Record<string, unknown>;
-}) {
-    try {
-        await auditRepo.create({
-            user_id: input.userId ?? null,
-            organization_id: input.organizationId ?? null,
-            entity_type: "api",
-            action: input.action as import("@/src/modules/database/types/core").AuditAction,
-            metadata: input.metadata ?? null,
-        });
-    } catch {
-        console.info("[api-audit]", input);
     }
 }
 

@@ -2,7 +2,7 @@
 
 -- HospitalHub
 create table if not exists public.hsp_hospital_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.hsp_hospital_hubs (
 
 -- Campus
 create table if not exists public.hsp_campuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   campus_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.hsp_campuses (
 
 -- Department
 create table if not exists public.hsp_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   department_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.hsp_departments (
 
 -- Ward
 create table if not exists public.hsp_wards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   ward_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.hsp_wards (
 
 -- HospitalBed
 create table if not exists public.hsp_hospital_beds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   bed_key text not null,
@@ -76,7 +76,7 @@ create table if not exists public.hsp_hospital_beds (
 
 -- PatientRegistration
 create table if not exists public.hsp_patient_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   registration_key text not null,
@@ -92,7 +92,7 @@ create table if not exists public.hsp_patient_registrations (
 
 -- PatientProfile
 create table if not exists public.hsp_patient_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   profile_key text not null,
@@ -107,7 +107,7 @@ create table if not exists public.hsp_patient_profiles (
 
 -- MedicalHistory
 create table if not exists public.hsp_medical_histories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   history_key text not null,
@@ -122,7 +122,7 @@ create table if not exists public.hsp_medical_histories (
 
 -- InsurancePolicy
 create table if not exists public.hsp_insurance_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   policy_key text not null,
@@ -137,7 +137,7 @@ create table if not exists public.hsp_insurance_policies (
 
 -- Appointment
 create table if not exists public.hsp_appointments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   appointment_key text not null,
@@ -153,7 +153,7 @@ create table if not exists public.hsp_appointments (
 
 -- OpdVisit
 create table if not exists public.hsp_opd_visits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   visit_key text not null,
@@ -169,7 +169,7 @@ create table if not exists public.hsp_opd_visits (
 
 -- IpdAdmission
 create table if not exists public.hsp_ipd_admissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   admission_key text not null,
@@ -185,7 +185,7 @@ create table if not exists public.hsp_ipd_admissions (
 
 -- ClinicalNote
 create table if not exists public.hsp_clinical_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   note_key text not null,
@@ -201,7 +201,7 @@ create table if not exists public.hsp_clinical_notes (
 
 -- PharmacyInventory
 create table if not exists public.hsp_pharmacy_inventory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   inventory_key text not null,
@@ -216,7 +216,7 @@ create table if not exists public.hsp_pharmacy_inventory (
 
 -- Prescription
 create table if not exists public.hsp_prescriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   prescription_key text not null,
@@ -231,7 +231,7 @@ create table if not exists public.hsp_prescriptions (
 
 -- LabOrder
 create table if not exists public.hsp_lab_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   order_key text not null,
@@ -247,7 +247,7 @@ create table if not exists public.hsp_lab_orders (
 
 -- LabResult
 create table if not exists public.hsp_lab_results (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   result_key text not null,
@@ -263,7 +263,7 @@ create table if not exists public.hsp_lab_results (
 
 -- HospitalBilling
 create table if not exists public.hsp_hospital_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   billing_key text not null,
@@ -278,7 +278,7 @@ create table if not exists public.hsp_hospital_billing (
 
 -- InsuranceClaim
 create table if not exists public.hsp_insurance_claims (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   claim_key text not null,
@@ -294,7 +294,7 @@ create table if not exists public.hsp_insurance_claims (
 
 -- HospitalInvoice
 create table if not exists public.hsp_hospital_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   invoice_key text not null,
@@ -310,7 +310,7 @@ create table if not exists public.hsp_hospital_invoices (
 
 -- HospitalPayment
 create table if not exists public.hsp_hospital_payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   payment_key text not null,
@@ -326,7 +326,7 @@ create table if not exists public.hsp_hospital_payments (
 
 -- PatientNotification
 create table if not exists public.hsp_patient_notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   notification_key text not null,
@@ -341,7 +341,7 @@ create table if not exists public.hsp_patient_notifications (
 
 -- MedicalReport
 create table if not exists public.hsp_medical_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   report_key text not null,
@@ -356,7 +356,7 @@ create table if not exists public.hsp_medical_reports (
 
 -- PatientFeedback
 create table if not exists public.hsp_patient_feedback (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   feedback_key text not null,
@@ -371,7 +371,7 @@ create table if not exists public.hsp_patient_feedback (
 
 -- AdmissionsAnalytics
 create table if not exists public.hsp_admissions_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -386,7 +386,7 @@ create table if not exists public.hsp_admissions_analytics (
 
 -- OccupancyAnalytics
 create table if not exists public.hsp_occupancy_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -401,7 +401,7 @@ create table if not exists public.hsp_occupancy_analytics (
 
 -- RevenueAnalytics
 create table if not exists public.hsp_revenue_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.hsp_revenue_analytics (
 
 -- HospitalMetric
 create table if not exists public.hsp_hospital_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -436,7 +436,7 @@ create table if not exists public.hsp_hospital_metrics (
 
 -- HospitalHealth
 create table if not exists public.hsp_hospital_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -454,7 +454,7 @@ create table if not exists public.hsp_hospital_health (
 
 -- ExecutiveKpi
 create table if not exists public.hsp_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -470,7 +470,7 @@ create table if not exists public.hsp_executive_kpis (
 
 -- HospitalFailure
 create table if not exists public.hsp_hospital_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   failure_key text not null,
@@ -487,7 +487,7 @@ create table if not exists public.hsp_hospital_failures (
 
 -- Audit Logs
 create table if not exists public.hsp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

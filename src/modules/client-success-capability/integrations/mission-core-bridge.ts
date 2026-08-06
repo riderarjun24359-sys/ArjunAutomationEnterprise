@@ -1,11 +1,9 @@
-import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
+import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 import { MISSION_CORE_CAPABILITY_IDS, MISSION_CORE_WORKFLOWS } from "@/src/modules/mission-core/constants";
 import type { CapabilityRegistration, PlatformEvent, WorkflowExecution } from "@/src/modules/mission-core/types";
 
-const client = createMissionCoreClient();
-
 export function ensureClientSuccessCapability(): CapabilityRegistration {
-    return client.ensureClientSuccessCapability();
+    return lazyMissionCoreClient().ensureClientSuccessCapability();
 }
 
 export function executeClientSuccessWorkflow(
@@ -13,7 +11,7 @@ export function executeClientSuccessWorkflow(
     payload?: Record<string, unknown>,
 ): WorkflowExecution {
     const capability = ensureClientSuccessCapability();
-    return client.executeWorkflow({
+    return lazyMissionCoreClient().executeWorkflow({
         capabilityId: capability.id,
         workflowName,
         payload,
@@ -22,7 +20,7 @@ export function executeClientSuccessWorkflow(
 
 export function getClientSuccessCapabilityStatus() {
     const capability = ensureClientSuccessCapability();
-    return client.getCapabilityStatus(capability.id);
+    return lazyMissionCoreClient().getCapabilityStatus(capability.id);
 }
 
 export function publishClientSuccessEvent(
@@ -30,7 +28,7 @@ export function publishClientSuccessEvent(
     payload?: Record<string, unknown>,
 ): PlatformEvent {
     ensureClientSuccessCapability();
-    return client.publishEvent({
+    return lazyMissionCoreClient().publishEvent({
         type,
         source: MISSION_CORE_CAPABILITY_IDS.clientSuccess,
         payload,
@@ -38,10 +36,11 @@ export function publishClientSuccessEvent(
 }
 
 export function subscribeClientSuccessEvents(eventTypes: string[]): void {
-    client.subscribeToEvents({
+    lazyMissionCoreClient().subscribeToEvents({
         capabilityId: MISSION_CORE_CAPABILITY_IDS.clientSuccess,
         eventTypes,
     });
 }
 
-export { MISSION_CORE_CAPABILITY_IDS, MISSION_CORE_WORKFLOWS, createMissionCoreClient };
+export { MISSION_CORE_CAPABILITY_IDS, MISSION_CORE_WORKFLOWS } from "@/src/modules/mission-core/constants";
+export { createMissionCoreClient } from "@/src/modules/mission-core/sdk";

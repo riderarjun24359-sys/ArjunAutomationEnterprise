@@ -1,7 +1,7 @@
 -- Sprint 30: Autonomous Company v1
 
 create table if not exists public.ac_company_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   context_key text not null,
@@ -26,7 +26,7 @@ create table if not exists public.ac_company_contexts (
 );
 
 create table if not exists public.ac_workflow_orchestrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   orchestration_key text not null,
@@ -40,7 +40,7 @@ create table if not exists public.ac_workflow_orchestrations (
 );
 
 create table if not exists public.ac_event_bus_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   event_key text not null,
@@ -55,7 +55,7 @@ create table if not exists public.ac_event_bus_events (
 );
 
 create table if not exists public.ac_worker_collaborations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   collaboration_key text not null,
@@ -69,7 +69,7 @@ create table if not exists public.ac_worker_collaborations (
 );
 
 create table if not exists public.ac_approval_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   workflow_key text not null,
@@ -83,7 +83,7 @@ create table if not exists public.ac_approval_workflows (
 );
 
 create table if not exists public.ac_notification_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   notification_key text not null,
@@ -98,7 +98,7 @@ create table if not exists public.ac_notification_center (
 );
 
 create table if not exists public.ac_company_timeline (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   timeline_key text not null,
@@ -113,7 +113,7 @@ create table if not exists public.ac_company_timeline (
 );
 
 create table if not exists public.ac_activity_feed (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   feed_key text not null,
@@ -127,7 +127,7 @@ create table if not exists public.ac_activity_feed (
 );
 
 create table if not exists public.ac_cross_module_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   automation_key text not null,
@@ -142,7 +142,7 @@ create table if not exists public.ac_cross_module_automations (
 );
 
 create table if not exists public.ac_executive_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   insight_key text not null,
@@ -157,7 +157,7 @@ create table if not exists public.ac_executive_insights (
 );
 
 create table if not exists public.ac_predictive_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   recommendation_key text not null,
@@ -172,7 +172,7 @@ create table if not exists public.ac_predictive_recommendations (
 );
 
 create table if not exists public.ac_system_search (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   search_key text not null,
@@ -188,7 +188,7 @@ create table if not exists public.ac_system_search (
 );
 
 create table if not exists public.ac_command_palette (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   command_key text not null,
@@ -203,7 +203,7 @@ create table if not exists public.ac_command_palette (
 );
 
 create table if not exists public.ac_emergency_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   workflow_key text not null,
@@ -218,7 +218,7 @@ create table if not exists public.ac_emergency_workflows (
 );
 
 create table if not exists public.ac_business_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   kpi_key text not null,
@@ -234,7 +234,7 @@ create table if not exists public.ac_business_kpis (
 );
 
 create table if not exists public.ac_security_governance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   governance_key text not null,
@@ -249,7 +249,7 @@ create table if not exists public.ac_security_governance (
 );
 
 create table if not exists public.ac_compliance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   dashboard_key text not null,
@@ -264,7 +264,7 @@ create table if not exists public.ac_compliance_dashboards (
 );
 
 create table if not exists public.ac_operational_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   health_key text not null,
@@ -278,7 +278,7 @@ create table if not exists public.ac_operational_health (
 );
 
 create table if not exists public.ac_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

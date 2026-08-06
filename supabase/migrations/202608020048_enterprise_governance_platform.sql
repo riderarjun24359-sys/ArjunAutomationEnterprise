@@ -2,7 +2,7 @@
 
 -- GovernanceHub
 create table if not exists public.egp_governance_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.egp_governance_hubs (
 
 -- OrganizationGovernance
 create table if not exists public.egp_organization_governance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   governance_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.egp_organization_governance (
 
 -- GovernancePolicy
 create table if not exists public.egp_governance_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   policy_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.egp_governance_policies (
 
 -- GovernanceFramework
 create table if not exists public.egp_governance_framework (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   framework_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.egp_governance_framework (
 
 -- GovernanceReview
 create table if not exists public.egp_governance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   review_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.egp_governance_reviews (
 
 -- GovernanceDashboard
 create table if not exists public.egp_governance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.egp_governance_dashboards (
 
 -- ComplianceFramework
 create table if not exists public.egp_compliance_framework (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   framework_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.egp_compliance_framework (
 
 -- ComplianceControl
 create table if not exists public.egp_compliance_controls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   control_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.egp_compliance_controls (
 
 -- ComplianceEvidence
 create table if not exists public.egp_compliance_evidence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   evidence_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.egp_compliance_evidence (
 
 -- ComplianceReport
 create table if not exists public.egp_compliance_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   report_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.egp_compliance_reports (
 
 -- ComplianceCalendar
 create table if not exists public.egp_compliance_calendar (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   calendar_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.egp_compliance_calendar (
 
 -- AuditCenter
 create table if not exists public.egp_audit_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   audit_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.egp_audit_center (
 
 -- AuditFinding
 create table if not exists public.egp_audit_findings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   finding_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.egp_audit_findings (
 
 -- CorrectiveAction
 create table if not exists public.egp_corrective_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   action_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.egp_corrective_actions (
 
 -- AuditEvidence
 create table if not exists public.egp_audit_evidence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   evidence_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.egp_audit_evidence (
 
 -- AuditAnalytics
 create table if not exists public.egp_audit_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.egp_audit_analytics (
 
 -- DataClassification
 create table if not exists public.egp_data_classification (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   classification_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.egp_data_classification (
 
 -- RetentionPolicy
 create table if not exists public.egp_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   policy_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.egp_retention_policies (
 
 -- DataLifecycle
 create table if not exists public.egp_data_lifecycle (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   lifecycle_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.egp_data_lifecycle (
 
 -- DataOwnership
 create table if not exists public.egp_data_ownership (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   ownership_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.egp_data_ownership (
 
 -- DataQuality
 create table if not exists public.egp_data_quality (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   quality_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.egp_data_quality (
 
 -- RiskRegister
 create table if not exists public.egp_risk_register (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   risk_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.egp_risk_register (
 
 -- RiskAssessment
 create table if not exists public.egp_risk_assessment (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   assessment_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.egp_risk_assessment (
 
 -- RiskMitigation
 create table if not exists public.egp_risk_mitigation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   mitigation_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.egp_risk_mitigation (
 
 -- RiskMonitoring
 create table if not exists public.egp_risk_monitoring (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   monitoring_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.egp_risk_monitoring (
 
 -- BusinessContinuity
 create table if not exists public.egp_business_continuity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   continuity_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.egp_business_continuity (
 
 -- GovernanceMetric
 create table if not exists public.egp_governance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -434,7 +434,7 @@ create table if not exists public.egp_governance_metrics (
 
 -- GovernanceHealth
 create table if not exists public.egp_governance_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -454,7 +454,7 @@ create table if not exists public.egp_governance_health (
 
 -- ComplianceDashboard
 create table if not exists public.egp_compliance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -470,7 +470,7 @@ create table if not exists public.egp_compliance_dashboards (
 
 -- MissionProgress
 create table if not exists public.egp_mission_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   progress_key text not null,
@@ -486,7 +486,7 @@ create table if not exists public.egp_mission_progress (
 
 -- GovernanceFailure
 create table if not exists public.egp_governance_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   failure_key text not null,
@@ -503,7 +503,7 @@ create table if not exists public.egp_governance_failures (
 
 -- Audit Logs
 create table if not exists public.egp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

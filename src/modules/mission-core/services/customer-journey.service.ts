@@ -1,15 +1,13 @@
-import { createMissionCoreClient } from "../sdk";
+import { lazyMissionCoreClient } from "../sdk/lazy-mission-core-client";
 import { createWorkflow, listDefinitions, runWorkflowToCompletion } from "../engine/workflow-engine";
 import { DEFAULT_WORKFLOW_TEMPLATE } from "../constants";
 import { executeCapabilityAction } from "../engine/capability-executor";
-import { logApiAudit } from "@/src/lib/api-security";
-
-const missionCore = createMissionCoreClient();
+import { logApiAudit } from "@/src/lib/api-audit";
 
 let lifecycleDefinitionId: string | null = null;
 
 function ensureLifecycleWorkflow() {
-    missionCore.initializePlatform();
+    lazyMissionCoreClient().initializePlatform();
     if (!lifecycleDefinitionId) {
         const existing = listDefinitions().find((d) => d.name === "Customer Lifecycle");
         if (existing) {
@@ -55,7 +53,7 @@ export class CustomerJourneyService {
             metadata: { email: input.email, source: input.source, leadResult },
         });
 
-        missionCore.publishEvent({ type: "LeadGenerated", source: "customerJourney", payload: leadResult });
+        lazyMissionCoreClient().publishEvent({ type: "LeadGenerated", source: "customerJourney", payload: leadResult });
 
         return leadResult;
     }

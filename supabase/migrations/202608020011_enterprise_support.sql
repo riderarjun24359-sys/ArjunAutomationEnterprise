@@ -1,7 +1,7 @@
 -- Sprint 18: Enterprise Customer Support & Service Management
 
 create table if not exists public.support_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -12,7 +12,7 @@ create table if not exists public.support_categories (
 );
 
 create table if not exists public.support_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   level integer not null default 1,
@@ -24,7 +24,7 @@ create table if not exists public.support_priorities (
 );
 
 create table if not exists public.support_slas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   priority_id uuid references public.support_priorities(id) on delete set null,
@@ -37,7 +37,7 @@ create table if not exists public.support_slas (
 );
 
 create table if not exists public.support_queues (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -50,7 +50,7 @@ create table if not exists public.support_queues (
 );
 
 create table if not exists public.support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_number text not null,
   subject text not null,
@@ -74,7 +74,7 @@ create table if not exists public.support_tickets (
 );
 
 create table if not exists public.support_ticket_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   author_id uuid references public.user_profiles(id) on delete set null,
@@ -84,7 +84,7 @@ create table if not exists public.support_ticket_notes (
 );
 
 create table if not exists public.support_ticket_attachments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   file_name text not null,
@@ -96,7 +96,7 @@ create table if not exists public.support_ticket_attachments (
 );
 
 create table if not exists public.support_knowledge_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   slug text not null,
@@ -110,7 +110,7 @@ create table if not exists public.support_knowledge_articles (
 );
 
 create table if not exists public.support_canned_responses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   shortcut text not null,
@@ -122,7 +122,7 @@ create table if not exists public.support_canned_responses (
 );
 
 create table if not exists public.support_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   trigger_condition text not null default 'sla_breach',
@@ -136,7 +136,7 @@ create table if not exists public.support_escalation_rules (
 );
 
 create table if not exists public.support_satisfaction_ratings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   rating integer not null check (rating >= 1 and rating <= 5),
@@ -146,7 +146,7 @@ create table if not exists public.support_satisfaction_ratings (
 );
 
 create table if not exists public.support_portal_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   portal_enabled boolean not null default true,
   welcome_message text not null default 'Welcome to our support portal.',
@@ -159,7 +159,7 @@ create table if not exists public.support_portal_settings (
 );
 
 create table if not exists public.support_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

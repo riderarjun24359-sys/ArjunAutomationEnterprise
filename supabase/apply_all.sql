@@ -133,7 +133,7 @@ end;
 $$;
 
 create table if not exists public.organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique,
   status text not null default 'active',
@@ -143,7 +143,7 @@ create table if not exists public.organizations (
 );
 
 create table if not exists public.user_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   auth_user_id uuid not null unique,
   email text not null,
   full_name text,
@@ -155,7 +155,7 @@ create table if not exists public.user_profiles (
 );
 
 create table if not exists public.organization_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid not null references public.user_profiles(id) on delete cascade,
   role_name text not null default 'member',
@@ -166,7 +166,7 @@ create table if not exists public.organization_members (
 );
 
 create table if not exists public.permission_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   key text not null unique,
   description text,
   created_at timestamptz not null default now(),
@@ -174,7 +174,7 @@ create table if not exists public.permission_definitions (
 );
 
 create table if not exists public.role_permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   role_name text not null,
   permission_key text not null,
   action text not null default 'read',
@@ -183,7 +183,7 @@ create table if not exists public.role_permissions (
 );
 
 create table if not exists public.audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid,
   user_id uuid,
   entity_type text,
@@ -194,7 +194,7 @@ create table if not exists public.audit_logs (
 );
 
 create table if not exists public.storage_objects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   bucket text not null,
   path text not null,
@@ -253,7 +253,7 @@ alter table public.storage_objects enable row level security;
 -- MIGRATION: 202608020002_crm_foundation.sql
 -- =============================================================================
 create table if not exists public.crm_clients (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   status text not null default 'lead',
@@ -270,7 +270,7 @@ create table if not exists public.crm_clients (
 );
 
 create table if not exists public.crm_leads (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_name text not null,
   contact_name text not null,
@@ -283,7 +283,7 @@ create table if not exists public.crm_leads (
 );
 
 create table if not exists public.crm_deals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_name text not null,
   value text not null default '$0',
@@ -296,7 +296,7 @@ create table if not exists public.crm_deals (
 );
 
 create table if not exists public.crm_activities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   activity_type text not null default 'note',
   title text not null,
@@ -306,7 +306,7 @@ create table if not exists public.crm_activities (
 );
 
 create table if not exists public.crm_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   assignee text not null,
@@ -358,7 +358,7 @@ alter table public.crm_tasks enable row level security;
 -- MIGRATION: 202608020003_project_management.sql
 -- =============================================================================
 create table if not exists public.project_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   status text not null default 'planning',
@@ -376,7 +376,7 @@ create table if not exists public.project_management (
 );
 
 create table if not exists public.project_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   title text not null,
   due_date date,
@@ -387,7 +387,7 @@ create table if not exists public.project_milestones (
 );
 
 create table if not exists public.project_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   title text not null,
   status text not null default 'todo',
@@ -399,7 +399,7 @@ create table if not exists public.project_tasks (
 );
 
 create table if not exists public.project_team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   name text not null,
   role text not null default 'member',
@@ -409,7 +409,7 @@ create table if not exists public.project_team_members (
 );
 
 create table if not exists public.project_time_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   project_name text not null,
   started_at text not null,
@@ -419,7 +419,7 @@ create table if not exists public.project_time_entries (
 );
 
 create table if not exists public.project_files (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   name text not null,
   folder text not null,
@@ -429,7 +429,7 @@ create table if not exists public.project_files (
 );
 
 create table if not exists public.project_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   author text not null,
   body text not null,
@@ -499,7 +499,7 @@ alter table public.project_comments enable row level security;
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid references public.organizations(id) on delete cascade,
   name text not null,
   description text,
@@ -510,7 +510,7 @@ create table if not exists public.roles (
 );
 
 create table if not exists public.permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   key text not null unique,
   description text,
   resource text,
@@ -519,7 +519,7 @@ create table if not exists public.permissions (
 );
 
 create table if not exists public.role_permission_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   role_id uuid not null references public.roles(id) on delete cascade,
   permission_id uuid not null references public.permissions(id) on delete cascade,
   action text not null default 'read',
@@ -532,7 +532,7 @@ create table if not exists public.role_permission_grants (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.companies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   industry text,
@@ -545,7 +545,7 @@ create table if not exists public.companies (
 );
 
 create table if not exists public.contacts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_id uuid references public.companies(id) on delete set null,
   first_name text not null,
@@ -558,7 +558,7 @@ create table if not exists public.contacts (
 );
 
 create table if not exists public.clients (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_id uuid references public.companies(id) on delete set null,
   primary_contact_id uuid references public.contacts(id) on delete set null,
@@ -585,7 +585,7 @@ create table if not exists public.clients (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.projects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   name text not null,
@@ -605,7 +605,7 @@ create table if not exists public.projects (
 );
 
 create table if not exists public.project_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete set null,
   name text not null,
@@ -617,7 +617,7 @@ create table if not exists public.project_members (
 );
 
 create table if not exists public.project_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   title text not null,
   due_date date,
@@ -628,7 +628,7 @@ create table if not exists public.project_milestones (
 );
 
 create table if not exists public.project_time_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   project_name text not null,
   started_at text not null,
@@ -638,7 +638,7 @@ create table if not exists public.project_time_entries (
 );
 
 create table if not exists public.project_files (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   name text not null,
   folder text not null,
@@ -648,7 +648,7 @@ create table if not exists public.project_files (
 );
 
 create table if not exists public.project_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   author text not null,
   body text not null,
@@ -694,7 +694,7 @@ end $$;
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
   title text not null,
@@ -712,7 +712,7 @@ create table if not exists public.tasks (
 );
 
 create table if not exists public.task_labels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   color text not null default 'slate',
@@ -727,7 +727,7 @@ create table if not exists public.task_label_assignments (
 );
 
 create table if not exists public.task_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   task_id uuid not null references public.tasks(id) on delete cascade,
   author_id uuid references public.user_profiles(id) on delete set null,
   author_name text not null default '',
@@ -741,7 +741,7 @@ create table if not exists public.task_comments (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete cascade,
   title text not null,
@@ -752,7 +752,7 @@ create table if not exists public.notifications (
 );
 
 create table if not exists public.activity_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete set null,
   entity_type text not null,
@@ -991,7 +991,7 @@ create policy profiles_update on public.user_profiles for update using (auth_use
 -- Sprint 12: Enterprise Finance & Invoicing
 
 create table if not exists public.tax_rates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   rate_percent numeric(5, 2) not null default 0,
@@ -1001,7 +1001,7 @@ create table if not exists public.tax_rates (
 );
 
 create table if not exists public.estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   project_id uuid references public.projects(id) on delete set null,
@@ -1019,7 +1019,7 @@ create table if not exists public.estimates (
 );
 
 create table if not exists public.estimate_line_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   estimate_id uuid not null references public.estimates(id) on delete cascade,
   description text not null,
   quantity numeric(10, 2) not null default 1,
@@ -1031,7 +1031,7 @@ create table if not exists public.estimate_line_items (
 );
 
 create table if not exists public.invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   project_id uuid references public.projects(id) on delete set null,
@@ -1052,7 +1052,7 @@ create table if not exists public.invoices (
 );
 
 create table if not exists public.invoice_line_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   invoice_id uuid not null references public.invoices(id) on delete cascade,
   description text not null,
   quantity numeric(10, 2) not null default 1,
@@ -1064,7 +1064,7 @@ create table if not exists public.invoice_line_items (
 );
 
 create table if not exists public.payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   invoice_id uuid not null references public.invoices(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
@@ -1078,7 +1078,7 @@ create table if not exists public.payments (
 );
 
 create table if not exists public.expenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
   client_id uuid references public.clients(id) on delete set null,
@@ -1093,7 +1093,7 @@ create table if not exists public.expenses (
 );
 
 create table if not exists public.recurring_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid not null references public.clients(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
@@ -1217,7 +1217,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 13: Enterprise AI Automation & Workflow Builder
 
 create table if not exists public.ai_agents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -1232,7 +1232,7 @@ create table if not exists public.ai_agents (
 );
 
 create table if not exists public.workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -1244,7 +1244,7 @@ create table if not exists public.workflow_templates (
 );
 
 create table if not exists public.workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   template_id uuid references public.workflow_templates(id) on delete set null,
   agent_id uuid references public.ai_agents(id) on delete set null,
@@ -1257,7 +1257,7 @@ create table if not exists public.workflows (
 );
 
 create table if not exists public.workflow_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   trigger_type text not null default 'manual',
   event_name text not null default '',
@@ -1268,7 +1268,7 @@ create table if not exists public.workflow_triggers (
 );
 
 create table if not exists public.workflow_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   step_order integer not null default 0,
   action_type text not null default 'notify',
@@ -1279,7 +1279,7 @@ create table if not exists public.workflow_actions (
 );
 
 create table if not exists public.workflow_conditions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   step_order integer not null default 0,
   field text not null,
@@ -1290,7 +1290,7 @@ create table if not exists public.workflow_conditions (
 );
 
 create table if not exists public.workflow_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   cron_expression text not null default '0 9 * * 1',
   timezone text not null default 'UTC',
@@ -1302,7 +1302,7 @@ create table if not exists public.workflow_schedules (
 );
 
 create table if not exists public.workflow_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   status text not null default 'pending',
@@ -1316,7 +1316,7 @@ create table if not exists public.workflow_executions (
 );
 
 create table if not exists public.automation_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workflow_id uuid references public.workflows(id) on delete set null,
   execution_id uuid references public.workflow_executions(id) on delete set null,
@@ -1415,7 +1415,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 14: Enterprise Analytics & Performance Insights
 
 create table if not exists public.analytics_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -1426,7 +1426,7 @@ create table if not exists public.analytics_dashboards (
 );
 
 create table if not exists public.analytics_widgets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   dashboard_id uuid not null references public.analytics_dashboards(id) on delete cascade,
   title text not null,
   widget_type text not null default 'kpi',
@@ -1439,7 +1439,7 @@ create table if not exists public.analytics_widgets (
 );
 
 create table if not exists public.analytics_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   label text not null,
@@ -1455,7 +1455,7 @@ create table if not exists public.analytics_metrics (
 );
 
 create table if not exists public.analytics_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   report_type text not null default 'summary',
@@ -1535,7 +1535,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 15: Enterprise Settings & Administration
 
 create table if not exists public.organization_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   timezone text not null default 'UTC',
   currency text not null default 'USD',
@@ -1549,7 +1549,7 @@ create table if not exists public.organization_settings (
 );
 
 create table if not exists public.organization_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   logo_url text not null default '',
   favicon_url text not null default '',
@@ -1563,7 +1563,7 @@ create table if not exists public.organization_branding (
 );
 
 create table if not exists public.organization_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   default_locale text not null default 'en',
   default_timezone text not null default 'UTC',
@@ -1575,7 +1575,7 @@ create table if not exists public.organization_preferences (
 );
 
 create table if not exists public.organization_security_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   mfa_required boolean not null default false,
   session_timeout_minutes integer not null default 480,
@@ -1587,7 +1587,7 @@ create table if not exists public.organization_security_policies (
 );
 
 create table if not exists public.teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -1598,7 +1598,7 @@ create table if not exists public.teams (
 );
 
 create table if not exists public.team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   team_id uuid not null references public.teams(id) on delete cascade,
   user_id uuid not null references public.user_profiles(id) on delete cascade,
   role_name text not null default 'member',
@@ -1607,7 +1607,7 @@ create table if not exists public.team_members (
 );
 
 create table if not exists public.organization_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   email text not null,
   role_name text not null default 'member',
@@ -1619,7 +1619,7 @@ create table if not exists public.organization_invitations (
 );
 
 create table if not exists public.user_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references public.user_profiles(id) on delete cascade,
   organization_id uuid references public.organizations(id) on delete set null,
   theme text not null default 'system',
@@ -1632,7 +1632,7 @@ create table if not exists public.user_preferences (
 );
 
 create table if not exists public.audit_config (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   retention_days integer not null default 365,
   enabled_events text[] not null default array['create', 'update', 'delete', 'login'],
@@ -1643,7 +1643,7 @@ create table if not exists public.audit_config (
 );
 
 create table if not exists public.api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   key_prefix text not null,
@@ -1658,7 +1658,7 @@ create table if not exists public.api_keys (
 );
 
 create table if not exists public.notification_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete cascade,
   channel text not null default 'email',
@@ -1670,7 +1670,7 @@ create table if not exists public.notification_preferences (
 );
 
 create table if not exists public.backup_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   schedule_cron text not null default '0 2 * * 0',
@@ -1683,7 +1683,7 @@ create table if not exists public.backup_configs (
 );
 
 create table if not exists public.backup_runs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   config_id uuid not null references public.backup_configs(id) on delete cascade,
   status text not null default 'pending',
   started_at timestamptz not null default now(),
@@ -1814,7 +1814,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 16: Enterprise HRMS & Employee Management
 
 create table if not exists public.departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -1827,7 +1827,7 @@ create table if not exists public.departments (
 );
 
 create table if not exists public.designations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   level text not null default 'individual_contributor',
@@ -1838,7 +1838,7 @@ create table if not exists public.designations (
 );
 
 create table if not exists public.employees (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_code text not null,
   first_name text not null,
@@ -1864,7 +1864,7 @@ alter table public.departments
   add constraint departments_head_employee_id_fkey foreign key (head_employee_id) references public.employees(id) on delete set null;
 
 create table if not exists public.hr_teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -1877,7 +1877,7 @@ create table if not exists public.hr_teams (
 );
 
 create table if not exists public.hr_team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   team_id uuid not null references public.hr_teams(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   role_name text not null default 'member',
@@ -1886,7 +1886,7 @@ create table if not exists public.hr_team_members (
 );
 
 create table if not exists public.attendance_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   work_date date not null,
@@ -1900,7 +1900,7 @@ create table if not exists public.attendance_records (
 );
 
 create table if not exists public.leave_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -1912,7 +1912,7 @@ create table if not exists public.leave_types (
 );
 
 create table if not exists public.leave_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   leave_type_id uuid not null references public.leave_types(id) on delete restrict,
@@ -1925,7 +1925,7 @@ create table if not exists public.leave_requests (
 );
 
 create table if not exists public.holidays (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   holiday_date date not null,
@@ -1936,7 +1936,7 @@ create table if not exists public.holidays (
 );
 
 create table if not exists public.payroll_cycles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   period_start date not null,
@@ -1947,7 +1947,7 @@ create table if not exists public.payroll_cycles (
 );
 
 create table if not exists public.payroll_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   cycle_id uuid not null references public.payroll_cycles(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   base_salary numeric(12,2) not null default 0,
@@ -1961,7 +1961,7 @@ create table if not exists public.payroll_entries (
 );
 
 create table if not exists public.employee_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   title text not null,
@@ -1973,7 +1973,7 @@ create table if not exists public.employee_documents (
 );
 
 create table if not exists public.performance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   reviewer_id uuid references public.employees(id) on delete set null,
@@ -1987,7 +1987,7 @@ create table if not exists public.performance_reviews (
 );
 
 create table if not exists public.job_openings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   department_id uuid references public.departments(id) on delete set null,
@@ -2000,7 +2000,7 @@ create table if not exists public.job_openings (
 );
 
 create table if not exists public.job_candidates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   opening_id uuid not null references public.job_openings(id) on delete cascade,
   full_name text not null,
   email text not null,
@@ -2012,7 +2012,7 @@ create table if not exists public.job_candidates (
 );
 
 create table if not exists public.onboarding_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   status text not null default 'in_progress',
@@ -2022,7 +2022,7 @@ create table if not exists public.onboarding_plans (
 );
 
 create table if not exists public.onboarding_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   plan_id uuid not null references public.onboarding_plans(id) on delete cascade,
   title text not null,
   status text not null default 'pending',
@@ -2033,7 +2033,7 @@ create table if not exists public.onboarding_tasks (
 );
 
 create table if not exists public.offboarding_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   status text not null default 'in_progress',
@@ -2043,7 +2043,7 @@ create table if not exists public.offboarding_plans (
 );
 
 create table if not exists public.offboarding_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   plan_id uuid not null references public.offboarding_plans(id) on delete cascade,
   title text not null,
   status text not null default 'pending',
@@ -2054,7 +2054,7 @@ create table if not exists public.offboarding_tasks (
 );
 
 create table if not exists public.org_chart_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   department_id uuid references public.departments(id) on delete set null,
@@ -2264,7 +2264,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 17: Enterprise Inventory & Asset Management
 
 create table if not exists public.product_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -2276,7 +2276,7 @@ create table if not exists public.product_categories (
 );
 
 create table if not exists public.products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   category_id uuid references public.product_categories(id) on delete set null,
   sku text not null,
@@ -2293,7 +2293,7 @@ create table if not exists public.products (
 );
 
 create table if not exists public.warehouses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -2306,7 +2306,7 @@ create table if not exists public.warehouses (
 );
 
 create table if not exists public.stock_levels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -2318,7 +2318,7 @@ create table if not exists public.stock_levels (
 );
 
 create table if not exists public.suppliers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -2332,7 +2332,7 @@ create table if not exists public.suppliers (
 );
 
 create table if not exists public.stock_movements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -2347,7 +2347,7 @@ create table if not exists public.stock_movements (
 );
 
 create table if not exists public.inventory_adjustments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -2359,7 +2359,7 @@ create table if not exists public.inventory_adjustments (
 );
 
 create table if not exists public.purchase_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   supplier_id uuid not null references public.suppliers(id) on delete restrict,
   po_number text not null,
@@ -2375,7 +2375,7 @@ create table if not exists public.purchase_orders (
 );
 
 create table if not exists public.purchase_order_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   purchase_order_id uuid not null references public.purchase_orders(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity numeric(12,2) not null,
@@ -2385,7 +2385,7 @@ create table if not exists public.purchase_order_items (
 );
 
 create table if not exists public.assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   asset_tag text not null,
   name text not null,
@@ -2403,7 +2403,7 @@ create table if not exists public.assets (
 );
 
 create table if not exists public.product_barcodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid references public.products(id) on delete cascade,
   asset_id uuid references public.assets(id) on delete cascade,
@@ -2414,7 +2414,7 @@ create table if not exists public.product_barcodes (
 );
 
 create table if not exists public.low_stock_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -2427,7 +2427,7 @@ create table if not exists public.low_stock_alerts (
 );
 
 create table if not exists public.stock_transfers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   transfer_number text not null,
   source_warehouse_id uuid not null references public.warehouses(id) on delete restrict,
@@ -2441,7 +2441,7 @@ create table if not exists public.stock_transfers (
 );
 
 create table if not exists public.stock_transfer_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   transfer_id uuid not null references public.stock_transfers(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity numeric(12,2) not null,
@@ -2449,7 +2449,7 @@ create table if not exists public.stock_transfer_items (
 );
 
 create table if not exists public.goods_received_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grn_number text not null,
   purchase_order_id uuid references public.purchase_orders(id) on delete set null,
@@ -2464,7 +2464,7 @@ create table if not exists public.goods_received_notes (
 );
 
 create table if not exists public.grn_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   grn_id uuid not null references public.goods_received_notes(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity_received numeric(12,2) not null,
@@ -2473,7 +2473,7 @@ create table if not exists public.grn_items (
 );
 
 create table if not exists public.inventory_valuations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   valuation_date date not null default current_date,
   method text not null default 'weighted_average',
@@ -2484,7 +2484,7 @@ create table if not exists public.inventory_valuations (
 );
 
 create table if not exists public.inventory_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -2636,7 +2636,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 18: Enterprise Customer Support & Service Management
 
 create table if not exists public.support_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -2647,7 +2647,7 @@ create table if not exists public.support_categories (
 );
 
 create table if not exists public.support_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   level integer not null default 1,
@@ -2659,7 +2659,7 @@ create table if not exists public.support_priorities (
 );
 
 create table if not exists public.support_slas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   priority_id uuid references public.support_priorities(id) on delete set null,
@@ -2672,7 +2672,7 @@ create table if not exists public.support_slas (
 );
 
 create table if not exists public.support_queues (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -2685,7 +2685,7 @@ create table if not exists public.support_queues (
 );
 
 create table if not exists public.support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_number text not null,
   subject text not null,
@@ -2709,7 +2709,7 @@ create table if not exists public.support_tickets (
 );
 
 create table if not exists public.support_ticket_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   author_id uuid references public.user_profiles(id) on delete set null,
@@ -2719,7 +2719,7 @@ create table if not exists public.support_ticket_notes (
 );
 
 create table if not exists public.support_ticket_attachments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   file_name text not null,
@@ -2731,7 +2731,7 @@ create table if not exists public.support_ticket_attachments (
 );
 
 create table if not exists public.support_knowledge_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   slug text not null,
@@ -2745,7 +2745,7 @@ create table if not exists public.support_knowledge_articles (
 );
 
 create table if not exists public.support_canned_responses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   shortcut text not null,
@@ -2757,7 +2757,7 @@ create table if not exists public.support_canned_responses (
 );
 
 create table if not exists public.support_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   trigger_condition text not null default 'sla_breach',
@@ -2771,7 +2771,7 @@ create table if not exists public.support_escalation_rules (
 );
 
 create table if not exists public.support_satisfaction_ratings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   ticket_id uuid not null references public.support_tickets(id) on delete cascade,
   rating integer not null check (rating >= 1 and rating <= 5),
@@ -2781,7 +2781,7 @@ create table if not exists public.support_satisfaction_ratings (
 );
 
 create table if not exists public.support_portal_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   portal_enabled boolean not null default true,
   welcome_message text not null default 'Welcome to our support portal.',
@@ -2794,7 +2794,7 @@ create table if not exists public.support_portal_settings (
 );
 
 create table if not exists public.support_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -2890,7 +2890,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 19: Enterprise Sales Pipeline & Revenue Operations
 
 create table if not exists public.sales_pipelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -2902,7 +2902,7 @@ create table if not exists public.sales_pipelines (
 );
 
 create table if not exists public.sales_pipeline_stages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   pipeline_id uuid not null references public.sales_pipelines(id) on delete cascade,
   name text not null,
@@ -2916,7 +2916,7 @@ create table if not exists public.sales_pipeline_stages (
 );
 
 create table if not exists public.sales_leads (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   lead_name text not null,
@@ -2932,7 +2932,7 @@ create table if not exists public.sales_leads (
 );
 
 create table if not exists public.sales_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_number text not null,
   name text not null,
@@ -2957,7 +2957,7 @@ create table if not exists public.sales_opportunities (
 );
 
 create table if not exists public.sales_quotes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   quote_number text not null,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
@@ -2973,7 +2973,7 @@ create table if not exists public.sales_quotes (
 );
 
 create table if not exists public.sales_quote_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   quote_id uuid not null references public.sales_quotes(id) on delete cascade,
   description text not null,
   quantity numeric(12,2) not null default 1,
@@ -2983,7 +2983,7 @@ create table if not exists public.sales_quote_items (
 );
 
 create table if not exists public.sales_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   forecast_period text not null,
   forecast_date date not null default current_date,
@@ -2996,7 +2996,7 @@ create table if not exists public.sales_forecasts (
 );
 
 create table if not exists public.sales_activities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -3010,7 +3010,7 @@ create table if not exists public.sales_activities (
 );
 
 create table if not exists public.sales_meetings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -3026,7 +3026,7 @@ create table if not exists public.sales_meetings (
 );
 
 create table if not exists public.sales_call_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -3040,7 +3040,7 @@ create table if not exists public.sales_call_logs (
 );
 
 create table if not exists public.sales_email_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -3054,7 +3054,7 @@ create table if not exists public.sales_email_tracking (
 );
 
 create table if not exists public.sales_targets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   period_label text not null,
@@ -3068,7 +3068,7 @@ create table if not exists public.sales_targets (
 );
 
 create table if not exists public.sales_commissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
@@ -3080,7 +3080,7 @@ create table if not exists public.sales_commissions (
 );
 
 create table if not exists public.sales_win_loss_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid not null references public.sales_opportunities(id) on delete cascade,
   outcome text not null,
@@ -3092,7 +3092,7 @@ create table if not exists public.sales_win_loss_records (
 );
 
 create table if not exists public.sales_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -3204,7 +3204,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 20: Enterprise Document & Content Management
 
 create table if not exists public.document_folders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   parent_folder_id uuid references public.document_folders(id) on delete set null,
   name text not null,
@@ -3216,7 +3216,7 @@ create table if not exists public.document_folders (
 );
 
 create table if not exists public.documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   folder_id uuid references public.document_folders(id) on delete set null,
   title text not null,
@@ -3239,7 +3239,7 @@ create table if not exists public.documents (
 );
 
 create table if not exists public.document_tags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   color text not null default '#64748b',
@@ -3248,7 +3248,7 @@ create table if not exists public.document_tags (
 );
 
 create table if not exists public.document_tag_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   document_id uuid not null references public.documents(id) on delete cascade,
   tag_id uuid not null references public.document_tags(id) on delete cascade,
   created_at timestamptz not null default now(),
@@ -3256,7 +3256,7 @@ create table if not exists public.document_tag_links (
 );
 
 create table if not exists public.document_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   version_number integer not null,
@@ -3269,7 +3269,7 @@ create table if not exists public.document_versions (
 );
 
 create table if not exists public.document_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   approver_id uuid references public.employees(id) on delete set null,
@@ -3281,7 +3281,7 @@ create table if not exists public.document_approvals (
 );
 
 create table if not exists public.document_esign_preparations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   signer_name text not null,
@@ -3294,7 +3294,7 @@ create table if not exists public.document_esign_preparations (
 );
 
 create table if not exists public.document_shares (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   share_token text not null,
@@ -3307,7 +3307,7 @@ create table if not exists public.document_shares (
 );
 
 create table if not exists public.document_access_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid references public.documents(id) on delete cascade,
   folder_id uuid references public.document_folders(id) on delete cascade,
@@ -3318,7 +3318,7 @@ create table if not exists public.document_access_grants (
 );
 
 create table if not exists public.document_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   category text not null default 'general',
@@ -3331,7 +3331,7 @@ create table if not exists public.document_templates (
 );
 
 create table if not exists public.document_previews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   preview_type text not null default 'thumbnail',
@@ -3342,7 +3342,7 @@ create table if not exists public.document_previews (
 );
 
 create table if not exists public.document_search_index (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   search_text text not null default '',
@@ -3351,7 +3351,7 @@ create table if not exists public.document_search_index (
 );
 
 create table if not exists public.document_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   retention_days integer not null default 365,
@@ -3364,7 +3364,7 @@ create table if not exists public.document_retention_policies (
 );
 
 create table if not exists public.document_archives (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   archived_at timestamptz not null default now(),
@@ -3374,7 +3374,7 @@ create table if not exists public.document_archives (
 );
 
 create table if not exists public.document_activity_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid references public.documents(id) on delete set null,
   activity_type text not null,
@@ -3384,7 +3384,7 @@ create table if not exists public.document_activity_logs (
 );
 
 create table if not exists public.document_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -3495,7 +3495,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 21: Enterprise AI Orchestration Layer
 
 create table if not exists public.ai_providers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   provider_key text not null,
@@ -3509,7 +3509,7 @@ create table if not exists public.ai_providers (
 );
 
 create table if not exists public.ai_model_routes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   provider_id uuid not null references public.ai_providers(id) on delete cascade,
@@ -3524,7 +3524,7 @@ create table if not exists public.ai_model_routes (
 );
 
 create table if not exists public.ai_orchestration_agents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   agent_type text not null default 'general',
@@ -3539,7 +3539,7 @@ create table if not exists public.ai_orchestration_agents (
 );
 
 create table if not exists public.ai_prompt_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   template_key text not null,
@@ -3554,7 +3554,7 @@ create table if not exists public.ai_prompt_templates (
 );
 
 create table if not exists public.ai_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
   session_key text not null,
@@ -3570,7 +3570,7 @@ create table if not exists public.ai_sessions (
 );
 
 create table if not exists public.ai_task_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
   session_id uuid references public.ai_sessions(id) on delete set null,
@@ -3589,7 +3589,7 @@ create table if not exists public.ai_task_executions (
 );
 
 create table if not exists public.ai_usage_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid references public.ai_providers(id) on delete set null,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
@@ -3602,7 +3602,7 @@ create table if not exists public.ai_usage_records (
 );
 
 create table if not exists public.ai_cost_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid references public.ai_providers(id) on delete set null,
   usage_record_id uuid references public.ai_usage_records(id) on delete set null,
@@ -3613,7 +3613,7 @@ create table if not exists public.ai_cost_records (
 );
 
 create table if not exists public.ai_rate_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   scope_type text not null default 'organization',
   scope_id uuid,
@@ -3625,7 +3625,7 @@ create table if not exists public.ai_rate_limits (
 );
 
 create table if not exists public.ai_permission_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grantee_type text not null default 'employee',
   grantee_id uuid,
@@ -3637,7 +3637,7 @@ create table if not exists public.ai_permission_grants (
 );
 
 create table if not exists public.ai_provider_health_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid not null references public.ai_providers(id) on delete cascade,
   status text not null default 'healthy',
@@ -3648,7 +3648,7 @@ create table if not exists public.ai_provider_health_checks (
 );
 
 create table if not exists public.ai_retry_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   max_retries integer not null default 3,
@@ -3661,7 +3661,7 @@ create table if not exists public.ai_retry_policies (
 );
 
 create table if not exists public.ai_orchestration_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -3673,7 +3673,7 @@ create table if not exists public.ai_orchestration_audit_logs (
 );
 
 create table if not exists public.ai_orchestration_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   metric_value numeric(14, 4) not null default 0,
@@ -3765,7 +3765,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 22: Enterprise Knowledge & Memory Engine
 
 create table if not exists public.knowledge_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   slug text not null,
@@ -3785,7 +3785,7 @@ create table if not exists public.knowledge_entries (
 );
 
 create table if not exists public.knowledge_semantic_index (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
   embedding_key text not null default '',
@@ -3795,7 +3795,7 @@ create table if not exists public.knowledge_semantic_index (
 );
 
 create table if not exists public.knowledge_solutions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   problem_statement text not null default '',
@@ -3809,7 +3809,7 @@ create table if not exists public.knowledge_solutions (
 );
 
 create table if not exists public.knowledge_adrs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   adr_number integer not null,
   title text not null,
@@ -3823,7 +3823,7 @@ create table if not exists public.knowledge_adrs (
 );
 
 create table if not exists public.knowledge_prompt_base (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   prompt_key text not null,
@@ -3837,7 +3837,7 @@ create table if not exists public.knowledge_prompt_base (
 );
 
 create table if not exists public.knowledge_project_memory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid not null references public.projects(id) on delete cascade,
   memory_key text not null,
@@ -3850,7 +3850,7 @@ create table if not exists public.knowledge_project_memory (
 );
 
 create table if not exists public.knowledge_client_memory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid not null references public.clients(id) on delete cascade,
   memory_key text not null,
@@ -3863,7 +3863,7 @@ create table if not exists public.knowledge_client_memory (
 );
 
 create table if not exists public.knowledge_components (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   component_type text not null default 'ui',
@@ -3876,7 +3876,7 @@ create table if not exists public.knowledge_components (
 );
 
 create table if not exists public.knowledge_patterns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   pattern_type text not null default 'architecture',
@@ -3889,7 +3889,7 @@ create table if not exists public.knowledge_patterns (
 );
 
 create table if not exists public.knowledge_documentation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   doc_key text not null,
@@ -3902,7 +3902,7 @@ create table if not exists public.knowledge_documentation (
 );
 
 create table if not exists public.knowledge_ai_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_key text not null,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
@@ -3916,7 +3916,7 @@ create table if not exists public.knowledge_ai_contexts (
 );
 
 create table if not exists public.knowledge_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
   version_number integer not null,
@@ -3927,7 +3927,7 @@ create table if not exists public.knowledge_versions (
 );
 
 create table if not exists public.knowledge_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   metric_value numeric(14, 4) not null default 0,
@@ -3939,7 +3939,7 @@ create table if not exists public.knowledge_analytics (
 );
 
 create table if not exists public.knowledge_permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grantee_type text not null default 'employee',
   grantee_id uuid,
@@ -3951,7 +3951,7 @@ create table if not exists public.knowledge_permissions (
 );
 
 create table if not exists public.knowledge_cross_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   source_module text not null,
   source_entity_type text not null,
@@ -3962,7 +3962,7 @@ create table if not exists public.knowledge_cross_links (
 );
 
 create table if not exists public.knowledge_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -4065,7 +4065,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 23: AI Business Analyst
 
 create table if not exists public.ba_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -4083,7 +4083,7 @@ create table if not exists public.ba_engagements (
 );
 
 create table if not exists public.ba_interviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   interview_key text not null,
@@ -4098,7 +4098,7 @@ create table if not exists public.ba_interviews (
 );
 
 create table if not exists public.ba_brds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   title text not null,
@@ -4113,7 +4113,7 @@ create table if not exists public.ba_brds (
 );
 
 create table if not exists public.ba_frs_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   brd_id uuid references public.ba_brds(id) on delete set null,
@@ -4127,7 +4127,7 @@ create table if not exists public.ba_frs_documents (
 );
 
 create table if not exists public.ba_user_stories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   frs_id uuid references public.ba_frs_documents(id) on delete set null,
@@ -4143,7 +4143,7 @@ create table if not exists public.ba_user_stories (
 );
 
 create table if not exists public.ba_acceptance_criteria (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_story_id uuid not null references public.ba_user_stories(id) on delete cascade,
   criterion_key text not null,
@@ -4155,7 +4155,7 @@ create table if not exists public.ba_acceptance_criteria (
 );
 
 create table if not exists public.ba_process_maps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   name text not null,
@@ -4168,7 +4168,7 @@ create table if not exists public.ba_process_maps (
 );
 
 create table if not exists public.ba_gap_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   current_state text not null default '',
@@ -4181,7 +4181,7 @@ create table if not exists public.ba_gap_analyses (
 );
 
 create table if not exists public.ba_feature_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   feature_name text not null,
@@ -4194,7 +4194,7 @@ create table if not exists public.ba_feature_priorities (
 );
 
 create table if not exists public.ba_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   risk_key text not null,
@@ -4210,7 +4210,7 @@ create table if not exists public.ba_risks (
 );
 
 create table if not exists public.ba_stakeholders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   name text not null,
@@ -4224,7 +4224,7 @@ create table if not exists public.ba_stakeholders (
 );
 
 create table if not exists public.ba_scope_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   item_key text not null,
@@ -4238,7 +4238,7 @@ create table if not exists public.ba_scope_items (
 );
 
 create table if not exists public.ba_proposals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   title text not null,
@@ -4251,7 +4251,7 @@ create table if not exists public.ba_proposals (
 );
 
 create table if not exists public.ba_cost_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -4266,7 +4266,7 @@ create table if not exists public.ba_cost_estimates (
 );
 
 create table if not exists public.ba_timeline_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -4280,7 +4280,7 @@ create table if not exists public.ba_timeline_estimates (
 );
 
 create table if not exists public.ba_requirement_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   entity_type text not null,
@@ -4293,7 +4293,7 @@ create table if not exists public.ba_requirement_versions (
 );
 
 create table if not exists public.ba_review_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   entity_type text not null,
@@ -4306,7 +4306,7 @@ create table if not exists public.ba_review_approvals (
 );
 
 create table if not exists public.ba_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -4420,7 +4420,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 24: AI Solution Architect
 
 create table if not exists public.sa_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -4441,7 +4441,7 @@ create table if not exists public.sa_engagements (
 );
 
 create table if not exists public.sa_solution_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   title text not null,
@@ -4455,7 +4455,7 @@ create table if not exists public.sa_solution_architectures (
 );
 
 create table if not exists public.sa_system_decompositions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4469,7 +4469,7 @@ create table if not exists public.sa_system_decompositions (
 );
 
 create table if not exists public.sa_domain_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4484,7 +4484,7 @@ create table if not exists public.sa_domain_models (
 );
 
 create table if not exists public.sa_database_schemas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4499,7 +4499,7 @@ create table if not exists public.sa_database_schemas (
 );
 
 create table if not exists public.sa_api_contracts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4514,7 +4514,7 @@ create table if not exists public.sa_api_contracts (
 );
 
 create table if not exists public.sa_module_selections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   module_name text not null,
@@ -4528,7 +4528,7 @@ create table if not exists public.sa_module_selections (
 );
 
 create table if not exists public.sa_build_reuse_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   item_key text not null,
@@ -4542,7 +4542,7 @@ create table if not exists public.sa_build_reuse_recommendations (
 );
 
 create table if not exists public.sa_integration_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4556,7 +4556,7 @@ create table if not exists public.sa_integration_plans (
 );
 
 create table if not exists public.sa_security_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4571,7 +4571,7 @@ create table if not exists public.sa_security_architectures (
 );
 
 create table if not exists public.sa_scalability_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4585,7 +4585,7 @@ create table if not exists public.sa_scalability_plans (
 );
 
 create table if not exists public.sa_performance_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4599,7 +4599,7 @@ create table if not exists public.sa_performance_plans (
 );
 
 create table if not exists public.sa_technology_decisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   decision_key text not null,
@@ -4614,7 +4614,7 @@ create table if not exists public.sa_technology_decisions (
 );
 
 create table if not exists public.sa_deployment_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -4628,7 +4628,7 @@ create table if not exists public.sa_deployment_architectures (
 );
 
 create table if not exists public.sa_sprint_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -4642,7 +4642,7 @@ create table if not exists public.sa_sprint_plans (
 );
 
 create table if not exists public.sa_dependency_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -4655,7 +4655,7 @@ create table if not exists public.sa_dependency_analyses (
 );
 
 create table if not exists public.sa_architecture_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   entity_type text not null,
@@ -4668,7 +4668,7 @@ create table if not exists public.sa_architecture_reviews (
 );
 
 create table if not exists public.sa_architecture_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   entity_type text not null,
@@ -4681,7 +4681,7 @@ create table if not exists public.sa_architecture_versions (
 );
 
 create table if not exists public.sa_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -4802,7 +4802,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 25: AI Development Factory
 
 create table if not exists public.df_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -4825,7 +4825,7 @@ create table if not exists public.df_engagements (
 );
 
 create table if not exists public.df_work_packages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   package_key text not null,
@@ -4839,7 +4839,7 @@ create table if not exists public.df_work_packages (
 );
 
 create table if not exists public.df_backend_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -4853,7 +4853,7 @@ create table if not exists public.df_backend_workflows (
 );
 
 create table if not exists public.df_frontend_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -4867,7 +4867,7 @@ create table if not exists public.df_frontend_workflows (
 );
 
 create table if not exists public.df_api_scaffolds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   scaffold_key text not null,
@@ -4881,7 +4881,7 @@ create table if not exists public.df_api_scaffolds (
 );
 
 create table if not exists public.df_migration_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   plan_key text not null,
@@ -4895,7 +4895,7 @@ create table if not exists public.df_migration_plans (
 );
 
 create table if not exists public.df_repositories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   repo_key text not null,
@@ -4909,7 +4909,7 @@ create table if not exists public.df_repositories (
 );
 
 create table if not exists public.df_components (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   component_key text not null,
@@ -4923,7 +4923,7 @@ create table if not exists public.df_components (
 );
 
 create table if not exists public.df_test_scaffolds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   scaffold_key text not null,
@@ -4937,7 +4937,7 @@ create table if not exists public.df_test_scaffolds (
 );
 
 create table if not exists public.df_coding_standards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   standard_key text not null,
@@ -4951,7 +4951,7 @@ create table if not exists public.df_coding_standards (
 );
 
 create table if not exists public.df_secure_coding_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   validation_key text not null,
@@ -4965,7 +4965,7 @@ create table if not exists public.df_secure_coding_validations (
 );
 
 create table if not exists public.df_module_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   recommendation_key text not null,
@@ -4979,7 +4979,7 @@ create table if not exists public.df_module_recommendations (
 );
 
 create table if not exists public.df_pull_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   pr_key text not null,
@@ -4993,7 +4993,7 @@ create table if not exists public.df_pull_requests (
 );
 
 create table if not exists public.df_code_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   review_key text not null,
@@ -5008,7 +5008,7 @@ create table if not exists public.df_code_reviews (
 );
 
 create table if not exists public.df_technical_docs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   doc_key text not null,
@@ -5022,7 +5022,7 @@ create table if not exists public.df_technical_docs (
 );
 
 create table if not exists public.df_progress_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   tracking_key text not null,
@@ -5036,7 +5036,7 @@ create table if not exists public.df_progress_tracking (
 );
 
 create table if not exists public.df_build_artifacts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   artifact_key text not null,
@@ -5051,7 +5051,7 @@ create table if not exists public.df_build_artifacts (
 );
 
 create table if not exists public.df_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   entity_type text not null,
@@ -5064,7 +5064,7 @@ create table if not exists public.df_versions (
 );
 
 create table if not exists public.df_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -5187,7 +5187,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 26: AI QA Engineer
 
 create table if not exists public.qa_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -5212,7 +5212,7 @@ create table if not exists public.qa_engagements (
 );
 
 create table if not exists public.qa_test_strategies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   strategy_key text not null,
@@ -5227,7 +5227,7 @@ create table if not exists public.qa_test_strategies (
 );
 
 create table if not exists public.qa_unit_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5241,7 +5241,7 @@ create table if not exists public.qa_unit_test_plans (
 );
 
 create table if not exists public.qa_integration_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5255,7 +5255,7 @@ create table if not exists public.qa_integration_test_plans (
 );
 
 create table if not exists public.qa_e2e_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5269,7 +5269,7 @@ create table if not exists public.qa_e2e_test_plans (
 );
 
 create table if not exists public.qa_regression_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -5284,7 +5284,7 @@ create table if not exists public.qa_regression_analyses (
 );
 
 create table if not exists public.qa_risk_based_tests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   test_key text not null,
@@ -5299,7 +5299,7 @@ create table if not exists public.qa_risk_based_tests (
 );
 
 create table if not exists public.qa_security_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5313,7 +5313,7 @@ create table if not exists public.qa_security_validations (
 );
 
 create table if not exists public.qa_performance_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5327,7 +5327,7 @@ create table if not exists public.qa_performance_validations (
 );
 
 create table if not exists public.qa_accessibility_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5342,7 +5342,7 @@ create table if not exists public.qa_accessibility_validations (
 );
 
 create table if not exists public.qa_api_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5356,7 +5356,7 @@ create table if not exists public.qa_api_validations (
 );
 
 create table if not exists public.qa_database_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5370,7 +5370,7 @@ create table if not exists public.qa_database_validations (
 );
 
 create table if not exists public.qa_ui_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -5384,7 +5384,7 @@ create table if not exists public.qa_ui_validations (
 );
 
 create table if not exists public.qa_bug_triages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   bug_key text not null,
@@ -5399,7 +5399,7 @@ create table if not exists public.qa_bug_triages (
 );
 
 create table if not exists public.qa_defect_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -5414,7 +5414,7 @@ create table if not exists public.qa_defect_analyses (
 );
 
 create table if not exists public.qa_coverage_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analytics_key text not null,
@@ -5429,7 +5429,7 @@ create table if not exists public.qa_coverage_analytics (
 );
 
 create table if not exists public.qa_release_readiness (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   assessment_key text not null,
@@ -5444,7 +5444,7 @@ create table if not exists public.qa_release_readiness (
 );
 
 create table if not exists public.qa_quality_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   score_key text not null,
@@ -5458,7 +5458,7 @@ create table if not exists public.qa_quality_scores (
 );
 
 create table if not exists public.qa_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -5583,7 +5583,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 27: AI DevOps & Deployment Engineer
 
 create table if not exists public.dd_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -5610,7 +5610,7 @@ create table if not exists public.dd_engagements (
 );
 
 create table if not exists public.dd_cicd_pipelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   pipeline_key text not null,
@@ -5625,7 +5625,7 @@ create table if not exists public.dd_cicd_pipelines (
 );
 
 create table if not exists public.dd_environments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   environment_key text not null,
@@ -5640,7 +5640,7 @@ create table if not exists public.dd_environments (
 );
 
 create table if not exists public.dd_infrastructure_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   template_key text not null,
@@ -5655,7 +5655,7 @@ create table if not exists public.dd_infrastructure_templates (
 );
 
 create table if not exists public.dd_docker_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   config_key text not null,
@@ -5670,7 +5670,7 @@ create table if not exists public.dd_docker_configs (
 );
 
 create table if not exists public.dd_kubernetes_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5685,7 +5685,7 @@ create table if not exists public.dd_kubernetes_plans (
 );
 
 create table if not exists public.dd_release_orchestrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   orchestration_key text not null,
@@ -5699,7 +5699,7 @@ create table if not exists public.dd_release_orchestrations (
 );
 
 create table if not exists public.dd_rollback_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5714,7 +5714,7 @@ create table if not exists public.dd_rollback_plans (
 );
 
 create table if not exists public.dd_blue_green_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5729,7 +5729,7 @@ create table if not exists public.dd_blue_green_plans (
 );
 
 create table if not exists public.dd_canary_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5744,7 +5744,7 @@ create table if not exists public.dd_canary_plans (
 );
 
 create table if not exists public.dd_monitoring_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   integration_key text not null,
@@ -5759,7 +5759,7 @@ create table if not exists public.dd_monitoring_integrations (
 );
 
 create table if not exists public.dd_logging_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   integration_key text not null,
@@ -5774,7 +5774,7 @@ create table if not exists public.dd_logging_integrations (
 );
 
 create table if not exists public.dd_health_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   check_key text not null,
@@ -5789,7 +5789,7 @@ create table if not exists public.dd_health_checks (
 );
 
 create table if not exists public.dd_backup_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   verification_key text not null,
@@ -5804,7 +5804,7 @@ create table if not exists public.dd_backup_verifications (
 );
 
 create table if not exists public.dd_disaster_recovery_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -5819,7 +5819,7 @@ create table if not exists public.dd_disaster_recovery_plans (
 );
 
 create table if not exists public.dd_cost_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -5833,7 +5833,7 @@ create table if not exists public.dd_cost_estimates (
 );
 
 create table if not exists public.dd_deployment_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   approval_key text not null,
@@ -5847,7 +5847,7 @@ create table if not exists public.dd_deployment_approvals (
 );
 
 create table if not exists public.dd_release_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   version_key text not null,
@@ -5861,7 +5861,7 @@ create table if not exists public.dd_release_versions (
 );
 
 create table if not exists public.dd_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -5986,7 +5986,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 28: AI Customer Success Manager
 
 create table if not exists public.cs_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -6016,7 +6016,7 @@ create table if not exists public.cs_engagements (
 );
 
 create table if not exists public.cs_onboarding_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -6030,7 +6030,7 @@ create table if not exists public.cs_onboarding_workflows (
 );
 
 create table if not exists public.cs_adoption_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   tracking_key text not null,
@@ -6044,7 +6044,7 @@ create table if not exists public.cs_adoption_tracking (
 );
 
 create table if not exists public.cs_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   score_key text not null,
@@ -6058,7 +6058,7 @@ create table if not exists public.cs_health_scores (
 );
 
 create table if not exists public.cs_renewal_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   plan_key text not null,
@@ -6073,7 +6073,7 @@ create table if not exists public.cs_renewal_plans (
 );
 
 create table if not exists public.cs_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   opportunity_key text not null,
@@ -6088,7 +6088,7 @@ create table if not exists public.cs_expansion_opportunities (
 );
 
 create table if not exists public.cs_risk_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -6103,7 +6103,7 @@ create table if not exists public.cs_risk_analyses (
 );
 
 create table if not exists public.cs_support_trend_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -6117,7 +6117,7 @@ create table if not exists public.cs_support_trend_analyses (
 );
 
 create table if not exists public.cs_success_playbooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   playbook_key text not null,
@@ -6131,7 +6131,7 @@ create table if not exists public.cs_success_playbooks (
 );
 
 create table if not exists public.cs_qbr_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   report_key text not null,
@@ -6145,7 +6145,7 @@ create table if not exists public.cs_qbr_reports (
 );
 
 create table if not exists public.cs_communication_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   plan_key text not null,
@@ -6159,7 +6159,7 @@ create table if not exists public.cs_communication_plans (
 );
 
 create table if not exists public.cs_training_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   recommendation_key text not null,
@@ -6173,7 +6173,7 @@ create table if not exists public.cs_training_recommendations (
 );
 
 create table if not exists public.cs_feedback_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -6188,7 +6188,7 @@ create table if not exists public.cs_feedback_analyses (
 );
 
 create table if not exists public.cs_sla_monitoring (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   monitoring_key text not null,
@@ -6202,7 +6202,7 @@ create table if not exists public.cs_sla_monitoring (
 );
 
 create table if not exists public.cs_success_kpi_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   dashboard_key text not null,
@@ -6216,7 +6216,7 @@ create table if not exists public.cs_success_kpi_dashboards (
 );
 
 create table if not exists public.cs_churn_predictions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   prediction_key text not null,
@@ -6231,7 +6231,7 @@ create table if not exists public.cs_churn_predictions (
 );
 
 create table if not exists public.cs_lifecycle_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   lifecycle_key text not null,
@@ -6246,7 +6246,7 @@ create table if not exists public.cs_lifecycle_management (
 );
 
 create table if not exists public.cs_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   summary_key text not null,
@@ -6260,7 +6260,7 @@ create table if not exists public.cs_executive_summaries (
 );
 
 create table if not exists public.cs_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -6385,7 +6385,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 29: Founder Operating System
 
 create table if not exists public.fo_workspaces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   workspace_key text not null,
@@ -6409,7 +6409,7 @@ create table if not exists public.fo_workspaces (
 );
 
 create table if not exists public.fo_strategic_okrs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   okr_key text not null,
@@ -6424,7 +6424,7 @@ create table if not exists public.fo_strategic_okrs (
 );
 
 create table if not exists public.fo_executive_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   dashboard_key text not null,
@@ -6438,7 +6438,7 @@ create table if not exists public.fo_executive_dashboards (
 );
 
 create table if not exists public.fo_revenue_runway (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   runway_key text not null,
@@ -6454,7 +6454,7 @@ create table if not exists public.fo_revenue_runway (
 );
 
 create table if not exists public.fo_team_capacity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   capacity_key text not null,
@@ -6468,7 +6468,7 @@ create table if not exists public.fo_team_capacity (
 );
 
 create table if not exists public.fo_product_roadmaps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   roadmap_key text not null,
@@ -6482,7 +6482,7 @@ create table if not exists public.fo_product_roadmaps (
 );
 
 create table if not exists public.fo_investor_relations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   relation_key text not null,
@@ -6497,7 +6497,7 @@ create table if not exists public.fo_investor_relations (
 );
 
 create table if not exists public.fo_board_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   report_key text not null,
@@ -6511,7 +6511,7 @@ create table if not exists public.fo_board_reports (
 );
 
 create table if not exists public.fo_decision_log (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   decision_key text not null,
@@ -6526,7 +6526,7 @@ create table if not exists public.fo_decision_log (
 );
 
 create table if not exists public.fo_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   priority_key text not null,
@@ -6541,7 +6541,7 @@ create table if not exists public.fo_priorities (
 );
 
 create table if not exists public.fo_resource_allocations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   allocation_key text not null,
@@ -6555,7 +6555,7 @@ create table if not exists public.fo_resource_allocations (
 );
 
 create table if not exists public.fo_risk_register (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   risk_key text not null,
@@ -6570,7 +6570,7 @@ create table if not exists public.fo_risk_register (
 );
 
 create table if not exists public.fo_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   metric_key text not null,
@@ -6586,7 +6586,7 @@ create table if not exists public.fo_growth_metrics (
 );
 
 create table if not exists public.fo_founder_agenda (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   agenda_key text not null,
@@ -6600,7 +6600,7 @@ create table if not exists public.fo_founder_agenda (
 );
 
 create table if not exists public.fo_stakeholders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   stakeholder_key text not null,
@@ -6615,7 +6615,7 @@ create table if not exists public.fo_stakeholders (
 );
 
 create table if not exists public.fo_capital_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   plan_key text not null,
@@ -6630,7 +6630,7 @@ create table if not exists public.fo_capital_plans (
 );
 
 create table if not exists public.fo_company_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   milestone_key text not null,
@@ -6645,7 +6645,7 @@ create table if not exists public.fo_company_milestones (
 );
 
 create table if not exists public.fo_founder_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   insight_key text not null,
@@ -6660,7 +6660,7 @@ create table if not exists public.fo_founder_insights (
 );
 
 create table if not exists public.fo_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -6785,7 +6785,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- Sprint 30: Autonomous Company v1
 
 create table if not exists public.ac_company_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   context_key text not null,
@@ -6810,7 +6810,7 @@ create table if not exists public.ac_company_contexts (
 );
 
 create table if not exists public.ac_workflow_orchestrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   orchestration_key text not null,
@@ -6824,7 +6824,7 @@ create table if not exists public.ac_workflow_orchestrations (
 );
 
 create table if not exists public.ac_event_bus_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   event_key text not null,
@@ -6839,7 +6839,7 @@ create table if not exists public.ac_event_bus_events (
 );
 
 create table if not exists public.ac_worker_collaborations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   collaboration_key text not null,
@@ -6853,7 +6853,7 @@ create table if not exists public.ac_worker_collaborations (
 );
 
 create table if not exists public.ac_approval_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   workflow_key text not null,
@@ -6867,7 +6867,7 @@ create table if not exists public.ac_approval_workflows (
 );
 
 create table if not exists public.ac_notification_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   notification_key text not null,
@@ -6882,7 +6882,7 @@ create table if not exists public.ac_notification_center (
 );
 
 create table if not exists public.ac_company_timeline (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   timeline_key text not null,
@@ -6897,7 +6897,7 @@ create table if not exists public.ac_company_timeline (
 );
 
 create table if not exists public.ac_activity_feed (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   feed_key text not null,
@@ -6911,7 +6911,7 @@ create table if not exists public.ac_activity_feed (
 );
 
 create table if not exists public.ac_cross_module_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   automation_key text not null,
@@ -6926,7 +6926,7 @@ create table if not exists public.ac_cross_module_automations (
 );
 
 create table if not exists public.ac_executive_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   insight_key text not null,
@@ -6941,7 +6941,7 @@ create table if not exists public.ac_executive_insights (
 );
 
 create table if not exists public.ac_predictive_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   recommendation_key text not null,
@@ -6956,7 +6956,7 @@ create table if not exists public.ac_predictive_recommendations (
 );
 
 create table if not exists public.ac_system_search (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   search_key text not null,
@@ -6972,7 +6972,7 @@ create table if not exists public.ac_system_search (
 );
 
 create table if not exists public.ac_command_palette (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   command_key text not null,
@@ -6987,7 +6987,7 @@ create table if not exists public.ac_command_palette (
 );
 
 create table if not exists public.ac_emergency_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   workflow_key text not null,
@@ -7002,7 +7002,7 @@ create table if not exists public.ac_emergency_workflows (
 );
 
 create table if not exists public.ac_business_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   kpi_key text not null,
@@ -7018,7 +7018,7 @@ create table if not exists public.ac_business_kpis (
 );
 
 create table if not exists public.ac_security_governance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   governance_key text not null,
@@ -7033,7 +7033,7 @@ create table if not exists public.ac_security_governance (
 );
 
 create table if not exists public.ac_compliance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   dashboard_key text not null,
@@ -7048,7 +7048,7 @@ create table if not exists public.ac_compliance_dashboards (
 );
 
 create table if not exists public.ac_operational_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_id uuid not null references public.ac_company_contexts(id) on delete cascade,
   health_key text not null,
@@ -7062,7 +7062,7 @@ create table if not exists public.ac_operational_health (
 );
 
 create table if not exists public.ac_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -7186,7 +7186,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- V2 Program A Sprint 1: Commercial Multi-Tenant SaaS Platform
 
 create table if not exists public.saas_tenants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_key text not null,
   company_name text not null,
@@ -7204,7 +7204,7 @@ create table if not exists public.saas_tenants (
 );
 
 create table if not exists public.saas_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   registration_key text not null,
@@ -7219,7 +7219,7 @@ create table if not exists public.saas_registrations (
 );
 
 create table if not exists public.saas_tenant_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   profile_key text not null,
@@ -7235,7 +7235,7 @@ create table if not exists public.saas_tenant_profiles (
 );
 
 create table if not exists public.saas_domain_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   domain_key text not null,
@@ -7249,7 +7249,7 @@ create table if not exists public.saas_domain_configs (
 );
 
 create table if not exists public.saas_email_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   verification_key text not null,
@@ -7263,7 +7263,7 @@ create table if not exists public.saas_email_verifications (
 );
 
 create table if not exists public.saas_trials (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   trial_key text not null,
@@ -7278,7 +7278,7 @@ create table if not exists public.saas_trials (
 );
 
 create table if not exists public.saas_workspace_setups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   setup_key text not null,
@@ -7292,7 +7292,7 @@ create table if not exists public.saas_workspace_setups (
 );
 
 create table if not exists public.saas_tenant_role_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   provision_key text not null,
@@ -7306,7 +7306,7 @@ create table if not exists public.saas_tenant_role_provisions (
 );
 
 create table if not exists public.saas_welcome_experiences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   experience_key text not null,
@@ -7320,7 +7320,7 @@ create table if not exists public.saas_welcome_experiences (
 );
 
 create table if not exists public.saas_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   subscription_key text not null,
@@ -7336,7 +7336,7 @@ create table if not exists public.saas_subscriptions (
 );
 
 create table if not exists public.saas_plan_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   limit_key text not null,
@@ -7351,7 +7351,7 @@ create table if not exists public.saas_plan_limits (
 );
 
 create table if not exists public.saas_subscription_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   event_key text not null,
@@ -7365,7 +7365,7 @@ create table if not exists public.saas_subscription_events (
 );
 
 create table if not exists public.saas_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   license_key text not null,
@@ -7380,7 +7380,7 @@ create table if not exists public.saas_licenses (
 );
 
 create table if not exists public.saas_license_allocations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   allocation_key text not null,
@@ -7395,7 +7395,7 @@ create table if not exists public.saas_license_allocations (
 );
 
 create table if not exists public.saas_feature_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   flag_key text not null,
@@ -7410,7 +7410,7 @@ create table if not exists public.saas_feature_flags (
 );
 
 create table if not exists public.saas_portal_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   settings_key text not null,
@@ -7423,7 +7423,7 @@ create table if not exists public.saas_portal_settings (
 );
 
 create table if not exists public.saas_portal_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   branding_key text not null,
@@ -7437,7 +7437,7 @@ create table if not exists public.saas_portal_branding (
 );
 
 create table if not exists public.saas_portal_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   integration_key text not null,
@@ -7450,7 +7450,7 @@ create table if not exists public.saas_portal_integrations (
 );
 
 create table if not exists public.saas_portal_api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   api_key_hash text not null default '',
@@ -7464,7 +7464,7 @@ create table if not exists public.saas_portal_api_keys (
 );
 
 create table if not exists public.saas_usage_meters (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   meter_key text not null,
@@ -7480,7 +7480,7 @@ create table if not exists public.saas_usage_meters (
 );
 
 create table if not exists public.saas_usage_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   record_key text not null,
@@ -7492,7 +7492,7 @@ create table if not exists public.saas_usage_records (
 );
 
 create table if not exists public.saas_commercial_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   invoice_key text not null,
@@ -7508,7 +7508,7 @@ create table if not exists public.saas_commercial_invoices (
 );
 
 create table if not exists public.saas_billing_credits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   credit_key text not null,
@@ -7521,7 +7521,7 @@ create table if not exists public.saas_billing_credits (
 );
 
 create table if not exists public.saas_billing_coupons (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   coupon_key text not null,
@@ -7536,7 +7536,7 @@ create table if not exists public.saas_billing_coupons (
 );
 
 create table if not exists public.saas_recurring_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   billing_key text not null,
@@ -7550,7 +7550,7 @@ create table if not exists public.saas_recurring_billing (
 );
 
 create table if not exists public.saas_tenant_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   score_key text not null,
@@ -7563,7 +7563,7 @@ create table if not exists public.saas_tenant_health_scores (
 );
 
 create table if not exists public.saas_onboarding_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   checklist_key text not null,
@@ -7577,7 +7577,7 @@ create table if not exists public.saas_onboarding_checklists (
 );
 
 create table if not exists public.saas_product_adoption (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   adoption_key text not null,
@@ -7591,7 +7591,7 @@ create table if not exists public.saas_product_adoption (
 );
 
 create table if not exists public.saas_renewal_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   renewal_key text not null,
@@ -7605,7 +7605,7 @@ create table if not exists public.saas_renewal_tracking (
 );
 
 create table if not exists public.saas_support_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   summary_key text not null,
@@ -7619,7 +7619,7 @@ create table if not exists public.saas_support_summaries (
 );
 
 create table if not exists public.saas_admin_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -7639,7 +7639,7 @@ create table if not exists public.saas_admin_metrics (
 );
 
 create table if not exists public.saas_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -7779,7 +7779,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- V2 Program A Sprint 2: Enterprise Identity Platform
 
 create table if not exists public.idp_realms (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_key text not null,
   realm_name text not null,
@@ -7791,7 +7791,7 @@ create table if not exists public.idp_realms (
 );
 
 create table if not exists public.idp_providers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   provider_key text not null,
@@ -7806,7 +7806,7 @@ create table if not exists public.idp_providers (
 );
 
 create table if not exists public.idp_saml_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   config_key text not null,
@@ -7821,7 +7821,7 @@ create table if not exists public.idp_saml_configs (
 );
 
 create table if not exists public.idp_oidc_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   config_key text not null,
@@ -7837,7 +7837,7 @@ create table if not exists public.idp_oidc_configs (
 );
 
 create table if not exists public.idp_mfa_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -7852,7 +7852,7 @@ create table if not exists public.idp_mfa_policies (
 );
 
 create table if not exists public.idp_mfa_enrollments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   enrollment_key text not null,
@@ -7867,7 +7867,7 @@ create table if not exists public.idp_mfa_enrollments (
 );
 
 create table if not exists public.idp_backup_codes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   code_key text not null,
@@ -7881,7 +7881,7 @@ create table if not exists public.idp_backup_codes (
 );
 
 create table if not exists public.idp_trusted_devices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   device_key text not null,
@@ -7897,7 +7897,7 @@ create table if not exists public.idp_trusted_devices (
 );
 
 create table if not exists public.idp_session_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -7912,7 +7912,7 @@ create table if not exists public.idp_session_policies (
 );
 
 create table if not exists public.idp_active_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   session_key text not null,
@@ -7929,7 +7929,7 @@ create table if not exists public.idp_active_sessions (
 );
 
 create table if not exists public.idp_device_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   device_key text not null,
@@ -7945,7 +7945,7 @@ create table if not exists public.idp_device_registry (
 );
 
 create table if not exists public.idp_concurrent_login_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -7958,7 +7958,7 @@ create table if not exists public.idp_concurrent_login_policies (
 );
 
 create table if not exists public.idp_rbac_roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   role_key text not null,
@@ -7972,7 +7972,7 @@ create table if not exists public.idp_rbac_roles (
 );
 
 create table if not exists public.idp_permission_groups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   group_key text not null,
@@ -7985,7 +7985,7 @@ create table if not exists public.idp_permission_groups (
 );
 
 create table if not exists public.idp_abac_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -7999,7 +7999,7 @@ create table if not exists public.idp_abac_policies (
 );
 
 create table if not exists public.idp_temporary_access_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   grant_key text not null,
@@ -8015,7 +8015,7 @@ create table if not exists public.idp_temporary_access_grants (
 );
 
 create table if not exists public.idp_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   department_key text not null,
@@ -8029,7 +8029,7 @@ create table if not exists public.idp_departments (
 );
 
 create table if not exists public.idp_teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   team_key text not null,
@@ -8043,7 +8043,7 @@ create table if not exists public.idp_teams (
 );
 
 create table if not exists public.idp_business_units (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   unit_key text not null,
@@ -8057,7 +8057,7 @@ create table if not exists public.idp_business_units (
 );
 
 create table if not exists public.idp_reporting_structures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   structure_key text not null,
@@ -8071,7 +8071,7 @@ create table if not exists public.idp_reporting_structures (
 );
 
 create table if not exists public.idp_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   invitation_key text not null,
@@ -8087,7 +8087,7 @@ create table if not exists public.idp_invitations (
 );
 
 create table if not exists public.idp_bulk_invite_batches (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   batch_key text not null,
@@ -8102,7 +8102,7 @@ create table if not exists public.idp_bulk_invite_batches (
 );
 
 create table if not exists public.idp_invitation_roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   role_assignment_key text not null,
@@ -8115,7 +8115,7 @@ create table if not exists public.idp_invitation_roles (
 );
 
 create table if not exists public.idp_invitation_audit (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   audit_key text not null,
@@ -8128,7 +8128,7 @@ create table if not exists public.idp_invitation_audit (
 );
 
 create table if not exists public.idp_login_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   login_key text not null,
@@ -8143,7 +8143,7 @@ create table if not exists public.idp_login_history (
 );
 
 create table if not exists public.idp_security_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   alert_key text not null,
@@ -8159,7 +8159,7 @@ create table if not exists public.idp_security_alerts (
 );
 
 create table if not exists public.idp_risk_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   event_key text not null,
@@ -8174,7 +8174,7 @@ create table if not exists public.idp_risk_events (
 );
 
 create table if not exists public.idp_password_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   policy_key text not null,
@@ -8191,7 +8191,7 @@ create table if not exists public.idp_password_policies (
 );
 
 create table if not exists public.idp_admin_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -8209,7 +8209,7 @@ create table if not exists public.idp_admin_metrics (
 );
 
 create table if not exists public.idp_identity_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   overall_score numeric(5, 2) not null default 0,
@@ -8221,7 +8221,7 @@ create table if not exists public.idp_identity_health (
 );
 
 create table if not exists public.idp_compromised_accounts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   realm_id uuid not null references public.idp_realms(id) on delete cascade,
   account_key text not null,
@@ -8235,7 +8235,7 @@ create table if not exists public.idp_compromised_accounts (
 );
 
 create table if not exists public.idp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -8374,7 +8374,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- V2 Program A Sprint 3: Customer Lifecycle & Tenant Operations Platform
 
 create table if not exists public.tlo_tenant_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_key text not null,
   company_name text not null,
@@ -8386,7 +8386,7 @@ create table if not exists public.tlo_tenant_contexts (
 );
 
 create table if not exists public.tlo_lifecycle_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   record_key text not null,
@@ -8402,7 +8402,7 @@ create table if not exists public.tlo_lifecycle_records (
 );
 
 create table if not exists public.tlo_lifecycle_transitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   transition_key text not null,
@@ -8419,7 +8419,7 @@ create table if not exists public.tlo_lifecycle_transitions (
 );
 
 create table if not exists public.tlo_lifecycle_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   event_key text not null,
@@ -8434,7 +8434,7 @@ create table if not exists public.tlo_lifecycle_events (
 );
 
 create table if not exists public.tlo_reactivation_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   request_key text not null,
@@ -8452,7 +8452,7 @@ create table if not exists public.tlo_reactivation_requests (
 );
 
 create table if not exists public.tlo_workspaces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   workspace_key text not null,
@@ -8467,7 +8467,7 @@ create table if not exists public.tlo_workspaces (
 );
 
 create table if not exists public.tlo_environment_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   setting_key text not null,
@@ -8482,7 +8482,7 @@ create table if not exists public.tlo_environment_settings (
 );
 
 create table if not exists public.tlo_storage_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   storage_key text not null,
@@ -8498,7 +8498,7 @@ create table if not exists public.tlo_storage_management (
 );
 
 create table if not exists public.tlo_operations_controls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   control_key text not null,
@@ -8516,7 +8516,7 @@ create table if not exists public.tlo_operations_controls (
 );
 
 create table if not exists public.tlo_onboarding_flows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   flow_key text not null,
@@ -8531,7 +8531,7 @@ create table if not exists public.tlo_onboarding_flows (
 );
 
 create table if not exists public.tlo_onboarding_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   progress_key text not null,
@@ -8548,7 +8548,7 @@ create table if not exists public.tlo_onboarding_progress (
 );
 
 create table if not exists public.tlo_onboarding_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   validation_key text not null,
@@ -8565,7 +8565,7 @@ create table if not exists public.tlo_onboarding_validations (
 );
 
 create table if not exists public.tlo_go_live_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   checklist_key text not null,
@@ -8581,7 +8581,7 @@ create table if not exists public.tlo_go_live_checklists (
 );
 
 create table if not exists public.tlo_marketplace_modules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   module_key text not null,
@@ -8597,7 +8597,7 @@ create table if not exists public.tlo_marketplace_modules (
 );
 
 create table if not exists public.tlo_module_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   installation_key text not null,
@@ -8613,7 +8613,7 @@ create table if not exists public.tlo_module_installations (
 );
 
 create table if not exists public.tlo_module_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   dependency_key text not null,
@@ -8628,7 +8628,7 @@ create table if not exists public.tlo_module_dependencies (
 );
 
 create table if not exists public.tlo_module_compatibility (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   compatibility_key text not null,
@@ -8644,7 +8644,7 @@ create table if not exists public.tlo_module_compatibility (
 );
 
 create table if not exists public.tlo_industry_packs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   pack_key text not null,
@@ -8659,7 +8659,7 @@ create table if not exists public.tlo_industry_packs (
 );
 
 create table if not exists public.tlo_pack_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   installation_key text not null,
@@ -8674,7 +8674,7 @@ create table if not exists public.tlo_pack_installations (
 );
 
 create table if not exists public.tlo_pack_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   version_key text not null,
@@ -8690,7 +8690,7 @@ create table if not exists public.tlo_pack_versions (
 );
 
 create table if not exists public.tlo_pack_exports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   export_key text not null,
@@ -8706,7 +8706,7 @@ create table if not exists public.tlo_pack_exports (
 );
 
 create table if not exists public.tlo_health_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   snapshot_key text not null,
@@ -8721,7 +8721,7 @@ create table if not exists public.tlo_health_snapshots (
 );
 
 create table if not exists public.tlo_health_dimensions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   dimension_key text not null,
@@ -8737,7 +8737,7 @@ create table if not exists public.tlo_health_dimensions (
 );
 
 create table if not exists public.tlo_health_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   risk_key text not null,
@@ -8754,7 +8754,7 @@ create table if not exists public.tlo_health_risks (
 );
 
 create table if not exists public.tlo_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   score_key text not null,
@@ -8769,7 +8769,7 @@ create table if not exists public.tlo_health_scores (
 );
 
 create table if not exists public.tlo_success_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   plan_key text not null,
@@ -8785,7 +8785,7 @@ create table if not exists public.tlo_success_plans (
 );
 
 create table if not exists public.tlo_quarterly_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   review_key text not null,
@@ -8801,7 +8801,7 @@ create table if not exists public.tlo_quarterly_reviews (
 );
 
 create table if not exists public.tlo_renewal_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   renewal_key text not null,
@@ -8817,7 +8817,7 @@ create table if not exists public.tlo_renewal_plans (
 );
 
 create table if not exists public.tlo_customer_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   milestone_key text not null,
@@ -8833,7 +8833,7 @@ create table if not exists public.tlo_customer_milestones (
 );
 
 create table if not exists public.tlo_commercial_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -8851,7 +8851,7 @@ create table if not exists public.tlo_commercial_metrics (
 );
 
 create table if not exists public.tlo_growth_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   snapshot_key text not null,
   snapshot_date date not null default current_date,
@@ -8867,7 +8867,7 @@ create table if not exists public.tlo_growth_snapshots (
 );
 
 create table if not exists public.tlo_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   opportunity_key text not null,
@@ -8884,7 +8884,7 @@ create table if not exists public.tlo_expansion_opportunities (
 );
 
 create table if not exists public.tlo_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -9026,7 +9026,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- M1 Subscription Billing
 create table if not exists public.brv_billing_accounts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   account_key text not null,
   account_name text not null,
@@ -9041,7 +9041,7 @@ create table if not exists public.brv_billing_accounts (
 );
 
 create table if not exists public.brv_billing_cycles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   cycle_key text not null,
@@ -9056,7 +9056,7 @@ create table if not exists public.brv_billing_cycles (
 );
 
 create table if not exists public.brv_subscription_billings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   subscription_key text not null,
@@ -9077,7 +9077,7 @@ create table if not exists public.brv_subscription_billings (
 );
 
 create table if not exists public.brv_proration_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   proration_key text not null,
@@ -9096,7 +9096,7 @@ create table if not exists public.brv_proration_records (
 
 -- M2 Payment Management
 create table if not exists public.brv_payment_methods (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   method_key text not null,
@@ -9113,7 +9113,7 @@ create table if not exists public.brv_payment_methods (
 );
 
 create table if not exists public.brv_payment_attempts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   attempt_key text not null,
@@ -9130,7 +9130,7 @@ create table if not exists public.brv_payment_attempts (
 );
 
 create table if not exists public.brv_refunds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   refund_key text not null,
@@ -9146,7 +9146,7 @@ create table if not exists public.brv_refunds (
 );
 
 create table if not exists public.brv_wallet_balances (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   balance_key text not null,
@@ -9162,7 +9162,7 @@ create table if not exists public.brv_wallet_balances (
 
 -- M3 Revenue Management
 create table if not exists public.brv_mrr_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -9180,7 +9180,7 @@ create table if not exists public.brv_mrr_snapshots (
 );
 
 create table if not exists public.brv_arr_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -9194,7 +9194,7 @@ create table if not exists public.brv_arr_snapshots (
 );
 
 create table if not exists public.brv_deferred_revenue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   deferred_key text not null,
@@ -9210,7 +9210,7 @@ create table if not exists public.brv_deferred_revenue (
 );
 
 create table if not exists public.brv_revenue_recognition (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   recognition_key text not null,
@@ -9226,7 +9226,7 @@ create table if not exists public.brv_revenue_recognition (
 
 -- M4 Invoice Center
 create table if not exists public.brv_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   invoice_key text not null,
@@ -9247,7 +9247,7 @@ create table if not exists public.brv_invoices (
 );
 
 create table if not exists public.brv_credit_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   credit_key text not null,
@@ -9263,7 +9263,7 @@ create table if not exists public.brv_credit_notes (
 );
 
 create table if not exists public.brv_debit_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   debit_key text not null,
@@ -9279,7 +9279,7 @@ create table if not exists public.brv_debit_notes (
 );
 
 create table if not exists public.brv_tax_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   config_key text not null,
@@ -9296,7 +9296,7 @@ create table if not exists public.brv_tax_configs (
 
 -- M5 Collection Center
 create table if not exists public.brv_outstanding_balances (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   balance_key text not null,
@@ -9312,7 +9312,7 @@ create table if not exists public.brv_outstanding_balances (
 );
 
 create table if not exists public.brv_payment_reminders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   reminder_key text not null,
@@ -9328,7 +9328,7 @@ create table if not exists public.brv_payment_reminders (
 );
 
 create table if not exists public.brv_collection_cases (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   case_key text not null,
@@ -9345,7 +9345,7 @@ create table if not exists public.brv_collection_cases (
 );
 
 create table if not exists public.brv_write_offs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   writeoff_key text not null,
@@ -9362,7 +9362,7 @@ create table if not exists public.brv_write_offs (
 
 -- M6 Financial Analytics
 create table if not exists public.brv_analytics_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -9378,7 +9378,7 @@ create table if not exists public.brv_analytics_snapshots (
 );
 
 create table if not exists public.brv_revenue_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   metrics_key text not null,
@@ -9394,7 +9394,7 @@ create table if not exists public.brv_revenue_growth_metrics (
 );
 
 create table if not exists public.brv_cash_flow_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   record_key text not null,
@@ -9410,7 +9410,7 @@ create table if not exists public.brv_cash_flow_records (
 );
 
 create table if not exists public.brv_subscription_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   trend_key text not null,
@@ -9428,7 +9428,7 @@ create table if not exists public.brv_subscription_trends (
 
 -- M7 Revenue Forecasting
 create table if not exists public.brv_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -9443,7 +9443,7 @@ create table if not exists public.brv_renewal_forecasts (
 );
 
 create table if not exists public.brv_mrr_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -9458,7 +9458,7 @@ create table if not exists public.brv_mrr_forecasts (
 );
 
 create table if not exists public.brv_arr_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -9473,7 +9473,7 @@ create table if not exists public.brv_arr_forecasts (
 );
 
 create table if not exists public.brv_revenue_projections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   projection_key text not null,
@@ -9489,7 +9489,7 @@ create table if not exists public.brv_revenue_projections (
 
 -- M8 Finance Ops Dashboard
 create table if not exists public.brv_finance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -9505,7 +9505,7 @@ create table if not exists public.brv_finance_metrics (
 );
 
 create table if not exists public.brv_financial_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -9520,7 +9520,7 @@ create table if not exists public.brv_financial_health (
 );
 
 create table if not exists public.brv_expansion_contraction (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   record_key text not null,
@@ -9536,7 +9536,7 @@ create table if not exists public.brv_expansion_contraction (
 );
 
 create table if not exists public.brv_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -9704,7 +9704,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- M1 Notification Engine
 create table if not exists public.cnh_communication_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -9716,7 +9716,7 @@ create table if not exists public.cnh_communication_hubs (
 );
 
 create table if not exists public.cnh_notification_channels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   channel_key text not null,
@@ -9732,7 +9732,7 @@ create table if not exists public.cnh_notification_channels (
 );
 
 create table if not exists public.cnh_notification_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   queue_key text not null,
@@ -9754,7 +9754,7 @@ create table if not exists public.cnh_notification_queue (
 );
 
 create table if not exists public.cnh_retry_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   policy_key text not null,
@@ -9771,7 +9771,7 @@ create table if not exists public.cnh_retry_policies (
 
 -- M2 Message Template Center
 create table if not exists public.cnh_message_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_key text not null,
@@ -9787,7 +9787,7 @@ create table if not exists public.cnh_message_templates (
 );
 
 create table if not exists public.cnh_template_variables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -9802,7 +9802,7 @@ create table if not exists public.cnh_template_variables (
 );
 
 create table if not exists public.cnh_template_localizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -9816,7 +9816,7 @@ create table if not exists public.cnh_template_localizations (
 );
 
 create table if not exists public.cnh_template_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -9833,7 +9833,7 @@ create table if not exists public.cnh_template_approvals (
 
 -- M3 Communication Automation
 create table if not exists public.cnh_automation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_key text not null,
@@ -9849,7 +9849,7 @@ create table if not exists public.cnh_automation_rules (
 );
 
 create table if not exists public.cnh_automation_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
@@ -9863,7 +9863,7 @@ create table if not exists public.cnh_automation_triggers (
 );
 
 create table if not exists public.cnh_automation_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
@@ -9879,7 +9879,7 @@ create table if not exists public.cnh_automation_schedules (
 );
 
 create table if not exists public.cnh_automation_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid references public.cnh_automation_rules(id) on delete set null,
@@ -9897,7 +9897,7 @@ create table if not exists public.cnh_automation_executions (
 
 -- M4 Customer Preference Center
 create table if not exists public.cnh_preference_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   profile_key text not null,
@@ -9912,7 +9912,7 @@ create table if not exists public.cnh_preference_profiles (
 );
 
 create table if not exists public.cnh_channel_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid not null references public.cnh_preference_profiles(id) on delete cascade,
@@ -9928,7 +9928,7 @@ create table if not exists public.cnh_channel_preferences (
 );
 
 create table if not exists public.cnh_opt_in_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
@@ -9944,7 +9944,7 @@ create table if not exists public.cnh_opt_in_records (
 );
 
 create table if not exists public.cnh_opt_out_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
@@ -9960,7 +9960,7 @@ create table if not exists public.cnh_opt_out_records (
 
 -- M5 Announcement Center
 create table if not exists public.cnh_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_key text not null,
@@ -9976,7 +9976,7 @@ create table if not exists public.cnh_announcements (
 );
 
 create table if not exists public.cnh_announcement_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -9990,7 +9990,7 @@ create table if not exists public.cnh_announcement_schedules (
 );
 
 create table if not exists public.cnh_pinned_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -10005,7 +10005,7 @@ create table if not exists public.cnh_pinned_announcements (
 );
 
 create table if not exists public.cnh_announcement_acknowledgements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -10019,7 +10019,7 @@ create table if not exists public.cnh_announcement_acknowledgements (
 
 -- M6 Campaign Management
 create table if not exists public.cnh_campaigns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_key text not null,
@@ -10036,7 +10036,7 @@ create table if not exists public.cnh_campaigns (
 );
 
 create table if not exists public.cnh_audience_segments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid references public.cnh_campaigns(id) on delete set null,
@@ -10051,7 +10051,7 @@ create table if not exists public.cnh_audience_segments (
 );
 
 create table if not exists public.cnh_campaign_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
@@ -10071,7 +10071,7 @@ create table if not exists public.cnh_campaign_deliveries (
 );
 
 create table if not exists public.cnh_campaign_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
@@ -10091,7 +10091,7 @@ create table if not exists public.cnh_campaign_metrics (
 
 -- M7 Delivery Analytics
 create table if not exists public.cnh_delivery_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -10108,7 +10108,7 @@ create table if not exists public.cnh_delivery_analytics (
 );
 
 create table if not exists public.cnh_engagement_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -10125,7 +10125,7 @@ create table if not exists public.cnh_engagement_metrics (
 );
 
 create table if not exists public.cnh_bounce_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   bounce_key text not null,
@@ -10142,7 +10142,7 @@ create table if not exists public.cnh_bounce_records (
 );
 
 create table if not exists public.cnh_channel_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   performance_key text not null,
@@ -10160,7 +10160,7 @@ create table if not exists public.cnh_channel_performance (
 
 -- M8 Communication Ops Dashboard
 create table if not exists public.cnh_communication_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -10177,7 +10177,7 @@ create table if not exists public.cnh_communication_metrics (
 );
 
 create table if not exists public.cnh_system_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -10194,7 +10194,7 @@ create table if not exists public.cnh_system_health (
 );
 
 create table if not exists public.cnh_delivery_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   failure_key text not null,
@@ -10212,7 +10212,7 @@ create table if not exists public.cnh_delivery_failures (
 );
 
 create table if not exists public.cnh_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -10381,7 +10381,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- M1 Integration Hub
 create table if not exists public.intg_integration_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -10393,7 +10393,7 @@ create table if not exists public.intg_integration_hubs (
 );
 
 create table if not exists public.intg_connected_services (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   service_key text not null,
@@ -10409,7 +10409,7 @@ create table if not exists public.intg_connected_services (
 );
 
 create table if not exists public.intg_connector_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connected_service_id uuid not null references public.intg_connected_services(id) on delete cascade,
@@ -10425,7 +10425,7 @@ create table if not exists public.intg_connector_configs (
 );
 
 create table if not exists public.intg_connector_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connected_service_id uuid not null references public.intg_connected_services(id) on delete cascade,
@@ -10441,7 +10441,7 @@ create table if not exists public.intg_connector_health (
 
 -- M2 Payment Connectors
 create table if not exists public.intg_payment_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_key text not null,
@@ -10457,7 +10457,7 @@ create table if not exists public.intg_payment_connectors (
 );
 
 create table if not exists public.intg_payment_connector_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -10472,7 +10472,7 @@ create table if not exists public.intg_payment_connector_health (
 );
 
 create table if not exists public.intg_payment_retry_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -10489,7 +10489,7 @@ create table if not exists public.intg_payment_retry_queue (
 );
 
 create table if not exists public.intg_payment_transactions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -10508,7 +10508,7 @@ create table if not exists public.intg_payment_transactions (
 
 -- M3 Accounting Connectors
 create table if not exists public.intg_accounting_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_key text not null,
@@ -10524,7 +10524,7 @@ create table if not exists public.intg_accounting_connectors (
 );
 
 create table if not exists public.intg_accounting_sync_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -10541,7 +10541,7 @@ create table if not exists public.intg_accounting_sync_status (
 );
 
 create table if not exists public.intg_export_mappings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -10557,7 +10557,7 @@ create table if not exists public.intg_export_mappings (
 );
 
 create table if not exists public.intg_accounting_exports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -10575,7 +10575,7 @@ create table if not exists public.intg_accounting_exports (
 
 -- M4 Public API Platform
 create table if not exists public.intg_api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   key_name text not null,
@@ -10591,7 +10591,7 @@ create table if not exists public.intg_api_keys (
 );
 
 create table if not exists public.intg_api_scopes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid not null references public.intg_api_keys(id) on delete cascade,
@@ -10605,7 +10605,7 @@ create table if not exists public.intg_api_scopes (
 );
 
 create table if not exists public.intg_rate_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid references public.intg_api_keys(id) on delete set null,
@@ -10620,7 +10620,7 @@ create table if not exists public.intg_rate_limits (
 );
 
 create table if not exists public.intg_api_usage (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid references public.intg_api_keys(id) on delete set null,
@@ -10638,7 +10638,7 @@ create table if not exists public.intg_api_usage (
 
 -- M5 Webhook Platform
 create table if not exists public.intg_incoming_webhooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   webhook_key text not null,
@@ -10654,7 +10654,7 @@ create table if not exists public.intg_incoming_webhooks (
 );
 
 create table if not exists public.intg_outgoing_webhooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   webhook_key text not null,
@@ -10670,7 +10670,7 @@ create table if not exists public.intg_outgoing_webhooks (
 );
 
 create table if not exists public.intg_webhook_dead_letter (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   outgoing_webhook_id uuid references public.intg_outgoing_webhooks(id) on delete set null,
@@ -10687,7 +10687,7 @@ create table if not exists public.intg_webhook_dead_letter (
 );
 
 create table if not exists public.intg_webhook_delivery_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   outgoing_webhook_id uuid not null references public.intg_outgoing_webhooks(id) on delete cascade,
@@ -10706,7 +10706,7 @@ create table if not exists public.intg_webhook_delivery_logs (
 
 -- M6 Integration Marketplace
 create table if not exists public.intg_marketplace_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_slug text not null,
@@ -10721,7 +10721,7 @@ create table if not exists public.intg_marketplace_connectors (
 );
 
 create table if not exists public.intg_marketplace_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -10736,7 +10736,7 @@ create table if not exists public.intg_marketplace_installations (
 );
 
 create table if not exists public.intg_marketplace_compatibility (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -10751,7 +10751,7 @@ create table if not exists public.intg_marketplace_compatibility (
 );
 
 create table if not exists public.intg_marketplace_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -10768,7 +10768,7 @@ create table if not exists public.intg_marketplace_versions (
 
 -- M7 API Analytics
 create table if not exists public.intg_api_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -10783,7 +10783,7 @@ create table if not exists public.intg_api_analytics (
 );
 
 create table if not exists public.intg_latency_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -10799,7 +10799,7 @@ create table if not exists public.intg_latency_metrics (
 );
 
 create table if not exists public.intg_webhook_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -10815,7 +10815,7 @@ create table if not exists public.intg_webhook_analytics (
 );
 
 create table if not exists public.intg_usage_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   trend_key text not null,
@@ -10832,7 +10832,7 @@ create table if not exists public.intg_usage_trends (
 
 -- M8 Integration Dashboard
 create table if not exists public.intg_integration_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -10847,7 +10847,7 @@ create table if not exists public.intg_integration_metrics (
 );
 
 create table if not exists public.intg_integration_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -10864,7 +10864,7 @@ create table if not exists public.intg_integration_health (
 );
 
 create table if not exists public.intg_integration_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   failure_key text not null,
@@ -10881,7 +10881,7 @@ create table if not exists public.intg_integration_failures (
 );
 
 create table if not exists public.intg_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -11049,7 +11049,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- OperationsCenter
 create table if not exists public.eoc_operations_centers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_key text not null,
   center_name text not null,
@@ -11062,7 +11062,7 @@ create table if not exists public.eoc_operations_centers (
 
 -- OverallHealth
 create table if not exists public.eoc_overall_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -11078,7 +11078,7 @@ create table if not exists public.eoc_overall_health (
 
 -- ModuleHealth
 create table if not exists public.eoc_module_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -11093,7 +11093,7 @@ create table if not exists public.eoc_module_health (
 
 -- DatabaseHealth
 create table if not exists public.eoc_database_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -11108,7 +11108,7 @@ create table if not exists public.eoc_database_health (
 
 -- JobScheduler
 create table if not exists public.eoc_job_schedulers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   scheduler_key text not null,
@@ -11124,7 +11124,7 @@ create table if not exists public.eoc_job_schedulers (
 
 -- RecurringJob
 create table if not exists public.eoc_recurring_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   job_key text not null,
@@ -11141,7 +11141,7 @@ create table if not exists public.eoc_recurring_jobs (
 
 -- JobRetryQueue
 create table if not exists public.eoc_job_retry_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   queue_key text not null,
@@ -11159,7 +11159,7 @@ create table if not exists public.eoc_job_retry_queue (
 
 -- JobDeadLetter
 create table if not exists public.eoc_job_dead_letter (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   dead_letter_key text not null,
@@ -11175,7 +11175,7 @@ create table if not exists public.eoc_job_dead_letter (
 
 -- PlatformEvent
 create table if not exists public.eoc_platform_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   event_key text not null,
@@ -11192,7 +11192,7 @@ create table if not exists public.eoc_platform_events (
 
 -- BusinessEvent
 create table if not exists public.eoc_business_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   event_key text not null,
@@ -11209,7 +11209,7 @@ create table if not exists public.eoc_business_events (
 
 -- EventSubscription
 create table if not exists public.eoc_event_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   subscription_key text not null,
@@ -11225,7 +11225,7 @@ create table if not exists public.eoc_event_subscriptions (
 
 -- EventReplay
 create table if not exists public.eoc_event_replays (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   replay_key text not null,
@@ -11242,7 +11242,7 @@ create table if not exists public.eoc_event_replays (
 
 -- Alert
 create table if not exists public.eoc_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   alert_key text not null,
@@ -11260,7 +11260,7 @@ create table if not exists public.eoc_alerts (
 
 -- EscalationRule
 create table if not exists public.eoc_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   rule_key text not null,
@@ -11276,7 +11276,7 @@ create table if not exists public.eoc_escalation_rules (
 
 -- AlertAcknowledgement
 create table if not exists public.eoc_alert_acknowledgements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   ack_key text not null,
@@ -11293,7 +11293,7 @@ create table if not exists public.eoc_alert_acknowledgements (
 
 -- MaintenanceWindow
 create table if not exists public.eoc_maintenance_windows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   window_key text not null,
@@ -11310,7 +11310,7 @@ create table if not exists public.eoc_maintenance_windows (
 
 -- GlobalFlag
 create table if not exists public.eoc_global_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   flag_key text not null,
@@ -11326,7 +11326,7 @@ create table if not exists public.eoc_global_flags (
 
 -- TenantFlag
 create table if not exists public.eoc_tenant_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   flag_key text not null,
@@ -11342,7 +11342,7 @@ create table if not exists public.eoc_tenant_flags (
 
 -- BetaFeature
 create table if not exists public.eoc_beta_features (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   feature_key text not null,
@@ -11357,7 +11357,7 @@ create table if not exists public.eoc_beta_features (
 
 -- RolloutConfig
 create table if not exists public.eoc_rollout_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   rollout_key text not null,
@@ -11373,7 +11373,7 @@ create table if not exists public.eoc_rollout_configs (
 
 -- PlatformConfig
 create table if not exists public.eoc_platform_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   config_key text not null,
@@ -11389,7 +11389,7 @@ create table if not exists public.eoc_platform_configs (
 
 -- TenantConfig
 create table if not exists public.eoc_tenant_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   config_key text not null,
@@ -11405,7 +11405,7 @@ create table if not exists public.eoc_tenant_configs (
 
 -- SecretsMetadata
 create table if not exists public.eoc_secrets_metadata (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   secret_key text not null,
@@ -11421,7 +11421,7 @@ create table if not exists public.eoc_secrets_metadata (
 
 -- ConfigVersion
 create table if not exists public.eoc_config_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   version_key text not null,
@@ -11437,7 +11437,7 @@ create table if not exists public.eoc_config_versions (
 
 -- PlatformLog
 create table if not exists public.eoc_platform_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   log_key text not null,
@@ -11453,7 +11453,7 @@ create table if not exists public.eoc_platform_logs (
 
 -- PlatformMetric
 create table if not exists public.eoc_platform_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   metrics_key text not null,
@@ -11469,7 +11469,7 @@ create table if not exists public.eoc_platform_metrics (
 
 -- TraceSummary
 create table if not exists public.eoc_trace_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   trace_key text not null,
@@ -11485,7 +11485,7 @@ create table if not exists public.eoc_trace_summaries (
 
 -- ServiceRegistry
 create table if not exists public.eoc_service_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   service_key text not null,
@@ -11501,7 +11501,7 @@ create table if not exists public.eoc_service_registry (
 
 -- OperationsMetric
 create table if not exists public.eoc_operations_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -11516,7 +11516,7 @@ create table if not exists public.eoc_operations_metrics (
 
 -- OperationsHealth
 create table if not exists public.eoc_operations_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -11532,7 +11532,7 @@ create table if not exists public.eoc_operations_health (
 
 -- OperationsFailure
 create table if not exists public.eoc_operations_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   failure_key text not null,
@@ -11549,7 +11549,7 @@ create table if not exists public.eoc_operations_failures (
 
 -- Audit Logs
 create table if not exists public.eoc_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -11700,7 +11700,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- IntelligenceHub
 create table if not exists public.aix_intelligence_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -11713,7 +11713,7 @@ create table if not exists public.aix_intelligence_hubs (
 
 -- DailyExecutiveBrief
 create table if not exists public.aix_daily_executive_briefs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   brief_key text not null,
@@ -11730,7 +11730,7 @@ create table if not exists public.aix_daily_executive_briefs (
 
 -- WeeklyBusinessReview
 create table if not exists public.aix_weekly_business_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   review_key text not null,
@@ -11747,7 +11747,7 @@ create table if not exists public.aix_weekly_business_reviews (
 
 -- MonthlyExecutiveSummary
 create table if not exists public.aix_monthly_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   summary_key text not null,
@@ -11764,7 +11764,7 @@ create table if not exists public.aix_monthly_executive_summaries (
 
 -- TrialConversionScore
 create table if not exists public.aix_trial_conversion_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -11781,7 +11781,7 @@ create table if not exists public.aix_trial_conversion_scores (
 
 -- RenewalProbability
 create table if not exists public.aix_renewal_probabilities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   probability_key text not null,
@@ -11798,7 +11798,7 @@ create table if not exists public.aix_renewal_probabilities (
 
 -- ChurnRisk
 create table if not exists public.aix_churn_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -11815,7 +11815,7 @@ create table if not exists public.aix_churn_risks (
 
 -- ExpansionOpportunity
 create table if not exists public.aix_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   opportunity_key text not null,
@@ -11832,7 +11832,7 @@ create table if not exists public.aix_expansion_opportunities (
 
 -- MrrTrend
 create table if not exists public.aix_mrr_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -11849,7 +11849,7 @@ create table if not exists public.aix_mrr_trends (
 
 -- ArrTrend
 create table if not exists public.aix_arr_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -11866,7 +11866,7 @@ create table if not exists public.aix_arr_trends (
 
 -- RevenueGrowthMetric
 create table if not exists public.aix_revenue_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -11883,7 +11883,7 @@ create table if not exists public.aix_revenue_growth_metrics (
 
 -- RevenueRisk
 create table if not exists public.aix_revenue_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -11900,7 +11900,7 @@ create table if not exists public.aix_revenue_risks (
 
 -- PlatformHealthIntel
 create table if not exists public.aix_platform_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -11916,7 +11916,7 @@ create table if not exists public.aix_platform_health_intel (
 
 -- QueueHealthIntel
 create table if not exists public.aix_queue_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -11933,7 +11933,7 @@ create table if not exists public.aix_queue_health_intel (
 
 -- IntegrationHealthIntel
 create table if not exists public.aix_integration_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -11950,7 +11950,7 @@ create table if not exists public.aix_integration_health_intel (
 
 -- PerformanceTrend
 create table if not exists public.aix_performance_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -11967,7 +11967,7 @@ create table if not exists public.aix_performance_trends (
 
 -- UnusualLoginActivity
 create table if not exists public.aix_unusual_login_activity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   activity_key text not null,
@@ -11985,7 +11985,7 @@ create table if not exists public.aix_unusual_login_activity (
 
 -- PermissionRisk
 create table if not exists public.aix_permission_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -12003,7 +12003,7 @@ create table if not exists public.aix_permission_risks (
 
 -- TenantSecurityTrend
 create table if not exists public.aix_tenant_security_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -12020,7 +12020,7 @@ create table if not exists public.aix_tenant_security_trends (
 
 -- ComplianceWarning
 create table if not exists public.aix_compliance_warnings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   warning_key text not null,
@@ -12038,7 +12038,7 @@ create table if not exists public.aix_compliance_warnings (
 
 -- TodayPriority
 create table if not exists public.aix_today_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   priority_key text not null,
@@ -12055,7 +12055,7 @@ create table if not exists public.aix_today_priorities (
 
 -- RecommendedAction
 create table if not exists public.aix_recommended_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   action_key text not null,
@@ -12073,7 +12073,7 @@ create table if not exists public.aix_recommended_actions (
 
 -- BusinessRisk
 create table if not exists public.aix_business_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -12091,7 +12091,7 @@ create table if not exists public.aix_business_risks (
 
 -- GrowthOpportunity
 create table if not exists public.aix_growth_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   opportunity_key text not null,
@@ -12109,7 +12109,7 @@ create table if not exists public.aix_growth_opportunities (
 
 -- KnowledgeReasoningSession
 create table if not exists public.aix_knowledge_reasoning_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   session_key text not null,
@@ -12126,7 +12126,7 @@ create table if not exists public.aix_knowledge_reasoning_sessions (
 
 -- EvidenceTrace
 create table if not exists public.aix_evidence_traces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trace_key text not null,
@@ -12142,7 +12142,7 @@ create table if not exists public.aix_evidence_traces (
 
 -- OrchestrationLink
 create table if not exists public.aix_orchestration_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   link_key text not null,
@@ -12159,7 +12159,7 @@ create table if not exists public.aix_orchestration_links (
 
 -- RecommendationOutput
 create table if not exists public.aix_recommendation_outputs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   output_key text not null,
@@ -12176,7 +12176,7 @@ create table if not exists public.aix_recommendation_outputs (
 
 -- ExecutiveMetric
 create table if not exists public.aix_executive_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -12193,7 +12193,7 @@ create table if not exists public.aix_executive_metrics (
 
 -- ExecutiveHealth
 create table if not exists public.aix_executive_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -12209,7 +12209,7 @@ create table if not exists public.aix_executive_health (
 
 -- ExecutiveFailure
 create table if not exists public.aix_executive_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   failure_key text not null,
@@ -12226,7 +12226,7 @@ create table if not exists public.aix_executive_failures (
 
 -- Audit Logs
 create table if not exists public.aix_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -12377,7 +12377,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- ReadinessHub
 create table if not exists public.elr_readiness_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -12390,7 +12390,7 @@ create table if not exists public.elr_readiness_hubs (
 
 -- EnvironmentValidation
 create table if not exists public.elr_environment_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -12406,7 +12406,7 @@ create table if not exists public.elr_environment_validations (
 
 -- ConfigurationValidation
 create table if not exists public.elr_configuration_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -12422,7 +12422,7 @@ create table if not exists public.elr_configuration_validations (
 
 -- SecretsValidation
 create table if not exists public.elr_secrets_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -12438,7 +12438,7 @@ create table if not exists public.elr_secrets_validations (
 
 -- DeploymentPlan
 create table if not exists public.elr_deployment_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   plan_key text not null,
@@ -12455,7 +12455,7 @@ create table if not exists public.elr_deployment_plans (
 
 -- RollbackPlan
 create table if not exists public.elr_rollback_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   plan_key text not null,
@@ -12471,7 +12471,7 @@ create table if not exists public.elr_rollback_plans (
 
 -- VersionRegistry
 create table if not exists public.elr_version_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   version_key text not null,
@@ -12487,7 +12487,7 @@ create table if not exists public.elr_version_registry (
 
 -- ReleaseNote
 create table if not exists public.elr_release_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   note_key text not null,
@@ -12503,7 +12503,7 @@ create table if not exists public.elr_release_notes (
 
 -- BackupPolicy
 create table if not exists public.elr_backup_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   policy_key text not null,
@@ -12519,7 +12519,7 @@ create table if not exists public.elr_backup_policies (
 
 -- BackupVerification
 create table if not exists public.elr_backup_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   verification_key text not null,
@@ -12535,7 +12535,7 @@ create table if not exists public.elr_backup_verifications (
 
 -- RestoreVerification
 create table if not exists public.elr_restore_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   verification_key text not null,
@@ -12551,7 +12551,7 @@ create table if not exists public.elr_restore_verifications (
 
 -- RecoveryDrill
 create table if not exists public.elr_recovery_drills (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   drill_key text not null,
@@ -12567,7 +12567,7 @@ create table if not exists public.elr_recovery_drills (
 
 -- ObservabilityLog
 create table if not exists public.elr_observability_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   log_key text not null,
@@ -12583,7 +12583,7 @@ create table if not exists public.elr_observability_logs (
 
 -- ObservabilityMetric
 create table if not exists public.elr_observability_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   metric_key text not null,
@@ -12599,7 +12599,7 @@ create table if not exists public.elr_observability_metrics (
 
 -- TraceRecord
 create table if not exists public.elr_trace_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   trace_key text not null,
@@ -12615,7 +12615,7 @@ create table if not exists public.elr_trace_records (
 
 -- SlaMonitor
 create table if not exists public.elr_sla_monitors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   monitor_key text not null,
@@ -12631,7 +12631,7 @@ create table if not exists public.elr_sla_monitors (
 
 -- SecurityChecklist
 create table if not exists public.elr_security_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   checklist_key text not null,
@@ -12647,7 +12647,7 @@ create table if not exists public.elr_security_checklists (
 
 -- VulnerabilityReview
 create table if not exists public.elr_vulnerability_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   review_key text not null,
@@ -12663,7 +12663,7 @@ create table if not exists public.elr_vulnerability_reviews (
 
 -- PermissionAudit
 create table if not exists public.elr_permission_audits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   audit_key text not null,
@@ -12679,7 +12679,7 @@ create table if not exists public.elr_permission_audits (
 
 -- ComplianceReview
 create table if not exists public.elr_compliance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   review_key text not null,
@@ -12695,7 +12695,7 @@ create table if not exists public.elr_compliance_reviews (
 
 -- AdminGuide
 create table if not exists public.elr_admin_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -12711,7 +12711,7 @@ create table if not exists public.elr_admin_guides (
 
 -- UserGuide
 create table if not exists public.elr_user_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -12727,7 +12727,7 @@ create table if not exists public.elr_user_guides (
 
 -- DeploymentGuide
 create table if not exists public.elr_deployment_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -12743,7 +12743,7 @@ create table if not exists public.elr_deployment_guides (
 
 -- LaunchScoreMetric
 create table if not exists public.elr_launch_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -12761,7 +12761,7 @@ create table if not exists public.elr_launch_scores (
 
 -- ReadinessValidation
 create table if not exists public.elr_readiness_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -12777,7 +12777,7 @@ create table if not exists public.elr_readiness_validations (
 
 -- LaunchBlocker
 create table if not exists public.elr_launch_blockers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   blocker_key text not null,
@@ -12793,7 +12793,7 @@ create table if not exists public.elr_launch_blockers (
 
 -- ScoreSnapshot
 create table if not exists public.elr_score_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   snapshot_key text not null,
@@ -12809,7 +12809,7 @@ create table if not exists public.elr_score_snapshots (
 
 -- LaunchHealth
 create table if not exists public.elr_launch_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -12827,7 +12827,7 @@ create table if not exists public.elr_launch_health (
 
 -- CriticalIssue
 create table if not exists public.elr_critical_issues (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   issue_key text not null,
@@ -12843,7 +12843,7 @@ create table if not exists public.elr_critical_issues (
 
 -- ReadinessWarning
 create table if not exists public.elr_readiness_warnings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   warning_key text not null,
@@ -12859,7 +12859,7 @@ create table if not exists public.elr_readiness_warnings (
 
 -- LaunchFailure
 create table if not exists public.elr_launch_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   failure_key text not null,
@@ -12876,7 +12876,7 @@ create table if not exists public.elr_launch_failures (
 
 -- Audit Logs
 create table if not exists public.elr_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -13027,7 +13027,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- FrameworkHub
 create table if not exists public.ifr_framework_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -13040,7 +13040,7 @@ create table if not exists public.ifr_framework_hubs (
 
 -- IndustryRegistration
 create table if not exists public.ifr_industry_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   registration_key text not null,
@@ -13055,7 +13055,7 @@ create table if not exists public.ifr_industry_registrations (
 
 -- IndustryMetadata
 create table if not exists public.ifr_industry_metadata (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   metadata_key text not null,
@@ -13070,7 +13070,7 @@ create table if not exists public.ifr_industry_metadata (
 
 -- IndustryVersion
 create table if not exists public.ifr_industry_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   version_key text not null,
@@ -13085,7 +13085,7 @@ create table if not exists public.ifr_industry_versions (
 
 -- IndustryDependency
 create table if not exists public.ifr_industry_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -13100,7 +13100,7 @@ create table if not exists public.ifr_industry_dependencies (
 
 -- BusinessType
 create table if not exists public.ifr_business_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   type_key text not null,
@@ -13115,7 +13115,7 @@ create table if not exists public.ifr_business_types (
 
 -- BusinessSize
 create table if not exists public.ifr_business_sizes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   size_key text not null,
@@ -13130,7 +13130,7 @@ create table if not exists public.ifr_business_sizes (
 
 -- OperatingModel
 create table if not exists public.ifr_operating_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   model_key text not null,
@@ -13145,7 +13145,7 @@ create table if not exists public.ifr_operating_models (
 
 -- IndustryProfile
 create table if not exists public.ifr_industry_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -13160,7 +13160,7 @@ create table if not exists public.ifr_industry_profiles (
 
 -- DashboardTemplate
 create table if not exists public.ifr_dashboard_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -13175,7 +13175,7 @@ create table if not exists public.ifr_dashboard_templates (
 
 -- WorkflowTemplate
 create table if not exists public.ifr_workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -13190,7 +13190,7 @@ create table if not exists public.ifr_workflow_templates (
 
 -- RoleTemplate
 create table if not exists public.ifr_role_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -13205,7 +13205,7 @@ create table if not exists public.ifr_role_templates (
 
 -- ReportTemplate
 create table if not exists public.ifr_report_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -13220,7 +13220,7 @@ create table if not exists public.ifr_report_templates (
 
 -- DynamicConfiguration
 create table if not exists public.ifr_dynamic_configurations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   config_key text not null,
@@ -13235,7 +13235,7 @@ create table if not exists public.ifr_dynamic_configurations (
 
 -- FeatureConfiguration
 create table if not exists public.ifr_feature_configurations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   feature_key text not null,
@@ -13250,7 +13250,7 @@ create table if not exists public.ifr_feature_configurations (
 
 -- BusinessRule
 create table if not exists public.ifr_business_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   rule_key text not null,
@@ -13265,7 +13265,7 @@ create table if not exists public.ifr_business_rules (
 
 -- ValidationRule
 create table if not exists public.ifr_validation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   rule_key text not null,
@@ -13280,7 +13280,7 @@ create table if not exists public.ifr_validation_rules (
 
 -- IndustryContext
 create table if not exists public.ifr_industry_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   context_key text not null,
@@ -13295,7 +13295,7 @@ create table if not exists public.ifr_industry_contexts (
 
 -- AiContext
 create table if not exists public.ifr_ai_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   context_key text not null,
@@ -13310,7 +13310,7 @@ create table if not exists public.ifr_ai_contexts (
 
 -- TerminologyEntry
 create table if not exists public.ifr_terminology_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   term_key text not null,
@@ -13325,7 +13325,7 @@ create table if not exists public.ifr_terminology_entries (
 
 -- DemoProfile
 create table if not exists public.ifr_demo_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -13340,7 +13340,7 @@ create table if not exists public.ifr_demo_profiles (
 
 -- ProductionProfile
 create table if not exists public.ifr_production_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -13355,7 +13355,7 @@ create table if not exists public.ifr_production_profiles (
 
 -- EnterpriseProfile
 create table if not exists public.ifr_enterprise_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -13370,7 +13370,7 @@ create table if not exists public.ifr_enterprise_profiles (
 
 -- SharedApi
 create table if not exists public.ifr_shared_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -13385,7 +13385,7 @@ create table if not exists public.ifr_shared_apis (
 
 -- ContextApi
 create table if not exists public.ifr_context_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -13400,7 +13400,7 @@ create table if not exists public.ifr_context_apis (
 
 -- ConfigurationApi
 create table if not exists public.ifr_configuration_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -13415,7 +13415,7 @@ create table if not exists public.ifr_configuration_apis (
 
 -- ExtensionPoint
 create table if not exists public.ifr_extension_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   extension_key text not null,
@@ -13430,7 +13430,7 @@ create table if not exists public.ifr_extension_points (
 
 -- FrameworkMetric
 create table if not exists public.ifr_framework_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -13448,7 +13448,7 @@ create table if not exists public.ifr_framework_metrics (
 
 -- FrameworkHealth
 create table if not exists public.ifr_framework_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -13466,7 +13466,7 @@ create table if not exists public.ifr_framework_health (
 
 -- CompatibilityCheck
 create table if not exists public.ifr_compatibility_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   check_key text not null,
@@ -13481,7 +13481,7 @@ create table if not exists public.ifr_compatibility_checks (
 
 -- FrameworkFailure
 create table if not exists public.ifr_framework_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   failure_key text not null,
@@ -13498,7 +13498,7 @@ create table if not exists public.ifr_framework_failures (
 
 -- Audit Logs
 create table if not exists public.ifr_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -13649,7 +13649,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- ProcessHub
 create table if not exists public.bpf_process_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -13662,7 +13662,7 @@ create table if not exists public.bpf_process_hubs (
 
 -- BusinessProcess
 create table if not exists public.bpf_business_processes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   process_key text not null,
@@ -13677,7 +13677,7 @@ create table if not exists public.bpf_business_processes (
 
 -- ProcessCategory
 create table if not exists public.bpf_process_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   category_key text not null,
@@ -13692,7 +13692,7 @@ create table if not exists public.bpf_process_categories (
 
 -- ProcessVersion
 create table if not exists public.bpf_process_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   version_key text not null,
@@ -13707,7 +13707,7 @@ create table if not exists public.bpf_process_versions (
 
 -- ProcessDependency
 create table if not exists public.bpf_process_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -13722,7 +13722,7 @@ create table if not exists public.bpf_process_dependencies (
 
 -- ProcessModel
 create table if not exists public.bpf_process_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   model_key text not null,
@@ -13737,7 +13737,7 @@ create table if not exists public.bpf_process_models (
 
 -- ProcessStep
 create table if not exists public.bpf_process_steps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   step_key text not null,
@@ -13752,7 +13752,7 @@ create table if not exists public.bpf_process_steps (
 
 -- DecisionPoint
 create table if not exists public.bpf_decision_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   decision_key text not null,
@@ -13767,7 +13767,7 @@ create table if not exists public.bpf_decision_points (
 
 -- ReusableBlock
 create table if not exists public.bpf_reusable_blocks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   block_key text not null,
@@ -13782,7 +13782,7 @@ create table if not exists public.bpf_reusable_blocks (
 
 -- ApprovalRule
 create table if not exists public.bpf_approval_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   rule_key text not null,
@@ -13797,7 +13797,7 @@ create table if not exists public.bpf_approval_rules (
 
 -- SequentialApproval
 create table if not exists public.bpf_sequential_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   approval_key text not null,
@@ -13812,7 +13812,7 @@ create table if not exists public.bpf_sequential_approvals (
 
 -- ParallelApproval
 create table if not exists public.bpf_parallel_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   approval_key text not null,
@@ -13827,7 +13827,7 @@ create table if not exists public.bpf_parallel_approvals (
 
 -- EscalationRule
 create table if not exists public.bpf_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   escalation_key text not null,
@@ -13842,7 +13842,7 @@ create table if not exists public.bpf_escalation_rules (
 
 -- TaskAssignment
 create table if not exists public.bpf_task_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -13857,7 +13857,7 @@ create table if not exists public.bpf_task_assignments (
 
 -- TaskTemplate
 create table if not exists public.bpf_task_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   template_key text not null,
@@ -13872,7 +13872,7 @@ create table if not exists public.bpf_task_templates (
 
 -- RecurringTask
 create table if not exists public.bpf_recurring_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   task_key text not null,
@@ -13887,7 +13887,7 @@ create table if not exists public.bpf_recurring_tasks (
 
 -- TaskSlaPolicy
 create table if not exists public.bpf_task_sla_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   policy_key text not null,
@@ -13902,7 +13902,7 @@ create table if not exists public.bpf_task_sla_policies (
 
 -- RuleCondition
 create table if not exists public.bpf_rule_conditions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   condition_key text not null,
@@ -13917,7 +13917,7 @@ create table if not exists public.bpf_rule_conditions (
 
 -- RuleValidation
 create table if not exists public.bpf_rule_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   validation_key text not null,
@@ -13932,7 +13932,7 @@ create table if not exists public.bpf_rule_validations (
 
 -- RuleCalculation
 create table if not exists public.bpf_rule_calculations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   calculation_key text not null,
@@ -13947,7 +13947,7 @@ create table if not exists public.bpf_rule_calculations (
 
 -- ReusableRule
 create table if not exists public.bpf_reusable_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   rule_key text not null,
@@ -13962,7 +13962,7 @@ create table if not exists public.bpf_reusable_rules (
 
 -- ProcessExecution
 create table if not exists public.bpf_process_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   execution_key text not null,
@@ -13977,7 +13977,7 @@ create table if not exists public.bpf_process_executions (
 
 -- ExecutionHistory
 create table if not exists public.bpf_execution_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   history_key text not null,
@@ -13992,7 +13992,7 @@ create table if not exists public.bpf_execution_history (
 
 -- ExecutionRetry
 create table if not exists public.bpf_execution_retries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   retry_key text not null,
@@ -14007,7 +14007,7 @@ create table if not exists public.bpf_execution_retries (
 
 -- ExecutionAnalytics
 create table if not exists public.bpf_execution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -14022,7 +14022,7 @@ create table if not exists public.bpf_execution_analytics (
 
 -- BottleneckReport
 create table if not exists public.bpf_bottleneck_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   report_key text not null,
@@ -14037,7 +14037,7 @@ create table if not exists public.bpf_bottleneck_reports (
 
 -- SlaPerformanceMetric
 create table if not exists public.bpf_sla_performance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   metric_key text not null,
@@ -14052,7 +14052,7 @@ create table if not exists public.bpf_sla_performance_metrics (
 
 -- ProcessMetric
 create table if not exists public.bpf_process_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -14071,7 +14071,7 @@ create table if not exists public.bpf_process_metrics (
 
 -- ProcessHealth
 create table if not exists public.bpf_process_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -14090,7 +14090,7 @@ create table if not exists public.bpf_process_health (
 
 -- FailedProcessRecord
 create table if not exists public.bpf_failed_process_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   record_key text not null,
@@ -14106,7 +14106,7 @@ create table if not exists public.bpf_failed_process_records (
 
 -- ProcessFailure
 create table if not exists public.bpf_process_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   failure_key text not null,
@@ -14123,7 +14123,7 @@ create table if not exists public.bpf_process_failures (
 
 -- Audit Logs
 create table if not exists public.bpf_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -14274,7 +14274,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- FormHub
 create table if not exists public.dfe_form_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -14287,7 +14287,7 @@ create table if not exists public.dfe_form_hubs (
 
 -- FormDefinition
 create table if not exists public.dfe_form_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   form_key text not null,
@@ -14302,7 +14302,7 @@ create table if not exists public.dfe_form_definitions (
 
 -- FormCategory
 create table if not exists public.dfe_form_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   category_key text not null,
@@ -14317,7 +14317,7 @@ create table if not exists public.dfe_form_categories (
 
 -- FormVersion
 create table if not exists public.dfe_form_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   version_key text not null,
@@ -14332,7 +14332,7 @@ create table if not exists public.dfe_form_versions (
 
 -- FormDependency
 create table if not exists public.dfe_form_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -14347,7 +14347,7 @@ create table if not exists public.dfe_form_dependencies (
 
 -- FormSection
 create table if not exists public.dfe_form_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   section_key text not null,
@@ -14362,7 +14362,7 @@ create table if not exists public.dfe_form_sections (
 
 -- FormTab
 create table if not exists public.dfe_form_tabs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   tab_key text not null,
@@ -14377,7 +14377,7 @@ create table if not exists public.dfe_form_tabs (
 
 -- FormGroup
 create table if not exists public.dfe_form_groups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   group_key text not null,
@@ -14392,7 +14392,7 @@ create table if not exists public.dfe_form_groups (
 
 -- RepeatableSection
 create table if not exists public.dfe_repeatable_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   section_key text not null,
@@ -14407,7 +14407,7 @@ create table if not exists public.dfe_repeatable_sections (
 
 -- FormField
 create table if not exists public.dfe_form_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   field_key text not null,
@@ -14422,7 +14422,7 @@ create table if not exists public.dfe_form_fields (
 
 -- FieldOption
 create table if not exists public.dfe_field_options (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   option_key text not null,
@@ -14437,7 +14437,7 @@ create table if not exists public.dfe_field_options (
 
 -- FormulaField
 create table if not exists public.dfe_formula_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   formula_key text not null,
@@ -14452,7 +14452,7 @@ create table if not exists public.dfe_formula_fields (
 
 -- MediaField
 create table if not exists public.dfe_media_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   media_key text not null,
@@ -14467,7 +14467,7 @@ create table if not exists public.dfe_media_fields (
 
 -- RequiredRule
 create table if not exists public.dfe_required_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -14482,7 +14482,7 @@ create table if not exists public.dfe_required_rules (
 
 -- RegexRule
 create table if not exists public.dfe_regex_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -14497,7 +14497,7 @@ create table if not exists public.dfe_regex_rules (
 
 -- RangeRule
 create table if not exists public.dfe_range_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -14512,7 +14512,7 @@ create table if not exists public.dfe_range_rules (
 
 -- CrossFieldRule
 create table if not exists public.dfe_cross_field_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -14527,7 +14527,7 @@ create table if not exists public.dfe_cross_field_rules (
 
 -- FormDraft
 create table if not exists public.dfe_form_drafts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   draft_key text not null,
@@ -14542,7 +14542,7 @@ create table if not exists public.dfe_form_drafts (
 
 -- FormSubmission
 create table if not exists public.dfe_form_submissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   submission_key text not null,
@@ -14557,7 +14557,7 @@ create table if not exists public.dfe_form_submissions (
 
 -- FormReview
 create table if not exists public.dfe_form_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   review_key text not null,
@@ -14572,7 +14572,7 @@ create table if not exists public.dfe_form_reviews (
 
 -- ExecutionAuditEntry
 create table if not exists public.dfe_execution_audit_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   audit_key text not null,
@@ -14587,7 +14587,7 @@ create table if not exists public.dfe_execution_audit_entries (
 
 -- RenderProfile
 create table if not exists public.dfe_render_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   profile_key text not null,
@@ -14602,7 +14602,7 @@ create table if not exists public.dfe_render_profiles (
 
 -- ThemeConfig
 create table if not exists public.dfe_theme_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   theme_key text not null,
@@ -14617,7 +14617,7 @@ create table if not exists public.dfe_theme_configs (
 
 -- LocalizationPack
 create table if not exists public.dfe_localization_packs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   locale_key text not null,
@@ -14632,7 +14632,7 @@ create table if not exists public.dfe_localization_packs (
 
 -- SubmissionAnalytics
 create table if not exists public.dfe_submission_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -14647,7 +14647,7 @@ create table if not exists public.dfe_submission_analytics (
 
 -- CompletionMetric
 create table if not exists public.dfe_completion_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   metric_key text not null,
@@ -14662,7 +14662,7 @@ create table if not exists public.dfe_completion_metrics (
 
 -- UsageTrend
 create table if not exists public.dfe_usage_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   trend_key text not null,
@@ -14677,7 +14677,7 @@ create table if not exists public.dfe_usage_trends (
 
 -- FormMetric
 create table if not exists public.dfe_form_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -14695,7 +14695,7 @@ create table if not exists public.dfe_form_metrics (
 
 -- FormHealth
 create table if not exists public.dfe_form_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -14713,7 +14713,7 @@ create table if not exists public.dfe_form_health (
 
 -- PendingReviewItem
 create table if not exists public.dfe_pending_review_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   item_key text not null,
@@ -14728,7 +14728,7 @@ create table if not exists public.dfe_pending_review_items (
 
 -- FormFailure
 create table if not exists public.dfe_form_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   failure_key text not null,
@@ -14745,7 +14745,7 @@ create table if not exists public.dfe_form_failures (
 
 -- Audit Logs
 create table if not exists public.dfe_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -14896,7 +14896,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- WorkflowHub
 create table if not exists public.dwe_workflow_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -14909,7 +14909,7 @@ create table if not exists public.dwe_workflow_hubs (
 
 -- WorkflowDefinition
 create table if not exists public.dwe_workflow_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -14924,7 +14924,7 @@ create table if not exists public.dwe_workflow_definitions (
 
 -- WorkflowCategory
 create table if not exists public.dwe_workflow_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   category_key text not null,
@@ -14939,7 +14939,7 @@ create table if not exists public.dwe_workflow_categories (
 
 -- WorkflowTemplate
 create table if not exists public.dwe_workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   template_key text not null,
@@ -14954,7 +14954,7 @@ create table if not exists public.dwe_workflow_templates (
 
 -- WorkflowVersion
 create table if not exists public.dwe_workflow_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   version_key text not null,
@@ -14969,7 +14969,7 @@ create table if not exists public.dwe_workflow_versions (
 
 -- WorkflowNode
 create table if not exists public.dwe_workflow_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   node_key text not null,
@@ -14984,7 +14984,7 @@ create table if not exists public.dwe_workflow_nodes (
 
 -- WorkflowTransition
 create table if not exists public.dwe_workflow_transitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   transition_key text not null,
@@ -14999,7 +14999,7 @@ create table if not exists public.dwe_workflow_transitions (
 
 -- DecisionNode
 create table if not exists public.dwe_decision_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   decision_key text not null,
@@ -15014,7 +15014,7 @@ create table if not exists public.dwe_decision_nodes (
 
 -- ReusableSubflow
 create table if not exists public.dwe_reusable_subflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   subflow_key text not null,
@@ -15029,7 +15029,7 @@ create table if not exists public.dwe_reusable_subflows (
 
 -- WorkflowExecution
 create table if not exists public.dwe_workflow_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   execution_key text not null,
@@ -15044,7 +15044,7 @@ create table if not exists public.dwe_workflow_executions (
 
 -- ExecutionHistory
 create table if not exists public.dwe_execution_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   history_key text not null,
@@ -15059,7 +15059,7 @@ create table if not exists public.dwe_execution_history (
 
 -- ExecutionRetry
 create table if not exists public.dwe_execution_retries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   retry_key text not null,
@@ -15074,7 +15074,7 @@ create table if not exists public.dwe_execution_retries (
 
 -- ExecutionRollback
 create table if not exists public.dwe_execution_rollbacks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   rollback_key text not null,
@@ -15089,7 +15089,7 @@ create table if not exists public.dwe_execution_rollbacks (
 
 -- TimeTrigger
 create table if not exists public.dwe_time_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -15104,7 +15104,7 @@ create table if not exists public.dwe_time_triggers (
 
 -- BusinessEventTrigger
 create table if not exists public.dwe_business_event_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -15119,7 +15119,7 @@ create table if not exists public.dwe_business_event_triggers (
 
 -- WebhookTrigger
 create table if not exists public.dwe_webhook_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -15134,7 +15134,7 @@ create table if not exists public.dwe_webhook_triggers (
 
 -- ScheduledTrigger
 create table if not exists public.dwe_scheduled_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   trigger_key text not null,
@@ -15149,7 +15149,7 @@ create table if not exists public.dwe_scheduled_triggers (
 
 -- ManualReview
 create table if not exists public.dwe_manual_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   review_key text not null,
@@ -15164,7 +15164,7 @@ create table if not exists public.dwe_manual_reviews (
 
 -- ApprovalTask
 create table if not exists public.dwe_approval_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   task_key text not null,
@@ -15179,7 +15179,7 @@ create table if not exists public.dwe_approval_tasks (
 
 -- EscalationRule
 create table if not exists public.dwe_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   rule_key text not null,
@@ -15194,7 +15194,7 @@ create table if not exists public.dwe_escalation_rules (
 
 -- SlaTracking
 create table if not exists public.dwe_sla_trackings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   sla_key text not null,
@@ -15209,7 +15209,7 @@ create table if not exists public.dwe_sla_trackings (
 
 -- AutomationNotification
 create table if not exists public.dwe_automation_notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   notification_key text not null,
@@ -15224,7 +15224,7 @@ create table if not exists public.dwe_automation_notifications (
 
 -- AutomationApiCall
 create table if not exists public.dwe_automation_api_calls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   api_key text not null,
@@ -15239,7 +15239,7 @@ create table if not exists public.dwe_automation_api_calls (
 
 -- AutomationIntegration
 create table if not exists public.dwe_automation_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   integration_key text not null,
@@ -15254,7 +15254,7 @@ create table if not exists public.dwe_automation_integrations (
 
 -- ExecutionAnalytics
 create table if not exists public.dwe_execution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -15269,7 +15269,7 @@ create table if not exists public.dwe_execution_analytics (
 
 -- BottleneckReport
 create table if not exists public.dwe_bottleneck_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   report_key text not null,
@@ -15284,7 +15284,7 @@ create table if not exists public.dwe_bottleneck_reports (
 
 -- SlaComplianceMetric
 create table if not exists public.dwe_sla_compliance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   metric_key text not null,
@@ -15299,7 +15299,7 @@ create table if not exists public.dwe_sla_compliance_metrics (
 
 -- WorkflowMetric
 create table if not exists public.dwe_workflow_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -15318,7 +15318,7 @@ create table if not exists public.dwe_workflow_metrics (
 
 -- WorkflowHealth
 create table if not exists public.dwe_workflow_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -15337,7 +15337,7 @@ create table if not exists public.dwe_workflow_health (
 
 -- FailedExecution
 create table if not exists public.dwe_failed_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   failure_key text not null,
@@ -15353,7 +15353,7 @@ create table if not exists public.dwe_failed_executions (
 
 -- WorkflowFailure
 create table if not exists public.dwe_workflow_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dwe_workflow_hubs(id) on delete cascade,
   failure_key text not null,
@@ -15370,7 +15370,7 @@ create table if not exists public.dwe_workflow_failures (
 
 -- Audit Logs
 create table if not exists public.dwe_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -15521,7 +15521,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- DocumentHub
 create table if not exists public.dde_document_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15534,7 +15534,7 @@ create table if not exists public.dde_document_hubs (
 
 -- DocumentType
 create table if not exists public.dde_document_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   type_key text not null,
@@ -15549,7 +15549,7 @@ create table if not exists public.dde_document_types (
 
 -- DocumentCategory
 create table if not exists public.dde_document_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   category_key text not null,
@@ -15564,7 +15564,7 @@ create table if not exists public.dde_document_categories (
 
 -- DocumentTemplate
 create table if not exists public.dde_document_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   template_key text not null,
@@ -15579,7 +15579,7 @@ create table if not exists public.dde_document_templates (
 
 -- DocumentVersion
 create table if not exists public.dde_document_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   version_key text not null,
@@ -15594,7 +15594,7 @@ create table if not exists public.dde_document_versions (
 
 -- TemplateHeader
 create table if not exists public.dde_template_headers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   header_key text not null,
@@ -15609,7 +15609,7 @@ create table if not exists public.dde_template_headers (
 
 -- TemplateFooter
 create table if not exists public.dde_template_footers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   footer_key text not null,
@@ -15624,7 +15624,7 @@ create table if not exists public.dde_template_footers (
 
 -- TemplateSection
 create table if not exists public.dde_template_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   section_key text not null,
@@ -15639,7 +15639,7 @@ create table if not exists public.dde_template_sections (
 
 -- TemplateVariable
 create table if not exists public.dde_template_variables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   variable_key text not null,
@@ -15654,7 +15654,7 @@ create table if not exists public.dde_template_variables (
 
 -- PdfGeneration
 create table if not exists public.dde_pdf_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   generation_key text not null,
@@ -15669,7 +15669,7 @@ create table if not exists public.dde_pdf_generations (
 
 -- HtmlGeneration
 create table if not exists public.dde_html_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   generation_key text not null,
@@ -15684,7 +15684,7 @@ create table if not exists public.dde_html_generations (
 
 -- ExportJob
 create table if not exists public.dde_export_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   job_key text not null,
@@ -15699,7 +15699,7 @@ create table if not exists public.dde_export_jobs (
 
 -- BatchGeneration
 create table if not exists public.dde_batch_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   batch_key text not null,
@@ -15714,7 +15714,7 @@ create table if not exists public.dde_batch_generations (
 
 -- ElectronicSignature
 create table if not exists public.dde_electronic_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -15729,7 +15729,7 @@ create table if not exists public.dde_electronic_signatures (
 
 -- ApprovalSignature
 create table if not exists public.dde_approval_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -15744,7 +15744,7 @@ create table if not exists public.dde_approval_signatures (
 
 -- SignatureVerification
 create table if not exists public.dde_signature_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   verification_key text not null,
@@ -15759,7 +15759,7 @@ create table if not exists public.dde_signature_verifications (
 
 -- SignatureAuditEntry
 create table if not exists public.dde_signature_audit_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   audit_key text not null,
@@ -15774,7 +15774,7 @@ create table if not exists public.dde_signature_audit_entries (
 
 -- VersionHistory
 create table if not exists public.dde_version_histories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   history_key text not null,
@@ -15789,7 +15789,7 @@ create table if not exists public.dde_version_histories (
 
 -- RetentionPolicy
 create table if not exists public.dde_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   policy_key text not null,
@@ -15804,7 +15804,7 @@ create table if not exists public.dde_retention_policies (
 
 -- ArchiveRecord
 create table if not exists public.dde_archive_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   archive_key text not null,
@@ -15819,7 +15819,7 @@ create table if not exists public.dde_archive_records (
 
 -- SharingPolicy
 create table if not exists public.dde_sharing_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   policy_key text not null,
@@ -15834,7 +15834,7 @@ create table if not exists public.dde_sharing_policies (
 
 -- EmailDelivery
 create table if not exists public.dde_email_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -15849,7 +15849,7 @@ create table if not exists public.dde_email_deliveries (
 
 -- DownloadDelivery
 create table if not exists public.dde_download_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -15864,7 +15864,7 @@ create table if not exists public.dde_download_deliveries (
 
 -- WebhookDelivery
 create table if not exists public.dde_webhook_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -15879,7 +15879,7 @@ create table if not exists public.dde_webhook_deliveries (
 
 -- GenerationAnalytics
 create table if not exists public.dde_generation_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -15894,7 +15894,7 @@ create table if not exists public.dde_generation_analytics (
 
 -- DeliveryAnalytics
 create table if not exists public.dde_delivery_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -15909,7 +15909,7 @@ create table if not exists public.dde_delivery_analytics (
 
 -- StorageAnalytics
 create table if not exists public.dde_storage_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -15924,7 +15924,7 @@ create table if not exists public.dde_storage_analytics (
 
 -- DocumentMetric
 create table if not exists public.dde_document_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -15943,7 +15943,7 @@ create table if not exists public.dde_document_metrics (
 
 -- DocumentHealth
 create table if not exists public.dde_document_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -15961,7 +15961,7 @@ create table if not exists public.dde_document_health (
 
 -- PendingSignature
 create table if not exists public.dde_pending_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -15976,7 +15976,7 @@ create table if not exists public.dde_pending_signatures (
 
 -- DocumentFailure
 create table if not exists public.dde_document_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   failure_key text not null,
@@ -15993,7 +15993,7 @@ create table if not exists public.dde_document_failures (
 
 -- Audit Logs
 create table if not exists public.dde_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -16144,7 +16144,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- RestaurantHub
 create table if not exists public.rst_restaurant_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16159,7 +16159,7 @@ create table if not exists public.rst_restaurant_hubs (
 
 -- Brand
 create table if not exists public.rst_brands (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   brand_key text not null,
@@ -16174,7 +16174,7 @@ create table if not exists public.rst_brands (
 
 -- Branch
 create table if not exists public.rst_branches (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   branch_key text not null,
@@ -16189,7 +16189,7 @@ create table if not exists public.rst_branches (
 
 -- BusinessLicense
 create table if not exists public.rst_business_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   license_key text not null,
@@ -16204,7 +16204,7 @@ create table if not exists public.rst_business_licenses (
 
 -- DiningArea
 create table if not exists public.rst_dining_areas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   area_key text not null,
@@ -16219,7 +16219,7 @@ create table if not exists public.rst_dining_areas (
 
 -- RestaurantTable
 create table if not exists public.rst_restaurant_tables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   table_key text not null,
@@ -16236,7 +16236,7 @@ create table if not exists public.rst_restaurant_tables (
 
 -- MenuCategory
 create table if not exists public.rst_menu_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   category_key text not null,
@@ -16251,7 +16251,7 @@ create table if not exists public.rst_menu_categories (
 
 -- MenuItem
 create table if not exists public.rst_menu_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   item_key text not null,
@@ -16266,7 +16266,7 @@ create table if not exists public.rst_menu_items (
 
 -- MenuVariant
 create table if not exists public.rst_menu_variants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   variant_key text not null,
@@ -16281,7 +16281,7 @@ create table if not exists public.rst_menu_variants (
 
 -- AddOn
 create table if not exists public.rst_add_ons (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   addon_key text not null,
@@ -16296,7 +16296,7 @@ create table if not exists public.rst_add_ons (
 
 -- ComboMeal
 create table if not exists public.rst_combo_meals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   combo_key text not null,
@@ -16311,7 +16311,7 @@ create table if not exists public.rst_combo_meals (
 
 -- Order
 create table if not exists public.rst_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   order_key text not null,
@@ -16327,7 +16327,7 @@ create table if not exists public.rst_orders (
 
 -- OrderItem
 create table if not exists public.rst_order_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   item_key text not null,
@@ -16342,7 +16342,7 @@ create table if not exists public.rst_order_items (
 
 -- OrderQueue
 create table if not exists public.rst_order_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   queue_key text not null,
@@ -16357,7 +16357,7 @@ create table if not exists public.rst_order_queue (
 
 -- KitchenRouting
 create table if not exists public.rst_kitchen_routing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   routing_key text not null,
@@ -16372,7 +16372,7 @@ create table if not exists public.rst_kitchen_routing (
 
 -- OrderTimeline
 create table if not exists public.rst_order_timeline (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   timeline_key text not null,
@@ -16387,7 +16387,7 @@ create table if not exists public.rst_order_timeline (
 
 -- KitchenStation
 create table if not exists public.rst_kitchen_stations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   station_key text not null,
@@ -16402,7 +16402,7 @@ create table if not exists public.rst_kitchen_stations (
 
 -- PreparationQueue
 create table if not exists public.rst_preparation_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   prep_key text not null,
@@ -16417,7 +16417,7 @@ create table if not exists public.rst_preparation_queue (
 
 -- CookingStatus
 create table if not exists public.rst_cooking_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   cooking_key text not null,
@@ -16432,7 +16432,7 @@ create table if not exists public.rst_cooking_status (
 
 -- ReadyQueue
 create table if not exists public.rst_ready_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   ready_key text not null,
@@ -16447,7 +16447,7 @@ create table if not exists public.rst_ready_queue (
 
 -- RushOrder
 create table if not exists public.rst_rush_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   rush_key text not null,
@@ -16462,7 +16462,7 @@ create table if not exists public.rst_rush_orders (
 
 -- Reservation
 create table if not exists public.rst_reservations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   reservation_key text not null,
@@ -16478,7 +16478,7 @@ create table if not exists public.rst_reservations (
 
 -- WaitingList
 create table if not exists public.rst_waiting_list (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   wait_key text not null,
@@ -16493,7 +16493,7 @@ create table if not exists public.rst_waiting_list (
 
 -- CustomerProfile
 create table if not exists public.rst_customer_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   profile_key text not null,
@@ -16508,7 +16508,7 @@ create table if not exists public.rst_customer_profiles (
 
 -- LoyaltyProgram
 create table if not exists public.rst_loyalty_programs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   program_key text not null,
@@ -16523,7 +16523,7 @@ create table if not exists public.rst_loyalty_programs (
 
 -- FeedbackReview
 create table if not exists public.rst_feedback_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   review_key text not null,
@@ -16538,7 +16538,7 @@ create table if not exists public.rst_feedback_reviews (
 
 -- RestaurantMetric
 create table if not exists public.rst_restaurant_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -16559,7 +16559,7 @@ create table if not exists public.rst_restaurant_metrics (
 
 -- RestaurantHealth
 create table if not exists public.rst_restaurant_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -16577,7 +16577,7 @@ create table if not exists public.rst_restaurant_health (
 
 -- RevenueAnalytics
 create table if not exists public.rst_revenue_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -16592,7 +16592,7 @@ create table if not exists public.rst_revenue_analytics (
 
 -- KitchenPerformance
 create table if not exists public.rst_kitchen_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   performance_key text not null,
@@ -16607,7 +16607,7 @@ create table if not exists public.rst_kitchen_performance (
 
 -- RestaurantFailure
 create table if not exists public.rst_restaurant_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   failure_key text not null,
@@ -16624,7 +16624,7 @@ create table if not exists public.rst_restaurant_failures (
 
 -- Audit Logs
 create table if not exists public.rst_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -16775,7 +16775,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- SchoolHub
 create table if not exists public.sch_school_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16789,7 +16789,7 @@ create table if not exists public.sch_school_hubs (
 
 -- Campus
 create table if not exists public.sch_campuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   campus_key text not null,
@@ -16804,7 +16804,7 @@ create table if not exists public.sch_campuses (
 
 -- Building
 create table if not exists public.sch_buildings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   building_key text not null,
@@ -16819,7 +16819,7 @@ create table if not exists public.sch_buildings (
 
 -- Classroom
 create table if not exists public.sch_classrooms (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   classroom_key text not null,
@@ -16834,7 +16834,7 @@ create table if not exists public.sch_classrooms (
 
 -- AcademicYear
 create table if not exists public.sch_academic_years (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   year_key text not null,
@@ -16850,7 +16850,7 @@ create table if not exists public.sch_academic_years (
 
 -- Admission
 create table if not exists public.sch_admissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   admission_key text not null,
@@ -16866,7 +16866,7 @@ create table if not exists public.sch_admissions (
 
 -- StudentProfile
 create table if not exists public.sch_student_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   profile_key text not null,
@@ -16881,7 +16881,7 @@ create table if not exists public.sch_student_profiles (
 
 -- ParentProfile
 create table if not exists public.sch_parent_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   parent_key text not null,
@@ -16896,7 +16896,7 @@ create table if not exists public.sch_parent_profiles (
 
 -- Enrollment
 create table if not exists public.sch_enrollments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   enrollment_key text not null,
@@ -16911,7 +16911,7 @@ create table if not exists public.sch_enrollments (
 
 -- Subject
 create table if not exists public.sch_subjects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   subject_key text not null,
@@ -16926,7 +16926,7 @@ create table if not exists public.sch_subjects (
 
 -- Timetable
 create table if not exists public.sch_timetables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   timetable_key text not null,
@@ -16941,7 +16941,7 @@ create table if not exists public.sch_timetables (
 
 -- Examination
 create table if not exists public.sch_examinations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   exam_key text not null,
@@ -16957,7 +16957,7 @@ create table if not exists public.sch_examinations (
 
 -- ReportCard
 create table if not exists public.sch_report_cards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   report_key text not null,
@@ -16972,7 +16972,7 @@ create table if not exists public.sch_report_cards (
 
 -- Teacher
 create table if not exists public.sch_teachers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   teacher_key text not null,
@@ -16987,7 +16987,7 @@ create table if not exists public.sch_teachers (
 
 -- StaffAttendance
 create table if not exists public.sch_staff_attendance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   attendance_key text not null,
@@ -17002,7 +17002,7 @@ create table if not exists public.sch_staff_attendance (
 
 -- LeaveRequest
 create table if not exists public.sch_leave_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   leave_key text not null,
@@ -17018,7 +17018,7 @@ create table if not exists public.sch_leave_requests (
 
 -- SubstituteTeacher
 create table if not exists public.sch_substitute_teachers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   substitute_key text not null,
@@ -17033,7 +17033,7 @@ create table if not exists public.sch_substitute_teachers (
 
 -- FeeStructure
 create table if not exists public.sch_fee_structures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   fee_key text not null,
@@ -17048,7 +17048,7 @@ create table if not exists public.sch_fee_structures (
 
 -- FeeInvoice
 create table if not exists public.sch_fee_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   invoice_key text not null,
@@ -17064,7 +17064,7 @@ create table if not exists public.sch_fee_invoices (
 
 -- FeePayment
 create table if not exists public.sch_fee_payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   payment_key text not null,
@@ -17080,7 +17080,7 @@ create table if not exists public.sch_fee_payments (
 
 -- Scholarship
 create table if not exists public.sch_scholarships (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   scholarship_key text not null,
@@ -17095,7 +17095,7 @@ create table if not exists public.sch_scholarships (
 
 -- Announcement
 create table if not exists public.sch_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   announcement_key text not null,
@@ -17110,7 +17110,7 @@ create table if not exists public.sch_announcements (
 
 -- Messaging
 create table if not exists public.sch_messaging (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   message_key text not null,
@@ -17125,7 +17125,7 @@ create table if not exists public.sch_messaging (
 
 -- Event
 create table if not exists public.sch_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   event_key text not null,
@@ -17140,7 +17140,7 @@ create table if not exists public.sch_events (
 
 -- AdmissionsAnalytics
 create table if not exists public.sch_admissions_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17155,7 +17155,7 @@ create table if not exists public.sch_admissions_analytics (
 
 -- AttendanceAnalytics
 create table if not exists public.sch_attendance_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17170,7 +17170,7 @@ create table if not exists public.sch_attendance_analytics (
 
 -- AcademicAnalytics
 create table if not exists public.sch_academic_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17185,7 +17185,7 @@ create table if not exists public.sch_academic_analytics (
 
 -- SchoolMetric
 create table if not exists public.sch_school_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -17205,7 +17205,7 @@ create table if not exists public.sch_school_metrics (
 
 -- SchoolHealth
 create table if not exists public.sch_school_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -17223,7 +17223,7 @@ create table if not exists public.sch_school_health (
 
 -- ExecutiveKpi
 create table if not exists public.sch_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -17239,7 +17239,7 @@ create table if not exists public.sch_executive_kpis (
 
 -- SchoolFailure
 create table if not exists public.sch_school_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   failure_key text not null,
@@ -17256,7 +17256,7 @@ create table if not exists public.sch_school_failures (
 
 -- Audit Logs
 create table if not exists public.sch_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -17407,7 +17407,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- HospitalHub
 create table if not exists public.hsp_hospital_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -17421,7 +17421,7 @@ create table if not exists public.hsp_hospital_hubs (
 
 -- Campus
 create table if not exists public.hsp_campuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   campus_key text not null,
@@ -17436,7 +17436,7 @@ create table if not exists public.hsp_campuses (
 
 -- Department
 create table if not exists public.hsp_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   department_key text not null,
@@ -17451,7 +17451,7 @@ create table if not exists public.hsp_departments (
 
 -- Ward
 create table if not exists public.hsp_wards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   ward_key text not null,
@@ -17466,7 +17466,7 @@ create table if not exists public.hsp_wards (
 
 -- HospitalBed
 create table if not exists public.hsp_hospital_beds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   bed_key text not null,
@@ -17481,7 +17481,7 @@ create table if not exists public.hsp_hospital_beds (
 
 -- PatientRegistration
 create table if not exists public.hsp_patient_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   registration_key text not null,
@@ -17497,7 +17497,7 @@ create table if not exists public.hsp_patient_registrations (
 
 -- PatientProfile
 create table if not exists public.hsp_patient_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   profile_key text not null,
@@ -17512,7 +17512,7 @@ create table if not exists public.hsp_patient_profiles (
 
 -- MedicalHistory
 create table if not exists public.hsp_medical_histories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   history_key text not null,
@@ -17527,7 +17527,7 @@ create table if not exists public.hsp_medical_histories (
 
 -- InsurancePolicy
 create table if not exists public.hsp_insurance_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   policy_key text not null,
@@ -17542,7 +17542,7 @@ create table if not exists public.hsp_insurance_policies (
 
 -- Appointment
 create table if not exists public.hsp_appointments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   appointment_key text not null,
@@ -17558,7 +17558,7 @@ create table if not exists public.hsp_appointments (
 
 -- OpdVisit
 create table if not exists public.hsp_opd_visits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   visit_key text not null,
@@ -17574,7 +17574,7 @@ create table if not exists public.hsp_opd_visits (
 
 -- IpdAdmission
 create table if not exists public.hsp_ipd_admissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   admission_key text not null,
@@ -17590,7 +17590,7 @@ create table if not exists public.hsp_ipd_admissions (
 
 -- ClinicalNote
 create table if not exists public.hsp_clinical_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   note_key text not null,
@@ -17606,7 +17606,7 @@ create table if not exists public.hsp_clinical_notes (
 
 -- PharmacyInventory
 create table if not exists public.hsp_pharmacy_inventory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   inventory_key text not null,
@@ -17621,7 +17621,7 @@ create table if not exists public.hsp_pharmacy_inventory (
 
 -- Prescription
 create table if not exists public.hsp_prescriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   prescription_key text not null,
@@ -17636,7 +17636,7 @@ create table if not exists public.hsp_prescriptions (
 
 -- LabOrder
 create table if not exists public.hsp_lab_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   order_key text not null,
@@ -17652,7 +17652,7 @@ create table if not exists public.hsp_lab_orders (
 
 -- LabResult
 create table if not exists public.hsp_lab_results (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   result_key text not null,
@@ -17668,7 +17668,7 @@ create table if not exists public.hsp_lab_results (
 
 -- HospitalBilling
 create table if not exists public.hsp_hospital_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   billing_key text not null,
@@ -17683,7 +17683,7 @@ create table if not exists public.hsp_hospital_billing (
 
 -- InsuranceClaim
 create table if not exists public.hsp_insurance_claims (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   claim_key text not null,
@@ -17699,7 +17699,7 @@ create table if not exists public.hsp_insurance_claims (
 
 -- HospitalInvoice
 create table if not exists public.hsp_hospital_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   invoice_key text not null,
@@ -17715,7 +17715,7 @@ create table if not exists public.hsp_hospital_invoices (
 
 -- HospitalPayment
 create table if not exists public.hsp_hospital_payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   payment_key text not null,
@@ -17731,7 +17731,7 @@ create table if not exists public.hsp_hospital_payments (
 
 -- PatientNotification
 create table if not exists public.hsp_patient_notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   notification_key text not null,
@@ -17746,7 +17746,7 @@ create table if not exists public.hsp_patient_notifications (
 
 -- MedicalReport
 create table if not exists public.hsp_medical_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   report_key text not null,
@@ -17761,7 +17761,7 @@ create table if not exists public.hsp_medical_reports (
 
 -- PatientFeedback
 create table if not exists public.hsp_patient_feedback (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   feedback_key text not null,
@@ -17776,7 +17776,7 @@ create table if not exists public.hsp_patient_feedback (
 
 -- AdmissionsAnalytics
 create table if not exists public.hsp_admissions_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17791,7 +17791,7 @@ create table if not exists public.hsp_admissions_analytics (
 
 -- OccupancyAnalytics
 create table if not exists public.hsp_occupancy_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17806,7 +17806,7 @@ create table if not exists public.hsp_occupancy_analytics (
 
 -- RevenueAnalytics
 create table if not exists public.hsp_revenue_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -17821,7 +17821,7 @@ create table if not exists public.hsp_revenue_analytics (
 
 -- HospitalMetric
 create table if not exists public.hsp_hospital_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -17841,7 +17841,7 @@ create table if not exists public.hsp_hospital_metrics (
 
 -- HospitalHealth
 create table if not exists public.hsp_hospital_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -17859,7 +17859,7 @@ create table if not exists public.hsp_hospital_health (
 
 -- ExecutiveKpi
 create table if not exists public.hsp_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -17875,7 +17875,7 @@ create table if not exists public.hsp_executive_kpis (
 
 -- HospitalFailure
 create table if not exists public.hsp_hospital_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.hsp_hospital_hubs(id) on delete cascade,
   failure_key text not null,
@@ -17892,7 +17892,7 @@ create table if not exists public.hsp_hospital_failures (
 
 -- Audit Logs
 create table if not exists public.hsp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -18043,7 +18043,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- RetailHub
 create table if not exists public.rtl_retail_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -18057,7 +18057,7 @@ create table if not exists public.rtl_retail_hubs (
 
 -- RetailBrand
 create table if not exists public.rtl_retail_brands (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   brand_key text not null,
@@ -18072,7 +18072,7 @@ create table if not exists public.rtl_retail_brands (
 
 -- Store
 create table if not exists public.rtl_stores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   store_key text not null,
@@ -18087,7 +18087,7 @@ create table if not exists public.rtl_stores (
 
 -- CashRegister
 create table if not exists public.rtl_cash_registers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   register_key text not null,
@@ -18102,7 +18102,7 @@ create table if not exists public.rtl_cash_registers (
 
 -- StoreDepartment
 create table if not exists public.rtl_store_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   department_key text not null,
@@ -18117,7 +18117,7 @@ create table if not exists public.rtl_store_departments (
 
 -- Product
 create table if not exists public.rtl_products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   product_key text not null,
@@ -18132,7 +18132,7 @@ create table if not exists public.rtl_products (
 
 -- ProductCategory
 create table if not exists public.rtl_product_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   category_key text not null,
@@ -18147,7 +18147,7 @@ create table if not exists public.rtl_product_categories (
 
 -- ProductVariant
 create table if not exists public.rtl_product_variants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   variant_key text not null,
@@ -18162,7 +18162,7 @@ create table if not exists public.rtl_product_variants (
 
 -- Promotion
 create table if not exists public.rtl_promotions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   promotion_key text not null,
@@ -18177,7 +18177,7 @@ create table if not exists public.rtl_promotions (
 
 -- SalesOrder
 create table if not exists public.rtl_sales_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   order_key text not null,
@@ -18193,7 +18193,7 @@ create table if not exists public.rtl_sales_orders (
 
 -- PosTransaction
 create table if not exists public.rtl_pos_transactions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   transaction_key text not null,
@@ -18209,7 +18209,7 @@ create table if not exists public.rtl_pos_transactions (
 
 -- ReturnsExchange
 create table if not exists public.rtl_returns_exchanges (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   return_key text not null,
@@ -18225,7 +18225,7 @@ create table if not exists public.rtl_returns_exchanges (
 
 -- ShiftClosing
 create table if not exists public.rtl_shift_closings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   closing_key text not null,
@@ -18240,7 +18240,7 @@ create table if not exists public.rtl_shift_closings (
 
 -- Warehouse
 create table if not exists public.rtl_warehouses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   warehouse_key text not null,
@@ -18255,7 +18255,7 @@ create table if not exists public.rtl_warehouses (
 
 -- StockLevel
 create table if not exists public.rtl_stock_levels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   stock_key text not null,
@@ -18270,7 +18270,7 @@ create table if not exists public.rtl_stock_levels (
 
 -- PurchaseOrder
 create table if not exists public.rtl_purchase_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   order_key text not null,
@@ -18286,7 +18286,7 @@ create table if not exists public.rtl_purchase_orders (
 
 -- Supplier
 create table if not exists public.rtl_suppliers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   supplier_key text not null,
@@ -18301,7 +18301,7 @@ create table if not exists public.rtl_suppliers (
 
 -- CustomerProfile
 create table if not exists public.rtl_customer_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   profile_key text not null,
@@ -18316,7 +18316,7 @@ create table if not exists public.rtl_customer_profiles (
 
 -- LoyaltyProgram
 create table if not exists public.rtl_loyalty_programs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   program_key text not null,
@@ -18331,7 +18331,7 @@ create table if not exists public.rtl_loyalty_programs (
 
 -- RewardPoint
 create table if not exists public.rtl_reward_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   points_key text not null,
@@ -18346,7 +18346,7 @@ create table if not exists public.rtl_reward_points (
 
 -- Campaign
 create table if not exists public.rtl_campaigns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   campaign_key text not null,
@@ -18361,7 +18361,7 @@ create table if not exists public.rtl_campaigns (
 
 -- DailyClosing
 create table if not exists public.rtl_daily_closings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   closing_key text not null,
@@ -18376,7 +18376,7 @@ create table if not exists public.rtl_daily_closings (
 
 -- BranchPerformance
 create table if not exists public.rtl_branch_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   performance_key text not null,
@@ -18391,7 +18391,7 @@ create table if not exists public.rtl_branch_performance (
 
 -- CommissionRecord
 create table if not exists public.rtl_commission_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   commission_key text not null,
@@ -18406,7 +18406,7 @@ create table if not exists public.rtl_commission_records (
 
 -- SalesAnalytics
 create table if not exists public.rtl_sales_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -18421,7 +18421,7 @@ create table if not exists public.rtl_sales_analytics (
 
 -- InventoryAnalytics
 create table if not exists public.rtl_inventory_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -18436,7 +18436,7 @@ create table if not exists public.rtl_inventory_analytics (
 
 -- ProfitabilityAnalytics
 create table if not exists public.rtl_profitability_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -18451,7 +18451,7 @@ create table if not exists public.rtl_profitability_analytics (
 
 -- RetailMetric
 create table if not exists public.rtl_retail_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -18471,7 +18471,7 @@ create table if not exists public.rtl_retail_metrics (
 
 -- RetailHealth
 create table if not exists public.rtl_retail_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -18489,7 +18489,7 @@ create table if not exists public.rtl_retail_health (
 
 -- ExecutiveKpi
 create table if not exists public.rtl_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -18505,7 +18505,7 @@ create table if not exists public.rtl_executive_kpis (
 
 -- RetailFailure
 create table if not exists public.rtl_retail_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   failure_key text not null,
@@ -18522,7 +18522,7 @@ create table if not exists public.rtl_retail_failures (
 
 -- Audit Logs
 create table if not exists public.rtl_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -18673,7 +18673,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- LaunchHub
 create table if not exists public.elf_launch_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -18687,7 +18687,7 @@ create table if not exists public.elf_launch_hubs (
 
 -- OrganizationProvision
 create table if not exists public.elf_organization_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   provision_key text not null,
@@ -18702,7 +18702,7 @@ create table if not exists public.elf_organization_provisions (
 
 -- TenantProvision
 create table if not exists public.elf_tenant_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   provision_key text not null,
@@ -18717,7 +18717,7 @@ create table if not exists public.elf_tenant_provisions (
 
 -- IndustryPackAssignment
 create table if not exists public.elf_industry_pack_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -18732,7 +18732,7 @@ create table if not exists public.elf_industry_pack_assignments (
 
 -- ModuleLicense
 create table if not exists public.elf_module_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   license_key text not null,
@@ -18747,7 +18747,7 @@ create table if not exists public.elf_module_licenses (
 
 -- WizardProfile
 create table if not exists public.elf_wizard_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   profile_key text not null,
@@ -18762,7 +18762,7 @@ create table if not exists public.elf_wizard_profiles (
 
 -- WizardBranding
 create table if not exists public.elf_wizard_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   branding_key text not null,
@@ -18777,7 +18777,7 @@ create table if not exists public.elf_wizard_branding (
 
 -- WizardDepartment
 create table if not exists public.elf_wizard_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   department_key text not null,
@@ -18792,7 +18792,7 @@ create table if not exists public.elf_wizard_departments (
 
 -- WizardSetting
 create table if not exists public.elf_wizard_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   setting_key text not null,
@@ -18807,7 +18807,7 @@ create table if not exists public.elf_wizard_settings (
 
 -- ImportJob
 create table if not exists public.elf_import_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   job_key text not null,
@@ -18823,7 +18823,7 @@ create table if not exists public.elf_import_jobs (
 
 -- ImportValidation
 create table if not exists public.elf_import_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   validation_key text not null,
@@ -18839,7 +18839,7 @@ create table if not exists public.elf_import_validations (
 
 -- ImportPreview
 create table if not exists public.elf_import_previews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   preview_key text not null,
@@ -18855,7 +18855,7 @@ create table if not exists public.elf_import_previews (
 
 -- ImportHistory
 create table if not exists public.elf_import_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   history_key text not null,
@@ -18871,7 +18871,7 @@ create table if not exists public.elf_import_history (
 
 -- GoLiveChecklist
 create table if not exists public.elf_go_live_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   checklist_key text not null,
@@ -18887,7 +18887,7 @@ create table if not exists public.elf_go_live_checklists (
 
 -- GoLiveScore
 create table if not exists public.elf_go_live_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   score_key text not null,
@@ -18903,7 +18903,7 @@ create table if not exists public.elf_go_live_scores (
 
 -- DeploymentStatus
 create table if not exists public.elf_deployment_statuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   status_key text not null,
@@ -18919,7 +18919,7 @@ create table if not exists public.elf_deployment_statuses (
 
 -- ReadinessValidation
 create table if not exists public.elf_readiness_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   validation_key text not null,
@@ -18935,7 +18935,7 @@ create table if not exists public.elf_readiness_validations (
 
 -- CustomerHealthScore
 create table if not exists public.elf_customer_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   score_key text not null,
@@ -18951,7 +18951,7 @@ create table if not exists public.elf_customer_health_scores (
 
 -- PlatformAdoption
 create table if not exists public.elf_platform_adoption (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   adoption_key text not null,
@@ -18967,7 +18967,7 @@ create table if not exists public.elf_platform_adoption (
 
 -- FeatureUsage
 create table if not exists public.elf_feature_usage (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   usage_key text not null,
@@ -18983,7 +18983,7 @@ create table if not exists public.elf_feature_usage (
 
 -- RenewalTracking
 create table if not exists public.elf_renewal_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   renewal_key text not null,
@@ -18999,7 +18999,7 @@ create table if not exists public.elf_renewal_tracking (
 
 -- SupportTicket
 create table if not exists public.elf_support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   ticket_key text not null,
@@ -19015,7 +19015,7 @@ create table if not exists public.elf_support_tickets (
 
 -- KnowledgeBaseArticle
 create table if not exists public.elf_knowledge_base_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   article_key text not null,
@@ -19031,7 +19031,7 @@ create table if not exists public.elf_knowledge_base_articles (
 
 -- IncidentTracking
 create table if not exists public.elf_incident_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   incident_key text not null,
@@ -19047,7 +19047,7 @@ create table if not exists public.elf_incident_tracking (
 
 -- CustomerRegistry
 create table if not exists public.elf_customer_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   customer_key text not null,
@@ -19063,7 +19063,7 @@ create table if not exists public.elf_customer_registry (
 
 -- SubscriptionRecord
 create table if not exists public.elf_subscription_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   subscription_key text not null,
@@ -19079,7 +19079,7 @@ create table if not exists public.elf_subscription_records (
 
 -- LicenseManagement
 create table if not exists public.elf_license_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   license_key text not null,
@@ -19095,7 +19095,7 @@ create table if not exists public.elf_license_management (
 
 -- LaunchMetric
 create table if not exists public.elf_launch_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -19114,7 +19114,7 @@ create table if not exists public.elf_launch_metrics (
 
 -- LaunchHealth
 create table if not exists public.elf_launch_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -19132,7 +19132,7 @@ create table if not exists public.elf_launch_health (
 
 -- MissionControlKpi
 create table if not exists public.elf_mission_control_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -19148,7 +19148,7 @@ create table if not exists public.elf_mission_control_kpis (
 
 -- LaunchFailure
 create table if not exists public.elf_launch_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   failure_key text not null,
@@ -19165,7 +19165,7 @@ create table if not exists public.elf_launch_failures (
 
 -- Audit Logs
 create table if not exists public.elf_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -19316,7 +19316,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- CompanyHub
 create table if not exists public.cmp_company_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -19330,7 +19330,7 @@ create table if not exists public.cmp_company_hubs (
 
 -- BrandProfile
 create table if not exists public.cmp_brand_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   profile_key text not null,
@@ -19345,7 +19345,7 @@ create table if not exists public.cmp_brand_profiles (
 
 -- LogoAsset
 create table if not exists public.cmp_logo_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   asset_key text not null,
@@ -19360,7 +19360,7 @@ create table if not exists public.cmp_logo_assets (
 
 -- ThemeConfig
 create table if not exists public.cmp_theme_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   config_key text not null,
@@ -19375,7 +19375,7 @@ create table if not exists public.cmp_theme_configs (
 
 -- BrandAsset
 create table if not exists public.cmp_brand_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   asset_key text not null,
@@ -19390,7 +19390,7 @@ create table if not exists public.cmp_brand_assets (
 
 -- WebsitePage
 create table if not exists public.cmp_website_pages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   page_key text not null,
@@ -19405,7 +19405,7 @@ create table if not exists public.cmp_website_pages (
 
 -- WebsiteFeature
 create table if not exists public.cmp_website_features (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   feature_key text not null,
@@ -19420,7 +19420,7 @@ create table if not exists public.cmp_website_features (
 
 -- WebsiteSection
 create table if not exists public.cmp_website_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   section_key text not null,
@@ -19435,7 +19435,7 @@ create table if not exists public.cmp_website_sections (
 
 -- DemoRequest
 create table if not exists public.cmp_demo_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   request_key text not null,
@@ -19451,7 +19451,7 @@ create table if not exists public.cmp_demo_requests (
 
 -- PricingPlan
 create table if not exists public.cmp_pricing_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   plan_key text not null,
@@ -19466,7 +19466,7 @@ create table if not exists public.cmp_pricing_plans (
 
 -- PricingPackage
 create table if not exists public.cmp_pricing_packages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   package_key text not null,
@@ -19481,7 +19481,7 @@ create table if not exists public.cmp_pricing_packages (
 
 -- ModulePricing
 create table if not exists public.cmp_module_pricing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   pricing_key text not null,
@@ -19496,7 +19496,7 @@ create table if not exists public.cmp_module_pricing (
 
 -- DiscountRule
 create table if not exists public.cmp_discount_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   rule_key text not null,
@@ -19511,7 +19511,7 @@ create table if not exists public.cmp_discount_rules (
 
 -- Proposal
 create table if not exists public.cmp_proposals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   proposal_key text not null,
@@ -19526,7 +19526,7 @@ create table if not exists public.cmp_proposals (
 
 -- ProposalDocument
 create table if not exists public.cmp_proposal_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   document_key text not null,
@@ -19541,7 +19541,7 @@ create table if not exists public.cmp_proposal_documents (
 
 -- ProposalContract
 create table if not exists public.cmp_proposal_contracts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   contract_key text not null,
@@ -19556,7 +19556,7 @@ create table if not exists public.cmp_proposal_contracts (
 
 -- ProposalHistory
 create table if not exists public.cmp_proposal_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   history_key text not null,
@@ -19571,7 +19571,7 @@ create table if not exists public.cmp_proposal_history (
 
 -- PortalDashboard
 create table if not exists public.cmp_portal_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -19586,7 +19586,7 @@ create table if not exists public.cmp_portal_dashboards (
 
 -- PortalSubscription
 create table if not exists public.cmp_portal_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   subscription_key text not null,
@@ -19601,7 +19601,7 @@ create table if not exists public.cmp_portal_subscriptions (
 
 -- PortalBilling
 create table if not exists public.cmp_portal_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   billing_key text not null,
@@ -19616,7 +19616,7 @@ create table if not exists public.cmp_portal_billing (
 
 -- PortalSupport
 create table if not exists public.cmp_portal_support (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   support_key text not null,
@@ -19631,7 +19631,7 @@ create table if not exists public.cmp_portal_support (
 
 -- DocGuide
 create table if not exists public.cmp_doc_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   guide_key text not null,
@@ -19646,7 +19646,7 @@ create table if not exists public.cmp_doc_guides (
 
 -- DocApiReference
 create table if not exists public.cmp_doc_api_references (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   reference_key text not null,
@@ -19661,7 +19661,7 @@ create table if not exists public.cmp_doc_api_references (
 
 -- DocVersion
 create table if not exists public.cmp_doc_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   version_key text not null,
@@ -19676,7 +19676,7 @@ create table if not exists public.cmp_doc_versions (
 
 -- DemoOrganization
 create table if not exists public.cmp_demo_organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   org_key text not null,
@@ -19691,7 +19691,7 @@ create table if not exists public.cmp_demo_organizations (
 
 -- DemoDataSet
 create table if not exists public.cmp_demo_data_sets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   dataset_key text not null,
@@ -19706,7 +19706,7 @@ create table if not exists public.cmp_demo_data_sets (
 
 -- DemoUser
 create table if not exists public.cmp_demo_users (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   user_key text not null,
@@ -19721,7 +19721,7 @@ create table if not exists public.cmp_demo_users (
 
 -- CompanyMetric
 create table if not exists public.cmp_company_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -19741,7 +19741,7 @@ create table if not exists public.cmp_company_metrics (
 
 -- CompanyHealth
 create table if not exists public.cmp_company_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -19760,7 +19760,7 @@ create table if not exists public.cmp_company_health (
 
 -- ExecutiveKpi
 create table if not exists public.cmp_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -19776,7 +19776,7 @@ create table if not exists public.cmp_executive_kpis (
 
 -- CompanyFailure
 create table if not exists public.cmp_company_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   failure_key text not null,
@@ -19793,7 +19793,7 @@ create table if not exists public.cmp_company_failures (
 
 -- Audit Logs
 create table if not exists public.cmp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -19944,7 +19944,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- DeliveryHub
 create table if not exists public.csd_delivery_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -19958,7 +19958,7 @@ create table if not exists public.csd_delivery_hubs (
 
 -- CustomerHealthScore
 create table if not exists public.csd_customer_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   score_key text not null,
@@ -19974,7 +19974,7 @@ create table if not exists public.csd_customer_health_scores (
 
 -- AdoptionAnalytic
 create table if not exists public.csd_adoption_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -19990,7 +19990,7 @@ create table if not exists public.csd_adoption_analytics (
 
 -- SuccessPlan
 create table if not exists public.csd_success_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   plan_key text not null,
@@ -20006,7 +20006,7 @@ create table if not exists public.csd_success_plans (
 
 -- CustomerTimeline
 create table if not exists public.csd_customer_timelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   timeline_key text not null,
@@ -20022,7 +20022,7 @@ create table if not exists public.csd_customer_timelines (
 
 -- RenewalForecast
 create table if not exists public.csd_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -20038,7 +20038,7 @@ create table if not exists public.csd_renewal_forecasts (
 
 -- SupportTicket
 create table if not exists public.csd_support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   ticket_key text not null,
@@ -20054,7 +20054,7 @@ create table if not exists public.csd_support_tickets (
 
 -- LiveChatSession
 create table if not exists public.csd_live_chat_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   session_key text not null,
@@ -20070,7 +20070,7 @@ create table if not exists public.csd_live_chat_sessions (
 
 -- KnowledgeBaseArticle
 create table if not exists public.csd_knowledge_base_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   article_key text not null,
@@ -20086,7 +20086,7 @@ create table if not exists public.csd_knowledge_base_articles (
 
 -- SlaPolicy
 create table if not exists public.csd_sla_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   policy_key text not null,
@@ -20102,7 +20102,7 @@ create table if not exists public.csd_sla_policies (
 
 -- EscalationRule
 create table if not exists public.csd_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   rule_key text not null,
@@ -20118,7 +20118,7 @@ create table if not exists public.csd_escalation_rules (
 
 -- DeploymentAutomation
 create table if not exists public.csd_deployment_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   automation_key text not null,
@@ -20134,7 +20134,7 @@ create table if not exists public.csd_deployment_automations (
 
 -- EnvironmentManagement
 create table if not exists public.csd_environment_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   environment_key text not null,
@@ -20150,7 +20150,7 @@ create table if not exists public.csd_environment_management (
 
 -- DeploymentTracking
 create table if not exists public.csd_deployment_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tracking_key text not null,
@@ -20166,7 +20166,7 @@ create table if not exists public.csd_deployment_tracking (
 
 -- UpgradeManagement
 create table if not exists public.csd_upgrade_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   upgrade_key text not null,
@@ -20182,7 +20182,7 @@ create table if not exists public.csd_upgrade_management (
 
 -- ReleaseTracking
 create table if not exists public.csd_release_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   release_key text not null,
@@ -20198,7 +20198,7 @@ create table if not exists public.csd_release_tracking (
 
 -- TrainingPortal
 create table if not exists public.csd_training_portals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   portal_key text not null,
@@ -20214,7 +20214,7 @@ create table if not exists public.csd_training_portals (
 
 -- VideoLibrary
 create table if not exists public.csd_video_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   video_key text not null,
@@ -20230,7 +20230,7 @@ create table if not exists public.csd_video_library (
 
 -- ProductTour
 create table if not exists public.csd_product_tours (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tour_key text not null,
@@ -20246,7 +20246,7 @@ create table if not exists public.csd_product_tours (
 
 -- Certification
 create table if not exists public.csd_certifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   certification_key text not null,
@@ -20262,7 +20262,7 @@ create table if not exists public.csd_certifications (
 
 -- ProgressTracking
 create table if not exists public.csd_progress_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   progress_key text not null,
@@ -20278,7 +20278,7 @@ create table if not exists public.csd_progress_tracking (
 
 -- LearningAnalytic
 create table if not exists public.csd_learning_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -20294,7 +20294,7 @@ create table if not exists public.csd_learning_analytics (
 
 -- DeliveryWorkflow
 create table if not exists public.csd_delivery_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -20310,7 +20310,7 @@ create table if not exists public.csd_delivery_workflows (
 
 -- OnboardingAutomation
 create table if not exists public.csd_onboarding_automation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   automation_key text not null,
@@ -20326,7 +20326,7 @@ create table if not exists public.csd_onboarding_automation (
 
 -- ImplementationTracking
 create table if not exists public.csd_implementation_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   tracking_key text not null,
@@ -20342,7 +20342,7 @@ create table if not exists public.csd_implementation_tracking (
 
 -- ResourceAssignment
 create table if not exists public.csd_resource_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -20358,7 +20358,7 @@ create table if not exists public.csd_resource_assignments (
 
 -- MilestoneTracking
 create table if not exists public.csd_milestone_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   milestone_key text not null,
@@ -20374,7 +20374,7 @@ create table if not exists public.csd_milestone_tracking (
 
 -- OperationsMetric
 create table if not exists public.csd_operations_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -20393,7 +20393,7 @@ create table if not exists public.csd_operations_metrics (
 
 -- OperationsHealth
 create table if not exists public.csd_operations_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -20412,7 +20412,7 @@ create table if not exists public.csd_operations_health (
 
 -- ExecutiveKpi
 create table if not exists public.csd_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -20428,7 +20428,7 @@ create table if not exists public.csd_executive_kpis (
 
 -- DeliveryFailure
 create table if not exists public.csd_delivery_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.csd_delivery_hubs(id) on delete cascade,
   failure_key text not null,
@@ -20445,7 +20445,7 @@ create table if not exists public.csd_delivery_failures (
 
 -- Audit Logs
 create table if not exists public.csd_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -20596,7 +20596,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- OperatedHub
 create table if not exists public.cop_operated_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -20610,7 +20610,7 @@ create table if not exists public.cop_operated_hubs (
 
 -- SignupFlow
 create table if not exists public.cop_signup_flows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   flow_key text not null,
@@ -20626,7 +20626,7 @@ create table if not exists public.cop_signup_flows (
 
 -- OrgProvisioning
 create table if not exists public.cop_org_provisioning (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   provision_key text not null,
@@ -20642,7 +20642,7 @@ create table if not exists public.cop_org_provisioning (
 
 -- DomainOnboarding
 create table if not exists public.cop_domain_onboarding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   domain_key text not null,
@@ -20658,7 +20658,7 @@ create table if not exists public.cop_domain_onboarding (
 
 -- EmailVerification
 create table if not exists public.cop_email_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   verification_key text not null,
@@ -20674,7 +20674,7 @@ create table if not exists public.cop_email_verifications (
 
 -- OnboardingWizard
 create table if not exists public.cop_onboarding_wizards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   wizard_key text not null,
@@ -20690,7 +20690,7 @@ create table if not exists public.cop_onboarding_wizards (
 
 -- ProductionProfile
 create table if not exists public.cop_production_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   profile_key text not null,
@@ -20706,7 +20706,7 @@ create table if not exists public.cop_production_profiles (
 
 -- DeploymentJob
 create table if not exists public.cop_deployment_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   job_key text not null,
@@ -20722,7 +20722,7 @@ create table if not exists public.cop_deployment_jobs (
 
 -- HealthValidation
 create table if not exists public.cop_health_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   validation_key text not null,
@@ -20738,7 +20738,7 @@ create table if not exists public.cop_health_validations (
 
 -- RollbackAutomation
 create table if not exists public.cop_rollback_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   rollback_key text not null,
@@ -20754,7 +20754,7 @@ create table if not exists public.cop_rollback_automations (
 
 -- DeploymentAudit
 create table if not exists public.cop_deployment_audits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   audit_key text not null,
@@ -20770,7 +20770,7 @@ create table if not exists public.cop_deployment_audits (
 
 -- CentralLog
 create table if not exists public.cop_central_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   log_key text not null,
@@ -20786,7 +20786,7 @@ create table if not exists public.cop_central_logs (
 
 -- MetricsCollector
 create table if not exists public.cop_metrics_collectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   collector_key text not null,
@@ -20802,7 +20802,7 @@ create table if not exists public.cop_metrics_collectors (
 
 -- DistributedTrace
 create table if not exists public.cop_distributed_traces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   trace_key text not null,
@@ -20818,7 +20818,7 @@ create table if not exists public.cop_distributed_traces (
 
 -- AlertRule
 create table if not exists public.cop_alert_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   rule_key text not null,
@@ -20834,7 +20834,7 @@ create table if not exists public.cop_alert_rules (
 
 -- IncidentTimeline
 create table if not exists public.cop_incident_timelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   incident_key text not null,
@@ -20850,7 +20850,7 @@ create table if not exists public.cop_incident_timelines (
 
 -- BackupScheduler
 create table if not exists public.cop_backup_schedulers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   schedule_key text not null,
@@ -20866,7 +20866,7 @@ create table if not exists public.cop_backup_schedulers (
 
 -- RestoreValidation
 create table if not exists public.cop_restore_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   restore_key text not null,
@@ -20882,7 +20882,7 @@ create table if not exists public.cop_restore_validations (
 
 -- MaintenanceMode
 create table if not exists public.cop_maintenance_modes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   maintenance_key text not null,
@@ -20898,7 +20898,7 @@ create table if not exists public.cop_maintenance_modes (
 
 -- FeatureFlagOp
 create table if not exists public.cop_feature_flag_ops (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   flag_key text not null,
@@ -20914,7 +20914,7 @@ create table if not exists public.cop_feature_flag_ops (
 
 -- PlatformDiagnostic
 create table if not exists public.cop_platform_diagnostics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   diagnostic_key text not null,
@@ -20930,7 +20930,7 @@ create table if not exists public.cop_platform_diagnostics (
 
 -- BetaOrganization
 create table if not exists public.cop_beta_organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   org_key text not null,
@@ -20946,7 +20946,7 @@ create table if not exists public.cop_beta_organizations (
 
 -- BetaInvitation
 create table if not exists public.cop_beta_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   invitation_key text not null,
@@ -20962,7 +20962,7 @@ create table if not exists public.cop_beta_invitations (
 
 -- FeedbackCollection
 create table if not exists public.cop_feedback_collection (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   feedback_key text not null,
@@ -20978,7 +20978,7 @@ create table if not exists public.cop_feedback_collection (
 
 -- FeatureRequest
 create table if not exists public.cop_feature_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   request_key text not null,
@@ -20994,7 +20994,7 @@ create table if not exists public.cop_feature_requests (
 
 -- BugReport
 create table if not exists public.cop_bug_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   bug_key text not null,
@@ -21010,7 +21010,7 @@ create table if not exists public.cop_bug_reports (
 
 -- ReleaseChannel
 create table if not exists public.cop_release_channels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   channel_key text not null,
@@ -21026,7 +21026,7 @@ create table if not exists public.cop_release_channels (
 
 -- OperatedMetric
 create table if not exists public.cop_operated_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -21046,7 +21046,7 @@ create table if not exists public.cop_operated_metrics (
 
 -- OperatedHealth
 create table if not exists public.cop_operated_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -21065,7 +21065,7 @@ create table if not exists public.cop_operated_health (
 
 -- ExecutiveBriefing
 create table if not exists public.cop_executive_briefings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   briefing_key text not null,
@@ -21081,7 +21081,7 @@ create table if not exists public.cop_executive_briefings (
 
 -- PlatformFailure
 create table if not exists public.cop_platform_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   failure_key text not null,
@@ -21098,7 +21098,7 @@ create table if not exists public.cop_platform_failures (
 
 -- Audit Logs
 create table if not exists public.cop_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -21249,7 +21249,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- IntelligenceHub
 create table if not exists public.eip_intelligence_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -21263,7 +21263,7 @@ create table if not exists public.eip_intelligence_hubs (
 
 -- KpiRegistry
 create table if not exists public.eip_kpi_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -21279,7 +21279,7 @@ create table if not exists public.eip_kpi_registry (
 
 -- KpiAggregation
 create table if not exists public.eip_kpi_aggregations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   aggregation_key text not null,
@@ -21295,7 +21295,7 @@ create table if not exists public.eip_kpi_aggregations (
 
 -- KpiCategory
 create table if not exists public.eip_kpi_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   category_key text not null,
@@ -21311,7 +21311,7 @@ create table if not exists public.eip_kpi_categories (
 
 -- KpiTarget
 create table if not exists public.eip_kpi_targets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   target_key text not null,
@@ -21327,7 +21327,7 @@ create table if not exists public.eip_kpi_targets (
 
 -- KpiThreshold
 create table if not exists public.eip_kpi_thresholds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   threshold_key text not null,
@@ -21343,7 +21343,7 @@ create table if not exists public.eip_kpi_thresholds (
 
 -- KpiSnapshot
 create table if not exists public.eip_kpi_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   snapshot_key text not null,
@@ -21359,7 +21359,7 @@ create table if not exists public.eip_kpi_snapshots (
 
 -- ExecutiveDashboard
 create table if not exists public.eip_executive_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -21375,7 +21375,7 @@ create table if not exists public.eip_executive_dashboards (
 
 -- CrossModuleInsight
 create table if not exists public.eip_cross_module_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   insight_key text not null,
@@ -21391,7 +21391,7 @@ create table if not exists public.eip_cross_module_insights (
 
 -- BusinessHealthScore
 create table if not exists public.eip_business_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -21407,7 +21407,7 @@ create table if not exists public.eip_business_health_scores (
 
 -- OperationalEfficiencyScore
 create table if not exists public.eip_operational_efficiency_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -21423,7 +21423,7 @@ create table if not exists public.eip_operational_efficiency_scores (
 
 -- GrowthScore
 create table if not exists public.eip_growth_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -21439,7 +21439,7 @@ create table if not exists public.eip_growth_scores (
 
 -- StrategicInsight
 create table if not exists public.eip_strategic_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   insight_key text not null,
@@ -21455,7 +21455,7 @@ create table if not exists public.eip_strategic_insights (
 
 -- RevenueForecast
 create table if not exists public.eip_revenue_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -21471,7 +21471,7 @@ create table if not exists public.eip_revenue_forecasts (
 
 -- CustomerGrowthForecast
 create table if not exists public.eip_customer_growth_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -21487,7 +21487,7 @@ create table if not exists public.eip_customer_growth_forecasts (
 
 -- RenewalForecast
 create table if not exists public.eip_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -21503,7 +21503,7 @@ create table if not exists public.eip_renewal_forecasts (
 
 -- CapacityPlanning
 create table if not exists public.eip_capacity_planning (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   plan_key text not null,
@@ -21519,7 +21519,7 @@ create table if not exists public.eip_capacity_planning (
 
 -- OperationalTrend
 create table if not exists public.eip_operational_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -21535,7 +21535,7 @@ create table if not exists public.eip_operational_trends (
 
 -- RiskForecast
 create table if not exists public.eip_risk_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -21551,7 +21551,7 @@ create table if not exists public.eip_risk_forecasts (
 
 -- DailyExecutiveBrief
 create table if not exists public.eip_daily_executive_briefs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   brief_key text not null,
@@ -21567,7 +21567,7 @@ create table if not exists public.eip_daily_executive_briefs (
 
 -- WeeklyBusinessSummary
 create table if not exists public.eip_weekly_business_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   summary_key text not null,
@@ -21583,7 +21583,7 @@ create table if not exists public.eip_weekly_business_summaries (
 
 -- MonthlyPerformanceReport
 create table if not exists public.eip_monthly_performance_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   report_key text not null,
@@ -21599,7 +21599,7 @@ create table if not exists public.eip_monthly_performance_reports (
 
 -- QuarterlyExecutiveReview
 create table if not exists public.eip_quarterly_executive_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   review_key text not null,
@@ -21615,7 +21615,7 @@ create table if not exists public.eip_quarterly_executive_reviews (
 
 -- AnnualBusinessReport
 create table if not exists public.eip_annual_business_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   report_key text not null,
@@ -21631,7 +21631,7 @@ create table if not exists public.eip_annual_business_reports (
 
 -- KpiServiceConfig
 create table if not exists public.eip_kpi_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -21647,7 +21647,7 @@ create table if not exists public.eip_kpi_service_configs (
 
 -- IntelligenceServiceConfig
 create table if not exists public.eip_intelligence_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -21663,7 +21663,7 @@ create table if not exists public.eip_intelligence_service_configs (
 
 -- ForecastServiceConfig
 create table if not exists public.eip_forecast_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -21679,7 +21679,7 @@ create table if not exists public.eip_forecast_service_configs (
 
 -- IntelligenceMetric
 create table if not exists public.eip_intelligence_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -21699,7 +21699,7 @@ create table if not exists public.eip_intelligence_metrics (
 
 -- IntelligenceHealth
 create table if not exists public.eip_intelligence_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -21718,7 +21718,7 @@ create table if not exists public.eip_intelligence_health (
 
 -- MissionProgress
 create table if not exists public.eip_mission_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   progress_key text not null,
@@ -21734,7 +21734,7 @@ create table if not exists public.eip_mission_progress (
 
 -- IntelligenceFailure
 create table if not exists public.eip_intelligence_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   failure_key text not null,
@@ -21751,7 +21751,7 @@ create table if not exists public.eip_intelligence_failures (
 
 -- Audit Logs
 create table if not exists public.eip_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -21902,7 +21902,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- OrganizationHub
 create table if not exists public.aof_organization_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -21916,7 +21916,7 @@ create table if not exists public.aof_organization_hubs (
 
 -- GrowthOrchestrator
 create table if not exists public.aof_growth_orchestrators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   orchestrator_key text not null,
@@ -21932,7 +21932,7 @@ create table if not exists public.aof_growth_orchestrators (
 
 -- CampaignIntelligence
 create table if not exists public.aof_campaign_intelligence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   campaign_key text not null,
@@ -21948,7 +21948,7 @@ create table if not exists public.aof_campaign_intelligence (
 
 -- LeadPrioritization
 create table if not exists public.aof_lead_prioritization (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   lead_key text not null,
@@ -21964,7 +21964,7 @@ create table if not exists public.aof_lead_prioritization (
 
 -- OpportunityRecommendation
 create table if not exists public.aof_opportunity_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   recommendation_key text not null,
@@ -21980,7 +21980,7 @@ create table if not exists public.aof_opportunity_recommendations (
 
 -- PipelineHealth
 create table if not exists public.aof_pipeline_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   health_key text not null,
@@ -21996,7 +21996,7 @@ create table if not exists public.aof_pipeline_health (
 
 -- GrowthAnalytics
 create table if not exists public.aof_growth_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -22012,7 +22012,7 @@ create table if not exists public.aof_growth_analytics (
 
 -- ExecutiveGrowthDashboard
 create table if not exists public.aof_executive_growth_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -22028,7 +22028,7 @@ create table if not exists public.aof_executive_growth_dashboards (
 
 -- DeliveryOrchestrator
 create table if not exists public.aof_delivery_orchestrators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   orchestrator_key text not null,
@@ -22044,7 +22044,7 @@ create table if not exists public.aof_delivery_orchestrators (
 
 -- ResourcePlanner
 create table if not exists public.aof_resource_planners (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   planner_key text not null,
@@ -22060,7 +22060,7 @@ create table if not exists public.aof_resource_planners (
 
 -- ImplementationScheduler
 create table if not exists public.aof_implementation_schedulers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   scheduler_key text not null,
@@ -22076,7 +22076,7 @@ create table if not exists public.aof_implementation_schedulers (
 
 -- DeploymentCoordination
 create table if not exists public.aof_deployment_coordination (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   coordination_key text not null,
@@ -22092,7 +22092,7 @@ create table if not exists public.aof_deployment_coordination (
 
 -- DeliveryIntelligence
 create table if not exists public.aof_delivery_intelligence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   intelligence_key text not null,
@@ -22108,7 +22108,7 @@ create table if not exists public.aof_delivery_intelligence (
 
 -- CustomerSuccessAutomation
 create table if not exists public.aof_customer_success_automation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   automation_key text not null,
@@ -22124,7 +22124,7 @@ create table if not exists public.aof_customer_success_automation (
 
 -- ExecutiveDeliveryDashboard
 create table if not exists public.aof_executive_delivery_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -22140,7 +22140,7 @@ create table if not exists public.aof_executive_delivery_dashboards (
 
 -- IdeaRegistry
 create table if not exists public.aof_idea_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   idea_key text not null,
@@ -22156,7 +22156,7 @@ create table if not exists public.aof_idea_registry (
 
 -- InnovationPipeline
 create table if not exists public.aof_innovation_pipeline (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   pipeline_key text not null,
@@ -22172,7 +22172,7 @@ create table if not exists public.aof_innovation_pipeline (
 
 -- ExperimentTracker
 create table if not exists public.aof_experiment_tracker (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   experiment_key text not null,
@@ -22188,7 +22188,7 @@ create table if not exists public.aof_experiment_tracker (
 
 -- ValidationWorkflow
 create table if not exists public.aof_validation_workflow (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -22204,7 +22204,7 @@ create table if not exists public.aof_validation_workflow (
 
 -- OutcomeEvaluation
 create table if not exists public.aof_outcome_evaluation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   evaluation_key text not null,
@@ -22220,7 +22220,7 @@ create table if not exists public.aof_outcome_evaluation (
 
 -- KnowledgeRepository
 create table if not exists public.aof_knowledge_repository (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   repository_key text not null,
@@ -22236,7 +22236,7 @@ create table if not exists public.aof_knowledge_repository (
 
 -- AiTaskRouter
 create table if not exists public.aof_ai_task_routers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   router_key text not null,
@@ -22252,7 +22252,7 @@ create table if not exists public.aof_ai_task_routers (
 
 -- HumanApprovalEngine
 create table if not exists public.aof_human_approval_engine (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   approval_key text not null,
@@ -22268,7 +22268,7 @@ create table if not exists public.aof_human_approval_engine (
 
 -- PolicyEngine
 create table if not exists public.aof_policy_engine (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   policy_key text not null,
@@ -22284,7 +22284,7 @@ create table if not exists public.aof_policy_engine (
 
 -- ExecutionHistory
 create table if not exists public.aof_execution_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   history_key text not null,
@@ -22300,7 +22300,7 @@ create table if not exists public.aof_execution_history (
 
 -- AiGovernanceRule
 create table if not exists public.aof_ai_governance_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   rule_key text not null,
@@ -22316,7 +22316,7 @@ create table if not exists public.aof_ai_governance_rules (
 
 -- OrganizationMetric
 create table if not exists public.aof_organization_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -22335,7 +22335,7 @@ create table if not exists public.aof_organization_metrics (
 
 -- OrganizationHealth
 create table if not exists public.aof_organization_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -22355,7 +22355,7 @@ create table if not exists public.aof_organization_health (
 
 -- InnovationDashboard
 create table if not exists public.aof_innovation_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -22371,7 +22371,7 @@ create table if not exists public.aof_innovation_dashboards (
 
 -- MissionProgress
 create table if not exists public.aof_mission_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   progress_key text not null,
@@ -22387,7 +22387,7 @@ create table if not exists public.aof_mission_progress (
 
 -- OrganizationFailure
 create table if not exists public.aof_organization_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aof_organization_hubs(id) on delete cascade,
   failure_key text not null,
@@ -22404,7 +22404,7 @@ create table if not exists public.aof_organization_failures (
 
 -- Audit Logs
 create table if not exists public.aof_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -22555,7 +22555,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- GovernanceHub
 create table if not exists public.egp_governance_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -22569,7 +22569,7 @@ create table if not exists public.egp_governance_hubs (
 
 -- OrganizationGovernance
 create table if not exists public.egp_organization_governance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   governance_key text not null,
@@ -22585,7 +22585,7 @@ create table if not exists public.egp_organization_governance (
 
 -- GovernancePolicy
 create table if not exists public.egp_governance_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   policy_key text not null,
@@ -22601,7 +22601,7 @@ create table if not exists public.egp_governance_policies (
 
 -- GovernanceFramework
 create table if not exists public.egp_governance_framework (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   framework_key text not null,
@@ -22617,7 +22617,7 @@ create table if not exists public.egp_governance_framework (
 
 -- GovernanceReview
 create table if not exists public.egp_governance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   review_key text not null,
@@ -22633,7 +22633,7 @@ create table if not exists public.egp_governance_reviews (
 
 -- GovernanceDashboard
 create table if not exists public.egp_governance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -22649,7 +22649,7 @@ create table if not exists public.egp_governance_dashboards (
 
 -- ComplianceFramework
 create table if not exists public.egp_compliance_framework (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   framework_key text not null,
@@ -22665,7 +22665,7 @@ create table if not exists public.egp_compliance_framework (
 
 -- ComplianceControl
 create table if not exists public.egp_compliance_controls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   control_key text not null,
@@ -22681,7 +22681,7 @@ create table if not exists public.egp_compliance_controls (
 
 -- ComplianceEvidence
 create table if not exists public.egp_compliance_evidence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   evidence_key text not null,
@@ -22697,7 +22697,7 @@ create table if not exists public.egp_compliance_evidence (
 
 -- ComplianceReport
 create table if not exists public.egp_compliance_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   report_key text not null,
@@ -22713,7 +22713,7 @@ create table if not exists public.egp_compliance_reports (
 
 -- ComplianceCalendar
 create table if not exists public.egp_compliance_calendar (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   calendar_key text not null,
@@ -22729,7 +22729,7 @@ create table if not exists public.egp_compliance_calendar (
 
 -- AuditCenter
 create table if not exists public.egp_audit_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   audit_key text not null,
@@ -22745,7 +22745,7 @@ create table if not exists public.egp_audit_center (
 
 -- AuditFinding
 create table if not exists public.egp_audit_findings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   finding_key text not null,
@@ -22761,7 +22761,7 @@ create table if not exists public.egp_audit_findings (
 
 -- CorrectiveAction
 create table if not exists public.egp_corrective_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   action_key text not null,
@@ -22777,7 +22777,7 @@ create table if not exists public.egp_corrective_actions (
 
 -- AuditEvidence
 create table if not exists public.egp_audit_evidence (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   evidence_key text not null,
@@ -22793,7 +22793,7 @@ create table if not exists public.egp_audit_evidence (
 
 -- AuditAnalytics
 create table if not exists public.egp_audit_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -22809,7 +22809,7 @@ create table if not exists public.egp_audit_analytics (
 
 -- DataClassification
 create table if not exists public.egp_data_classification (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   classification_key text not null,
@@ -22825,7 +22825,7 @@ create table if not exists public.egp_data_classification (
 
 -- RetentionPolicy
 create table if not exists public.egp_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   policy_key text not null,
@@ -22841,7 +22841,7 @@ create table if not exists public.egp_retention_policies (
 
 -- DataLifecycle
 create table if not exists public.egp_data_lifecycle (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   lifecycle_key text not null,
@@ -22857,7 +22857,7 @@ create table if not exists public.egp_data_lifecycle (
 
 -- DataOwnership
 create table if not exists public.egp_data_ownership (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   ownership_key text not null,
@@ -22873,7 +22873,7 @@ create table if not exists public.egp_data_ownership (
 
 -- DataQuality
 create table if not exists public.egp_data_quality (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   quality_key text not null,
@@ -22889,7 +22889,7 @@ create table if not exists public.egp_data_quality (
 
 -- RiskRegister
 create table if not exists public.egp_risk_register (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   risk_key text not null,
@@ -22905,7 +22905,7 @@ create table if not exists public.egp_risk_register (
 
 -- RiskAssessment
 create table if not exists public.egp_risk_assessment (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   assessment_key text not null,
@@ -22921,7 +22921,7 @@ create table if not exists public.egp_risk_assessment (
 
 -- RiskMitigation
 create table if not exists public.egp_risk_mitigation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   mitigation_key text not null,
@@ -22937,7 +22937,7 @@ create table if not exists public.egp_risk_mitigation (
 
 -- RiskMonitoring
 create table if not exists public.egp_risk_monitoring (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   monitoring_key text not null,
@@ -22953,7 +22953,7 @@ create table if not exists public.egp_risk_monitoring (
 
 -- BusinessContinuity
 create table if not exists public.egp_business_continuity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   continuity_key text not null,
@@ -22969,7 +22969,7 @@ create table if not exists public.egp_business_continuity (
 
 -- GovernanceMetric
 create table if not exists public.egp_governance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -22987,7 +22987,7 @@ create table if not exists public.egp_governance_metrics (
 
 -- GovernanceHealth
 create table if not exists public.egp_governance_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -23007,7 +23007,7 @@ create table if not exists public.egp_governance_health (
 
 -- ComplianceDashboard
 create table if not exists public.egp_compliance_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -23023,7 +23023,7 @@ create table if not exists public.egp_compliance_dashboards (
 
 -- MissionProgress
 create table if not exists public.egp_mission_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   progress_key text not null,
@@ -23039,7 +23039,7 @@ create table if not exists public.egp_mission_progress (
 
 -- GovernanceFailure
 create table if not exists public.egp_governance_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.egp_governance_hubs(id) on delete cascade,
   failure_key text not null,
@@ -23056,7 +23056,7 @@ create table if not exists public.egp_governance_failures (
 
 -- Audit Logs
 create table if not exists public.egp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -23207,7 +23207,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- GrowthHub
 create table if not exists public.aage_growth_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -23221,7 +23221,7 @@ create table if not exists public.aage_growth_hubs (
 
 -- BrandProfile
 create table if not exists public.aage_brand_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   profile_key text not null,
@@ -23237,7 +23237,7 @@ create table if not exists public.aage_brand_profiles (
 
 -- BrandVoice
 create table if not exists public.aage_brand_voice (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   voice_key text not null,
@@ -23253,7 +23253,7 @@ create table if not exists public.aage_brand_voice (
 
 -- CoreMessaging
 create table if not exists public.aage_core_messaging (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   messaging_key text not null,
@@ -23269,7 +23269,7 @@ create table if not exists public.aage_core_messaging (
 
 -- BrandGuideline
 create table if not exists public.aage_brand_guidelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   guideline_key text not null,
@@ -23285,7 +23285,7 @@ create table if not exists public.aage_brand_guidelines (
 
 -- LogoLibrary
 create table if not exists public.aage_logo_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   logo_key text not null,
@@ -23301,7 +23301,7 @@ create table if not exists public.aage_logo_library (
 
 -- ColorSystem
 create table if not exists public.aage_color_systems (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   color_key text not null,
@@ -23317,7 +23317,7 @@ create table if not exists public.aage_color_systems (
 
 -- YoutubeTemplate
 create table if not exists public.aage_youtube_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23333,7 +23333,7 @@ create table if not exists public.aage_youtube_templates (
 
 -- SocialTemplate
 create table if not exists public.aage_social_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23349,7 +23349,7 @@ create table if not exists public.aage_social_templates (
 
 -- BlogTemplate
 create table if not exists public.aage_blog_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23365,7 +23365,7 @@ create table if not exists public.aage_blog_templates (
 
 -- WebsiteArticleTemplate
 create table if not exists public.aage_website_article_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23381,7 +23381,7 @@ create table if not exists public.aage_website_article_templates (
 
 -- EmailCampaignTemplate
 create table if not exists public.aage_email_campaign_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23397,7 +23397,7 @@ create table if not exists public.aage_email_campaign_templates (
 
 -- CaseStudyTemplate
 create table if not exists public.aage_case_study_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23413,7 +23413,7 @@ create table if not exists public.aage_case_study_templates (
 
 -- ImageAsset
 create table if not exists public.aage_image_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -23429,7 +23429,7 @@ create table if not exists public.aage_image_assets (
 
 -- VideoAsset
 create table if not exists public.aage_video_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -23445,7 +23445,7 @@ create table if not exists public.aage_video_assets (
 
 -- IconAsset
 create table if not exists public.aage_icon_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -23461,7 +23461,7 @@ create table if not exists public.aage_icon_assets (
 
 -- VoiceProfile
 create table if not exists public.aage_voice_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   profile_key text not null,
@@ -23477,7 +23477,7 @@ create table if not exists public.aage_voice_profiles (
 
 -- MusicAsset
 create table if not exists public.aage_music_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -23493,7 +23493,7 @@ create table if not exists public.aage_music_assets (
 
 -- ThumbnailTemplate
 create table if not exists public.aage_thumbnail_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -23509,7 +23509,7 @@ create table if not exists public.aage_thumbnail_templates (
 
 -- IdeaGenerator
 create table if not exists public.aage_idea_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -23525,7 +23525,7 @@ create table if not exists public.aage_idea_generators (
 
 -- ScriptGenerator
 create table if not exists public.aage_script_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -23541,7 +23541,7 @@ create table if not exists public.aage_script_generators (
 
 -- CaptionGenerator
 create table if not exists public.aage_caption_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -23557,7 +23557,7 @@ create table if not exists public.aage_caption_generators (
 
 -- BlogGenerator
 create table if not exists public.aage_blog_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -23573,7 +23573,7 @@ create table if not exists public.aage_blog_generators (
 
 -- SeoAssistant
 create table if not exists public.aage_seo_assistants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   assistant_key text not null,
@@ -23589,7 +23589,7 @@ create table if not exists public.aage_seo_assistants (
 
 -- CtaGenerator
 create table if not exists public.aage_cta_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -23605,7 +23605,7 @@ create table if not exists public.aage_cta_generators (
 
 -- GrowthMetric
 create table if not exists public.aage_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -23624,7 +23624,7 @@ create table if not exists public.aage_growth_metrics (
 
 -- GrowthHealth
 create table if not exists public.aage_growth_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -23642,7 +23642,7 @@ create table if not exists public.aage_growth_health (
 
 -- ContentCalendar
 create table if not exists public.aage_content_calendar (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   calendar_key text not null,
@@ -23658,7 +23658,7 @@ create table if not exists public.aage_content_calendar (
 
 -- DraftQueue
 create table if not exists public.aage_draft_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -23674,7 +23674,7 @@ create table if not exists public.aage_draft_queue (
 
 -- ApprovalQueue
 create table if not exists public.aage_approval_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -23690,7 +23690,7 @@ create table if not exists public.aage_approval_queue (
 
 -- PublishingQueue
 create table if not exists public.aage_publishing_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -23706,7 +23706,7 @@ create table if not exists public.aage_publishing_queue (
 
 -- Audit Logs
 create table if not exists public.aage_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,
@@ -23857,7 +23857,7 @@ on conflict (key) do update set description = excluded.description, resource = e
 
 -- OperationsHub
 create table if not exists public.aago_operations_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -23871,7 +23871,7 @@ create table if not exists public.aago_operations_hubs (
 
 -- BrandKnowledgeBase
 create table if not exists public.aago_brand_knowledge_base (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   knowledge_key text not null,
@@ -23887,7 +23887,7 @@ create table if not exists public.aago_brand_knowledge_base (
 
 -- BrandRulebook
 create table if not exists public.aago_brand_rulebook (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   rulebook_key text not null,
@@ -23903,7 +23903,7 @@ create table if not exists public.aago_brand_rulebook (
 
 -- MessagingLibrary
 create table if not exists public.aago_messaging_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   message_key text not null,
@@ -23919,7 +23919,7 @@ create table if not exists public.aago_messaging_library (
 
 -- ServiceLibrary
 create table if not exists public.aago_service_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   service_key text not null,
@@ -23935,7 +23935,7 @@ create table if not exists public.aago_service_library (
 
 -- IndustryLibrary
 create table if not exists public.aago_industry_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   industry_key text not null,
@@ -23951,7 +23951,7 @@ create table if not exists public.aago_industry_library (
 
 -- FaqLibrary
 create table if not exists public.aago_faq_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   faq_key text not null,
@@ -23967,7 +23967,7 @@ create table if not exists public.aago_faq_library (
 
 -- BrandApprovalRule
 create table if not exists public.aago_brand_approval_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   rule_key text not null,
@@ -23983,7 +23983,7 @@ create table if not exists public.aago_brand_approval_rules (
 
 -- VideoProject
 create table if not exists public.aago_video_projects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   project_key text not null,
@@ -23999,7 +23999,7 @@ create table if not exists public.aago_video_projects (
 
 -- ThumbnailManager
 create table if not exists public.aago_thumbnail_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   thumbnail_key text not null,
@@ -24015,7 +24015,7 @@ create table if not exists public.aago_thumbnail_manager (
 
 -- VoiceoverManager
 create table if not exists public.aago_voiceover_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   voiceover_key text not null,
@@ -24031,7 +24031,7 @@ create table if not exists public.aago_voiceover_manager (
 
 -- CreativeAssetGenerator
 create table if not exists public.aago_creative_asset_generator (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   generator_key text not null,
@@ -24047,7 +24047,7 @@ create table if not exists public.aago_creative_asset_generator (
 
 -- CampaignAssetBuilder
 create table if not exists public.aago_campaign_asset_builder (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   builder_key text not null,
@@ -24063,7 +24063,7 @@ create table if not exists public.aago_campaign_asset_builder (
 
 -- CreativeWorkflow
 create table if not exists public.aago_creative_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -24079,7 +24079,7 @@ create table if not exists public.aago_creative_workflows (
 
 -- DistributionContentQueue
 create table if not exists public.aago_distribution_content_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   queue_key text not null,
@@ -24095,7 +24095,7 @@ create table if not exists public.aago_distribution_content_queue (
 
 -- DistributionPublishingQueue
 create table if not exists public.aago_distribution_publishing_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   queue_key text not null,
@@ -24111,7 +24111,7 @@ create table if not exists public.aago_distribution_publishing_queue (
 
 -- ChannelManager
 create table if not exists public.aago_channel_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   channel_key text not null,
@@ -24127,7 +24127,7 @@ create table if not exists public.aago_channel_manager (
 
 -- ApprovalCenter
 create table if not exists public.aago_approval_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   approval_key text not null,
@@ -24143,7 +24143,7 @@ create table if not exists public.aago_approval_center (
 
 -- PublishingHistory
 create table if not exists public.aago_publishing_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   history_key text not null,
@@ -24159,7 +24159,7 @@ create table if not exists public.aago_publishing_history (
 
 -- DistributionAnalytics
 create table if not exists public.aago_distribution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -24175,7 +24175,7 @@ create table if not exists public.aago_distribution_analytics (
 
 -- CampaignDashboard
 create table if not exists public.aago_campaign_dashboard (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -24191,7 +24191,7 @@ create table if not exists public.aago_campaign_dashboard (
 
 -- ContentPerformance
 create table if not exists public.aago_content_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   performance_key text not null,
@@ -24207,7 +24207,7 @@ create table if not exists public.aago_content_performance (
 
 -- LeadAttribution
 create table if not exists public.aago_lead_attribution (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   attribution_key text not null,
@@ -24223,7 +24223,7 @@ create table if not exists public.aago_lead_attribution (
 
 -- GrowthKpi
 create table if not exists public.aago_growth_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -24239,7 +24239,7 @@ create table if not exists public.aago_growth_kpis (
 
 -- RoiDashboard
 create table if not exists public.aago_roi_dashboard (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   roi_key text not null,
@@ -24255,7 +24255,7 @@ create table if not exists public.aago_roi_dashboard (
 
 -- RecommendationEngine
 create table if not exists public.aago_recommendation_engine (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   recommendation_key text not null,
@@ -24271,7 +24271,7 @@ create table if not exists public.aago_recommendation_engine (
 
 -- CommandCenterMetric
 create table if not exists public.aago_command_center_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -24290,7 +24290,7 @@ create table if not exists public.aago_command_center_metrics (
 
 -- CommandCenterHealth
 create table if not exists public.aago_command_center_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -24308,7 +24308,7 @@ create table if not exists public.aago_command_center_health (
 
 -- MissionStatus
 create table if not exists public.aago_mission_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   mission_key text not null,
@@ -24324,7 +24324,7 @@ create table if not exists public.aago_mission_status (
 
 -- ExecutiveSummary
 create table if not exists public.aago_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   summary_key text not null,
@@ -24340,7 +24340,7 @@ create table if not exists public.aago_executive_summaries (
 
 -- OperationalFailure
 create table if not exists public.aago_operational_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   failure_key text not null,
@@ -24357,7 +24357,7 @@ create table if not exists public.aago_operational_failures (
 
 -- Audit Logs
 create table if not exists public.aago_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

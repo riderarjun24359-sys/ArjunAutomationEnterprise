@@ -1,7 +1,7 @@
 -- Sprint 27: AI DevOps & Deployment Engineer
 
 create table if not exists public.dd_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -28,7 +28,7 @@ create table if not exists public.dd_engagements (
 );
 
 create table if not exists public.dd_cicd_pipelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   pipeline_key text not null,
@@ -43,7 +43,7 @@ create table if not exists public.dd_cicd_pipelines (
 );
 
 create table if not exists public.dd_environments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   environment_key text not null,
@@ -58,7 +58,7 @@ create table if not exists public.dd_environments (
 );
 
 create table if not exists public.dd_infrastructure_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   template_key text not null,
@@ -73,7 +73,7 @@ create table if not exists public.dd_infrastructure_templates (
 );
 
 create table if not exists public.dd_docker_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   config_key text not null,
@@ -88,7 +88,7 @@ create table if not exists public.dd_docker_configs (
 );
 
 create table if not exists public.dd_kubernetes_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -103,7 +103,7 @@ create table if not exists public.dd_kubernetes_plans (
 );
 
 create table if not exists public.dd_release_orchestrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   orchestration_key text not null,
@@ -117,7 +117,7 @@ create table if not exists public.dd_release_orchestrations (
 );
 
 create table if not exists public.dd_rollback_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -132,7 +132,7 @@ create table if not exists public.dd_rollback_plans (
 );
 
 create table if not exists public.dd_blue_green_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -147,7 +147,7 @@ create table if not exists public.dd_blue_green_plans (
 );
 
 create table if not exists public.dd_canary_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -162,7 +162,7 @@ create table if not exists public.dd_canary_plans (
 );
 
 create table if not exists public.dd_monitoring_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   integration_key text not null,
@@ -177,7 +177,7 @@ create table if not exists public.dd_monitoring_integrations (
 );
 
 create table if not exists public.dd_logging_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   integration_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.dd_logging_integrations (
 );
 
 create table if not exists public.dd_health_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   check_key text not null,
@@ -207,7 +207,7 @@ create table if not exists public.dd_health_checks (
 );
 
 create table if not exists public.dd_backup_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   verification_key text not null,
@@ -222,7 +222,7 @@ create table if not exists public.dd_backup_verifications (
 );
 
 create table if not exists public.dd_disaster_recovery_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   plan_key text not null,
@@ -237,7 +237,7 @@ create table if not exists public.dd_disaster_recovery_plans (
 );
 
 create table if not exists public.dd_cost_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -251,7 +251,7 @@ create table if not exists public.dd_cost_estimates (
 );
 
 create table if not exists public.dd_deployment_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   approval_key text not null,
@@ -265,7 +265,7 @@ create table if not exists public.dd_deployment_approvals (
 );
 
 create table if not exists public.dd_release_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.dd_engagements(id) on delete cascade,
   version_key text not null,
@@ -279,7 +279,7 @@ create table if not exists public.dd_release_versions (
 );
 
 create table if not exists public.dd_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

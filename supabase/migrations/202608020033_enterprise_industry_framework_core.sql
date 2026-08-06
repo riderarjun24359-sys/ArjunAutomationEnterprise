@@ -2,7 +2,7 @@
 
 -- FrameworkHub
 create table if not exists public.ifr_framework_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.ifr_framework_hubs (
 
 -- IndustryRegistration
 create table if not exists public.ifr_industry_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   registration_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.ifr_industry_registrations (
 
 -- IndustryMetadata
 create table if not exists public.ifr_industry_metadata (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   metadata_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.ifr_industry_metadata (
 
 -- IndustryVersion
 create table if not exists public.ifr_industry_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   version_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.ifr_industry_versions (
 
 -- IndustryDependency
 create table if not exists public.ifr_industry_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -75,7 +75,7 @@ create table if not exists public.ifr_industry_dependencies (
 
 -- BusinessType
 create table if not exists public.ifr_business_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   type_key text not null,
@@ -90,7 +90,7 @@ create table if not exists public.ifr_business_types (
 
 -- BusinessSize
 create table if not exists public.ifr_business_sizes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   size_key text not null,
@@ -105,7 +105,7 @@ create table if not exists public.ifr_business_sizes (
 
 -- OperatingModel
 create table if not exists public.ifr_operating_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   model_key text not null,
@@ -120,7 +120,7 @@ create table if not exists public.ifr_operating_models (
 
 -- IndustryProfile
 create table if not exists public.ifr_industry_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.ifr_industry_profiles (
 
 -- DashboardTemplate
 create table if not exists public.ifr_dashboard_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.ifr_dashboard_templates (
 
 -- WorkflowTemplate
 create table if not exists public.ifr_workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -165,7 +165,7 @@ create table if not exists public.ifr_workflow_templates (
 
 -- RoleTemplate
 create table if not exists public.ifr_role_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.ifr_role_templates (
 
 -- ReportTemplate
 create table if not exists public.ifr_report_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   template_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.ifr_report_templates (
 
 -- DynamicConfiguration
 create table if not exists public.ifr_dynamic_configurations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   config_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.ifr_dynamic_configurations (
 
 -- FeatureConfiguration
 create table if not exists public.ifr_feature_configurations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   feature_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.ifr_feature_configurations (
 
 -- BusinessRule
 create table if not exists public.ifr_business_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   rule_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.ifr_business_rules (
 
 -- ValidationRule
 create table if not exists public.ifr_validation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   rule_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.ifr_validation_rules (
 
 -- IndustryContext
 create table if not exists public.ifr_industry_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   context_key text not null,
@@ -270,7 +270,7 @@ create table if not exists public.ifr_industry_contexts (
 
 -- AiContext
 create table if not exists public.ifr_ai_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   context_key text not null,
@@ -285,7 +285,7 @@ create table if not exists public.ifr_ai_contexts (
 
 -- TerminologyEntry
 create table if not exists public.ifr_terminology_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   term_key text not null,
@@ -300,7 +300,7 @@ create table if not exists public.ifr_terminology_entries (
 
 -- DemoProfile
 create table if not exists public.ifr_demo_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -315,7 +315,7 @@ create table if not exists public.ifr_demo_profiles (
 
 -- ProductionProfile
 create table if not exists public.ifr_production_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -330,7 +330,7 @@ create table if not exists public.ifr_production_profiles (
 
 -- EnterpriseProfile
 create table if not exists public.ifr_enterprise_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   profile_key text not null,
@@ -345,7 +345,7 @@ create table if not exists public.ifr_enterprise_profiles (
 
 -- SharedApi
 create table if not exists public.ifr_shared_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.ifr_shared_apis (
 
 -- ContextApi
 create table if not exists public.ifr_context_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.ifr_context_apis (
 
 -- ConfigurationApi
 create table if not exists public.ifr_configuration_apis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   api_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.ifr_configuration_apis (
 
 -- ExtensionPoint
 create table if not exists public.ifr_extension_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   extension_key text not null,
@@ -405,7 +405,7 @@ create table if not exists public.ifr_extension_points (
 
 -- FrameworkMetric
 create table if not exists public.ifr_framework_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -423,7 +423,7 @@ create table if not exists public.ifr_framework_metrics (
 
 -- FrameworkHealth
 create table if not exists public.ifr_framework_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -441,7 +441,7 @@ create table if not exists public.ifr_framework_health (
 
 -- CompatibilityCheck
 create table if not exists public.ifr_compatibility_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   check_key text not null,
@@ -456,7 +456,7 @@ create table if not exists public.ifr_compatibility_checks (
 
 -- FrameworkFailure
 create table if not exists public.ifr_framework_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.ifr_framework_hubs(id) on delete cascade,
   failure_key text not null,
@@ -473,7 +473,7 @@ create table if not exists public.ifr_framework_failures (
 
 -- Audit Logs
 create table if not exists public.ifr_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

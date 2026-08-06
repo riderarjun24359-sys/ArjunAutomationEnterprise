@@ -66,11 +66,11 @@ function buildMigration() {
         const uniqueClause = isHub
             ? "unique (organization_id, center_key)"
             : isOrgOnly
-              ? `unique (organization_id, ${e.sqlExtra.split("\n")[0].split(" ")[0]})`
-              : `unique (organization_id, center_id, ${e.sqlExtra.split("\n")[0].split(" ")[0]})`;
+                ? `unique (organization_id, ${e.sqlExtra.split("\n")[0].split(" ")[0]})`
+                : `unique (organization_id, center_id, ${e.sqlExtra.split("\n")[0].split(" ")[0]})`;
         sql += `-- ${e.pascal}\n`;
         sql += `create table if not exists public.${e.table} (\n`;
-        sql += `  id uuid primary key default uuid_generate_v4(),\n`;
+        sql += `  id uuid primary key default gen_random_uuid(),\n`;
         sql += `  organization_id uuid not null references public.organizations(id) on delete cascade,\n`;
         sql += centerCol;
         sql += `  ${e.sqlExtra},\n`;
@@ -82,7 +82,7 @@ function buildMigration() {
     }
     sql += `-- Audit Logs\n`;
     sql += `create table if not exists public.${PREFIX}_audit_logs (\n`;
-    sql += `  id uuid primary key default uuid_generate_v4(),\n`;
+    sql += `  id uuid primary key default gen_random_uuid(),\n`;
     sql += `  organization_id uuid not null references public.organizations(id) on delete cascade,\n`;
     sql += `  entity_type text not null default '',\n`;
     sql += `  entity_id uuid,\n`;

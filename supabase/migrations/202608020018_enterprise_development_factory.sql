@@ -1,7 +1,7 @@
 -- Sprint 25: AI Development Factory
 
 create table if not exists public.df_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -24,7 +24,7 @@ create table if not exists public.df_engagements (
 );
 
 create table if not exists public.df_work_packages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   package_key text not null,
@@ -38,7 +38,7 @@ create table if not exists public.df_work_packages (
 );
 
 create table if not exists public.df_backend_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -52,7 +52,7 @@ create table if not exists public.df_backend_workflows (
 );
 
 create table if not exists public.df_frontend_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -66,7 +66,7 @@ create table if not exists public.df_frontend_workflows (
 );
 
 create table if not exists public.df_api_scaffolds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   scaffold_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.df_api_scaffolds (
 );
 
 create table if not exists public.df_migration_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   plan_key text not null,
@@ -94,7 +94,7 @@ create table if not exists public.df_migration_plans (
 );
 
 create table if not exists public.df_repositories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   repo_key text not null,
@@ -108,7 +108,7 @@ create table if not exists public.df_repositories (
 );
 
 create table if not exists public.df_components (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   component_key text not null,
@@ -122,7 +122,7 @@ create table if not exists public.df_components (
 );
 
 create table if not exists public.df_test_scaffolds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   scaffold_key text not null,
@@ -136,7 +136,7 @@ create table if not exists public.df_test_scaffolds (
 );
 
 create table if not exists public.df_coding_standards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   standard_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.df_coding_standards (
 );
 
 create table if not exists public.df_secure_coding_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   validation_key text not null,
@@ -164,7 +164,7 @@ create table if not exists public.df_secure_coding_validations (
 );
 
 create table if not exists public.df_module_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   recommendation_key text not null,
@@ -178,7 +178,7 @@ create table if not exists public.df_module_recommendations (
 );
 
 create table if not exists public.df_pull_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   pr_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.df_pull_requests (
 );
 
 create table if not exists public.df_code_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   review_key text not null,
@@ -207,7 +207,7 @@ create table if not exists public.df_code_reviews (
 );
 
 create table if not exists public.df_technical_docs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   doc_key text not null,
@@ -221,7 +221,7 @@ create table if not exists public.df_technical_docs (
 );
 
 create table if not exists public.df_progress_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   tracking_key text not null,
@@ -235,7 +235,7 @@ create table if not exists public.df_progress_tracking (
 );
 
 create table if not exists public.df_build_artifacts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   artifact_key text not null,
@@ -250,7 +250,7 @@ create table if not exists public.df_build_artifacts (
 );
 
 create table if not exists public.df_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.df_engagements(id) on delete cascade,
   entity_type text not null,
@@ -263,7 +263,7 @@ create table if not exists public.df_versions (
 );
 
 create table if not exists public.df_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

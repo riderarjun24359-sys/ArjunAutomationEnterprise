@@ -46,7 +46,7 @@ export function PremiumFooter() {
                         <p className="mt-4 max-w-sm text-sm text-slate-400 leading-relaxed">
                             Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.
                         </p>
-                        <p className="mt-4 text-sm text-slate-500">sales@arjunautomation.com</p>
+                        <p className="mt-4 text-sm text-slate-400">sales@arjunautomation.com</p>
                     </div>
 
                     {Object.entries({ Company: FOOTER_LINKS.company, Solutions: FOOTER_LINKS.solutions, Resources: FOOTER_LINKS.resources }).map(
@@ -68,10 +68,10 @@ export function PremiumFooter() {
                 </div>
 
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 sm:flex-row">
-                    <p className="text-sm text-slate-500">&copy; {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
+                    <p className="text-sm text-slate-400">&copy; {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
                     <div className="flex gap-4">
                         {FOOTER_LINKS.legal.map((link) => (
-                            <AnimatedLink key={link.href} href={link.href} className="text-slate-500 hover:text-indigo-400">
+                            <AnimatedLink key={link.href} href={link.href} className="text-slate-400 hover:text-indigo-400">
                                 {link.label}
                             </AnimatedLink>
                         ))}

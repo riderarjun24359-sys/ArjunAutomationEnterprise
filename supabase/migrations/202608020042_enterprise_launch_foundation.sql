@@ -2,7 +2,7 @@
 
 -- LaunchHub
 create table if not exists public.elf_launch_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.elf_launch_hubs (
 
 -- OrganizationProvision
 create table if not exists public.elf_organization_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   provision_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.elf_organization_provisions (
 
 -- TenantProvision
 create table if not exists public.elf_tenant_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   provision_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.elf_tenant_provisions (
 
 -- IndustryPackAssignment
 create table if not exists public.elf_industry_pack_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.elf_industry_pack_assignments (
 
 -- ModuleLicense
 create table if not exists public.elf_module_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   license_key text not null,
@@ -76,7 +76,7 @@ create table if not exists public.elf_module_licenses (
 
 -- WizardProfile
 create table if not exists public.elf_wizard_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   profile_key text not null,
@@ -91,7 +91,7 @@ create table if not exists public.elf_wizard_profiles (
 
 -- WizardBranding
 create table if not exists public.elf_wizard_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   branding_key text not null,
@@ -106,7 +106,7 @@ create table if not exists public.elf_wizard_branding (
 
 -- WizardDepartment
 create table if not exists public.elf_wizard_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   department_key text not null,
@@ -121,7 +121,7 @@ create table if not exists public.elf_wizard_departments (
 
 -- WizardSetting
 create table if not exists public.elf_wizard_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   setting_key text not null,
@@ -136,7 +136,7 @@ create table if not exists public.elf_wizard_settings (
 
 -- ImportJob
 create table if not exists public.elf_import_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   job_key text not null,
@@ -152,7 +152,7 @@ create table if not exists public.elf_import_jobs (
 
 -- ImportValidation
 create table if not exists public.elf_import_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   validation_key text not null,
@@ -168,7 +168,7 @@ create table if not exists public.elf_import_validations (
 
 -- ImportPreview
 create table if not exists public.elf_import_previews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   preview_key text not null,
@@ -184,7 +184,7 @@ create table if not exists public.elf_import_previews (
 
 -- ImportHistory
 create table if not exists public.elf_import_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   history_key text not null,
@@ -200,7 +200,7 @@ create table if not exists public.elf_import_history (
 
 -- GoLiveChecklist
 create table if not exists public.elf_go_live_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   checklist_key text not null,
@@ -216,7 +216,7 @@ create table if not exists public.elf_go_live_checklists (
 
 -- GoLiveScore
 create table if not exists public.elf_go_live_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   score_key text not null,
@@ -232,7 +232,7 @@ create table if not exists public.elf_go_live_scores (
 
 -- DeploymentStatus
 create table if not exists public.elf_deployment_statuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   status_key text not null,
@@ -248,7 +248,7 @@ create table if not exists public.elf_deployment_statuses (
 
 -- ReadinessValidation
 create table if not exists public.elf_readiness_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   validation_key text not null,
@@ -264,7 +264,7 @@ create table if not exists public.elf_readiness_validations (
 
 -- CustomerHealthScore
 create table if not exists public.elf_customer_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   score_key text not null,
@@ -280,7 +280,7 @@ create table if not exists public.elf_customer_health_scores (
 
 -- PlatformAdoption
 create table if not exists public.elf_platform_adoption (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   adoption_key text not null,
@@ -296,7 +296,7 @@ create table if not exists public.elf_platform_adoption (
 
 -- FeatureUsage
 create table if not exists public.elf_feature_usage (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   usage_key text not null,
@@ -312,7 +312,7 @@ create table if not exists public.elf_feature_usage (
 
 -- RenewalTracking
 create table if not exists public.elf_renewal_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   renewal_key text not null,
@@ -328,7 +328,7 @@ create table if not exists public.elf_renewal_tracking (
 
 -- SupportTicket
 create table if not exists public.elf_support_tickets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   ticket_key text not null,
@@ -344,7 +344,7 @@ create table if not exists public.elf_support_tickets (
 
 -- KnowledgeBaseArticle
 create table if not exists public.elf_knowledge_base_articles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   article_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.elf_knowledge_base_articles (
 
 -- IncidentTracking
 create table if not exists public.elf_incident_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   incident_key text not null,
@@ -376,7 +376,7 @@ create table if not exists public.elf_incident_tracking (
 
 -- CustomerRegistry
 create table if not exists public.elf_customer_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   customer_key text not null,
@@ -392,7 +392,7 @@ create table if not exists public.elf_customer_registry (
 
 -- SubscriptionRecord
 create table if not exists public.elf_subscription_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   subscription_key text not null,
@@ -408,7 +408,7 @@ create table if not exists public.elf_subscription_records (
 
 -- LicenseManagement
 create table if not exists public.elf_license_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   license_key text not null,
@@ -424,7 +424,7 @@ create table if not exists public.elf_license_management (
 
 -- LaunchMetric
 create table if not exists public.elf_launch_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -443,7 +443,7 @@ create table if not exists public.elf_launch_metrics (
 
 -- LaunchHealth
 create table if not exists public.elf_launch_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -461,7 +461,7 @@ create table if not exists public.elf_launch_health (
 
 -- MissionControlKpi
 create table if not exists public.elf_mission_control_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -477,7 +477,7 @@ create table if not exists public.elf_mission_control_kpis (
 
 -- LaunchFailure
 create table if not exists public.elf_launch_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elf_launch_hubs(id) on delete cascade,
   failure_key text not null,
@@ -494,7 +494,7 @@ create table if not exists public.elf_launch_failures (
 
 -- Audit Logs
 create table if not exists public.elf_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

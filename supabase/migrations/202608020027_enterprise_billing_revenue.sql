@@ -2,7 +2,7 @@
 
 -- M1 Subscription Billing
 create table if not exists public.brv_billing_accounts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   account_key text not null,
   account_name text not null,
@@ -17,7 +17,7 @@ create table if not exists public.brv_billing_accounts (
 );
 
 create table if not exists public.brv_billing_cycles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   cycle_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.brv_billing_cycles (
 );
 
 create table if not exists public.brv_subscription_billings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   subscription_key text not null,
@@ -53,7 +53,7 @@ create table if not exists public.brv_subscription_billings (
 );
 
 create table if not exists public.brv_proration_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   proration_key text not null,
@@ -72,7 +72,7 @@ create table if not exists public.brv_proration_records (
 
 -- M2 Payment Management
 create table if not exists public.brv_payment_methods (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   method_key text not null,
@@ -89,7 +89,7 @@ create table if not exists public.brv_payment_methods (
 );
 
 create table if not exists public.brv_payment_attempts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   attempt_key text not null,
@@ -106,7 +106,7 @@ create table if not exists public.brv_payment_attempts (
 );
 
 create table if not exists public.brv_refunds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   refund_key text not null,
@@ -122,7 +122,7 @@ create table if not exists public.brv_refunds (
 );
 
 create table if not exists public.brv_wallet_balances (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   balance_key text not null,
@@ -138,7 +138,7 @@ create table if not exists public.brv_wallet_balances (
 
 -- M3 Revenue Management
 create table if not exists public.brv_mrr_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -156,7 +156,7 @@ create table if not exists public.brv_mrr_snapshots (
 );
 
 create table if not exists public.brv_arr_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -170,7 +170,7 @@ create table if not exists public.brv_arr_snapshots (
 );
 
 create table if not exists public.brv_deferred_revenue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   deferred_key text not null,
@@ -186,7 +186,7 @@ create table if not exists public.brv_deferred_revenue (
 );
 
 create table if not exists public.brv_revenue_recognition (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   recognition_key text not null,
@@ -202,7 +202,7 @@ create table if not exists public.brv_revenue_recognition (
 
 -- M4 Invoice Center
 create table if not exists public.brv_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   invoice_key text not null,
@@ -223,7 +223,7 @@ create table if not exists public.brv_invoices (
 );
 
 create table if not exists public.brv_credit_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   credit_key text not null,
@@ -239,7 +239,7 @@ create table if not exists public.brv_credit_notes (
 );
 
 create table if not exists public.brv_debit_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   debit_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.brv_debit_notes (
 );
 
 create table if not exists public.brv_tax_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   config_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.brv_tax_configs (
 
 -- M5 Collection Center
 create table if not exists public.brv_outstanding_balances (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   balance_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.brv_outstanding_balances (
 );
 
 create table if not exists public.brv_payment_reminders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   reminder_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.brv_payment_reminders (
 );
 
 create table if not exists public.brv_collection_cases (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   case_key text not null,
@@ -321,7 +321,7 @@ create table if not exists public.brv_collection_cases (
 );
 
 create table if not exists public.brv_write_offs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   writeoff_key text not null,
@@ -338,7 +338,7 @@ create table if not exists public.brv_write_offs (
 
 -- M6 Financial Analytics
 create table if not exists public.brv_analytics_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   snapshot_key text not null,
@@ -354,7 +354,7 @@ create table if not exists public.brv_analytics_snapshots (
 );
 
 create table if not exists public.brv_revenue_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   metrics_key text not null,
@@ -370,7 +370,7 @@ create table if not exists public.brv_revenue_growth_metrics (
 );
 
 create table if not exists public.brv_cash_flow_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   record_key text not null,
@@ -386,7 +386,7 @@ create table if not exists public.brv_cash_flow_records (
 );
 
 create table if not exists public.brv_subscription_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   trend_key text not null,
@@ -404,7 +404,7 @@ create table if not exists public.brv_subscription_trends (
 
 -- M7 Revenue Forecasting
 create table if not exists public.brv_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -419,7 +419,7 @@ create table if not exists public.brv_renewal_forecasts (
 );
 
 create table if not exists public.brv_mrr_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -434,7 +434,7 @@ create table if not exists public.brv_mrr_forecasts (
 );
 
 create table if not exists public.brv_arr_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   forecast_key text not null,
@@ -449,7 +449,7 @@ create table if not exists public.brv_arr_forecasts (
 );
 
 create table if not exists public.brv_revenue_projections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   projection_key text not null,
@@ -465,7 +465,7 @@ create table if not exists public.brv_revenue_projections (
 
 -- M8 Finance Ops Dashboard
 create table if not exists public.brv_finance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -481,7 +481,7 @@ create table if not exists public.brv_finance_metrics (
 );
 
 create table if not exists public.brv_financial_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -496,7 +496,7 @@ create table if not exists public.brv_financial_health (
 );
 
 create table if not exists public.brv_expansion_contraction (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   billing_account_id uuid not null references public.brv_billing_accounts(id) on delete cascade,
   record_key text not null,
@@ -512,7 +512,7 @@ create table if not exists public.brv_expansion_contraction (
 );
 
 create table if not exists public.brv_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

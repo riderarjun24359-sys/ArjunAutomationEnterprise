@@ -5,7 +5,7 @@
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.roles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid references public.organizations(id) on delete cascade,
   name text not null,
   description text,
@@ -16,7 +16,7 @@ create table if not exists public.roles (
 );
 
 create table if not exists public.permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   key text not null unique,
   description text,
   resource text,
@@ -25,7 +25,7 @@ create table if not exists public.permissions (
 );
 
 create table if not exists public.role_permission_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   role_id uuid not null references public.roles(id) on delete cascade,
   permission_id uuid not null references public.permissions(id) on delete cascade,
   action text not null default 'read',
@@ -38,7 +38,7 @@ create table if not exists public.role_permission_grants (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.companies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   industry text,
@@ -51,7 +51,7 @@ create table if not exists public.companies (
 );
 
 create table if not exists public.contacts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_id uuid references public.companies(id) on delete set null,
   first_name text not null,
@@ -64,7 +64,7 @@ create table if not exists public.contacts (
 );
 
 create table if not exists public.clients (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_id uuid references public.companies(id) on delete set null,
   primary_contact_id uuid references public.contacts(id) on delete set null,
@@ -91,7 +91,7 @@ create table if not exists public.clients (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.projects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   name text not null,
@@ -111,7 +111,7 @@ create table if not exists public.projects (
 );
 
 create table if not exists public.project_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete set null,
   name text not null,
@@ -123,7 +123,7 @@ create table if not exists public.project_members (
 );
 
 create table if not exists public.project_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   title text not null,
   due_date date,
@@ -134,7 +134,7 @@ create table if not exists public.project_milestones (
 );
 
 create table if not exists public.project_time_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   project_name text not null,
   started_at text not null,
@@ -144,7 +144,7 @@ create table if not exists public.project_time_entries (
 );
 
 create table if not exists public.project_files (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   name text not null,
   folder text not null,
@@ -154,7 +154,7 @@ create table if not exists public.project_files (
 );
 
 create table if not exists public.project_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   author text not null,
   body text not null,
@@ -200,7 +200,7 @@ end $$;
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
   title text not null,
@@ -218,7 +218,7 @@ create table if not exists public.tasks (
 );
 
 create table if not exists public.task_labels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   color text not null default 'slate',
@@ -233,7 +233,7 @@ create table if not exists public.task_label_assignments (
 );
 
 create table if not exists public.task_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   task_id uuid not null references public.tasks(id) on delete cascade,
   author_id uuid references public.user_profiles(id) on delete set null,
   author_name text not null default '',
@@ -247,7 +247,7 @@ create table if not exists public.task_comments (
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete cascade,
   title text not null,
@@ -258,7 +258,7 @@ create table if not exists public.notifications (
 );
 
 create table if not exists public.activity_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete set null,
   entity_type text not null,

@@ -2,7 +2,7 @@
 
 -- IntelligenceHub
 create table if not exists public.eip_intelligence_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.eip_intelligence_hubs (
 
 -- KpiRegistry
 create table if not exists public.eip_kpi_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.eip_kpi_registry (
 
 -- KpiAggregation
 create table if not exists public.eip_kpi_aggregations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   aggregation_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.eip_kpi_aggregations (
 
 -- KpiCategory
 create table if not exists public.eip_kpi_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   category_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.eip_kpi_categories (
 
 -- KpiTarget
 create table if not exists public.eip_kpi_targets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   target_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.eip_kpi_targets (
 
 -- KpiThreshold
 create table if not exists public.eip_kpi_thresholds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   threshold_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.eip_kpi_thresholds (
 
 -- KpiSnapshot
 create table if not exists public.eip_kpi_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   snapshot_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.eip_kpi_snapshots (
 
 -- ExecutiveDashboard
 create table if not exists public.eip_executive_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.eip_executive_dashboards (
 
 -- CrossModuleInsight
 create table if not exists public.eip_cross_module_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   insight_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.eip_cross_module_insights (
 
 -- BusinessHealthScore
 create table if not exists public.eip_business_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.eip_business_health_scores (
 
 -- OperationalEfficiencyScore
 create table if not exists public.eip_operational_efficiency_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.eip_operational_efficiency_scores (
 
 -- GrowthScore
 create table if not exists public.eip_growth_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.eip_growth_scores (
 
 -- StrategicInsight
 create table if not exists public.eip_strategic_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   insight_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.eip_strategic_insights (
 
 -- RevenueForecast
 create table if not exists public.eip_revenue_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.eip_revenue_forecasts (
 
 -- CustomerGrowthForecast
 create table if not exists public.eip_customer_growth_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.eip_customer_growth_forecasts (
 
 -- RenewalForecast
 create table if not exists public.eip_renewal_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.eip_renewal_forecasts (
 
 -- CapacityPlanning
 create table if not exists public.eip_capacity_planning (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   plan_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.eip_capacity_planning (
 
 -- OperationalTrend
 create table if not exists public.eip_operational_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.eip_operational_trends (
 
 -- RiskForecast
 create table if not exists public.eip_risk_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   forecast_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.eip_risk_forecasts (
 
 -- DailyExecutiveBrief
 create table if not exists public.eip_daily_executive_briefs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   brief_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.eip_daily_executive_briefs (
 
 -- WeeklyBusinessSummary
 create table if not exists public.eip_weekly_business_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   summary_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.eip_weekly_business_summaries (
 
 -- MonthlyPerformanceReport
 create table if not exists public.eip_monthly_performance_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   report_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.eip_monthly_performance_reports (
 
 -- QuarterlyExecutiveReview
 create table if not exists public.eip_quarterly_executive_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   review_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.eip_quarterly_executive_reviews (
 
 -- AnnualBusinessReport
 create table if not exists public.eip_annual_business_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   report_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.eip_annual_business_reports (
 
 -- KpiServiceConfig
 create table if not exists public.eip_kpi_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.eip_kpi_service_configs (
 
 -- IntelligenceServiceConfig
 create table if not exists public.eip_intelligence_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.eip_intelligence_service_configs (
 
 -- ForecastServiceConfig
 create table if not exists public.eip_forecast_service_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   config_key text not null,
@@ -432,7 +432,7 @@ create table if not exists public.eip_forecast_service_configs (
 
 -- IntelligenceMetric
 create table if not exists public.eip_intelligence_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -452,7 +452,7 @@ create table if not exists public.eip_intelligence_metrics (
 
 -- IntelligenceHealth
 create table if not exists public.eip_intelligence_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -471,7 +471,7 @@ create table if not exists public.eip_intelligence_health (
 
 -- MissionProgress
 create table if not exists public.eip_mission_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   progress_key text not null,
@@ -487,7 +487,7 @@ create table if not exists public.eip_mission_progress (
 
 -- IntelligenceFailure
 create table if not exists public.eip_intelligence_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.eip_intelligence_hubs(id) on delete cascade,
   failure_key text not null,
@@ -504,7 +504,7 @@ create table if not exists public.eip_intelligence_failures (
 
 -- Audit Logs
 create table if not exists public.eip_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

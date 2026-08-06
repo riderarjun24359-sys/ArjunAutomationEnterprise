@@ -1,7 +1,7 @@
 -- V2 Program A Sprint 3: Customer Lifecycle & Tenant Operations Platform
 
 create table if not exists public.tlo_tenant_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_key text not null,
   company_name text not null,
@@ -13,7 +13,7 @@ create table if not exists public.tlo_tenant_contexts (
 );
 
 create table if not exists public.tlo_lifecycle_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   record_key text not null,
@@ -29,7 +29,7 @@ create table if not exists public.tlo_lifecycle_records (
 );
 
 create table if not exists public.tlo_lifecycle_transitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   transition_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.tlo_lifecycle_transitions (
 );
 
 create table if not exists public.tlo_lifecycle_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   event_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.tlo_lifecycle_events (
 );
 
 create table if not exists public.tlo_reactivation_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   request_key text not null,
@@ -79,7 +79,7 @@ create table if not exists public.tlo_reactivation_requests (
 );
 
 create table if not exists public.tlo_workspaces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   workspace_key text not null,
@@ -94,7 +94,7 @@ create table if not exists public.tlo_workspaces (
 );
 
 create table if not exists public.tlo_environment_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   setting_key text not null,
@@ -109,7 +109,7 @@ create table if not exists public.tlo_environment_settings (
 );
 
 create table if not exists public.tlo_storage_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   storage_key text not null,
@@ -125,7 +125,7 @@ create table if not exists public.tlo_storage_management (
 );
 
 create table if not exists public.tlo_operations_controls (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   control_key text not null,
@@ -143,7 +143,7 @@ create table if not exists public.tlo_operations_controls (
 );
 
 create table if not exists public.tlo_onboarding_flows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   flow_key text not null,
@@ -158,7 +158,7 @@ create table if not exists public.tlo_onboarding_flows (
 );
 
 create table if not exists public.tlo_onboarding_progress (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   progress_key text not null,
@@ -175,7 +175,7 @@ create table if not exists public.tlo_onboarding_progress (
 );
 
 create table if not exists public.tlo_onboarding_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   validation_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.tlo_onboarding_validations (
 );
 
 create table if not exists public.tlo_go_live_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   checklist_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.tlo_go_live_checklists (
 );
 
 create table if not exists public.tlo_marketplace_modules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   module_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.tlo_marketplace_modules (
 );
 
 create table if not exists public.tlo_module_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   installation_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.tlo_module_installations (
 );
 
 create table if not exists public.tlo_module_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   dependency_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.tlo_module_dependencies (
 );
 
 create table if not exists public.tlo_module_compatibility (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   compatibility_key text not null,
@@ -271,7 +271,7 @@ create table if not exists public.tlo_module_compatibility (
 );
 
 create table if not exists public.tlo_industry_packs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   pack_key text not null,
@@ -286,7 +286,7 @@ create table if not exists public.tlo_industry_packs (
 );
 
 create table if not exists public.tlo_pack_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   installation_key text not null,
@@ -301,7 +301,7 @@ create table if not exists public.tlo_pack_installations (
 );
 
 create table if not exists public.tlo_pack_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   version_key text not null,
@@ -317,7 +317,7 @@ create table if not exists public.tlo_pack_versions (
 );
 
 create table if not exists public.tlo_pack_exports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   export_key text not null,
@@ -333,7 +333,7 @@ create table if not exists public.tlo_pack_exports (
 );
 
 create table if not exists public.tlo_health_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   snapshot_key text not null,
@@ -348,7 +348,7 @@ create table if not exists public.tlo_health_snapshots (
 );
 
 create table if not exists public.tlo_health_dimensions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   dimension_key text not null,
@@ -364,7 +364,7 @@ create table if not exists public.tlo_health_dimensions (
 );
 
 create table if not exists public.tlo_health_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   risk_key text not null,
@@ -381,7 +381,7 @@ create table if not exists public.tlo_health_risks (
 );
 
 create table if not exists public.tlo_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   score_key text not null,
@@ -396,7 +396,7 @@ create table if not exists public.tlo_health_scores (
 );
 
 create table if not exists public.tlo_success_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   plan_key text not null,
@@ -412,7 +412,7 @@ create table if not exists public.tlo_success_plans (
 );
 
 create table if not exists public.tlo_quarterly_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   review_key text not null,
@@ -428,7 +428,7 @@ create table if not exists public.tlo_quarterly_reviews (
 );
 
 create table if not exists public.tlo_renewal_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   renewal_key text not null,
@@ -444,7 +444,7 @@ create table if not exists public.tlo_renewal_plans (
 );
 
 create table if not exists public.tlo_customer_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   milestone_key text not null,
@@ -460,7 +460,7 @@ create table if not exists public.tlo_customer_milestones (
 );
 
 create table if not exists public.tlo_commercial_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -478,7 +478,7 @@ create table if not exists public.tlo_commercial_metrics (
 );
 
 create table if not exists public.tlo_growth_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   snapshot_key text not null,
   snapshot_date date not null default current_date,
@@ -494,7 +494,7 @@ create table if not exists public.tlo_growth_snapshots (
 );
 
 create table if not exists public.tlo_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_context_id uuid not null references public.tlo_tenant_contexts(id) on delete cascade,
   opportunity_key text not null,
@@ -511,7 +511,7 @@ create table if not exists public.tlo_expansion_opportunities (
 );
 
 create table if not exists public.tlo_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

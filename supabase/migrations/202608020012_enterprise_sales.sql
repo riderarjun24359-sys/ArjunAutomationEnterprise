@@ -1,7 +1,7 @@
 -- Sprint 19: Enterprise Sales Pipeline & Revenue Operations
 
 create table if not exists public.sales_pipelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -13,7 +13,7 @@ create table if not exists public.sales_pipelines (
 );
 
 create table if not exists public.sales_pipeline_stages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   pipeline_id uuid not null references public.sales_pipelines(id) on delete cascade,
   name text not null,
@@ -27,7 +27,7 @@ create table if not exists public.sales_pipeline_stages (
 );
 
 create table if not exists public.sales_leads (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   lead_name text not null,
@@ -43,7 +43,7 @@ create table if not exists public.sales_leads (
 );
 
 create table if not exists public.sales_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_number text not null,
   name text not null,
@@ -68,7 +68,7 @@ create table if not exists public.sales_opportunities (
 );
 
 create table if not exists public.sales_quotes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   quote_number text not null,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
@@ -84,7 +84,7 @@ create table if not exists public.sales_quotes (
 );
 
 create table if not exists public.sales_quote_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   quote_id uuid not null references public.sales_quotes(id) on delete cascade,
   description text not null,
   quantity numeric(12,2) not null default 1,
@@ -94,7 +94,7 @@ create table if not exists public.sales_quote_items (
 );
 
 create table if not exists public.sales_forecasts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   forecast_period text not null,
   forecast_date date not null default current_date,
@@ -107,7 +107,7 @@ create table if not exists public.sales_forecasts (
 );
 
 create table if not exists public.sales_activities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -121,7 +121,7 @@ create table if not exists public.sales_activities (
 );
 
 create table if not exists public.sales_meetings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -137,7 +137,7 @@ create table if not exists public.sales_meetings (
 );
 
 create table if not exists public.sales_call_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -151,7 +151,7 @@ create table if not exists public.sales_call_logs (
 );
 
 create table if not exists public.sales_email_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
   lead_id uuid references public.sales_leads(id) on delete set null,
@@ -165,7 +165,7 @@ create table if not exists public.sales_email_tracking (
 );
 
 create table if not exists public.sales_targets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   period_label text not null,
@@ -179,7 +179,7 @@ create table if not exists public.sales_targets (
 );
 
 create table if not exists public.sales_commissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   opportunity_id uuid references public.sales_opportunities(id) on delete set null,
@@ -191,7 +191,7 @@ create table if not exists public.sales_commissions (
 );
 
 create table if not exists public.sales_win_loss_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   opportunity_id uuid not null references public.sales_opportunities(id) on delete cascade,
   outcome text not null,
@@ -203,7 +203,7 @@ create table if not exists public.sales_win_loss_records (
 );
 
 create table if not exists public.sales_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

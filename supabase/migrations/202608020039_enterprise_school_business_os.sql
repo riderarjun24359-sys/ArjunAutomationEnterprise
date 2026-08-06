@@ -2,7 +2,7 @@
 
 -- SchoolHub
 create table if not exists public.sch_school_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.sch_school_hubs (
 
 -- Campus
 create table if not exists public.sch_campuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   campus_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.sch_campuses (
 
 -- Building
 create table if not exists public.sch_buildings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   building_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.sch_buildings (
 
 -- Classroom
 create table if not exists public.sch_classrooms (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   classroom_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.sch_classrooms (
 
 -- AcademicYear
 create table if not exists public.sch_academic_years (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   year_key text not null,
@@ -77,7 +77,7 @@ create table if not exists public.sch_academic_years (
 
 -- Admission
 create table if not exists public.sch_admissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   admission_key text not null,
@@ -93,7 +93,7 @@ create table if not exists public.sch_admissions (
 
 -- StudentProfile
 create table if not exists public.sch_student_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   profile_key text not null,
@@ -108,7 +108,7 @@ create table if not exists public.sch_student_profiles (
 
 -- ParentProfile
 create table if not exists public.sch_parent_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   parent_key text not null,
@@ -123,7 +123,7 @@ create table if not exists public.sch_parent_profiles (
 
 -- Enrollment
 create table if not exists public.sch_enrollments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   enrollment_key text not null,
@@ -138,7 +138,7 @@ create table if not exists public.sch_enrollments (
 
 -- Subject
 create table if not exists public.sch_subjects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   subject_key text not null,
@@ -153,7 +153,7 @@ create table if not exists public.sch_subjects (
 
 -- Timetable
 create table if not exists public.sch_timetables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   timetable_key text not null,
@@ -168,7 +168,7 @@ create table if not exists public.sch_timetables (
 
 -- Examination
 create table if not exists public.sch_examinations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   exam_key text not null,
@@ -184,7 +184,7 @@ create table if not exists public.sch_examinations (
 
 -- ReportCard
 create table if not exists public.sch_report_cards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   report_key text not null,
@@ -199,7 +199,7 @@ create table if not exists public.sch_report_cards (
 
 -- Teacher
 create table if not exists public.sch_teachers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   teacher_key text not null,
@@ -214,7 +214,7 @@ create table if not exists public.sch_teachers (
 
 -- StaffAttendance
 create table if not exists public.sch_staff_attendance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   attendance_key text not null,
@@ -229,7 +229,7 @@ create table if not exists public.sch_staff_attendance (
 
 -- LeaveRequest
 create table if not exists public.sch_leave_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   leave_key text not null,
@@ -245,7 +245,7 @@ create table if not exists public.sch_leave_requests (
 
 -- SubstituteTeacher
 create table if not exists public.sch_substitute_teachers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   substitute_key text not null,
@@ -260,7 +260,7 @@ create table if not exists public.sch_substitute_teachers (
 
 -- FeeStructure
 create table if not exists public.sch_fee_structures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   fee_key text not null,
@@ -275,7 +275,7 @@ create table if not exists public.sch_fee_structures (
 
 -- FeeInvoice
 create table if not exists public.sch_fee_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   invoice_key text not null,
@@ -291,7 +291,7 @@ create table if not exists public.sch_fee_invoices (
 
 -- FeePayment
 create table if not exists public.sch_fee_payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   payment_key text not null,
@@ -307,7 +307,7 @@ create table if not exists public.sch_fee_payments (
 
 -- Scholarship
 create table if not exists public.sch_scholarships (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   scholarship_key text not null,
@@ -322,7 +322,7 @@ create table if not exists public.sch_scholarships (
 
 -- Announcement
 create table if not exists public.sch_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   announcement_key text not null,
@@ -337,7 +337,7 @@ create table if not exists public.sch_announcements (
 
 -- Messaging
 create table if not exists public.sch_messaging (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   message_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.sch_messaging (
 
 -- Event
 create table if not exists public.sch_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   event_key text not null,
@@ -367,7 +367,7 @@ create table if not exists public.sch_events (
 
 -- AdmissionsAnalytics
 create table if not exists public.sch_admissions_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -382,7 +382,7 @@ create table if not exists public.sch_admissions_analytics (
 
 -- AttendanceAnalytics
 create table if not exists public.sch_attendance_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -397,7 +397,7 @@ create table if not exists public.sch_attendance_analytics (
 
 -- AcademicAnalytics
 create table if not exists public.sch_academic_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -412,7 +412,7 @@ create table if not exists public.sch_academic_analytics (
 
 -- SchoolMetric
 create table if not exists public.sch_school_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -432,7 +432,7 @@ create table if not exists public.sch_school_metrics (
 
 -- SchoolHealth
 create table if not exists public.sch_school_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -450,7 +450,7 @@ create table if not exists public.sch_school_health (
 
 -- ExecutiveKpi
 create table if not exists public.sch_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -466,7 +466,7 @@ create table if not exists public.sch_executive_kpis (
 
 -- SchoolFailure
 create table if not exists public.sch_school_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.sch_school_hubs(id) on delete cascade,
   failure_key text not null,
@@ -483,7 +483,7 @@ create table if not exists public.sch_school_failures (
 
 -- Audit Logs
 create table if not exists public.sch_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

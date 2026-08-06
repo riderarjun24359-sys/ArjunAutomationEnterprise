@@ -2,7 +2,7 @@
 
 -- M1 Notification Engine
 create table if not exists public.cnh_communication_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -14,7 +14,7 @@ create table if not exists public.cnh_communication_hubs (
 );
 
 create table if not exists public.cnh_notification_channels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   channel_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.cnh_notification_channels (
 );
 
 create table if not exists public.cnh_notification_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   queue_key text not null,
@@ -52,7 +52,7 @@ create table if not exists public.cnh_notification_queue (
 );
 
 create table if not exists public.cnh_retry_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   policy_key text not null,
@@ -69,7 +69,7 @@ create table if not exists public.cnh_retry_policies (
 
 -- M2 Message Template Center
 create table if not exists public.cnh_message_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_key text not null,
@@ -85,7 +85,7 @@ create table if not exists public.cnh_message_templates (
 );
 
 create table if not exists public.cnh_template_variables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -100,7 +100,7 @@ create table if not exists public.cnh_template_variables (
 );
 
 create table if not exists public.cnh_template_localizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -114,7 +114,7 @@ create table if not exists public.cnh_template_localizations (
 );
 
 create table if not exists public.cnh_template_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   template_id uuid not null references public.cnh_message_templates(id) on delete cascade,
@@ -131,7 +131,7 @@ create table if not exists public.cnh_template_approvals (
 
 -- M3 Communication Automation
 create table if not exists public.cnh_automation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_key text not null,
@@ -147,7 +147,7 @@ create table if not exists public.cnh_automation_rules (
 );
 
 create table if not exists public.cnh_automation_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
@@ -161,7 +161,7 @@ create table if not exists public.cnh_automation_triggers (
 );
 
 create table if not exists public.cnh_automation_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid not null references public.cnh_automation_rules(id) on delete cascade,
@@ -177,7 +177,7 @@ create table if not exists public.cnh_automation_schedules (
 );
 
 create table if not exists public.cnh_automation_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   rule_id uuid references public.cnh_automation_rules(id) on delete set null,
@@ -195,7 +195,7 @@ create table if not exists public.cnh_automation_executions (
 
 -- M4 Customer Preference Center
 create table if not exists public.cnh_preference_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   profile_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.cnh_preference_profiles (
 );
 
 create table if not exists public.cnh_channel_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid not null references public.cnh_preference_profiles(id) on delete cascade,
@@ -226,7 +226,7 @@ create table if not exists public.cnh_channel_preferences (
 );
 
 create table if not exists public.cnh_opt_in_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
@@ -242,7 +242,7 @@ create table if not exists public.cnh_opt_in_records (
 );
 
 create table if not exists public.cnh_opt_out_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   preference_profile_id uuid references public.cnh_preference_profiles(id) on delete set null,
@@ -258,7 +258,7 @@ create table if not exists public.cnh_opt_out_records (
 
 -- M5 Announcement Center
 create table if not exists public.cnh_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_key text not null,
@@ -274,7 +274,7 @@ create table if not exists public.cnh_announcements (
 );
 
 create table if not exists public.cnh_announcement_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -288,7 +288,7 @@ create table if not exists public.cnh_announcement_schedules (
 );
 
 create table if not exists public.cnh_pinned_announcements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -303,7 +303,7 @@ create table if not exists public.cnh_pinned_announcements (
 );
 
 create table if not exists public.cnh_announcement_acknowledgements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   announcement_id uuid not null references public.cnh_announcements(id) on delete cascade,
@@ -317,7 +317,7 @@ create table if not exists public.cnh_announcement_acknowledgements (
 
 -- M6 Campaign Management
 create table if not exists public.cnh_campaigns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_key text not null,
@@ -334,7 +334,7 @@ create table if not exists public.cnh_campaigns (
 );
 
 create table if not exists public.cnh_audience_segments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid references public.cnh_campaigns(id) on delete set null,
@@ -349,7 +349,7 @@ create table if not exists public.cnh_audience_segments (
 );
 
 create table if not exists public.cnh_campaign_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
@@ -369,7 +369,7 @@ create table if not exists public.cnh_campaign_deliveries (
 );
 
 create table if not exists public.cnh_campaign_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   campaign_id uuid not null references public.cnh_campaigns(id) on delete cascade,
@@ -389,7 +389,7 @@ create table if not exists public.cnh_campaign_metrics (
 
 -- M7 Delivery Analytics
 create table if not exists public.cnh_delivery_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -406,7 +406,7 @@ create table if not exists public.cnh_delivery_analytics (
 );
 
 create table if not exists public.cnh_engagement_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -423,7 +423,7 @@ create table if not exists public.cnh_engagement_metrics (
 );
 
 create table if not exists public.cnh_bounce_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   bounce_key text not null,
@@ -440,7 +440,7 @@ create table if not exists public.cnh_bounce_records (
 );
 
 create table if not exists public.cnh_channel_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   performance_key text not null,
@@ -458,7 +458,7 @@ create table if not exists public.cnh_channel_performance (
 
 -- M8 Communication Ops Dashboard
 create table if not exists public.cnh_communication_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -475,7 +475,7 @@ create table if not exists public.cnh_communication_metrics (
 );
 
 create table if not exists public.cnh_system_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -492,7 +492,7 @@ create table if not exists public.cnh_system_health (
 );
 
 create table if not exists public.cnh_delivery_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cnh_communication_hubs(id) on delete cascade,
   failure_key text not null,
@@ -510,7 +510,7 @@ create table if not exists public.cnh_delivery_failures (
 );
 
 create table if not exists public.cnh_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

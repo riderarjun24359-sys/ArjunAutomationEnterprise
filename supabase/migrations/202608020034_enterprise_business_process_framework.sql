@@ -2,7 +2,7 @@
 
 -- ProcessHub
 create table if not exists public.bpf_process_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.bpf_process_hubs (
 
 -- BusinessProcess
 create table if not exists public.bpf_business_processes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   process_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.bpf_business_processes (
 
 -- ProcessCategory
 create table if not exists public.bpf_process_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   category_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.bpf_process_categories (
 
 -- ProcessVersion
 create table if not exists public.bpf_process_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   version_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.bpf_process_versions (
 
 -- ProcessDependency
 create table if not exists public.bpf_process_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -75,7 +75,7 @@ create table if not exists public.bpf_process_dependencies (
 
 -- ProcessModel
 create table if not exists public.bpf_process_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   model_key text not null,
@@ -90,7 +90,7 @@ create table if not exists public.bpf_process_models (
 
 -- ProcessStep
 create table if not exists public.bpf_process_steps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   step_key text not null,
@@ -105,7 +105,7 @@ create table if not exists public.bpf_process_steps (
 
 -- DecisionPoint
 create table if not exists public.bpf_decision_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   decision_key text not null,
@@ -120,7 +120,7 @@ create table if not exists public.bpf_decision_points (
 
 -- ReusableBlock
 create table if not exists public.bpf_reusable_blocks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   block_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.bpf_reusable_blocks (
 
 -- ApprovalRule
 create table if not exists public.bpf_approval_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   rule_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.bpf_approval_rules (
 
 -- SequentialApproval
 create table if not exists public.bpf_sequential_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   approval_key text not null,
@@ -165,7 +165,7 @@ create table if not exists public.bpf_sequential_approvals (
 
 -- ParallelApproval
 create table if not exists public.bpf_parallel_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   approval_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.bpf_parallel_approvals (
 
 -- EscalationRule
 create table if not exists public.bpf_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   escalation_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.bpf_escalation_rules (
 
 -- TaskAssignment
 create table if not exists public.bpf_task_assignments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   assignment_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.bpf_task_assignments (
 
 -- TaskTemplate
 create table if not exists public.bpf_task_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   template_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.bpf_task_templates (
 
 -- RecurringTask
 create table if not exists public.bpf_recurring_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   task_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.bpf_recurring_tasks (
 
 -- TaskSlaPolicy
 create table if not exists public.bpf_task_sla_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   policy_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.bpf_task_sla_policies (
 
 -- RuleCondition
 create table if not exists public.bpf_rule_conditions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   condition_key text not null,
@@ -270,7 +270,7 @@ create table if not exists public.bpf_rule_conditions (
 
 -- RuleValidation
 create table if not exists public.bpf_rule_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   validation_key text not null,
@@ -285,7 +285,7 @@ create table if not exists public.bpf_rule_validations (
 
 -- RuleCalculation
 create table if not exists public.bpf_rule_calculations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   calculation_key text not null,
@@ -300,7 +300,7 @@ create table if not exists public.bpf_rule_calculations (
 
 -- ReusableRule
 create table if not exists public.bpf_reusable_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   rule_key text not null,
@@ -315,7 +315,7 @@ create table if not exists public.bpf_reusable_rules (
 
 -- ProcessExecution
 create table if not exists public.bpf_process_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   execution_key text not null,
@@ -330,7 +330,7 @@ create table if not exists public.bpf_process_executions (
 
 -- ExecutionHistory
 create table if not exists public.bpf_execution_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   history_key text not null,
@@ -345,7 +345,7 @@ create table if not exists public.bpf_execution_history (
 
 -- ExecutionRetry
 create table if not exists public.bpf_execution_retries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   retry_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.bpf_execution_retries (
 
 -- ExecutionAnalytics
 create table if not exists public.bpf_execution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.bpf_execution_analytics (
 
 -- BottleneckReport
 create table if not exists public.bpf_bottleneck_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   report_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.bpf_bottleneck_reports (
 
 -- SlaPerformanceMetric
 create table if not exists public.bpf_sla_performance_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   metric_key text not null,
@@ -405,7 +405,7 @@ create table if not exists public.bpf_sla_performance_metrics (
 
 -- ProcessMetric
 create table if not exists public.bpf_process_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -424,7 +424,7 @@ create table if not exists public.bpf_process_metrics (
 
 -- ProcessHealth
 create table if not exists public.bpf_process_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -443,7 +443,7 @@ create table if not exists public.bpf_process_health (
 
 -- FailedProcessRecord
 create table if not exists public.bpf_failed_process_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   record_key text not null,
@@ -459,7 +459,7 @@ create table if not exists public.bpf_failed_process_records (
 
 -- ProcessFailure
 create table if not exists public.bpf_process_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.bpf_process_hubs(id) on delete cascade,
   failure_key text not null,
@@ -476,7 +476,7 @@ create table if not exists public.bpf_process_failures (
 
 -- Audit Logs
 create table if not exists public.bpf_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

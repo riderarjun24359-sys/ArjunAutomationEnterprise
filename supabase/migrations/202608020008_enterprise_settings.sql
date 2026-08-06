@@ -1,7 +1,9 @@
--- Sprint 15: Enterprise Settings & Administration
+create extension if not exists "pgcrypto";
+
+-- Sprint 15: Enterprise Settings & Administration-- Sprint 15: Enterprise Settings & Administration
 
 create table if not exists public.organization_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   timezone text not null default 'UTC',
   currency text not null default 'USD',
@@ -15,7 +17,7 @@ create table if not exists public.organization_settings (
 );
 
 create table if not exists public.organization_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   logo_url text not null default '',
   favicon_url text not null default '',
@@ -29,7 +31,7 @@ create table if not exists public.organization_branding (
 );
 
 create table if not exists public.organization_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   default_locale text not null default 'en',
   default_timezone text not null default 'UTC',
@@ -41,7 +43,7 @@ create table if not exists public.organization_preferences (
 );
 
 create table if not exists public.organization_security_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   mfa_required boolean not null default false,
   session_timeout_minutes integer not null default 480,
@@ -53,7 +55,7 @@ create table if not exists public.organization_security_policies (
 );
 
 create table if not exists public.teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -64,7 +66,7 @@ create table if not exists public.teams (
 );
 
 create table if not exists public.team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   team_id uuid not null references public.teams(id) on delete cascade,
   user_id uuid not null references public.user_profiles(id) on delete cascade,
   role_name text not null default 'member',
@@ -73,7 +75,7 @@ create table if not exists public.team_members (
 );
 
 create table if not exists public.organization_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   email text not null,
   role_name text not null default 'member',
@@ -85,7 +87,7 @@ create table if not exists public.organization_invitations (
 );
 
 create table if not exists public.user_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references public.user_profiles(id) on delete cascade,
   organization_id uuid references public.organizations(id) on delete set null,
   theme text not null default 'system',
@@ -98,7 +100,7 @@ create table if not exists public.user_preferences (
 );
 
 create table if not exists public.audit_config (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null unique references public.organizations(id) on delete cascade,
   retention_days integer not null default 365,
   enabled_events text[] not null default array['create', 'update', 'delete', 'login'],
@@ -109,7 +111,7 @@ create table if not exists public.audit_config (
 );
 
 create table if not exists public.api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   key_prefix text not null,
@@ -124,7 +126,7 @@ create table if not exists public.api_keys (
 );
 
 create table if not exists public.notification_preferences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid references public.user_profiles(id) on delete cascade,
   channel text not null default 'email',
@@ -136,7 +138,7 @@ create table if not exists public.notification_preferences (
 );
 
 create table if not exists public.backup_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   schedule_cron text not null default '0 2 * * 0',
@@ -149,7 +151,7 @@ create table if not exists public.backup_configs (
 );
 
 create table if not exists public.backup_runs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   config_id uuid not null references public.backup_configs(id) on delete cascade,
   status text not null default 'pending',
   started_at timestamptz not null default now(),

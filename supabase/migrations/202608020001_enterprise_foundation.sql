@@ -11,7 +11,7 @@ end;
 $$;
 
 create table if not exists public.organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique,
   status text not null default 'active',
@@ -21,7 +21,7 @@ create table if not exists public.organizations (
 );
 
 create table if not exists public.user_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   auth_user_id uuid not null unique,
   email text not null,
   full_name text,
@@ -33,7 +33,7 @@ create table if not exists public.user_profiles (
 );
 
 create table if not exists public.organization_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_id uuid not null references public.user_profiles(id) on delete cascade,
   role_name text not null default 'member',
@@ -44,7 +44,7 @@ create table if not exists public.organization_members (
 );
 
 create table if not exists public.permission_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   key text not null unique,
   description text,
   created_at timestamptz not null default now(),
@@ -52,7 +52,7 @@ create table if not exists public.permission_definitions (
 );
 
 create table if not exists public.role_permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   role_name text not null,
   permission_key text not null,
   action text not null default 'read',
@@ -61,7 +61,7 @@ create table if not exists public.role_permissions (
 );
 
 create table if not exists public.audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid,
   user_id uuid,
   entity_type text,
@@ -72,7 +72,7 @@ create table if not exists public.audit_logs (
 );
 
 create table if not exists public.storage_objects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   bucket text not null,
   path text not null,

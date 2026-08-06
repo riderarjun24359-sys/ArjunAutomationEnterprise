@@ -2,7 +2,7 @@
 
 -- DocumentHub
 create table if not exists public.dde_document_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.dde_document_hubs (
 
 -- DocumentType
 create table if not exists public.dde_document_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   type_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.dde_document_types (
 
 -- DocumentCategory
 create table if not exists public.dde_document_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   category_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.dde_document_categories (
 
 -- DocumentTemplate
 create table if not exists public.dde_document_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   template_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.dde_document_templates (
 
 -- DocumentVersion
 create table if not exists public.dde_document_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   version_key text not null,
@@ -75,7 +75,7 @@ create table if not exists public.dde_document_versions (
 
 -- TemplateHeader
 create table if not exists public.dde_template_headers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   header_key text not null,
@@ -90,7 +90,7 @@ create table if not exists public.dde_template_headers (
 
 -- TemplateFooter
 create table if not exists public.dde_template_footers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   footer_key text not null,
@@ -105,7 +105,7 @@ create table if not exists public.dde_template_footers (
 
 -- TemplateSection
 create table if not exists public.dde_template_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   section_key text not null,
@@ -120,7 +120,7 @@ create table if not exists public.dde_template_sections (
 
 -- TemplateVariable
 create table if not exists public.dde_template_variables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   variable_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.dde_template_variables (
 
 -- PdfGeneration
 create table if not exists public.dde_pdf_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   generation_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.dde_pdf_generations (
 
 -- HtmlGeneration
 create table if not exists public.dde_html_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   generation_key text not null,
@@ -165,7 +165,7 @@ create table if not exists public.dde_html_generations (
 
 -- ExportJob
 create table if not exists public.dde_export_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   job_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.dde_export_jobs (
 
 -- BatchGeneration
 create table if not exists public.dde_batch_generations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   batch_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.dde_batch_generations (
 
 -- ElectronicSignature
 create table if not exists public.dde_electronic_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.dde_electronic_signatures (
 
 -- ApprovalSignature
 create table if not exists public.dde_approval_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.dde_approval_signatures (
 
 -- SignatureVerification
 create table if not exists public.dde_signature_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   verification_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.dde_signature_verifications (
 
 -- SignatureAuditEntry
 create table if not exists public.dde_signature_audit_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   audit_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.dde_signature_audit_entries (
 
 -- VersionHistory
 create table if not exists public.dde_version_histories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   history_key text not null,
@@ -270,7 +270,7 @@ create table if not exists public.dde_version_histories (
 
 -- RetentionPolicy
 create table if not exists public.dde_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   policy_key text not null,
@@ -285,7 +285,7 @@ create table if not exists public.dde_retention_policies (
 
 -- ArchiveRecord
 create table if not exists public.dde_archive_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   archive_key text not null,
@@ -300,7 +300,7 @@ create table if not exists public.dde_archive_records (
 
 -- SharingPolicy
 create table if not exists public.dde_sharing_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   policy_key text not null,
@@ -315,7 +315,7 @@ create table if not exists public.dde_sharing_policies (
 
 -- EmailDelivery
 create table if not exists public.dde_email_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -330,7 +330,7 @@ create table if not exists public.dde_email_deliveries (
 
 -- DownloadDelivery
 create table if not exists public.dde_download_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -345,7 +345,7 @@ create table if not exists public.dde_download_deliveries (
 
 -- WebhookDelivery
 create table if not exists public.dde_webhook_deliveries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   delivery_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.dde_webhook_deliveries (
 
 -- GenerationAnalytics
 create table if not exists public.dde_generation_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.dde_generation_analytics (
 
 -- DeliveryAnalytics
 create table if not exists public.dde_delivery_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.dde_delivery_analytics (
 
 -- StorageAnalytics
 create table if not exists public.dde_storage_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -405,7 +405,7 @@ create table if not exists public.dde_storage_analytics (
 
 -- DocumentMetric
 create table if not exists public.dde_document_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -424,7 +424,7 @@ create table if not exists public.dde_document_metrics (
 
 -- DocumentHealth
 create table if not exists public.dde_document_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -442,7 +442,7 @@ create table if not exists public.dde_document_health (
 
 -- PendingSignature
 create table if not exists public.dde_pending_signatures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   signature_key text not null,
@@ -457,7 +457,7 @@ create table if not exists public.dde_pending_signatures (
 
 -- DocumentFailure
 create table if not exists public.dde_document_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dde_document_hubs(id) on delete cascade,
   failure_key text not null,
@@ -474,7 +474,7 @@ create table if not exists public.dde_document_failures (
 
 -- Audit Logs
 create table if not exists public.dde_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

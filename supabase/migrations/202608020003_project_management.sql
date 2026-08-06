@@ -1,5 +1,5 @@
 create table if not exists public.project_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   status text not null default 'planning',
@@ -17,7 +17,7 @@ create table if not exists public.project_management (
 );
 
 create table if not exists public.project_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   title text not null,
   due_date date,
@@ -28,7 +28,7 @@ create table if not exists public.project_milestones (
 );
 
 create table if not exists public.project_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   title text not null,
   status text not null default 'todo',
@@ -40,7 +40,7 @@ create table if not exists public.project_tasks (
 );
 
 create table if not exists public.project_team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   name text not null,
   role text not null default 'member',
@@ -50,7 +50,7 @@ create table if not exists public.project_team_members (
 );
 
 create table if not exists public.project_time_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   project_name text not null,
   started_at text not null,
@@ -60,7 +60,7 @@ create table if not exists public.project_time_entries (
 );
 
 create table if not exists public.project_files (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   name text not null,
   folder text not null,
@@ -70,7 +70,7 @@ create table if not exists public.project_files (
 );
 
 create table if not exists public.project_comments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.project_management(id) on delete cascade,
   author text not null,
   body text not null,

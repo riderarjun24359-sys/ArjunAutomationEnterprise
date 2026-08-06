@@ -1,7 +1,7 @@
 -- Sprint 20: Enterprise Document & Content Management
 
 create table if not exists public.document_folders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   parent_folder_id uuid references public.document_folders(id) on delete set null,
   name text not null,
@@ -13,7 +13,7 @@ create table if not exists public.document_folders (
 );
 
 create table if not exists public.documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   folder_id uuid references public.document_folders(id) on delete set null,
   title text not null,
@@ -36,7 +36,7 @@ create table if not exists public.documents (
 );
 
 create table if not exists public.document_tags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   color text not null default '#64748b',
@@ -45,7 +45,7 @@ create table if not exists public.document_tags (
 );
 
 create table if not exists public.document_tag_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   document_id uuid not null references public.documents(id) on delete cascade,
   tag_id uuid not null references public.document_tags(id) on delete cascade,
   created_at timestamptz not null default now(),
@@ -53,7 +53,7 @@ create table if not exists public.document_tag_links (
 );
 
 create table if not exists public.document_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   version_number integer not null,
@@ -66,7 +66,7 @@ create table if not exists public.document_versions (
 );
 
 create table if not exists public.document_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   approver_id uuid references public.employees(id) on delete set null,
@@ -78,7 +78,7 @@ create table if not exists public.document_approvals (
 );
 
 create table if not exists public.document_esign_preparations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   signer_name text not null,
@@ -91,7 +91,7 @@ create table if not exists public.document_esign_preparations (
 );
 
 create table if not exists public.document_shares (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   share_token text not null,
@@ -104,7 +104,7 @@ create table if not exists public.document_shares (
 );
 
 create table if not exists public.document_access_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid references public.documents(id) on delete cascade,
   folder_id uuid references public.document_folders(id) on delete cascade,
@@ -115,7 +115,7 @@ create table if not exists public.document_access_grants (
 );
 
 create table if not exists public.document_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   category text not null default 'general',
@@ -128,7 +128,7 @@ create table if not exists public.document_templates (
 );
 
 create table if not exists public.document_previews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   preview_type text not null default 'thumbnail',
@@ -139,7 +139,7 @@ create table if not exists public.document_previews (
 );
 
 create table if not exists public.document_search_index (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   search_text text not null default '',
@@ -148,7 +148,7 @@ create table if not exists public.document_search_index (
 );
 
 create table if not exists public.document_retention_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   retention_days integer not null default 365,
@@ -161,7 +161,7 @@ create table if not exists public.document_retention_policies (
 );
 
 create table if not exists public.document_archives (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid not null references public.documents(id) on delete cascade,
   archived_at timestamptz not null default now(),
@@ -171,7 +171,7 @@ create table if not exists public.document_archives (
 );
 
 create table if not exists public.document_activity_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   document_id uuid references public.documents(id) on delete set null,
   activity_type text not null,
@@ -181,7 +181,7 @@ create table if not exists public.document_activity_logs (
 );
 
 create table if not exists public.document_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

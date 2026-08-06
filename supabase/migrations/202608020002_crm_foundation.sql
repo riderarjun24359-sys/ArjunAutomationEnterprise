@@ -1,5 +1,5 @@
 create table if not exists public.crm_clients (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   status text not null default 'lead',
@@ -16,7 +16,7 @@ create table if not exists public.crm_clients (
 );
 
 create table if not exists public.crm_leads (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   company_name text not null,
   contact_name text not null,
@@ -29,7 +29,7 @@ create table if not exists public.crm_leads (
 );
 
 create table if not exists public.crm_deals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_name text not null,
   value text not null default '$0',
@@ -42,7 +42,7 @@ create table if not exists public.crm_deals (
 );
 
 create table if not exists public.crm_activities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   activity_type text not null default 'note',
   title text not null,
@@ -52,7 +52,7 @@ create table if not exists public.crm_activities (
 );
 
 create table if not exists public.crm_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   assignee text not null,

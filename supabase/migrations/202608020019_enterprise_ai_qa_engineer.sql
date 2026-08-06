@@ -1,7 +1,7 @@
 -- Sprint 26: AI QA Engineer
 
 create table if not exists public.qa_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -26,7 +26,7 @@ create table if not exists public.qa_engagements (
 );
 
 create table if not exists public.qa_test_strategies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   strategy_key text not null,
@@ -41,7 +41,7 @@ create table if not exists public.qa_test_strategies (
 );
 
 create table if not exists public.qa_unit_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -55,7 +55,7 @@ create table if not exists public.qa_unit_test_plans (
 );
 
 create table if not exists public.qa_integration_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -69,7 +69,7 @@ create table if not exists public.qa_integration_test_plans (
 );
 
 create table if not exists public.qa_e2e_test_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -83,7 +83,7 @@ create table if not exists public.qa_e2e_test_plans (
 );
 
 create table if not exists public.qa_regression_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -98,7 +98,7 @@ create table if not exists public.qa_regression_analyses (
 );
 
 create table if not exists public.qa_risk_based_tests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   test_key text not null,
@@ -113,7 +113,7 @@ create table if not exists public.qa_risk_based_tests (
 );
 
 create table if not exists public.qa_security_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -127,7 +127,7 @@ create table if not exists public.qa_security_validations (
 );
 
 create table if not exists public.qa_performance_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -141,7 +141,7 @@ create table if not exists public.qa_performance_validations (
 );
 
 create table if not exists public.qa_accessibility_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -156,7 +156,7 @@ create table if not exists public.qa_accessibility_validations (
 );
 
 create table if not exists public.qa_api_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -170,7 +170,7 @@ create table if not exists public.qa_api_validations (
 );
 
 create table if not exists public.qa_database_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -184,7 +184,7 @@ create table if not exists public.qa_database_validations (
 );
 
 create table if not exists public.qa_ui_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   validation_key text not null,
@@ -198,7 +198,7 @@ create table if not exists public.qa_ui_validations (
 );
 
 create table if not exists public.qa_bug_triages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   bug_key text not null,
@@ -213,7 +213,7 @@ create table if not exists public.qa_bug_triages (
 );
 
 create table if not exists public.qa_defect_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -228,7 +228,7 @@ create table if not exists public.qa_defect_analyses (
 );
 
 create table if not exists public.qa_coverage_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   analytics_key text not null,
@@ -243,7 +243,7 @@ create table if not exists public.qa_coverage_analytics (
 );
 
 create table if not exists public.qa_release_readiness (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   assessment_key text not null,
@@ -258,7 +258,7 @@ create table if not exists public.qa_release_readiness (
 );
 
 create table if not exists public.qa_quality_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.qa_engagements(id) on delete cascade,
   score_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.qa_quality_scores (
 );
 
 create table if not exists public.qa_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

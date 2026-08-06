@@ -1,7 +1,7 @@
 -- Sprint 21: Enterprise AI Orchestration Layer
 
 create table if not exists public.ai_providers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   provider_key text not null,
@@ -15,7 +15,7 @@ create table if not exists public.ai_providers (
 );
 
 create table if not exists public.ai_model_routes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   provider_id uuid not null references public.ai_providers(id) on delete cascade,
@@ -30,7 +30,7 @@ create table if not exists public.ai_model_routes (
 );
 
 create table if not exists public.ai_orchestration_agents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   agent_type text not null default 'general',
@@ -45,7 +45,7 @@ create table if not exists public.ai_orchestration_agents (
 );
 
 create table if not exists public.ai_prompt_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   template_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.ai_prompt_templates (
 );
 
 create table if not exists public.ai_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
   session_key text not null,
@@ -76,7 +76,7 @@ create table if not exists public.ai_sessions (
 );
 
 create table if not exists public.ai_task_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
   session_id uuid references public.ai_sessions(id) on delete set null,
@@ -95,7 +95,7 @@ create table if not exists public.ai_task_executions (
 );
 
 create table if not exists public.ai_usage_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid references public.ai_providers(id) on delete set null,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
@@ -108,7 +108,7 @@ create table if not exists public.ai_usage_records (
 );
 
 create table if not exists public.ai_cost_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid references public.ai_providers(id) on delete set null,
   usage_record_id uuid references public.ai_usage_records(id) on delete set null,
@@ -119,7 +119,7 @@ create table if not exists public.ai_cost_records (
 );
 
 create table if not exists public.ai_rate_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   scope_type text not null default 'organization',
   scope_id uuid,
@@ -131,7 +131,7 @@ create table if not exists public.ai_rate_limits (
 );
 
 create table if not exists public.ai_permission_grants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grantee_type text not null default 'employee',
   grantee_id uuid,
@@ -143,7 +143,7 @@ create table if not exists public.ai_permission_grants (
 );
 
 create table if not exists public.ai_provider_health_checks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   provider_id uuid not null references public.ai_providers(id) on delete cascade,
   status text not null default 'healthy',
@@ -154,7 +154,7 @@ create table if not exists public.ai_provider_health_checks (
 );
 
 create table if not exists public.ai_retry_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   max_retries integer not null default 3,
@@ -167,7 +167,7 @@ create table if not exists public.ai_retry_policies (
 );
 
 create table if not exists public.ai_orchestration_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
@@ -179,7 +179,7 @@ create table if not exists public.ai_orchestration_audit_logs (
 );
 
 create table if not exists public.ai_orchestration_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   metric_value numeric(14, 4) not null default 0,

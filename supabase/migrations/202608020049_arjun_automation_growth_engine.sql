@@ -2,7 +2,7 @@
 
 -- GrowthHub
 create table if not exists public.aage_growth_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.aage_growth_hubs (
 
 -- BrandProfile
 create table if not exists public.aage_brand_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   profile_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.aage_brand_profiles (
 
 -- BrandVoice
 create table if not exists public.aage_brand_voice (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   voice_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.aage_brand_voice (
 
 -- CoreMessaging
 create table if not exists public.aage_core_messaging (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   messaging_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.aage_core_messaging (
 
 -- BrandGuideline
 create table if not exists public.aage_brand_guidelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   guideline_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.aage_brand_guidelines (
 
 -- LogoLibrary
 create table if not exists public.aage_logo_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   logo_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.aage_logo_library (
 
 -- ColorSystem
 create table if not exists public.aage_color_systems (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   color_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.aage_color_systems (
 
 -- YoutubeTemplate
 create table if not exists public.aage_youtube_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.aage_youtube_templates (
 
 -- SocialTemplate
 create table if not exists public.aage_social_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.aage_social_templates (
 
 -- BlogTemplate
 create table if not exists public.aage_blog_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.aage_blog_templates (
 
 -- WebsiteArticleTemplate
 create table if not exists public.aage_website_article_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.aage_website_article_templates (
 
 -- EmailCampaignTemplate
 create table if not exists public.aage_email_campaign_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.aage_email_campaign_templates (
 
 -- CaseStudyTemplate
 create table if not exists public.aage_case_study_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.aage_case_study_templates (
 
 -- ImageAsset
 create table if not exists public.aage_image_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.aage_image_assets (
 
 -- VideoAsset
 create table if not exists public.aage_video_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.aage_video_assets (
 
 -- IconAsset
 create table if not exists public.aage_icon_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.aage_icon_assets (
 
 -- VoiceProfile
 create table if not exists public.aage_voice_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   profile_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.aage_voice_profiles (
 
 -- MusicAsset
 create table if not exists public.aage_music_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   asset_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.aage_music_assets (
 
 -- ThumbnailTemplate
 create table if not exists public.aage_thumbnail_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   template_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.aage_thumbnail_templates (
 
 -- IdeaGenerator
 create table if not exists public.aage_idea_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.aage_idea_generators (
 
 -- ScriptGenerator
 create table if not exists public.aage_script_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.aage_script_generators (
 
 -- CaptionGenerator
 create table if not exists public.aage_caption_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.aage_caption_generators (
 
 -- BlogGenerator
 create table if not exists public.aage_blog_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.aage_blog_generators (
 
 -- SeoAssistant
 create table if not exists public.aage_seo_assistants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   assistant_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.aage_seo_assistants (
 
 -- CtaGenerator
 create table if not exists public.aage_cta_generators (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   generator_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.aage_cta_generators (
 
 -- GrowthMetric
 create table if not exists public.aage_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -419,7 +419,7 @@ create table if not exists public.aage_growth_metrics (
 
 -- GrowthHealth
 create table if not exists public.aage_growth_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -437,7 +437,7 @@ create table if not exists public.aage_growth_health (
 
 -- ContentCalendar
 create table if not exists public.aage_content_calendar (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   calendar_key text not null,
@@ -453,7 +453,7 @@ create table if not exists public.aage_content_calendar (
 
 -- DraftQueue
 create table if not exists public.aage_draft_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -469,7 +469,7 @@ create table if not exists public.aage_draft_queue (
 
 -- ApprovalQueue
 create table if not exists public.aage_approval_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -485,7 +485,7 @@ create table if not exists public.aage_approval_queue (
 
 -- PublishingQueue
 create table if not exists public.aage_publishing_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aage_growth_hubs(id) on delete cascade,
   queue_key text not null,
@@ -501,7 +501,7 @@ create table if not exists public.aage_publishing_queue (
 
 -- Audit Logs
 create table if not exists public.aage_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

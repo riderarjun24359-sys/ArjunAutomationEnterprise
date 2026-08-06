@@ -1,7 +1,7 @@
 -- Sprint 17: Enterprise Inventory & Asset Management
 
 create table if not exists public.product_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -13,7 +13,7 @@ create table if not exists public.product_categories (
 );
 
 create table if not exists public.products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   category_id uuid references public.product_categories(id) on delete set null,
   sku text not null,
@@ -30,7 +30,7 @@ create table if not exists public.products (
 );
 
 create table if not exists public.warehouses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -43,7 +43,7 @@ create table if not exists public.warehouses (
 );
 
 create table if not exists public.stock_levels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -55,7 +55,7 @@ create table if not exists public.stock_levels (
 );
 
 create table if not exists public.suppliers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -69,7 +69,7 @@ create table if not exists public.suppliers (
 );
 
 create table if not exists public.stock_movements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -84,7 +84,7 @@ create table if not exists public.stock_movements (
 );
 
 create table if not exists public.inventory_adjustments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -96,7 +96,7 @@ create table if not exists public.inventory_adjustments (
 );
 
 create table if not exists public.purchase_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   supplier_id uuid not null references public.suppliers(id) on delete restrict,
   po_number text not null,
@@ -112,7 +112,7 @@ create table if not exists public.purchase_orders (
 );
 
 create table if not exists public.purchase_order_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   purchase_order_id uuid not null references public.purchase_orders(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity numeric(12,2) not null,
@@ -122,7 +122,7 @@ create table if not exists public.purchase_order_items (
 );
 
 create table if not exists public.assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   asset_tag text not null,
   name text not null,
@@ -140,7 +140,7 @@ create table if not exists public.assets (
 );
 
 create table if not exists public.product_barcodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid references public.products(id) on delete cascade,
   asset_id uuid references public.assets(id) on delete cascade,
@@ -151,7 +151,7 @@ create table if not exists public.product_barcodes (
 );
 
 create table if not exists public.low_stock_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete cascade,
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
@@ -164,7 +164,7 @@ create table if not exists public.low_stock_alerts (
 );
 
 create table if not exists public.stock_transfers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   transfer_number text not null,
   source_warehouse_id uuid not null references public.warehouses(id) on delete restrict,
@@ -178,7 +178,7 @@ create table if not exists public.stock_transfers (
 );
 
 create table if not exists public.stock_transfer_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   transfer_id uuid not null references public.stock_transfers(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity numeric(12,2) not null,
@@ -186,7 +186,7 @@ create table if not exists public.stock_transfer_items (
 );
 
 create table if not exists public.goods_received_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grn_number text not null,
   purchase_order_id uuid references public.purchase_orders(id) on delete set null,
@@ -201,7 +201,7 @@ create table if not exists public.goods_received_notes (
 );
 
 create table if not exists public.grn_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   grn_id uuid not null references public.goods_received_notes(id) on delete cascade,
   product_id uuid not null references public.products(id) on delete restrict,
   quantity_received numeric(12,2) not null,
@@ -210,7 +210,7 @@ create table if not exists public.grn_items (
 );
 
 create table if not exists public.inventory_valuations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   valuation_date date not null default current_date,
   method text not null default 'weighted_average',
@@ -221,7 +221,7 @@ create table if not exists public.inventory_valuations (
 );
 
 create table if not exists public.inventory_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

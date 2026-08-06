@@ -8,18 +8,6 @@ export const getRepositoryClient = (): SupabaseClient | null => {
     return null;
 };
 
-export async function getRepositoryClientAsync(): Promise<SupabaseClient | null> {
-    if (typeof window !== "undefined") {
-        return supabaseBrowser();
-    }
-    try {
-        const { supabaseServer } = await import("@/src/lib/supabase-server");
-        return supabaseServer();
-    } catch {
-        return null;
-    }
-}
-
 const isRecoverableRepositoryError = (error: { message: string; code?: string }): boolean => {
     const message = error.message.toLowerCase();
     return (

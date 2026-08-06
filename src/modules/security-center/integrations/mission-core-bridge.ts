@@ -1,9 +1,7 @@
-import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
+import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 import type { PlatformEvent } from "@/src/modules/mission-core/types";
 import type { SecurityPolicyResult, UserContext } from "../types";
 import { enforceCapabilityAccess } from "../lib/security-policies";
-
-const client = createMissionCoreClient();
 
 export function enforceSecurityPolicy(
     capabilityId: string,
@@ -21,11 +19,11 @@ export function publishSecurityEvent(
     type: string,
     payload?: Record<string, unknown>,
 ): PlatformEvent {
-    return client.publishEvent({
+    return lazyMissionCoreClient().publishEvent({
         type,
         source: "securityCenter",
         payload: { ...payload, securityEvent: true },
     });
 }
 
-export { createMissionCoreClient };
+export { createMissionCoreClient } from "@/src/modules/mission-core/sdk";

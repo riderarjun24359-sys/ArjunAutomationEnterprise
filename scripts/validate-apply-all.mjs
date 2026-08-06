@@ -48,7 +48,7 @@ as $$
   select 'authenticated'::text;
 $$;
 
-create or replace function uuid_generate_v4()
+create or replace function gen_random_uuid()
 returns uuid
 language sql
 as $$

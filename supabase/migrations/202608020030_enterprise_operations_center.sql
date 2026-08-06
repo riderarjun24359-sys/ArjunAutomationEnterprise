@@ -2,7 +2,7 @@
 
 -- OperationsCenter
 create table if not exists public.eoc_operations_centers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_key text not null,
   center_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.eoc_operations_centers (
 
 -- OverallHealth
 create table if not exists public.eoc_overall_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.eoc_overall_health (
 
 -- ModuleHealth
 create table if not exists public.eoc_module_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.eoc_module_health (
 
 -- DatabaseHealth
 create table if not exists public.eoc_database_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   health_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.eoc_database_health (
 
 -- JobScheduler
 create table if not exists public.eoc_job_schedulers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   scheduler_key text not null,
@@ -77,7 +77,7 @@ create table if not exists public.eoc_job_schedulers (
 
 -- RecurringJob
 create table if not exists public.eoc_recurring_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   job_key text not null,
@@ -94,7 +94,7 @@ create table if not exists public.eoc_recurring_jobs (
 
 -- JobRetryQueue
 create table if not exists public.eoc_job_retry_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   queue_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.eoc_job_retry_queue (
 
 -- JobDeadLetter
 create table if not exists public.eoc_job_dead_letter (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   dead_letter_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.eoc_job_dead_letter (
 
 -- PlatformEvent
 create table if not exists public.eoc_platform_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   event_key text not null,
@@ -145,7 +145,7 @@ create table if not exists public.eoc_platform_events (
 
 -- BusinessEvent
 create table if not exists public.eoc_business_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   event_key text not null,
@@ -162,7 +162,7 @@ create table if not exists public.eoc_business_events (
 
 -- EventSubscription
 create table if not exists public.eoc_event_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   subscription_key text not null,
@@ -178,7 +178,7 @@ create table if not exists public.eoc_event_subscriptions (
 
 -- EventReplay
 create table if not exists public.eoc_event_replays (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   replay_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.eoc_event_replays (
 
 -- Alert
 create table if not exists public.eoc_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   alert_key text not null,
@@ -213,7 +213,7 @@ create table if not exists public.eoc_alerts (
 
 -- EscalationRule
 create table if not exists public.eoc_escalation_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   rule_key text not null,
@@ -229,7 +229,7 @@ create table if not exists public.eoc_escalation_rules (
 
 -- AlertAcknowledgement
 create table if not exists public.eoc_alert_acknowledgements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   ack_key text not null,
@@ -246,7 +246,7 @@ create table if not exists public.eoc_alert_acknowledgements (
 
 -- MaintenanceWindow
 create table if not exists public.eoc_maintenance_windows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   window_key text not null,
@@ -263,7 +263,7 @@ create table if not exists public.eoc_maintenance_windows (
 
 -- GlobalFlag
 create table if not exists public.eoc_global_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   flag_key text not null,
@@ -279,7 +279,7 @@ create table if not exists public.eoc_global_flags (
 
 -- TenantFlag
 create table if not exists public.eoc_tenant_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   flag_key text not null,
@@ -295,7 +295,7 @@ create table if not exists public.eoc_tenant_flags (
 
 -- BetaFeature
 create table if not exists public.eoc_beta_features (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   feature_key text not null,
@@ -310,7 +310,7 @@ create table if not exists public.eoc_beta_features (
 
 -- RolloutConfig
 create table if not exists public.eoc_rollout_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   rollout_key text not null,
@@ -326,7 +326,7 @@ create table if not exists public.eoc_rollout_configs (
 
 -- PlatformConfig
 create table if not exists public.eoc_platform_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   config_key text not null,
@@ -342,7 +342,7 @@ create table if not exists public.eoc_platform_configs (
 
 -- TenantConfig
 create table if not exists public.eoc_tenant_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   config_key text not null,
@@ -358,7 +358,7 @@ create table if not exists public.eoc_tenant_configs (
 
 -- SecretsMetadata
 create table if not exists public.eoc_secrets_metadata (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   secret_key text not null,
@@ -374,7 +374,7 @@ create table if not exists public.eoc_secrets_metadata (
 
 -- ConfigVersion
 create table if not exists public.eoc_config_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   version_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.eoc_config_versions (
 
 -- PlatformLog
 create table if not exists public.eoc_platform_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   log_key text not null,
@@ -406,7 +406,7 @@ create table if not exists public.eoc_platform_logs (
 
 -- PlatformMetric
 create table if not exists public.eoc_platform_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   metrics_key text not null,
@@ -422,7 +422,7 @@ create table if not exists public.eoc_platform_metrics (
 
 -- TraceSummary
 create table if not exists public.eoc_trace_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   trace_key text not null,
@@ -438,7 +438,7 @@ create table if not exists public.eoc_trace_summaries (
 
 -- ServiceRegistry
 create table if not exists public.eoc_service_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   service_key text not null,
@@ -454,7 +454,7 @@ create table if not exists public.eoc_service_registry (
 
 -- OperationsMetric
 create table if not exists public.eoc_operations_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -469,7 +469,7 @@ create table if not exists public.eoc_operations_metrics (
 
 -- OperationsHealth
 create table if not exists public.eoc_operations_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -485,7 +485,7 @@ create table if not exists public.eoc_operations_health (
 
 -- OperationsFailure
 create table if not exists public.eoc_operations_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   center_id uuid not null references public.eoc_operations_centers(id) on delete cascade,
   failure_key text not null,
@@ -502,7 +502,7 @@ create table if not exists public.eoc_operations_failures (
 
 -- Audit Logs
 create table if not exists public.eoc_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

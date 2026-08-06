@@ -1,7 +1,7 @@
 -- Sprint 28: AI Customer Success Manager
 
 create table if not exists public.cs_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.cs_engagements (
 );
 
 create table if not exists public.cs_onboarding_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   workflow_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.cs_onboarding_workflows (
 );
 
 create table if not exists public.cs_adoption_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   tracking_key text not null,
@@ -59,7 +59,7 @@ create table if not exists public.cs_adoption_tracking (
 );
 
 create table if not exists public.cs_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   score_key text not null,
@@ -73,7 +73,7 @@ create table if not exists public.cs_health_scores (
 );
 
 create table if not exists public.cs_renewal_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   plan_key text not null,
@@ -88,7 +88,7 @@ create table if not exists public.cs_renewal_plans (
 );
 
 create table if not exists public.cs_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   opportunity_key text not null,
@@ -103,7 +103,7 @@ create table if not exists public.cs_expansion_opportunities (
 );
 
 create table if not exists public.cs_risk_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -118,7 +118,7 @@ create table if not exists public.cs_risk_analyses (
 );
 
 create table if not exists public.cs_support_trend_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -132,7 +132,7 @@ create table if not exists public.cs_support_trend_analyses (
 );
 
 create table if not exists public.cs_success_playbooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   playbook_key text not null,
@@ -146,7 +146,7 @@ create table if not exists public.cs_success_playbooks (
 );
 
 create table if not exists public.cs_qbr_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   report_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.cs_qbr_reports (
 );
 
 create table if not exists public.cs_communication_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   plan_key text not null,
@@ -174,7 +174,7 @@ create table if not exists public.cs_communication_plans (
 );
 
 create table if not exists public.cs_training_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   recommendation_key text not null,
@@ -188,7 +188,7 @@ create table if not exists public.cs_training_recommendations (
 );
 
 create table if not exists public.cs_feedback_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -203,7 +203,7 @@ create table if not exists public.cs_feedback_analyses (
 );
 
 create table if not exists public.cs_sla_monitoring (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   monitoring_key text not null,
@@ -217,7 +217,7 @@ create table if not exists public.cs_sla_monitoring (
 );
 
 create table if not exists public.cs_success_kpi_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   dashboard_key text not null,
@@ -231,7 +231,7 @@ create table if not exists public.cs_success_kpi_dashboards (
 );
 
 create table if not exists public.cs_churn_predictions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   prediction_key text not null,
@@ -246,7 +246,7 @@ create table if not exists public.cs_churn_predictions (
 );
 
 create table if not exists public.cs_lifecycle_management (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   lifecycle_key text not null,
@@ -261,7 +261,7 @@ create table if not exists public.cs_lifecycle_management (
 );
 
 create table if not exists public.cs_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.cs_engagements(id) on delete cascade,
   summary_key text not null,
@@ -275,7 +275,7 @@ create table if not exists public.cs_executive_summaries (
 );
 
 create table if not exists public.cs_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/src/lib/cn";
-import { MagneticButton } from "@/src/modules/company-launch-kit/components/premium/ui/MagneticButton";
-import { ThemeToggle } from "@/src/modules/company-launch-kit/components/premium/ui/ThemeToggle";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
+
+const ThemeToggle = dynamic(
+    () => import("@/src/modules/company-launch-kit/components/premium/ui/ThemeToggle").then((m) => m.ThemeToggle),
+    { ssr: false, loading: () => <div className="h-9 w-9" aria-hidden="true" /> },
+);
 
 export function PremiumHeader() {
     const pathname = usePathname();
@@ -33,8 +36,7 @@ export function PremiumHeader() {
             <div className="premium-container flex items-center justify-between py-4">
                 <Link
                     href={MARKETING_ROUTES.home}
-                    className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-lg"
-                    aria-label="Arjun Automation home"
+                    className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
                 >
                     <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
                     <span className="font-display text-lg font-semibold">Arjun Automation</span>
@@ -60,9 +62,12 @@ export function PremiumHeader() {
 
                 <div className="hidden items-center gap-3 lg:flex">
                     <ThemeToggle />
-                    <MagneticButton href={MARKETING_ROUTES.contact} className="px-4 py-2">
+                    <Link
+                        href={MARKETING_ROUTES.contact}
+                        className="inline-flex items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
+                    >
                         Get Started
-                    </MagneticButton>
+                    </Link>
                 </div>
 
                 <div className="flex items-center gap-2 lg:hidden">
@@ -80,38 +85,36 @@ export function PremiumHeader() {
                 </div>
             </div>
 
-            <AnimatePresence>
-                {mobileOpen && (
-                    <motion.nav
-                        id="mobile-nav"
-                        className="border-t border-[var(--premium-border)] premium-glass lg:hidden"
-                        aria-label="Mobile navigation"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <div className="premium-container flex flex-col gap-1 py-4">
-                            {NAV_ITEMS.map((item) => (
-                                <Link
-                                    key={item.href}
-                                    href={item.href}
-                                    onClick={() => setMobileOpen(false)}
-                                    className={cn(
-                                        "rounded-lg px-3 py-2 text-sm font-medium",
-                                        pathname === item.href ? "text-indigo-700 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-950/50" : "text-[var(--premium-fg-muted)]",
-                                    )}
-                                >
-                                    {item.label}
-                                </Link>
-                            ))}
-                            <MagneticButton href={MARKETING_ROUTES.contact} className="mt-2 w-full">
-                                Get Started
-                            </MagneticButton>
-                        </div>
-                    </motion.nav>
-                )}
-            </AnimatePresence>
+            {mobileOpen ? (
+                <nav
+                    id="mobile-nav"
+                    className="border-t border-[var(--premium-border)] premium-glass lg:hidden"
+                    aria-label="Mobile navigation"
+                >
+                    <div className="premium-container flex flex-col gap-1 py-4">
+                        {NAV_ITEMS.map((item) => (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setMobileOpen(false)}
+                                className={cn(
+                                    "rounded-lg px-3 py-2 text-sm font-medium",
+                                    pathname === item.href ? "text-indigo-700 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-950/50" : "text-[var(--premium-fg-muted)]",
+                                )}
+                            >
+                                {item.label}
+                            </Link>
+                        ))}
+                        <Link
+                            href={MARKETING_ROUTES.contact}
+                            className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600"
+                            onClick={() => setMobileOpen(false)}
+                        >
+                            Get Started
+                        </Link>
+                    </div>
+                </nav>
+            ) : null}
         </header>
     );
 }

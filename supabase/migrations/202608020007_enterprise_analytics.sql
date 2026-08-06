@@ -1,7 +1,7 @@
 -- Sprint 14: Enterprise Analytics & Performance Insights
 
 create table if not exists public.analytics_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -12,7 +12,7 @@ create table if not exists public.analytics_dashboards (
 );
 
 create table if not exists public.analytics_widgets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   dashboard_id uuid not null references public.analytics_dashboards(id) on delete cascade,
   title text not null,
   widget_type text not null default 'kpi',
@@ -25,7 +25,7 @@ create table if not exists public.analytics_widgets (
 );
 
 create table if not exists public.analytics_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   label text not null,
@@ -41,7 +41,7 @@ create table if not exists public.analytics_metrics (
 );
 
 create table if not exists public.analytics_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   report_type text not null default 'summary',

@@ -1,7 +1,7 @@
 -- Delivery Engine v1.0 — internal execution system for AI-accelerated client delivery
 
 create table if not exists public.de_blueprints (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   blueprint_key text not null,
   name text not null,
@@ -17,7 +17,7 @@ create table if not exists public.de_blueprints (
 );
 
 create table if not exists public.de_components (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   component_key text not null,
   name text not null,
@@ -33,7 +33,7 @@ create table if not exists public.de_components (
 );
 
 create table if not exists public.de_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
   client_id uuid references public.clients(id) on delete set null,
@@ -48,7 +48,7 @@ create table if not exists public.de_engagements (
 );
 
 create table if not exists public.de_pipeline_runs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid references public.de_engagements(id) on delete cascade,
   pipeline_type text not null check (pipeline_type in ('init', 'environment', 'quality', 'testing', 'deployment', 'documentation')),
@@ -60,7 +60,7 @@ create table if not exists public.de_pipeline_runs (
 );
 
 create table if not exists public.de_quality_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid references public.de_engagements(id) on delete cascade,
   dimension text not null check (dimension in ('performance', 'security', 'accessibility', 'brand', 'seo', 'engineering', 'business_rules')),
@@ -71,7 +71,7 @@ create table if not exists public.de_quality_verifications (
 );
 
 create table if not exists public.de_knowledge_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entry_type text not null check (entry_type in ('lesson', 'solution', 'fix', 'architecture', 'pattern')),
   title text not null,
@@ -83,7 +83,7 @@ create table if not exists public.de_knowledge_entries (
 );
 
 create table if not exists public.de_analytics_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   metric_value numeric(14,4) not null default 0,
@@ -94,7 +94,7 @@ create table if not exists public.de_analytics_metrics (
 );
 
 create table if not exists public.de_ai_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid references public.de_engagements(id) on delete set null,
   recommendation_type text not null check (recommendation_type in ('blueprint', 'component', 'duplicate', 'improvement', 'checklist')),
@@ -124,11 +124,30 @@ alter table public.de_knowledge_entries enable row level security;
 alter table public.de_analytics_metrics enable row level security;
 alter table public.de_ai_recommendations enable row level security;
 
-create policy "de_blueprints_org_access" on public.de_blueprints for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_components_org_access" on public.de_components for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_engagements_org_access" on public.de_engagements for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_pipeline_runs_org_access" on public.de_pipeline_runs for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_quality_verifications_org_access" on public.de_quality_verifications for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_knowledge_entries_org_access" on public.de_knowledge_entries for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_analytics_metrics_org_access" on public.de_analytics_metrics for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "de_ai_recommendations_org_access" on public.de_ai_recommendations for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));

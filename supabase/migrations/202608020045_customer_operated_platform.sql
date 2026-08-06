@@ -2,7 +2,7 @@
 
 -- OperatedHub
 create table if not exists public.cop_operated_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.cop_operated_hubs (
 
 -- SignupFlow
 create table if not exists public.cop_signup_flows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   flow_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.cop_signup_flows (
 
 -- OrgProvisioning
 create table if not exists public.cop_org_provisioning (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   provision_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.cop_org_provisioning (
 
 -- DomainOnboarding
 create table if not exists public.cop_domain_onboarding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   domain_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.cop_domain_onboarding (
 
 -- EmailVerification
 create table if not exists public.cop_email_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   verification_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.cop_email_verifications (
 
 -- OnboardingWizard
 create table if not exists public.cop_onboarding_wizards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   wizard_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.cop_onboarding_wizards (
 
 -- ProductionProfile
 create table if not exists public.cop_production_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   profile_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.cop_production_profiles (
 
 -- DeploymentJob
 create table if not exists public.cop_deployment_jobs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   job_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.cop_deployment_jobs (
 
 -- HealthValidation
 create table if not exists public.cop_health_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   validation_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.cop_health_validations (
 
 -- RollbackAutomation
 create table if not exists public.cop_rollback_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   rollback_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.cop_rollback_automations (
 
 -- DeploymentAudit
 create table if not exists public.cop_deployment_audits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   audit_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.cop_deployment_audits (
 
 -- CentralLog
 create table if not exists public.cop_central_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   log_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.cop_central_logs (
 
 -- MetricsCollector
 create table if not exists public.cop_metrics_collectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   collector_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.cop_metrics_collectors (
 
 -- DistributedTrace
 create table if not exists public.cop_distributed_traces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   trace_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.cop_distributed_traces (
 
 -- AlertRule
 create table if not exists public.cop_alert_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   rule_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.cop_alert_rules (
 
 -- IncidentTimeline
 create table if not exists public.cop_incident_timelines (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   incident_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.cop_incident_timelines (
 
 -- BackupScheduler
 create table if not exists public.cop_backup_schedulers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   schedule_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.cop_backup_schedulers (
 
 -- RestoreValidation
 create table if not exists public.cop_restore_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   restore_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.cop_restore_validations (
 
 -- MaintenanceMode
 create table if not exists public.cop_maintenance_modes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   maintenance_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.cop_maintenance_modes (
 
 -- FeatureFlagOp
 create table if not exists public.cop_feature_flag_ops (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   flag_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.cop_feature_flag_ops (
 
 -- PlatformDiagnostic
 create table if not exists public.cop_platform_diagnostics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   diagnostic_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.cop_platform_diagnostics (
 
 -- BetaOrganization
 create table if not exists public.cop_beta_organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   org_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.cop_beta_organizations (
 
 -- BetaInvitation
 create table if not exists public.cop_beta_invitations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   invitation_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.cop_beta_invitations (
 
 -- FeedbackCollection
 create table if not exists public.cop_feedback_collection (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   feedback_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.cop_feedback_collection (
 
 -- FeatureRequest
 create table if not exists public.cop_feature_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   request_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.cop_feature_requests (
 
 -- BugReport
 create table if not exists public.cop_bug_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   bug_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.cop_bug_reports (
 
 -- ReleaseChannel
 create table if not exists public.cop_release_channels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   channel_key text not null,
@@ -432,7 +432,7 @@ create table if not exists public.cop_release_channels (
 
 -- OperatedMetric
 create table if not exists public.cop_operated_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -452,7 +452,7 @@ create table if not exists public.cop_operated_metrics (
 
 -- OperatedHealth
 create table if not exists public.cop_operated_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -471,7 +471,7 @@ create table if not exists public.cop_operated_health (
 
 -- ExecutiveBriefing
 create table if not exists public.cop_executive_briefings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   briefing_key text not null,
@@ -487,7 +487,7 @@ create table if not exists public.cop_executive_briefings (
 
 -- PlatformFailure
 create table if not exists public.cop_platform_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cop_operated_hubs(id) on delete cascade,
   failure_key text not null,
@@ -504,7 +504,7 @@ create table if not exists public.cop_platform_failures (
 
 -- Audit Logs
 create table if not exists public.cop_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

@@ -2,7 +2,7 @@
 
 -- FormHub
 create table if not exists public.dfe_form_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.dfe_form_hubs (
 
 -- FormDefinition
 create table if not exists public.dfe_form_definitions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   form_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.dfe_form_definitions (
 
 -- FormCategory
 create table if not exists public.dfe_form_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   category_key text not null,
@@ -45,7 +45,7 @@ create table if not exists public.dfe_form_categories (
 
 -- FormVersion
 create table if not exists public.dfe_form_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   version_key text not null,
@@ -60,7 +60,7 @@ create table if not exists public.dfe_form_versions (
 
 -- FormDependency
 create table if not exists public.dfe_form_dependencies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   dependency_key text not null,
@@ -75,7 +75,7 @@ create table if not exists public.dfe_form_dependencies (
 
 -- FormSection
 create table if not exists public.dfe_form_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   section_key text not null,
@@ -90,7 +90,7 @@ create table if not exists public.dfe_form_sections (
 
 -- FormTab
 create table if not exists public.dfe_form_tabs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   tab_key text not null,
@@ -105,7 +105,7 @@ create table if not exists public.dfe_form_tabs (
 
 -- FormGroup
 create table if not exists public.dfe_form_groups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   group_key text not null,
@@ -120,7 +120,7 @@ create table if not exists public.dfe_form_groups (
 
 -- RepeatableSection
 create table if not exists public.dfe_repeatable_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   section_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.dfe_repeatable_sections (
 
 -- FormField
 create table if not exists public.dfe_form_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   field_key text not null,
@@ -150,7 +150,7 @@ create table if not exists public.dfe_form_fields (
 
 -- FieldOption
 create table if not exists public.dfe_field_options (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   option_key text not null,
@@ -165,7 +165,7 @@ create table if not exists public.dfe_field_options (
 
 -- FormulaField
 create table if not exists public.dfe_formula_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   formula_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.dfe_formula_fields (
 
 -- MediaField
 create table if not exists public.dfe_media_fields (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   media_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.dfe_media_fields (
 
 -- RequiredRule
 create table if not exists public.dfe_required_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.dfe_required_rules (
 
 -- RegexRule
 create table if not exists public.dfe_regex_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.dfe_regex_rules (
 
 -- RangeRule
 create table if not exists public.dfe_range_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.dfe_range_rules (
 
 -- CrossFieldRule
 create table if not exists public.dfe_cross_field_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   rule_key text not null,
@@ -255,7 +255,7 @@ create table if not exists public.dfe_cross_field_rules (
 
 -- FormDraft
 create table if not exists public.dfe_form_drafts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   draft_key text not null,
@@ -270,7 +270,7 @@ create table if not exists public.dfe_form_drafts (
 
 -- FormSubmission
 create table if not exists public.dfe_form_submissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   submission_key text not null,
@@ -285,7 +285,7 @@ create table if not exists public.dfe_form_submissions (
 
 -- FormReview
 create table if not exists public.dfe_form_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   review_key text not null,
@@ -300,7 +300,7 @@ create table if not exists public.dfe_form_reviews (
 
 -- ExecutionAuditEntry
 create table if not exists public.dfe_execution_audit_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   audit_key text not null,
@@ -315,7 +315,7 @@ create table if not exists public.dfe_execution_audit_entries (
 
 -- RenderProfile
 create table if not exists public.dfe_render_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   profile_key text not null,
@@ -330,7 +330,7 @@ create table if not exists public.dfe_render_profiles (
 
 -- ThemeConfig
 create table if not exists public.dfe_theme_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   theme_key text not null,
@@ -345,7 +345,7 @@ create table if not exists public.dfe_theme_configs (
 
 -- LocalizationPack
 create table if not exists public.dfe_localization_packs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   locale_key text not null,
@@ -360,7 +360,7 @@ create table if not exists public.dfe_localization_packs (
 
 -- SubmissionAnalytics
 create table if not exists public.dfe_submission_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.dfe_submission_analytics (
 
 -- CompletionMetric
 create table if not exists public.dfe_completion_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   metric_key text not null,
@@ -390,7 +390,7 @@ create table if not exists public.dfe_completion_metrics (
 
 -- UsageTrend
 create table if not exists public.dfe_usage_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   trend_key text not null,
@@ -405,7 +405,7 @@ create table if not exists public.dfe_usage_trends (
 
 -- FormMetric
 create table if not exists public.dfe_form_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -423,7 +423,7 @@ create table if not exists public.dfe_form_metrics (
 
 -- FormHealth
 create table if not exists public.dfe_form_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -441,7 +441,7 @@ create table if not exists public.dfe_form_health (
 
 -- PendingReviewItem
 create table if not exists public.dfe_pending_review_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   item_key text not null,
@@ -456,7 +456,7 @@ create table if not exists public.dfe_pending_review_items (
 
 -- FormFailure
 create table if not exists public.dfe_form_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.dfe_form_hubs(id) on delete cascade,
   failure_key text not null,
@@ -473,7 +473,7 @@ create table if not exists public.dfe_form_failures (
 
 -- Audit Logs
 create table if not exists public.dfe_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

@@ -2,7 +2,7 @@
 
 -- CompanyHub
 create table if not exists public.cmp_company_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.cmp_company_hubs (
 
 -- BrandProfile
 create table if not exists public.cmp_brand_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   profile_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.cmp_brand_profiles (
 
 -- LogoAsset
 create table if not exists public.cmp_logo_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   asset_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.cmp_logo_assets (
 
 -- ThemeConfig
 create table if not exists public.cmp_theme_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   config_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.cmp_theme_configs (
 
 -- BrandAsset
 create table if not exists public.cmp_brand_assets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   asset_key text not null,
@@ -76,7 +76,7 @@ create table if not exists public.cmp_brand_assets (
 
 -- WebsitePage
 create table if not exists public.cmp_website_pages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   page_key text not null,
@@ -91,7 +91,7 @@ create table if not exists public.cmp_website_pages (
 
 -- WebsiteFeature
 create table if not exists public.cmp_website_features (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   feature_key text not null,
@@ -106,7 +106,7 @@ create table if not exists public.cmp_website_features (
 
 -- WebsiteSection
 create table if not exists public.cmp_website_sections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   section_key text not null,
@@ -121,7 +121,7 @@ create table if not exists public.cmp_website_sections (
 
 -- DemoRequest
 create table if not exists public.cmp_demo_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   request_key text not null,
@@ -137,7 +137,7 @@ create table if not exists public.cmp_demo_requests (
 
 -- PricingPlan
 create table if not exists public.cmp_pricing_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   plan_key text not null,
@@ -152,7 +152,7 @@ create table if not exists public.cmp_pricing_plans (
 
 -- PricingPackage
 create table if not exists public.cmp_pricing_packages (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   package_key text not null,
@@ -167,7 +167,7 @@ create table if not exists public.cmp_pricing_packages (
 
 -- ModulePricing
 create table if not exists public.cmp_module_pricing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   pricing_key text not null,
@@ -182,7 +182,7 @@ create table if not exists public.cmp_module_pricing (
 
 -- DiscountRule
 create table if not exists public.cmp_discount_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   rule_key text not null,
@@ -197,7 +197,7 @@ create table if not exists public.cmp_discount_rules (
 
 -- Proposal
 create table if not exists public.cmp_proposals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   proposal_key text not null,
@@ -212,7 +212,7 @@ create table if not exists public.cmp_proposals (
 
 -- ProposalDocument
 create table if not exists public.cmp_proposal_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   document_key text not null,
@@ -227,7 +227,7 @@ create table if not exists public.cmp_proposal_documents (
 
 -- ProposalContract
 create table if not exists public.cmp_proposal_contracts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   contract_key text not null,
@@ -242,7 +242,7 @@ create table if not exists public.cmp_proposal_contracts (
 
 -- ProposalHistory
 create table if not exists public.cmp_proposal_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   history_key text not null,
@@ -257,7 +257,7 @@ create table if not exists public.cmp_proposal_history (
 
 -- PortalDashboard
 create table if not exists public.cmp_portal_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.cmp_portal_dashboards (
 
 -- PortalSubscription
 create table if not exists public.cmp_portal_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   subscription_key text not null,
@@ -287,7 +287,7 @@ create table if not exists public.cmp_portal_subscriptions (
 
 -- PortalBilling
 create table if not exists public.cmp_portal_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   billing_key text not null,
@@ -302,7 +302,7 @@ create table if not exists public.cmp_portal_billing (
 
 -- PortalSupport
 create table if not exists public.cmp_portal_support (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   support_key text not null,
@@ -317,7 +317,7 @@ create table if not exists public.cmp_portal_support (
 
 -- DocGuide
 create table if not exists public.cmp_doc_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   guide_key text not null,
@@ -332,7 +332,7 @@ create table if not exists public.cmp_doc_guides (
 
 -- DocApiReference
 create table if not exists public.cmp_doc_api_references (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   reference_key text not null,
@@ -347,7 +347,7 @@ create table if not exists public.cmp_doc_api_references (
 
 -- DocVersion
 create table if not exists public.cmp_doc_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   version_key text not null,
@@ -362,7 +362,7 @@ create table if not exists public.cmp_doc_versions (
 
 -- DemoOrganization
 create table if not exists public.cmp_demo_organizations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   org_key text not null,
@@ -377,7 +377,7 @@ create table if not exists public.cmp_demo_organizations (
 
 -- DemoDataSet
 create table if not exists public.cmp_demo_data_sets (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   dataset_key text not null,
@@ -392,7 +392,7 @@ create table if not exists public.cmp_demo_data_sets (
 
 -- DemoUser
 create table if not exists public.cmp_demo_users (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   user_key text not null,
@@ -407,7 +407,7 @@ create table if not exists public.cmp_demo_users (
 
 -- CompanyMetric
 create table if not exists public.cmp_company_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -427,7 +427,7 @@ create table if not exists public.cmp_company_metrics (
 
 -- CompanyHealth
 create table if not exists public.cmp_company_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -446,7 +446,7 @@ create table if not exists public.cmp_company_health (
 
 -- ExecutiveKpi
 create table if not exists public.cmp_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -462,7 +462,7 @@ create table if not exists public.cmp_executive_kpis (
 
 -- CompanyFailure
 create table if not exists public.cmp_company_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.cmp_company_hubs(id) on delete cascade,
   failure_key text not null,
@@ -479,7 +479,7 @@ create table if not exists public.cmp_company_failures (
 
 -- Audit Logs
 create table if not exists public.cmp_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

@@ -2,7 +2,7 @@
 
 -- IntelligenceHub
 create table if not exists public.aix_intelligence_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.aix_intelligence_hubs (
 
 -- DailyExecutiveBrief
 create table if not exists public.aix_daily_executive_briefs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   brief_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.aix_daily_executive_briefs (
 
 -- WeeklyBusinessReview
 create table if not exists public.aix_weekly_business_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   review_key text not null,
@@ -49,7 +49,7 @@ create table if not exists public.aix_weekly_business_reviews (
 
 -- MonthlyExecutiveSummary
 create table if not exists public.aix_monthly_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   summary_key text not null,
@@ -66,7 +66,7 @@ create table if not exists public.aix_monthly_executive_summaries (
 
 -- TrialConversionScore
 create table if not exists public.aix_trial_conversion_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   score_key text not null,
@@ -83,7 +83,7 @@ create table if not exists public.aix_trial_conversion_scores (
 
 -- RenewalProbability
 create table if not exists public.aix_renewal_probabilities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   probability_key text not null,
@@ -100,7 +100,7 @@ create table if not exists public.aix_renewal_probabilities (
 
 -- ChurnRisk
 create table if not exists public.aix_churn_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -117,7 +117,7 @@ create table if not exists public.aix_churn_risks (
 
 -- ExpansionOpportunity
 create table if not exists public.aix_expansion_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   opportunity_key text not null,
@@ -134,7 +134,7 @@ create table if not exists public.aix_expansion_opportunities (
 
 -- MrrTrend
 create table if not exists public.aix_mrr_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -151,7 +151,7 @@ create table if not exists public.aix_mrr_trends (
 
 -- ArrTrend
 create table if not exists public.aix_arr_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -168,7 +168,7 @@ create table if not exists public.aix_arr_trends (
 
 -- RevenueGrowthMetric
 create table if not exists public.aix_revenue_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -185,7 +185,7 @@ create table if not exists public.aix_revenue_growth_metrics (
 
 -- RevenueRisk
 create table if not exists public.aix_revenue_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -202,7 +202,7 @@ create table if not exists public.aix_revenue_risks (
 
 -- PlatformHealthIntel
 create table if not exists public.aix_platform_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -218,7 +218,7 @@ create table if not exists public.aix_platform_health_intel (
 
 -- QueueHealthIntel
 create table if not exists public.aix_queue_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -235,7 +235,7 @@ create table if not exists public.aix_queue_health_intel (
 
 -- IntegrationHealthIntel
 create table if not exists public.aix_integration_health_intel (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   intel_key text not null,
@@ -252,7 +252,7 @@ create table if not exists public.aix_integration_health_intel (
 
 -- PerformanceTrend
 create table if not exists public.aix_performance_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -269,7 +269,7 @@ create table if not exists public.aix_performance_trends (
 
 -- UnusualLoginActivity
 create table if not exists public.aix_unusual_login_activity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   activity_key text not null,
@@ -287,7 +287,7 @@ create table if not exists public.aix_unusual_login_activity (
 
 -- PermissionRisk
 create table if not exists public.aix_permission_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -305,7 +305,7 @@ create table if not exists public.aix_permission_risks (
 
 -- TenantSecurityTrend
 create table if not exists public.aix_tenant_security_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trend_key text not null,
@@ -322,7 +322,7 @@ create table if not exists public.aix_tenant_security_trends (
 
 -- ComplianceWarning
 create table if not exists public.aix_compliance_warnings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   warning_key text not null,
@@ -340,7 +340,7 @@ create table if not exists public.aix_compliance_warnings (
 
 -- TodayPriority
 create table if not exists public.aix_today_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   priority_key text not null,
@@ -357,7 +357,7 @@ create table if not exists public.aix_today_priorities (
 
 -- RecommendedAction
 create table if not exists public.aix_recommended_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   action_key text not null,
@@ -375,7 +375,7 @@ create table if not exists public.aix_recommended_actions (
 
 -- BusinessRisk
 create table if not exists public.aix_business_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   risk_key text not null,
@@ -393,7 +393,7 @@ create table if not exists public.aix_business_risks (
 
 -- GrowthOpportunity
 create table if not exists public.aix_growth_opportunities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   opportunity_key text not null,
@@ -411,7 +411,7 @@ create table if not exists public.aix_growth_opportunities (
 
 -- KnowledgeReasoningSession
 create table if not exists public.aix_knowledge_reasoning_sessions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   session_key text not null,
@@ -428,7 +428,7 @@ create table if not exists public.aix_knowledge_reasoning_sessions (
 
 -- EvidenceTrace
 create table if not exists public.aix_evidence_traces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   trace_key text not null,
@@ -444,7 +444,7 @@ create table if not exists public.aix_evidence_traces (
 
 -- OrchestrationLink
 create table if not exists public.aix_orchestration_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   link_key text not null,
@@ -461,7 +461,7 @@ create table if not exists public.aix_orchestration_links (
 
 -- RecommendationOutput
 create table if not exists public.aix_recommendation_outputs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   output_key text not null,
@@ -478,7 +478,7 @@ create table if not exists public.aix_recommendation_outputs (
 
 -- ExecutiveMetric
 create table if not exists public.aix_executive_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -495,7 +495,7 @@ create table if not exists public.aix_executive_metrics (
 
 -- ExecutiveHealth
 create table if not exists public.aix_executive_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -511,7 +511,7 @@ create table if not exists public.aix_executive_health (
 
 -- ExecutiveFailure
 create table if not exists public.aix_executive_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aix_intelligence_hubs(id) on delete cascade,
   failure_key text not null,
@@ -528,7 +528,7 @@ create table if not exists public.aix_executive_failures (
 
 -- Audit Logs
 create table if not exists public.aix_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

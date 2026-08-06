@@ -2,7 +2,7 @@
 
 -- M1 Integration Hub
 create table if not exists public.intg_integration_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -14,7 +14,7 @@ create table if not exists public.intg_integration_hubs (
 );
 
 create table if not exists public.intg_connected_services (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   service_key text not null,
@@ -30,7 +30,7 @@ create table if not exists public.intg_connected_services (
 );
 
 create table if not exists public.intg_connector_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connected_service_id uuid not null references public.intg_connected_services(id) on delete cascade,
@@ -46,7 +46,7 @@ create table if not exists public.intg_connector_configs (
 );
 
 create table if not exists public.intg_connector_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connected_service_id uuid not null references public.intg_connected_services(id) on delete cascade,
@@ -62,7 +62,7 @@ create table if not exists public.intg_connector_health (
 
 -- M2 Payment Connectors
 create table if not exists public.intg_payment_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_key text not null,
@@ -78,7 +78,7 @@ create table if not exists public.intg_payment_connectors (
 );
 
 create table if not exists public.intg_payment_connector_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -93,7 +93,7 @@ create table if not exists public.intg_payment_connector_health (
 );
 
 create table if not exists public.intg_payment_retry_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -110,7 +110,7 @@ create table if not exists public.intg_payment_retry_queue (
 );
 
 create table if not exists public.intg_payment_transactions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_payment_connectors(id) on delete cascade,
@@ -129,7 +129,7 @@ create table if not exists public.intg_payment_transactions (
 
 -- M3 Accounting Connectors
 create table if not exists public.intg_accounting_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_key text not null,
@@ -145,7 +145,7 @@ create table if not exists public.intg_accounting_connectors (
 );
 
 create table if not exists public.intg_accounting_sync_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -162,7 +162,7 @@ create table if not exists public.intg_accounting_sync_status (
 );
 
 create table if not exists public.intg_export_mappings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -178,7 +178,7 @@ create table if not exists public.intg_export_mappings (
 );
 
 create table if not exists public.intg_accounting_exports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_id uuid not null references public.intg_accounting_connectors(id) on delete cascade,
@@ -196,7 +196,7 @@ create table if not exists public.intg_accounting_exports (
 
 -- M4 Public API Platform
 create table if not exists public.intg_api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   key_name text not null,
@@ -212,7 +212,7 @@ create table if not exists public.intg_api_keys (
 );
 
 create table if not exists public.intg_api_scopes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid not null references public.intg_api_keys(id) on delete cascade,
@@ -226,7 +226,7 @@ create table if not exists public.intg_api_scopes (
 );
 
 create table if not exists public.intg_rate_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid references public.intg_api_keys(id) on delete set null,
@@ -241,7 +241,7 @@ create table if not exists public.intg_rate_limits (
 );
 
 create table if not exists public.intg_api_usage (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   api_key_id uuid references public.intg_api_keys(id) on delete set null,
@@ -259,7 +259,7 @@ create table if not exists public.intg_api_usage (
 
 -- M5 Webhook Platform
 create table if not exists public.intg_incoming_webhooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   webhook_key text not null,
@@ -275,7 +275,7 @@ create table if not exists public.intg_incoming_webhooks (
 );
 
 create table if not exists public.intg_outgoing_webhooks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   webhook_key text not null,
@@ -291,7 +291,7 @@ create table if not exists public.intg_outgoing_webhooks (
 );
 
 create table if not exists public.intg_webhook_dead_letter (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   outgoing_webhook_id uuid references public.intg_outgoing_webhooks(id) on delete set null,
@@ -308,7 +308,7 @@ create table if not exists public.intg_webhook_dead_letter (
 );
 
 create table if not exists public.intg_webhook_delivery_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   outgoing_webhook_id uuid not null references public.intg_outgoing_webhooks(id) on delete cascade,
@@ -327,7 +327,7 @@ create table if not exists public.intg_webhook_delivery_logs (
 
 -- M6 Integration Marketplace
 create table if not exists public.intg_marketplace_connectors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   connector_slug text not null,
@@ -342,7 +342,7 @@ create table if not exists public.intg_marketplace_connectors (
 );
 
 create table if not exists public.intg_marketplace_installations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -357,7 +357,7 @@ create table if not exists public.intg_marketplace_installations (
 );
 
 create table if not exists public.intg_marketplace_compatibility (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -372,7 +372,7 @@ create table if not exists public.intg_marketplace_compatibility (
 );
 
 create table if not exists public.intg_marketplace_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   marketplace_connector_id uuid not null references public.intg_marketplace_connectors(id) on delete cascade,
@@ -389,7 +389,7 @@ create table if not exists public.intg_marketplace_versions (
 
 -- M7 API Analytics
 create table if not exists public.intg_api_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -404,7 +404,7 @@ create table if not exists public.intg_api_analytics (
 );
 
 create table if not exists public.intg_latency_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   metrics_key text not null,
@@ -420,7 +420,7 @@ create table if not exists public.intg_latency_metrics (
 );
 
 create table if not exists public.intg_webhook_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -436,7 +436,7 @@ create table if not exists public.intg_webhook_analytics (
 );
 
 create table if not exists public.intg_usage_trends (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   trend_key text not null,
@@ -453,7 +453,7 @@ create table if not exists public.intg_usage_trends (
 
 -- M8 Integration Dashboard
 create table if not exists public.intg_integration_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -468,7 +468,7 @@ create table if not exists public.intg_integration_metrics (
 );
 
 create table if not exists public.intg_integration_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -485,7 +485,7 @@ create table if not exists public.intg_integration_health (
 );
 
 create table if not exists public.intg_integration_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.intg_integration_hubs(id) on delete cascade,
   failure_key text not null,
@@ -502,7 +502,7 @@ create table if not exists public.intg_integration_failures (
 );
 
 create table if not exists public.intg_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

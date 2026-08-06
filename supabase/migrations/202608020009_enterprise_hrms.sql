@@ -1,7 +1,7 @@
 -- Sprint 16: Enterprise HRMS & Employee Management
 
 create table if not exists public.departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -14,7 +14,7 @@ create table if not exists public.departments (
 );
 
 create table if not exists public.designations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   level text not null default 'individual_contributor',
@@ -25,7 +25,7 @@ create table if not exists public.designations (
 );
 
 create table if not exists public.employees (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_code text not null,
   first_name text not null,
@@ -51,7 +51,7 @@ alter table public.departments
   add constraint departments_head_employee_id_fkey foreign key (head_employee_id) references public.employees(id) on delete set null;
 
 create table if not exists public.hr_teams (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   slug text not null,
@@ -64,7 +64,7 @@ create table if not exists public.hr_teams (
 );
 
 create table if not exists public.hr_team_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   team_id uuid not null references public.hr_teams(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   role_name text not null default 'member',
@@ -73,7 +73,7 @@ create table if not exists public.hr_team_members (
 );
 
 create table if not exists public.attendance_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   work_date date not null,
@@ -87,7 +87,7 @@ create table if not exists public.attendance_records (
 );
 
 create table if not exists public.leave_types (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   code text not null,
@@ -99,7 +99,7 @@ create table if not exists public.leave_types (
 );
 
 create table if not exists public.leave_requests (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   leave_type_id uuid not null references public.leave_types(id) on delete restrict,
@@ -112,7 +112,7 @@ create table if not exists public.leave_requests (
 );
 
 create table if not exists public.holidays (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   holiday_date date not null,
@@ -123,7 +123,7 @@ create table if not exists public.holidays (
 );
 
 create table if not exists public.payroll_cycles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   period_start date not null,
@@ -134,7 +134,7 @@ create table if not exists public.payroll_cycles (
 );
 
 create table if not exists public.payroll_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   cycle_id uuid not null references public.payroll_cycles(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   base_salary numeric(12,2) not null default 0,
@@ -148,7 +148,7 @@ create table if not exists public.payroll_entries (
 );
 
 create table if not exists public.employee_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   title text not null,
@@ -160,7 +160,7 @@ create table if not exists public.employee_documents (
 );
 
 create table if not exists public.performance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   reviewer_id uuid references public.employees(id) on delete set null,
@@ -174,7 +174,7 @@ create table if not exists public.performance_reviews (
 );
 
 create table if not exists public.job_openings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   department_id uuid references public.departments(id) on delete set null,
@@ -187,7 +187,7 @@ create table if not exists public.job_openings (
 );
 
 create table if not exists public.job_candidates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   opening_id uuid not null references public.job_openings(id) on delete cascade,
   full_name text not null,
   email text not null,
@@ -199,7 +199,7 @@ create table if not exists public.job_candidates (
 );
 
 create table if not exists public.onboarding_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   status text not null default 'in_progress',
@@ -209,7 +209,7 @@ create table if not exists public.onboarding_plans (
 );
 
 create table if not exists public.onboarding_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   plan_id uuid not null references public.onboarding_plans(id) on delete cascade,
   title text not null,
   status text not null default 'pending',
@@ -220,7 +220,7 @@ create table if not exists public.onboarding_tasks (
 );
 
 create table if not exists public.offboarding_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   status text not null default 'in_progress',
@@ -230,7 +230,7 @@ create table if not exists public.offboarding_plans (
 );
 
 create table if not exists public.offboarding_tasks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   plan_id uuid not null references public.offboarding_plans(id) on delete cascade,
   title text not null,
   status text not null default 'pending',
@@ -241,7 +241,7 @@ create table if not exists public.offboarding_tasks (
 );
 
 create table if not exists public.org_chart_nodes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   employee_id uuid not null references public.employees(id) on delete cascade,
   department_id uuid references public.departments(id) on delete set null,

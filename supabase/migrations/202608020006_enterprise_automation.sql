@@ -1,7 +1,7 @@
 -- Sprint 13: Enterprise AI Automation & Workflow Builder
 
 create table if not exists public.ai_agents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -16,7 +16,7 @@ create table if not exists public.ai_agents (
 );
 
 create table if not exists public.workflow_templates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   description text not null default '',
@@ -28,7 +28,7 @@ create table if not exists public.workflow_templates (
 );
 
 create table if not exists public.workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   template_id uuid references public.workflow_templates(id) on delete set null,
   agent_id uuid references public.ai_agents(id) on delete set null,
@@ -41,7 +41,7 @@ create table if not exists public.workflows (
 );
 
 create table if not exists public.workflow_triggers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   trigger_type text not null default 'manual',
   event_name text not null default '',
@@ -52,7 +52,7 @@ create table if not exists public.workflow_triggers (
 );
 
 create table if not exists public.workflow_actions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   step_order integer not null default 0,
   action_type text not null default 'notify',
@@ -63,7 +63,7 @@ create table if not exists public.workflow_actions (
 );
 
 create table if not exists public.workflow_conditions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   step_order integer not null default 0,
   field text not null,
@@ -74,7 +74,7 @@ create table if not exists public.workflow_conditions (
 );
 
 create table if not exists public.workflow_schedules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   cron_expression text not null default '0 9 * * 1',
   timezone text not null default 'UTC',
@@ -86,7 +86,7 @@ create table if not exists public.workflow_schedules (
 );
 
 create table if not exists public.workflow_executions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workflow_id uuid not null references public.workflows(id) on delete cascade,
   status text not null default 'pending',
@@ -100,7 +100,7 @@ create table if not exists public.workflow_executions (
 );
 
 create table if not exists public.automation_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workflow_id uuid references public.workflows(id) on delete set null,
   execution_id uuid references public.workflow_executions(id) on delete set null,

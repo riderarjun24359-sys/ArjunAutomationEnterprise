@@ -2,7 +2,7 @@
 
 -- ReadinessHub
 create table if not exists public.elr_readiness_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -15,7 +15,7 @@ create table if not exists public.elr_readiness_hubs (
 
 -- EnvironmentValidation
 create table if not exists public.elr_environment_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.elr_environment_validations (
 
 -- ConfigurationValidation
 create table if not exists public.elr_configuration_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -47,7 +47,7 @@ create table if not exists public.elr_configuration_validations (
 
 -- SecretsValidation
 create table if not exists public.elr_secrets_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -63,7 +63,7 @@ create table if not exists public.elr_secrets_validations (
 
 -- DeploymentPlan
 create table if not exists public.elr_deployment_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   plan_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.elr_deployment_plans (
 
 -- RollbackPlan
 create table if not exists public.elr_rollback_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   plan_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.elr_rollback_plans (
 
 -- VersionRegistry
 create table if not exists public.elr_version_registry (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   version_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.elr_version_registry (
 
 -- ReleaseNote
 create table if not exists public.elr_release_notes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   note_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.elr_release_notes (
 
 -- BackupPolicy
 create table if not exists public.elr_backup_policies (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   policy_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.elr_backup_policies (
 
 -- BackupVerification
 create table if not exists public.elr_backup_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   verification_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.elr_backup_verifications (
 
 -- RestoreVerification
 create table if not exists public.elr_restore_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   verification_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.elr_restore_verifications (
 
 -- RecoveryDrill
 create table if not exists public.elr_recovery_drills (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   drill_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.elr_recovery_drills (
 
 -- ObservabilityLog
 create table if not exists public.elr_observability_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   log_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.elr_observability_logs (
 
 -- ObservabilityMetric
 create table if not exists public.elr_observability_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   metric_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.elr_observability_metrics (
 
 -- TraceRecord
 create table if not exists public.elr_trace_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   trace_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.elr_trace_records (
 
 -- SlaMonitor
 create table if not exists public.elr_sla_monitors (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   monitor_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.elr_sla_monitors (
 
 -- SecurityChecklist
 create table if not exists public.elr_security_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   checklist_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.elr_security_checklists (
 
 -- VulnerabilityReview
 create table if not exists public.elr_vulnerability_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   review_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.elr_vulnerability_reviews (
 
 -- PermissionAudit
 create table if not exists public.elr_permission_audits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   audit_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.elr_permission_audits (
 
 -- ComplianceReview
 create table if not exists public.elr_compliance_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   review_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.elr_compliance_reviews (
 
 -- AdminGuide
 create table if not exists public.elr_admin_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.elr_admin_guides (
 
 -- UserGuide
 create table if not exists public.elr_user_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.elr_user_guides (
 
 -- DeploymentGuide
 create table if not exists public.elr_deployment_guides (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   guide_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.elr_deployment_guides (
 
 -- LaunchScoreMetric
 create table if not exists public.elr_launch_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -386,7 +386,7 @@ create table if not exists public.elr_launch_scores (
 
 -- ReadinessValidation
 create table if not exists public.elr_readiness_validations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   validation_key text not null,
@@ -402,7 +402,7 @@ create table if not exists public.elr_readiness_validations (
 
 -- LaunchBlocker
 create table if not exists public.elr_launch_blockers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   blocker_key text not null,
@@ -418,7 +418,7 @@ create table if not exists public.elr_launch_blockers (
 
 -- ScoreSnapshot
 create table if not exists public.elr_score_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   snapshot_key text not null,
@@ -434,7 +434,7 @@ create table if not exists public.elr_score_snapshots (
 
 -- LaunchHealth
 create table if not exists public.elr_launch_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -452,7 +452,7 @@ create table if not exists public.elr_launch_health (
 
 -- CriticalIssue
 create table if not exists public.elr_critical_issues (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   issue_key text not null,
@@ -468,7 +468,7 @@ create table if not exists public.elr_critical_issues (
 
 -- ReadinessWarning
 create table if not exists public.elr_readiness_warnings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   warning_key text not null,
@@ -484,7 +484,7 @@ create table if not exists public.elr_readiness_warnings (
 
 -- LaunchFailure
 create table if not exists public.elr_launch_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.elr_readiness_hubs(id) on delete cascade,
   failure_key text not null,
@@ -501,7 +501,7 @@ create table if not exists public.elr_launch_failures (
 
 -- Audit Logs
 create table if not exists public.elr_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

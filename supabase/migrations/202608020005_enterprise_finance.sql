@@ -1,7 +1,7 @@
 -- Sprint 12: Enterprise Finance & Invoicing
 
 create table if not exists public.tax_rates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   rate_percent numeric(5, 2) not null default 0,
@@ -11,7 +11,7 @@ create table if not exists public.tax_rates (
 );
 
 create table if not exists public.estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   project_id uuid references public.projects(id) on delete set null,
@@ -29,7 +29,7 @@ create table if not exists public.estimates (
 );
 
 create table if not exists public.estimate_line_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   estimate_id uuid not null references public.estimates(id) on delete cascade,
   description text not null,
   quantity numeric(10, 2) not null default 1,
@@ -41,7 +41,7 @@ create table if not exists public.estimate_line_items (
 );
 
 create table if not exists public.invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
   project_id uuid references public.projects(id) on delete set null,
@@ -62,7 +62,7 @@ create table if not exists public.invoices (
 );
 
 create table if not exists public.invoice_line_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   invoice_id uuid not null references public.invoices(id) on delete cascade,
   description text not null,
   quantity numeric(10, 2) not null default 1,
@@ -74,7 +74,7 @@ create table if not exists public.invoice_line_items (
 );
 
 create table if not exists public.payments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   invoice_id uuid not null references public.invoices(id) on delete cascade,
   client_id uuid references public.clients(id) on delete set null,
@@ -88,7 +88,7 @@ create table if not exists public.payments (
 );
 
 create table if not exists public.expenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,
   client_id uuid references public.clients(id) on delete set null,
@@ -103,7 +103,7 @@ create table if not exists public.expenses (
 );
 
 create table if not exists public.recurring_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid not null references public.clients(id) on delete cascade,
   project_id uuid references public.projects(id) on delete set null,

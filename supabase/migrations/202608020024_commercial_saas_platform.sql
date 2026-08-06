@@ -1,7 +1,7 @@
 -- V2 Program A Sprint 1: Commercial Multi-Tenant SaaS Platform
 
 create table if not exists public.saas_tenants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_key text not null,
   company_name text not null,
@@ -19,7 +19,7 @@ create table if not exists public.saas_tenants (
 );
 
 create table if not exists public.saas_registrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   registration_key text not null,
@@ -34,7 +34,7 @@ create table if not exists public.saas_registrations (
 );
 
 create table if not exists public.saas_tenant_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   profile_key text not null,
@@ -50,7 +50,7 @@ create table if not exists public.saas_tenant_profiles (
 );
 
 create table if not exists public.saas_domain_configs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   domain_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.saas_domain_configs (
 );
 
 create table if not exists public.saas_email_verifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   verification_key text not null,
@@ -78,7 +78,7 @@ create table if not exists public.saas_email_verifications (
 );
 
 create table if not exists public.saas_trials (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   trial_key text not null,
@@ -93,7 +93,7 @@ create table if not exists public.saas_trials (
 );
 
 create table if not exists public.saas_workspace_setups (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   setup_key text not null,
@@ -107,7 +107,7 @@ create table if not exists public.saas_workspace_setups (
 );
 
 create table if not exists public.saas_tenant_role_provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   provision_key text not null,
@@ -121,7 +121,7 @@ create table if not exists public.saas_tenant_role_provisions (
 );
 
 create table if not exists public.saas_welcome_experiences (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   experience_key text not null,
@@ -135,7 +135,7 @@ create table if not exists public.saas_welcome_experiences (
 );
 
 create table if not exists public.saas_subscriptions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   subscription_key text not null,
@@ -151,7 +151,7 @@ create table if not exists public.saas_subscriptions (
 );
 
 create table if not exists public.saas_plan_limits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   limit_key text not null,
@@ -166,7 +166,7 @@ create table if not exists public.saas_plan_limits (
 );
 
 create table if not exists public.saas_subscription_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   event_key text not null,
@@ -180,7 +180,7 @@ create table if not exists public.saas_subscription_events (
 );
 
 create table if not exists public.saas_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   license_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.saas_licenses (
 );
 
 create table if not exists public.saas_license_allocations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   allocation_key text not null,
@@ -210,7 +210,7 @@ create table if not exists public.saas_license_allocations (
 );
 
 create table if not exists public.saas_feature_flags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   flag_key text not null,
@@ -225,7 +225,7 @@ create table if not exists public.saas_feature_flags (
 );
 
 create table if not exists public.saas_portal_settings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   settings_key text not null,
@@ -238,7 +238,7 @@ create table if not exists public.saas_portal_settings (
 );
 
 create table if not exists public.saas_portal_branding (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   branding_key text not null,
@@ -252,7 +252,7 @@ create table if not exists public.saas_portal_branding (
 );
 
 create table if not exists public.saas_portal_integrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   integration_key text not null,
@@ -265,7 +265,7 @@ create table if not exists public.saas_portal_integrations (
 );
 
 create table if not exists public.saas_portal_api_keys (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   api_key_hash text not null default '',
@@ -279,7 +279,7 @@ create table if not exists public.saas_portal_api_keys (
 );
 
 create table if not exists public.saas_usage_meters (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   meter_key text not null,
@@ -295,7 +295,7 @@ create table if not exists public.saas_usage_meters (
 );
 
 create table if not exists public.saas_usage_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   record_key text not null,
@@ -307,7 +307,7 @@ create table if not exists public.saas_usage_records (
 );
 
 create table if not exists public.saas_commercial_invoices (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   invoice_key text not null,
@@ -323,7 +323,7 @@ create table if not exists public.saas_commercial_invoices (
 );
 
 create table if not exists public.saas_billing_credits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   credit_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.saas_billing_credits (
 );
 
 create table if not exists public.saas_billing_coupons (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   coupon_key text not null,
@@ -351,7 +351,7 @@ create table if not exists public.saas_billing_coupons (
 );
 
 create table if not exists public.saas_recurring_billing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   billing_key text not null,
@@ -365,7 +365,7 @@ create table if not exists public.saas_recurring_billing (
 );
 
 create table if not exists public.saas_tenant_health_scores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   score_key text not null,
@@ -378,7 +378,7 @@ create table if not exists public.saas_tenant_health_scores (
 );
 
 create table if not exists public.saas_onboarding_checklists (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   checklist_key text not null,
@@ -392,7 +392,7 @@ create table if not exists public.saas_onboarding_checklists (
 );
 
 create table if not exists public.saas_product_adoption (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   adoption_key text not null,
@@ -406,7 +406,7 @@ create table if not exists public.saas_product_adoption (
 );
 
 create table if not exists public.saas_renewal_tracking (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   renewal_key text not null,
@@ -420,7 +420,7 @@ create table if not exists public.saas_renewal_tracking (
 );
 
 create table if not exists public.saas_support_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   tenant_id uuid not null references public.saas_tenants(id) on delete cascade,
   summary_key text not null,
@@ -434,7 +434,7 @@ create table if not exists public.saas_support_summaries (
 );
 
 create table if not exists public.saas_admin_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -454,7 +454,7 @@ create table if not exists public.saas_admin_metrics (
 );
 
 create table if not exists public.saas_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

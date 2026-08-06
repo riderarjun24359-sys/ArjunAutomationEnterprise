@@ -7,15 +7,16 @@ export const supabaseServer = async () => {
 
     try {
         const { url, anonKey } = assertSupabaseConfigured();
+
         return createServerClient(url, anonKey, {
             cookies: {
                 getAll() {
                     return cookieStore.getAll();
                 },
-                setAll(cookiesToSet) {
-                    for (const cookie of cookiesToSet) {
-                        cookieStore.set(cookie.name, cookie.value, cookie.options);
-                    }
+
+                // Next.js 16 Server Components lo cookies set cheyyakudadhu.
+                setAll() {
+                    // Intentionally empty
                 },
             },
         });

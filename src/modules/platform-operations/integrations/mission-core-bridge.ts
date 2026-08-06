@@ -1,16 +1,14 @@
-import { createMissionCoreClient } from "@/src/modules/mission-core/sdk";
+import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 import type { PlatformEvent, PlatformHealth } from "@/src/modules/mission-core/types";
 import { PLATFORM_OPS_EVENTS } from "../constants";
 import type { HealthScore } from "../types";
 
-const client = createMissionCoreClient();
-
 export function publishHealthEvent(payload?: Record<string, unknown>): PlatformEvent {
-    return client.publishHealthEvent({ ...payload, source: "platformOperations" });
+    return lazyMissionCoreClient().publishHealthEvent({ ...payload, source: "platformOperations" });
 }
 
 export function publishWorkflowEvent(payload?: Record<string, unknown>): PlatformEvent {
-    return client.publishEvent({
+    return lazyMissionCoreClient().publishEvent({
         type: PLATFORM_OPS_EVENTS.WorkflowEvent,
         source: "platformOperations",
         payload,
@@ -18,19 +16,19 @@ export function publishWorkflowEvent(payload?: Record<string, unknown>): Platfor
 }
 
 export function publishPerformanceMetric(payload?: Record<string, unknown>): PlatformEvent {
-    return client.publishPerformanceMetric({ ...payload, source: "platformOperations" });
+    return lazyMissionCoreClient().publishPerformanceMetric({ ...payload, source: "platformOperations" });
 }
 
 export function publishFailureEvent(payload?: Record<string, unknown>): PlatformEvent {
-    return client.publishFailureEvent({ ...payload, source: "platformOperations" });
+    return lazyMissionCoreClient().publishFailureEvent({ ...payload, source: "platformOperations" });
 }
 
 export function publishRecoveryEvent(payload?: Record<string, unknown>): PlatformEvent {
-    return client.publishRecoveryEvent({ ...payload, source: "platformOperations" });
+    return lazyMissionCoreClient().publishRecoveryEvent({ ...payload, source: "platformOperations" });
 }
 
 export function getPlatformHealth(): PlatformHealth {
-    return client.getPlatformHealth();
+    return lazyMissionCoreClient().getPlatformHealth();
 }
 
 export function mapMissionCoreHealthToScore(health: PlatformHealth): HealthScore {
@@ -44,4 +42,4 @@ export function mapMissionCoreHealthToScore(health: PlatformHealth): HealthScore
     };
 }
 
-export { createMissionCoreClient };
+export { createMissionCoreClient } from "@/src/modules/mission-core/sdk";

@@ -2,7 +2,7 @@
 
 -- RetailHub
 create table if not exists public.rtl_retail_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.rtl_retail_hubs (
 
 -- RetailBrand
 create table if not exists public.rtl_retail_brands (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   brand_key text not null,
@@ -31,7 +31,7 @@ create table if not exists public.rtl_retail_brands (
 
 -- Store
 create table if not exists public.rtl_stores (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   store_key text not null,
@@ -46,7 +46,7 @@ create table if not exists public.rtl_stores (
 
 -- CashRegister
 create table if not exists public.rtl_cash_registers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   register_key text not null,
@@ -61,7 +61,7 @@ create table if not exists public.rtl_cash_registers (
 
 -- StoreDepartment
 create table if not exists public.rtl_store_departments (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   department_key text not null,
@@ -76,7 +76,7 @@ create table if not exists public.rtl_store_departments (
 
 -- Product
 create table if not exists public.rtl_products (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   product_key text not null,
@@ -91,7 +91,7 @@ create table if not exists public.rtl_products (
 
 -- ProductCategory
 create table if not exists public.rtl_product_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   category_key text not null,
@@ -106,7 +106,7 @@ create table if not exists public.rtl_product_categories (
 
 -- ProductVariant
 create table if not exists public.rtl_product_variants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   variant_key text not null,
@@ -121,7 +121,7 @@ create table if not exists public.rtl_product_variants (
 
 -- Promotion
 create table if not exists public.rtl_promotions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   promotion_key text not null,
@@ -136,7 +136,7 @@ create table if not exists public.rtl_promotions (
 
 -- SalesOrder
 create table if not exists public.rtl_sales_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   order_key text not null,
@@ -152,7 +152,7 @@ create table if not exists public.rtl_sales_orders (
 
 -- PosTransaction
 create table if not exists public.rtl_pos_transactions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   transaction_key text not null,
@@ -168,7 +168,7 @@ create table if not exists public.rtl_pos_transactions (
 
 -- ReturnsExchange
 create table if not exists public.rtl_returns_exchanges (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   return_key text not null,
@@ -184,7 +184,7 @@ create table if not exists public.rtl_returns_exchanges (
 
 -- ShiftClosing
 create table if not exists public.rtl_shift_closings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   closing_key text not null,
@@ -199,7 +199,7 @@ create table if not exists public.rtl_shift_closings (
 
 -- Warehouse
 create table if not exists public.rtl_warehouses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   warehouse_key text not null,
@@ -214,7 +214,7 @@ create table if not exists public.rtl_warehouses (
 
 -- StockLevel
 create table if not exists public.rtl_stock_levels (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   stock_key text not null,
@@ -229,7 +229,7 @@ create table if not exists public.rtl_stock_levels (
 
 -- PurchaseOrder
 create table if not exists public.rtl_purchase_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   order_key text not null,
@@ -245,7 +245,7 @@ create table if not exists public.rtl_purchase_orders (
 
 -- Supplier
 create table if not exists public.rtl_suppliers (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   supplier_key text not null,
@@ -260,7 +260,7 @@ create table if not exists public.rtl_suppliers (
 
 -- CustomerProfile
 create table if not exists public.rtl_customer_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   profile_key text not null,
@@ -275,7 +275,7 @@ create table if not exists public.rtl_customer_profiles (
 
 -- LoyaltyProgram
 create table if not exists public.rtl_loyalty_programs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   program_key text not null,
@@ -290,7 +290,7 @@ create table if not exists public.rtl_loyalty_programs (
 
 -- RewardPoint
 create table if not exists public.rtl_reward_points (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   points_key text not null,
@@ -305,7 +305,7 @@ create table if not exists public.rtl_reward_points (
 
 -- Campaign
 create table if not exists public.rtl_campaigns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   campaign_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.rtl_campaigns (
 
 -- DailyClosing
 create table if not exists public.rtl_daily_closings (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   closing_key text not null,
@@ -335,7 +335,7 @@ create table if not exists public.rtl_daily_closings (
 
 -- BranchPerformance
 create table if not exists public.rtl_branch_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   performance_key text not null,
@@ -350,7 +350,7 @@ create table if not exists public.rtl_branch_performance (
 
 -- CommissionRecord
 create table if not exists public.rtl_commission_records (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   commission_key text not null,
@@ -365,7 +365,7 @@ create table if not exists public.rtl_commission_records (
 
 -- SalesAnalytics
 create table if not exists public.rtl_sales_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -380,7 +380,7 @@ create table if not exists public.rtl_sales_analytics (
 
 -- InventoryAnalytics
 create table if not exists public.rtl_inventory_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -395,7 +395,7 @@ create table if not exists public.rtl_inventory_analytics (
 
 -- ProfitabilityAnalytics
 create table if not exists public.rtl_profitability_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -410,7 +410,7 @@ create table if not exists public.rtl_profitability_analytics (
 
 -- RetailMetric
 create table if not exists public.rtl_retail_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -430,7 +430,7 @@ create table if not exists public.rtl_retail_metrics (
 
 -- RetailHealth
 create table if not exists public.rtl_retail_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -448,7 +448,7 @@ create table if not exists public.rtl_retail_health (
 
 -- ExecutiveKpi
 create table if not exists public.rtl_executive_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -464,7 +464,7 @@ create table if not exists public.rtl_executive_kpis (
 
 -- RetailFailure
 create table if not exists public.rtl_retail_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rtl_retail_hubs(id) on delete cascade,
   failure_key text not null,
@@ -481,7 +481,7 @@ create table if not exists public.rtl_retail_failures (
 
 -- Audit Logs
 create table if not exists public.rtl_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

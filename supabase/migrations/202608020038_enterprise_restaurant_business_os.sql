@@ -2,7 +2,7 @@
 
 -- RestaurantHub
 create table if not exists public.rst_restaurant_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -17,7 +17,7 @@ create table if not exists public.rst_restaurant_hubs (
 
 -- Brand
 create table if not exists public.rst_brands (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   brand_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.rst_brands (
 
 -- Branch
 create table if not exists public.rst_branches (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   branch_key text not null,
@@ -47,7 +47,7 @@ create table if not exists public.rst_branches (
 
 -- BusinessLicense
 create table if not exists public.rst_business_licenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   license_key text not null,
@@ -62,7 +62,7 @@ create table if not exists public.rst_business_licenses (
 
 -- DiningArea
 create table if not exists public.rst_dining_areas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   area_key text not null,
@@ -77,7 +77,7 @@ create table if not exists public.rst_dining_areas (
 
 -- RestaurantTable
 create table if not exists public.rst_restaurant_tables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   table_key text not null,
@@ -94,7 +94,7 @@ create table if not exists public.rst_restaurant_tables (
 
 -- MenuCategory
 create table if not exists public.rst_menu_categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   category_key text not null,
@@ -109,7 +109,7 @@ create table if not exists public.rst_menu_categories (
 
 -- MenuItem
 create table if not exists public.rst_menu_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   item_key text not null,
@@ -124,7 +124,7 @@ create table if not exists public.rst_menu_items (
 
 -- MenuVariant
 create table if not exists public.rst_menu_variants (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   variant_key text not null,
@@ -139,7 +139,7 @@ create table if not exists public.rst_menu_variants (
 
 -- AddOn
 create table if not exists public.rst_add_ons (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   addon_key text not null,
@@ -154,7 +154,7 @@ create table if not exists public.rst_add_ons (
 
 -- ComboMeal
 create table if not exists public.rst_combo_meals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   combo_key text not null,
@@ -169,7 +169,7 @@ create table if not exists public.rst_combo_meals (
 
 -- Order
 create table if not exists public.rst_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   order_key text not null,
@@ -185,7 +185,7 @@ create table if not exists public.rst_orders (
 
 -- OrderItem
 create table if not exists public.rst_order_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   item_key text not null,
@@ -200,7 +200,7 @@ create table if not exists public.rst_order_items (
 
 -- OrderQueue
 create table if not exists public.rst_order_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   queue_key text not null,
@@ -215,7 +215,7 @@ create table if not exists public.rst_order_queue (
 
 -- KitchenRouting
 create table if not exists public.rst_kitchen_routing (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   routing_key text not null,
@@ -230,7 +230,7 @@ create table if not exists public.rst_kitchen_routing (
 
 -- OrderTimeline
 create table if not exists public.rst_order_timeline (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   timeline_key text not null,
@@ -245,7 +245,7 @@ create table if not exists public.rst_order_timeline (
 
 -- KitchenStation
 create table if not exists public.rst_kitchen_stations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   station_key text not null,
@@ -260,7 +260,7 @@ create table if not exists public.rst_kitchen_stations (
 
 -- PreparationQueue
 create table if not exists public.rst_preparation_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   prep_key text not null,
@@ -275,7 +275,7 @@ create table if not exists public.rst_preparation_queue (
 
 -- CookingStatus
 create table if not exists public.rst_cooking_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   cooking_key text not null,
@@ -290,7 +290,7 @@ create table if not exists public.rst_cooking_status (
 
 -- ReadyQueue
 create table if not exists public.rst_ready_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   ready_key text not null,
@@ -305,7 +305,7 @@ create table if not exists public.rst_ready_queue (
 
 -- RushOrder
 create table if not exists public.rst_rush_orders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   rush_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.rst_rush_orders (
 
 -- Reservation
 create table if not exists public.rst_reservations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   reservation_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.rst_reservations (
 
 -- WaitingList
 create table if not exists public.rst_waiting_list (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   wait_key text not null,
@@ -351,7 +351,7 @@ create table if not exists public.rst_waiting_list (
 
 -- CustomerProfile
 create table if not exists public.rst_customer_profiles (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   profile_key text not null,
@@ -366,7 +366,7 @@ create table if not exists public.rst_customer_profiles (
 
 -- LoyaltyProgram
 create table if not exists public.rst_loyalty_programs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   program_key text not null,
@@ -381,7 +381,7 @@ create table if not exists public.rst_loyalty_programs (
 
 -- FeedbackReview
 create table if not exists public.rst_feedback_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   review_key text not null,
@@ -396,7 +396,7 @@ create table if not exists public.rst_feedback_reviews (
 
 -- RestaurantMetric
 create table if not exists public.rst_restaurant_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -417,7 +417,7 @@ create table if not exists public.rst_restaurant_metrics (
 
 -- RestaurantHealth
 create table if not exists public.rst_restaurant_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -435,7 +435,7 @@ create table if not exists public.rst_restaurant_health (
 
 -- RevenueAnalytics
 create table if not exists public.rst_revenue_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -450,7 +450,7 @@ create table if not exists public.rst_revenue_analytics (
 
 -- KitchenPerformance
 create table if not exists public.rst_kitchen_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   performance_key text not null,
@@ -465,7 +465,7 @@ create table if not exists public.rst_kitchen_performance (
 
 -- RestaurantFailure
 create table if not exists public.rst_restaurant_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.rst_restaurant_hubs(id) on delete cascade,
   failure_key text not null,
@@ -482,7 +482,7 @@ create table if not exists public.rst_restaurant_failures (
 
 -- Audit Logs
 create table if not exists public.rst_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

@@ -1,7 +1,7 @@
 -- Sprint 22: Enterprise Knowledge & Memory Engine
 
 create table if not exists public.knowledge_entries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   slug text not null,
@@ -21,7 +21,7 @@ create table if not exists public.knowledge_entries (
 );
 
 create table if not exists public.knowledge_semantic_index (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
   embedding_key text not null default '',
@@ -31,7 +31,7 @@ create table if not exists public.knowledge_semantic_index (
 );
 
 create table if not exists public.knowledge_solutions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   problem_statement text not null default '',
@@ -45,7 +45,7 @@ create table if not exists public.knowledge_solutions (
 );
 
 create table if not exists public.knowledge_adrs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   adr_number integer not null,
   title text not null,
@@ -59,7 +59,7 @@ create table if not exists public.knowledge_adrs (
 );
 
 create table if not exists public.knowledge_prompt_base (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   prompt_key text not null,
@@ -73,7 +73,7 @@ create table if not exists public.knowledge_prompt_base (
 );
 
 create table if not exists public.knowledge_project_memory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   project_id uuid not null references public.projects(id) on delete cascade,
   memory_key text not null,
@@ -86,7 +86,7 @@ create table if not exists public.knowledge_project_memory (
 );
 
 create table if not exists public.knowledge_client_memory (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   client_id uuid not null references public.clients(id) on delete cascade,
   memory_key text not null,
@@ -99,7 +99,7 @@ create table if not exists public.knowledge_client_memory (
 );
 
 create table if not exists public.knowledge_components (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   component_type text not null default 'ui',
@@ -112,7 +112,7 @@ create table if not exists public.knowledge_components (
 );
 
 create table if not exists public.knowledge_patterns (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   name text not null,
   pattern_type text not null default 'architecture',
@@ -125,7 +125,7 @@ create table if not exists public.knowledge_patterns (
 );
 
 create table if not exists public.knowledge_documentation (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   doc_key text not null,
@@ -138,7 +138,7 @@ create table if not exists public.knowledge_documentation (
 );
 
 create table if not exists public.knowledge_ai_contexts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   context_key text not null,
   agent_id uuid references public.ai_orchestration_agents(id) on delete set null,
@@ -152,7 +152,7 @@ create table if not exists public.knowledge_ai_contexts (
 );
 
 create table if not exists public.knowledge_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entry_id uuid not null references public.knowledge_entries(id) on delete cascade,
   version_number integer not null,
@@ -163,7 +163,7 @@ create table if not exists public.knowledge_versions (
 );
 
 create table if not exists public.knowledge_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metric_key text not null,
   metric_value numeric(14, 4) not null default 0,
@@ -175,7 +175,7 @@ create table if not exists public.knowledge_analytics (
 );
 
 create table if not exists public.knowledge_permissions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   grantee_type text not null default 'employee',
   grantee_id uuid,
@@ -187,7 +187,7 @@ create table if not exists public.knowledge_permissions (
 );
 
 create table if not exists public.knowledge_cross_links (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   source_module text not null,
   source_entity_type text not null,
@@ -198,7 +198,7 @@ create table if not exists public.knowledge_cross_links (
 );
 
 create table if not exists public.knowledge_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

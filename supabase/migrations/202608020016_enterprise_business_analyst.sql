@@ -1,7 +1,7 @@
 -- Sprint 23: AI Business Analyst
 
 create table if not exists public.ba_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -19,7 +19,7 @@ create table if not exists public.ba_engagements (
 );
 
 create table if not exists public.ba_interviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   interview_key text not null,
@@ -34,7 +34,7 @@ create table if not exists public.ba_interviews (
 );
 
 create table if not exists public.ba_brds (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   title text not null,
@@ -49,7 +49,7 @@ create table if not exists public.ba_brds (
 );
 
 create table if not exists public.ba_frs_documents (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   brd_id uuid references public.ba_brds(id) on delete set null,
@@ -63,7 +63,7 @@ create table if not exists public.ba_frs_documents (
 );
 
 create table if not exists public.ba_user_stories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   frs_id uuid references public.ba_frs_documents(id) on delete set null,
@@ -79,7 +79,7 @@ create table if not exists public.ba_user_stories (
 );
 
 create table if not exists public.ba_acceptance_criteria (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   user_story_id uuid not null references public.ba_user_stories(id) on delete cascade,
   criterion_key text not null,
@@ -91,7 +91,7 @@ create table if not exists public.ba_acceptance_criteria (
 );
 
 create table if not exists public.ba_process_maps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   name text not null,
@@ -104,7 +104,7 @@ create table if not exists public.ba_process_maps (
 );
 
 create table if not exists public.ba_gap_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   current_state text not null default '',
@@ -117,7 +117,7 @@ create table if not exists public.ba_gap_analyses (
 );
 
 create table if not exists public.ba_feature_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   feature_name text not null,
@@ -130,7 +130,7 @@ create table if not exists public.ba_feature_priorities (
 );
 
 create table if not exists public.ba_risks (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   risk_key text not null,
@@ -146,7 +146,7 @@ create table if not exists public.ba_risks (
 );
 
 create table if not exists public.ba_stakeholders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   name text not null,
@@ -160,7 +160,7 @@ create table if not exists public.ba_stakeholders (
 );
 
 create table if not exists public.ba_scope_items (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   item_key text not null,
@@ -174,7 +174,7 @@ create table if not exists public.ba_scope_items (
 );
 
 create table if not exists public.ba_proposals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   title text not null,
@@ -187,7 +187,7 @@ create table if not exists public.ba_proposals (
 );
 
 create table if not exists public.ba_cost_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -202,7 +202,7 @@ create table if not exists public.ba_cost_estimates (
 );
 
 create table if not exists public.ba_timeline_estimates (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   estimate_key text not null,
@@ -216,7 +216,7 @@ create table if not exists public.ba_timeline_estimates (
 );
 
 create table if not exists public.ba_requirement_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   entity_type text not null,
@@ -229,7 +229,7 @@ create table if not exists public.ba_requirement_versions (
 );
 
 create table if not exists public.ba_review_approvals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.ba_engagements(id) on delete cascade,
   entity_type text not null,
@@ -242,7 +242,7 @@ create table if not exists public.ba_review_approvals (
 );
 
 create table if not exists public.ba_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

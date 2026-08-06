@@ -1,7 +1,7 @@
 -- Sprint 29: Founder Operating System
 
 create table if not exists public.fo_workspaces (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   workspace_key text not null,
@@ -25,7 +25,7 @@ create table if not exists public.fo_workspaces (
 );
 
 create table if not exists public.fo_strategic_okrs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   okr_key text not null,
@@ -40,7 +40,7 @@ create table if not exists public.fo_strategic_okrs (
 );
 
 create table if not exists public.fo_executive_dashboards (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   dashboard_key text not null,
@@ -54,7 +54,7 @@ create table if not exists public.fo_executive_dashboards (
 );
 
 create table if not exists public.fo_revenue_runway (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   runway_key text not null,
@@ -70,7 +70,7 @@ create table if not exists public.fo_revenue_runway (
 );
 
 create table if not exists public.fo_team_capacity (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   capacity_key text not null,
@@ -84,7 +84,7 @@ create table if not exists public.fo_team_capacity (
 );
 
 create table if not exists public.fo_product_roadmaps (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   roadmap_key text not null,
@@ -98,7 +98,7 @@ create table if not exists public.fo_product_roadmaps (
 );
 
 create table if not exists public.fo_investor_relations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   relation_key text not null,
@@ -113,7 +113,7 @@ create table if not exists public.fo_investor_relations (
 );
 
 create table if not exists public.fo_board_reports (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   report_key text not null,
@@ -127,7 +127,7 @@ create table if not exists public.fo_board_reports (
 );
 
 create table if not exists public.fo_decision_log (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   decision_key text not null,
@@ -142,7 +142,7 @@ create table if not exists public.fo_decision_log (
 );
 
 create table if not exists public.fo_priorities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   priority_key text not null,
@@ -157,7 +157,7 @@ create table if not exists public.fo_priorities (
 );
 
 create table if not exists public.fo_resource_allocations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   allocation_key text not null,
@@ -171,7 +171,7 @@ create table if not exists public.fo_resource_allocations (
 );
 
 create table if not exists public.fo_risk_register (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   risk_key text not null,
@@ -186,7 +186,7 @@ create table if not exists public.fo_risk_register (
 );
 
 create table if not exists public.fo_growth_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   metric_key text not null,
@@ -202,7 +202,7 @@ create table if not exists public.fo_growth_metrics (
 );
 
 create table if not exists public.fo_founder_agenda (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   agenda_key text not null,
@@ -216,7 +216,7 @@ create table if not exists public.fo_founder_agenda (
 );
 
 create table if not exists public.fo_stakeholders (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   stakeholder_key text not null,
@@ -231,7 +231,7 @@ create table if not exists public.fo_stakeholders (
 );
 
 create table if not exists public.fo_capital_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   plan_key text not null,
@@ -246,7 +246,7 @@ create table if not exists public.fo_capital_plans (
 );
 
 create table if not exists public.fo_company_milestones (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   milestone_key text not null,
@@ -261,7 +261,7 @@ create table if not exists public.fo_company_milestones (
 );
 
 create table if not exists public.fo_founder_insights (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   workspace_id uuid not null references public.fo_workspaces(id) on delete cascade,
   insight_key text not null,
@@ -276,7 +276,7 @@ create table if not exists public.fo_founder_insights (
 );
 
 create table if not exists public.fo_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,

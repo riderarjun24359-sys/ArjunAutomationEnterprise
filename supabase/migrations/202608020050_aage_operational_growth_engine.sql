@@ -2,7 +2,7 @@
 
 -- OperationsHub
 create table if not exists public.aago_operations_hubs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_key text not null,
   hub_name text not null,
@@ -16,7 +16,7 @@ create table if not exists public.aago_operations_hubs (
 
 -- BrandKnowledgeBase
 create table if not exists public.aago_brand_knowledge_base (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   knowledge_key text not null,
@@ -32,7 +32,7 @@ create table if not exists public.aago_brand_knowledge_base (
 
 -- BrandRulebook
 create table if not exists public.aago_brand_rulebook (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   rulebook_key text not null,
@@ -48,7 +48,7 @@ create table if not exists public.aago_brand_rulebook (
 
 -- MessagingLibrary
 create table if not exists public.aago_messaging_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   message_key text not null,
@@ -64,7 +64,7 @@ create table if not exists public.aago_messaging_library (
 
 -- ServiceLibrary
 create table if not exists public.aago_service_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   service_key text not null,
@@ -80,7 +80,7 @@ create table if not exists public.aago_service_library (
 
 -- IndustryLibrary
 create table if not exists public.aago_industry_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   industry_key text not null,
@@ -96,7 +96,7 @@ create table if not exists public.aago_industry_library (
 
 -- FaqLibrary
 create table if not exists public.aago_faq_library (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   faq_key text not null,
@@ -112,7 +112,7 @@ create table if not exists public.aago_faq_library (
 
 -- BrandApprovalRule
 create table if not exists public.aago_brand_approval_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   rule_key text not null,
@@ -128,7 +128,7 @@ create table if not exists public.aago_brand_approval_rules (
 
 -- VideoProject
 create table if not exists public.aago_video_projects (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   project_key text not null,
@@ -144,7 +144,7 @@ create table if not exists public.aago_video_projects (
 
 -- ThumbnailManager
 create table if not exists public.aago_thumbnail_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   thumbnail_key text not null,
@@ -160,7 +160,7 @@ create table if not exists public.aago_thumbnail_manager (
 
 -- VoiceoverManager
 create table if not exists public.aago_voiceover_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   voiceover_key text not null,
@@ -176,7 +176,7 @@ create table if not exists public.aago_voiceover_manager (
 
 -- CreativeAssetGenerator
 create table if not exists public.aago_creative_asset_generator (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   generator_key text not null,
@@ -192,7 +192,7 @@ create table if not exists public.aago_creative_asset_generator (
 
 -- CampaignAssetBuilder
 create table if not exists public.aago_campaign_asset_builder (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   builder_key text not null,
@@ -208,7 +208,7 @@ create table if not exists public.aago_campaign_asset_builder (
 
 -- CreativeWorkflow
 create table if not exists public.aago_creative_workflows (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   workflow_key text not null,
@@ -224,7 +224,7 @@ create table if not exists public.aago_creative_workflows (
 
 -- DistributionContentQueue
 create table if not exists public.aago_distribution_content_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   queue_key text not null,
@@ -240,7 +240,7 @@ create table if not exists public.aago_distribution_content_queue (
 
 -- DistributionPublishingQueue
 create table if not exists public.aago_distribution_publishing_queue (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   queue_key text not null,
@@ -256,7 +256,7 @@ create table if not exists public.aago_distribution_publishing_queue (
 
 -- ChannelManager
 create table if not exists public.aago_channel_manager (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   channel_key text not null,
@@ -272,7 +272,7 @@ create table if not exists public.aago_channel_manager (
 
 -- ApprovalCenter
 create table if not exists public.aago_approval_center (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   approval_key text not null,
@@ -288,7 +288,7 @@ create table if not exists public.aago_approval_center (
 
 -- PublishingHistory
 create table if not exists public.aago_publishing_history (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   history_key text not null,
@@ -304,7 +304,7 @@ create table if not exists public.aago_publishing_history (
 
 -- DistributionAnalytics
 create table if not exists public.aago_distribution_analytics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   analytics_key text not null,
@@ -320,7 +320,7 @@ create table if not exists public.aago_distribution_analytics (
 
 -- CampaignDashboard
 create table if not exists public.aago_campaign_dashboard (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   dashboard_key text not null,
@@ -336,7 +336,7 @@ create table if not exists public.aago_campaign_dashboard (
 
 -- ContentPerformance
 create table if not exists public.aago_content_performance (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   performance_key text not null,
@@ -352,7 +352,7 @@ create table if not exists public.aago_content_performance (
 
 -- LeadAttribution
 create table if not exists public.aago_lead_attribution (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   attribution_key text not null,
@@ -368,7 +368,7 @@ create table if not exists public.aago_lead_attribution (
 
 -- GrowthKpi
 create table if not exists public.aago_growth_kpis (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   kpi_key text not null,
@@ -384,7 +384,7 @@ create table if not exists public.aago_growth_kpis (
 
 -- RoiDashboard
 create table if not exists public.aago_roi_dashboard (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   roi_key text not null,
@@ -400,7 +400,7 @@ create table if not exists public.aago_roi_dashboard (
 
 -- RecommendationEngine
 create table if not exists public.aago_recommendation_engine (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   recommendation_key text not null,
@@ -416,7 +416,7 @@ create table if not exists public.aago_recommendation_engine (
 
 -- CommandCenterMetric
 create table if not exists public.aago_command_center_metrics (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   metrics_key text not null,
   metric_date date not null default current_date,
@@ -435,7 +435,7 @@ create table if not exists public.aago_command_center_metrics (
 
 -- CommandCenterHealth
 create table if not exists public.aago_command_center_health (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   health_key text not null,
   health_date date not null default current_date,
@@ -453,7 +453,7 @@ create table if not exists public.aago_command_center_health (
 
 -- MissionStatus
 create table if not exists public.aago_mission_status (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   mission_key text not null,
@@ -469,7 +469,7 @@ create table if not exists public.aago_mission_status (
 
 -- ExecutiveSummary
 create table if not exists public.aago_executive_summaries (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   summary_key text not null,
@@ -485,7 +485,7 @@ create table if not exists public.aago_executive_summaries (
 
 -- OperationalFailure
 create table if not exists public.aago_operational_failures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   hub_id uuid not null references public.aago_operations_hubs(id) on delete cascade,
   failure_key text not null,
@@ -502,7 +502,7 @@ create table if not exists public.aago_operational_failures (
 
 -- Audit Logs
 create table if not exists public.aago_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null default '',
   entity_id uuid,

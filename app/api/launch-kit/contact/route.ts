@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { secureApiRoute, logApiAudit } from "@/src/lib/api-security";
-import { customerJourneyService } from "@/src/modules/mission-core/services/customer-journey.service";
 
 const contactSchema = z.object({
     name: z.string().min(1, "Name is required").max(200),
@@ -32,6 +31,7 @@ export async function POST(request: Request) {
 
         const { name, email, company, phone, message, source } = parsed.data;
 
+        const { customerJourneyService } = await import("@/src/modules/mission-core/services/customer-journey.service");
         const leadResult = await customerJourneyService.intakeLead(
             { name, email, company, phone, message, source },
             {

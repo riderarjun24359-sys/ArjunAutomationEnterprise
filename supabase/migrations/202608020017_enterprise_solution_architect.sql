@@ -1,7 +1,7 @@
 -- Sprint 24: AI Solution Architect
 
 create table if not exists public.sa_engagements (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   title text not null,
   engagement_key text not null,
@@ -22,7 +22,7 @@ create table if not exists public.sa_engagements (
 );
 
 create table if not exists public.sa_solution_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   title text not null,
@@ -36,7 +36,7 @@ create table if not exists public.sa_solution_architectures (
 );
 
 create table if not exists public.sa_system_decompositions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -50,7 +50,7 @@ create table if not exists public.sa_system_decompositions (
 );
 
 create table if not exists public.sa_domain_models (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -65,7 +65,7 @@ create table if not exists public.sa_domain_models (
 );
 
 create table if not exists public.sa_database_schemas (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -80,7 +80,7 @@ create table if not exists public.sa_database_schemas (
 );
 
 create table if not exists public.sa_api_contracts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -95,7 +95,7 @@ create table if not exists public.sa_api_contracts (
 );
 
 create table if not exists public.sa_module_selections (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   module_name text not null,
@@ -109,7 +109,7 @@ create table if not exists public.sa_module_selections (
 );
 
 create table if not exists public.sa_build_reuse_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   item_key text not null,
@@ -123,7 +123,7 @@ create table if not exists public.sa_build_reuse_recommendations (
 );
 
 create table if not exists public.sa_integration_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -137,7 +137,7 @@ create table if not exists public.sa_integration_plans (
 );
 
 create table if not exists public.sa_security_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -152,7 +152,7 @@ create table if not exists public.sa_security_architectures (
 );
 
 create table if not exists public.sa_scalability_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -166,7 +166,7 @@ create table if not exists public.sa_scalability_plans (
 );
 
 create table if not exists public.sa_performance_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -180,7 +180,7 @@ create table if not exists public.sa_performance_plans (
 );
 
 create table if not exists public.sa_technology_decisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   decision_key text not null,
@@ -195,7 +195,7 @@ create table if not exists public.sa_technology_decisions (
 );
 
 create table if not exists public.sa_deployment_architectures (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   name text not null,
@@ -209,7 +209,7 @@ create table if not exists public.sa_deployment_architectures (
 );
 
 create table if not exists public.sa_sprint_plans (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   plan_key text not null,
@@ -223,7 +223,7 @@ create table if not exists public.sa_sprint_plans (
 );
 
 create table if not exists public.sa_dependency_analyses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   analysis_key text not null,
@@ -236,7 +236,7 @@ create table if not exists public.sa_dependency_analyses (
 );
 
 create table if not exists public.sa_architecture_reviews (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   entity_type text not null,
@@ -249,7 +249,7 @@ create table if not exists public.sa_architecture_reviews (
 );
 
 create table if not exists public.sa_architecture_versions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engagement_id uuid not null references public.sa_engagements(id) on delete cascade,
   entity_type text not null,
@@ -262,7 +262,7 @@ create table if not exists public.sa_architecture_versions (
 );
 
 create table if not exists public.sa_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   entity_type text not null,
   entity_id uuid,
