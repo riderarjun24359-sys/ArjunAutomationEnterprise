@@ -72,6 +72,8 @@
     "production:verify": "node scripts/verify-production.mjs",
     "go-live:verify": "node scripts/verify-go-live.mjs",
     "founder-dashboard:verify": "node scripts/verify-founder-dashboard.mjs",
+    "production-cutover:verify": "node scripts/verify-production-cutover.mjs",
+    "generate:production-readiness-report": "node scripts/generate-production-readiness-report.mjs",
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
