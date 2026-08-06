@@ -30,7 +30,7 @@ export function computePlatformReliabilityScore() {
     const health = platformOperationsService.getLiveHealthScore();
     const errors = platformOperationsService.getErrors(false);
     const backups = platformOperationsService.getBackups();
-    const backupRate = backups.length ? (backups.filter((b) => b.verified).length / backups.length) * 100 : 100;
+    const backupRate = backups.length ? (backups.filter((b) => b.status === "verified").length / backups.length) * 100 : 100;
     return computeReliabilityScore({
         healthScore: health.score,
         openErrors: errors.length,

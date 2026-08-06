@@ -1,7 +1,7 @@
 "use client";
 
-import { DELIVERY_PLAYBOOK_STAGES } from "../../constants";
-import type { DeliveryEngineDashboard } from "../../types";
+import { DELIVERY_PLAYBOOK_STAGES } from "../constants";
+import type { DeliveryEngineDashboard } from "../types";
 
 export function DeliveryPlaybookPipeline({ dashboard }: { dashboard: DeliveryEngineDashboard | null }) {
     if (!dashboard) return null;

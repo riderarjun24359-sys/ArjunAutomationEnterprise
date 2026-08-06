@@ -26,6 +26,7 @@ pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || l
 
 pass("route:page", existsSync(join(root, "app", "(shell)", "production-readiness", "page.tsx")));
 pass("api:health", existsSync(join(root, "app", "api", "production-readiness", "health", "route.ts")));
+pass("api:health_rate_limited", readSafe(join(root, "app/api/production-readiness/health/route.ts")).includes("checkRateLimit"));
 pass("migration", existsSync(join(root, "supabase", "migrations", "202608060003_production_readiness_v1.sql")));
 
 pass("lib:production-logger", existsSync(join(root, "src", "lib", "production-logger.ts")));

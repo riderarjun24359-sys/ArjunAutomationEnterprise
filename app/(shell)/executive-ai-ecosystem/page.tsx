@@ -1,5 +1,5 @@
-import { ExecutiveAiEcosystemPage } from "@/src/modules/executive-ai-ecosystem";
+import { ExecutiveAiPage } from "@/src/modules/executive-ai";
 
-export default function ExecutiveAiEcosystemRoutePage() {
-    return <ExecutiveAiEcosystemPage />;
+export default function Page() {
+    return <ExecutiveAiPage />;
 }

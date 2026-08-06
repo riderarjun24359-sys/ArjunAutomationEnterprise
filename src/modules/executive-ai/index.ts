@@ -1,0 +1,11 @@
+export { ExecutiveAiPage } from "./dashboard/ExecutiveAiPage";
+export { ExecutiveAiDashboardPanel } from "./dashboard/ExecutiveAiDashboard";
+export { executiveAiService } from "./executive-ai-service";
+export { executiveAiRepository } from "./executive-ai-repository";
+export { useExecutiveAi } from "./executive-ai-hooks";
+export { publishExecutiveAiEvent, subscribeExecutiveAiEvents } from "./executive-ai-events";
+export { orchestratorService } from "./orchestrator/orchestrator.service";
+export { buildSharedKnowledge } from "./executive-memory/executive-memory.service";
+export { generateAllAgentRecommendations, routeTaskToAgents, EXECUTIVE_AGENTS } from "./executive-registry/executive-registry.service";
+export * from "./constants";
+export * from "./types";

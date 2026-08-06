@@ -134,10 +134,12 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "QualityGatePassed", source: "missionCore", payload: { passed: payload.passed } });
                 return { capabilityId, action, processed: true, qualityGate: true, timestamp };
             }
+            case "executiveAi:orchestrate":
             case "executiveAiEcosystem:orchestrate": {
                 missionCore().publishEvent({ type: "ExecutiveBriefGenerated", source: "missionCore", payload: { taskType: payload.taskType } });
                 return { capabilityId, action, processed: true, orchestrated: true, timestamp };
             }
+            case "executiveAi:approve-recommendation":
             case "executiveAiEcosystem:approve-recommendation": {
                 missionCore().publishEvent({ type: "RecommendationApproved", source: "missionCore", payload: { recommendationId: payload.recommendationId } });
                 return { capabilityId, action, processed: true, approved: true, timestamp };

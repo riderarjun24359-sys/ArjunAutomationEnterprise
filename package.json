@@ -43,6 +43,8 @@
     "executive-command-center:verify": "node scripts/verify-executive-command-center.mjs",
     "delivery-engine:verify": "node scripts/verify-delivery-engine.mjs",
     "production-readiness:verify": "node scripts/verify-production-readiness.mjs",
+    "executive-ai:verify": "node scripts/verify-executive-ai.mjs",
+    "enterprise-certification:verify": "node scripts/verify-enterprise-certification.mjs",
     "executive-ai-ecosystem:verify": "node scripts/verify-executive-ai-ecosystem.mjs",
     "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
     "verify": "node scripts/verify-public-website.mjs",
@@ -86,7 +88,6 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "uuid": "^14.0.1",
-    "xlsx": "^0.18.5",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
