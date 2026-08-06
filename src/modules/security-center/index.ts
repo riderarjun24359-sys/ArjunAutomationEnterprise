@@ -1,4 +1,5 @@
 export { SecurityCenterPage } from "./components/SecurityCenterPage";
+export { SecurityCenterOsPage } from "./pages/SecurityCenterOsPage";
 export { createSecurityCenterClient } from "./sdk";
 export type { SecurityCenterClient } from "./sdk";
 export {
@@ -13,6 +14,7 @@ export {
     ORG_ISOLATION_RESOURCES,
     SECURITY_PERMISSIONS,
 } from "./constants";
+export * from "./constants/os";
 export type {
     AuthMethod,
     MfaMethod,
@@ -27,7 +29,19 @@ export type {
     UserContext,
     SecurityPolicyResult,
 } from "./types";
+export * from "./types/os";
 export { securityCenterService } from "./services/security-center.service";
+export { securityCenterOsService } from "./services/security-center-os.service";
+export { securityCenterOsRepository } from "./repository/security-center-os.repository";
+export { useSecurityCenterOs } from "./hooks/useSecurityCenterOs";
+export {
+    buildSecurityCenterSnapshot,
+    createEmptySecurityCenterSnapshot,
+} from "./builders/security-center.builders";
+export { buildAiSecurityAssistant } from "./ai/ai-security-assistant";
+export { buildSecurityOsAnalytics } from "./analytics/security-os.analytics";
+export { listSecurityOsPlatformLinks } from "./integrations/platform-bridges";
+export { writeSecurityOsAuditLog } from "./utils/os-audit";
 export { enforceSecurityPolicy, publishSecurityEvent } from "./integrations/mission-core-bridge";
 export { hasPermission } from "./engine/rbac-engine";
 export { SECURITY_POLICIES, enforceCapabilityAccess } from "./lib/security-policies";

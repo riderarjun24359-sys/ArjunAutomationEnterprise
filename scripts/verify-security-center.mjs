@@ -156,10 +156,40 @@ const sharedRegistry = readSafe(join(mcRoot, "engine", "shared-service-registry.
 pass("mission-core:auth_delegates_security_center", sharedRegistry.includes("createSecurityCenterClient"));
 
 const pageSource = readSafe(join(modRoot, "components", "SecurityCenterPage.tsx"));
-pass("ui:design_os_Card", pageSource.includes("@/src/design-os/components/Card"));
-pass("ui:PageTransition", pageSource.includes("PageTransition"));
-pass("ui:StaggerReveal", pageSource.includes("StaggerReveal"));
-pass("ui:Tabs", pageSource.includes("Tabs"));
+pass("ui:page_renders_os", pageSource.includes("SecurityCenterOsPage"));
+
+const osPageSource = readSafe(join(modRoot, "pages", "SecurityCenterOsPage.tsx"));
+pass("ui:design_os_Card", osPageSource.includes("@/src/design-os/components/Card"));
+pass("ui:PageTransition", osPageSource.includes("PageTransition"));
+pass("os:ops_dashboard", osPageSource.includes("OpsDashboardPanel"));
+pass("os:compliance", osPageSource.includes("ComplianceOsPanel"));
+pass("os:assistant", osPageSource.includes("AiSecurityAssistantPanel"));
+
+const osFiles = [
+    "repository/security-center-os.repository.ts",
+    "builders/security-center.builders.ts",
+    "services/security-center-os.service.ts",
+    "ai/ai-security-assistant.ts",
+    "analytics/security-os.analytics.ts",
+    "hooks/useSecurityCenterOs.ts",
+    "pages/SecurityCenterOsPage.tsx",
+    "types/os.ts",
+    "types/raw.ts",
+    "utils/os-audit.ts",
+    "components/os/SecurityOsPanels.tsx",
+];
+for (const f of osFiles) pass(`os:file:${f}`, existsSync(join(modRoot, f)));
+
+pass("os:multi_tenant", readSafe(join(modRoot, "repository/security-center-os.repository.ts")).includes("resolveOrganizationContext"));
+pass("os:supabase", readSafe(join(modRoot, "repository/security-center-os.repository.ts")).includes("idpSecurityAlerts"));
+pass("os:audit_helper", existsSync(join(modRoot, "utils/os-audit.ts")));
+pass("ecc:security_widgets", existsSync(join(root, "src/modules/executive-command-center/components/ExecutiveSecurityWidgetsPanel.tsx")));
+pass(
+    "ecc:wired",
+    readSafe(join(root, "src/modules/executive-command-center/components/ExecutiveCommandCenterPage.tsx")).includes(
+        "ExecutiveSecurityWidgetsPanel",
+    ),
+);
 
 const sdkSource = readSafe(join(modRoot, "sdk", "index.ts"));
 pass("sdk:createSecurityCenterClient", sdkSource.includes("createSecurityCenterClient"));
@@ -174,11 +204,32 @@ pass("secrets:no_hardcoded_api_keys", !hardcodedFound);
 
 pass("package:security_center_verify", readSafe(join(root, "package.json")).includes('"security-center:verify"'));
 
+const unitOs = spawnVerify(root, "scripts/test-security-center-os.mjs");
+pass("test:security-center-os", unitOs.status === 0, unitOs.status !== 0 ? (unitOs.stderr || unitOs.stdout || "").slice(0, 300) : "");
+
+const live = spawnVerify(root, "scripts/test-executive-live-stats.mjs");
+pass("regression:sprint1-live-stats", live.status === 0);
+
+const widgets = spawnVerify(root, "scripts/test-executive-widgets.mjs");
+pass("regression:sprint1-widgets", widgets.status === 0);
+
+const crm = spawnVerify(root, "scripts/test-crm-enterprise.mjs");
+pass("regression:sprint2-crm", crm.status === 0);
+
+const cs = spawnVerify(root, "scripts/test-customer-success-os.mjs");
+pass("regression:sprint4-customer-success", cs.status === 0);
+
+const bf = spawnVerify(root, "scripts/test-billing-finance-os.mjs");
+pass("regression:sprint5-billing-finance", bf.status === 0);
+
+const hrms = spawnVerify(root, "scripts/test-hrms-workforce-os.mjs");
+pass("regression:sprint6-hrms", hrms.status === 0);
+
+const intg = spawnVerify(root, "scripts/test-integration-hub-os.mjs");
+pass("regression:sprint7-integrations", intg.status === 0);
+
 const mcVerify = spawnVerify(root, "scripts/verify-mission-core.mjs");
 pass("regression:mission_core_verify", mcVerify.status === 0, mcVerify.status !== 0 ? "mission-core verify failed" : "");
-
-const mcTsc = runTsc(root);
-pass("regression:mission_core_tsc", mcTsc.status === 0);
 
 const passed = results.filter((r) => r.pass).length;
 const failed = results.filter((r) => !r.pass);

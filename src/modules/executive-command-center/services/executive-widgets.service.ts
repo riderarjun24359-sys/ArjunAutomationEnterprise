@@ -2,6 +2,7 @@ import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-suc
 import type { FinanceExecutiveWidgets } from "@/src/modules/billing-finance/types/os";
 import type { ExecutiveHrWidgets } from "@/src/modules/hrms-workforce/types/os";
 import type { ExecutiveIntegrationWidgets } from "@/src/modules/integration-hub/types/os";
+import type { ExecutiveSecurityWidgets } from "@/src/modules/security-center/types/os";
 import { EXECUTIVE_QUICK_ACTIONS } from "../constants/quick-actions";
 import type { ExecutiveDashboardWidgets, LiveOperationsStats } from "../types";
 import { buildActivityTimeline } from "./activity-timeline.service";
@@ -17,6 +18,7 @@ export function buildExecutiveDashboardWidgets(input: {
     finance?: FinanceExecutiveWidgets | null;
     hrms?: ExecutiveHrWidgets | null;
     integrations?: ExecutiveIntegrationWidgets | null;
+    security?: ExecutiveSecurityWidgets | null;
 }): ExecutiveDashboardWidgets {
     const {
         data,
@@ -26,6 +28,7 @@ export function buildExecutiveDashboardWidgets(input: {
         finance = null,
         hrms = null,
         integrations = null,
+        security = null,
     } = input;
 
     if (!data) {
@@ -42,6 +45,7 @@ export function buildExecutiveDashboardWidgets(input: {
             finance,
             hrms,
             integrations,
+            security,
         };
     }
 
@@ -55,5 +59,6 @@ export function buildExecutiveDashboardWidgets(input: {
         finance,
         hrms,
         integrations,
+        security,
     };
 }

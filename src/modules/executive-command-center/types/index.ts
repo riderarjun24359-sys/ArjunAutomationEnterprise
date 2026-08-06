@@ -6,6 +6,7 @@ import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-suc
 import type { FinanceExecutiveWidgets } from "@/src/modules/billing-finance/types/os";
 import type { ExecutiveHrWidgets } from "@/src/modules/hrms-workforce/types/os";
 import type { ExecutiveIntegrationWidgets } from "@/src/modules/integration-hub/types/os";
+import type { ExecutiveSecurityWidgets } from "@/src/modules/security-center/types/os";
 
 export type IntelligenceModuleKey = "cto" | "operations" | "business" | "customer" | "project";
 
@@ -159,6 +160,7 @@ export interface ExecutiveDashboardWidgets {
     finance: FinanceExecutiveWidgets | null;
     hrms: ExecutiveHrWidgets | null;
     integrations: ExecutiveIntegrationWidgets | null;
+    security: ExecutiveSecurityWidgets | null;
 }
 
 export interface IntelligenceModuleMetric {

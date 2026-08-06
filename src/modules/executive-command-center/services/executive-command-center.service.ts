@@ -19,6 +19,7 @@ import { customerSuccessOsService } from "@/src/modules/customer-success/service
 import { billingFinanceOsService } from "@/src/modules/billing-finance/services/billing-finance-os.service";
 import { hrmsWorkforceOsService } from "@/src/modules/hrms-workforce/services/hrms-workforce-os.service";
 import { integrationHubOsService } from "@/src/modules/integration-hub/services/integration-hub-os.service";
+import { securityCenterOsService } from "@/src/modules/security-center/services/security-center-os.service";
 import type {
     CopilotContext,
     ExecutiveCommandCenterSnapshot,
@@ -68,8 +69,18 @@ function mergeNotifications(
 
 export class ExecutiveCommandCenterService {
     async getSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
-        const [overview, eip, aix, business, opsData, csSnapshot, financeSnapshot, hrmsSnapshot, integrationSnapshot] =
-            await Promise.all([
+        const [
+            overview,
+            eip,
+            aix,
+            business,
+            opsData,
+            csSnapshot,
+            financeSnapshot,
+            hrmsSnapshot,
+            integrationSnapshot,
+            securitySnapshot,
+        ] = await Promise.all([
             fetchDashboardOverview(authUserId, email, fullName),
             fetchEipStats(authUserId, email, fullName),
             fetchAixStats(authUserId, email, fullName),
@@ -79,6 +90,7 @@ export class ExecutiveCommandCenterService {
             billingFinanceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             hrmsWorkforceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             integrationHubOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
+            securityCenterOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
         ]);
 
         const liveStats = opsData
@@ -108,6 +120,7 @@ export class ExecutiveCommandCenterService {
             finance: financeSnapshot?.executiveWidgets ?? null,
             hrms: hrmsSnapshot?.executiveWidgets ?? null,
             integrations: integrationSnapshot?.executiveWidgets ?? null,
+            security: securitySnapshot?.executiveWidgets ?? null,
         });
 
         return {

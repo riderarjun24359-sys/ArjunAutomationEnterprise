@@ -21,6 +21,7 @@ import { CustomerSuccessExecutiveWidgetsPanel } from "./CustomerSuccessExecutive
 import { FinanceExecutiveWidgetsPanel } from "./FinanceExecutiveWidgetsPanel";
 import { ExecutiveHrWidgetsPanel } from "./ExecutiveHrWidgetsPanel";
 import { ExecutiveIntegrationWidgetsPanel } from "./ExecutiveIntegrationWidgetsPanel";
+import { ExecutiveSecurityWidgetsPanel } from "./ExecutiveSecurityWidgetsPanel";
 
 function ExecutiveCommandCenterSkeleton() {
     return (
@@ -120,6 +121,7 @@ export function ExecutiveCommandCenterPage() {
             <FinanceExecutiveWidgetsPanel widgets={snapshot.widgets.finance} />
             <ExecutiveHrWidgetsPanel widgets={snapshot.widgets.hrms} />
             <ExecutiveIntegrationWidgetsPanel widgets={snapshot.widgets.integrations} />
+            <ExecutiveSecurityWidgetsPanel widgets={snapshot.widgets.security} />
 
             <div className="grid gap-6 lg:grid-cols-2">
                 <AiExecutiveInsightsPanel insights={snapshot.widgets.insights} />
