@@ -73,6 +73,8 @@
     "go-live:verify": "node scripts/verify-go-live.mjs",
     "founder-dashboard:verify": "node scripts/verify-founder-dashboard.mjs",
     "early-access:verify": "node scripts/verify-early-access.mjs",
+    "launch-execution:verify": "node scripts/verify-launch-execution.mjs",
+    "generate:launch-execution-report": "node scripts/generate-launch-execution-report.mjs",
     "production-cutover:verify": "node scripts/verify-production-cutover.mjs",
     "generate:production-readiness-report": "node scripts/generate-production-readiness-report.mjs",
     "test:e2e": "playwright test",
