@@ -75,6 +75,8 @@
     "early-access:verify": "node scripts/verify-early-access.mjs",
     "launch-execution:verify": "node scripts/verify-launch-execution.mjs",
     "generate:launch-execution-report": "node scripts/generate-launch-execution-report.mjs",
+    "final-launch-readiness:verify": "node scripts/verify-final-launch-readiness.mjs",
+    "generate:final-launch-readiness-report": "node scripts/generate-final-launch-readiness-report.mjs",
     "production-cutover:verify": "node scripts/verify-production-cutover.mjs",
     "generate:production-readiness-report": "node scripts/generate-production-readiness-report.mjs",
     "test:e2e": "playwright test",

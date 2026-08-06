@@ -41,6 +41,7 @@ export const GO_LIVE_HEALTH_ENDPOINTS = [
     "/api/ops/go-live",
     "/api/ops/cutover",
     "/api/ops/launch-execution",
+    "/api/ops/final-launch-readiness",
 ] as const;
 
 export const GO_LIVE_SECURITY_CHECKS = [
