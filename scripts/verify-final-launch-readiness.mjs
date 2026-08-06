@@ -6,8 +6,10 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { runTsc, runLint, spawnVerify } from "./_verify-spawn-helper.mjs";
+import { loadProjectEnv } from "./_load-env.mjs";
 
 const root = process.cwd();
+loadProjectEnv(root);
 const results = [];
 
 function pass(check, ok, detail = "") {
@@ -74,6 +76,16 @@ for (const f of journeyFiles) pass(`journey:${f}`, existsSync(join(root, f)));
 
 process.env.SKIP_TSC = "1";
 process.env.SKIP_LINT = "1";
+
+const emailVerify = spawnVerify(root, "scripts/verify-launch-email-provider.mjs");
+pass("blocker:email_provider", emailVerify.status === 0, emailVerify.status !== 0 ? (emailVerify.stderr || emailVerify.stdout || "").slice(0, 200) : "");
+
+const urlVerify = spawnVerify(root, "scripts/verify-production-urls.mjs");
+pass("blocker:production_urls", urlVerify.status === 0, urlVerify.status !== 0 ? (urlVerify.stderr || urlVerify.stdout || "").slice(0, 200) : "");
+
+const smoke = spawnVerify(root, "scripts/production-smoke.mjs");
+pass("blocker:production_smoke", smoke.status === 0, smoke.status !== 0 ? (smoke.stderr || smoke.stdout || "").slice(0, 200) : "");
+
 const report = spawnVerify(root, "scripts/generate-final-launch-readiness-report.mjs");
 pass("report:generate", report.status === 0, report.status !== 0 ? (report.stderr || report.stdout || "").slice(0, 200) : "");
 const reportMd = readSafe(join(root, "docs/FINAL_LAUNCH_READINESS_REPORT.md"));
@@ -84,6 +96,7 @@ pass("report:critical_section", reportMd.includes("Critical issues"));
 pass("report:high_section", reportMd.includes("High priority issues"));
 pass("report:medium_section", reportMd.includes("Medium priority issues"));
 pass("report:nice_section", reportMd.includes("Nice-to-have"));
+pass("report:go", /Decision:\s*\*?GO\b/.test(reportMd) && /Final score:\**\s*100\b/.test(reportMd), "expect 100/100 GO");
 
 const launchExec = spawnVerify(root, "scripts/verify-launch-execution.mjs");
 pass("regression:launch_execution", launchExec.status === 0, launchExec.status !== 0 ? (launchExec.stderr || launchExec.stdout || "").slice(0, 200) : "");

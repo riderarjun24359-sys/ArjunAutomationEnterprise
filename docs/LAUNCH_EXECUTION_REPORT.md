@@ -1,9 +1,9 @@
 # Launch Execution Report — Early Access
 
 **Version:** 1.0.0-early-access-execution  
-**Generated:** 2026-08-06T22:31:51.249Z  
+**Generated:** 2026-08-06T22:53:21.971Z  
 **Decision: HOLD**  
-**Score:** 57/100  
+**Score:** 79/100  
 
 ## Executive launch report
 
@@ -15,19 +15,11 @@ Hold inviting customers until remaining blockers below are cleared, then re-run 
 
 ## Risk summary
 
-- Cannot safely activate production without critical secrets.
-- Cohort onboarding emails will not deliver.
 - Recovery posture incomplete without backups.
 - Founder paging limited without OPS_ALERT_WEBHOOK_URL/SENTRY_DSN.
 
 ## Known issues
 
-- Missing critical secret: NEXT_PUBLIC_APP_URL
-- Missing critical secret: NEXT_PUBLIC_SUPABASE_URL
-- Missing critical secret: NEXT_PUBLIC_SUPABASE_ANON_KEY
-- Missing critical secret: PLATFORM_LEAD_API_KEY
-- Missing critical secret: PLATFORM_ORGANIZATION_ID
-- Email provider not configured
 - BACKUPS not enabled (BACKUP_ENABLED)
 - External monitoring sink not configured
 
@@ -35,7 +27,7 @@ Hold inviting customers until remaining blockers below are cleared, then re-run 
 
 | Check | Status | Detail |
 |---|---|---|
-| activation_secrets | warn | NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID |
+| activation_secrets | pass | ok |
 | activation_startup_gate | pass | instrumentation.ts |
 | activation_cutover_api | pass | /api/ops/cutover |
 | activation_health | pass | ops endpoints |
@@ -49,7 +41,7 @@ Hold inviting customers until remaining blockers below are cleared, then re-run 
 | cohort_console | pass | /early-access |
 | cohort_runbook | pass | cohort runbook |
 | cohort_email_templates | pass | templates |
-| cohort_email_provider | warn | pending |
+| cohort_email_provider | pass | configured |
 
 ## Production smoke test
 
@@ -70,7 +62,7 @@ Hold inviting customers until remaining blockers below are cleared, then re-run 
 
 | ID | Status | Detail |
 |---|---|---|
-| activation_secrets | warn | NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID |
+| activation_secrets | pass | ok |
 | activation_startup_gate | pass | instrumentation.ts |
 | activation_cutover_api | pass | /api/ops/cutover |
 | activation_health | pass | ops endpoints |
@@ -79,19 +71,13 @@ Hold inviting customers until remaining blockers below are cleared, then re-run 
 | cohort_console | pass | /early-access |
 | cohort_runbook | pass | cohort runbook |
 | cohort_email_templates | pass | templates |
-| cohort_email_provider | warn | pending |
+| cohort_email_provider | pass | configured |
 | smoke_flow | pass | 10/10 |
 | smoke_spec | pass | playwright smoke |
 | docs_execution | pass | LAUNCH_EXECUTION.md |
 
 ## Remaining blockers
 
-- Set NEXT_PUBLIC_APP_URL
-- Set NEXT_PUBLIC_SUPABASE_URL
-- Set NEXT_PUBLIC_SUPABASE_ANON_KEY
-- Set PLATFORM_LEAD_API_KEY
-- Set PLATFORM_ORGANIZATION_ID
-- Configure RESEND_API_KEY or SMTP_*
 - Set BACKUP_ENABLED=true and enable org backups
 - Set OPS_ALERT_WEBHOOK_URL or SENTRY_DSN
 

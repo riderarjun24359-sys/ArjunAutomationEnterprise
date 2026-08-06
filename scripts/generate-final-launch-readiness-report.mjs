@@ -4,8 +4,10 @@
  */
 import { writeFileSync, existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { loadProjectEnv } from "./_load-env.mjs";
 
 const root = process.cwd();
+loadProjectEnv(root);
 const env = process.env;
 
 function ok(rel) {
