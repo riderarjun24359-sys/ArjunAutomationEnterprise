@@ -7,6 +7,15 @@ export const shadows = {
     glow: "var(--dos-shadow-glow)",
 } as const;
 
+export const levels = {
+    0: "var(--dos-elevation-0)",
+    1: "var(--dos-elevation-1)",
+    2: "var(--dos-elevation-2)",
+    3: "var(--dos-elevation-3)",
+    4: "var(--dos-elevation-4)",
+    glow: "var(--dos-elevation-glow)",
+} as const;
+
 export const zIndex = {
     base: 0,
     dropdown: 1000,
@@ -19,4 +28,4 @@ export const zIndex = {
     command: 1700,
 } as const;
 
-export const elevation = { shadows, zIndex } as const;
+export const elevation = { shadows, levels, zIndex } as const;

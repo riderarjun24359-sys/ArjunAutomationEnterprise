@@ -7,6 +7,8 @@ import { PremiumSidebar } from "./PremiumSidebar";
 import { DashboardToolbar } from "./DashboardToolbar";
 import { CommandPalette } from "./CommandPalette";
 import { KeyboardShortcuts } from "./KeyboardShortcuts";
+import { PremiumMotionProvider } from "@/src/design-os/motion/components/PremiumMotionProvider";
+import { RouteTransition } from "@/src/design-os/motion/components/RouteTransition";
 import { cn } from "@/src/lib/cn";
 
 interface DashboardShellProps {
@@ -21,20 +23,24 @@ export function DashboardShell({ children, title, className }: DashboardShellPro
     const snapshot = useExecutiveShellStore((s) => s.snapshot);
 
     return (
-        <div className={cn("min-h-screen bg-[var(--dos-surface-secondary)] text-[var(--dos-text-primary)]", className)}>
-            <MobileNav />
-            <CommandPalette />
-            <KeyboardShortcuts />
-            <ExecutiveCopilot open={copilotOpen} onClose={() => setCopilotOpen(false)} snapshot={snapshot} />
-            <div className="flex min-h-screen">
-                <div className="hidden lg:block">
-                    <PremiumSidebar className="sticky top-0 h-screen" />
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                    <DashboardToolbar title={title} />
-                    <main className="flex-1 overflow-x-hidden px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <PremiumMotionProvider>
+            <div className={cn("min-h-screen bg-[var(--dos-surface-secondary)] text-[var(--dos-text-primary)]", className)}>
+                <MobileNav />
+                <CommandPalette />
+                <KeyboardShortcuts />
+                <ExecutiveCopilot open={copilotOpen} onClose={() => setCopilotOpen(false)} snapshot={snapshot} />
+                <div className="flex min-h-screen">
+                    <div className="hidden lg:block">
+                        <PremiumSidebar className="sticky top-0 h-screen" />
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                        <DashboardToolbar title={title} />
+                        <main className="flex-1 overflow-x-hidden px-4 py-6 sm:px-6 lg:px-8">
+                            <RouteTransition>{children}</RouteTransition>
+                        </main>
+                    </div>
                 </div>
             </div>
-        </div>
+        </PremiumMotionProvider>
     );
 }

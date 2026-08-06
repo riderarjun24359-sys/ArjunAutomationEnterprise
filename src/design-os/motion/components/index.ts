@@ -1,4 +1,5 @@
 export { PageTransition } from "./PageTransition";
+export { RouteTransition } from "./RouteTransition";
 export { StaggerReveal, StaggerRevealItem } from "./StaggerReveal";
 export { MagneticButton } from "./MagneticButton";
 export { AnimatedCounter } from "./AnimatedCounter";
@@ -6,3 +7,10 @@ export { SkeletonLoader } from "./SkeletonLoader";
 export { GlowPulse } from "./GlowPulse";
 export { FloatingElement } from "./FloatingElement";
 export { ProgressiveLoader } from "./ProgressiveLoader";
+export { PremiumMotionProvider } from "./PremiumMotionProvider";
+export { WidgetEntrance } from "./WidgetEntrance";
+export { AiTypingText } from "./AiTypingText";
+export { AiThinkingIndicator } from "./AiThinkingIndicator";
+export { StreamingText } from "./StreamingText";
+export { BottomSheet } from "./BottomSheet";
+export { ProgressIndicator } from "./ProgressIndicator";

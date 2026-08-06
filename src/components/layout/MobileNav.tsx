@@ -1,33 +1,60 @@
 "use client";
 
+import { AnimatePresence, m } from "framer-motion";
 import { X } from "lucide-react";
 import { Sidebar } from "@/src/components/layout/Sidebar";
 import { useAppStore } from "@/src/store/app.store";
+import { modalOverlay } from "@/src/design-os/motion/variants";
+import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
 
 export function MobileNav() {
     const isMobileMenuOpen = useAppStore((state) => state.isMobileMenuOpen);
     const toggleMobileMenu = useAppStore((state) => state.toggleMobileMenu);
-
-    if (!isMobileMenuOpen) {
-        return null;
-    }
+    const reduced = useReducedMotion();
 
     return (
-        <div className="fixed inset-0 z-40 lg:hidden">
-            <button type="button" className="absolute inset-0 bg-slate-950/50" aria-label="Close navigation menu" onClick={toggleMobileMenu} />
-            <div className="absolute inset-y-0 left-0 w-[85%] max-w-xs shadow-2xl">
-                <div className="flex items-center justify-end border-b border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-950">
-                    <button
+        <AnimatePresence>
+            {isMobileMenuOpen ? (
+                <div className="fixed inset-0 z-40 lg:hidden">
+                    <m.button
                         type="button"
-                        onClick={toggleMobileMenu}
-                        className="rounded-xl border border-slate-200 p-2 text-slate-600 dark:border-slate-700 dark:text-slate-300"
+                        className="absolute inset-0 bg-[var(--dos-surface-overlay)]"
                         aria-label="Close navigation menu"
+                        onClick={toggleMobileMenu}
+                        variants={reduced ? undefined : modalOverlay}
+                        initial={reduced ? false : "hidden"}
+                        animate="visible"
+                        exit="exit"
+                    />
+                    <m.div
+                        className="dos-gpu absolute inset-y-0 left-0 w-[85%] max-w-xs border-r border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] shadow-[var(--dos-elevation-4)]"
+                        variants={
+                            reduced
+                                ? undefined
+                                : {
+                                      hidden: { x: "-100%" },
+                                      visible: { x: 0, transition: { type: "spring", stiffness: 360, damping: 34 } },
+                                      exit: { x: "-100%", transition: { duration: 0.2 } },
+                                  }
+                        }
+                        initial={reduced ? false : "hidden"}
+                        animate="visible"
+                        exit="exit"
                     >
-                        <X className="h-4 w-4" />
-                    </button>
+                        <div className="flex items-center justify-end border-b border-[var(--dos-border)] p-3">
+                            <button
+                                type="button"
+                                onClick={toggleMobileMenu}
+                                className="dos-focus-ring dos-interactive rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] p-2 text-[var(--dos-text-secondary)]"
+                                aria-label="Close navigation menu"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        </div>
+                        <Sidebar onNavigate={toggleMobileMenu} className="h-[calc(100%-57px)] w-full" />
+                    </m.div>
                 </div>
-                <Sidebar onNavigate={toggleMobileMenu} className="h-[calc(100%-57px)] w-full" />
-            </div>
-        </div>
+            ) : null}
+        </AnimatePresence>
     );
 }

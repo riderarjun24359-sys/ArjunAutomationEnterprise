@@ -57,6 +57,7 @@
     "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
     "verify": "node scripts/verify-public-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
+    "premium-ui:verify": "node scripts/verify-premium-ui.mjs",
     "business-assets:verify": "node scripts/verify-business-assets.mjs",
     "client-success-capability:verify": "node scripts/verify-client-success-capability.mjs",
     "mission-core:verify": "node scripts/verify-mission-core.mjs",

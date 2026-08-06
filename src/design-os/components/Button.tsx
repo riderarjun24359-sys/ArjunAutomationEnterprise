@@ -1,13 +1,15 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { useMagnetic } from "@/src/design-os/motion/hooks/useMagnetic";
+import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
+import { pressableTransition } from "@/src/design-os/motion/variants";
 
 const buttonVariants = cva(
-    "inline-flex items-center justify-center gap-2 font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] disabled:pointer-events-none disabled:opacity-50",
+    "dos-ripple dos-focus-ring inline-flex items-center justify-center gap-2 font-semibold transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50",
     {
         variants: {
             variant: {
@@ -33,20 +35,23 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
 
 export function Button({ className, variant, size, loading, magnetic, children, disabled, type = "button", ...props }: ButtonProps) {
     const { ref, onMouseMove, onMouseLeave } = useMagnetic<HTMLButtonElement>();
+    const reduced = useReducedMotion();
 
     return (
-        <motion.button
+        <m.button
             ref={magnetic ? ref : undefined}
             type={type}
             onMouseMove={magnetic ? onMouseMove : undefined}
             onMouseLeave={magnetic ? onMouseLeave : undefined}
-            whileTap={{ scale: 0.98 }}
-            className={cn(buttonVariants({ variant, size }), className)}
+            whileHover={reduced ? undefined : { y: -1 }}
+            whileTap={reduced ? undefined : { scale: 0.98 }}
+            transition={pressableTransition}
+            className={cn(buttonVariants({ variant, size }), "dos-gpu", className)}
             disabled={disabled || loading}
             {...props}
         >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
             {children}
-        </motion.button>
+        </m.button>
     );
 }
