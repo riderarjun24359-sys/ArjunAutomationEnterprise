@@ -67,8 +67,29 @@ function mergeNotifications(
     return merged;
 }
 
+const SNAPSHOT_TTL_MS = 12_000;
+const snapshotCache = new Map<string, { expiresAt: number; value: Promise<ExecutiveCommandCenterSnapshot> }>();
+
 export class ExecutiveCommandCenterService {
     async getSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
+        const cacheKey = `${authUserId}:${email.toLowerCase()}`;
+        const now = Date.now();
+        const cached = snapshotCache.get(cacheKey);
+        if (cached && cached.expiresAt > now) {
+            return cached.value;
+        }
+
+        const value = this.buildSnapshot(authUserId, email, fullName);
+        snapshotCache.set(cacheKey, { expiresAt: now + SNAPSHOT_TTL_MS, value });
+        try {
+            return await value;
+        } catch (error) {
+            snapshotCache.delete(cacheKey);
+            throw error;
+        }
+    }
+
+    private async buildSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
         const [
             overview,
             eip,

@@ -15,16 +15,6 @@ export const CRM_ENTERPRISE_TABS = {
     analytics: "analytics",
 } as const satisfies Record<string, CrmEnterpriseTab>;
 
-/** @deprecated Use CRM_ENTERPRISE_TABS */
-export const CRM_TABS = {
-    overview: "overview",
-    clients: "clients",
-    leads: "leads",
-    deals: "deals",
-    activities: "activities",
-    tasks: "tasks",
-} as const;
-
 export const CLIENT_STATUS_OPTIONS = [
     { value: "lead", label: "Lead" },
     { value: "active", label: "Active" },

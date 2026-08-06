@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { Badge } from "@/src/design-os/components/Badge";
 import { Card } from "@/src/design-os/components/Card";
 import { EmptyState } from "@/src/design-os/components/EmptyState";
@@ -7,21 +8,34 @@ import { PageTransition } from "@/src/design-os/motion/components/PageTransition
 import { SkeletonLoader } from "@/src/design-os/motion/components/SkeletonLoader";
 import { EXECUTIVE_COMMAND_CENTER_THEME } from "../constants";
 import { useExecutiveCommandCenter } from "../hooks/useExecutiveCommandCenter";
-import { AiExecutiveInsightsPanel } from "./AiExecutiveInsightsPanel";
 import { ExecutiveBriefCard } from "./ExecutiveBriefCard";
 import { ExecutiveChartsPanel } from "./ExecutiveChartsPanel";
 import { ExecutiveFeed } from "./ExecutiveFeed";
 import { IntelligenceEnginesPanel } from "./IntelligenceEnginesPanel";
 import { IntelligenceModuleGrid } from "./IntelligenceModuleGrid";
 import { QuickActionsPanel } from "./QuickActionsPanel";
-import { RecentActivityTimeline } from "./RecentActivityTimeline";
 import { RecentNotificationsPanel, RecentNotificationsSkeleton } from "./RecentNotificationsPanel";
 import { UnifiedKpiStrip, UnifiedKpiStripSkeleton } from "./UnifiedKpiStrip";
-import { CustomerSuccessExecutiveWidgetsPanel } from "./CustomerSuccessExecutiveWidgetsPanel";
-import { FinanceExecutiveWidgetsPanel } from "./FinanceExecutiveWidgetsPanel";
-import { ExecutiveHrWidgetsPanel } from "./ExecutiveHrWidgetsPanel";
-import { ExecutiveIntegrationWidgetsPanel } from "./ExecutiveIntegrationWidgetsPanel";
-import { ExecutiveSecurityWidgetsPanel } from "./ExecutiveSecurityWidgetsPanel";
+
+const AiExecutiveInsightsPanel = dynamic(() => import("./AiExecutiveInsightsPanel").then((m) => m.AiExecutiveInsightsPanel), { ssr: false });
+const RecentActivityTimeline = dynamic(() => import("./RecentActivityTimeline").then((m) => m.RecentActivityTimeline), { ssr: false });
+const CustomerSuccessExecutiveWidgetsPanel = dynamic(
+    () => import("./CustomerSuccessExecutiveWidgetsPanel").then((m) => m.CustomerSuccessExecutiveWidgetsPanel),
+    { ssr: false },
+);
+const FinanceExecutiveWidgetsPanel = dynamic(
+    () => import("./FinanceExecutiveWidgetsPanel").then((m) => m.FinanceExecutiveWidgetsPanel),
+    { ssr: false },
+);
+const ExecutiveHrWidgetsPanel = dynamic(() => import("./ExecutiveHrWidgetsPanel").then((m) => m.ExecutiveHrWidgetsPanel), { ssr: false });
+const ExecutiveIntegrationWidgetsPanel = dynamic(
+    () => import("./ExecutiveIntegrationWidgetsPanel").then((m) => m.ExecutiveIntegrationWidgetsPanel),
+    { ssr: false },
+);
+const ExecutiveSecurityWidgetsPanel = dynamic(
+    () => import("./ExecutiveSecurityWidgetsPanel").then((m) => m.ExecutiveSecurityWidgetsPanel),
+    { ssr: false },
+);
 
 function ExecutiveCommandCenterSkeleton() {
     return (

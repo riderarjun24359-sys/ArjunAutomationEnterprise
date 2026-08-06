@@ -39,32 +39,32 @@ export async function loadOrganizationOperationsData(
     const orgId = context.organizationId;
     const listQuery = { limit: LIST_LIMIT, orderBy: "created_at" as const, orderDirection: "desc" as const };
 
-    const [clients, activeClients, projects, tasks, salesLeads, crmLeads, invoices, payments, audits, activities] =
-        await Promise.all([
-            databaseService.clients.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.clients.listActiveClients(orgId).catch(() => []),
-            databaseService.projects.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.tasks.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.salesLeads.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.clients.listLeads(orgId).catch(() => []),
-            databaseService.invoices.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.payments.listByOrganization(orgId, listQuery).catch(() => []),
-            databaseService.audits
-                .list({
-                    limit: 40,
-                    orderBy: "created_at",
-                    orderDirection: "desc",
-                    filters: { organization_id: orgId },
-                })
-                .catch(() => []),
-            databaseService.activityLogs
-                .listByOrganization(orgId, {
-                    orderBy: "created_at",
-                    orderDirection: "desc",
-                    limit: 40,
-                })
-                .catch(() => []),
-        ]);
+    const [clients, projects, tasks, salesLeads, invoices, payments, audits, activities] = await Promise.all([
+        databaseService.clients.listByOrganization(orgId, listQuery).catch(() => [] as DbClient[]),
+        databaseService.projects.listByOrganization(orgId, listQuery).catch(() => [] as DbProject[]),
+        databaseService.tasks.listByOrganization(orgId, listQuery).catch(() => [] as DbTask[]),
+        databaseService.salesLeads.listByOrganization(orgId, listQuery).catch(() => [] as DbSalesLead[]),
+        databaseService.invoices.listByOrganization(orgId, listQuery).catch(() => [] as DbInvoice[]),
+        databaseService.payments.listByOrganization(orgId, listQuery).catch(() => [] as DbPayment[]),
+        databaseService.audits
+            .list({
+                limit: 40,
+                orderBy: "created_at",
+                orderDirection: "desc",
+                filters: { organization_id: orgId },
+            })
+            .catch(() => [] as AuditLog[]),
+        databaseService.activityLogs
+            .listByOrganization(orgId, {
+                orderBy: "created_at",
+                orderDirection: "desc",
+                limit: 40,
+            })
+            .catch(() => [] as DbActivityLog[]),
+    ]);
+
+    const activeClients = clients.filter((c) => c.lifecycle_stage === "client");
+    const crmLeads = clients.filter((c) => c.lifecycle_stage !== "client");
 
     return {
         organizationId: orgId,

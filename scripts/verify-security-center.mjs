@@ -54,20 +54,23 @@ pass("nav:primary_section", /Security Center[\s\S]*section:\s*"primary"/.test(na
 const middlewareSource = readSafe(join(root, "src", "middleware", "auth.ts"));
 pass("middleware:securityCenter_protected", middlewareSource.includes("ROUTES.securityCenter"));
 
-const panels = [
-    "AuthenticationPanel",
-    "MfaPanel",
-    "RbacPanel",
-    "OrgIsolationPanel",
-    "ApiSecurityPanel",
-    "SecretsManagementPanel",
-    "AuditCenterPanel",
-    "ThreatDetectionPanel",
-    "SecurityDashboardPanel",
+const osPanels = [
+    "OpsDashboardPanel",
+    "RbacOsPanel",
+    "PermissionsOsPanel",
+    "AuditExplorerPanel",
+    "SecurityEventsPanel",
+    "MfaOsPanel",
+    "SessionsOsPanel",
+    "ApiSecurityOsPanel",
+    "ComplianceOsPanel",
+    "BackupDrOsPanel",
+    "SecurityAlertsOsPanel",
+    "AiSecurityAssistantPanel",
 ];
-
-for (const panel of panels) {
-    pass(`panel:${panel}`, existsSync(join(modRoot, "components", "panels", `${panel}.tsx`)));
+const osPanelSource = readSafe(join(modRoot, "components", "os", "SecurityOsPanels.tsx"));
+for (const panel of osPanels) {
+    pass(`panel:${panel}`, osPanelSource.includes(`function ${panel}`) || osPanelSource.includes(`export function ${panel}`));
 }
 
 const engines = [

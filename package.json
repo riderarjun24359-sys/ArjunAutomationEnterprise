@@ -65,6 +65,7 @@
     "ai-foundation:verify": "node scripts/verify-ai-foundation.mjs",
     "production-remediation:verify": "node scripts/verify-production-remediation.mjs",
     "launch-readiness:verify": "node scripts/verify-launch-readiness.mjs",
+    "launch-audit": "node scripts/launch-audit.mjs",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {

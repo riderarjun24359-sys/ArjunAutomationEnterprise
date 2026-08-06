@@ -13,15 +13,46 @@ const auditRepo = new AuditRepository();
 
 const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unknown>> = {
     auth: {
-        validateSession: () => ({ valid: true, userId: "platform-user" }),
+        validateSession: (token?: unknown) => {
+            if (!token) return { valid: false, reason: "token_required" };
+            const result = securityClient.validateToken(String(token));
+            return { valid: result.valid, keyId: result.keyId, role: result.role };
+        },
         getPermissions: () => ({ roles: securityClient.getRoles() }),
         checkPermission: (role: unknown, permission: unknown) =>
             securityClient.hasPermission(role as import("@/src/modules/security-center/types").SecurityRole, permission as import("@/src/modules/security-center/types").Permission),
         validateToken: (token: unknown) => securityClient.validateToken(String(token)),
     },
     notifications: {
-        send: (payload: unknown) => ({ sent: true, channel: "email", payload }),
-        listPending: () => ({ count: 0, items: [] }),
+        send: async (...args: unknown[]) => {
+            const [authUserId, email, payload, fullName] = args;
+            if (!authUserId || !email || !payload) {
+                return { sent: false, reason: "auth_and_payload_required" };
+            }
+            const { createCommunicationHubClient } = await import("@/src/modules/communication-hub/sdk");
+            const client = createCommunicationHubClient(String(authUserId), String(email), fullName as string | null | undefined);
+            const result = await client.sendNotification(
+                payload as import("@/src/modules/communication-hub/types").CnhSdkSendNotificationInput,
+            );
+            return { sent: true, channel: "communication-hub", result };
+        },
+        listPending: async (...args: unknown[]) => {
+            const [authUserId, email, fullName] = args;
+            if (!authUserId || !email) {
+                return { count: 0, items: [], reason: "auth_required" };
+            }
+            const { communicationHubService } = await import("@/src/modules/communication-hub/sdk");
+            const queue = await communicationHubService.getNotificationQueue(
+                String(authUserId),
+                String(email),
+                fullName as string | null | undefined,
+            );
+            const pending = queue.filter((item) => {
+                const status = `${item.status} ${item.deliveryStatus}`.toLowerCase();
+                return status.includes("pending") || status.includes("queued") || status.includes("waiting");
+            });
+            return { count: pending.length, items: pending.slice(0, 50) };
+        },
     },
     documentEngine: {
         generate: (template: unknown) => ({ documentId: `doc-${Date.now()}`, template }),
@@ -64,7 +95,7 @@ const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unk
     },
     analytics: {
         track: (event: unknown) => ({ tracked: true, event }),
-        getMetrics: () => ({ kpis: { activeUsers: 42, workflows: 12 } }),
+        getMetrics: () => ({ kpis: { source: "mission-core", tracked: true } }),
     },
     integrations: {
         invoke: (connector: unknown, method: unknown) => ({ connector, method, success: true }),
