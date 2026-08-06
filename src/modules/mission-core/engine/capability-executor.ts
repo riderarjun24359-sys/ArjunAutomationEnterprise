@@ -156,6 +156,18 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "ImprovementItemCreated", source: "missionCore", payload: { itemId: payload.itemId } });
                 return { capabilityId, action, processed: true, improvementCaptured: true, timestamp };
             }
+            case "aiCommandCenter:dashboard": {
+                missionCore().publishEvent({ type: "AiCommandCenterLoaded", source: "missionCore", payload: {} });
+                return { capabilityId, action, processed: true, dashboardLoaded: true, timestamp };
+            }
+            case "aiCommandCenter:accept-recommendation": {
+                missionCore().publishEvent({ type: "AiRecommendationAccepted", source: "missionCore", payload: { recommendationId: payload.recommendationId } });
+                return { capabilityId, action, processed: true, accepted: true, timestamp };
+            }
+            case "aiCommandCenter:dismiss-recommendation": {
+                missionCore().publishEvent({ type: "AiRecommendationDismissed", source: "missionCore", payload: { recommendationId: payload.recommendationId } });
+                return { capabilityId, action, processed: true, dismissed: true, timestamp };
+            }
             default: {
                 const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {

@@ -41,6 +41,17 @@ export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
         events: ["GlobalOpsDashboardLoaded", "SuccessPlanCreated", "EscalationOpened", "ImprovementItemCreated"],
     },
     {
+        id: "aiCommandCenter",
+        name: "AI Command Center",
+        route: "/ai-command-center",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "aiCommandCenter", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["missionCore", "businessPlatform", "globalOperations", "deliveryEngine", "executiveAi"],
+        apis: ["dashboard", "accept-recommendation", "dismiss-recommendation", "run-automation"],
+        events: ["AiCommandCenterLoaded", "AiRecommendationAccepted", "AiRecommendationDismissed", "AiDecisionProposed"],
+    },
+    {
         id: "productionReadiness",
         name: "Production Readiness",
         route: "/production-readiness",

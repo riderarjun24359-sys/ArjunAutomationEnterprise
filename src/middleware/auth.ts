@@ -43,6 +43,7 @@ const protectedRoutes = [
     ROUTES.executiveAi,
     ROUTES.executiveAiEcosystem,
     ROUTES.globalOperations,
+    ROUTES.aiCommandCenter,
     ROUTES.documents,
     ROUTES.ai,
     ROUTES.knowledge,

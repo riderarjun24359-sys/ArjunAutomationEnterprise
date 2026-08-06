@@ -72,6 +72,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Production Readiness", href: ROUTES.productionReadiness, description: "Enterprise production hardening: observability, resilience, security, scalability, CTO audit dashboard", icon: ShieldCheck, section: "primary" },
     { label: "Executive AI", href: ROUTES.executiveAi, description: "Coordinated executive AI leadership layer: 9 agents, orchestrator, collaboration, governance, and human approval", icon: Bot, section: "primary" },
     { label: "Global Operations", href: ROUTES.globalOperations, description: "Customer success OS, support center, onboarding, delivery control, feedback, and continuous improvement", icon: Network, section: "primary" },
+    { label: "AI Command Center", href: ROUTES.aiCommandCenter, description: "Operational AI command: system health, decisions, recommendations, automation, and executive analytics", icon: Bot, section: "primary" },
     { label: "AI Foundation", href: ROUTES.aiFoundation, description: "Governed AI layer: memory, knowledge graph, prompts, agents, workflows, evaluation, governance, cost tracking, and learning pipeline", icon: Brain, section: "primary" },
     { label: "Finance", href: ROUTES.finance, description: "Revenue and costs", icon: Wallet, section: "secondary" },
     { label: "Sales", href: ROUTES.sales, description: "Pipeline and revenue operations", icon: TrendingUp, section: "secondary" },

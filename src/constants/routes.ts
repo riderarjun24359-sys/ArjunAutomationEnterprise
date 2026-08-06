@@ -72,6 +72,7 @@ export const ROUTES = {
     executiveAi: "/executive-ai",
     executiveAiEcosystem: "/executive-ai-ecosystem",
     globalOperations: "/global-operations",
+    aiCommandCenter: "/ai-command-center",
     documents: "/documents",
 } as const;
 

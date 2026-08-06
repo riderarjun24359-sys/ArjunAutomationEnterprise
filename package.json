@@ -46,6 +46,7 @@
     "executive-ai:verify": "node scripts/verify-executive-ai.mjs",
     "enterprise-certification:verify": "node scripts/verify-enterprise-certification.mjs",
     "global-operations:verify": "node scripts/verify-global-operations.mjs",
+    "ai-command-center:verify": "node scripts/verify-ai-command-center.mjs",
     "executive-ai-ecosystem:verify": "node scripts/verify-executive-ai-ecosystem.mjs",
     "trust-conversion:verify": "node scripts/verify-trust-conversion.mjs",
     "verify": "node scripts/verify-public-website.mjs",
