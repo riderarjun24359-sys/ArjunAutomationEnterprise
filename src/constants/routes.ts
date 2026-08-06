@@ -28,6 +28,7 @@ export const ROUTES = {
     clientSuccess: "/client-success",
     missionCore: "/mission-core",
     founderOs: "/founder-os",
+    founderAnalytics: "/founder-analytics",
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",
     enterpriseIdentity: "/enterprise-identity",
