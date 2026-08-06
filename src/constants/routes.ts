@@ -80,6 +80,7 @@ export const ROUTES = {
     globalOperations: "/global-operations",
     aiCommandCenter: "/ai-command-center",
     productionDeployment: "/production-deployment",
+    goLive: "/go-live",
     documents: "/documents",
 } as const;
 

@@ -13,21 +13,24 @@
   - `/api/ops/diagnostics` — authenticated diagnostics
   - `/api/ops/production` — Early Access production summary (no secrets)
 
-## Production Early Access
+## Production Early Access / Go-Live
 
-Release: `v1.0.0-early-access` — see `docs/releases/v1.0.0-early-access.md`
+Release: `v1.0.0-early-access` — see `docs/releases/v1.0.0-early-access.md`  
+Go-Live: `docs/GO_LIVE_CHECKLIST.md`, `docs/GO_LIVE_RUNBOOK.md`, `docs/CUSTOMER_ONBOARDING_RUNBOOK.md`, `docs/ROLLBACK_RUNBOOK.md`
 
 ### Daily checks
 
 1. Open `/production-deployment` or `GET /api/ops/production`
-2. Confirm Supabase configured, auth session helpers available
-3. Review open alerts via ops monitoring / Platform Operations
-4. Spot-check storage upload (authorized) and signed URL flow
+2. Open `/go-live` or `GET /api/ops/go-live` before inviting customers
+3. Confirm Supabase configured, auth session helpers available
+4. Review open alerts via ops monitoring / Platform Operations
+5. Spot-check storage upload (authorized) and signed URL flow
 
 ### Verify locally / CI
 
 ```bash
 npm run production:verify
+npm run go-live:verify
 ```
 
 ### Deployment pipeline
