@@ -30,6 +30,17 @@ export const PLATFORM_CAPABILITIES: CapabilityDefinition[] = [
         events: ["ExecutiveBriefGenerated", "RecommendationApproved", "AgentTaskRouted", "ConflictResolved", "ConsensusReached"],
     },
     {
+        id: "globalOperations",
+        name: "Customer Success & Global Operations",
+        route: "/global-operations",
+        version: "1.0",
+        status: "active",
+        health: { capabilityId: "globalOperations", status: "healthy", uptime: 99.9, lastCheck: new Date().toISOString() },
+        dependencies: ["businessPlatform", "clientSuccess", "deliveryEngine"],
+        apis: ["dashboard", "success-plan", "onboarding", "delivery-control", "feedback", "improvement-backlog"],
+        events: ["GlobalOpsDashboardLoaded", "SuccessPlanCreated", "EscalationOpened", "ImprovementItemCreated"],
+    },
+    {
         id: "productionReadiness",
         name: "Production Readiness",
         route: "/production-readiness",

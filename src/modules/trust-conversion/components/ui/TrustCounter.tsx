@@ -22,8 +22,8 @@ export function TrustCounter({ value, suffix = "", prefix = "", duration = 1.8, 
 
         const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reduced) {
-            setDisplay(value);
-            return;
+            const id = requestAnimationFrame(() => setDisplay(value));
+            return () => cancelAnimationFrame(id);
         }
 
         let frameId = 0;

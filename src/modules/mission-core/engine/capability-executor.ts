@@ -144,6 +144,18 @@ export async function executeCapabilityAction(
                 missionCore().publishEvent({ type: "RecommendationApproved", source: "missionCore", payload: { recommendationId: payload.recommendationId } });
                 return { capabilityId, action, processed: true, approved: true, timestamp };
             }
+            case "globalOperations:dashboard": {
+                missionCore().publishEvent({ type: "GlobalOpsDashboardLoaded", source: "missionCore", payload: {} });
+                return { capabilityId, action, processed: true, dashboardLoaded: true, timestamp };
+            }
+            case "globalOperations:success-plan": {
+                missionCore().publishEvent({ type: "SuccessPlanCreated", source: "missionCore", payload: { planId: payload.planId } });
+                return { capabilityId, action, processed: true, successPlanCreated: true, timestamp };
+            }
+            case "globalOperations:improvement-backlog": {
+                missionCore().publishEvent({ type: "ImprovementItemCreated", source: "missionCore", payload: { itemId: payload.itemId } });
+                return { capabilityId, action, processed: true, improvementCaptured: true, timestamp };
+            }
             default: {
                 const cap = missionCore().getCapability(capabilityId);
                 if (!cap) {

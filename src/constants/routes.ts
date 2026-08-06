@@ -71,6 +71,7 @@ export const ROUTES = {
     productionReadiness: "/production-readiness",
     executiveAi: "/executive-ai",
     executiveAiEcosystem: "/executive-ai-ecosystem",
+    globalOperations: "/global-operations",
     documents: "/documents",
 } as const;
 

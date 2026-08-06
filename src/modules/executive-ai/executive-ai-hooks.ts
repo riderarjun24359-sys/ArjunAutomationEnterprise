@@ -28,7 +28,10 @@ export function useExecutiveAi() {
     }, [ctx]);
 
     useEffect(() => {
-        void refresh();
+        const id = window.setTimeout(() => {
+            void refresh();
+        }, 0);
+        return () => window.clearTimeout(id);
     }, [refresh]);
 
     const runOrchestration = useCallback(async (taskType: string) => {
