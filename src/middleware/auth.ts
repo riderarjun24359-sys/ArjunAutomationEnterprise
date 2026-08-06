@@ -68,6 +68,7 @@ const protectedRoutes = [
     ROUTES.billingFinance,
     ROUTES.communicationHub,
     ROUTES.integrationPlatform,
+    ROUTES.integrationHub,
     ROUTES.operationsCenter,
     ROUTES.executiveIntelligence,
     ROUTES.launchReadiness,
