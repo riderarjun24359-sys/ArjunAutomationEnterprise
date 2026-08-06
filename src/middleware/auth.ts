@@ -74,6 +74,7 @@ const protectedRoutes = [
     ROUTES.aiFoundation,
     ROUTES.founderOs,
     ROUTES.founderAnalytics,
+    ROUTES.earlyAccess,
     ROUTES.autonomousCompany,
     ROUTES.commercialPlatform,
     ROUTES.enterpriseIdentity,

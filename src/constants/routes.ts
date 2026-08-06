@@ -29,6 +29,7 @@ export const ROUTES = {
     missionCore: "/mission-core",
     founderOs: "/founder-os",
     founderAnalytics: "/founder-analytics",
+    earlyAccess: "/early-access",
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",
     enterpriseIdentity: "/enterprise-identity",
