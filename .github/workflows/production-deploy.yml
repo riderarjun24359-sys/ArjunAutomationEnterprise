@@ -1,0 +1,88 @@
+name: Production Early Access Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*-early-access"
+      - "v*"
+
+jobs:
+  verify:
+    name: Production verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run production:verify
+        env:
+          NODE_ENV: production
+          AAOS_DEPLOY_ENV: production
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
+          PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
+
+  build:
+    name: Build release artifact
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      - name: Upload .next artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-${{ github.sha }}
+          path: .next
+          retention-days: 14
+
+  healthcheck:
+    name: Post-deploy health checks
+    needs: build
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe production endpoints
+        env:
+          PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PRODUCTION_BASE_URL:-}" ]; then
+            echo "PRODUCTION_BASE_URL not set — skipping live probe (configure repo variable)."
+            exit 0
+          fi
+          curl -fsS "$PRODUCTION_BASE_URL/api/ops/live" | tee live.json
+          curl -fsS "$PRODUCTION_BASE_URL/api/ops/ready" | tee ready.json || true
+          curl -fsS "$PRODUCTION_BASE_URL/api/ops/health" | tee health.json || true
+          curl -fsS "$PRODUCTION_BASE_URL/api/ops/production" | tee production.json || true
+          echo "Health probes complete"
+
+  rollback_notes:
+    name: Publish rollback strategy
+    needs: [verify, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Echo rollback strategy
+        run: |
+          echo "Rollback strategy:"
+          echo "1. Redeploy previous git tag / immutable artifact"
+          echo "2. Re-run npm run production:verify"
+          echo "3. Confirm /api/ops/live and /api/ops/ready"
+          echo "4. See docs/DEPLOYMENT_CHECKLIST.md and docs/INCIDENT_RESPONSE.md"

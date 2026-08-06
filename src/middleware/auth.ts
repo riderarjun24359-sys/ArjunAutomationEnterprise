@@ -52,6 +52,7 @@ const protectedRoutes = [
     ROUTES.businessPlatform,
     ROUTES.deliveryEngine,
     ROUTES.productionReadiness,
+    ROUTES.productionDeployment,
     ROUTES.executiveAi,
     ROUTES.executiveAiEcosystem,
     ROUTES.globalOperations,
