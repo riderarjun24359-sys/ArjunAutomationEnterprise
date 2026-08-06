@@ -43,6 +43,7 @@
     "executive-command-center:verify": "node scripts/verify-executive-command-center.mjs",
     "crm-enterprise:verify": "node scripts/verify-crm-enterprise.mjs",
     "customer-success:verify": "node scripts/verify-customer-success-os.mjs",
+    "billing-finance:verify": "node scripts/verify-billing-finance-os.mjs",
     "delivery-engine:verify": "node scripts/verify-delivery-engine.mjs",
     "production-readiness:verify": "node scripts/verify-production-readiness.mjs",
     "executive-ai:verify": "node scripts/verify-executive-ai.mjs",

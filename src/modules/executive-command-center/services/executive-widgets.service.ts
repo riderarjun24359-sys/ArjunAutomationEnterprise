@@ -1,4 +1,5 @@
 import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-success/types/os";
+import type { FinanceExecutiveWidgets } from "@/src/modules/billing-finance/types/os";
 import { EXECUTIVE_QUICK_ACTIONS } from "../constants/quick-actions";
 import type { ExecutiveDashboardWidgets, LiveOperationsStats } from "../types";
 import { buildActivityTimeline } from "./activity-timeline.service";
@@ -11,8 +12,9 @@ export function buildExecutiveDashboardWidgets(input: {
     liveStats: LiveOperationsStats;
     unifiedScore: number;
     customerSuccess?: CustomerSuccessExecutiveWidgets | null;
+    finance?: FinanceExecutiveWidgets | null;
 }): ExecutiveDashboardWidgets {
-    const { data, liveStats, unifiedScore, customerSuccess = null } = input;
+    const { data, liveStats, unifiedScore, customerSuccess = null, finance = null } = input;
 
     if (!data) {
         return {
@@ -25,6 +27,7 @@ export function buildExecutiveDashboardWidgets(input: {
             charts: createEmptyExecutiveCharts(),
             quickActions: EXECUTIVE_QUICK_ACTIONS,
             customerSuccess,
+            finance,
         };
     }
 
@@ -35,5 +38,6 @@ export function buildExecutiveDashboardWidgets(input: {
         charts,
         quickActions: EXECUTIVE_QUICK_ACTIONS,
         customerSuccess,
+        finance,
     };
 }

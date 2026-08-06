@@ -30,6 +30,7 @@ export const ROUTES = {
     enterpriseIdentity: "/enterprise-identity",
     tenantLifecycle: "/tenant-lifecycle",
     billingRevenue: "/billing-revenue",
+    billingFinance: "/billing-finance",
     communicationHub: "/communication-hub",
     integrationPlatform: "/integration-platform",
     operationsCenter: "/operations-center",

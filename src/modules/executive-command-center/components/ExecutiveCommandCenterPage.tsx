@@ -18,6 +18,7 @@ import { RecentActivityTimeline } from "./RecentActivityTimeline";
 import { RecentNotificationsPanel, RecentNotificationsSkeleton } from "./RecentNotificationsPanel";
 import { UnifiedKpiStrip, UnifiedKpiStripSkeleton } from "./UnifiedKpiStrip";
 import { CustomerSuccessExecutiveWidgetsPanel } from "./CustomerSuccessExecutiveWidgetsPanel";
+import { FinanceExecutiveWidgetsPanel } from "./FinanceExecutiveWidgetsPanel";
 
 function ExecutiveCommandCenterSkeleton() {
     return (
@@ -114,6 +115,7 @@ export function ExecutiveCommandCenterPage() {
             <ExecutiveBriefCard brief={snapshot.brief} />
             <ExecutiveChartsPanel charts={snapshot.widgets.charts} />
             <CustomerSuccessExecutiveWidgetsPanel widgets={snapshot.widgets.customerSuccess} />
+            <FinanceExecutiveWidgetsPanel widgets={snapshot.widgets.finance} />
 
             <div className="grid gap-6 lg:grid-cols-2">
                 <AiExecutiveInsightsPanel insights={snapshot.widgets.insights} />

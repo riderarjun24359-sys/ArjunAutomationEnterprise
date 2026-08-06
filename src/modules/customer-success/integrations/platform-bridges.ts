@@ -9,7 +9,8 @@ export const CUSTOMER_SUCCESS_INTEGRATIONS = [
     { id: "ai-command-center", label: "AI Command Center", href: ROUTES.aiCommandCenter },
     { id: "knowledge", label: "Knowledge Engine", href: ROUTES.knowledge },
     { id: "support", label: "Support Center", href: ROUTES.support },
-    { id: "billing", label: "Billing", href: ROUTES.billingRevenue },
+    { id: "billing", label: "Billing & Finance OS", href: ROUTES.billingFinance },
+    { id: "billing-revenue", label: "Billing Revenue", href: ROUTES.billingRevenue },
     { id: "mission-core", label: "Mission Core", href: ROUTES.missionCore },
 ] as const;
 

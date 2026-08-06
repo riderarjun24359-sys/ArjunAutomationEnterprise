@@ -16,6 +16,7 @@ import { buildIntelligenceModules } from "./module-snapshots";
 import { loadOrganizationOperationsData } from "./organization-operations-data.service";
 import { buildExecutiveDashboardWidgets } from "./executive-widgets.service";
 import { customerSuccessOsService } from "@/src/modules/customer-success/services/customer-success-os.service";
+import { billingFinanceOsService } from "@/src/modules/billing-finance/services/billing-finance-os.service";
 import type {
     CopilotContext,
     ExecutiveCommandCenterSnapshot,
@@ -65,13 +66,14 @@ function mergeNotifications(
 
 export class ExecutiveCommandCenterService {
     async getSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
-        const [overview, eip, aix, business, opsData, csSnapshot] = await Promise.all([
+        const [overview, eip, aix, business, opsData, csSnapshot, financeSnapshot] = await Promise.all([
             fetchDashboardOverview(authUserId, email, fullName),
             fetchEipStats(authUserId, email, fullName),
             fetchAixStats(authUserId, email, fullName),
             fetchBusinessPlatformDashboard(authUserId, email, fullName).catch(() => null),
             loadOrganizationOperationsData(authUserId, email, fullName).catch(() => null),
             customerSuccessOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
+            billingFinanceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
         ]);
 
         const liveStats = opsData
@@ -98,6 +100,7 @@ export class ExecutiveCommandCenterService {
             liveStats,
             unifiedScore,
             customerSuccess: csSnapshot?.executiveWidgets ?? null,
+            finance: financeSnapshot?.executiveWidgets ?? null,
         });
 
         return {

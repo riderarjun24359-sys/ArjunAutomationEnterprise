@@ -3,6 +3,7 @@ import type { AixDashboardStats } from "@/src/modules/executive-intelligence/typ
 import type { DashboardOverview } from "@/src/modules/dashboard/types";
 import type { BusinessPlatformDashboard } from "@/src/modules/business-platform/types";
 import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-success/types/os";
+import type { FinanceExecutiveWidgets } from "@/src/modules/billing-finance/types/os";
 
 export type IntelligenceModuleKey = "cto" | "operations" | "business" | "customer" | "project";
 
@@ -153,6 +154,7 @@ export interface ExecutiveDashboardWidgets {
     charts: ExecutiveChartsBundle;
     quickActions: ExecutiveQuickAction[];
     customerSuccess: CustomerSuccessExecutiveWidgets | null;
+    finance: FinanceExecutiveWidgets | null;
 }
 
 export interface IntelligenceModuleMetric {
