@@ -77,13 +77,19 @@ export const buildCrmDashboardStats = (input: {
 }): CrmDashboardStats => {
     const activeClients = input.clients.filter((client) => client.lifecycle_stage === "client").length;
     const leads = input.clients.filter((client) => client.lifecycle_stage !== "client").length;
+    const revenue = input.clients
+        .filter((client) => client.lifecycle_stage === "client")
+        .reduce((sum, client) => {
+            const n = Number(String(client.revenue ?? "0").replace(/[^0-9.-]/g, ""));
+            return sum + (Number.isFinite(n) ? n : 0);
+        }, 0);
 
     return {
         totalClients: activeClients,
         activeDeals: input.deals.length,
-        monthlyRevenue: "$312k",
+        monthlyRevenue: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(revenue),
         newLeads: leads,
-        conversionRate: activeClients > 0 ? `${Math.round((activeClients / (activeClients + leads)) * 100)}%` : "0%",
+        conversionRate: activeClients + leads > 0 ? `${Math.round((activeClients / (activeClients + leads)) * 100)}%` : "0%",
         recentActivities: input.activities.slice(0, 3).map(mapActivitySummary),
     };
 };

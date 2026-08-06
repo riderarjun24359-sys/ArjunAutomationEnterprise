@@ -1,0 +1,39 @@
+import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-success/types/os";
+import { EXECUTIVE_QUICK_ACTIONS } from "../constants/quick-actions";
+import type { ExecutiveDashboardWidgets, LiveOperationsStats } from "../types";
+import { buildActivityTimeline } from "./activity-timeline.service";
+import { buildAiExecutiveInsights } from "./ai-executive-insights.service";
+import { buildExecutiveCharts, createEmptyExecutiveCharts } from "./executive-charts.service";
+import type { OrganizationOperationsData } from "./organization-operations-data.service";
+
+export function buildExecutiveDashboardWidgets(input: {
+    data: OrganizationOperationsData | null;
+    liveStats: LiveOperationsStats;
+    unifiedScore: number;
+    customerSuccess?: CustomerSuccessExecutiveWidgets | null;
+}): ExecutiveDashboardWidgets {
+    const { data, liveStats, unifiedScore, customerSuccess = null } = input;
+
+    if (!data) {
+        return {
+            activityTimeline: [],
+            insights: buildAiExecutiveInsights({
+                liveStats,
+                charts: createEmptyExecutiveCharts(),
+                unifiedScore,
+            }),
+            charts: createEmptyExecutiveCharts(),
+            quickActions: EXECUTIVE_QUICK_ACTIONS,
+            customerSuccess,
+        };
+    }
+
+    const charts = buildExecutiveCharts(data);
+    return {
+        activityTimeline: buildActivityTimeline(data),
+        insights: buildAiExecutiveInsights({ liveStats, charts, unifiedScore }),
+        charts,
+        quickActions: EXECUTIVE_QUICK_ACTIONS,
+        customerSuccess,
+    };
+}

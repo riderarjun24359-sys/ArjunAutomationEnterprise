@@ -1,3 +1,21 @@
+import type { CrmEnterpriseTab } from "../types/enterprise";
+
+export const CRM_THEME = {
+    badge: "CRM Enterprise Platform",
+    title: "Enterprise CRM",
+    subtitle: "Client directory, lead pipeline, profiles, AI assistant, communications, and analytics — live from Supabase.",
+};
+
+export const CRM_ENTERPRISE_TABS = {
+    directory: "directory",
+    leads: "leads",
+    profile: "profile",
+    ai: "ai",
+    communications: "communications",
+    analytics: "analytics",
+} as const satisfies Record<string, CrmEnterpriseTab>;
+
+/** @deprecated Use CRM_ENTERPRISE_TABS */
 export const CRM_TABS = {
     overview: "overview",
     clients: "clients",
@@ -16,6 +34,7 @@ export const CLIENT_STATUS_OPTIONS = [
 
 export const LEAD_STAGE_OPTIONS = [
     { value: "new", label: "New" },
+    { value: "contacted", label: "Contacted" },
     { value: "qualified", label: "Qualified" },
     { value: "proposal", label: "Proposal" },
     { value: "negotiation", label: "Negotiation" },

@@ -2,6 +2,7 @@ import type { EipDashboardStats } from "@/src/modules/enterprise-intelligence-pl
 import type { AixDashboardStats } from "@/src/modules/executive-intelligence/types";
 import type { DashboardOverview } from "@/src/modules/dashboard/types";
 import type { BusinessPlatformDashboard } from "@/src/modules/business-platform/types";
+import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-success/types/os";
 
 export type IntelligenceModuleKey = "cto" | "operations" | "business" | "customer" | "project";
 
@@ -61,6 +62,97 @@ export interface ExecutiveNotification {
     time: string;
     severity: Severity;
     read: boolean;
+    source?: "activity" | "audit" | "attention" | "system";
+}
+
+export interface RevenueSummaryLive {
+    collected: number;
+    outstanding: number;
+    openInvoiceCount: number;
+    invoiceCount: number;
+    currency: string;
+    label: string;
+    detail: string;
+}
+
+export interface LiveOperationsStats {
+    totalClients: number;
+    activeProjects: number;
+    openTasks: number;
+    crmLeads: number;
+    revenue: RevenueSummaryLive;
+    notifications: ExecutiveNotification[];
+    source: "supabase" | "fallback";
+    fetchedAt: string;
+    organizationId: string | null;
+}
+
+export type ActivityModuleFilter = "crm" | "projects" | "tasks" | "finance" | "system";
+
+export interface ActivityTimelineItem {
+    id: string;
+    title: string;
+    detail: string;
+    module: ActivityModuleFilter;
+    entityType: string;
+    action: string;
+    occurredAt: string;
+    relativeTime: string;
+    source: "activity" | "audit";
+}
+
+export interface ExecutiveChartPoint {
+    key: string;
+    label: string;
+    value: number;
+}
+
+export interface ProjectStatusSlice {
+    status: string;
+    count: number;
+}
+
+export interface TaskCompletionStats {
+    total: number;
+    completed: number;
+    open: number;
+    rate: number;
+}
+
+export interface ExecutiveChartsBundle {
+    revenueTrend: ExecutiveChartPoint[];
+    clientGrowth: ExecutiveChartPoint[];
+    projectStatus: ProjectStatusSlice[];
+    taskCompletion: TaskCompletionStats;
+    source: "supabase" | "fallback";
+    fetchedAt: string;
+}
+
+export interface AiExecutiveInsight {
+    id: string;
+    kind: "insight" | "risk" | "recommendation" | "opportunity";
+    priority: "P1" | "P2" | "P3";
+    severity: Severity;
+    title: string;
+    detail: string;
+    actionLabel?: string;
+    actionHref?: string;
+}
+
+export interface ExecutiveQuickAction {
+    id: string;
+    label: string;
+    description: string;
+    href: string;
+    icon: "users" | "folder" | "check" | "target" | "report";
+}
+
+export interface ExecutiveDashboardWidgets {
+    activityTimeline: ActivityTimelineItem[];
+    insights: AiExecutiveInsight[];
+    charts: ExecutiveChartsBundle;
+    quickActions: ExecutiveQuickAction[];
+    customerSuccess: CustomerSuccessExecutiveWidgets | null;
 }
 
 export interface IntelligenceModuleMetric {
@@ -107,6 +199,8 @@ export interface ExecutiveCommandCenterSnapshot {
     modules: IntelligenceModuleSnapshot[];
     brief: ExecutiveBrief;
     kpis: ExecutiveKpi[];
+    liveStats: LiveOperationsStats;
+    widgets: ExecutiveDashboardWidgets;
 }
 
 export interface ExecutiveRawSignals {
@@ -114,6 +208,7 @@ export interface ExecutiveRawSignals {
     eip: EipDashboardStats;
     aix: AixDashboardStats;
     business: BusinessPlatformDashboard | null;
+    liveStats: LiveOperationsStats;
 }
 
 export interface SmartSearchResult {

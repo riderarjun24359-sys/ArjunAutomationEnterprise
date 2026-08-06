@@ -41,6 +41,8 @@
     "public-website:verify": "node scripts/verify-public-website.mjs",
     "business-platform:verify": "node scripts/verify-business-platform.mjs",
     "executive-command-center:verify": "node scripts/verify-executive-command-center.mjs",
+    "crm-enterprise:verify": "node scripts/verify-crm-enterprise.mjs",
+    "customer-success:verify": "node scripts/verify-customer-success-os.mjs",
     "delivery-engine:verify": "node scripts/verify-delivery-engine.mjs",
     "production-readiness:verify": "node scripts/verify-production-readiness.mjs",
     "executive-ai:verify": "node scripts/verify-executive-ai.mjs",

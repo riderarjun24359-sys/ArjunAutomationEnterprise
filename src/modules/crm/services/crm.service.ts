@@ -1,110 +1,176 @@
+import { databaseService } from "@/src/modules/database/services/database-service";
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import {
-    buildCrmDashboardStats,
     mapActivitySummary,
     mapClientDetail,
     mapClientSummary,
-    mapCrmTaskSummary,
-    mapDealSummary,
     mapLeadSummary,
 } from "@/src/modules/database/lib/crm-mappers";
-import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
-import { databaseService } from "@/src/modules/database/services/database-service";
-import type { ActivitySummary, ClientDetail, ClientSummary, CrmDashboardStats, DealSummary, LeadSummary, TaskSummary } from "@/src/modules/crm/types";
+import {
+    buildClientProfile,
+    buildCrmEnterpriseSnapshot,
+    createEmptyCrmSnapshot,
+    queryDirectory,
+} from "./crm-enterprise-builders";
+import { loadCrmPlatformData } from "./crm-platform-data.service";
+import type {
+    ClientProfileBundle,
+    CrmEnterpriseSnapshot,
+    DirectoryQuery,
+    DirectoryResult,
+    LeadPipelineStage,
+} from "../types/enterprise";
+import type {
+    ActivitySummary,
+    ClientDetail,
+    ClientSummary,
+    CrmDashboardStats,
+    DealSummary,
+    LeadSummary,
+    TaskSummary,
+} from "../types";
+
+export { queryDirectory } from "./crm-enterprise-builders";
 
 export class CrmService {
     private async getContext(authUserId: string, email: string, fullName?: string | null) {
         return resolveOrganizationContext(authUserId, email, fullName);
     }
 
-    async getClients(authUserId: string, email: string, fullName?: string | null): Promise<ClientSummary[]> {
+    async getEnterpriseSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<CrmEnterpriseSnapshot> {
+        const data = await loadCrmPlatformData(authUserId, email, fullName).catch(() => null);
+        if (!data) return createEmptyCrmSnapshot();
+        return buildCrmEnterpriseSnapshot(data);
+    }
+
+    async getDirectoryPage(
+        authUserId: string,
+        email: string,
+        query: DirectoryQuery,
+        fullName?: string | null,
+    ): Promise<DirectoryResult> {
+        const snapshot = await this.getEnterpriseSnapshot(authUserId, email, fullName);
+        return queryDirectory(snapshot.directory, query);
+    }
+
+    async getClientProfile(
+        authUserId: string,
+        email: string,
+        clientId: string,
+        fullName?: string | null,
+    ): Promise<ClientProfileBundle | null> {
+        const data = await loadCrmPlatformData(authUserId, email, fullName).catch(() => null);
+        if (!data) return null;
+        return buildClientProfile(data, clientId);
+    }
+
+    async moveLeadStage(
+        authUserId: string,
+        email: string,
+        leadId: string,
+        stage: LeadPipelineStage,
+        origin: "sales_lead" | "crm_lead",
+        fullName?: string | null,
+    ): Promise<boolean> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return [];
+        if (!context) return false;
+
+        if (origin === "sales_lead") {
+            const updated = await databaseService.salesLeads.update(leadId, {
+                status: stage,
+                updated_at: new Date().toISOString(),
+            });
+            return Boolean(updated);
         }
 
+        const updated = await databaseService.clients.update(leadId, {
+            lifecycle_stage: stage,
+            status: stage === "won" ? "active" : stage === "lost" ? "inactive" : "lead",
+            updated_at: new Date().toISOString(),
+        });
+        return Boolean(updated);
+    }
+
+    async getClients(authUserId: string, email: string, fullName?: string | null): Promise<ClientSummary[]> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) return [];
         const records = await databaseService.clients.listByOrganization(context.organizationId);
         return records.filter((record) => record.lifecycle_stage === "client").map(mapClientSummary);
     }
 
     async getClient(authUserId: string, email: string, id: string, fullName?: string | null): Promise<ClientDetail | undefined> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return undefined;
-        }
-
+        if (!context) return undefined;
         const record = await databaseService.clients.getById(id);
         return record ? mapClientDetail(record) : undefined;
     }
 
     async getLeads(authUserId: string, email: string, fullName?: string | null): Promise<LeadSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return [];
-        }
-
+        if (!context) return [];
         const records = await databaseService.clients.listLeads(context.organizationId);
         return records.map(mapLeadSummary);
     }
 
     async getDeals(authUserId: string, email: string, fullName?: string | null): Promise<DealSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return [];
-        }
-
-        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
-            filters: { entity_type: "deal" },
-        });
-
-        return records.map(mapDealSummary);
+        if (!context) return [];
+        const opportunities = await databaseService.salesOpportunities.listByOrganization(context.organizationId);
+        return opportunities.map((opp) => ({
+            id: opp.id,
+            client: opp.name,
+            value: `$${Number(opp.amount ?? 0).toLocaleString()}`,
+            closeDate: opp.expected_close_date ?? "—",
+            stage: (opp.status as DealSummary["stage"]) || "discovery",
+            probability: Number(opp.probability ?? 0),
+            revenueMetric: `Weighted $${Math.round(Number(opp.amount ?? 0) * (Number(opp.probability ?? 0) / 100)).toLocaleString()}`,
+        }));
     }
 
     async getActivities(authUserId: string, email: string, fullName?: string | null): Promise<ActivitySummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return [];
-        }
-
-        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
-            filters: { entity_type: "activity" },
-        });
-
+        if (!context) return [];
+        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, { limit: 50 });
         return records.map(mapActivitySummary);
     }
 
     async getTasks(authUserId: string, email: string, fullName?: string | null): Promise<TaskSummary[]> {
         const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return [];
-        }
-
-        const records = await databaseService.activityLogs.listByOrganization(context.organizationId, {
-            filters: { entity_type: "crm_task" },
-        });
-
-        return records.map(mapCrmTaskSummary);
+        if (!context) return [];
+        const records = await databaseService.tasks.listByOrganization(context.organizationId);
+        return records.map((task) => ({
+            id: task.id,
+            title: task.title,
+            assignee: task.assignee_name ?? "Unassigned",
+            dueDate: task.due_date ?? "—",
+            priority: (task.priority as TaskSummary["priority"]) || "medium",
+            status: (task.status as TaskSummary["status"]) || "pending",
+        }));
     }
 
     async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<CrmDashboardStats> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) {
-            return {
-                totalClients: 0,
-                activeDeals: 0,
-                monthlyRevenue: "$0",
-                newLeads: 0,
-                conversionRate: "0%",
-                recentActivities: [],
-            };
-        }
-
-        const [clients, deals, activities] = await Promise.all([
-            databaseService.clients.listByOrganization(context.organizationId),
-            databaseService.activityLogs.listByOrganization(context.organizationId, { filters: { entity_type: "deal" } }),
-            databaseService.activityLogs.listByOrganization(context.organizationId, { filters: { entity_type: "activity" }, limit: 5 }),
-        ]);
-
-        return buildCrmDashboardStats({ clients, deals, activities });
+        const snapshot = await this.getEnterpriseSnapshot(authUserId, email, fullName);
+        return {
+            totalClients: snapshot.stats.totalClients,
+            activeDeals: snapshot.stats.openOpportunities,
+            monthlyRevenue: snapshot.stats.collectedRevenueLabel,
+            newLeads: snapshot.stats.totalLeads,
+            conversionRate: `${snapshot.stats.conversionRate}%`,
+            recentActivities: snapshot.communications.slice(0, 5).map((c) => ({
+                id: c.id,
+                type:
+                    c.channel === "call"
+                        ? "call"
+                        : c.channel === "email"
+                          ? "email"
+                          : c.channel === "meeting"
+                            ? "meeting"
+                            : "note",
+                title: c.title,
+                detail: c.detail,
+                dueAt: c.relativeTime,
+            })),
+        };
     }
 }
 

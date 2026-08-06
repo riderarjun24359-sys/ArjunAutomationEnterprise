@@ -33,3 +33,5 @@ export const INTELLIGENCE_MODULES: Record<
 };
 
 export const CRITICAL_ACTION_PREFIXES = ["delete", "remove", "revoke", "terminate", "publish", "deploy"];
+
+export { EXECUTIVE_QUICK_ACTIONS } from "./quick-actions";

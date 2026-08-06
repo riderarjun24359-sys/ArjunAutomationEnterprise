@@ -11,6 +11,7 @@ export function useExecutiveCommandCenter() {
     const setSnapshot = useExecutiveShellStore((s) => s.setSnapshot);
     const [snapshot, setLocalSnapshot] = useState<ExecutiveCommandCenterSnapshot | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -20,33 +21,46 @@ export function useExecutiveCommandCenter() {
                 if (!cancelled) {
                     setLocalSnapshot(null);
                     setSnapshot(null);
+                    setError(null);
                     setLoading(false);
                 }
                 return;
             }
 
-            if (!cancelled) setLoading(true);
+            if (!cancelled) {
+                setLoading(true);
+                setError(null);
+            }
 
             try {
                 const data = await executiveCommandCenterService.getSnapshot(user.id, user.email, user.fullName);
                 if (!cancelled) {
                     setLocalSnapshot(data);
                     setSnapshot(data);
+                    setError(null);
                 }
-            } catch (error) {
-                console.error("[executive-command-center] Failed to load snapshot", error);
+            } catch (err) {
+                console.error("[executive-command-center] Failed to load snapshot", err);
                 if (!cancelled) {
                     setLocalSnapshot(null);
                     setSnapshot(null);
+                    setError(err instanceof Error ? err.message : "Failed to load executive dashboard");
                 }
             } finally {
                 if (!cancelled) setLoading(false);
             }
         };
 
-        void load();
-        return () => { cancelled = true; };
+        // Defer to satisfy react-hooks/set-state-in-effect while keeping sync user-gate paths correct.
+        const timer = window.setTimeout(() => {
+            void load();
+        }, 0);
+
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
     }, [user, setSnapshot]);
 
-    return { snapshot, loading };
+    return { snapshot, loading, error };
 }

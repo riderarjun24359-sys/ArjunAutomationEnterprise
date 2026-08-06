@@ -43,11 +43,59 @@ for (const mod of modules) {
 }
 
 pass("service:executive-command-center", existsSync(join(modRoot, "services", "executive-command-center.service.ts")));
+pass("service:live-operations-stats", existsSync(join(modRoot, "services", "live-operations-stats.service.ts")));
 pass("service:smart-search", existsSync(join(modRoot, "services", "smart-search.service.ts")));
 pass("service:command-registry", existsSync(join(modRoot, "services", "command-registry.ts")));
 pass("hook:useExecutiveCommandCenter", existsSync(join(modRoot, "hooks", "useExecutiveCommandCenter.ts")));
 pass("hook:useExecutiveCopilot", existsSync(join(modRoot, "hooks", "useExecutiveCopilot.ts")));
 pass("store:executive", existsSync(join(root, "src", "store", "executive.store.ts")));
+pass("component:RecentNotificationsPanel", existsSync(join(modRoot, "components", "RecentNotificationsPanel.tsx")));
+pass("component:QuickActionsPanel", existsSync(join(modRoot, "components", "QuickActionsPanel.tsx")));
+pass("component:RecentActivityTimeline", existsSync(join(modRoot, "components", "RecentActivityTimeline.tsx")));
+pass("component:AiExecutiveInsightsPanel", existsSync(join(modRoot, "components", "AiExecutiveInsightsPanel.tsx")));
+pass("component:ExecutiveChartsPanel", existsSync(join(modRoot, "components", "ExecutiveChartsPanel.tsx")));
+pass("service:organization-operations-data", existsSync(join(modRoot, "services", "organization-operations-data.service.ts")));
+pass("service:executive-widgets", existsSync(join(modRoot, "services", "executive-widgets.service.ts")));
+pass("service:activity-timeline", existsSync(join(modRoot, "services", "activity-timeline.service.ts")));
+pass("service:executive-charts", existsSync(join(modRoot, "services", "executive-charts.service.ts")));
+pass("service:ai-executive-insights", existsSync(join(modRoot, "services", "ai-executive-insights.service.ts")));
+
+const eccService = readSafe(join(modRoot, "services", "executive-command-center.service.ts"));
+const kpiBuilder = readSafe(join(modRoot, "services", "build-live-operations-kpis.ts"));
+pass("kpi:total-clients", kpiBuilder.includes("Total Clients"));
+pass("kpi:active-projects", kpiBuilder.includes("Active Projects"));
+pass("kpi:open-tasks", kpiBuilder.includes("Open Tasks"));
+pass("kpi:crm-leads", kpiBuilder.includes("CRM Leads"));
+pass("kpi:revenue-summary", kpiBuilder.includes("Revenue Summary"));
+pass("live:fetchLiveOperationsStats", eccService.includes("loadOrganizationOperationsData") || eccService.includes("fetchLiveOperationsStats"));
+pass("live:widgets-wired", eccService.includes("buildExecutiveDashboardWidgets"));
+pass("service:build-live-operations-kpis", existsSync(join(modRoot, "services", "build-live-operations-kpis.ts")));
+
+const liveStats = readSafe(join(modRoot, "services", "live-operations-stats.service.ts"));
+const opsData = readSafe(join(modRoot, "services", "organization-operations-data.service.ts"));
+pass("live:supabase-clients", opsData.includes("databaseService.clients") || liveStats.includes("databaseService.clients"));
+pass("live:supabase-projects", opsData.includes("databaseService.projects") || liveStats.includes("databaseService.projects"));
+pass("live:supabase-tasks", opsData.includes("databaseService.tasks") || liveStats.includes("databaseService.tasks"));
+pass("live:supabase-invoices", opsData.includes("databaseService.invoices") || liveStats.includes("databaseService.invoices"));
+pass("live:supabase-activity", opsData.includes("databaseService.activityLogs") || opsData.includes("databaseService.audits"));
+
+const page = readSafe(join(modRoot, "components", "ExecutiveCommandCenterPage.tsx"));
+pass("ui:skeleton", page.includes("UnifiedKpiStripSkeleton") || page.includes("SkeletonLoader"));
+pass("ui:error-state", page.includes("Unable to load") || page.includes("error"));
+pass("ui:notifications", page.includes("RecentNotificationsPanel"));
+pass("ui:widgets-quick-actions", page.includes("QuickActionsPanel"));
+pass("ui:widgets-activity", page.includes("RecentActivityTimeline"));
+pass("ui:widgets-insights", page.includes("AiExecutiveInsightsPanel"));
+pass("ui:widgets-charts", page.includes("ExecutiveChartsPanel"));
+
+const hook = readSafe(join(modRoot, "hooks", "useExecutiveCommandCenter.ts"));
+pass("hook:error-state", hook.includes("error"));
+
+const liveTest = spawnVerify(root, "scripts/test-executive-live-stats.mjs");
+pass("test:live-stats", liveTest.status === 0, liveTest.status !== 0 ? (liveTest.stderr || liveTest.stdout || "").slice(0, 300) : "");
+
+const widgetsTest = spawnVerify(root, "scripts/test-executive-widgets.mjs");
+pass("test:widgets", widgetsTest.status === 0, widgetsTest.status !== 0 ? (widgetsTest.stderr || widgetsTest.stdout || "").slice(0, 300) : "");
 
 const bridges = ["eip-bridge", "aix-bridge", "business-platform-bridge", "dashboard-bridge"];
 for (const bridge of bridges) {

@@ -1,8 +1,18 @@
 export { CustomerSuccessPage } from "@/src/modules/customer-success/components/CustomerSuccessPage";
+export { CustomerSuccessOsPage } from "@/src/modules/customer-success/pages/CustomerSuccessOsPage";
 export { CustomerSuccessStats } from "@/src/modules/customer-success/components/CustomerSuccessStats";
 export { customerSuccessService } from "@/src/modules/customer-success/services/customer-success.service";
+export { customerSuccessOsService } from "@/src/modules/customer-success/services/customer-success-os.service";
+export { customerSuccessRepository } from "@/src/modules/customer-success/repository/customer-success.repository";
 export { useCustomerSuccess } from "@/src/modules/customer-success/hooks/useCustomerSuccess";
+export { useCustomerSuccessOs } from "@/src/modules/customer-success/hooks/useCustomerSuccessOs";
 export { createCustomerSuccessClient, CustomerSuccessClient } from "@/src/modules/customer-success/sdk";
+export { buildCustomerSuccessSnapshot, createEmptyCustomerSuccessSnapshot } from "@/src/modules/customer-success/builders/customer-success.builders";
+export { buildAiCustomerSuccessAssistant } from "@/src/modules/customer-success/ai/customer-success-assistant";
+export { buildCustomerSuccessAnalytics } from "@/src/modules/customer-success/analytics/customer-success.analytics";
+export { listCustomerSuccessIntegrations } from "@/src/modules/customer-success/integrations/platform-bridges";
 export * from "@/src/modules/customer-success/types";
+export * from "@/src/modules/customer-success/types/os";
 export * from "@/src/modules/customer-success/constants";
+export * from "@/src/modules/customer-success/constants/os";
 export * from "@/src/modules/customer-success/schemas";
