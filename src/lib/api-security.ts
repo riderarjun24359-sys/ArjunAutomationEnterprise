@@ -8,6 +8,8 @@ import { logApiAudit } from "@/src/lib/api-audit";
 export interface ApiSecurityContext {
     user: { id: string; email: string; fullName: string | null; role: UserRole };
     organizationId: string | null;
+    sessionExpiresAt?: string | null;
+    refreshRecommended?: boolean;
 }
 
 export interface SecureApiOptions {
@@ -16,11 +18,14 @@ export interface SecureApiOptions {
     rateLimit?: number;
     allowPublic?: boolean;
     publicApiKeyEnv?: string;
+    /** When true (default), reject expired/invalid sessions via hardened validation. */
+    requireValidSession?: boolean;
 }
 
 export { logApiAudit } from "@/src/lib/api-audit";
 
-async function resolveUserRole(userId: string, _email: string): Promise<UserRole> {
+async function resolveUserRole(userId: string, email: string): Promise<UserRole> {
+    void email;
     try {
         const { databaseService } = await import("@/src/modules/database/services/database-service");
         const profile = await databaseService.profiles.getByAuthUser(userId);
@@ -81,6 +86,55 @@ export async function secureApiRoute(
                 error: null,
             };
         }
+    }
+
+    const requireValidSession = options.requireValidSession !== false;
+    if (requireValidSession) {
+        const validated = await authServerService.validateSession();
+        if (!validated.valid || !validated.user) {
+            await logApiAudit({
+                action: "api_unauthorized",
+                metadata: { reason: validated.reason ?? "missing", path: new URL(request.url).pathname },
+            });
+            return {
+                context: null,
+                error: NextResponse.json(
+                    { error: "Authentication required", reason: validated.reason ?? "missing" },
+                    { status: 401 },
+                ),
+            };
+        }
+
+        if (validated.reason === "refresh_required") {
+            await authServerService.refreshSessionIfNeeded();
+        }
+
+        const user = validated.user;
+        const role = await resolveUserRole(user.id, user.email);
+        const authUser = { ...user, role };
+
+        if (options.permission && !hasPermission(role, options.permission)) {
+            await logApiAudit({
+                action: "api_forbidden",
+                userId: user.id,
+                metadata: { permission: options.permission, path: new URL(request.url).pathname },
+            });
+            return {
+                context: null,
+                error: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
+            };
+        }
+
+        const organizationId = await resolveOrganizationId(user.id, user.email);
+        return {
+            context: {
+                user: { id: authUser.id, email: authUser.email, fullName: authUser.fullName ?? null, role },
+                organizationId,
+                sessionExpiresAt: validated.expiresAt ?? validated.session?.expiresAt ?? null,
+                refreshRecommended: validated.reason === "refresh_required",
+            },
+            error: null,
+        };
     }
 
     const user = await authServerService.getUser();

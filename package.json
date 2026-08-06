@@ -67,6 +67,9 @@
     "production-remediation:verify": "node scripts/verify-production-remediation.mjs",
     "launch-readiness:verify": "node scripts/verify-launch-readiness.mjs",
     "launch-audit": "node scripts/launch-audit.mjs",
+    "operations:verify": "node scripts/verify-operations.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:list": "playwright test --list",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"
   },
   "dependencies": {
@@ -103,6 +106,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.4",
+    "@playwright/test": "^1.54.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
