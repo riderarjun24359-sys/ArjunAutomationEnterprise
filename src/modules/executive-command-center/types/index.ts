@@ -4,6 +4,7 @@ import type { DashboardOverview } from "@/src/modules/dashboard/types";
 import type { BusinessPlatformDashboard } from "@/src/modules/business-platform/types";
 import type { CustomerSuccessExecutiveWidgets } from "@/src/modules/customer-success/types/os";
 import type { FinanceExecutiveWidgets } from "@/src/modules/billing-finance/types/os";
+import type { ExecutiveHrWidgets } from "@/src/modules/hrms-workforce/types/os";
 
 export type IntelligenceModuleKey = "cto" | "operations" | "business" | "customer" | "project";
 
@@ -155,6 +156,7 @@ export interface ExecutiveDashboardWidgets {
     quickActions: ExecutiveQuickAction[];
     customerSuccess: CustomerSuccessExecutiveWidgets | null;
     finance: FinanceExecutiveWidgets | null;
+    hrms: ExecutiveHrWidgets | null;
 }
 
 export interface IntelligenceModuleMetric {

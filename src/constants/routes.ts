@@ -64,6 +64,7 @@ export const ROUTES = {
     automation: "/automation",
     settings: "/settings",
     hr: "/hr",
+    hrms: "/hrms",
     inventory: "/inventory",
     support: "/support",
     sales: "/sales",

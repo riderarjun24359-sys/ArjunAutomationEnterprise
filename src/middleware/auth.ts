@@ -34,6 +34,7 @@ const protectedRoutes = [
     ROUTES.automation,
     ROUTES.settings,
     ROUTES.hr,
+    ROUTES.hrms,
     ROUTES.inventory,
     ROUTES.support,
     ROUTES.sales,

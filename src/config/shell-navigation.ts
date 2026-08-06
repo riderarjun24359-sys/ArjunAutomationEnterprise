@@ -120,6 +120,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
     { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },
+    { label: "HRMS & Workforce OS", href: ROUTES.hrms, description: "Enterprise workforce OS: employees, attendance, leave, payroll, ATS, performance, training, assets, and AI HR assistant", icon: UserCog, section: "secondary" },
     { label: "Inventory", href: ROUTES.inventory, description: "Stock, assets, and procurement", icon: Package, section: "secondary" },
     { label: "Support", href: ROUTES.support, description: "Customer support and service desk", icon: Headphones, section: "secondary" },
     { label: "Documents", href: ROUTES.documents, description: "Document and content management", icon: FileText, section: "secondary" },
