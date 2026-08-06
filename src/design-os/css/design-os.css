@@ -293,6 +293,48 @@
     box-shadow: var(--dos-elevation-4);
 }
 
+/* Immersive Experience Engine v2 */
+.immersive-living-workspace {
+    isolation: isolate;
+    background: var(--dos-surface-secondary);
+}
+
+.immersive-ambient {
+    contain: paint;
+    transition: transform 80ms linear;
+}
+
+.immersive-light-orb {
+    contain: strict;
+    will-change: transform, opacity;
+}
+
+.immersive-glass-hero,
+.immersive-command-palette {
+    contain: layout paint;
+}
+
+.immersive-physics-page {
+    contain: layout;
+    min-height: 1px;
+}
+
+.immersive-live-kpi-card {
+    transition: box-shadow var(--dos-duration-normal) var(--dos-easing-default);
+}
+
+.immersive-live-kpi-card:hover {
+    box-shadow: var(--dos-elevation-3), var(--dos-elevation-glow);
+}
+
+.immersive-celebration {
+    contain: paint;
+}
+
+[data-immersive-v2="1"] .dos-gpu {
+    transform: translateZ(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -317,5 +359,13 @@
 
     .dos-gpu {
         will-change: auto;
+    }
+
+    .immersive-ambient,
+    .immersive-light-orb,
+    .immersive-celebration {
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
     }
 }

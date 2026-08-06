@@ -25,7 +25,7 @@ export function KpiCard({
 }) {
     return (
         <WidgetEntrance delay={delay} className={className}>
-            <Card hover className="h-full">
+            <Card hover className="immersive-live-kpi-card h-full">
                 <p className="text-sm font-medium text-[var(--dos-text-secondary)]">{title}</p>
                 <div className="mt-2 flex items-end justify-between gap-4">
                     <p className="text-3xl font-semibold tracking-tight text-[var(--dos-text-primary)]">

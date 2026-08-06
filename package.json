@@ -58,6 +58,7 @@
     "verify": "node scripts/verify-public-website.mjs",
     "design-os:verify": "node scripts/verify-design-os.mjs",
     "premium-ui:verify": "node scripts/verify-premium-ui.mjs",
+    "immersive-v2:verify": "node scripts/verify-immersive-v2.mjs",
     "business-assets:verify": "node scripts/verify-business-assets.mjs",
     "client-success-capability:verify": "node scripts/verify-client-success-capability.mjs",
     "mission-core:verify": "node scripts/verify-mission-core.mjs",

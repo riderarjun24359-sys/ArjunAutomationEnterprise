@@ -1,0 +1,16 @@
+export { ImmersiveProvider } from "./ImmersiveProvider";
+export { CinematicWelcome } from "./CinematicWelcome";
+export { LivingWorkspace } from "./LivingWorkspace";
+export { AmbientGradients } from "./AmbientGradients";
+export { PhysicsPageTransition } from "./PhysicsPageTransition";
+export { SharedElement } from "./SharedElement";
+export { WidgetOrchestra, WidgetOrchestraItem } from "./WidgetOrchestra";
+export { AiPresenceShell } from "./AiPresenceShell";
+export { AiCommandPaletteMotion } from "./AiCommandPaletteMotion";
+export { CelebrationBurst } from "./CelebrationBurst";
+export { DelightEmptyState } from "./DelightEmptyState";
+export { PremiumSuccessState } from "./PremiumSuccessState";
+export { OnboardingMoment } from "./OnboardingMoment";
+export { LiveKpiTransition } from "./LiveKpiTransition";
+export { AnimatedChartFrame } from "./AnimatedChartFrame";
+export { LiveActivityMotion } from "./LiveActivityMotion";

@@ -20,15 +20,21 @@ export function EmptyState({
     return (
         <m.div
             className={cn(
-                "rounded-[var(--dos-radius-2xl)] border border-dashed border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] p-8 text-center",
+                "immersive-empty-state relative overflow-hidden rounded-[var(--dos-radius-2xl)] border border-dashed border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] p-8 text-center",
                 className,
             )}
             initial={reduced ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
         >
-            <p className="font-semibold text-[var(--dos-text-primary)]">{title}</p>
-            <p className="mt-2 text-sm text-[var(--dos-text-secondary)]">{description}</p>
-            {action ? <div className="mt-4">{action}</div> : null}
+            {!reduced ? (
+                <span
+                    className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[var(--dos-brand-primary)]/10 blur-2xl"
+                    aria-hidden="true"
+                />
+            ) : null}
+            <p className="relative font-semibold text-[var(--dos-text-primary)]">{title}</p>
+            <p className="relative mt-2 text-sm text-[var(--dos-text-secondary)]">{description}</p>
+            {action ? <div className="relative mt-4">{action}</div> : null}
         </m.div>
     );
 }

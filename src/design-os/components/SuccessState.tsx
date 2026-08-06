@@ -5,6 +5,7 @@ import { m } from "framer-motion";
 import { cn } from "@/src/lib/cn";
 import { scaleIn } from "@/src/design-os/motion/variants";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
+import { CelebrationBurst } from "@/src/design-os/immersive-v2/components/CelebrationBurst";
 
 export function SuccessState({
     title = "Success",
@@ -22,7 +23,7 @@ export function SuccessState({
     return (
         <m.div
             className={cn(
-                "flex flex-col items-center gap-4 rounded-[var(--dos-radius-2xl)] border border-[var(--dos-success)]/30 bg-[var(--dos-success-muted)] p-8 text-center",
+                "immersive-success-state relative flex flex-col items-center gap-4 overflow-hidden rounded-[var(--dos-radius-2xl)] border border-[var(--dos-success)]/30 bg-[var(--dos-success-muted)] p-8 text-center",
                 className,
             )}
             variants={reduced ? undefined : scaleIn}
@@ -30,12 +31,13 @@ export function SuccessState({
             animate="visible"
             role="status"
         >
-            <CheckCircle2 className="h-8 w-8 text-[var(--dos-success)]" aria-hidden="true" />
-            <div>
+            <CelebrationBurst active={!reduced} />
+            <CheckCircle2 className="relative h-8 w-8 text-[var(--dos-success)]" aria-hidden="true" />
+            <div className="relative">
                 <p className="font-semibold text-[var(--dos-text-primary)]">{title}</p>
                 <p className="mt-2 text-sm text-[var(--dos-text-secondary)]">{description}</p>
             </div>
-            {action ? <div>{action}</div> : null}
+            {action ? <div className="relative">{action}</div> : null}
         </m.div>
     );
 }
