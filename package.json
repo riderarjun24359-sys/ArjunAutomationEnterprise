@@ -68,6 +68,7 @@
     "launch-readiness:verify": "node scripts/verify-launch-readiness.mjs",
     "launch-audit": "node scripts/launch-audit.mjs",
     "operations:verify": "node scripts/verify-operations.mjs",
+    "soft-launch:verify": "node scripts/verify-soft-launch.mjs",
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"

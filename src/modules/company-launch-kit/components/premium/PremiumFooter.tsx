@@ -27,6 +27,9 @@ const FOOTER_LINKS = {
         { label: "Privacy Policy", href: MARKETING_ROUTES.privacy },
         { label: "Terms of Service", href: MARKETING_ROUTES.terms },
         { label: "Cookie Policy", href: MARKETING_ROUTES.cookies },
+        { label: "Refund Policy", href: MARKETING_ROUTES.refund },
+        { label: "Help Center", href: MARKETING_ROUTES.help },
+        { label: "Features", href: MARKETING_ROUTES.features },
     ],
 };
 

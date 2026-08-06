@@ -223,11 +223,13 @@ export const CTA_CONTENT = {
 
 export const NAV_ITEMS = [
     { label: "About", href: MARKETING_ROUTES.about },
+    { label: "Features", href: MARKETING_ROUTES.features },
     { label: "Services", href: MARKETING_ROUTES.services },
     { label: "Industries", href: MARKETING_ROUTES.industries },
     { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
     { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
     { label: "Pricing", href: MARKETING_ROUTES.pricing },
+    { label: "Help", href: MARKETING_ROUTES.help },
     { label: "Resources", href: MARKETING_ROUTES.resources },
     { label: "Contact", href: MARKETING_ROUTES.contact },
 ];

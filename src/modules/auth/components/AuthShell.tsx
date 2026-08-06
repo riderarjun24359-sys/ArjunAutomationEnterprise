@@ -41,7 +41,12 @@ export function AuthShell({ mode, title, description }: AuthShellProps) {
                                 <Link href={ROUTES.auth.forgotPassword} className="hover:underline">Forgot password?</Link>
                             </>
                         ) : null}
-                        {mode === "sign-up" ? <Link href={ROUTES.auth.signIn} className="font-medium text-white hover:underline">Back to sign in</Link> : null}
+                        {mode === "sign-up" ? (
+                            <>
+                                <Link href={ROUTES.auth.signIn} className="font-medium text-white hover:underline">Back to sign in</Link>
+                                <Link href={ROUTES.auth.verifyEmail} className="hover:underline">Email verification</Link>
+                            </>
+                        ) : null}
                         {mode === "forgot-password" ? <Link href={ROUTES.auth.signIn} className="font-medium text-white hover:underline">Back to sign in</Link> : null}
                         {mode === "reset-password" ? <Link href={ROUTES.auth.signIn} className="font-medium text-white hover:underline">Go to sign in</Link> : null}
                     </div>

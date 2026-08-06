@@ -11,12 +11,13 @@ import {
     MANAGED_SUPPORT_TIERS,
     PRICING_PHILOSOPHY,
 } from "@/src/modules/company-launch-kit/data/pricing";
+import { SOFT_LAUNCH_PLANS } from "@/src/modules/soft-launch/data/launch-assets";
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Pricing",
     description:
-        "Transparent, milestone-based pricing for Arjun Automation platform implementation, industry packs, AI workers, and managed support.",
+        "Soft-launch SaaS plans (Free Trial, Starter, Professional, Enterprise) plus transparent implementation and managed support pricing.",
     path: MARKETING_ROUTES.pricing,
 };
 
@@ -44,6 +45,54 @@ export default function PricingPage() {
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
                 <div className="space-y-16">
+                    <section aria-labelledby="saas-plans-heading">
+                        <div className="flex flex-wrap items-end justify-between gap-4">
+                            <div>
+                                <h2 id="saas-plans-heading" className="text-2xl font-semibold">
+                                    Soft-launch SaaS plans
+                                </h2>
+                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
+                                    Free Trial, Starter, Professional, and Enterprise with clear usage limits.
+                                </p>
+                            </div>
+                            <Link href={MARKETING_ROUTES.upgrade} className="text-sm font-semibold text-indigo-700 underline">
+                                Open upgrade flow
+                            </Link>
+                        </div>
+                        <div className="mt-8 grid gap-6 lg:grid-cols-4">
+                            {SOFT_LAUNCH_PLANS.map((plan) => (
+                                <article
+                                    key={plan.id}
+                                    className={`rounded-3xl border p-6 ${
+                                        plan.highlighted ? "border-indigo-700 ring-2 ring-indigo-700/30" : "border-[var(--premium-border)]"
+                                    }`}
+                                >
+                                    <h3 className="text-lg font-semibold">{plan.name}</h3>
+                                    <p className="mt-2 text-3xl font-bold">{plan.priceLabel}</p>
+                                    <p className="mt-1 text-xs text-[var(--premium-fg-muted)]">{plan.billingNote}</p>
+                                    <p className="mt-4 text-sm text-[var(--premium-fg-muted)]">{plan.description}</p>
+                                    <ul className="mt-4 space-y-1 text-xs text-[var(--premium-fg-muted)]">
+                                        <li>Users: {plan.limits.users}</li>
+                                        <li>Projects: {plan.limits.projects}</li>
+                                        <li>Storage: {plan.limits.storage}</li>
+                                        <li>API calls: {plan.limits.apiCalls}</li>
+                                    </ul>
+                                    <ul className="mt-4 space-y-2 text-sm text-[var(--premium-fg-muted)]">
+                                        {plan.features.map((feature) => (
+                                            <li key={feature}>• {feature}</li>
+                                        ))}
+                                    </ul>
+                                    <Link
+                                        href={plan.cta.href}
+                                        className="mt-6 inline-flex rounded-full bg-indigo-700 px-4 py-2 text-sm font-semibold text-white"
+                                    >
+                                        {plan.cta.label}
+                                    </Link>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
+
                     <section aria-labelledby="philosophy-heading">
                         <h2 id="philosophy-heading" className="text-2xl font-semibold">
                             Our pricing philosophy
