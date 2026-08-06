@@ -75,6 +75,7 @@ const protectedRoutes = [
     ROUTES.founderOs,
     ROUTES.founderAnalytics,
     ROUTES.earlyAccess,
+    ROUTES.customerSuccessGrowth,
     ROUTES.autonomousCompany,
     ROUTES.commercialPlatform,
     ROUTES.enterpriseIdentity,

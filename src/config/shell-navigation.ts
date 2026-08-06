@@ -120,6 +120,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Founder Analytics", href: ROUTES.founderAnalytics, description: "Founder-only growth command center: MRR/ARR, acquisition, customer intelligence, alerts, advisor, and board room", icon: BarChart3, section: "secondary" },
     { label: "Early Access", href: ROUTES.earlyAccess, description: "Launch sprint console: invites, waitlist, customer success, feedback, monitoring, and releases", icon: Rocket, section: "secondary" },
+    { label: "Customer Success Growth", href: ROUTES.customerSuccessGrowth, description: "Acquisition & success sprint: onboarding funnel, referrals, testimonials, education, founder daily brief", icon: HeartHandshake, section: "secondary" },
     { label: "Automation", href: ROUTES.automation, description: "AI workflows and agents", icon: Bot, section: "secondary" },
     { label: "Analytics", href: ROUTES.analytics, description: "Performance insights", icon: BarChart3, section: "secondary" },
     { label: "HR", href: ROUTES.hr, description: "Employee and people operations", icon: UserCog, section: "secondary" },

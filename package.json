@@ -80,6 +80,7 @@
     "launch-email:verify": "node scripts/verify-launch-email-provider.mjs",
     "production-urls:verify": "node scripts/verify-production-urls.mjs",
     "production-smoke": "node scripts/production-smoke.mjs",
+    "customer-success-growth:verify": "node scripts/verify-customer-success-growth.mjs",
     "production-cutover:verify": "node scripts/verify-production-cutover.mjs",
     "generate:production-readiness-report": "node scripts/generate-production-readiness-report.mjs",
     "test:e2e": "playwright test",

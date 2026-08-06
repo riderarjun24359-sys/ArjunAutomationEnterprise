@@ -30,6 +30,7 @@ export const ROUTES = {
     founderOs: "/founder-os",
     founderAnalytics: "/founder-analytics",
     earlyAccess: "/early-access",
+    customerSuccessGrowth: "/customer-success-growth",
     autonomousCompany: "/autonomous-company",
     commercialPlatform: "/commercial-platform",
     enterpriseIdentity: "/enterprise-identity",
