@@ -111,6 +111,7 @@ const protectedRoutes = [
     ROUTES.growthOsCreative,
     ROUTES.growthOsVideo,
     ROUTES.growthOsPublishing,
+    ROUTES.growthOsIntelligence,
     ROUTES.brandOs,
     ROUTES.designOs,
     ROUTES.businessAssets,
