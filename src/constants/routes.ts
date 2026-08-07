@@ -71,6 +71,7 @@ export const ROUTES = {
     aiSalesLeadEngine: "/ai-sales-lead-engine",
     aiCustomerSuccessEngine: "/ai-customer-success-engine",
     aiFinanceBillingEngine: "/ai-finance-billing-engine",
+    aiAutomationEngine: "/ai-automation-engine",
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
