@@ -1,0 +1,315 @@
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
+import { databaseService } from "@/src/modules/database/services/database-service";
+import { readEnvSecretHealth } from "../lib/env-secret-health";
+import type { EnterpriseIntegrationsRawData } from "../types";
+
+const LIMIT = 500;
+const q = { limit: LIMIT, orderBy: "created_at" as const, orderDirection: "desc" as const };
+
+export class EnterpriseIntegrationsRepository {
+    async loadOrganizationData(
+        authUserId: string,
+        email: string,
+        fullName?: string | null,
+    ): Promise<EnterpriseIntegrationsRawData | null> {
+        const context = await resolveOrganizationContext(authUserId, email, fullName);
+        if (!context) return null;
+
+        const orgId = context.organizationId;
+        const membershipsForUser = await databaseService.memberships.getByUser(context.profileId).catch(() => []);
+        const membershipRole =
+            membershipsForUser.find((m) => m.organization_id === orgId)?.role_name ??
+            membershipsForUser[0]?.role_name ??
+            null;
+
+        const envHealth = readEnvSecretHealth();
+
+        const [
+            hubs,
+            connectedServices,
+            connectorConfigs,
+            connectorHealth,
+            paymentConnectors,
+            paymentHealth,
+            paymentRetries,
+            paymentTransactions,
+            apiKeys,
+            rateLimits,
+            apiUsage,
+            incomingWebhooks,
+            outgoingWebhooks,
+            webhookDeadLetters,
+            webhookDeliveryLogs,
+            marketplace,
+            installations,
+            latencyMetrics,
+            integrationMetrics,
+            integrationHealth,
+            integrationFailures,
+            accountingSync,
+            secrets,
+            emailChannels,
+            emailQueue,
+            emailTemplates,
+            retryPolicies,
+            deliveryFailures,
+            aiAgents,
+        ] = await Promise.all([
+            databaseService.intgIntegrationHubs.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgConnectedServices.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgConnectorConfigs.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgConnectorHealth.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgPaymentConnectors.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgPaymentConnectorHealth.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgPaymentRetryQueue.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgPaymentTransactions.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgApiKeys.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgRateLimits.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgApiUsage.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgIncomingWebhooks.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgOutgoingWebhooks.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgWebhookDeadLetter.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgWebhookDeliveryLogs.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgMarketplaceConnectors.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgMarketplaceInstallations.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgLatencyMetrics.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgIntegrationMetrics.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgIntegrationHealth.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgIntegrationFailures.listByOrganization(orgId, q).catch(() => []),
+            databaseService.intgAccountingSyncStatus.listByOrganization(orgId, q).catch(() => []),
+            databaseService.eocSecretsMetadata.listByOrganization(orgId, q).catch(() => []),
+            databaseService.cnhNotificationChannels.listByOrganization(orgId, q).catch(() => []),
+            databaseService.cnhNotificationQueue.listByOrganization(orgId, q).catch(() => []),
+            databaseService.cnhMessageTemplates.listByOrganization(orgId, q).catch(() => []),
+            databaseService.cnhRetryPolicies.listByOrganization(orgId, q).catch(() => []),
+            databaseService.cnhDeliveryFailures.listByOrganization(orgId, q).catch(() => []),
+            databaseService.aiAgents.listByOrganization(orgId, q).catch(() => []),
+        ]);
+
+        return {
+            organizationId: orgId,
+            membershipRole,
+            envHealth,
+            hubs: hubs.map((r) => ({
+                id: r.id,
+                hub_name: r.hub_name,
+                environment: r.environment,
+                status: r.status,
+            })),
+            connectedServices: connectedServices.map((r) => ({
+                id: r.id,
+                service_name: r.service_name,
+                provider_type: r.provider_type,
+                connector_status: r.connector_status,
+                credentials_ref: r.credentials_ref,
+                status: r.status,
+            })),
+            connectorConfigs: connectorConfigs.map((r) => ({
+                id: r.id,
+                config_name: r.config_name,
+                provider_type: r.provider_type,
+                api_version: r.api_version,
+                status: r.status,
+            })),
+            connectorHealth: connectorHealth.map((r) => ({
+                id: r.id,
+                health_score: Number(r.health_score ?? 0),
+                last_check_at: r.last_check_at,
+                status: r.status,
+            })),
+            paymentConnectors: paymentConnectors.map((r) => ({
+                id: r.id,
+                connector_name: r.connector_name,
+                provider_type: r.provider_type,
+                connector_status: r.connector_status,
+                credentials_ref: r.credentials_ref,
+                status: r.status,
+            })),
+            paymentHealth: paymentHealth.map((r) => ({
+                id: r.id,
+                health_score: Number(r.health_score ?? 0),
+                latency_ms: Number(r.latency_ms ?? 0),
+                status: r.status,
+            })),
+            paymentRetries: paymentRetries.map((r) => ({
+                id: r.id,
+                transaction_ref: r.transaction_ref,
+                retry_count: Number(r.retry_count ?? 0),
+                last_error: r.last_error,
+                status: r.status,
+            })),
+            paymentTransactions: paymentTransactions.map((r) => ({
+                id: r.id,
+                provider_type: r.provider_type,
+                amount: Number(r.amount ?? 0),
+                currency: r.currency,
+                transaction_status: r.transaction_status,
+                processed_at: r.processed_at ?? null,
+                status: r.status,
+            })),
+            apiKeys: apiKeys.map((r) => ({
+                id: r.id,
+                key_name: r.key_name,
+                key_prefix: r.key_prefix,
+                expires_at: r.expires_at ?? null,
+                last_used_at: r.last_used_at ?? null,
+                status: r.status,
+            })),
+            rateLimits: rateLimits.map((r) => ({
+                id: r.id,
+                limit_name: r.limit_name,
+                rate_limit_rpm: Number(r.rate_limit_rpm ?? 0),
+                burst_limit: Number(r.burst_limit ?? 0),
+                status: r.status,
+            })),
+            apiUsage: apiUsage.map((r) => ({
+                id: r.id,
+                endpoint: r.endpoint,
+                request_count: Number(r.request_count ?? 0),
+                error_count: Number(r.error_count ?? 0),
+                period_start: r.period_start,
+                status: r.status,
+            })),
+            incomingWebhooks: incomingWebhooks.map((r) => ({
+                id: r.id,
+                webhook_name: r.webhook_name,
+                endpoint_path: r.endpoint_path,
+                provider_type: r.provider_type,
+                webhook_signing_key_hash: r.webhook_signing_key_hash,
+                is_enabled: Boolean(r.is_enabled),
+                status: r.status,
+            })),
+            outgoingWebhooks: outgoingWebhooks.map((r) => ({
+                id: r.id,
+                webhook_name: r.webhook_name,
+                target_url: r.target_url,
+                webhook_signing_key_hash: r.webhook_signing_key_hash,
+                is_enabled: Boolean(r.is_enabled),
+                status: r.status,
+            })),
+            webhookDeadLetters: webhookDeadLetters.map((r) => ({
+                id: r.id,
+                event_type: r.event_type,
+                retry_count: Number(r.retry_count ?? 0),
+                last_error: r.last_error,
+                status: r.status,
+            })),
+            webhookDeliveryLogs: webhookDeliveryLogs.map((r) => ({
+                id: r.id,
+                event_type: r.event_type,
+                http_status: Number(r.http_status ?? 0),
+                delivery_status: r.delivery_status,
+                delivered_at: r.delivered_at ?? null,
+                latency_ms: Number(r.latency_ms ?? 0),
+                status: r.status,
+            })),
+            marketplace: marketplace.map((r) => ({
+                id: r.id,
+                connector_name: r.connector_name,
+                provider_type: r.provider_type,
+                category: r.category,
+                description: r.description,
+                status: r.status,
+            })),
+            installations: installations.map((r) => ({
+                id: r.id,
+                installation_key: r.installation_key,
+                connector_status: r.connector_status,
+                status: r.status,
+            })),
+            latencyMetrics: latencyMetrics.map((r) => ({
+                id: r.id,
+                endpoint: r.endpoint,
+                p95_ms: Number(r.p95_ms ?? 0),
+                metric_date: r.metric_date,
+                status: r.status,
+            })),
+            integrationMetrics: integrationMetrics.map((r) => ({
+                id: r.id,
+                metric_date: r.metric_date,
+                active_connectors: Number(r.active_connectors ?? 0),
+                total_api_calls: Number(r.total_api_calls ?? 0),
+                total_webhook_deliveries: Number(r.total_webhook_deliveries ?? 0),
+                overall_success_rate: Number(r.overall_success_rate ?? 0),
+                status: r.status,
+            })),
+            integrationHealth: integrationHealth.map((r) => ({
+                id: r.id,
+                overall_score: Number(r.overall_score ?? 0),
+                uptime_percent: Number(r.uptime_percent ?? 0),
+                active_connectors: Number(r.active_connectors ?? 0),
+                degraded_connectors: Number(r.degraded_connectors ?? 0),
+                summary: r.summary,
+                status: r.status,
+            })),
+            integrationFailures: integrationFailures.map((r) => ({
+                id: r.id,
+                provider_type: r.provider_type,
+                error_message: r.error_message,
+                retry_count: Number(r.retry_count ?? 0),
+                failed_at: r.failed_at,
+                status: r.status,
+            })),
+            accountingSync: accountingSync.map((r) => ({
+                id: r.id,
+                entity_type: r.entity_type,
+                last_sync_at: r.last_sync_at ?? null,
+                records_synced: Number(r.records_synced ?? 0),
+                sync_status: r.sync_status,
+                status: r.status,
+            })),
+            secrets: secrets.map((r) => ({
+                id: r.id,
+                secret_name: r.secret_name,
+                vault_ref: r.vault_ref,
+                rotation_due_at: r.rotation_due_at ?? null,
+                secret_status: r.secret_status,
+                status: r.status,
+            })),
+            emailChannels: emailChannels.map((r) => ({
+                id: r.id,
+                channel_name: r.channel_name,
+                channel_type: r.channel_type,
+                is_enabled: Boolean(r.is_enabled),
+                status: r.status,
+            })),
+            emailQueue: emailQueue.map((r) => ({
+                id: r.id,
+                recipient: r.recipient,
+                subject: r.subject,
+                delivery_status: r.delivery_status,
+                retry_count: Number(r.retry_count ?? 0),
+                delivered_at: r.delivered_at ?? null,
+                failure_reason: r.failure_reason,
+                status: r.status,
+            })),
+            emailTemplates: emailTemplates.map((r) => ({
+                id: r.id,
+                template_name: r.template_name,
+                status: r.status,
+            })),
+            retryPolicies: retryPolicies.map((r) => ({
+                id: r.id,
+                policy_name: r.policy_name,
+                status: r.status,
+                max_retries: Number(r.max_retries ?? 0),
+            })),
+            deliveryFailures: deliveryFailures.map((r) => ({
+                id: r.id,
+                failure_reason: r.error_message || r.error_code,
+                status: r.status,
+                created_at: r.failed_at,
+            })),
+            aiAgents: aiAgents.map((r) => ({
+                id: r.id,
+                name: r.name,
+                model: r.model,
+                status: r.status,
+                max_tokens: Number(r.max_tokens ?? 0),
+                description: r.description,
+            })),
+        };
+    }
+}
+
+export const enterpriseIntegrationsRepository = new EnterpriseIntegrationsRepository();

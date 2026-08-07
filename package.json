@@ -47,6 +47,7 @@
     "ai-finance-billing-engine:verify": "node scripts/verify-ai-finance-billing-engine.mjs",
     "ai-automation-engine:verify": "node scripts/verify-ai-automation-engine.mjs",
     "ai-operations-center:verify": "node scripts/verify-ai-operations-center.mjs",
+    "enterprise-integrations:verify": "node scripts/verify-enterprise-integrations.mjs",
     "aage-growth-engine:verify": "node scripts/verify-growth-engine.mjs",
     "brand-os:verify": "node scripts/verify-brand-os.mjs",
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",
