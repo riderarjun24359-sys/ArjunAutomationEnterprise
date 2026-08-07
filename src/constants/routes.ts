@@ -69,6 +69,7 @@ export const ROUTES = {
     growthOsIntelligence: "/growth-os-intelligence",
     aiMarketingGrowthEngine: "/ai-marketing-growth-engine",
     aiSalesLeadEngine: "/ai-sales-lead-engine",
+    aiCustomerSuccessEngine: "/ai-customer-success-engine",
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
