@@ -117,6 +117,7 @@ const protectedRoutes = [
     ROUTES.aiCustomerSuccessEngine,
     ROUTES.aiFinanceBillingEngine,
     ROUTES.aiAutomationEngine,
+    ROUTES.aiOperationsCenter,
     ROUTES.brandOs,
     ROUTES.designOs,
     ROUTES.businessAssets,
