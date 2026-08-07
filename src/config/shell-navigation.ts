@@ -46,6 +46,7 @@ import {
     Gauge,
     Network,
     Megaphone,
+    Target,
 } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";
 
@@ -126,6 +127,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Growth OS Publishing", href: ROUTES.growthOsPublishing, description: "Growth OS Sprint 5: campaign orchestrator, scheduler, website/social publishing, releases, distribution analytics", icon: Network, section: "secondary" },
     { label: "Growth OS Intelligence", href: ROUTES.growthOsIntelligence, description: "Growth OS Sprint 6: executive, marketing, revenue intelligence, forecasting, recommendations, unified dashboards", icon: BarChart3, section: "secondary" },
     { label: "AI Marketing & Growth", href: ROUTES.aiMarketingGrowthEngine, description: "Sprint 9: AI content generator, campaign planner, brand voice, prompt library, and content calendar", icon: Megaphone, section: "secondary" },
+    { label: "AI Sales & Lead Gen", href: ROUTES.aiSalesLeadEngine, description: "Sprint 10: AI lead capture, scoring, pipeline, deals, proposals, forecasting, and sales integrations", icon: Target, section: "secondary" },
     { label: "Founder OS", href: ROUTES.founderOs, description: "Founder operating system for strategic OKRs, runway, board reports, and execution", icon: Crown, section: "secondary" },
     { label: "Founder Analytics", href: ROUTES.founderAnalytics, description: "Founder-only growth command center: MRR/ARR, acquisition, customer intelligence, alerts, advisor, and board room", icon: BarChart3, section: "secondary" },
     { label: "Early Access", href: ROUTES.earlyAccess, description: "Launch sprint console: invites, waitlist, customer success, feedback, monitoring, and releases", icon: Rocket, section: "secondary" },

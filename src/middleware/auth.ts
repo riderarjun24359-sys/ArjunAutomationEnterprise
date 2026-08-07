@@ -113,6 +113,7 @@ const protectedRoutes = [
     ROUTES.growthOsPublishing,
     ROUTES.growthOsIntelligence,
     ROUTES.aiMarketingGrowthEngine,
+    ROUTES.aiSalesLeadEngine,
     ROUTES.brandOs,
     ROUTES.designOs,
     ROUTES.businessAssets,
