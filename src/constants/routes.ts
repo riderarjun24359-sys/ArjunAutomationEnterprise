@@ -60,6 +60,7 @@ export const ROUTES = {
     aiOrganizationFoundation: "/ai-organization-foundation",
     enterpriseGovernancePlatform: "/enterprise-governance-platform",
     growthEngine: "/growth-engine",
+    growthEngineV1: "/growth-engine-v1",
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
