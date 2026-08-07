@@ -106,6 +106,7 @@ const protectedRoutes = [
     ROUTES.enterpriseGovernancePlatform,
     ROUTES.growthEngine,
     ROUTES.growthEngineV1,
+    ROUTES.growthOsFoundation,
     ROUTES.brandOs,
     ROUTES.designOs,
     ROUTES.businessAssets,

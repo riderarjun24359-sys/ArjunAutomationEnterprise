@@ -35,6 +35,7 @@
     "ai-organization-foundation:verify": "node scripts/verify-ai-organization-foundation.mjs",
     "enterprise-governance:verify": "node scripts/verify-enterprise-governance.mjs",
     "growth-engine:verify": "node scripts/verify-growth-engine-v1.mjs",
+    "growth-os-foundation:verify": "node scripts/verify-growth-os-foundation.mjs",
     "aage-growth-engine:verify": "node scripts/verify-growth-engine.mjs",
     "brand-os:verify": "node scripts/verify-brand-os.mjs",
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",

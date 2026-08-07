@@ -61,6 +61,7 @@ export const ROUTES = {
     enterpriseGovernancePlatform: "/enterprise-governance-platform",
     growthEngine: "/growth-engine",
     growthEngineV1: "/growth-engine-v1",
+    growthOsFoundation: "/growth-os-foundation",
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
