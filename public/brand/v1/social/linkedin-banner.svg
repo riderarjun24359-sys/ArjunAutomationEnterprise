@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 396" fill="none" role="img" aria-label="Arjun Automation LinkedIn banner">
+  <title>Arjun Automation — LinkedIn Banner</title>
+  <rect width="1584" height="396" fill="#0A1628"/>
+  <circle cx="1280" cy="80" r="220" fill="#0F766E" opacity="0.18"/>
+  <circle cx="200" cy="340" r="180" fill="#14B8A6" opacity="0.1"/>
+  <g transform="translate(80,110) scale(2.2)">
+    <circle cx="32" cy="32" r="26" stroke="#F8FAFC" stroke-width="2.2" opacity="0.2"/>
+    <path d="M48.5 18.5 A22 22 0 1 1 18 45.5" stroke="#14B8A6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M22 44 L32 18 L42 44" stroke="#F8FAFC" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M26.5 35.5 H37.5" stroke="#F8FAFC" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="46" cy="20" r="3" fill="#14B8A6"/>
+  </g>
+  <text x="280" y="185" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="54" font-weight="650" fill="#F8FAFC" letter-spacing="-0.03em">Arjun Automation</text>
+  <text x="280" y="235" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="500" fill="#94A3B8" letter-spacing="0.08em">Enterprise automation, orchestrated.</text>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" fill="none" role="img" aria-label="Logo usage do and don't">
+  <title>Arjun Automation — Logo Do / Don't</title>
+  <rect width="1200" height="640" fill="#F8FAFC"/>
+  <text x="48" y="56" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="650" fill="#0A1628">Logo usage</text>
+  <text x="48" y="92" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="16" fill="#64748B">Clear examples for partners and vendors</text>
+
+  <!-- DO -->
+  <rect x="48" y="130" width="520" height="450" rx="20" fill="#FFFFFF" stroke="#059669" stroke-width="2"/>
+  <text x="72" y="172" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="650" fill="#059669">DO</text>
+  <g transform="translate(120,220) scale(2.2)">
+    <circle cx="32" cy="32" r="26" stroke="#0A1628" stroke-width="2.5" opacity="0.18"/>
+    <path d="M48.5 18.5 A22 22 0 1 1 18 45.5" stroke="#0F766E" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M22 44 L32 18 L42 44" stroke="#0A1628" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M26.5 35.5 H37.5" stroke="#0A1628" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="46" cy="20" r="3.2" fill="#14B8A6"/>
+  </g>
+  <text x="72" y="420" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#0A1628">Approved colors � correct proportions</text>
+  <text x="72" y="448" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#64748B">Preserve clear space around the mark</text>
+  <text x="72" y="476" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#64748B">Use light mark on cloud / mist surfaces</text>
+
+  <!-- DON'T -->
+  <rect x="632" y="130" width="520" height="450" rx="20" fill="#FFFFFF" stroke="#DC2626" stroke-width="2"/>
+  <text x="656" y="172" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="650" fill="#DC2626">DON'T</text>
+  <g transform="translate(720,240) scale(2.4) rotate(18 32 32)">
+    <circle cx="32" cy="32" r="26" stroke="#7C3AED" stroke-width="2.5" opacity="0.4"/>
+    <path d="M48.5 18.5 A22 22 0 1 1 18 45.5" stroke="#A855F7" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M22 44 L32 18 L42 44" stroke="#7C3AED" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M26.5 35.5 H37.5" stroke="#7C3AED" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="46" cy="20" r="3.2" fill="#C084FC"/>
+  </g>
+  <line x1="700" y1="220" x2="1080" y2="480" stroke="#DC2626" stroke-width="4" opacity="0.55"/>
+  <text x="656" y="420" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#0A1628">No recolor � no rotate � no stretch</text>
+  <text x="656" y="448" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#64748B">No violet defaults or drop shadows</text>
+  <text x="656" y="476" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="15" fill="#64748B">No busy photo without a dark scrim</text>
+</svg>

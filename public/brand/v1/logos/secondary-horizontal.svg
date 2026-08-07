@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 48" fill="none" role="img" aria-label="Arjun Automation secondary logo">
+  <title>Arjun Automation — Secondary Horizontal</title>
+  <path d="M10 36 L20 14 L30 36" stroke="#0F766E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M14 28 H26" stroke="#0F766E" stroke-width="2.2" stroke-linecap="round"/>
+  <text x="42" y="30" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0A1628" letter-spacing="-0.02em">Arjun</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" fill="none" role="img" aria-label="Arjun Automation presentation content slide">
+  <title>Arjun Automation — Presentation Content Template</title>
+  <rect width="1920" height="1080" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="1920" height="8" fill="#0F766E"/>
+  <text x="120" y="120" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0F766E" letter-spacing="0.18em">SECTION</text>
+  <text x="120" y="190" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="48" font-weight="650" fill="#0A1628" letter-spacing="-0.02em">Headline for this slide</text>
+  <text x="120" y="260" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="400" fill="#64748B">Supporting sentence — one idea, one outcome.</text>
+  <rect x="120" y="320" width="780" height="520" rx="24" fill="#FFFFFF" stroke="#E2E8F0"/>
+  <rect x="940" y="320" width="860" height="520" rx="24" fill="#0A1628"/>
+  <text x="120" y="1040" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="500" fill="#94A3B8">Arjun Automation</text>
+  <text x="1800" y="1040" text-anchor="end" font-family="Geist Sans, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="500" fill="#94A3B8">02</text>
+</svg>

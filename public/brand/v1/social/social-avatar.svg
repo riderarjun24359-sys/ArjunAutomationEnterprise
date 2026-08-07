@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none" role="img" aria-label="Arjun Automation social avatar">
+  <title>Arjun Automation — Social Profile</title>
+  <rect width="400" height="400" fill="#0A1628"/>
+  <circle cx="200" cy="200" r="130" stroke="#F8FAFC" stroke-width="10" opacity="0.14"/>
+  <path d="M285 125 A118 118 0 1 1 130 285" stroke="#14B8A6" stroke-width="16" stroke-linecap="round"/>
+  <path d="M140 275 L200 125 L260 275" stroke="#F8FAFC" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M160 230 H240" stroke="#F8FAFC" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="278" cy="132" r="16" fill="#14B8A6"/>
+</svg>

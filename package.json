@@ -85,6 +85,7 @@
     "customer-success-growth:verify": "node scripts/verify-customer-success-growth.mjs",
     "production-cutover:verify": "node scripts/verify-production-cutover.mjs",
     "generate:production-readiness-report": "node scripts/generate-production-readiness-report.mjs",
+    "brand-identity:generate": "node scripts/generate-brand-identity-v1.mjs",
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "ai-delivery-model:verify": "node scripts/verify-ai-delivery-model.mjs"

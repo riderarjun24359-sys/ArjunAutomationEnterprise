@@ -1,0 +1,56 @@
+{
+  "version": "1.0.0",
+  "name": "Arjun Automation Brand Identity",
+  "codename": "Precision Orbit",
+  "generatedAt": "2026-08-07T00:15:26.698Z",
+  "deliverables": [
+    "Brand Identity v1.0",
+    "Brand Guidelines PDF",
+    "Asset Export Pack"
+  ],
+  "colors": {
+    "ink": "#0A1628",
+    "harbor": "#0E4D5C",
+    "signal": "#0F766E",
+    "signalBright": "#14B8A6",
+    "mist": "#F1F5F9",
+    "cloud": "#F8FAFC",
+    "steel": "#64748B"
+  },
+  "svg": [
+    "guidelines/logo-do-dont.svg",
+    "logos/app-icon.svg",
+    "logos/favicon.svg",
+    "logos/monogram-dark.svg",
+    "logos/monogram-light.svg",
+    "logos/primary-horizontal-dark.svg",
+    "logos/primary-horizontal-light.svg",
+    "logos/primary-stacked-dark.svg",
+    "logos/primary-stacked-light.svg",
+    "logos/secondary-horizontal.svg",
+    "presentations/content-slide.svg",
+    "presentations/title-slide.svg",
+    "social/linkedin-banner.svg",
+    "social/social-avatar.svg"
+  ],
+  "png": [
+    "monogram-light.png",
+    "monogram-dark.png",
+    "primary-horizontal-light.png",
+    "primary-horizontal-dark.png",
+    "primary-stacked-light.png",
+    "primary-stacked-dark.png",
+    "secondary-horizontal.png",
+    "app-icon.png",
+    "favicon.png",
+    "favicon-32.png",
+    "favicon-16.png",
+    "social-avatar.png",
+    "linkedin-banner.png",
+    "title-slide.png",
+    "content-slide.png",
+    "logo-do-dont.png"
+  ],
+  "pdf": "exports/Brand-Identity-v1.0-Guidelines.pdf",
+  "publicMirror": "public/brand/v1"
+}
