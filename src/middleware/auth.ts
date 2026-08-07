@@ -107,6 +107,7 @@ const protectedRoutes = [
     ROUTES.growthEngine,
     ROUTES.growthEngineV1,
     ROUTES.growthOsFoundation,
+    ROUTES.growthOsContent,
     ROUTES.brandOs,
     ROUTES.designOs,
     ROUTES.businessAssets,
