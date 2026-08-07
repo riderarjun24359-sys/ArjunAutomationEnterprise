@@ -1,5 +1,5 @@
 export type OrganizationStatus = "active" | "inactive" | "suspended";
-export type UserRoleName = "super_admin" | "admin" | "manager" | "member" | "viewer";
+export type UserRoleName = "super_admin" | "admin" | "founder" | "owner" | "manager" | "member" | "viewer";
 export type PermissionAction = "read" | "write" | "delete" | "manage";
 export type AuditAction = "create" | "update" | "delete" | "login" | "logout" | "view";
 

@@ -1,4 +1,5 @@
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { hasFounderAdminMembershipRole, isPlatformFounderEmail } from "@/src/modules/database/lib/platform-founder";
 
 export interface OrganizationContext {
     profileId: string;
@@ -7,6 +8,22 @@ export interface OrganizationContext {
 
 const CONTEXT_TTL_MS = 15_000;
 const contextCache = new Map<string, { expiresAt: number; value: Promise<OrganizationContext | null> }>();
+
+async function ensurePlatformFounderRole(
+    email: string,
+    profileId: string,
+    organizationId: string,
+    membershipRole: string | null | undefined,
+): Promise<void> {
+    if (!isPlatformFounderEmail(email)) {
+        return;
+    }
+    if (hasFounderAdminMembershipRole(membershipRole)) {
+        return;
+    }
+
+    await databaseService.memberships.updateRole(organizationId, profileId, "founder");
+}
 
 async function resolveOrganizationContextUncached(
     authUserId: string,
@@ -36,8 +53,17 @@ async function resolveOrganizationContextUncached(
     }
 
     if (!memberships.some((membership) => membership.organization_id === organizationId)) {
-        await databaseService.memberships.ensureMembership(organizationId, profile.id);
+        const seedRole = isPlatformFounderEmail(email) ? "founder" : undefined;
+        await databaseService.memberships.ensureMembership(organizationId, profile.id, seedRole);
     }
+
+    const refreshedMemberships = await databaseService.memberships.getByUser(profile.id);
+    const membershipRole =
+        refreshedMemberships.find((membership) => membership.organization_id === organizationId)?.role_name ??
+        refreshedMemberships[0]?.role_name ??
+        null;
+
+    await ensurePlatformFounderRole(email, profile.id, organizationId, membershipRole);
 
     return { profileId: profile.id, organizationId };
 }

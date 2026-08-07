@@ -27,10 +27,26 @@ export class MembershipRepository extends BaseRepository<OrganizationMember> {
         return (data ?? []) as OrganizationMember[];
     }
 
-    async ensureMembership(organizationId: string, userId: string, roleName: UserRoleName = "member"): Promise<OrganizationMember | null> {
+    /**
+     * Ensures a membership row exists. Never overwrites an existing role_name on conflict
+     * (prevents accidental demotion of founder/admin).
+     */
+    async ensureMembership(organizationId: string, userId: string, roleName?: UserRoleName): Promise<OrganizationMember | null> {
         const client = getRepositoryClient();
         if (!client) {
             return null;
+        }
+
+        const existing = await this.getByUser(userId);
+        const current = existing.find((membership) => membership.organization_id === organizationId) ?? null;
+        if (current) {
+            return current;
+        }
+
+        let resolvedRole: UserRoleName = roleName ?? "member";
+        if (!roleName) {
+            const orgMembers = await this.listByOrganization(organizationId);
+            resolvedRole = orgMembers.length === 0 ? "founder" : "member";
         }
 
         const { data, error } = await client
@@ -39,15 +55,40 @@ export class MembershipRepository extends BaseRepository<OrganizationMember> {
                 {
                     organization_id: organizationId,
                     user_id: userId,
-                    role_name: roleName,
+                    role_name: resolvedRole,
                     is_active: true,
                 },
-                { onConflict: "organization_id,user_id" },
+                { onConflict: "organization_id,user_id", ignoreDuplicates: true },
             )
             .select("*")
             .maybeSingle();
 
         mapRepositoryError(error, "Failed to ensure membership");
+
+        if (data) {
+            return data as OrganizationMember;
+        }
+
+        const refreshed = await this.getByUser(userId);
+        return refreshed.find((membership) => membership.organization_id === organizationId) ?? null;
+    }
+
+    async updateRole(organizationId: string, userId: string, roleName: UserRoleName): Promise<OrganizationMember | null> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return null;
+        }
+
+        const { data, error } = await client
+            .from(this.table)
+            .update({ role_name: roleName, updated_at: new Date().toISOString() })
+            .eq("organization_id", organizationId)
+            .eq("user_id", userId)
+            .eq("is_active", true)
+            .select("*")
+            .maybeSingle();
+
+        mapRepositoryError(error, "Failed to update membership role");
         return (data as OrganizationMember | null) ?? null;
     }
 }

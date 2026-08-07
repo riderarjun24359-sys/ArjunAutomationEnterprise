@@ -15,6 +15,8 @@ export const SETTINGS_TABS = {
 export const ROLE_OPTIONS = [
     { value: "super_admin", label: "Super Admin" },
     { value: "admin", label: "Admin" },
+    { value: "founder", label: "Founder" },
+    { value: "owner", label: "Owner" },
     { value: "manager", label: "Manager" },
     { value: "member", label: "Member" },
     { value: "viewer", label: "Viewer" },

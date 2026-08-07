@@ -40,7 +40,20 @@ create table if not exists public.organization_members (
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (organization_id, user_id)
+  unique (organization_id, user_id),
+  constraint organization_members_role_name_check check (
+    role_name = any (
+      array[
+        'super_admin'::text,
+        'admin'::text,
+        'founder'::text,
+        'owner'::text,
+        'manager'::text,
+        'member'::text,
+        'viewer'::text
+      ]
+    )
+  )
 );
 
 create table if not exists public.permission_definitions (
