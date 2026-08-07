@@ -38,6 +38,7 @@
     "growth-os-foundation:verify": "node scripts/verify-growth-os-foundation.mjs",
     "growth-os-content:verify": "node scripts/verify-growth-os-content.mjs",
     "growth-os-creative:verify": "node scripts/verify-growth-os-creative.mjs",
+    "growth-os-video:verify": "node scripts/verify-growth-os-video.mjs",
     "aage-growth-engine:verify": "node scripts/verify-growth-engine.mjs",
     "brand-os:verify": "node scripts/verify-brand-os.mjs",
     "company-launch-kit:verify": "node scripts/verify-company-launch-kit.mjs",
