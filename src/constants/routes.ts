@@ -74,6 +74,7 @@ export const ROUTES = {
     aiAutomationEngine: "/ai-automation-engine",
     aiOperationsCenter: "/ai-operations-center",
     enterpriseIntegrations: "/enterprise-integrations",
+    aiEnterpriseBrain: "/ai-enterprise-brain",
     brandOs: "/brand-os",
     designOs: "/design-os",
     businessAssets: "/business-assets",
