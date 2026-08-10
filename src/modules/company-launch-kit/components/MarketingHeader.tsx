@@ -1,3 +1,4 @@
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 "use client";
 
 import Link from "next/link";
