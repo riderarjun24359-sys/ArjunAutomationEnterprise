@@ -17,6 +17,7 @@ import {
 import {
     isPaymentGatewayConfigured,
     isStripeWebhookSecretConfigured,
+    isRazorpayPaymentWebhookConfigured,
     PAYMENT_WEBHOOK_PATH,
 } from "@/src/lib/production-payments";
 
@@ -50,7 +51,7 @@ function envPresent(env: NodeJS.ProcessEnv, key: string): boolean {
 }
 
 function scanMigrations(cwd = process.cwd()): { files: number; rlsEnable: number; policies: number } {
-    const dir = join(cwd, "supabase", "migrations");
+    const dir = join(/*turbopackIgnore: true*/ cwd, "supabase", "migrations");
     if (!existsSync(dir)) return { files: 0, rlsEnable: 0, policies: 0 };
     const files = readdirSync(dir).filter((f) => f.endsWith(".sql"));
     let rlsEnable = 0;
@@ -92,7 +93,7 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     checks.push({
         id: "secrets_startup_gate",
         area: "secrets",
-        status: existsSync(join(cwd, "instrumentation.ts")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "instrumentation.ts")) ? "pass" : "fail",
         detail: "instrumentation.ts registers assertCriticalProductionSecrets on Node runtime",
     });
 
@@ -100,7 +101,7 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     checks.push({
         id: "supabase_env",
         area: "supabase",
-        status: envPresent(env, "NEXT_PUBLIC_SUPABASE_URL") && envPresent(env, "NEXT_PUBLIC_SUPABASE_ANON_KEY") ? "pass" : "fail",
+        status: envPresent(env, "NEXT_PUBLIC_SUPABASE_URL") && envPresent(env, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY") ? "pass" : "fail",
         detail: "Supabase URL + anon key",
     });
     checks.push({
@@ -173,29 +174,31 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
 
     // 4. Payments
     const payOk = isPaymentGatewayConfigured(env);
-    const whOk = isStripeWebhookSecretConfigured(env);
+    const stripeWebhookOk = isStripeWebhookSecretConfigured(env);
+    const razorpayWebhookOk = isRazorpayPaymentWebhookConfigured(env);
+    const whOk = stripeWebhookOk || razorpayWebhookOk;
     checks.push({
         id: "payments_gateway",
         area: "payments",
         status: payOk ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
-        detail: payOk ? "Stripe live/test keys configured" : "Configure STRIPE_SECRET_KEY + NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        detail: payOk ? "Payment gateway configured (Razorpay India-first or Stripe fallback)" : "Configure Razorpay or Stripe for paid plans",
     });
     checks.push({
         id: "payments_webhook",
         area: "payments",
-        status: whOk && existsSync(join(cwd, "app/api/payments/webhook/route.ts")) ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
-        detail: `Webhook path ${PAYMENT_WEBHOOK_PATH} · secret ${whOk ? "set" : "missing"}`,
+        status: whOk && existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/payments/webhook/route.ts")) ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
+        detail: `Unified webhook path ${PAYMENT_WEBHOOK_PATH} · Razorpay ${razorpayWebhookOk ? "set" : "missing"} · Stripe ${stripeWebhookOk ? "set" : "missing"}`,
     });
     checks.push({
         id: "payments_subscription_surface",
         area: "payments",
-        status: existsSync(join(cwd, "src/modules/billing-finance/services/billing-finance-os.service.ts")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/services/billing-finance-os.service.ts")) ? "pass" : "fail",
         detail: "Billing Finance OS subscription lifecycle surface present (unchanged)",
     });
     checks.push({
         id: "payments_invoice_surface",
         area: "payments",
-        status: existsSync(join(cwd, "src/modules/billing-finance/components/os/InvoiceCenterPanel.tsx")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/components/os/InvoiceCenterPanel.tsx")) ? "pass" : "fail",
         detail: "Invoice Center flow present in Billing Finance OS",
     });
 
@@ -208,7 +211,7 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
         detail: monitoringOk ? "External alert sink configured" : "Set OPS_ALERT_WEBHOOK_URL and/or SENTRY_DSN",
     });
     const healthFiles = ["live", "ready", "health", "diagnostics", "production", "go-live", "cutover"].every((name) =>
-        existsSync(join(cwd, `app/api/ops/${name}/route.ts`)),
+        existsSync(join(/*turbopackIgnore: true*/ cwd, `app/api/ops/${name}/route.ts`)),
     );
     checks.push({
         id: "monitoring_health",
@@ -219,13 +222,13 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     checks.push({
         id: "monitoring_logging",
         area: "monitoring",
-        status: existsSync(join(cwd, "src/lib/production-logger.ts")) && existsSync(join(cwd, "src/lib/ops-monitoring.ts")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/production-logger.ts")) && existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/ops-monitoring.ts")) ? "pass" : "fail",
         detail: "production-logger + ops-monitoring present",
     });
     checks.push({
         id: "monitoring_diagnostics",
         area: "monitoring",
-        status: existsSync(join(cwd, "app/api/ops/diagnostics/route.ts")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/ops/diagnostics/route.ts")) ? "pass" : "fail",
         detail: "/api/ops/diagnostics authenticated diagnostics route",
     });
 
@@ -234,7 +237,7 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     checks.push({
         id: "cutover_go_live_checklist",
         area: "cutover",
-        status: existsSync(join(cwd, "docs/GO_LIVE_CHECKLIST.md")) ? "pass" : "fail",
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/GO_LIVE_CHECKLIST.md")) ? "pass" : "fail",
         detail: "docs/GO_LIVE_CHECKLIST.md present for execution",
     });
     checks.push({
@@ -248,7 +251,7 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     checks.push({
         id: "cutover_readiness_report",
         area: "cutover",
-        status: existsSync(join(cwd, "docs/PRODUCTION_READINESS_REPORT.md")) || existsSync(join(cwd, "scripts/generate-production-readiness-report.mjs"))
+        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/PRODUCTION_READINESS_REPORT.md")) || existsSync(join(/*turbopackIgnore: true*/ cwd, "scripts/generate-production-readiness-report.mjs"))
             ? "pass"
             : "fail",
         detail: "Production readiness report generator / artifact present",

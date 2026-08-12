@@ -4,11 +4,23 @@
  */
 
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { isRazorpayConfigured, isRazorpayWebhookConfigured } from "@/src/lib/razorpay-payments";
 
 export const PAYMENT_WEBHOOK_PATH = "/api/payments/webhook";
 
 export function isPaymentGatewayConfigured(env: NodeJS.ProcessEnv = process.env): boolean {
-    return Boolean(env.STRIPE_SECRET_KEY?.trim() && env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim());
+    return Boolean(
+        (env.STRIPE_SECRET_KEY?.trim() && env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim()) ||
+        isRazorpayConfigured(env),
+    );
+}
+
+export function isRazorpayPaymentGatewayConfigured(env: NodeJS.ProcessEnv = process.env): boolean {
+    return isRazorpayConfigured(env);
+}
+
+export function isRazorpayPaymentWebhookConfigured(env: NodeJS.ProcessEnv = process.env): boolean {
+    return isRazorpayWebhookConfigured(env);
 }
 
 export function isStripeWebhookSecretConfigured(env: NodeJS.ProcessEnv = process.env): boolean {

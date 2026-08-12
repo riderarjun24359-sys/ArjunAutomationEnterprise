@@ -46,12 +46,12 @@ export interface FinalLaunchReadinessReport {
 }
 
 function ok(cwd: string, rel: string): boolean {
-    return existsSync(join(cwd, rel));
+    return existsSync(join(/*turbopackIgnore: true*/ cwd, rel));
 }
 
 function read(cwd: string, rel: string): string {
     try {
-        return readFileSync(join(cwd, rel), "utf8");
+        return readFileSync(join(/*turbopackIgnore: true*/ cwd, rel), "utf8");
     } catch {
         return "";
     }

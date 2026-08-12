@@ -61,7 +61,7 @@ const SMOKE_FLOW: Array<{ step: string; path: string; file: string }> = [
 ];
 
 function fileOk(cwd: string, rel: string): boolean {
-    return existsSync(join(cwd, rel));
+    return existsSync(join(/*turbopackIgnore: true*/ cwd, rel));
 }
 
 export function validateLaunchExecution(env: NodeJS.ProcessEnv = process.env, cwd = process.cwd()): LaunchExecutionReport {
@@ -97,13 +97,31 @@ export function validateLaunchExecution(env: NodeJS.ProcessEnv = process.env, cw
         detail: healthOk ? "All ops health/cutover/launch endpoints present" : "Missing one or more ops health routes",
     });
     const backupsOk = env.BACKUP_ENABLED === "1" || env.BACKUP_ENABLED === "true";
+    const paymentOk = Boolean(
+        (env.RAZORPAY_KEY_ID?.trim() &&
+            env.RAZORPAY_KEY_SECRET?.trim() &&
+            env.RAZORPAY_WEBHOOK_SECRET?.trim() &&
+            env.RAZORPAY_STARTER_AMOUNT_MINOR?.trim() &&
+            env.RAZORPAY_PROFESSIONAL_AMOUNT_MINOR?.trim()) ||
+        (env.STRIPE_SECRET_KEY?.trim() &&
+            env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.trim() &&
+            env.STRIPE_WEBHOOK_SECRET?.trim()),
+    );
+    const monitoringOk = Boolean(
+        env.OPS_ALERT_WEBHOOK_URL?.trim() || env.SENTRY_DSN?.trim() || env.NEXT_PUBLIC_SENTRY_DSN?.trim(),
+    );
     checks.push({
         id: "activation_backups",
         area: "activation",
         status: backupsOk ? "pass" : "warn",
         detail: backupsOk ? "BACKUP_ENABLED set" : "Set BACKUP_ENABLED=true and enable org backup configs",
     });
-    const monitoringOk = Boolean(env.OPS_ALERT_WEBHOOK_URL?.trim() || env.SENTRY_DSN?.trim() || env.NEXT_PUBLIC_SENTRY_DSN?.trim());
+    checks.push({
+        id: "activation_payment",
+        area: "activation",
+        status: paymentOk ? "pass" : "warn",
+        detail: paymentOk ? "Stripe gateway + webhook secret configured" : "Configure Stripe secret, publishable key, and webhook secret",
+    });
     checks.push({
         id: "activation_monitoring",
         area: "activation",
@@ -227,6 +245,10 @@ export function validateLaunchExecution(env: NodeJS.ProcessEnv = process.env, cw
         knownIssues.push("BACKUP_ENABLED not set.");
         riskSummary.push("Disaster recovery posture incomplete without enabled backups.");
     }
+    if (!paymentOk) {
+        knownIssues.push("Stripe payment gateway/webhook configuration incomplete.");
+        riskSummary.push("Paid plans cannot be safely activated until Stripe gateway and webhook verification are configured.");
+    }
     if (!monitoringOk) {
         knownIssues.push("No external monitoring sink (OPS_ALERT_WEBHOOK_URL / SENTRY_DSN).");
         riskSummary.push("Founder alerts may be limited to in-app ops buffers without external paging.");
@@ -237,7 +259,7 @@ export function validateLaunchExecution(env: NodeJS.ProcessEnv = process.env, cw
     }
 
     const artifactReady = fail.length === 0;
-    const runtimeReady = missingCritical.length === 0 && emailOk && backupsOk;
+    const runtimeReady = missingCritical.length === 0 && emailOk && backupsOk && paymentOk && monitoringOk;
     const decision: LaunchDecision = artifactReady && runtimeReady ? "GO" : "HOLD";
     const decisionRationale = artifactReady
         ? runtimeReady

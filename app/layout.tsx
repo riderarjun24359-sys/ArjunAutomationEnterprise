@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { appConfig } from "@/src/config/app";
 import { LAUNCH_KIT_SEO } from "@/src/modules/company-launch-kit/config/seo-defaults";
 import { SOFT_LAUNCH_BRANDING } from "@/src/modules/soft-launch/data/launch-assets";
@@ -37,9 +37,11 @@ export const metadata: Metadata = {
         apple: [{ url: SOFT_LAUNCH_BRANDING.logoPath }],
     },
     manifest: "/manifest.webmanifest",
-    themeColor: SOFT_LAUNCH_BRANDING.primaryColor,
 };
 
+export const viewport: Viewport = {
+    themeColor: SOFT_LAUNCH_BRANDING.primaryColor,
+};
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -51,3 +53,4 @@ export default function RootLayout({
         </html>
     );
 }
+

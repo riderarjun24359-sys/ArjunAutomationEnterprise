@@ -42,15 +42,15 @@ export async function buildGoLiveServicesReport(): Promise<GoLiveServicesReport>
     }
 
     const emailTemplatesPresent =
-        existsSync(join(process.cwd(), "src/modules/soft-launch/content/emails/welcome.md")) &&
-        existsSync(join(process.cwd(), "src/modules/soft-launch/content/emails/verify-email.md"));
+        existsSync(join(/*turbopackIgnore: true*/ process.cwd(), "src/modules/soft-launch/content/emails/welcome.md")) &&
+        existsSync(join(/*turbopackIgnore: true*/ process.cwd(), "src/modules/soft-launch/content/emails/verify-email.md"));
     const emailTask = readiness.tasks.find((t) => t.id === "email");
     const paymentTask = readiness.tasks.find((t) => t.id === "payment");
     const securityTask = readiness.tasks.find((t) => t.id === "security");
     const sessionApi = typeof authServerService.validateSession === "function";
     const restore = verifyRestoreProcedure();
-    const wizardPresent = existsSync(join(process.cwd(), "src/modules/soft-launch/components/OnboardingWizard.tsx"));
-    const plansPresent = existsSync(join(process.cwd(), "src/modules/soft-launch/data/launch-assets.ts"));
+    const wizardPresent = existsSync(join(/*turbopackIgnore: true*/ process.cwd(), "src/modules/soft-launch/components/OnboardingWizard.tsx"));
+    const plansPresent = existsSync(join(/*turbopackIgnore: true*/ process.cwd(), "src/modules/soft-launch/data/launch-assets.ts"));
 
     return {
         version: GO_LIVE_VERSION,
