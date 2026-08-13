@@ -29,7 +29,7 @@ export function MarketingHeaderStatic() {
 
                 <div className="hidden lg:block">
                     <Link
-                        href={MARKETING_ROUTES.contact}
+                        href={MARKETING_ROUTES.home}
                         className="inline-flex items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
                     >
                         Get Started
