@@ -151,7 +151,7 @@ export async function authMiddleware(request: NextRequest) {
 
     if (!supabaseContext) {
         if (isProtectedRoute) {
-            const signInUrl = new URL(ROUTES.auth.signIn, request.url);
+            const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
             signInUrl.searchParams.set("redirectTo", pathname);
             signInUrl.searchParams.set("error", "supabase_not_configured");
             return NextResponse.redirect(signInUrl);
@@ -167,13 +167,13 @@ export async function authMiddleware(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (isProtectedRoute && !user) {
-        const signInUrl = new URL(ROUTES.auth.signIn, request.url);
+        const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
         signInUrl.searchParams.set("redirectTo", pathname);
         return NextResponse.redirect(signInUrl);
     }
 
     if (isAuthRoute && user && pathname !== ROUTES.auth.callback) {
-        return NextResponse.redirect(new URL(ROUTES.dashboard, request.url));
+        return NextResponse.redirect(new URL(ROUTES.dashboard, request.nextUrl.origin));
     }
 
     return response;
