@@ -14,9 +14,10 @@ export const supabaseServer = async () => {
                     return cookieStore.getAll();
                 },
 
-                // Next.js 16 Server Components lo cookies set cheyyakudadhu.
-                setAll() {
-                    // Intentionally empty
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        cookieStore.set(name, value, options);
+                    });
                 },
             },
         });
