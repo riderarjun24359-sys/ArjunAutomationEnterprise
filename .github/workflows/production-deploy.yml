@@ -56,12 +56,39 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
+          PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
       - name: Upload .next artifact
         uses: actions/upload-artifact@v4
         with:
           name: next-build-${{ github.sha }}
           path: .next
           retention-days: 14
+
+  deploy:
+    name: Deploy to Vercel
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download .next artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build-${{ github.sha }}
+          path: .next
+      - name: Deploy to Vercel
+        uses: vercel/vercel-action@v3
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          build-env-vars: |
+            NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            PLATFORM_LEAD_API_KEY=${{ secrets.PLATFORM_LEAD_API_KEY }}
+            PLATFORM_ORGANIZATION_ID=${{ secrets.PLATFORM_ORGANIZATION_ID }}
+          prod: true
 
   healthcheck:
     name: Post-deploy health checks
