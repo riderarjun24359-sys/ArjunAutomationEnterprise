@@ -1,5 +1,5 @@
 const configuredSiteUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
-const siteUrl = configuredSiteUrl || (process.env.NODE_ENV === "production" ? "https://www.arjunautomation.com" : "http://localhost:3000");
+const siteUrl = configuredSiteUrl || (process.env.NODE_ENV === "production" ? "https://www.arjunautomations.com" : "http://localhost:3000");
 
 const xProfile = process.env.NEXT_PUBLIC_SOCIAL_X?.trim();
 const twitterHandle = xProfile
