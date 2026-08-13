@@ -67,25 +67,30 @@ jobs:
 
   deploy:
     name: Deploy to Vercel
-    needs: build
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download .next artifact
-        uses: actions/download-artifact@v4
+      - uses: actions/setup-node@v4
         with:
-          name: next-build
-          path: .next
+          node-version: "20"
+          cache: npm
+      - run: npm ci
       - name: Deploy to Vercel
         run: npx vercel --prod --yes
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
+          PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
 
   healthcheck:
     name: Post-deploy health checks
-    needs: build
+    needs: deploy
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
@@ -107,7 +112,7 @@ jobs:
 
   rollback_notes:
     name: Publish rollback strategy
-    needs: [verify, build]
+    needs: [verify, deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
