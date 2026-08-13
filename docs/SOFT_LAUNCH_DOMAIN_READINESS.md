@@ -2,7 +2,7 @@
 
 ## Canonical host
 
-- Production host: `www.arjunautomation.com`
+- Production host: `www.arjunautomations.com`
 - Set `NEXT_PUBLIC_APP_URL` to the canonical HTTPS origin.
 
 ## DNS checklist

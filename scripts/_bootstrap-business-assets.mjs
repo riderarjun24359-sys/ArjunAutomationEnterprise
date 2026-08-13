@@ -436,7 +436,7 @@ Each industry benefits from pre-built **Industry OS packs** that accelerate depl
         title: "Contact Information",
         content: \`**Sales & Partnerships**
 Email: sales@arjunautomation.com
-Web: www.arjunautomation.com
+Web: www.arjunautomations.com
 
 **Customer Success**
 Email: success@arjunautomation.com
