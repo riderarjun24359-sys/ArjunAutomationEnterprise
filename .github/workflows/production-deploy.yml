@@ -3,6 +3,8 @@ name: Production Early Access Deploy
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - "v*-early-access"
       - "v*"
