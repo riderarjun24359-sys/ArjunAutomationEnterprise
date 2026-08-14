@@ -188,6 +188,32 @@ export class BillingRevenueService {
         });
     }
 
+    async getDashboardStatsForOrg(organizationId: string): Promise<BrvDashboardStats> {
+        const maps = await this.getMaps(organizationId);
+        const [billingAccounts, subscriptionBillingsRaw, mrrSnapshotsRaw, arrSnapshotsRaw, outstandingBalancesRaw, invoicesRaw, paymentAttemptsRaw, collectionCases, auditLogs] = await Promise.all([
+            (await databaseService.brvBillingAccounts.listByOrganization(organizationId)).map(mapBillingAccountSummary),
+            databaseService.brvSubscriptionBillings.listByOrganization(organizationId),
+            databaseService.brvMrrSnapshots.listByOrganization(organizationId),
+            databaseService.brvArrSnapshots.listByOrganization(organizationId),
+            databaseService.brvOutstandingBalances.listByOrganization(organizationId),
+            databaseService.brvInvoices.listByOrganization(organizationId),
+            databaseService.brvPaymentAttempts.listByOrganization(organizationId),
+            (await databaseService.brvCollectionCases.listByOrganization(organizationId)).map((r) => mapCollectionCaseSummary(r, maps)),
+            (await databaseService.brvAuditLogs.listByOrganization(organizationId)).map(mapAuditEntry),
+        ]);
+        return buildBrvDashboardStats({
+            billingAccounts,
+            subscriptionBillings: subscriptionBillingsRaw.map(mapSubscriptionBillingForStats),
+            mrrSnapshots: mrrSnapshotsRaw.map(mapMrrSnapshotForStats),
+            arrSnapshots: arrSnapshotsRaw.map(mapArrSnapshotForStats),
+            outstandingBalances: outstandingBalancesRaw.map(mapOutstandingBalanceForStats),
+            invoices: invoicesRaw.map(mapInvoiceForStats),
+            paymentAttempts: paymentAttemptsRaw.map(mapPaymentAttemptForStats),
+            collectionCases,
+            auditLogs,
+        });
+    }
+
     getPipelineInfo(): BrvPipelineInfo {
         return buildBrvPipelineInfo();
     }

@@ -55,6 +55,44 @@ export class TaskService {
         return this.hydrateTasks(authUserId, email, fullName);
     }
 
+    async getTasksForOrg(organizationId: string): Promise<Task[]> {
+        const [records, labels, assignments] = await Promise.all([
+            databaseService.tasks.listByOrganization(organizationId),
+            databaseService.tasks.listLabels(organizationId),
+            databaseService.tasks.listByOrganization(organizationId).then((tasks) =>
+                databaseService.tasks.listLabelAssignments(tasks.map((task) => task.id)),
+            ),
+        ]);
+
+        const labelMap = new Map(labels.map((label) => [label.id, mapTaskLabel(label)]));
+        const assignmentsByTask = assignments.reduce<Map<string, TaskLabel[]>>((map, assignment) => {
+            const current = map.get(assignment.task_id) ?? [];
+            const label = labelMap.get(assignment.label_id);
+            if (label) {
+                current.push(label);
+            }
+            map.set(assignment.task_id, current);
+            return map;
+        }, new Map());
+
+        const projects = await Promise.all(
+            [...new Set(records.map((record) => record.project_id).filter(Boolean))].map(async (projectId) => {
+                const project = await databaseService.projects.getById(String(projectId));
+                return [String(projectId), project] as const;
+            }),
+        );
+        const projectMap = new Map(projects);
+
+        return records.map((record) =>
+            mapTaskRecord(
+                record,
+                assignmentsByTask.get(record.id) ?? [],
+                record.project_id ? projectMap.get(record.project_id) : null,
+                record.assignee_id ? mapTaskAssignee({ id: record.assignee_id, auth_user_id: record.assignee_id, email: record.assignee_name ?? "", full_name: record.assignee_name, created_at: record.created_at, updated_at: record.updated_at }) : null,
+            ),
+        );
+    }
+
     async getTask(authUserId: string, email: string, id: string, fullName?: string | null): Promise<Task | undefined> {
         const tasks = await this.hydrateTasks(authUserId, email, fullName);
         return tasks.find((task) => task.id === id);
@@ -83,6 +121,25 @@ export class TaskService {
         return task;
     }
 
+    async createTaskSystemWide(organizationId: string, input: CreateTaskInput): Promise<Task> {
+        const created = await databaseService.tasks.create(buildCreateTaskPayload(organizationId, input));
+        if (!created) {
+            throw new Error("Failed to create task");
+        }
+
+        if (input.labelIds?.length) {
+            await databaseService.tasks.setLabelAssignments(created.id, input.labelIds);
+        }
+
+        const tasks = await this.getTasksForOrg(organizationId);
+        const task = tasks.find(t => t.id === created.id);
+        if (!task) {
+            throw new Error("Failed to load created task");
+        }
+
+        return task;
+    }
+
     async updateTask(authUserId: string, email: string, id: string, input: UpdateTaskInput, fullName?: string | null): Promise<Task | undefined> {
         const updated = await databaseService.tasks.update(id, buildUpdateTaskPayload(input));
         if (!updated) {
@@ -95,6 +152,22 @@ export class TaskService {
 
         return this.getTask(authUserId, email, id, fullName);
     }
+
+    async updateTaskById(id: string, input: UpdateTaskInput): Promise<Task | undefined> {
+        const updated = await databaseService.tasks.update(id, buildUpdateTaskPayload(input));
+        if (!updated) {
+            return undefined;
+        }
+
+        if (input.labelIds) {
+            await databaseService.tasks.setLabelAssignments(id, input.labelIds);
+        }
+
+        const orgId = updated.organization_id;
+        const tasks = await this.getTasksForOrg(orgId);
+        return tasks.find(t => t.id === id);
+    }
+
 
     async deleteTask(authUserId: string, email: string, id: string): Promise<boolean> {
         return databaseService.tasks.delete(id);

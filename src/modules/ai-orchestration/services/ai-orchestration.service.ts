@@ -337,6 +337,14 @@ export class AiOrchestrationService {
         return { taskId: task.id ?? "", status: task.status, routeName: route?.routeName ?? null, providerName: route?.providerName ?? task.providerName ?? null, modelUsed: route?.modelId };
     }
 
+    async executeTaskSystemWide(input: CreateTaskExecutionInput & { organizationId: string }): Promise<TaskExecutionSummary> {
+        const created = await databaseService.aiTaskExecutions.create(buildTaskExecutionPayload(input.organizationId, input));
+        if (!created) throw new Error("Failed to create task execution");
+        await databaseService.aiOrchestrationAuditLogs.create(buildAiAuditPayload(input.organizationId, "task", "execute", `Task ${created.task_type} queued`, created.id));
+        const maps = await this.getMaps(input.organizationId);
+        return mapTaskExecutionSummary(created, maps);
+    }
+
     async getProviderOptions(authUserId: string, email: string, fullName?: string | null) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];

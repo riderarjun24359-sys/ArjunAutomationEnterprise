@@ -182,6 +182,11 @@ export class CustomerSuccessService {
         return (await databaseService.csHealthScores.listByOrganization(context.organizationId)).map((r) => mapHealthScoreSummary(r, maps));
     }
 
+    async getHealthScoresForOrg(organizationId: string): Promise<HealthScoreSummary[]> {
+        const maps = await this.getMaps(organizationId);
+        return (await databaseService.csHealthScores.listByOrganization(organizationId)).map((r) => mapHealthScoreSummary(r, maps));
+    }
+
     async createHealthScore(authUserId: string, email: string, input: CreateHealthScoreInput, fullName?: string | null): Promise<HealthScoreSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");

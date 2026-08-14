@@ -42,20 +42,13 @@ export class AiEnterpriseBrainService {
         return buildAiEnterpriseBrainSnapshot(data);
     }
 
-    async runControlLoop(
-        authUserId: string,
-        email: string,
-        fullName?: string | null,
-    ): Promise<boolean> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) return false;
-
+    async runForOrganization(organizationId: string): Promise<boolean> {
         // 1. Collect Signals
         const [health, csStats, billingStats, tasks] = await Promise.all([
             buildProductionHealthReport(),
-            customerSuccessService.getHealthScores(authUserId, email, fullName),
-            billingRevenueService.getDashboardStats(authUserId, email, fullName),
-            taskService.getTasks(authUserId, email, fullName),
+            customerSuccessService.getHealthScoresForOrg(organizationId),
+            billingRevenueService.getDashboardStatsForOrg(organizationId),
+            taskService.getTasksForOrg(organizationId),
         ]);
 
         const criticalHealth = health.status === "critical";
@@ -64,9 +57,9 @@ export class AiEnterpriseBrainService {
         // 2. Recovery Verification
         const incidentTask = tasks.find(t => t.title.includes("Enterprise Ops Priority") && t.status === "todo");
         if (incidentTask && !criticalHealth && highRiskClients.length === 0) {
-            await taskService.updateTask(authUserId, email, incidentTask.id, { status: "done" }, fullName);
+            await taskService.updateTaskById(incidentTask.id, { status: "done" });
             await databaseService.aiOrchestrationAuditLogs.create({
-                organization_id: context.organizationId,
+                organization_id: organizationId,
                 action: "remediation_verified",
                 result: "task_closed",
             });
@@ -80,9 +73,9 @@ export class AiEnterpriseBrainService {
         if (incidentTask) {
             const createdAt = new Date(incidentTask.createdAt).getTime();
             if (Date.now() - createdAt > 3600000) { // 1 hour
-                await taskService.updateTask(authUserId, email, incidentTask.id, { priority: "urgent" }, fullName);
+                await taskService.updateTaskById(incidentTask.id, { priority: "urgent" });
                 await databaseService.aiOrchestrationAuditLogs.create({
-                    organization_id: context.organizationId,
+                    organization_id: organizationId,
                     action: "prioritize_operations",
                     result: "task_escalated",
                 });
@@ -91,28 +84,42 @@ export class AiEnterpriseBrainService {
         }
 
         // 4. AI Orchestration
-        const aiResponse = await aiOrchestrationService.executeTask(authUserId, email, {
+        const aiResponse = await aiOrchestrationService.executeTaskSystemWide({
             taskType: "prioritize_ops",
-            moduleSource: "ai-enterprise-brain",
-            inputPayload: { healthStatus: health.status, riskClients: highRiskClients.length, revenueMrr: billingStats.mrrUsd },
-        }, fullName);
+            organizationId,
+            inputPayload: { moduleSource: "ai-enterprise-brain", healthStatus: health.status, riskClients: highRiskClients.length, revenueMrr: billingStats.mrrUsd },
+        });
 
         // 5. Deduplicated Task Creation
-        await taskService.createTask(authUserId, email, {
+        await taskService.createTaskSystemWide(organizationId, {
             title: "Enterprise Ops Priority Action Required",
             description: `AI recommended prioritization: ${JSON.stringify(aiResponse)}`,
             status: "todo",
             priority: "high",
             dueDate: new Date(Date.now() + 3600000).toISOString(),
-        }, fullName);
+        });
 
         await databaseService.aiOrchestrationAuditLogs.create({
-            organization_id: context.organizationId,
+            organization_id: organizationId,
             action: "prioritize_operations",
             result: "task_created",
         });
 
         return true;
+    }
+
+    async runSystemWideControlLoop(): Promise<boolean> {
+        const orgs = await databaseService.organizations.list();
+        let success = true;
+        for (const org of orgs) {
+            try {
+                await this.runForOrganization(org.id);
+            } catch (e) {
+                console.error(`Failed to run control loop for org ${org.id}`, e);
+                success = false;
+            }
+        }
+        return success;
     }
 }
 
