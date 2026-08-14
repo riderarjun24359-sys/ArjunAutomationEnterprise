@@ -67,7 +67,7 @@ export const DEFAULT_QUOTATION_TEMPLATE = `# Quotation Template
 
 ## Acceptance
 
-To accept this quotation, sign below and return to sales@arjunautomation.com
+To accept this quotation, sign below and return to sales@arjunautomations.com
 
 | Client Signature | Date |
 |------------------|------|
@@ -77,3 +77,4 @@ To accept this quotation, sign below and return to sales@arjunautomation.com
 
 *© Arjun Automation. Template v2.0.*
 `;
+

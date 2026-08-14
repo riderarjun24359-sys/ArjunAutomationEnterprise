@@ -32,9 +32,10 @@ export default function CookiesPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-indigo-950">Contact</h2>
-                    <p className="mt-2 leading-relaxed">Questions about cookies: sales@arjunautomation.com</p>
+                    <p className="mt-2 leading-relaxed">Questions about cookies: sales@arjunautomations.com</p>
                 </div>
             </section>
         </article>
     );
 }
+

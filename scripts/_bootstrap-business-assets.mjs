@@ -435,14 +435,14 @@ Each industry benefits from pre-built **Industry OS packs** that accelerate depl
         id: "contact-information",
         title: "Contact Information",
         content: \`**Sales & Partnerships**
-Email: sales@arjunautomation.com
+Email: sales@arjunautomations.com
 Web: www.arjunautomations.com
 
 **Customer Success**
-Email: success@arjunautomation.com
+Email: success@arjunautomations.com
 
 **Support (Managed Clients)**
-Email: support@arjunautomation.com
+Email: support@arjunautomations.com
 Portal: Available via Client Portal module
 
 **Office Hours**
@@ -628,3 +628,4 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
     },
 ];
 `);
+

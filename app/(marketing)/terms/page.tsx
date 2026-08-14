@@ -40,9 +40,10 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-indigo-950">7. Contact</h2>
-                    <p className="mt-2 leading-relaxed">Questions about these terms: sales@arjunautomation.com</p>
+                    <p className="mt-2 leading-relaxed">Questions about these terms: sales@arjunautomations.com</p>
                 </div>
             </section>
         </article>
     );
 }
+

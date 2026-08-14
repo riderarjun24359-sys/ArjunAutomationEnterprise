@@ -50,7 +50,7 @@ export function buildOrganizationJsonLd() {
         url: LAUNCH_KIT_SEO.siteUrl,
         logo: `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/logo.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
-        email: "sales@arjunautomation.com",
+        email: "sales@arjunautomations.com",
         sameAs: [
             "https://www.linkedin.com/company/arjunautomation",
             "https://twitter.com/arjunautomation",
@@ -58,7 +58,7 @@ export function buildOrganizationJsonLd() {
         contactPoint: {
             "@type": "ContactPoint",
             contactType: "sales",
-            email: "sales@arjunautomation.com",
+            email: "sales@arjunautomations.com",
             availableLanguage: ["English"],
         },
     };
@@ -124,3 +124,4 @@ export function buildServiceJsonLd(input: {
         },
     };
 }
+

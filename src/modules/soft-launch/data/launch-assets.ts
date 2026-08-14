@@ -141,13 +141,14 @@ export const SOFT_LAUNCH_BRANDING = {
     faviconPath: "/brand/favicon.svg",
     logoPath: "/brand/logos/favicon.svg",
     ogImagePath: "/launch-kit/og-default.svg",
-    supportEmail: "support@arjunautomation.com",
-    salesEmail: "sales@arjunautomation.com",
+    supportEmail: "support@arjunautomations.com",
+    salesEmail: "sales@arjunautomations.com",
 } as const;
 
 export const DOMAIN_READINESS = {
-    canonicalHost: "www.arjunautomation.com",
+    canonicalHost: "www.arjunautomations.com",
     requiredDns: ["A/ALIAS to hosting provider", "CNAME www → apex or CDN", "TXT for email auth (SPF/DKIM/DMARC)"],
     tls: "HTTPS enforced via platform edge",
     env: ["NEXT_PUBLIC_APP_URL", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "PLATFORM_LEAD_API_KEY"],
 } as const;
+

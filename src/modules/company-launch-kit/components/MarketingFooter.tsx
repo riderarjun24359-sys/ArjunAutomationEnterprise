@@ -40,7 +40,7 @@ export function MarketingFooter() {
                             Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.
                         </p>
                         <p className="mt-4 text-sm text-slate-500">
-                            sales@arjunautomation.com
+                            sales@arjunautomations.com
                         </p>
                     </div>
                     <div>
@@ -94,3 +94,4 @@ export function MarketingFooter() {
         </footer>
     );
 }
+

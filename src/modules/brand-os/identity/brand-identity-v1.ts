@@ -10,7 +10,7 @@ export const BRAND_IDENTITY_V1 = {
     shortName: "Arjun",
     tagline: "Enterprise automation, orchestrated.",
     symbolName: "Orbit Mark",
-    domain: "www.arjunautomation.com",
+    domain: "www.arjunautomations.com",
 } as const;
 
 /** Original enterprise palette — ink navy + signal teal (not violet-default). */
@@ -102,3 +102,4 @@ export const BRAND_V1_ILLUSTRATION = {
     lineWeight: "1.5–2.5px at 24px icon size",
     cornerRadius: "consistent with brand radius md–xl",
 } as const;
+

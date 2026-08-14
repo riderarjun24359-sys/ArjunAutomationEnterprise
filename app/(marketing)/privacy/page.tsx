@@ -36,11 +36,12 @@ export default function PrivacyPage() {
                 <p>We may use third-party analytics providers (Google Analytics, Meta Pixel, LinkedIn Insight Tag) subject to their respective privacy policies. These services may collect anonymized usage data.</p>
 
                 <h2 className="text-xl font-semibold text-indigo-950">6. Your Rights</h2>
-                <p>You may request access to, correction of, or deletion of your personal data by contacting sales@arjunautomation.com. We will respond within 30 days.</p>
+                <p>You may request access to, correction of, or deletion of your personal data by contacting sales@arjunautomations.com. We will respond within 30 days.</p>
 
                 <h2 className="text-xl font-semibold text-indigo-950">7. Contact</h2>
-                <p>For privacy-related inquiries: sales@arjunautomation.com</p>
+                <p>For privacy-related inquiries: sales@arjunautomations.com</p>
             </section>
         </article>
     );
 }
+

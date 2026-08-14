@@ -71,8 +71,8 @@ export default function CareersPage() {
                         </div>
                         <p className="mt-6 text-sm text-slate-600">
                             Interested? Send your resume to{" "}
-                            <a href="mailto:careers@arjunautomation.com" className="text-indigo-700 hover:text-indigo-600">
-                                careers@arjunautomation.com
+                            <a href="mailto:careers@arjunautomations.com" className="text-indigo-700 hover:text-indigo-600">
+                                careers@arjunautomations.com
                             </a>{" "}
                             or{" "}
                             <Link href={MARKETING_ROUTES.contact} className="text-indigo-700 hover:text-indigo-600">
@@ -87,3 +87,4 @@ export default function CareersPage() {
         </>
     );
 }
+

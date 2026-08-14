@@ -7,7 +7,7 @@ import type { SecurityCenterState, SecurityRole } from "../types";
 
 const DEFAULT_USER = {
     authUserId: "platform-user",
-    email: "security@arjunautomation.com",
+    email: "security@arjunautomations.com",
     fullName: "Security Admin",
     orgId: "org-default",
     role: "admin" as SecurityRole,
@@ -86,3 +86,4 @@ export function useSecurityCenter() {
 
     return { state, loading, refresh, service: securityCenterService };
 }
+

@@ -57,9 +57,10 @@ Reference: AA-INV-[YYYY]-[###]
 
 - Payment due within 15 days of invoice date
 - Late payments subject to 1.5% monthly interest
-- Questions: finance@arjunautomation.com
+- Questions: finance@arjunautomations.com
 
 ---
 
 *© Arjun Automation. Official Invoice.*
 `;
+

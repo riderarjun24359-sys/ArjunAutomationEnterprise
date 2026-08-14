@@ -11,7 +11,7 @@ export interface SocialPostTemplateProps {
 export function SocialPostTemplate({
     headline = "Enterprise automation. Without the enterprise wait.",
     body = "Arjun Automation OS unifies CRM, AI workers, and industry packs into one secure platform. AI-generated first version within hours.",
-    cta = "Learn more at arjunautomation.com",
+    cta = "Learn more at arjunautomations.com",
 }: SocialPostTemplateProps) {
     return (
         <div className="mx-auto max-w-md" aria-label="Social post preview">
@@ -32,3 +32,4 @@ export function SocialPostTemplate({
         </div>
     );
 }
+

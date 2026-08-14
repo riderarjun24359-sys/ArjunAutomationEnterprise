@@ -41,7 +41,7 @@ export function MarketingFooterStatic() {
                         <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
                             Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.
                         </p>
-                        <p className="mt-4 text-sm text-slate-400">sales@arjunautomation.com</p>
+                        <p className="mt-4 text-sm text-slate-400">sales@arjunautomations.com</p>
                     </div>
 
                     {Object.entries({ Company: FOOTER_LINKS.company, Solutions: FOOTER_LINKS.solutions, Resources: FOOTER_LINKS.resources }).map(
@@ -82,3 +82,4 @@ export function MarketingFooterStatic() {
         </footer>
     );
 }
+

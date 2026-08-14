@@ -29,7 +29,7 @@ try {
     appHost = new URL(appUrl).hostname;
     pass(
         "url:canonical_host",
-        appHost === "www.arjunautomation.com" || appHost.endsWith(".vercel.app"),
+        appHost === "www.arjunautomations.com" || appHost.endsWith(".vercel.app"),
         appHost,
     );
 } catch {
@@ -70,3 +70,4 @@ for (const r of results) {
     console.log(`${r.pass ? "PASS" : "FAIL"} ${r.check}${r.detail ? ` — ${r.detail}` : ""}`);
 }
 process.exitCode = failed.length ? 1 : 0;
+

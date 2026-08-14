@@ -38,7 +38,7 @@ export default function RefundPolicyPage() {
                         Enterprise agreements and implementation retainers follow the statement of work. Milestone payments already accepted for completed discovery or delivery work are non-refundable. Unused prepaid managed-support months may be credited toward future service by written agreement.
                     </p>
                     <p>
-                        To request a refund, email <a className="underline" href="mailto:support@arjunautomation.com">support@arjunautomation.com</a> with your organization name, invoice ID, and reason. We respond within 3 business days.
+                        To request a refund, email <a className="underline" href="mailto:support@arjunautomations.com">support@arjunautomations.com</a> with your organization name, invoice ID, and reason. We respond within 3 business days.
                     </p>
                     <p>
                         See also our <Link className="underline" href={MARKETING_ROUTES.terms}>Terms of Service</Link> and <Link className="underline" href={MARKETING_ROUTES.privacy}>Privacy Policy</Link>.
@@ -49,3 +49,4 @@ export default function RefundPolicyPage() {
         </>
     );
 }
+

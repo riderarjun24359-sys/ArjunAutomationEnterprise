@@ -310,7 +310,7 @@ function writeGuidelinesPdf() {
     "All product, marketing, partner, and sales materials must use Brand Identity v1.0 assets from brand-assets/identity-v1.0. Do not invent alternate marks or palettes.",
     y,
   );
-  y = body("Contact: brand@arjunautomation.com", y);
+  y = body("Contact: brand@arjunautomations.com", y);
   y = body("Pack location: brand-assets/identity-v1.0 · Public mirror: public/brand/v1", y);
   footer(5);
 
@@ -385,3 +385,4 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+

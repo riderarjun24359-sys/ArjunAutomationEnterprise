@@ -25,9 +25,9 @@ const breadcrumbs = [
 ];
 
 const CHANNELS = [
-    { label: "Sales & Partnerships", value: "sales@arjunautomation.com", href: "mailto:sales@arjunautomation.com" },
-    { label: "Customer Success", value: "success@arjunautomation.com", href: "mailto:success@arjunautomation.com" },
-    { label: "Support (Managed Clients)", value: "support@arjunautomation.com", href: "mailto:support@arjunautomation.com" },
+    { label: "Sales & Partnerships", value: "sales@arjunautomations.com", href: "mailto:sales@arjunautomations.com" },
+    { label: "Customer Success", value: "success@arjunautomations.com", href: "mailto:success@arjunautomations.com" },
+    { label: "Support (Managed Clients)", value: "support@arjunautomations.com", href: "mailto:support@arjunautomations.com" },
 ];
 
 const QUALIFICATION_STEPS = [
@@ -113,3 +113,4 @@ export default function ContactPage() {
         </>
     );
 }
+

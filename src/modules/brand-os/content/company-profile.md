@@ -93,14 +93,14 @@ Customers receive AI-accelerated delivery without compromising enterprise qualit
 ## Contact
 
 **Sales & Partnerships**  
-Email: sales@arjunautomation.com  
-Web: www.arjunautomation.com
+Email: sales@arjunautomations.com
+Web: www.arjunautomations.com
 
-**Customer Success**  
-Email: success@arjunautomation.com
+**Customer Success**
+Email: success@arjunautomations.com
 
-**Support (Managed Clients)**  
-Email: support@arjunautomation.com  
+**Support (Managed Clients)**
+Email: support@arjunautomations.com
 Portal: Available via Client Portal module
 
 **Office Hours**  
