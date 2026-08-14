@@ -22,6 +22,9 @@ import {
 } from "@/src/modules/database/lib/automation-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { buildProductionHealthReport } from "@/src/lib/production-health";
+import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
+import { taskService } from "@/src/modules/tasks/services/task.service";
 import type {
     AiAgent,
     AutomationAnalytics,
@@ -232,6 +235,36 @@ export class AutomationService {
         ]);
 
         return buildAutomationAnalytics({ workflows, executions, logs });
+    }
+
+    async detectAndRemediateCriticalHealth(
+        authUserId: string,
+        email: string,
+        fullName?: string | null,
+    ): Promise<boolean> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) return false;
+
+        const health = buildProductionHealthReport();
+        if (health.status !== "critical") return false;
+
+        // Propose remediation using AI
+        const aiResponse = await aiOrchestrationService.executeTask(authUserId, email, {
+            taskType: "remediate_incident",
+            moduleSource: "automation",
+            inputPayload: { healthStatus: health.status, checks: health.checks },
+        }, fullName);
+
+        // Create a remediation task
+        await taskService.createTask(authUserId, email, {
+            title: `Remediation required: System Health ${health.status}`,
+            description: `AI recommended remediation: ${JSON.stringify(aiResponse)}`,
+            status: "todo",
+            priority: "high",
+            dueDate: new Date().toISOString(),
+        }, fullName);
+
+        return true;
     }
 }
 
