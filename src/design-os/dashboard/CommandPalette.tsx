@@ -9,7 +9,7 @@ import { searchCommands, parseNaturalLanguageCommand } from "@/src/modules/execu
 import { searchEverything } from "@/src/modules/executive-command-center/services/smart-search.service";
 import { useExecutiveShellStore } from "@/src/store/executive.store";
 import { AiCommandPaletteMotion } from "@/src/design-os/immersive-v2";
-import { AiThinkingIndicator } from "@/src/design-os/motion/components/AiThinkingIndicator";
+import { AiThinkingIndicator } from "@/src/design-os/components/ai/AiThinkingIndicator";
 
 export function CommandPalette() {
     const open = useExecutiveShellStore((s) => s.commandPaletteOpen);
@@ -72,7 +72,7 @@ export function CommandPalette() {
                     </div>
                     {thinking ? (
                         <div className="px-4 py-3">
-                            <AiThinkingIndicator label="Interpreting" />
+                            <AiThinkingIndicator />
                         </div>
                     ) : null}
                     <Command.List className="max-h-80 overflow-y-auto p-2">

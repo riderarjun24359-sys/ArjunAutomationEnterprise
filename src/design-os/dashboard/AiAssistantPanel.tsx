@@ -1,17 +1,20 @@
 "use client";
 
 import { AnimatePresence, m } from "framer-motion";
-import { Bot, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/src/lib/cn";
 import { Button } from "@/src/design-os/components/Button";
 import { Input } from "@/src/design-os/components/Input";
 import { drawerPanel, modalOverlay } from "@/src/design-os/motion/variants";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
-import { AiThinkingIndicator } from "@/src/design-os/motion/components/AiThinkingIndicator";
-import { AiTypingText } from "@/src/design-os/motion/components/AiTypingText";
+import { AiThinkingIndicator } from "@/src/design-os/components/ai/AiThinkingIndicator";
+import { AiTypingText } from "@/src/design-os/components/ai/AiTypingText";
+import { AiState, AiStateIndicator } from "@/src/design-os/components/ai/AiStateIndicator";
+import { useState } from "react";
 
 export function AiAssistantPanel({ open, onClose, className }: { open: boolean; onClose: () => void; className?: string }) {
     const reduced = useReducedMotion();
+    const [aiState] = useState<AiState>("idle");
 
     return (
         <AnimatePresence>
@@ -42,7 +45,7 @@ export function AiAssistantPanel({ open, onClose, className }: { open: boolean; 
                     >
                         <div className="flex items-center justify-between border-b border-[var(--dos-border)] px-4 py-3">
                             <div className="flex items-center gap-2">
-                                <Bot className="h-5 w-5 text-[var(--dos-brand-primary)]" aria-hidden="true" />
+                                <AiStateIndicator state={aiState} size={30} />
                                 <span className="font-semibold text-[var(--dos-text-primary)]">AI Assistant</span>
                             </div>
                             <button
@@ -55,10 +58,13 @@ export function AiAssistantPanel({ open, onClose, className }: { open: boolean; 
                             </button>
                         </div>
                         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-                            <AiThinkingIndicator label="Ready" />
+                            <div className="flex justify-center py-4">
+                                <AiThinkingIndicator />
+                            </div>
                             <div className="rounded-[var(--dos-radius-xl)] border border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] p-3 text-sm text-[var(--dos-text-secondary)]">
                                 <AiTypingText text="Ask anything about your workspace, modules, or live data. Answers stream with premium motion." />
                             </div>
+
                             <div className="mt-auto flex gap-2 pt-2">
                                 <Input placeholder="Ask a question..." aria-label="Ask the AI assistant" />
                                 <Button size="sm">Send</Button>

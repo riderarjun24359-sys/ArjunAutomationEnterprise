@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/src/lib/cn";
 import type { ShellNavigationItem } from "@/src/config/shell-navigation";
+import { m } from "framer-motion";
+import { staggerItem } from "@/src/design-os/motion/variants";
 
 interface NavLinkProps {
     item: ShellNavigationItem;
@@ -13,23 +15,33 @@ interface NavLinkProps {
 
 export function NavLink({ item, collapsed = false, onNavigate }: NavLinkProps) {
     const pathname = usePathname();
-    const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+    const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(`${item.href}/`));
     const Icon = item.icon;
 
     return (
-        <Link
-            href={item.href}
-            onClick={onNavigate}
-            title={collapsed ? item.label : undefined}
-            className={cn(
-                "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition",
-                isActive
-                    ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white",
+        <m.div variants={staggerItem} className="relative">
+            <Link
+                href={item.href}
+                onClick={onNavigate}
+                title={collapsed ? item.label : undefined}
+                className={cn(
+                    "dos-focus-ring group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium",
+                    "transition-colors duration-200",
+                    isActive
+                        ? "text-[var(--dos-text-primary)]"
+                        : "text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] hover:text-[var(--dos-text-primary)]",
+                )}
+            >
+                <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-[var(--dos-brand-primary)]" : "text-[var(--dos-text-tertiary)] group-hover:text-[var(--dos-text-secondary)]")} />
+                {!collapsed ? <span className="truncate">{item.label}</span> : null}
+            </Link>
+            {isActive && (
+                <m.div
+                    layoutId="sidebar-active-indicator"
+                    className="absolute inset-0 z-[-1] rounded-2xl bg-[var(--dos-surface-tertiary)] shadow-[var(--dos-shadow-glow)]"
+                    transition={{ type: "spring", stiffness: 350, damping: 35 }}
+                />
             )}
-        >
-            <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-emerald-600 dark:text-emerald-300" : "text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200")} />
-            {!collapsed ? <span className="truncate">{item.label}</span> : null}
-        </Link>
+        </m.div>
     );
 }

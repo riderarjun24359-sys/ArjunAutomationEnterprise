@@ -9,8 +9,6 @@ export { FloatingElement } from "./FloatingElement";
 export { ProgressiveLoader } from "./ProgressiveLoader";
 export { PremiumMotionProvider } from "./PremiumMotionProvider";
 export { WidgetEntrance } from "./WidgetEntrance";
-export { AiTypingText } from "./AiTypingText";
-export { AiThinkingIndicator } from "./AiThinkingIndicator";
 export { StreamingText } from "./StreamingText";
 export { BottomSheet } from "./BottomSheet";
 export { ProgressIndicator } from "./ProgressIndicator";

@@ -9,6 +9,9 @@ import { useAppStore } from "@/src/store/app.store";
 import { useExecutiveShellStore } from "@/src/store/executive.store";
 import { shellRouteLabels } from "@/src/config/shell-navigation";
 import { usePathname } from "next/navigation";
+import { m } from "framer-motion";
+import { staggerContainer, staggerItem } from "@/src/design-os/motion/variants";
+import { cn } from "@/src/lib/cn";
 
 export function DashboardToolbar({ title }: { title?: string }) {
     const pathname = usePathname();
@@ -24,33 +27,45 @@ export function DashboardToolbar({ title }: { title?: string }) {
     })) ?? [];
 
     return (
-        <header className="sticky top-0 z-[var(--dos-z-sticky)] border-b border-[var(--dos-border)] bg-[var(--dos-surface-elevated)]/90 backdrop-blur-md">
-            <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <header className={cn("dos-glass-panel sticky top-0 z-[var(--dos-z-sticky)]")}>
+            <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
                 <div className="flex min-w-0 items-center gap-3">
                     <button type="button" onClick={toggleMobileMenu} className="rounded-[var(--dos-radius-xl)] border border-[var(--dos-border)] p-2 text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] lg:hidden" aria-label="Open navigation menu">
                         <Menu className="h-5 w-5" />
                     </button>
                     <div className="min-w-0">
-                        <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--dos-brand-primary)]">Executive Intelligence</p>
                         <h1 className="truncate text-lg font-semibold text-[var(--dos-text-primary)]">{resolvedTitle}</h1>
                     </div>
                 </div>
                 <div className="hidden max-w-md flex-1 px-4 md:block">
                     <SmartSearch />
                 </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={toggleCopilot}
-                        className="flex h-9 w-9 items-center justify-center rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] text-[var(--dos-text-secondary)] hover:text-[var(--dos-brand-primary)]"
-                        aria-label="Open executive copilot"
-                    >
-                        <Bot className="h-4 w-4" />
-                    </button>
-                    <NotificationCenter count={notifications.length} items={notifications} />
-                    <ThemeToggle />
-                    <UserMenu />
-                </div>
+                <m.div
+                    className="flex items-center gap-2"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    animate="show"
+                >
+                    <m.div variants={staggerItem}>
+                        <button
+                            type="button"
+                            onClick={toggleCopilot}
+                            className="dos-focus-ring dos-interactive flex h-9 w-9 items-center justify-center rounded-full border border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] text-[var(--dos-text-secondary)] transition-colors hover:text-[var(--dos-brand-primary)]"
+                            aria-label="Open executive copilot"
+                        >
+                            <Bot className="h-4 w-4" />
+                        </button>
+                    </m.div>
+                    <m.div variants={staggerItem}>
+                        <NotificationCenter count={notifications.length} items={notifications} />
+                    </m.div>
+                    <m.div variants={staggerItem}>
+                        <ThemeToggle />
+                    </m.div>
+                    <m.div variants={staggerItem}>
+                        <UserMenu />
+                    </m.div>
+                </m.div>
             </div>
         </header>
     );

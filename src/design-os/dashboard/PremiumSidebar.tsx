@@ -8,6 +8,8 @@ import { appConfig } from "@/src/config/app";
 import { cn } from "@/src/lib/cn";
 import { useAppStore } from "@/src/store/app.store";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
+import { BrandMark } from "../components/brand/BrandMark";
+import { staggerContainer } from "@/src/design-os/motion/variants";
 
 interface PremiumSidebarProps {
     onNavigate?: () => void;
@@ -25,7 +27,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
             animate={{ width: sidebarOpen ? 288 : 84 }}
             transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 320, damping: 34 }}
         >
-            <div className="flex items-center justify-between gap-3 border-b border-[var(--dos-border)] px-4 py-4">
+            <div className="flex items-center justify-between gap-3 border-b border-[var(--dos-border)] px-4 py-3">
                 <div className={cn("min-w-0", !sidebarOpen && "mx-auto")}>
                     {sidebarOpen ? (
                         <>
@@ -33,9 +35,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                             <p className="truncate text-xs text-[var(--dos-text-tertiary)]">Enterprise OS</p>
                         </>
                     ) : (
-                        <div className="flex h-9 w-9 items-center justify-center rounded-[var(--dos-radius-xl)] bg-[var(--dos-brand-primary)]/15 text-sm font-semibold text-[var(--dos-brand-primary)]">
-                            AO
-                        </div>
+                        <BrandMark />
                     )}
                 </div>
                 <button
@@ -47,7 +47,12 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                     {sidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
                 </button>
             </div>
-            <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4">
+            <m.nav
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+                className="flex-1 space-y-6 overflow-y-auto px-3 py-4"
+            >
                 <div className="space-y-1">
                     {sidebarOpen ? (
                         <p className="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--dos-text-tertiary)]">Operations</p>
@@ -64,7 +69,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                         <NavLink key={item.href} item={item} collapsed={!sidebarOpen} onNavigate={onNavigate} />
                     ))}
                 </div>
-            </nav>
+            </m.nav>
         </m.aside>
     );
 }

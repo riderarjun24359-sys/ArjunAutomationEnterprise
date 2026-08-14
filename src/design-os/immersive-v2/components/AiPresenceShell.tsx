@@ -2,7 +2,7 @@
 
 import { m } from "framer-motion";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
-import { AiThinkingIndicator } from "@/src/design-os/motion/components/AiThinkingIndicator";
+import { AiThinkingIndicator } from "@/src/design-os/components/ai/AiThinkingIndicator";
 import { StreamingText } from "@/src/design-os/motion/components/StreamingText";
 import { aiPresencePulse } from "../variants";
 import { cn } from "@/src/lib/cn";
