@@ -246,7 +246,28 @@ export class AutomationService {
         if (!context) return false;
 
         const health = buildProductionHealthReport();
+        const existingTasks = await taskService.getTasks(authUserId, email, fullName);
+        const incidentTask = existingTasks.find(t => t.title.includes("System Health critical") && t.status === "todo");
+
+        if (health.status === "healthy") {
+            if (incidentTask) {
+                await taskService.updateTask(authUserId, email, incidentTask.id, { status: "done" }, fullName);
+                await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, `Incident recovery verified for task ${incidentTask.id}`, "info", incidentTask.id));
+            }
+            return true;
+        }
+
         if (health.status !== "critical") return false;
+
+        if (incidentTask) {
+            // Check for escalation
+            const createdAt = new Date(incidentTask.createdAt).getTime();
+            if (Date.now() - createdAt > 3600000) { // 1 hour threshold
+                await taskService.updateTask(authUserId, email, incidentTask.id, { priority: "urgent" }, fullName);
+                await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, `Incident escalated for task ${incidentTask.id}`, "warn", incidentTask.id));
+            }
+            return false;
+        }
 
         // Propose remediation using AI
         const aiResponse = await aiOrchestrationService.executeTask(authUserId, email, {
@@ -256,17 +277,13 @@ export class AutomationService {
         }, fullName);
 
         // Create a remediation task
-        const existingTask = await taskService.getTasks(authUserId, email, fullName);
-        const isDuplicate = existingTask.some(t => t.title.includes(`System Health ${health.status}`) && t.status === "todo");
-        if (!isDuplicate) {
-            await taskService.createTask(authUserId, email, {
-                title: `Remediation required: System Health ${health.status}`,
-                description: `AI recommended remediation: ${JSON.stringify(aiResponse)}`,
-                status: "todo",
-                priority: "high",
-                dueDate: new Date().toISOString(),
-            }, fullName);
-        }
+        await taskService.createTask(authUserId, email, {
+            title: `Remediation required: System Health ${health.status}`,
+            description: `AI recommended remediation: ${JSON.stringify(aiResponse)}`,
+            status: "todo",
+            priority: "high",
+            dueDate: new Date().toISOString(),
+        }, fullName);
 
         return true;
     }
