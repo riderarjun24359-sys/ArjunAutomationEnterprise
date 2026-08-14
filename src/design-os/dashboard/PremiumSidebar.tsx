@@ -8,7 +8,6 @@ import { appConfig } from "@/src/config/app";
 import { cn } from "@/src/lib/cn";
 import { useAppStore } from "@/src/store/app.store";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
-import { BrandMark } from "../components/brand/BrandMark";
 import { staggerContainer } from "@/src/design-os/motion/variants";
 
 interface PremiumSidebarProps {
@@ -35,7 +34,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                             <p className="truncate text-xs text-[var(--dos-text-tertiary)]">Enterprise OS</p>
                         </>
                     ) : (
-                        <BrandMark />
+                        <div />
                     )}
                 </div>
                 <button

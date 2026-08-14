@@ -29,7 +29,7 @@ try {
     appHost = new URL(appUrl).hostname;
     pass(
         "url:canonical_host",
-        appHost === "www.arjunautomations.com" || appHost.endsWith(".vercel.app"),
+        appHost === "www.arjunautomation.com" || appHost.endsWith(".vercel.app"),
         appHost,
     );
 } catch {

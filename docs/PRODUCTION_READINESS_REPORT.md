@@ -1,21 +1,21 @@
 # Production Readiness Report
 
 **Version:** 1.0.0-early-access-cutover  
-**Generated:** 2026-08-06T22:53:27.987Z  
-**Ready:** YES  
-**Score:** 64/100  
+**Generated:** 2026-08-14T17:09:18.597Z  
+**Ready:** NO  
+**Score:** 40/100  
 
 ## Secrets
 
-- Missing critical: none
-- Email provider: configured
+- Missing critical: NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID
+- Email provider: pending
 - Payments: pending · webhook secret pending
 - Monitoring sink: pending
 - Backup enabled: no
 
 ## Supabase
 
-- Migration SQL files: 58
+- Migration SQL files: 59
 - RLS enable statements: 1233
 - Policies: 361
 - Apply on production with `npm run db:apply` (or platform pipeline)
@@ -31,11 +31,11 @@
 
 | ID | Status | Detail |
 |---|---|---|
-| secrets_critical | pass | all present |
+| secrets_critical | warn | NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID |
 | secrets_startup_gate | pass | instrumentation.ts |
-| supabase_migrations | pass | 58 files |
+| supabase_migrations | pass | 59 files |
 | supabase_rls | pass | 1233 RLS / 361 policies |
-| email_provider | pass | configured |
+| email_provider | warn | missing |
 | email_templates | pass | welcome.md:true, verify-email.md:true, invite-teammate.md:true, password-reset.md:true |
 | payments_gateway | warn | missing |
 | payments_webhook | warn | /api/payments/webhook |
@@ -44,6 +44,12 @@
 
 ## Remaining blockers
 
+- Set NEXT_PUBLIC_APP_URL
+- Set NEXT_PUBLIC_SUPABASE_URL
+- Set NEXT_PUBLIC_SUPABASE_ANON_KEY
+- Set PLATFORM_LEAD_API_KEY
+- Set PLATFORM_ORGANIZATION_ID
+- Configure RESEND_API_KEY or SMTP_*
 - Configure Stripe keys
 - Set STRIPE_WEBHOOK_SECRET and register /api/payments/webhook
 - Set BACKUP_ENABLED=true and enable org backups
