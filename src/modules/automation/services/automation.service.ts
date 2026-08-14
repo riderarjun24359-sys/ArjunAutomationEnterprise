@@ -256,13 +256,17 @@ export class AutomationService {
         }, fullName);
 
         // Create a remediation task
-        await taskService.createTask(authUserId, email, {
-            title: `Remediation required: System Health ${health.status}`,
-            description: `AI recommended remediation: ${JSON.stringify(aiResponse)}`,
-            status: "todo",
-            priority: "high",
-            dueDate: new Date().toISOString(),
-        }, fullName);
+        const existingTask = await taskService.getTasks(authUserId, email, fullName);
+        const isDuplicate = existingTask.some(t => t.title.includes(`System Health ${health.status}`) && t.status === "todo");
+        if (!isDuplicate) {
+            await taskService.createTask(authUserId, email, {
+                title: `Remediation required: System Health ${health.status}`,
+                description: `AI recommended remediation: ${JSON.stringify(aiResponse)}`,
+                status: "todo",
+                priority: "high",
+                dueDate: new Date().toISOString(),
+            }, fullName);
+        }
 
         return true;
     }
