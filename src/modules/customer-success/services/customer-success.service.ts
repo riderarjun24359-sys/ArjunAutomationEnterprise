@@ -43,6 +43,8 @@ import {
 } from "@/src/modules/database/lib/customer-success-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { taskService } from "@/src/modules/tasks/services/task.service";
+import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
 import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import type {
@@ -205,6 +207,61 @@ export class CustomerSuccessService {
         await databaseService.csAuditLogs.create(buildCsAuditPayload(context.organizationId, "renewal_plan", "create", `Renewal plan ${created.name} created`, created.id));
         const maps = await this.getMaps(context.organizationId);
         return mapRenewalPlanSummary(created, maps);
+    }
+
+    async detectAndRemediateClientRisk(
+        authUserId: string,
+        email: string,
+        fullName?: string | null,
+    ): Promise<boolean> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) return false;
+
+        const healthScores = await this.getHealthScores(authUserId, email, fullName);
+        const highRiskClients = healthScores.filter(hs => hs.overallScore < 50);
+
+        for (const client of highRiskClients) {
+            // Find existing task
+            const existingTasks = await taskService.getTasks(authUserId, email, fullName);
+            const task = existingTasks.find(t => t.title.includes(`Risk detected for client ${client.name}`));
+            
+            if (task) {
+                if (task.status === "done") {
+                    // Proceed to re-analyze risk
+                } else if (task.status === "todo" || task.status === "in_progress" || task.status === "review" || task.status === "blocked") {
+                    // Check for escalation (if task older than 24 hours)
+                    const createdAt = new Date(task.createdAt).getTime();
+                    if (Date.now() - createdAt > 86400000) {
+                        await taskService.updateTask(authUserId, email, task.id, { priority: "urgent" }, fullName);
+                        await databaseService.csAuditLogs.create(buildCsAuditPayload(context.organizationId, "risk_mitigation", "update", `Risk task escalated for ${client.name}`, task.id));
+                    }
+                    continue;
+                } else {
+                     // cancelled - assume manual intervention, skip
+                     continue;
+                }
+            }
+
+            // AI analysis
+            const aiResponse = await aiOrchestrationService.executeTask(authUserId, email, {
+                taskType: "analyze_client_risk",
+                moduleSource: "customer-success",
+                inputPayload: { clientId: client.id, healthScore: client.overallScore },
+            }, fullName);
+
+            // Create remediation task
+            await taskService.createTask(authUserId, email, {
+                title: `Risk detected for client ${client.name}`,
+                description: `AI recommended risk mitigation: ${JSON.stringify(aiResponse)}`,
+                status: "todo",
+                priority: "high",
+                dueDate: new Date(Date.now() + 86400000).toISOString(), // 24 hours
+            }, fullName);
+            
+            await databaseService.csAuditLogs.create(buildCsAuditPayload(context.organizationId, "risk_mitigation", "create", `Risk task created for ${client.name}`, client.id));
+        }
+
+        return true;
     }
 
     async getExpansionOpportunities(authUserId: string, email: string, fullName?: string | null): Promise<ExpansionOpportunitySummary[]> {
