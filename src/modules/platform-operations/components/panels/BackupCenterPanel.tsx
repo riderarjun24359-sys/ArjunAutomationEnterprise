@@ -14,14 +14,18 @@ export function BackupCenterPanel() {
     const { service } = usePlatformOperations();
     const [configs, setConfigs] = useState<DbBackupConfig[]>([]);
 
+    useEffect(() => {
+        let mounted = true;
+        service.getBackupConfigs(ACME_ORG_ID).then((data) => {
+            if (mounted) setConfigs(data);
+        });
+        return () => { mounted = false };
+    }, [service]);
+
     const loadConfigs = useCallback(async () => {
         const data = await service.getBackupConfigs(ACME_ORG_ID);
         setConfigs(data);
     }, [service]);
-
-    useEffect(() => {
-        loadConfigs();
-    }, [loadConfigs]);
 
     const handleCreateConfig = async () => {
         await service.createBackupConfig(ACME_ORG_ID, "Production Database Backup");
