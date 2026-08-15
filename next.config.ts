@@ -19,6 +19,17 @@ const nextConfig: NextConfig = {
                 destination: "/auth/sign-in",
                 permanent: true,
             },
+            {
+                source: "/:path*",
+                has: [
+                    {
+                        type: "host",
+                        value: "arjunautomations.com",
+                    },
+                ],
+                destination: "https://www.arjunautomations.com/:path*",
+                permanent: true,
+            },
         ];
     },
     async headers() {
