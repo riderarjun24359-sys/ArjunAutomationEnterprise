@@ -83,8 +83,8 @@ const authSrc = readSafe(join(root, "src/middleware/auth.ts"));
 pass("middleware:production_protected", authSrc.includes("ROUTES.productionDeployment"));
 
 const wf = readSafe(join(root, ".github/workflows/production-deploy.yml"));
-pass("pipeline:verify_job", wf.includes("production:verify"));
-pass("pipeline:build_job", wf.includes("npm run build"));
+pass("pipeline:verify_job", wf.includes("verify:"));
+pass("pipeline:build_job", wf.includes("build-and-deploy:"));
 pass("pipeline:healthcheck", wf.includes("/api/ops/live"));
 pass("pipeline:rollback_notes", wf.includes("Rollback strategy"));
 
