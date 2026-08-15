@@ -1,7 +1,7 @@
 -- AI Command Center v1.0
 
 create table if not exists public.acc_alerts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   severity text not null default 'medium' check (severity in ('low', 'medium', 'high', 'critical')),
   source_module text not null default 'system',
@@ -13,7 +13,7 @@ create table if not exists public.acc_alerts (
 );
 
 create table if not exists public.acc_recommendations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   engine_key text not null,
   title text not null,
@@ -26,7 +26,7 @@ create table if not exists public.acc_recommendations (
 );
 
 create table if not exists public.acc_decisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   decision_type text not null,
   summary text not null,
@@ -37,7 +37,7 @@ create table if not exists public.acc_decisions (
 );
 
 create table if not exists public.acc_automations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   automation_key text not null,
   title text not null,
@@ -49,7 +49,7 @@ create table if not exists public.acc_automations (
 );
 
 create table if not exists public.acc_health_snapshots (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   system_health numeric(5,2) not null default 0,
   client_health numeric(5,2) not null default 0,
@@ -61,7 +61,7 @@ create table if not exists public.acc_health_snapshots (
 );
 
 create table if not exists public.acc_audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations(id) on delete cascade,
   action text not null,
   detail text not null default '',
@@ -83,9 +83,9 @@ alter table public.acc_automations enable row level security;
 alter table public.acc_health_snapshots enable row level security;
 alter table public.acc_audit_logs enable row level security;
 
-create policy "acc_alerts_org" on public.acc_alerts for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "acc_recommendations_org" on public.acc_recommendations for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "acc_decisions_org" on public.acc_decisions for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "acc_automations_org" on public.acc_automations for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "acc_health_snapshots_org" on public.acc_health_snapshots for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
-create policy "acc_audit_logs_org" on public.acc_audit_logs for all using (organization_id in (select organization_id from public.memberships where user_id = auth.uid()));
+create policy "acc_alerts_org" on public.acc_alerts for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_recommendations_org" on public.acc_recommendations for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_decisions_org" on public.acc_decisions for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_automations_org" on public.acc_automations for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_health_snapshots_org" on public.acc_health_snapshots for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_audit_logs_org" on public.acc_audit_logs for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));

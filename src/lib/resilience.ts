@@ -93,7 +93,7 @@ export async function withCircuitBreaker<T>(
         const result = await fn();
         recordCircuitSuccess(key);
         return result;
-    } catch (error) {
+    } catch {
         recordCircuitFailure(key);
         return fallback();
     }

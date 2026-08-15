@@ -1,3 +1,4 @@
+import { databaseService } from "@/src/modules/database/services/database-service";
 import type {
     BackupRecord,
     DisasterRecoveryPlan,
@@ -153,6 +154,34 @@ export class PlatformOperationsService {
             serviceStatuses: this.getServiceStatuses(),
             dashboard: this.getOperationsDashboard(),
         };
+    }
+
+    async createBackupConfig(orgId: string, name: string) {
+        return await databaseService.backupConfigs.create({
+            organization_id: orgId,
+            name: name,
+            schedule_cron: "0 2 * * 0",
+            destination: "supabase",
+            is_enabled: true,
+            retention_count: 30,
+            include_tables: []
+        });
+    }
+
+    async getBackupConfigs(orgId: string) {
+        return await databaseService.backupConfigs.listByOrganization(orgId);
+    }
+
+    async getBackupRuns(configId: string) {
+        return await databaseService.backupRuns.listByConfig(configId);
+    }
+
+    async triggerBackup(orgId: string, configId: string) {
+        return await databaseService.backupRuns.create({
+            config_id: configId,
+            status: "pending",
+            started_at: new Date().toISOString()
+        });
     }
 }
 

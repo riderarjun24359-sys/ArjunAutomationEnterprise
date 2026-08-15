@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { ROUTES } from "@/src/constants/routes";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
 
@@ -63,7 +64,7 @@ export function PremiumHeader() {
                 <div className="hidden items-center gap-3 lg:flex">
                     <ThemeToggle />
                     <Link
-                        href={MARKETING_ROUTES.contact}
+                        href={ROUTES.auth.signIn}
                         className="inline-flex items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
                     >
                         Get Started
@@ -106,7 +107,7 @@ export function PremiumHeader() {
                             </Link>
                         ))}
                         <Link
-                            href={MARKETING_ROUTES.contact}
+                            href={ROUTES.auth.signIn}
                             className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600"
                             onClick={() => setMobileOpen(false)}
                         >
