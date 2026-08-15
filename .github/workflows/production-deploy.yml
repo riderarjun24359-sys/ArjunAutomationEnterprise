@@ -75,6 +75,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: next-build
+          path: .
       - name: Deploy to Vercel
         run: npx vercel --prod --prebuilt --yes --token $VERCEL_TOKEN
         env:
