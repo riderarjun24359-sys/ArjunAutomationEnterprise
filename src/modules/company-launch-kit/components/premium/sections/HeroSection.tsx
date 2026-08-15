@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronDown, Shield, Lock, Cpu, Building2 } from "lucide-react";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { HeroEnterpriseIllustration } from "@/src/modules/company-launch-kit/components/premium/sections/HeroEnterpriseIllustration";
 import { HERO_CONTENT } from "@/src/modules/company-launch-kit/data/home-content";
 
@@ -29,6 +30,9 @@ export function HeroSection() {
             <div className="premium-noise pointer-events-none absolute inset-0 opacity-[0.04]" aria-hidden="true" />
 
             <div className="premium-container relative z-10 flex min-h-[88vh] flex-col justify-center pb-16 pt-28 sm:pt-32 lg:pb-20 lg:pt-36">
+                <div className="mb-8">
+                    <BrandLogo variant="horizontal" className="h-10" />
+                </div>
                 <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-20">
                     <div className="lg:col-span-7 xl:col-span-6">
                         <p className="hero-fade-up text-xs font-semibold uppercase tracking-[0.28em] text-indigo-700 dark:text-indigo-300 sm:text-sm">
