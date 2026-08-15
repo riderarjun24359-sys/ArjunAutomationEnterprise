@@ -67,17 +67,17 @@ jobs:
 
   deploy:
     name: Deploy to Vercel
-    needs: verify
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Download .next artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: "20"
-          cache: npm
-      - run: npm ci
+          name: next-build
+          path: .next
       - name: Deploy to Vercel
-        run: npx vercel --prod --yes --token $VERCEL_TOKEN
+        run: npx vercel --prod --prebuilt --yes --token $VERCEL_TOKEN
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
