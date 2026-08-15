@@ -39,8 +39,8 @@ jobs:
           PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
           PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
 
-  build:
-    name: Build release artifact
+  build-and-deploy:
+    name: Build and Deploy to Vercel
     needs: verify
     runs-on: ubuntu-latest
     steps:
@@ -50,36 +50,14 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - name: Vercel Pull
+        run: npx vercel pull --yes --environment=production --token $VERCEL_TOKEN
         env:
-          NODE_ENV: production
-          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
-          PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: next-build
-          path: |
-            .next
-            .vercel
-          retention-days: 14
-
-  deploy:
-    name: Deploy to Vercel
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: next-build
-          path: .
-      - name: Deploy to Vercel
-        run: npx vercel --prod --prebuilt --yes --token $VERCEL_TOKEN
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Vercel Build
+        run: npx vercel build --prod --token $VERCEL_TOKEN
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -89,10 +67,16 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
           PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
+      - name: Vercel Deploy
+        run: npx vercel deploy --prebuilt --prod --yes --token $VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   healthcheck:
     name: Post-deploy health checks
-    needs: deploy
+    needs: build-and-deploy
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
@@ -114,7 +98,7 @@ jobs:
 
   rollback_notes:
     name: Publish rollback strategy
-    needs: [verify, deploy]
+    needs: [verify, build-and-deploy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
