@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, FileText, Globe, Mail, Image } from "lucide-react";
+import { ExternalLink, FileText, Globe, Mail, Image as ImageIcon } from "lucide-react";
+import NextImage from "next/image";
 import { LAUNCH_KIT_SECTIONS, LAUNCH_KIT_THEME } from "@/src/modules/company-launch-kit/constants";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { LAUNCH_KIT_DOCUMENT_FILES, LAUNCH_KIT_EMAIL_FILES } from "@/src/modules/company-launch-kit/lib/documents";
@@ -117,7 +118,7 @@ export function CompanyLaunchKitPage() {
 
             <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
                 <h2 className="flex items-center gap-2 text-lg font-semibold text-indigo-950">
-                    <Image className="h-5 w-5" aria-hidden="true" />
+                    <NextImage src="/icons/file.svg" className="h-5 w-5" aria-hidden="true" alt="File icon" width={20} height={20} />
                     Blog Posts ({BLOG_POSTS.length})
                 </h2>
                 <ul className="mt-4 space-y-2">
