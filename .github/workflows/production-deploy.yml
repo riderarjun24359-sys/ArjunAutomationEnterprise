@@ -58,15 +58,13 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           PLATFORM_LEAD_API_KEY: ${{ secrets.PLATFORM_LEAD_API_KEY }}
           PLATFORM_ORGANIZATION_ID: ${{ secrets.PLATFORM_ORGANIZATION_ID }}
-      - name: Debug build output
-        run: ls -R .next
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: next-build
           path: |
             .next
-            .vercel/output
+            .vercel
           retention-days: 14
 
   deploy:
@@ -75,15 +73,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Debug workspace
-        run: ls -la
-      - name: Download .next artifact
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: next-build
           path: .
-      - name: Debug workspace after download
-        run: ls -la
       - name: Deploy to Vercel
         run: npx vercel --prod --prebuilt --yes --token $VERCEL_TOKEN
         env:
