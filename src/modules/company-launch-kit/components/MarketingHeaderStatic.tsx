@@ -30,7 +30,7 @@ export function MarketingHeaderStatic() {
 
                 <div className="hidden lg:block">
                     <Link
-                        href={MARKETING_ROUTES.home}
+                        href={MARKETING_ROUTES.contact}
                         className="inline-flex items-center justify-center rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--dos-surface)] transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                     >
                         Get Started
