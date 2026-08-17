@@ -50,10 +50,20 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - name: Vercel Link
-        run: npx vercel link --yes --project "$VERCEL_PROJECT_ID" --scope "$VERCEL_ORG_ID" --token "$VERCEL_TOKEN"
+      - name: Verify Secrets
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then echo "VERCEL_TOKEN missing"; exit 1; fi
+          if [ -z "$VERCEL_PROJECT_ID" ]; then echo "VERCEL_PROJECT_ID missing"; exit 1; fi
+          if [ -z "$VERCEL_ORG_ID" ]; then echo "VERCEL_ORG_ID missing"; exit 1; fi
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Configure Vercel Project
+        run: |
+          mkdir -p .vercel
+          echo '{"projectId": "'$VERCEL_PROJECT_ID'", "orgId": "'$VERCEL_ORG_ID'"}' > .vercel/project.json
+        env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Vercel Pull
