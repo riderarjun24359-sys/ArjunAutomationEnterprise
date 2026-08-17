@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { ELF_THEME, IMPORT_STATUS_OPTIONS, ALERT_SEVERITY_OPTIONS, PROVISION_STATUS_OPTIONS, LICENSE_STATUS_OPTIONS, DEPLOYMENT_STATUS_OPTIONS, RENEWAL_STATUS_OPTIONS, TICKET_STATUS_OPTIONS, SUBSCRIPTION_STATUS_OPTIONS } from "@/src/modules/launch-foundation/constants";

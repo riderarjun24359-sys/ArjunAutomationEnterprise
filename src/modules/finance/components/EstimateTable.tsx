@@ -1,8 +1,6 @@
-import { Card } from "@/src/components/ui/Card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Estimate } from "@/src/modules/finance/types";
+import { cn } from "@/src/lib/cn";
 
 interface EstimateTableProps {
     estimates: Estimate[];
@@ -11,33 +9,37 @@ interface EstimateTableProps {
 
 export function EstimateTable({ estimates, onConvert }: EstimateTableProps) {
     return (
-        <Card hover>
-            <SectionHeader title="Estimates" description="Proposals linked to clients and projects" />
+        <section className="os-panel p-6">
+            <header className="mb-6">
+                <h2 className="dos-text-h2">Estimates</h2>
+                <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Proposals linked to clients and projects</p>
+            </header>
+            
             {estimates.length === 0 ? (
-                <div className="mt-6">
-                    <EmptyState title="No estimates found" description="Create an estimate to start the sales pipeline." />
+                <div className="rounded-[var(--dos-radius-lg)] border border-dashed border-[var(--dos-border)] p-8 text-center">
+                    <p className="dos-text-secondary">No estimates found.</p>
                 </div>
             ) : (
-                <div className="mt-6 space-y-3">
+                <div className="space-y-3">
                     {estimates.map((estimate) => (
-                        <div key={estimate.id} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
+                        <div key={estimate.id} className="flex items-center justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 transition">
                             <div>
-                                <p className="font-medium">{estimate.number}</p>
-                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{estimate.number}</p>
+                                <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
                                     {estimate.clientName}
                                     {estimate.projectName ? ` • ${estimate.projectName}` : ""}
                                 </p>
                             </div>
-                            <div className="flex items-center gap-4 text-right text-sm">
+                            <div className="flex items-center gap-4 text-right dos-text-body-sm text-[var(--dos-text-secondary)]">
                                 <div>
-                                    <p className="capitalize">{estimate.status}</p>
-                                    <p>{formatMoney(estimate.total)}</p>
+                                    <p className="capitalize dos-text-caption">{estimate.status}</p>
+                                    <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(estimate.total)}</p>
                                 </div>
                                 {onConvert && estimate.status !== "declined" ? (
                                     <button
                                         type="button"
                                         onClick={() => void onConvert(estimate.id)}
-                                        className="rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/40"
+                                        className="rounded-full border border-[var(--dos-border)] px-4 py-1.5 text-xs font-semibold hover:border-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary)] transition"
                                     >
                                         Convert
                                     </button>
@@ -47,6 +49,6 @@ export function EstimateTable({ estimates, onConvert }: EstimateTableProps) {
                     ))}
                 </div>
             )}
-        </Card>
+        </section>
     );
 }

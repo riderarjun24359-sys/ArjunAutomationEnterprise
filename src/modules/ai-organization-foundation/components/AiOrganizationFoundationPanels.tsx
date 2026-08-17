@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { AOF_THEME, CAMPAIGN_STATUS_OPTIONS, ALERT_SEVERITY_OPTIONS, ORCHESTRATOR_STATUS_OPTIONS, DASHBOARD_STATUS_OPTIONS, PLANNER_STATUS_OPTIONS, SCHEDULER_STATUS_OPTIONS, COORDINATION_STATUS_OPTIONS, AUTOMATION_STATUS_OPTIONS, IDEA_STATUS_OPTIONS, PIPELINE_STATUS_OPTIONS, EXPERIMENT_STATUS_OPTIONS, WORKFLOW_STATUS_OPTIONS, REPOSITORY_STATUS_OPTIONS, ROUTER_STATUS_OPTIONS, APPROVAL_STATUS_OPTIONS, POLICY_STATUS_OPTIONS, GOVERNANCE_STATUS_OPTIONS } from "@/src/modules/ai-organization-foundation/constants";

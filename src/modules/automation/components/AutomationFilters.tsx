@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { WORKFLOW_STATUS_OPTIONS } from "@/src/modules/automation/constants";
 import type { WorkflowStatusFilter } from "@/src/modules/automation/types";
 

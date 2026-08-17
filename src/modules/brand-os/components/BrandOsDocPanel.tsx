@@ -2,7 +2,7 @@
 
 import { Printer } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { LoadingState } from "@/src/components/ui/LoadingState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { renderMarkdown } from "@/src/modules/brand-os/lib/markdown";

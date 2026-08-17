@@ -1,38 +1,35 @@
 :root {
-    --premium-bg: #fafafa;
-    --premium-bg-secondary: #f1f5f9;
-    --premium-fg: #0f172a;
-    --premium-fg-muted: #475569;
-    --premium-border: rgba(15, 23, 42, 0.08);
-    --premium-glass: rgba(255, 255, 255, 0.72);
-    --premium-glass-border: rgba(255, 255, 255, 0.4);
-    --premium-accent: #4338ca;
-    --premium-accent-glow: rgba(99, 102, 241, 0.35);
+    --premium-bg: var(--dos-surface);
+    --premium-bg-secondary: var(--dos-surface-secondary);
+    --premium-fg: var(--dos-text-primary);
+    --premium-fg-muted: var(--dos-text-secondary);
+    --premium-border: var(--dos-border);
+    --premium-glass: var(--dos-glass-bg);
+    --premium-glass-border: var(--dos-glass-border);
+    --premium-accent: var(--dos-brand-primary);
+    --premium-accent-glow: var(--dos-shadow-glow);
+    /* Retain aurora/mesh for backward compatibility in cinematic hero */
     --premium-aurora-1: rgba(99, 102, 241, 0.15);
     --premium-aurora-2: rgba(6, 182, 212, 0.12);
     --premium-aurora-3: rgba(139, 92, 246, 0.1);
     --premium-mesh-1: #6366f1;
     --premium-mesh-2: #06b6d4;
     --premium-mesh-3: #8b5cf6;
-    --premium-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-    --premium-radius: 1rem;
-    --font-display: var(--font-inter, system-ui, sans-serif);
+    --premium-shadow: var(--dos-elevation-2);
+    --premium-radius: var(--dos-radius-2xl);
+    --font-display: var(--dos-font-display);
 }
 
 .dark {
-    --premium-bg: #0a0a0f;
-    --premium-bg-secondary: #12121a;
-    --premium-fg: #f8fafc;
-    --premium-fg-muted: #94a3b8;
-    --premium-border: rgba(248, 250, 252, 0.08);
-    --premium-glass: rgba(15, 15, 25, 0.65);
-    --premium-glass-border: rgba(255, 255, 255, 0.06);
-    --premium-accent: #818cf8;
-    --premium-accent-glow: rgba(129, 140, 248, 0.4);
-    --premium-aurora-1: rgba(99, 102, 241, 0.2);
-    --premium-aurora-2: rgba(6, 182, 212, 0.15);
-    --premium-aurora-3: rgba(139, 92, 246, 0.18);
-    --premium-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    --premium-bg: var(--dos-surface);
+    --premium-bg-secondary: var(--dos-surface-secondary);
+    --premium-fg: var(--dos-text-primary);
+    --premium-fg-muted: var(--dos-text-secondary);
+    --premium-border: var(--dos-border);
+    --premium-glass: var(--dos-glass-bg);
+    --premium-glass-border: var(--dos-glass-border);
+    --premium-accent: var(--dos-brand-primary);
+    --premium-accent-glow: var(--dos-shadow-glow);
 }
 
 .premium-theme {

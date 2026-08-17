@@ -1,6 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
+import { cn } from "@/src/lib/cn";
 import type { Workflow } from "@/src/modules/automation/types";
 
 interface WorkflowTableProps {
@@ -12,29 +10,45 @@ interface WorkflowTableProps {
 
 export function WorkflowTable({ workflows, selectedWorkflowId, onSelectWorkflow, onRunWorkflow }: WorkflowTableProps) {
     return (
-        <Card hover>
-            <SectionHeader title="Workflows" description="Automation pipelines with triggers, actions, and conditions" />
+        <section className="os-panel p-6">
+            <header className="mb-6">
+                <h2 className="dos-text-h2">Workflows</h2>
+                <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Automation pipelines with triggers, actions, and conditions</p>
+            </header>
+            
             {workflows.length === 0 ? (
-                <div className="mt-6">
-                    <EmptyState title="No workflows found" description="Create a workflow or adjust your filters." />
+                <div className="rounded-[var(--dos-radius-lg)] border border-dashed border-[var(--dos-border)] p-8 text-center">
+                    <p className="dos-text-secondary">No workflows found.</p>
                 </div>
             ) : (
-                <div className="mt-6 space-y-3">
+                <div className="space-y-3">
                     {workflows.map((workflow) => (
-                        <div key={workflow.id} className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 transition ${selectedWorkflowId === workflow.id ? "border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30" : "border-slate-200 dark:border-slate-800"}`}>
+                        <div 
+                            key={workflow.id} 
+                            className={cn(
+                                "flex w-full items-center justify-between rounded-[var(--dos-radius-lg)] border p-4 transition",
+                                selectedWorkflowId === workflow.id 
+                                    ? "border-[var(--dos-border-focus)] bg-[var(--dos-surface-secondary)]" 
+                                    : "border-[var(--dos-border)] bg-[var(--dos-surface-elevated)]"
+                            )}
+                        >
                             <button type="button" onClick={() => onSelectWorkflow(workflow.id)} className="flex-1 text-left">
-                                <p className="font-medium">{workflow.name}</p>
-                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{workflow.name}</p>
+                                <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
                                     {workflow.agentName ?? "No agent"} • {workflow.triggers.length} triggers • {workflow.actions.length} actions
                                 </p>
                             </button>
-                            <div className="flex items-center gap-3 text-right text-sm">
-                                <div>
-                                    <p className="capitalize">{workflow.status}</p>
-                                    <p className="text-xs text-slate-500">v{workflow.version}</p>
+                            <div className="flex items-center gap-4 text-right">
+                                <div className="text-right">
+                                    <p className="dos-text-caption">{workflow.status}</p>
+                                    <p className="dos-text-body-sm text-[var(--dos-text-tertiary)]">v{workflow.version}</p>
                                 </div>
                                 {onRunWorkflow && workflow.status === "active" ? (
-                                    <button type="button" onClick={() => void onRunWorkflow(workflow.id)} className="rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => void onRunWorkflow(workflow.id)} 
+                                        className="rounded-full border border-[var(--dos-border)] px-4 py-1.5 text-xs font-semibold hover:border-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary)] transition"
+                                    >
                                         Run
                                     </button>
                                 ) : null}
@@ -43,6 +57,6 @@ export function WorkflowTable({ workflows, selectedWorkflowId, onSelectWorkflow,
                     ))}
                 </div>
             )}
-        </Card>
+        </section>
     );
 }

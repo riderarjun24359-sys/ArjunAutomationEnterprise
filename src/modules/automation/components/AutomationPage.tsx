@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Bot, Plus } from "lucide-react";
 import { useState } from "react";
-import { Card } from "@/src/components/ui/Card";
-import { LoadingState } from "@/src/components/ui/LoadingState";
+import { PageTransition } from "@/src/design-os/motion/components/PageTransition";
+import { Badge } from "@/src/design-os/components/Badge";
 import { AgentForm } from "@/src/modules/automation/components/AgentForm";
 import { AgentTable } from "@/src/modules/automation/components/AgentTable";
 import { AutomationAnalyticsPanel } from "@/src/modules/automation/components/AutomationAnalyticsPanel";
@@ -20,6 +18,7 @@ import { WorkflowTable } from "@/src/modules/automation/components/WorkflowTable
 import { AUTOMATION_TABS } from "@/src/modules/automation/constants";
 import { useAutomation } from "@/src/modules/automation/hooks/useAutomation";
 import type { AiAgentFormValues, WorkflowFormValues } from "@/src/modules/automation/schemas";
+import { LoadingState } from "@/src/components/ui/LoadingState";
 
 const tabs = [
     { id: AUTOMATION_TABS.overview, label: "Overview" },
@@ -85,127 +84,108 @@ export function AutomationPage() {
     };
 
     if (loading) {
-        return (
-            <div className="mx-auto max-w-7xl">
-                <LoadingState label="Loading automation and workflow data" />
-            </div>
-        );
+        return <LoadingState label="Loading automation systems" />;
     }
 
     return (
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-slate-900 dark:text-slate-100">
-            <motion.header
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
-            >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
-                        <p className="text-sm font-medium uppercase tracking-[0.24em] text-emerald-600">Automation Operations</p>
-                        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Enterprise AI automation and workflow builder</h1>
-                        <p className="mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-                            Build workflows with triggers, actions, conditions, AI agents, scheduling, execution history, and operational analytics from one Supabase-backed workspace.
-                        </p>
-                    </div>
+        <PageTransition className="mx-auto max-w-[85rem] space-y-10">
+            <header className="flex flex-col gap-4 border-b border-[var(--dos-border-subtle)] pb-8">
+                <Badge variant="info" className="w-fit">Automation OS Engine</Badge>
+                <div>
+                    <h1 className="dos-text-display">Automation Control</h1>
+                    <p className="mt-4 max-w-3xl dos-text-h3 text-[var(--dos-text-secondary)]">
+                        Intelligent workflow orchestration, AI agent management, and real-time execution monitoring.
+                    </p>
                 </div>
-            </motion.header>
+            </header>
 
             <AutomationStats stats={stats} />
 
-            <div className="flex flex-wrap gap-2">
+            <nav className="flex flex-wrap gap-2 border-b border-[var(--dos-border-subtle)] pb-4">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         type="button"
                         onClick={() => setActiveTab(tab.id)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition ${activeTab === tab.id ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900" : "bg-white text-slate-600 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"}`}
+                        className={`rounded-full px-5 py-2 text-sm font-semibold transition ${activeTab === tab.id ? "bg-[var(--dos-text-primary)] text-[var(--dos-surface)]" : "text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] hover:text-[var(--dos-text-primary)]"}`}
                     >
                         {tab.label}
                     </button>
                 ))}
-            </div>
+            </nav>
 
-            {activeTab === AUTOMATION_TABS.overview ? (
-                <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-                    <WorkflowTable
-                        workflows={allWorkflows.slice(0, 5)}
-                        selectedWorkflowId={selectedWorkflow?.id}
-                        onSelectWorkflow={(id) => void selectWorkflow(id)}
-                        onRunWorkflow={(id) => void runWorkflow(id)}
-                    />
-                    <WorkflowDetailPanel workflow={selectedWorkflow} />
-                </section>
-            ) : null}
-
-            {activeTab === AUTOMATION_TABS.builder ? (
-                <>
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={() => setShowWorkflowForm((current) => !current)}
-                            className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950"
-                        >
-                            <Plus className="h-4 w-4" />
-                            {showWorkflowForm ? "Hide Form" : "New Workflow"}
-                        </button>
-                    </div>
-                    {showWorkflowForm ? (
-                        <WorkflowForm agents={agents} templates={templates} onSubmit={handleCreateWorkflow} />
-                    ) : null}
-                    <AutomationFilters
-                        searchQuery={searchQuery}
-                        statusFilter={statusFilter}
-                        onSearchChange={setSearchQuery}
-                        onStatusChange={setStatusFilter}
-                    />
-                    <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+            <section className="min-h-[60vh] rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-8">
+                {activeTab === AUTOMATION_TABS.overview ? (
+                    <section className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
                         <WorkflowTable
-                            workflows={workflows}
+                            workflows={allWorkflows.slice(0, 5)}
                             selectedWorkflowId={selectedWorkflow?.id}
                             onSelectWorkflow={(id) => void selectWorkflow(id)}
                             onRunWorkflow={(id) => void runWorkflow(id)}
                         />
-                        <WorkflowDetailPanel
-                            workflow={selectedWorkflow}
-                            onStatusChange={(status) => selectedWorkflow ? void updateWorkflowStatus(selectedWorkflow.id, status) : undefined}
-                        />
+                        <WorkflowDetailPanel workflow={selectedWorkflow} />
                     </section>
-                </>
-            ) : null}
+                ) : null}
 
-            {activeTab === AUTOMATION_TABS.agents ? (
-                <>
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={() => setShowAgentForm((current) => !current)}
-                            className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 dark:hover:bg-emerald-950"
-                        >
-                            <Plus className="h-4 w-4" />
-                            {showAgentForm ? "Hide Form" : "New Agent"}
-                        </button>
+                {activeTab === AUTOMATION_TABS.builder ? (
+                    <div className="space-y-6">
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setShowWorkflowForm((current) => !current)}
+                                className="rounded-full bg-[var(--dos-text-primary)] px-5 py-2 text-sm font-semibold text-[var(--dos-surface)]"
+                            >
+                                {showWorkflowForm ? "Close Builder" : "New Workflow"}
+                            </button>
+                        </div>
+                        {showWorkflowForm ? (
+                            <WorkflowForm agents={agents} templates={templates} onSubmit={handleCreateWorkflow} />
+                        ) : null}
+                        <AutomationFilters
+                            searchQuery={searchQuery}
+                            statusFilter={statusFilter}
+                            onSearchChange={setSearchQuery}
+                            onStatusChange={setStatusFilter}
+                        />
+                        <section className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+                            <WorkflowTable
+                                workflows={workflows}
+                                selectedWorkflowId={selectedWorkflow?.id}
+                                onSelectWorkflow={(id) => void selectWorkflow(id)}
+                                onRunWorkflow={(id) => void runWorkflow(id)}
+                            />
+                            <WorkflowDetailPanel
+                                workflow={selectedWorkflow}
+                                onStatusChange={(status) => selectedWorkflow ? void updateWorkflowStatus(selectedWorkflow.id, status) : undefined}
+                            />
+                        </section>
                     </div>
-                    {showAgentForm ? <AgentForm onSubmit={handleCreateAgent} /> : null}
-                    <AgentTable agents={agents} />
-                </>
-            ) : null}
+                ) : null}
 
-            {activeTab === AUTOMATION_TABS.templates ? <TemplateTable templates={templates} /> : null}
-            {activeTab === AUTOMATION_TABS.executions ? <ExecutionTable executions={executions} /> : null}
-            {activeTab === AUTOMATION_TABS.logs ? <AutomationLogTable logs={logs} /> : null}
-            {activeTab === AUTOMATION_TABS.monitoring ? (
-                <AutomationMonitoring stats={stats} workflows={allWorkflows} executions={executions} />
-            ) : null}
-            {activeTab === AUTOMATION_TABS.analytics ? <AutomationAnalyticsPanel analytics={analytics} /> : null}
-
-            {allWorkflows.length === 0 && agents.length === 0 ? (
-                <Card hover>
-                    <div className="flex items-center gap-3">
-                        <Bot className="h-5 w-5 text-emerald-600" />
-                        <p className="text-sm text-slate-500 dark:text-slate-400">Create your first workflow or AI agent to populate the automation workspace.</p>
+                {activeTab === AUTOMATION_TABS.agents ? (
+                    <div className="space-y-6">
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                onClick={() => setShowAgentForm((current) => !current)}
+                                className="rounded-full bg-[var(--dos-text-primary)] px-5 py-2 text-sm font-semibold text-[var(--dos-surface)]"
+                            >
+                                {showAgentForm ? "Close Form" : "New Agent"}
+                            </button>
+                        </div>
+                        {showAgentForm ? <AgentForm onSubmit={handleCreateAgent} /> : null}
+                        <AgentTable agents={agents} />
                     </div>
-                </Card>
-            ) : null}
-        </div>
+                ) : null}
+
+                {activeTab === AUTOMATION_TABS.templates ? <TemplateTable templates={templates} /> : null}
+                {activeTab === AUTOMATION_TABS.executions ? <ExecutionTable executions={executions} /> : null}
+                {activeTab === AUTOMATION_TABS.logs ? <AutomationLogTable logs={logs} /> : null}
+                {activeTab === AUTOMATION_TABS.monitoring ? (
+                    <AutomationMonitoring stats={stats} workflows={allWorkflows} executions={executions} />
+                ) : null}
+                {activeTab === AUTOMATION_TABS.analytics ? <AutomationAnalyticsPanel analytics={analytics} /> : null}
+            </section>
+        </PageTransition>
     );
 }

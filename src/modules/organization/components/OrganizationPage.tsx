@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ChevronRight, Users } from "lucide-react";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { LoadingState } from "@/src/components/ui/LoadingState";

@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Building2, Sparkles, Users } from "lucide-react";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { StatCard } from "@/src/components/ui/StatCard";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { ErrorBoundary } from "@/src/components/ui/ErrorBoundary";

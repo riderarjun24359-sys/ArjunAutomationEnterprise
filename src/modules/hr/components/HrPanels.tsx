@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { CANDIDATE_STAGE_OPTIONS, DESIGNATION_LEVEL_OPTIONS, EMPLOYMENT_TYPE_OPTIONS } from "@/src/modules/hr/constants";
@@ -40,45 +40,52 @@ function SaveButton({ loading, label = "Save changes" }: { loading?: boolean; la
 
 function ListCard({ title, subtitle, meta }: { title: string; subtitle: string; meta?: string }) {
     return (
-        <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-            <p className="font-medium">{title}</p>
-            <p className="text-sm text-slate-500">{subtitle}</p>
-            {meta ? <p className="mt-1 text-xs text-emerald-600">{meta}</p> : null}
+        <div className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 transition hover:border-[var(--dos-brand-primary)]">
+            <p className="font-semibold text-[var(--dos-text-primary)]">{title}</p>
+            <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">{subtitle}</p>
+            {meta ? <p className="mt-1 dos-text-caption text-[var(--dos-ai-accent)]">{meta}</p> : null}
         </div>
     );
 }
 
 export function HrOverviewPanel({ data }: { data: HrData }) {
     return (
-        <div className="grid gap-6 xl:grid-cols-2">
-            <Card hover>
-                <SectionHeader title="Workforce summary" description="Current HR coverage across the organization" />
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-8 xl:grid-cols-2">
+            <section className="os-panel p-6">
+                <header className="mb-6">
+                    <h3 className="dos-text-h3">Workforce Summary</h3>
+                    <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Current HR coverage across the organization</p>
+                </header>
+                <div className="grid gap-3 sm:grid-cols-2">
                     <ListCard title="Employees" subtitle={`${data.stats?.activeEmployees ?? 0} active of ${data.stats?.totalEmployees ?? 0}`} />
                     <ListCard title="Departments" subtitle={`${data.departments.length} departments`} />
                     <ListCard title="Open roles" subtitle={`${data.stats?.openPositions ?? 0} open positions`} />
                     <ListCard title="Holidays" subtitle={`${data.stats?.upcomingHolidays ?? 0} upcoming`} />
                 </div>
-            </Card>
-            <Card hover>
-                <SectionHeader title="Role-based HR access" description="Roles with HR permissions in this organization" />
-                <div className="mt-6 space-y-3">
+            </section>
+            
+            <section className="os-panel p-6">
+                <header className="mb-6">
+                    <h3 className="dos-text-h3">Role-based HR access</h3>
+                    <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Roles with HR permissions in this organization</p>
+                </header>
+                <div className="space-y-3">
                     {data.roleAccess.length === 0 ? (
-                        <EmptyState title="No HR role grants" description="HR permissions will appear once assigned to roles." />
+                        <p className="dos-text-secondary p-4 text-center">No HR role grants</p>
                     ) : (
                         data.roleAccess.map((role) => (
-                            <div key={role.roleName} className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                                <p className="font-medium">{role.roleName}</p>
+                            <div key={role.roleName} className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] p-4">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{role.roleName}</p>
                                 <div className="mt-2 flex flex-wrap gap-2">
                                     {role.permissions.map((permission) => (
-                                        <span key={permission} className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-700 dark:text-emerald-300">{permission}</span>
+                                        <span key={permission} className="rounded-full bg-[var(--dos-surface-tertiary)] px-3 py-1 dos-text-caption text-[var(--dos-text-secondary)]">{permission}</span>
                                     ))}
                                 </div>
                             </div>
                         ))
                     )}
                 </div>
-            </Card>
+            </section>
         </div>
     );
 }

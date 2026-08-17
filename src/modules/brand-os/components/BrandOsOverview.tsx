@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen, Briefcase, CheckCircle2, FileText, FolderOpen, Palette, XCircle } from "lucide-react";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { StatCard } from "@/src/components/ui/StatCard";
 import { BRAND_ASSET_FOLDERS, getAllDocuments, getDocumentsByCategory } from "@/src/modules/brand-os/lib/documents";
 import { BRAND_OS_THEME } from "@/src/modules/brand-os/constants";

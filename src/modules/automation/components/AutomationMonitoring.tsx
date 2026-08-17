@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import type { AutomationDashboardStats, Workflow, WorkflowExecution } from "@/src/modules/automation/types";
 

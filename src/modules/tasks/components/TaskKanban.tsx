@@ -1,8 +1,5 @@
-import { Card } from "@/src/components/ui/Card";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { KANBAN_COLUMNS } from "@/src/modules/tasks/constants";
 import { TaskCard } from "@/src/modules/tasks/components/TaskCard";
-import { EmptyState } from "@/src/modules/tasks/components/EmptyState";
 import type { Task } from "@/src/modules/tasks/types";
 
 interface TaskKanbanProps {
@@ -12,35 +9,32 @@ interface TaskKanbanProps {
 
 export function TaskKanban({ tasks, onSelectTask }: TaskKanbanProps) {
     if (tasks.length === 0) {
-        return <EmptyState title="No tasks in this view" description="Adjust filters or create a new task to populate the kanban board." />;
+        return <div className="p-8 text-center rounded-[var(--dos-radius-lg)] border border-dashed border-[var(--dos-border)] text-[var(--dos-text-secondary)]">No tasks in this view.</div>;
     }
 
     return (
-        <Card hover>
-            <SectionHeader title="Kanban board" description="Drag-and-drop ready task columns by status" />
-            <div className="mt-6 grid gap-4 overflow-x-auto lg:grid-cols-5">
-                {KANBAN_COLUMNS.map((column) => {
-                    const columnTasks = tasks.filter((task) => task.status === column.status);
+        <div className="grid gap-6 overflow-x-auto lg:grid-cols-5 pb-4">
+            {KANBAN_COLUMNS.map((column) => {
+                const columnTasks = tasks.filter((task) => task.status === column.status);
 
-                    return (
-                        <div key={column.status} className="min-w-[220px] rounded-2xl border border-slate-200 bg-slate-50/50 p-3 dark:border-slate-800 dark:bg-slate-950/40">
-                            <div className="mb-3 flex items-center justify-between px-1">
-                                <p className="text-sm font-semibold">{column.label}</p>
-                                <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-                                    {columnTasks.length}
-                                </span>
-                            </div>
-                            <div className="space-y-3">
-                                {columnTasks.length === 0 ? (
-                                    <p className="px-1 py-4 text-center text-xs text-slate-400">No tasks</p>
-                                ) : (
-                                    columnTasks.map((task) => <TaskCard key={task.id} task={task} onSelect={onSelectTask} compact />)
-                                )}
-                            </div>
+                return (
+                    <div key={column.status} className="min-w-[280px] rounded-[var(--dos-radius-2xl)] border border-[var(--dos-border-subtle)] bg-[var(--dos-surface-secondary)]/50 p-4">
+                        <div className="mb-4 flex items-center justify-between px-1">
+                            <h3 className="dos-text-h3">{column.label}</h3>
+                            <span className="rounded-full bg-[var(--dos-surface-tertiary)] px-3 py-1 text-xs font-semibold text-[var(--dos-text-secondary)]">
+                                {columnTasks.length}
+                            </span>
                         </div>
-                    );
-                })}
-            </div>
-        </Card>
+                        <div className="space-y-4">
+                            {columnTasks.length === 0 ? (
+                                <p className="px-1 py-8 text-center dos-text-body-sm text-[var(--dos-text-tertiary)]">No tasks</p>
+                            ) : (
+                                columnTasks.map((task) => <TaskCard key={task.id} task={task} onSelect={onSelectTask} />)
+                            )}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
     );
 }

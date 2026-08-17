@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { EGP_THEME, GOVERNANCE_STATUS_OPTIONS, POLICY_STATUS_OPTIONS, FRAMEWORK_STATUS_OPTIONS, CONTROL_STATUS_OPTIONS, EVIDENCE_STATUS_OPTIONS, DASHBOARD_STATUS_OPTIONS, REVIEW_STATUS_OPTIONS, REPORT_STATUS_OPTIONS, CALENDAR_STATUS_OPTIONS, AUDIT_STATUS_OPTIONS, ACTION_STATUS_OPTIONS, OWNERSHIP_STATUS_OPTIONS, MITIGATION_STATUS_OPTIONS, MONITORING_STATUS_OPTIONS, CONTINUITY_STATUS_OPTIONS, ALERT_SEVERITY_OPTIONS } from "@/src/modules/enterprise-governance-platform/constants";

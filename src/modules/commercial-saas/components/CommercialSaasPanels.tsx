@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { PLAN_TIER_OPTIONS, SAAS_THEME } from "@/src/modules/commercial-saas/constants";

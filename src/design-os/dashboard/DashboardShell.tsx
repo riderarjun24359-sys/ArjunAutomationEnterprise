@@ -43,7 +43,7 @@ export function DashboardShell({
     return (
         <PremiumMotionProvider>
             <ImmersiveProvider>
-                <LivingWorkspace className={cn("text-[var(--dos-text-primary)]", className)}>
+                <LivingWorkspace className={cn("dos-text-body text-[var(--dos-text-primary)]", className)}>
                     <CinematicWelcome />
                     <MobileNav />
                     <CommandPalette />

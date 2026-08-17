@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { EIP_THEME, KPI_STATUS_OPTIONS, CATEGORY_STATUS_OPTIONS, DASHBOARD_STATUS_OPTIONS, CONFIG_STATUS_OPTIONS } from "@/src/modules/enterprise-intelligence-platform/constants";

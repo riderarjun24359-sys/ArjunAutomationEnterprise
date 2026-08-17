@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { PIPELINE_STAGE_OPTIONS, PRIORITY_OPTIONS, PROCESS_TYPE_OPTIONS, RISK_LEVEL_OPTIONS, SCOPE_TYPE_OPTIONS } from "@/src/modules/business-analyst/constants";

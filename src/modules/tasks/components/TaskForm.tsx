@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { taskSchema, type TaskFormValues } from "@/src/modules/tasks/schemas";
 import { TASK_PRIORITY_OPTIONS, TASK_STATUS_OPTIONS } from "@/src/modules/tasks/constants";

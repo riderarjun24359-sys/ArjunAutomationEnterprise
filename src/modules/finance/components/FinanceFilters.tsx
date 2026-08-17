@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { INVOICE_STATUS_OPTIONS } from "@/src/modules/finance/constants";
 import type { InvoiceStatusFilter } from "@/src/modules/finance/types";
 

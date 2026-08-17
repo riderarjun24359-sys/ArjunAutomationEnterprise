@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { REPORT_STATUS_OPTIONS, REPORT_TYPE_OPTIONS } from "@/src/modules/analytics/constants";
 import { reportFormSchema, type ReportFormValues } from "@/src/modules/analytics/schemas";

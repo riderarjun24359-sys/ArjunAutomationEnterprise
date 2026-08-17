@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { AGENT_TYPE_OPTIONS, AI_PERMISSIONS, MODULE_SOURCE_OPTIONS, PROVIDER_KEY_OPTIONS, ROUTING_STRATEGY_OPTIONS } from "@/src/modules/ai-orchestration/constants";

@@ -14,7 +14,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { CHART_COLORS } from "@/src/modules/analytics/constants";

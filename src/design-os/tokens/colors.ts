@@ -1,11 +1,11 @@
 export const brand = {
-    primary: "#4338ca",
-    primaryHover: "#3730a3",
-    primaryMuted: "#6366f1",
+    primary: "#38bdf8",
+    primaryHover: "#7dd3fc",
+    primaryMuted: "#38bdf8",
     secondary: "#06b6d4",
     secondaryHover: "#0891b2",
-    accent: "#8b5cf6",
-    accentHover: "#7c3aed",
+    accent: "#6366f1",
+    accentHover: "#4f46e5",
 } as const;
 
 export const semantic = {

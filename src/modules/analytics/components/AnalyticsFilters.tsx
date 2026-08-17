@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { METRIC_CATEGORY_FILTERS } from "@/src/modules/analytics/constants";
 import type { AnalyticsCategoryFilter } from "@/src/modules/analytics/types";
 

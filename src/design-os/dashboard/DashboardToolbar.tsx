@@ -27,21 +27,21 @@ export function DashboardToolbar({ title }: { title?: string }) {
     })) ?? [];
 
     return (
-        <header className={cn("dos-glass-panel sticky top-0 z-[var(--dos-z-sticky)]")}>
-            <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <header className={cn("dos-glass-panel sticky top-0 z-[var(--dos-z-sticky)] border-x-0 border-t-0")}>
+            <div className="flex items-center justify-between gap-4 px-4 py-2 sm:px-6">
                 <div className="flex min-w-0 items-center gap-3">
                     <button type="button" onClick={toggleMobileMenu} className="rounded-[var(--dos-radius-xl)] border border-[var(--dos-border)] p-2 text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] lg:hidden" aria-label="Open navigation menu">
                         <Menu className="h-5 w-5" />
                     </button>
                     <div className="min-w-0">
-                        <h1 className="truncate text-lg font-semibold text-[var(--dos-text-primary)]">{resolvedTitle}</h1>
+                        <h1 className="truncate dos-text-h3 text-[var(--dos-text-primary)]">{resolvedTitle}</h1>
                     </div>
                 </div>
-                <div className="hidden max-w-md flex-1 px-4 md:block">
+                <div className="hidden max-w-sm flex-1 px-2 md:block">
                     <SmartSearch />
                 </div>
                 <m.div
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-1"
                     variants={staggerContainer}
                     initial="hidden"
                     animate="show"
@@ -50,7 +50,7 @@ export function DashboardToolbar({ title }: { title?: string }) {
                         <button
                             type="button"
                             onClick={toggleCopilot}
-                            className="dos-focus-ring dos-interactive flex h-9 w-9 items-center justify-center rounded-full border border-[var(--dos-border)] bg-[var(--dos-surface-secondary)] text-[var(--dos-text-secondary)] transition-colors hover:text-[var(--dos-brand-primary)]"
+                            className="dos-focus-ring dos-interactive flex h-8 w-8 items-center justify-center rounded-full border border-[var(--dos-brand-primary)]/20 bg-[var(--dos-brand-primary)]/5 text-[var(--dos-brand-primary)] transition-all hover:bg-[var(--dos-brand-primary)]/10"
                             aria-label="Open executive copilot"
                         >
                             <Bot className="h-4 w-4" />

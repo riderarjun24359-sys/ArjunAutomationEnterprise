@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { CLIENT_INDUSTRY_OPTIONS, CLIENT_STATUS_OPTIONS } from "@/src/modules/clients/constants";
 import { clientFormSchema, type ClientFormValues } from "@/src/modules/clients/schemas";

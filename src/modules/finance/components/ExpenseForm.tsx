@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { EXPENSE_CATEGORY_OPTIONS, EXPENSE_STATUS_OPTIONS } from "@/src/modules/finance/constants";
 import { expenseFormSchema, type ExpenseFormValues } from "@/src/modules/finance/schemas";

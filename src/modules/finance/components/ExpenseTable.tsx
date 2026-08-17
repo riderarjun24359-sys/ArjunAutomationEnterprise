@@ -1,6 +1,3 @@
-import { Card } from "@/src/components/ui/Card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Expense } from "@/src/modules/finance/types";
 
@@ -10,32 +7,36 @@ interface ExpenseTableProps {
 
 export function ExpenseTable({ expenses }: ExpenseTableProps) {
     return (
-        <Card hover>
-            <SectionHeader title="Expenses" description="Operational costs linked to delivery" />
+        <section className="os-panel p-6">
+            <header className="mb-6">
+                <h2 className="dos-text-h2">Expenses</h2>
+                <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Operational costs linked to delivery</p>
+            </header>
+            
             {expenses.length === 0 ? (
-                <div className="mt-6">
-                    <EmptyState title="No expenses recorded" description="Create an expense to track operational costs." />
+                <div className="rounded-[var(--dos-radius-lg)] border border-dashed border-[var(--dos-border)] p-8 text-center">
+                    <p className="dos-text-secondary">No expenses recorded.</p>
                 </div>
             ) : (
-                <div className="mt-6 space-y-3">
+                <div className="space-y-3">
                     {expenses.map((expense) => (
-                        <div key={expense.id} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
+                        <div key={expense.id} className="flex items-center justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 transition">
                             <div>
-                                <p className="font-medium">{expense.description}</p>
-                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{expense.description}</p>
+                                <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
                                     {expense.category}
                                     {expense.projectName ? ` • ${expense.projectName}` : ""}
                                     {expense.clientName ? ` • ${expense.clientName}` : ""}
                                 </p>
                             </div>
-                            <div className="text-right text-sm">
-                                <p className="capitalize">{expense.status}</p>
-                                <p className="font-medium">{formatMoney(expense.amount)}</p>
+                            <div className="text-right dos-text-body-sm text-[var(--dos-text-secondary)]">
+                                <p className="capitalize dos-text-caption">{expense.status}</p>
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(expense.amount)}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
-        </Card>
+        </section>
     );
 }

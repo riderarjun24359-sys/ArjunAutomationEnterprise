@@ -1,6 +1,3 @@
-import { Card } from "@/src/components/ui/Card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Invoice } from "@/src/modules/finance/types";
 
@@ -11,79 +8,77 @@ interface InvoiceDetailPanelProps {
 export function InvoiceDetailPanel({ invoice }: InvoiceDetailPanelProps) {
     if (!invoice) {
         return (
-            <Card hover>
-                <SectionHeader title="Invoice detail" description="Select an invoice to inspect line items and balances" />
-                <div className="mt-6">
-                    <EmptyState title="No invoice selected" description="Choose an invoice from the list to view details." />
-                </div>
-            </Card>
+            <section className="os-panel p-8 text-center text-[var(--dos-text-secondary)]">
+                Select an invoice to inspect details.
+            </section>
         );
     }
 
     return (
-        <Card hover>
-            <SectionHeader title={invoice.number} description={`${invoice.clientName}${invoice.projectName ? ` • ${invoice.projectName}` : ""}`} />
-            <div className="mt-6 space-y-4">
-                <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">Status</p>
-                        <p className="mt-1 font-medium capitalize">{invoice.status}</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">Balance Due</p>
-                        <p className="mt-1 font-medium">{formatMoney(invoice.balanceDue)}</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">Issue Date</p>
-                        <p className="mt-1 font-medium">{invoice.issueDate}</p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">Due Date</p>
-                        <p className="mt-1 font-medium">{invoice.dueDate || "—"}</p>
-                    </div>
+        <section className="os-panel p-6">
+            <header className="mb-6 border-b border-[var(--dos-border-subtle)] pb-4">
+                <h2 className="dos-text-h2">{invoice.number}</h2>
+                <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">
+                    {invoice.clientName}{invoice.projectName ? ` • ${invoice.projectName}` : ""}
+                </p>
+            </header>
+            
+            <div className="space-y-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                    {[
+                        { label: "Status", value: invoice.status },
+                        { label: "Balance Due", value: formatMoney(invoice.balanceDue) },
+                        { label: "Issue Date", value: invoice.issueDate },
+                        { label: "Due Date", value: invoice.dueDate || "—" },
+                    ].map((item) => (
+                        <div key={item.label} className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4">
+                            <p className="dos-text-caption text-[var(--dos-text-tertiary)]">{item.label}</p>
+                            <p className="mt-1 font-semibold text-[var(--dos-text-primary)] capitalize">{item.value}</p>
+                        </div>
+                    ))}
                 </div>
 
                 <div>
-                    <p className="mb-2 text-sm font-medium">Line Items</p>
-                    <div className="space-y-2">
+                    <h4 className="mb-3 dos-text-h3">Line Items</h4>
+                    <div className="space-y-3">
                         {invoice.lineItems.map((item) => (
-                            <div key={item.id} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
+                            <div key={item.id} className="flex items-center justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4">
                                 <div>
-                                    <p className="font-medium">{item.description}</p>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.quantity} × {formatMoney(item.unitPrice)}</p>
+                                    <p className="font-semibold text-[var(--dos-text-primary)]">{item.description}</p>
+                                    <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">{item.quantity} × {formatMoney(item.unitPrice)}</p>
                                 </div>
-                                <p className="font-medium">{formatMoney(item.amount)}</p>
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(item.amount)}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                    <div className="flex justify-between text-sm">
+                <div className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-5 space-y-2">
+                    <div className="flex justify-between dos-text-body-sm text-[var(--dos-text-secondary)]">
                         <span>Subtotal</span>
                         <span>{formatMoney(invoice.subtotal)}</span>
                     </div>
-                    <div className="mt-1 flex justify-between text-sm">
+                    <div className="flex justify-between dos-text-body-sm text-[var(--dos-text-secondary)]">
                         <span>Tax</span>
                         <span>{formatMoney(invoice.taxAmount)}</span>
                     </div>
-                    <div className="mt-2 flex justify-between font-medium">
+                    <div className="flex justify-between font-semibold text-[var(--dos-text-primary)] pt-2 border-t border-[var(--dos-border-subtle)]">
                         <span>Total</span>
                         <span>{formatMoney(invoice.total)}</span>
                     </div>
-                    <div className="mt-1 flex justify-between text-sm text-emerald-600">
+                    <div className="flex justify-between dos-text-body-sm text-[var(--dos-success)] pt-1">
                         <span>Paid</span>
                         <span>{formatMoney(invoice.amountPaid)}</span>
                     </div>
                 </div>
 
                 {invoice.notes ? (
-                    <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                        <p className="text-xs uppercase tracking-wide text-slate-500">Notes</p>
-                        <p className="mt-1 text-sm">{invoice.notes}</p>
+                    <div className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4">
+                        <p className="dos-text-caption text-[var(--dos-text-tertiary)]">Notes</p>
+                        <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">{invoice.notes}</p>
                     </div>
                 ) : null}
             </div>
-        </Card>
+        </section>
     );
 }

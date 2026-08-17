@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Building2, Plus, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { LoadingState } from "@/src/components/ui/LoadingState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";

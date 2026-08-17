@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
 import { env } from "@/src/lib/env";
 import { buildMetadata } from "@/src/lib/seo";
-import "@/src/modules/company-launch-kit/design-system/premium.css";
 
 const inter = Inter({
     subsets: ["latin"],

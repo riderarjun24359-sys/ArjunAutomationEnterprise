@@ -4,13 +4,55 @@
 :root {
   --background: var(--dos-surface);
   --foreground: var(--dos-text-primary);
+  --card: var(--dos-surface-elevated);
+  --card-foreground: var(--dos-text-primary);
+  --popover: var(--dos-surface-elevated);
+  --popover-foreground: var(--dos-text-primary);
+  --primary: var(--dos-brand-primary);
+  --primary-foreground: #020617;
+  --secondary: var(--dos-surface-secondary);
+  --secondary-foreground: var(--dos-text-primary);
+  --muted: var(--dos-surface-tertiary);
+  --muted-foreground: var(--dos-text-secondary);
+  --accent: var(--dos-surface-secondary);
+  --accent-foreground: var(--dos-text-primary);
+  --destructive: var(--dos-error);
+  --destructive-foreground: #ffffff;
+  --border: var(--dos-border);
+  --input: var(--dos-border);
+  --ring: var(--dos-border-focus);
+  --radius: var(--dos-radius-lg);
+}
+
+.dark {
+  --primary-foreground: #020617;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
   --font-sans: var(--dos-font-sans);
   --font-mono: var(--dos-font-mono);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 body {

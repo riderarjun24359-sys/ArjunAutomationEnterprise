@@ -135,36 +135,39 @@ export function AuthForm({ mode }: AuthFormProps) {
         [mode, router, searchParams, setAuth],
     );
 
+    const inputClasses = "w-full rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-tertiary)] px-4 py-3 text-[var(--dos-text-primary)] focus:border-[var(--dos-border-focus)] focus:ring-1 focus:ring-[var(--dos-border-focus)] outline-none transition";
+    const labelClasses = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--dos-text-secondary)]";
+
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {!supabaseReady ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
-                    Supabase environment variables are missing. Copy `.env.example` to `.env.local` and add your project URL and anon key.
+                <div className="rounded-2xl border border-[var(--dos-warning)] bg-[var(--dos-warning)]/10 p-4 text-sm text-[var(--dos-warning)]">
+                    Supabase environment variables are missing.
                 </div>
             ) : null}
 
-            {message ? <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">{message}</div> : null}
-            {displayedError ? <div className="rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/50 dark:text-rose-300">{displayedError}</div> : null}
+            {message ? <div className="rounded-2xl border border-[var(--dos-success)] bg-[var(--dos-success)]/10 p-4 text-sm text-[var(--dos-success)]">{message}</div> : null}
+            {displayedError ? <div className="rounded-2xl border border-[var(--dos-error)] bg-[var(--dos-error)]/10 p-4 text-sm text-[var(--dos-error)]">{displayedError}</div> : null}
 
             {mode === "sign-up" ? (
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Full name</label>
-                    <input {...form.register("fullName")} className="w-full rounded-2xl border border-slate-300 px-4 py-3 dark:border-slate-700 dark:bg-slate-950" />
-                    {"fullName" in errors && errors.fullName ? <p className="mt-2 text-sm text-red-600">{String(errors.fullName.message)}</p> : null}
+                    <label className={labelClasses}>Full name</label>
+                    <input {...form.register("fullName")} className={inputClasses} placeholder="Enter your full name" />
+                    {"fullName" in errors && errors.fullName ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.fullName.message)}</p> : null}
                 </div>
             ) : null}
 
             <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Email</label>
-                <input type="email" {...form.register("email")} className="w-full rounded-2xl border border-slate-300 px-4 py-3 dark:border-slate-700 dark:bg-slate-950" />
-                {"email" in errors && errors.email ? <p className="mt-2 text-sm text-red-600">{String(errors.email.message)}</p> : null}
+                <label className={labelClasses}>Email</label>
+                <input type="email" {...form.register("email")} className={inputClasses} placeholder="name@company.com" />
+                {"email" in errors && errors.email ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.email.message)}</p> : null}
             </div>
 
             {mode !== "forgot-password" ? (
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-200">Password</label>
-                    <input type="password" {...form.register("password")} className="w-full rounded-2xl border border-slate-300 px-4 py-3 dark:border-slate-700 dark:bg-slate-950" />
-                    {"password" in errors && errors.password ? <p className="mt-2 text-sm text-red-600">{String(errors.password.message)}</p> : null}
+                    <label className={labelClasses}>Password</label>
+                    <input type="password" {...form.register("password")} className={inputClasses} placeholder="••••••••" />
+                    {"password" in errors && errors.password ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.password.message)}</p> : null}
                 </div>
             ) : null}
 
@@ -172,7 +175,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 type="submit"
                 disabled={isSubmitting || !supabaseReady}
                 aria-busy={isSubmitting}
-                className="w-full rounded-2xl bg-slate-950 px-4 py-3 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+                className="w-full rounded-[var(--dos-radius-lg)] bg-[var(--dos-text-primary)] px-4 py-3 font-semibold text-[var(--dos-surface)] transition hover:bg-[var(--dos-brand-primary)] disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {isSubmitting ? "Please wait..." : mode === "sign-in" ? "Sign in" : mode === "sign-up" ? "Create account" : mode === "forgot-password" ? "Send recovery email" : "Update password"}
             </button>

@@ -1,11 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Card } from "@/src/components/ui/Card";
-import { LoadingState } from "@/src/components/ui/LoadingState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
+import { PageTransition } from "@/src/design-os/motion/components/PageTransition";
+import { Badge } from "@/src/design-os/components/Badge";
 import { AnalyticsChartsPanel } from "@/src/modules/analytics/components/AnalyticsChartsPanel";
 import { AnalyticsFilters } from "@/src/modules/analytics/components/AnalyticsFilters";
 import { AnalyticsReportsTable } from "@/src/modules/analytics/components/AnalyticsReportsTable";
@@ -19,6 +16,7 @@ import { RevenueAnalyticsPanel } from "@/src/modules/analytics/components/Revenu
 import { ANALYTICS_TABS } from "@/src/modules/analytics/constants";
 import { useAnalytics } from "@/src/modules/analytics/hooks/useAnalytics";
 import type { ReportFormValues } from "@/src/modules/analytics/schemas";
+import { LoadingState } from "@/src/components/ui/LoadingState";
 
 const tabs = [
     { id: ANALYTICS_TABS.overview, label: "Overview" },
@@ -72,40 +70,32 @@ export function AnalyticsPage() {
     };
 
     if (loading) {
-        return (
-            <div className="mx-auto max-w-7xl">
-                <LoadingState label="Loading analytics and performance insights" />
-            </div>
-        );
+        return <LoadingState label="Loading intelligence systems" />;
     }
 
     return (
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-slate-900 dark:text-slate-100">
-            <motion.header
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80"
-            >
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <PageTransition className="mx-auto max-w-[85rem] space-y-10">
+            <header className="flex flex-col gap-4 border-b border-[var(--dos-border-subtle)] pb-8">
+                <Badge variant="info" className="w-fit">Intelligence OS Engine</Badge>
+                <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm font-medium uppercase tracking-[0.24em] text-emerald-600">Performance Intelligence</p>
-                        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Enterprise analytics and performance insights</h1>
-                        <p className="mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
-                            Cross-module KPIs, revenue trends, delivery throughput, client portfolio health, automation performance, saved dashboards, and exportable reports from one Supabase-backed workspace.
+                        <h1 className="dos-text-display">Performance Intelligence</h1>
+                        <p className="mt-4 max-w-3xl dos-text-h3 text-[var(--dos-text-secondary)]">
+                            Enterprise analytics, real-time insights, and predictive performance intelligence.
                         </p>
                     </div>
                     <button
                         type="button"
                         onClick={() => setShowReportForm((current) => !current)}
-                        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-500"
+                        className="rounded-full bg-[var(--dos-text-primary)] px-6 py-3 text-sm font-semibold text-[var(--dos-surface)] transition hover:bg-[var(--dos-brand-primary)]"
                     >
-                        <Plus className="h-4 w-4" />
-                        New Report
+                        {showReportForm ? "Close Form" : "New Report"}
                     </button>
                 </div>
-            </motion.header>
+            </header>
 
             <AnalyticsStats stats={stats} />
+            
             <AnalyticsFilters
                 searchQuery={searchQuery}
                 categoryFilter={categoryFilter}
@@ -113,57 +103,55 @@ export function AnalyticsPage() {
                 onCategoryChange={setCategoryFilter}
             />
 
-            <div className="flex flex-wrap gap-2">
+            <nav className="flex flex-wrap gap-2 border-b border-[var(--dos-border-subtle)] pb-4">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         type="button"
                         onClick={() => setActiveTab(tab.id)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                            activeTab === tab.id
-                                ? "bg-emerald-600 text-white"
-                                : "border border-slate-200 text-slate-600 hover:border-emerald-300 dark:border-slate-800 dark:text-slate-300"
-                        }`}
+                        className={`rounded-full px-5 py-2 text-sm font-semibold transition ${activeTab === tab.id ? "bg-[var(--dos-text-primary)] text-[var(--dos-surface)]" : "text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] hover:text-[var(--dos-text-primary)]"}`}
                     >
                         {tab.label}
                     </button>
                 ))}
-            </div>
+            </nav>
 
-            {showReportForm ? <ReportForm onSubmit={handleCreateReport} onCancel={() => setShowReportForm(false)} /> : null}
+            <section className="min-h-[60vh] rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-8">
+                {showReportForm ? <ReportForm onSubmit={handleCreateReport} onCancel={() => setShowReportForm(false)} /> : null}
 
-            {activeTab === ANALYTICS_TABS.overview ? (
-                <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-                    <DashboardTable dashboards={dashboards} />
-                    <Card hover>
-                        <SectionHeader title="Tracked metrics" description="Stored metric snapshots for this organization" />
-                        <div className="mt-6 space-y-3">
-                            {metrics.length === 0 ? (
-                                <p className="text-sm text-slate-500">No metrics available.</p>
-                            ) : (
-                                metrics.slice(0, 8).map((metric) => (
-                                    <div key={metric.id} className="flex justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                                        <div>
-                                            <p className="font-medium">{metric.label}</p>
-                                            <p className="text-xs capitalize text-slate-500">{metric.category}</p>
+                {activeTab === ANALYTICS_TABS.overview ? (
+                    <section className="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+                        <DashboardTable dashboards={dashboards} />
+                        <section className="os-panel p-6">
+                            <h3 className="mb-6 dos-text-h3">Tracked Metrics</h3>
+                            <div className="space-y-3">
+                                {metrics.length === 0 ? (
+                                    <p className="dos-text-secondary">No metrics available.</p>
+                                ) : (
+                                    metrics.slice(0, 8).map((metric) => (
+                                        <div key={metric.id} className="flex justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] px-4 py-3">
+                                            <div>
+                                                <p className="font-semibold text-[var(--dos-text-primary)]">{metric.label}</p>
+                                                <p className="dos-text-caption text-[var(--dos-text-tertiary)]">{metric.category}</p>
+                                            </div>
+                                            <span className="font-semibold text-[var(--dos-text-primary)]">
+                                                {metric.unit === "USD" ? `$${metric.value.toLocaleString()}` : metric.unit === "percent" ? `${metric.value}%` : metric.value}
+                                            </span>
                                         </div>
-                                        <span className="font-medium">
-                                            {metric.unit === "USD" ? `$${metric.value.toLocaleString()}` : metric.unit === "percent" ? `${metric.value}%` : metric.value}
-                                        </span>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </Card>
-                </div>
-            ) : null}
+                                    ))
+                                )}
+                            </div>
+                        </section>
+                    </section>
+                ) : null}
 
-            {activeTab === ANALYTICS_TABS.revenue ? <RevenueAnalyticsPanel revenue={revenue} /> : null}
-            {activeTab === ANALYTICS_TABS.delivery ? <DeliveryAnalyticsPanel delivery={delivery} /> : null}
-            {activeTab === ANALYTICS_TABS.clients ? <ClientAnalyticsPanel clients={clients} /> : null}
-            {activeTab === ANALYTICS_TABS.automation ? <AutomationInsightsPanel automation={automation} /> : null}
-            {activeTab === ANALYTICS_TABS.reports ? <AnalyticsReportsTable reports={reports} onPublish={publishReport} /> : null}
-            {activeTab === ANALYTICS_TABS.charts ? <AnalyticsChartsPanel summary={summary} /> : null}
-        </div>
+                {activeTab === ANALYTICS_TABS.revenue ? <RevenueAnalyticsPanel revenue={revenue} /> : null}
+                {activeTab === ANALYTICS_TABS.delivery ? <DeliveryAnalyticsPanel delivery={delivery} /> : null}
+                {activeTab === ANALYTICS_TABS.clients ? <ClientAnalyticsPanel clients={clients} /> : null}
+                {activeTab === ANALYTICS_TABS.automation ? <AutomationInsightsPanel automation={automation} /> : null}
+                {activeTab === ANALYTICS_TABS.reports ? <AnalyticsReportsTable reports={reports} onPublish={publishReport} /> : null}
+                {activeTab === ANALYTICS_TABS.charts ? <AnalyticsChartsPanel summary={summary} /> : null}
+            </section>
+        </PageTransition>
     );
 }

@@ -1,4 +1,4 @@
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import type { ClientActivitySummary, ClientContactSummary, ClientDetail, ClientProjectSummary } from "@/src/modules/clients/types";

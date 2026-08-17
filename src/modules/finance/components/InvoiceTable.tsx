@@ -1,8 +1,6 @@
-import { Card } from "@/src/components/ui/Card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
-import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Invoice } from "@/src/modules/finance/types";
+import { cn } from "@/src/lib/cn";
 
 interface InvoiceTableProps {
     invoices: Invoice[];
@@ -12,40 +10,45 @@ interface InvoiceTableProps {
 
 export function InvoiceTable({ invoices, selectedInvoiceId, onSelectInvoice }: InvoiceTableProps) {
     return (
-        <Card hover>
-            <SectionHeader title="Invoices" description="Accounts receivable linked to clients and projects" />
+        <section className="os-panel p-6">
+            <header className="mb-6">
+                <h2 className="dos-text-h2">Invoices</h2>
+                <p className="dos-text-body-sm text-[var(--dos-text-secondary)]">Accounts receivable linked to clients and projects</p>
+            </header>
+            
             {invoices.length === 0 ? (
-                <div className="mt-6">
-                    <EmptyState title="No invoices found" description="Create an invoice or adjust your filters." />
+                <div className="rounded-[var(--dos-radius-lg)] border border-dashed border-[var(--dos-border)] p-8 text-center">
+                    <p className="dos-text-secondary">No invoices found.</p>
                 </div>
             ) : (
-                <div className="mt-6 space-y-3">
+                <div className="space-y-3">
                     {invoices.map((invoice) => (
                         <button
                             key={invoice.id}
                             type="button"
                             onClick={() => onSelectInvoice(invoice.id)}
-                            className={`flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition ${
+                            className={cn(
+                                "flex w-full items-center justify-between rounded-[var(--dos-radius-lg)] border p-4 transition text-left",
                                 selectedInvoiceId === invoice.id
-                                    ? "border-emerald-300 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950/30"
-                                    : "border-slate-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-950/40"
-                            }`}
+                                    ? "border-[var(--dos-border-focus)] bg-[var(--dos-surface-secondary)]"
+                                    : "border-[var(--dos-border)] bg-[var(--dos-surface-elevated)]"
+                            )}
                         >
                             <div>
-                                <p className="font-medium">{invoice.number}</p>
-                                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{invoice.number}</p>
+                                <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
                                     {invoice.clientName}
                                     {invoice.projectName ? ` • ${invoice.projectName}` : ""}
                                 </p>
                             </div>
-                            <div className="text-right text-sm text-slate-600 dark:text-slate-300">
-                                <p className="capitalize">{invoice.status}</p>
-                                <p>{formatMoney(invoice.total)}</p>
+                            <div className="text-right dos-text-body-sm text-[var(--dos-text-secondary)]">
+                                <p className="capitalize dos-text-caption">{invoice.status}</p>
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(invoice.total)}</p>
                             </div>
                         </button>
                     ))}
                 </div>
             )}
-        </Card>
+        </section>
     );
 }

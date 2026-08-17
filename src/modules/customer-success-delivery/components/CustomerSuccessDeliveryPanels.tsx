@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Card } from "@/src/components/ui/Card";
+import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { CSD_THEME, SESSION_STATUS_OPTIONS, ALERT_SEVERITY_OPTIONS, PLAN_STATUS_OPTIONS, RENEWAL_STATUS_OPTIONS, TICKET_STATUS_OPTIONS, AUTOMATION_STATUS_OPTIONS, DEPLOYMENT_STATUS_OPTIONS, UPGRADE_STATUS_OPTIONS, RELEASE_STATUS_OPTIONS, WORKFLOW_STATUS_OPTIONS, IMPLEMENTATION_STATUS_OPTIONS, MILESTONE_STATUS_OPTIONS } from "@/src/modules/customer-success-delivery/constants";
