@@ -80,16 +80,32 @@ export function HeroSection() {
 
                         {/* Founder Composition */}
                         <div className="absolute inset-0 z-20">
-                            <Image 
-                                src="/brand/founder/founder-primary.jpeg" 
-                                alt="Arjun Automation Founder"
-                                fill
-                                className="object-cover object-[50%_20%]"
-                                priority
-                            />
-                            {/* Deep Atmospheric Masking */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[var(--premium-bg)] via-black/20 to-transparent" />
-                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--premium-bg)] via-transparent to-transparent" />
+                            <div className="relative w-full h-full">
+                                <Image
+                                    src="/brand/founder/founder-primary.jpeg"
+                                    alt="Arjun Automation Founder"
+                                    fill
+                                    className="object-contain object-bottom"
+                                    priority
+                                />
+                                <div className="absolute bottom-6 left-6 z-30">
+                                    <p className="text-white text-xl font-bold">ARJUN</p>
+                                    <p className="text-white/80 text-sm">Founder</p>
+                                </div>
+                            </div>
+                            <div className="absolute bottom-6 right-6 z-30 w-1/3 aspect-[3/4] rounded-2xl overflow-hidden border border-white/20">
+                                <Image
+                                    src="/brand/Designer and developer/sagar-designer and developer.jpeg"
+                                    alt="Sagar Designer & Developer"
+                                    fill
+                                    className="object-cover object-center"
+                                />
+                                <div className="absolute bottom-2 left-2 z-40">
+                                    <p className="text-white text-sm font-bold">SAGAR</p>
+                                    <p className="text-white/80 text-xs">Designer & Developer</p>
+                                </div>
+                            </div>
+
                         </div>
                     </motion.div>
                 </div>
