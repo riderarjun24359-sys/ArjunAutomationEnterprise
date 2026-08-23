@@ -17,6 +17,8 @@ export { TaxRateForm } from "@/src/modules/finance/components/TaxRateForm";
 export { FinanceReports } from "@/src/modules/finance/components/FinanceReports";
 export { financeService } from "@/src/modules/finance/services/finance.service";
 export { useFinance } from "@/src/modules/finance/hooks/useFinance";
+
+// Explicit exports to avoid ambiguity
 export * from "@/src/modules/finance/types";
 export * from "@/src/modules/finance/constants";
-export * from "@/src/modules/finance/schemas";
+// Do not export * from schemas if types already export them

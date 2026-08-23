@@ -209,6 +209,9 @@ export interface ExecutiveCommandCenterSnapshot {
     kpis: ExecutiveKpi[];
     liveStats: LiveOperationsStats;
     widgets: ExecutiveDashboardWidgets;
+    runningAutomations: number;
+    pendingApprovals: number;
+    criticalRisks: number;
 }
 
 export interface ExecutiveRawSignals {

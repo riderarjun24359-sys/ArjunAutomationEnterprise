@@ -1,7 +1,6 @@
 "use client";
 
-import { Badge } from "@/src/design-os/components/Badge";
-import { Card } from "@/src/design-os/components/Card";
+import { Card } from "@/src/design-os/components/primitives/Card";
 import { EmptyState } from "@/src/design-os/components/EmptyState";
 import type { RevenueDashboardMetrics } from "../../types/os";
 
@@ -10,78 +9,58 @@ export function RevenueDashboardPanel({ revenue }: { revenue: RevenueDashboardMe
         return (
             <EmptyState
                 title="No revenue signals"
-                description="Revenue dashboard builds from MRR/ARR snapshots, invoices, and payments in Supabase."
+                description="Revenue dashboard builds from MRR/ARR snapshots, invoices, and payments."
             />
         );
     }
 
     return (
-        <div className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Card>
-                    <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">MRR</p>
-                    <p className="mt-2 text-2xl font-bold text-[var(--dos-text-primary)]">${revenue.mrrUsd.toLocaleString()}</p>
-                    <Badge className="mt-2" variant={revenue.mrrTrend === "up" ? "success" : revenue.mrrTrend === "down" ? "error" : "info"}>
-                        Trend {revenue.mrrTrend}
-                    </Badge>
-                </Card>
-                <Card>
-                    <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">ARR</p>
-                    <p className="mt-2 text-2xl font-bold text-[var(--dos-text-primary)]">${revenue.arrUsd.toLocaleString()}</p>
-                </Card>
-                <Card>
-                    <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Collected</p>
-                    <p className="mt-2 text-2xl font-bold text-[var(--dos-text-primary)]">${revenue.collectedUsd.toLocaleString()}</p>
-                </Card>
-                <Card>
-                    <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Outstanding</p>
-                    <p className="mt-2 text-2xl font-bold text-[var(--dos-text-primary)]">${revenue.outstandingUsd.toLocaleString()}</p>
-                </Card>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-2">
-                <Card>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--dos-text-tertiary)]">Revenue by month</p>
-                    <ul className="mt-3 space-y-2 text-sm text-[var(--dos-text-secondary)]">
-                        {revenue.revenueByMonth.length === 0 ? (
-                            <li>No monthly revenue rows yet</li>
-                        ) : (
-                            revenue.revenueByMonth.map((row) => (
-                                <li key={row.month} className="flex justify-between gap-2">
-                                    <span>{row.month}</span>
-                                    <span>
-                                        Inv ${row.invoicedUsd.toLocaleString()} · Coll ${row.collectedUsd.toLocaleString()}
-                                    </span>
-                                </li>
-                            ))
-                        )}
+        <div className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+                <Card variant="base">
+                    <p className="text-xs font-semibold text-[var(--dos-text-tertiary)] uppercase tracking-wide">Revenue trend (Last 6mo)</p>
+                    <ul className="mt-4 space-y-3">
+                        {revenue.revenueByMonth.map((row) => (
+                            <li key={row.month} className="flex justify-between items-center text-sm border-b border-[var(--dos-border-subtle)] pb-2 last:border-0 last:pb-0">
+                                <span className="font-medium text-[var(--dos-text-secondary)]">{row.month}</span>
+                                <span className="text-[var(--dos-text-primary)] tabular-nums">
+                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Inv:</span> ${row.invoicedUsd.toLocaleString()} 
+                                    <span className="mx-2 text-[var(--dos-border)]">|</span>
+                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Coll:</span> ${row.collectedUsd.toLocaleString()}
+                                </span>
+                            </li>
+                        ))}
                     </ul>
                 </Card>
-                <Card>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--dos-text-tertiary)]">Top accounts</p>
-                    <ul className="mt-3 space-y-2 text-sm text-[var(--dos-text-secondary)]">
-                        {revenue.topAccounts.length === 0 ? (
-                            <li>No account revenue yet</li>
-                        ) : (
-                            revenue.topAccounts.map((a) => (
-                                <li key={a.name} className="flex justify-between gap-2">
-                                    <span>{a.name}</span>
-                                    <span>
-                                        MRR ${a.mrrUsd.toLocaleString()} · Due ${a.outstandingUsd.toLocaleString()}
-                                    </span>
-                                </li>
-                            ))
-                        )}
+                <Card variant="base">
+                    <p className="text-xs font-semibold text-[var(--dos-text-tertiary)] uppercase tracking-wide">Top accounts (MRR)</p>
+                    <ul className="mt-4 space-y-3">
+                        {revenue.topAccounts.slice(0, 8).map((a) => (
+                            <li key={a.name} className="flex justify-between items-center border-b border-[var(--dos-border-subtle)] pb-2 last:border-0 last:pb-0">
+                                <span className="truncate text-sm text-[var(--dos-text-secondary)]">{a.name}</span>
+                                <span className="font-semibold text-[var(--dos-text-primary)] tabular-nums">${Math.round(a.mrrUsd).toLocaleString()}</span>
+                            </li>
+                        ))}
                     </ul>
                 </Card>
             </div>
 
-            <Card>
-                <div className="grid gap-2 text-sm text-[var(--dos-text-secondary)] sm:grid-cols-2 lg:grid-cols-4">
-                    <span>Invoices {revenue.invoiceCount}</span>
-                    <span>Paid invoices {revenue.paidInvoiceCount}</span>
-                    <span>Failed payments {revenue.failedPaymentCount}</span>
-                    <span>Collection cases {revenue.collectionCasesOpen}</span>
+            <Card variant="base" className="grid gap-6 text-sm text-[var(--dos-text-secondary)] sm:grid-cols-2 lg:grid-cols-4">
+                <div className="flex flex-col gap-1">
+                    <span className="text-[var(--dos-text-tertiary)] uppercase text-xs">Total Invoices</span>
+                    <span className="text-2xl font-bold text-[var(--dos-text-primary)] tabular-nums">{revenue.invoiceCount}</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[var(--dos-text-tertiary)] uppercase text-xs">Paid</span>
+                    <span className="text-2xl font-bold text-[var(--dos-tint-success)] tabular-nums">{revenue.paidInvoiceCount}</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[var(--dos-text-tertiary)] uppercase text-xs">Failed Payments</span>
+                    <span className="text-2xl font-bold text-[var(--dos-tint-critical)] tabular-nums">{revenue.failedPaymentCount}</span>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="text-[var(--dos-text-tertiary)] uppercase text-xs">Collection Cases</span>
+                    <span className="text-2xl font-bold text-[var(--dos-tint-warning)] tabular-nums">{revenue.collectionCasesOpen}</span>
                 </div>
             </Card>
         </div>

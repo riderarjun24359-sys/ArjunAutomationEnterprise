@@ -22,6 +22,7 @@ export const PROVIDER_KEY_OPTIONS = [
     { value: "anthropic", label: "Anthropic" },
     { value: "azure", label: "Azure OpenAI" },
     { value: "google", label: "Google AI" },
+    { value: "gemini", label: "Google Gemini" },
 ] as const;
 
 export const AGENT_TYPE_OPTIONS = [

@@ -159,6 +159,9 @@ export class ExecutiveCommandCenterService {
             kpis: buildLiveOperationsKpis(liveStats),
             liveStats,
             widgets,
+            runningAutomations: liveStats.activeProjects,
+            pendingApprovals: 0,
+            criticalRisks: risks.length,
         };
     }
 

@@ -1,0 +1,28 @@
+
+> arjunautomationos-enterprise@1.1.1 build
+> next build
+
+▲ Next.js 16.3.0 (Turbopack)
+- Environments: .env.local
+⚠ Warning: Next.js ignored package-lock.json in /Users/chittemsagar because it is outside the current Git repository (/Users/chittemsagar/ArjunAutomationEnterprise).
+ To use this directory, set `turbopack.root` in your Next.js config.
+
+✓ Running next.config.ts took 97ms
+- Experiments (use with caution):
+  · optimizePackageImports
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 2.8s
+  Running TypeScript ...
+src/modules/billing-finance/components/os/EstimateCenterPanel.tsx(4,58): error TS2305: Module '"@/src/modules/finance/types"' has no exported member 'EstimateFormValues'.
+src/modules/billing-finance/components/os/ExpenseCenterPanel.tsx(4,58): error TS2305: Module '"@/src/modules/finance/types"' has no exported member 'ExpenseFormValues'.
+src/modules/billing-finance/components/os/RecurringCenterPanel.tsx(7,14): error TS2739: Type '{}' is missing the following properties from type 'RecurringFormProps': clients, projects, onSubmit
+src/modules/billing-finance/components/os/RecurringCenterPanel.tsx(8,14): error TS2741: Property 'recurringInvoices' is missing in type '{}' but required in type 'RecurringTableProps'.
+src/modules/billing-finance/components/os/TaxCenterPanel.tsx(7,14): error TS2741: Property 'onSubmit' is missing in type '{}' but required in type 'TaxRateFormProps'.
+src/modules/billing-finance/components/os/TaxCenterPanel.tsx(8,14): error TS2741: Property 'taxRates' is missing in type '{}' but required in type 'TaxRateTableProps'.
+src/modules/billing-finance/pages/BillingFinanceOsPage.tsx(116,89): error TS2339: Property 'estimates' does not exist on type 'BillingFinanceSnapshot'.
+src/modules/billing-finance/pages/BillingFinanceOsPage.tsx(117,86): error TS2339: Property 'expenses' does not exist on type 'BillingFinanceSnapshot'.
+src/modules/executive-command-center/components/IntelligenceEnginesPanel.tsx(105,4): error TS2304: Cannot find name 'IntelligenceEnginesPanelProps'.
+src/modules/platform-operations/components/panels/ServiceStatusPanel.tsx(26,76): error TS2367: This comparison appears to be unintentional because the types '"offline" | "critical" | "degraded"' and '"warning"' have no overlap.
+Failed to type check.
+

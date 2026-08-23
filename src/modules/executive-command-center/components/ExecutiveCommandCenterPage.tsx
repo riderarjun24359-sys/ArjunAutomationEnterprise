@@ -2,10 +2,12 @@
 
 import dynamic from "next/dynamic";
 import { Badge } from "@/src/design-os/components/Badge";
+import { IntelligentContainer } from "@/src/design-os/components/IntelligentContainer";
 import { PageTransition } from "@/src/design-os/motion/components/PageTransition";
 import { SkeletonLoader } from "@/src/design-os/motion/components/SkeletonLoader";
 import { EXECUTIVE_COMMAND_CENTER_THEME } from "../constants";
 import { useExecutiveCommandCenter } from "../hooks/useExecutiveCommandCenter";
+import { getEnterprisePulse } from "./EnterprisePulse";
 import { ExecutiveBriefCard } from "./ExecutiveBriefCard";
 import { ExecutiveChartsPanel } from "./ExecutiveChartsPanel";
 import { ExecutiveFeed } from "./ExecutiveFeed";
@@ -72,22 +74,29 @@ export function ExecutiveCommandCenterPage() {
 
     return (
         <PageTransition className="mx-auto max-w-[85rem] space-y-10">
-            <header className="flex flex-col gap-4 border-b border-[var(--dos-border-subtle)] pb-8">
-                <Badge variant="info" className="w-fit">{EXECUTIVE_COMMAND_CENTER_THEME.badge}</Badge>
-                <div>
-                    <h1 className="dos-text-display">
-                        {EXECUTIVE_COMMAND_CENTER_THEME.title}
-                    </h1>
-                    <p className="mt-4 max-w-3xl dos-text-h3 text-[var(--dos-text-secondary)]">
-                        {EXECUTIVE_COMMAND_CENTER_THEME.subtitle}
-                    </p>
-                </div>
-                <div className="flex flex-wrap gap-4 dos-text-caption text-[var(--dos-text-tertiary)]">
-                    <span>{snapshot.organizationName}</span>
-                    <span>•</span>
-                    <span>System Status: <span className="text-[var(--dos-brand-primary)]">Operational</span></span>
-                    <span>•</span>
-                    <span>Unified Intelligence Score: <span className="text-[var(--dos-ai-accent)]">{snapshot.unifiedScore}%</span></span>
+            <header className="space-y-6">
+                <div className="flex items-center justify-between gap-4 border-b border-[var(--dos-border-subtle)] pb-6">
+                    <div>
+                        <Badge variant="info" className="w-fit mb-2">{EXECUTIVE_COMMAND_CENTER_THEME.badge}</Badge>
+                        <h1 className="dos-text-h1 tracking-tighter">
+                            {EXECUTIVE_COMMAND_CENTER_THEME.title}
+                        </h1>
+                    </div>
+                    {/* Enterprise Pulse HUD */}
+                    <div className="flex gap-2">
+                        {getEnterprisePulse(snapshot).map((item) => (
+                            <IntelligentContainer 
+                                key={item.label}
+                                material="active"
+                                agentType={item.status === "healthy" ? "success" : item.status === "active" ? "processing" : item.status === "warning" ? "warning" : "critical"}
+                                className="flex items-center gap-3 px-4 py-2 border border-[var(--dos-border-subtle)]"
+                            >
+                                <item.icon className="h-4 w-4" />
+                                <span className="dos-text-caption">{item.label}</span>
+                                <span className="font-semibold">{item.value}</span>
+                            </IntelligentContainer>
+                        ))}
+                    </div>
                 </div>
             </header>
 

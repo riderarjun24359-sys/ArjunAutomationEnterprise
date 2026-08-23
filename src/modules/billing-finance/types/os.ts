@@ -1,3 +1,5 @@
+import { Estimate, Expense } from "@/src/modules/finance/types";
+
 export type BillingFinanceOsTab =
     | "subscriptions"
     | "invoices"
@@ -107,6 +109,8 @@ export interface BillingFinanceSnapshot {
     subscriptions: SubscriptionManagementItem[];
     invoices: InvoiceCenterItem[];
     payments: PaymentCenterItem[];
+    estimates: Estimate[];
+    expenses: Expense[];
     revenue: RevenueDashboardMetrics;
     executiveWidgets: FinanceExecutiveWidgets;
     assistant: AiFinanceAssistant;

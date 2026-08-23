@@ -2,6 +2,7 @@
 
 import { cn } from "@/src/lib/cn";
 import { WidgetEntrance } from "@/src/design-os/motion/components/WidgetEntrance";
+import { IntelligentContainer } from "@/src/design-os/components/IntelligentContainer";
 
 export function GlassWidget({
     title,
@@ -16,7 +17,14 @@ export function GlassWidget({
 }) {
     return (
         <WidgetEntrance>
-            <div className={cn("dos-glass-panel rounded-[var(--dos-radius-2xl)] p-6", className)}>
+            <IntelligentContainer 
+                className={cn(
+                    "border-0 shadow-none",
+                    "bg-[var(--dos-surface-insight)] backdrop-blur-md", // Refractive look
+                    "z-[var(--dos-z-data)]", // Spatial elevation
+                    className
+                )}
+            >
                 {title ? (
                     <div className="mb-4 flex items-center justify-between">
                         <h3 className="text-base font-semibold text-[var(--dos-text-primary)]">{title}</h3>
@@ -24,7 +32,7 @@ export function GlassWidget({
                     </div>
                 ) : null}
                 {children}
-            </div>
+            </IntelligentContainer>
         </WidgetEntrance>
     );
 }

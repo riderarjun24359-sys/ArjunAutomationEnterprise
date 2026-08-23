@@ -3,6 +3,7 @@
 import { Bot, Menu } from "lucide-react";
 import { SmartSearch } from "./SmartSearch";
 import { NotificationCenter } from "./NotificationCenter";
+import { GlobalEnterprisePulse } from "./GlobalEnterprisePulse";
 import { ThemeToggle } from "@/src/design-os/components/ThemeToggle";
 import { UserMenu } from "@/src/components/layout/UserMenu";
 import { useAppStore } from "@/src/store/app.store";
@@ -27,16 +28,20 @@ export function DashboardToolbar({ title }: { title?: string }) {
     })) ?? [];
 
     return (
-        <header className={cn("dos-glass-panel sticky top-0 z-[var(--dos-z-sticky)] border-x-0 border-t-0")}>
+        <header className={cn("dos-gpu sticky top-0 z-[var(--dos-z-sticky)] border-x-0 border-b border-[var(--dos-border-subtle)] bg-[var(--dos-surface-foundation)]")}>
             <div className="flex items-center justify-between gap-4 px-4 py-2 sm:px-6">
                 <div className="flex min-w-0 items-center gap-3">
-                    <button type="button" onClick={toggleMobileMenu} className="rounded-[var(--dos-radius-xl)] border border-[var(--dos-border)] p-2 text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] lg:hidden" aria-label="Open navigation menu">
+                    <button type="button" onClick={toggleMobileMenu} className="rounded-[var(--dos-radius-xl)] border border-[var(--dos-border-subtle)] p-2 text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-active)] lg:hidden" aria-label="Open navigation menu">
                         <Menu className="h-5 w-5" />
                     </button>
                     <div className="min-w-0">
                         <h1 className="truncate dos-text-h3 text-[var(--dos-text-primary)]">{resolvedTitle}</h1>
                     </div>
                 </div>
+                
+                {/* Global Enterprise Pulse */}
+                <GlobalEnterprisePulse />
+
                 <div className="hidden max-w-sm flex-1 px-2 md:block">
                     <SmartSearch />
                 </div>

@@ -1,3 +1,4 @@
+import { shellNavigation } from "@/src/config/shell-navigation";
 import {
     buildAgentPayload,
     buildAiAuditPayload,
@@ -379,6 +380,46 @@ export class AiOrchestrationService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
         return (await databaseService.employees.listByOrganization(context.organizationId)).map((e) => ({ id: e.id, name: `${e.first_name} ${e.last_name}` }));
+    }
+
+    validateIntent(moduleHref: string): boolean {
+        return shellNavigation.some((item) => item.href === moduleHref);
+    }
+
+    async interpretIntent(authUserId: string, email: string, input: { rawInput: string }, fullName?: string | null) {
+        const capabilities = shellNavigation.map(i => ({ 
+            label: i.label, 
+            href: i.href, 
+            description: i.description 
+        }));
+
+        const systemPrompt = `You are an enterprise intent interpreter. Interpret the user request into a JSON Intent.
+        Rules:
+        1. Interpret ONLY. Do not execute.
+        2. Select ONLY from supplied capabilities.
+        3. Never invent routes.
+        4. Source must be 'AI_FALLBACK'.
+        5. Output format must be JSON.
+        
+        Capabilities: ${JSON.stringify(capabilities)}
+        
+        User request: ${input.rawInput}`;
+
+        try {
+            // Using existing orchestration bridge to execute the task
+            const result = await this.executeTask(authUserId, email, {
+                taskType: "intent-interpretation",
+                moduleSource: "command-palette",
+                inputPayload: { prompt: systemPrompt, rawInput: input.rawInput },
+            }, fullName);
+
+            // In a real production environment, we would fetch the task result here.
+            // As a stub for Phase C, return null as we cannot fully integrate 
+            // the async task result polling mechanism in this scope.
+            return null;
+        } catch (e) {
+            return null;
+        }
     }
 }
 

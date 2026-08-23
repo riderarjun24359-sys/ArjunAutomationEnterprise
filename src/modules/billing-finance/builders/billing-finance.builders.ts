@@ -270,6 +270,8 @@ export function createEmptyBillingFinanceSnapshot(): BillingFinanceSnapshot {
         subscriptions: [],
         invoices: [],
         payments: [],
+        estimates: [],
+        expenses: [],
         revenue: {
             mrrUsd: 0,
             arrUsd: 0,
@@ -329,6 +331,8 @@ export function buildBillingFinanceSnapshot(data: BillingFinanceRawData): Billin
         subscriptions,
         invoices,
         payments,
+        estimates: [],
+        expenses: [],
         revenue,
         executiveWidgets,
         assistant: {

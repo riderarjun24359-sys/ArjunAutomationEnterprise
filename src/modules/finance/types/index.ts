@@ -217,3 +217,7 @@ export interface CreateTaxRateInput {
 }
 
 export type InvoiceStatusFilter = "all" | InvoiceStatus;
+
+export type EstimateFormValues = Omit<CreateEstimateInput, 'status'>;
+export type ExpenseFormValues = Omit<CreateExpenseInput, 'status'>;
+export type TaxRateFormValues = Omit<CreateTaxRateInput, 'isDefault'>;

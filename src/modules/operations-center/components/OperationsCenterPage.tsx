@@ -40,6 +40,10 @@ import {
     OperationsCenterSdkPanel,
 } from "@/src/modules/operations-center/components/OperationsCenterPanels";
 import { OperationsCenterStats } from "@/src/modules/operations-center/components/OperationsCenterStats";
+import { OperationsPulse } from "@/src/modules/operations/components/OperationsPulse";
+import { OperationsExceptionField } from "@/src/modules/operations/components/OperationsExceptionField";
+import { OperationsWorkQueue } from "@/src/modules/operations/components/OperationsWorkQueue";
+import { useOperationsSnapshot } from "@/src/modules/operations/hooks/useOperationsSnapshot";
 import { EOC_TABS } from "@/src/modules/operations-center/constants";
 import { useOperationsCenter } from "@/src/modules/operations-center/hooks/useOperationsCenter";
 
@@ -82,9 +86,10 @@ const tabs = [
 
 export function OperationsCenterPage() {
     const operationsCenter = useOperationsCenter();
+    const { snapshot, loading: snapshotLoading } = useOperationsSnapshot();
     const [activeTab, setActiveTab] = useState<(typeof EOC_TABS)[keyof typeof EOC_TABS]>(EOC_TABS.overview);
 
-    if (operationsCenter.loading) {
+    if (operationsCenter.loading || snapshotLoading) {
         return <div className="mx-auto max-w-7xl"><LoadingState label="Loading Operations Center" /></div>;
     }
 
@@ -97,6 +102,16 @@ export function OperationsCenterPage() {
                     Integration layer for the entire SaaS platform: connected services, payment & accounting connectors, public API platform, webhook delivery, integration marketplace, API analytics, and operations center dashboard with security-first audit and the shared Operations Center SDK.
                 </p>
             </motion.header>
+            
+            {snapshot && <OperationsPulse snapshot={snapshot} />}
+            
+            {snapshot && (
+                <div className="grid gap-6 lg:grid-cols-2">
+                    <OperationsExceptionField exceptions={snapshot.exceptions} />
+                    <OperationsWorkQueue workQueue={snapshot.workQueue} />
+                </div>
+            )}
+
             <OperationsCenterStats stats={operationsCenter.stats} />
             <div className="flex flex-wrap gap-2">
                 {tabs.map((tab) => (
@@ -104,6 +119,7 @@ export function OperationsCenterPage() {
                 ))}
             </div>
             {activeTab === EOC_TABS.overview ? <OperationsCenterOverviewPanel data={operationsCenter} /> : null}
+...
             {activeTab === EOC_TABS.operationsCenters ? <OperationsCentersPanel data={operationsCenter} /> : null}
             {activeTab === EOC_TABS.overallHealth ? <OverallHealthsPanel data={operationsCenter} /> : null}
             {activeTab === EOC_TABS.moduleHealth ? <ModuleHealthsPanel data={operationsCenter} /> : null}

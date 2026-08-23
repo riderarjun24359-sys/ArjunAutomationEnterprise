@@ -14,7 +14,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { Card } from "@/src/design-os/components/Card";
+import { IntelligentContainer } from "@/src/design-os/components/IntelligentContainer";
 import { EmptyState } from "@/src/design-os/components/EmptyState";
 import type { ExecutiveChartsBundle } from "../types";
 
@@ -24,7 +24,6 @@ const CHART_COLORS = [
     "#10b981",
     "#f59e0b",
     "#ef4444",
-    "#64748b",
 ];
 
 function ChartShell({
@@ -39,10 +38,10 @@ function ChartShell({
     children: React.ReactNode;
 }) {
     return (
-        <Card>
-            <h3 className="text-sm font-semibold text-[var(--dos-text-primary)]">{title}</h3>
+        <IntelligentContainer material="base" className="flex flex-col">
+            <h3 className="text-sm font-semibold text-[var(--dos-text-primary)] tracking-wide uppercase">{title}</h3>
             <p className="mt-1 text-xs text-[var(--dos-text-tertiary)]">{description}</p>
-            <div className="mt-4 h-56 sm:h-64">
+            <div className="mt-6 h-56 w-full sm:h-64">
                 {empty ? (
                     <EmptyState
                         className="h-full border-0 bg-transparent p-4"
@@ -53,7 +52,7 @@ function ChartShell({
                     children
                 )}
             </div>
-        </Card>
+        </IntelligentContainer>
     );
 }
 
@@ -70,50 +69,52 @@ export function ExecutiveChartsPanel({ charts }: { charts: ExecutiveChartsBundle
 
     return (
         <section>
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--dos-text-secondary)]">
-                Executive Charts
+            <h2 className="mb-6 text-xs font-semibold uppercase tracking-widest text-[var(--dos-text-tertiary)]">
+                Executive Analytics
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
                 <ChartShell
-                    title="Revenue trend"
+                    title="Revenue Trend"
                     description="Collected payments / invoice amounts by month"
                     empty={revenueEmpty}
                 >
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={charts.revenueTrend}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--dos-border-subtle)" />
-                            <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                            <YAxis tick={{ fontSize: 11 }} />
-                            <Tooltip />
+                            <CartesianGrid vertical={false} stroke="var(--dos-border-subtle)" />
+                            <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--dos-text-tertiary)" }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--dos-text-tertiary)" }} />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', background: 'var(--dos-surface-elevated)', color: 'var(--dos-text-primary)' }} />
                             <Line
                                 type="monotone"
                                 dataKey="value"
                                 stroke="var(--dos-brand-primary)"
-                                strokeWidth={2.5}
-                                dot={{ r: 3 }}
+                                strokeWidth={2}
+                                dot={false}
+                                activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                         </LineChart>
                     </ResponsiveContainer>
                 </ChartShell>
 
                 <ChartShell
-                    title="Client growth"
+                    title="Client Growth"
                     description="Cumulative clients over the last 6 months"
                     empty={clientEmpty}
                 >
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={charts.clientGrowth}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--dos-border-subtle)" />
-                            <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-                            <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                            <Tooltip />
-                            <Bar dataKey="value" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
+                            <CartesianGrid vertical={false} stroke="var(--dos-border-subtle)" />
+                            <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--dos-text-tertiary)" }} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "var(--dos-text-tertiary)" }} />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', background: 'var(--dos-surface-elevated)', color: 'var(--dos-text-primary)' }} />
+                            <Bar dataKey="value" fill="var(--dos-brand-accent)" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </ChartShell>
-
+                
+                {/* Simplified pie chart shell structure */}
                 <ChartShell
-                    title="Project status distribution"
+                    title="Project Status"
                     description="Live project counts by status"
                     empty={projectEmpty}
                 >
@@ -125,20 +126,21 @@ export function ExecutiveChartsPanel({ charts }: { charts: ExecutiveChartsBundle
                                 nameKey="status"
                                 cx="50%"
                                 cy="50%"
-                                outerRadius={80}
-                                label
+                                outerRadius={70}
+                                innerRadius={40}
+                                stroke="none"
                             >
                                 {charts.projectStatus.map((entry, index) => (
                                     <Cell key={entry.status} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', background: 'var(--dos-surface-elevated)', color: 'var(--dos-text-primary)' }} />
                         </PieChart>
                     </ResponsiveContainer>
                 </ChartShell>
 
                 <ChartShell
-                    title="Task completion rate"
+                    title="Task Completion Rate"
                     description={`${charts.taskCompletion.rate}% complete · ${charts.taskCompletion.completed}/${charts.taskCompletion.total} tasks`}
                     empty={taskEmpty}
                 >
@@ -150,15 +152,15 @@ export function ExecutiveChartsPanel({ charts }: { charts: ExecutiveChartsBundle
                                 nameKey="name"
                                 cx="50%"
                                 cy="50%"
-                                innerRadius={45}
-                                outerRadius={80}
-                                label
+                                innerRadius={40}
+                                outerRadius={70}
+                                stroke="none"
                             >
                                 {taskRateData.map((entry, index) => (
-                                    <Cell key={entry.name} fill={index === 0 ? "#10b981" : "#f59e0b"} />
+                                    <Cell key={entry.name} fill={index === 0 ? "var(--dos-tint-success)" : "var(--dos-tint-warning)"} />
                                 ))}
                             </Pie>
-                            <Tooltip />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', background: 'var(--dos-surface-elevated)', color: 'var(--dos-text-primary)' }} />
                         </PieChart>
                     </ResponsiveContainer>
                 </ChartShell>

@@ -1,5 +1,6 @@
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Expense } from "@/src/modules/finance/types";
+import { FinanceRow } from "@/src/design-os/components/primitives/FinanceRow";
 
 interface ExpenseTableProps {
     expenses: Expense[];
@@ -20,7 +21,7 @@ export function ExpenseTable({ expenses }: ExpenseTableProps) {
             ) : (
                 <div className="space-y-3">
                     {expenses.map((expense) => (
-                        <div key={expense.id} className="flex items-center justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 transition">
+                        <FinanceRow key={expense.id}>
                             <div>
                                 <p className="font-semibold text-[var(--dos-text-primary)]">{expense.description}</p>
                                 <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
@@ -33,7 +34,7 @@ export function ExpenseTable({ expenses }: ExpenseTableProps) {
                                 <p className="capitalize dos-text-caption">{expense.status}</p>
                                 <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(expense.amount)}</p>
                             </div>
-                        </div>
+                        </FinanceRow>
                     ))}
                 </div>
             )}

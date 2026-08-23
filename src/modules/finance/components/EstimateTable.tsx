@@ -1,6 +1,7 @@
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Estimate } from "@/src/modules/finance/types";
 import { cn } from "@/src/lib/cn";
+import { FinanceRow } from "@/src/design-os/components/primitives/FinanceRow";
 
 interface EstimateTableProps {
     estimates: Estimate[];
@@ -22,7 +23,7 @@ export function EstimateTable({ estimates, onConvert }: EstimateTableProps) {
             ) : (
                 <div className="space-y-3">
                     {estimates.map((estimate) => (
-                        <div key={estimate.id} className="flex items-center justify-between rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 transition">
+                        <FinanceRow key={estimate.id}>
                             <div>
                                 <p className="font-semibold text-[var(--dos-text-primary)]">{estimate.number}</p>
                                 <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
@@ -45,7 +46,7 @@ export function EstimateTable({ estimates, onConvert }: EstimateTableProps) {
                                     </button>
                                 ) : null}
                             </div>
-                        </div>
+                        </FinanceRow>
                     ))}
                 </div>
             )}

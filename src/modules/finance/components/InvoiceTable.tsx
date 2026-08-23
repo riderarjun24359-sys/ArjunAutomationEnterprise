@@ -1,6 +1,7 @@
 import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 import type { Invoice } from "@/src/modules/finance/types";
 import { cn } from "@/src/lib/cn";
+import { FinanceRow } from "@/src/design-os/components/primitives/FinanceRow";
 
 interface InvoiceTableProps {
     invoices: Invoice[];
@@ -27,24 +28,21 @@ export function InvoiceTable({ invoices, selectedInvoiceId, onSelectInvoice }: I
                             key={invoice.id}
                             type="button"
                             onClick={() => onSelectInvoice(invoice.id)}
-                            className={cn(
-                                "flex w-full items-center justify-between rounded-[var(--dos-radius-lg)] border p-4 transition text-left",
-                                selectedInvoiceId === invoice.id
-                                    ? "border-[var(--dos-border-focus)] bg-[var(--dos-surface-secondary)]"
-                                    : "border-[var(--dos-border)] bg-[var(--dos-surface-elevated)]"
-                            )}
+                            className="w-full text-left"
                         >
-                            <div>
-                                <p className="font-semibold text-[var(--dos-text-primary)]">{invoice.number}</p>
-                                <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
-                                    {invoice.clientName}
-                                    {invoice.projectName ? ` • ${invoice.projectName}` : ""}
-                                </p>
-                            </div>
-                            <div className="text-right dos-text-body-sm text-[var(--dos-text-secondary)]">
-                                <p className="capitalize dos-text-caption">{invoice.status}</p>
-                                <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(invoice.total)}</p>
-                            </div>
+                            <FinanceRow className={selectedInvoiceId === invoice.id ? "border-[var(--dos-border-focus)] bg-[var(--dos-surface-secondary)]" : ""}>
+                                <div>
+                                    <p className="font-semibold text-[var(--dos-text-primary)]">{invoice.number}</p>
+                                    <p className="mt-1 dos-text-body-sm text-[var(--dos-text-secondary)]">
+                                        {invoice.clientName}
+                                        {invoice.projectName ? ` • ${invoice.projectName}` : ""}
+                                    </p>
+                                </div>
+                                <div className="text-right dos-text-body-sm text-[var(--dos-text-secondary)]">
+                                    <p className="capitalize dos-text-caption">{invoice.status}</p>
+                                    <p className="font-semibold text-[var(--dos-text-primary)]">{formatMoney(invoice.total)}</p>
+                                </div>
+                            </FinanceRow>
                         </button>
                     ))}
                 </div>

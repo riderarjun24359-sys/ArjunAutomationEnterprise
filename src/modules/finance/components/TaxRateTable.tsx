@@ -1,7 +1,7 @@
-import { Card } from "@/src/components/ui/card";
-import { EmptyState } from "@/src/components/ui/EmptyState";
+import { Card } from "@/src/design-os/components/primitives/Card";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import type { TaxRate } from "@/src/modules/finance/types";
+import { FinanceRow } from "@/src/design-os/components/primitives/FinanceRow";
 
 interface TaxRateTableProps {
     taxRates: TaxRate[];
@@ -9,24 +9,24 @@ interface TaxRateTableProps {
 
 export function TaxRateTable({ taxRates }: TaxRateTableProps) {
     return (
-        <Card hover>
+        <Card variant="base">
             <SectionHeader title="Tax rates" description="Organization tax configuration" />
             {taxRates.length === 0 ? (
                 <div className="mt-6">
-                    <EmptyState title="No tax rates configured" description="Create a tax rate for invoice calculations." />
+                    <p className="text-center text-sm text-[var(--dos-text-secondary)]">No tax rates configured.</p>
                 </div>
             ) : (
                 <div className="mt-6 space-y-3">
                     {taxRates.map((taxRate) => (
-                        <div key={taxRate.id} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
-                            <div>
-                                <p className="font-medium">{taxRate.name}</p>
+                        <FinanceRow key={taxRate.id}>
+                            <div className="flex flex-col">
+                                <p className="font-semibold text-[var(--dos-text-primary)]">{taxRate.name}</p>
                                 {taxRate.isDefault ? (
-                                    <p className="mt-1 text-xs font-medium uppercase tracking-wide text-emerald-600">Default</p>
+                                    <span className="mt-1 text-xs font-semibold uppercase tracking-wider text-[var(--dos-tint-success)]">Default</span>
                                 ) : null}
                             </div>
-                            <p className="text-lg font-semibold">{taxRate.ratePercent}%</p>
-                        </div>
+                            <p className="text-lg font-bold text-[var(--dos-text-primary)] tabular-nums">{taxRate.ratePercent}%</p>
+                        </FinanceRow>
                     ))}
                 </div>
             )}

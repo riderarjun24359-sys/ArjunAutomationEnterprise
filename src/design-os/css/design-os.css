@@ -14,6 +14,19 @@
     --dos-surface-tertiary: #e2e8f0;
     --dos-surface-elevated: #ffffff;
     
+    /* NEW: Refractive Surface System */
+    --dos-surface-foundation: #ffffff; /* Global workspace background */
+    --dos-surface-base: #f8fafc;       /* Default container material */
+    --dos-surface-active: #f1f5f9;     /* Elevated container material */
+    --dos-surface-insight: rgba(255, 255, 255, 0.95); /* SPECIAL: High-value AI content */
+    
+    /* NEW: Agent Tint Model (Alpha overlays) */
+    --dos-tint-neutral: rgba(0, 0, 0, 0);
+    --dos-tint-processing: rgba(59, 130, 246, 0.05);
+    --dos-tint-warning: rgba(245, 158, 11, 0.05);
+    --dos-tint-critical: rgba(239, 68, 68, 0.05);
+    --dos-tint-success: rgba(34, 197, 94, 0.05);
+
     /* Border - Refined */
     --dos-border: rgba(30, 41, 59, 0.12);
     --dos-border-subtle: rgba(30, 41, 59, 0.06);
@@ -30,6 +43,22 @@
     /* Motion */
     --dos-duration-normal: 250ms;
     --dos-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* NEW: Semantic Motion Tokens */
+    --dos-motion-duration-operational: 150ms;
+    --dos-motion-duration-fluid: 400ms;
+    --dos-motion-duration-pulse: 2000ms;
+    --dos-motion-ease-operational: cubic-bezier(0.16, 1, 0.3, 1);
+    --dos-motion-ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* NEW: Spatial Elevation (Z-index + Layering) */
+    --dos-z-foundation: 0;
+    --dos-z-surface: 10;
+    --dos-z-data: 20;
+    --dos-z-active: 30;
+    --dos-z-insight: 40;
+    --dos-z-copilot: 50;
+    --dos-z-overlay: 100;
 }
 
 .dark {
@@ -38,6 +67,19 @@
     --dos-surface-secondary: #050a15;
     --dos-surface-tertiary: #0c1220;
     --dos-surface-elevated: #0f172a;
+    
+    /* NEW: Refractive Surface System */
+    --dos-surface-foundation: #020617; /* Global workspace background */
+    --dos-surface-base: #050a15;       /* Default container material */
+    --dos-surface-active: #0c1220;     /* Elevated container material */
+    --dos-surface-insight: rgba(15, 23, 42, 0.95); /* SPECIAL: High-value AI content */
+    
+    /* NEW: Agent Tint Model (Dark Mode Alpha overlays) */
+    --dos-tint-neutral: rgba(0, 0, 0, 0);
+    --dos-tint-processing: rgba(59, 130, 246, 0.1);
+    --dos-tint-warning: rgba(245, 158, 11, 0.1);
+    --dos-tint-critical: rgba(239, 68, 68, 0.1);
+    --dos-tint-success: rgba(34, 197, 94, 0.1);
 
     /* Border - Refined */
     --dos-border: rgba(241, 245, 249, 0.1);
