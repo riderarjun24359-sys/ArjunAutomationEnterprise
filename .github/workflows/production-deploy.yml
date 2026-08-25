@@ -95,6 +95,12 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Vercel Link
+        run: npx vercel@58.0.0 link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Vercel Build
         run: npx vercel@58.0.0 build --prod
         env:
