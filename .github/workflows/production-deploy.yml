@@ -87,6 +87,14 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Configure Vercel Project
+        run: |
+          rm -rf .vercel
+          mkdir -p .vercel
+          echo '{"projectId": "'$VERCEL_PROJECT_ID'", "orgId": "'$VERCEL_ORG_ID'"}' > .vercel/project.json
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Vercel Build
         run: npx vercel@58.0.0 build --prod
         env:
