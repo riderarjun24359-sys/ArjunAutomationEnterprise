@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
@@ -9,6 +8,8 @@ import { AnimatedGridPattern } from "@/src/components/magic/AnimatedGridPattern"
 import { Spotlight } from "@/src/components/magic/Spotlight";
 import { HERO_CONTENT } from "@/src/modules/company-launch-kit/data/home-content";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+
+import { ArjunOSVisualization } from '@/src/modules/public-site/components/3d/ArjunOSVisualization';
 
 const Environment3D = dynamic(() => import('@/src/modules/public-site/components/3d/Environment3D'), {
     ssr: false,
@@ -67,7 +68,7 @@ export function HeroSection() {
                     </motion.div>
                 </div>
 
-                {/* Immersive Founder / System Layer */}
+                {/* Immersive Product-Focused Layer */}
                 <motion.div 
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -81,22 +82,14 @@ export function HeroSection() {
                         </Suspense>
                     </div>
 
-                    {/* Founder Composition - Reverted Preference */}
-                    <div className="absolute inset-0 z-10">
-                        <Image 
-                            src="/brand/founder/founder-primary.jpeg" 
-                            alt="Arjun Automation Founder"
-                            fill
-                            className="object-cover object-[50%_20%]"
-                            priority
-                        />
-                        {/* Intelligent Atmospheric Masking */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[var(--dos-surface)] via-transparent to-transparent opacity-80" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--dos-surface)] via-transparent to-transparent opacity-60" />
+                    {/* Product Composition */}
+                    <div className="absolute inset-0 z-10 flex items-center justify-center p-8">
+                        <Suspense fallback={<div className="w-full h-full bg-[var(--dos-surface-tertiary)] animate-pulse" />}>
+                            <ArjunOSVisualization />
+                        </Suspense>
                     </div>
                 </motion.div>
             </div>
         </section>
     );
 }
-
