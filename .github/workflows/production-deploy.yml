@@ -93,35 +93,25 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - name: Configure Vercel Project
+      - name: Trigger Vercel Deployment via API
         run: |
-          rm -rf .vercel
-          mkdir -p .vercel
-          echo '{"projectId": "'$VERCEL_PROJECT_ID'", "orgId": "'$VERCEL_ORG_ID'"}' > .vercel/project.json
-          ls -R .vercel
-          cat .vercel/project.json
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - name: Vercel Link
-        run: npx vercel@58.0.0 link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      - name: Vercel Build
-        run: npx vercel@58.0.0 build --prod
+          curl -X POST https://api.vercel.com/v13/deployments \
+          -H "Authorization: Bearer $VERCEL_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "name": "arjunautomationos-enterprise",
+            "project": "'$VERCEL_PROJECT_ID'",
+            "target": "production",
+            "gitSource": {
+              "type": "github",
+              "repoId": "1325528606",
+              "ref": "main"
+            }
+          }'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          # ...
-      - name: Vercel Deploy
-        run: npx vercel@58.0.0 deploy --prebuilt --prod --yes
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   healthcheck:
     name: Post-deploy health checks
