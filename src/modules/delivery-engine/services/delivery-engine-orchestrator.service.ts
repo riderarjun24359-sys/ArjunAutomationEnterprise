@@ -6,6 +6,7 @@ import { fetchProjects } from "../integrations/projects-bridge";
 import {
     buildDashboardMetrics,
     buildDefaultAnalytics,
+    canAdvanceToStage,
     generateAiRecommendations,
     recommendBlueprint,
     runAutomationPipeline,
@@ -171,6 +172,13 @@ export class DeliveryEngineService {
         if (!current) return null;
         const idx = DELIVERY_PLAYBOOK_STAGES.findIndex((s) => s.id === current.playbookStage);
         const next = DELIVERY_PLAYBOOK_STAGES[Math.min(idx + 1, DELIVERY_PLAYBOOK_STAGES.length - 1)];
+        if (next.id !== current.playbookStage) {
+            const verifications = (await deliveryEngineRepository.listQualityVerifications(orgId)).filter(
+                (v) => v.engagementId === engagementId,
+            );
+            const gate = canAdvanceToStage(next.id, verifications);
+            if (!gate.allowed) throw new Error(gate.reason);
+        }
         return deliveryEngineRepository.updateEngagementStage(orgId, engagementId, next.id as PlaybookStage);
     }
 

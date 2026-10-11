@@ -1,7 +1,10 @@
 import { aiOrchestrationService } from "../src/modules/ai-orchestration/services/ai-orchestration.service.ts";
 
 async function registerGeminiProvider(authUserId, email, fullName) {
-    console.log("Preparing to register Gemini provider...");
+    console.log("Preparing to register Gemini provider (optional — local fallback stays active without a key)...");
+    if (!process.env.GEMINI_API_KEY?.trim() && !process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim()) {
+        console.warn("GEMINI_API_KEY not set: DB record will be created, but external Gemini generation stays disabled until the key is set.");
+    }
     
     try {
         const provider = await aiOrchestrationService.createProvider(authUserId, email, {

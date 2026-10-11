@@ -1,6 +1,7 @@
 import { buildCreateTaskPayload, buildUpdateTaskPayload, computeTaskStatistics, mapTaskAssignee, mapTaskLabel, mapTaskRecord } from "@/src/modules/database/lib/task-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { isTaskTransitionAllowed } from "@/src/modules/tasks/lib/task-transitions";
 import type { CreateTaskInput, Task, TaskAssignee, TaskLabel, TaskStatistics, UpdateTaskInput } from "@/src/modules/tasks/types";
 
 export class TaskService {
@@ -141,6 +142,12 @@ export class TaskService {
     }
 
     async updateTask(authUserId: string, email: string, id: string, input: UpdateTaskInput, fullName?: string | null): Promise<Task | undefined> {
+        if (input.status) {
+            const current = await this.getTask(authUserId, email, id, fullName);
+            if (current && !isTaskTransitionAllowed(current.status, input.status)) {
+                throw new Error(`Task status transition from ${current.status} to ${input.status} is not allowed`);
+            }
+        }
         const updated = await databaseService.tasks.update(id, buildUpdateTaskPayload(input));
         if (!updated) {
             return undefined;

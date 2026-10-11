@@ -1,16 +1,16 @@
 # Final Launch Readiness Report
 
-**Version:** 1.0.0-final-launch-readiness  
-**Generated:** 2026-08-14T17:05:36.768Z  
-**Final score:** 100/100  
-**Decision: GO**  
+**Version:** 1.0.0-final-launch-readiness
+**Generated:** 2026-10-11T06:18:35.043Z
+**Final score:** 76/100
+**Decision: HOLD**
 
 ## Executive summary
 
 Customer-experience audit of Arjun Automation before first invitation.
 Journey surfaces 12/12.
-Issues: 0 critical · 0 high · 0 medium · 0 nice-to-have.
-Recommendation: **GO**.
+Issues: 2 critical · 0 high · 0 medium · 0 nice-to-have.
+Recommendation: **HOLD**.
 
 ## Customer journey audit
 
@@ -47,7 +47,8 @@ Recommendation: **GO**.
 
 ## Critical issues
 
-- None
+- Production secrets incomplete: NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID
+- Email provider not configured (verify-email/invites will fail)
 
 ## High priority issues
 
@@ -63,8 +64,8 @@ Recommendation: **GO**.
 
 ## Recommendation
 
-**GO**
+**HOLD**
 
-Safe to send the first Early Access invitation after operator sign-off.
+Do not send invitations until critical blockers are cleared; re-run npm run final-launch-readiness:verify.
 
 See `docs/FINAL_LAUNCH_READINESS.md`, `docs/LAUNCH_EXECUTION.md`, `docs/EARLY_ACCESS_COHORT_RUNBOOK.md`.

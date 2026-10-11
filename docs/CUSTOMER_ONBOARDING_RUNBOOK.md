@@ -61,3 +61,47 @@ curl -fsS "$PRODUCTION_BASE_URL/api/ops/go-live"
 ```
 
 Dashboard: `/go-live` — onboarding assets + security + email/payment tasks acceptable.
+
+## First-customer services motion (delivery engagements)
+
+For the initial services customer (platform implementation offer), follow the
+persisted lifecycle — every step below maps to implemented code and records:
+
+1. **Capture** — public lead form (`/contact`) with consent; deduped per-org
+   into `sales_leads`; consent proof in `sales_audit_logs` metadata.
+2. **Qualify** — move through `open → qualified → proposal → negotiation →
+   won/lost` in the sales pipeline; log follow-ups as `sales_activities`
+   with due dates (`getDueFollowUps` lists what is due — owners act, nothing
+   auto-sends).
+3. **Discover** — run the questionnaire
+   (`src/modules/brand-os/content/sales-kit/discovery-questionnaire.md`) and
+   persist answers via `buildDiscoveryInterviewInput` +
+   `businessAnalystService.createInterview` on the engagement.
+4. **Propose** — draft from the catalog (`buildProposalDraft`), persist via
+   `businessAnalystService.createProposal`, version via requirement versions.
+   Customer approval is a human `createReviewApproval` row
+   (`pending → approved`). No e-signature is claimed: use the external
+   signing handoff and file the signed copy before proceeding.
+5. **Onboard** — work `buildOnboardingChecklist` with the customer; track
+   state in `cop_onboarding_wizards` rows, never in mock profiles.
+6. **Execute** — projects, milestones, tasks (`todo → in_progress →
+   review → done`, terminal states enforced); pipeline runs record `pending`
+   until a worker result is recorded — never mark complete from a queue row.
+7. **Verify + accept** — record real quality verifications; deployment stays
+   blocked until all pass (`canAdvanceToStage`); acceptance is an explicit
+   `delivery-acceptance` review approval (`buildAcceptanceApprovalInput`).
+8. **Invoice (manual, until provider mapping is live)** — create the invoice
+   in the finance module (unique number enforced); share invoice number,
+   amount, currency, due date, and UPI/bank transfer details with the
+   customer over an approved channel; on receipt of a transfer reference,
+   record a manual payment (amount ≤ outstanding balance enforced).
+9. **Reconcile** — match provider events to invoices with
+   `reconcileProviderEvent`; discrepancies stay open for human review.
+   Refunds need a human approval id + reason and can never exceed paid.
+10. **Support** — log tickets in `support_tickets` with SLA; work
+    `selectOverdueTickets`/`selectResponseBreaches` weekly; renewals via
+    `csd_renewal_forecasts` worked through `selectRenewalsDue` 30 days out.
+
+Human approval stays mandatory before external messages, contracts,
+charges, refunds, or irreversible actions. No step above invents prospects,
+approvals, payments, or completed work.

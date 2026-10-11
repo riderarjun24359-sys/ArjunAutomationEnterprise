@@ -82,7 +82,12 @@ for (const stage of journeyStages) {
 }
 
 pass("phase3:customer_journey_service", existsSync(join(root, "src/modules/mission-core/services/customer-journey.service.ts")));
-pass("phase3:lead_intake_wired", readSafe(join(root, "app/api/launch-kit/contact/route.ts")).includes("customerJourneyService"));
+// The contact route persists via the server-side intake contract (the old
+// customerJourneyService path is a server-side no-op: repository clients are
+// browser-only, so it could never insert from a route handler). Assert the
+// real contract instead: consent gate + dedup + sales_leads insert + audit.
+const contactRoute = readSafe(join(root, "app/api/launch-kit/contact/route.ts"));
+pass("phase3:lead_intake_wired", contactRoute.includes("leadIntakeSchema") && contactRoute.includes("findDuplicateLead") && contactRoute.includes('from("sales_leads")') && contactRoute.includes("getServiceRoleClient"));
 pass("phase3:audit_on_intake", readSafe(join(root, "app/api/launch-kit/contact/route.ts")).includes("logApiAudit"));
 pass("phase3:workflow_async", readSafe(join(root, "src/modules/mission-core/engine/workflow-engine.ts")).includes("runWorkflowToCompletion"));
 

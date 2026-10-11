@@ -53,7 +53,12 @@ pass("mission-core:projects_capability", mcConstants.includes('id: "projects"'))
 
 // Phase 3 — Customer Journey
 pass("journey:lead_not_console_only", !readSafe(join(root, "app/api/launch-kit/contact/route.ts")).includes("console.info"));
-pass("journey:customer_journey_service", readSafe(join(root, "app/api/launch-kit/contact/route.ts")).includes("customerJourneyService"));
+// The contact route persists via the server-side intake contract (the old
+// customerJourneyService path is a server-side no-op: repository clients are
+// browser-only, so it could never insert from a route handler). Assert the
+// real contract instead: consent gate + dedup + sales_leads insert.
+const contactRouteSrc = readSafe(join(root, "app/api/launch-kit/contact/route.ts"));
+pass("journey:customer_journey_service", contactRouteSrc.includes("leadIntakeSchema") && contactRouteSrc.includes("findDuplicateLead") && contactRouteSrc.includes('from("sales_leads")') && contactRouteSrc.includes("getServiceRoleClient"));
 pass("journey:project_create", readSafe(join(root, "src/modules/projects/services/project.service.ts")).includes("createProject"));
 
 // Phase 4 — AI Consolidation

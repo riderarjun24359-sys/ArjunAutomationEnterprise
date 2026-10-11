@@ -3,6 +3,15 @@ import type { JobQueue, QueueType } from "../types";
 
 const queueStore: JobQueue[] = [];
 
+/**
+ * In-memory job counters (no worker, no persistence).
+ *
+ * Queues start at zero — previous random seeds fabricated backlog and
+ * throughput. `enqueueJob` records real enqueue calls in this process only;
+ * nothing here executes work. A durable worker with retries, idempotency,
+ * and dead-letter handling is still required before claiming autonomous
+ * background execution.
+ */
 export function initializeQueues(): JobQueue[] {
     if (queueStore.length > 0) return queueStore;
     QUEUE_TYPES.forEach((type) => {
@@ -10,11 +19,11 @@ export function initializeQueues(): JobQueue[] {
             id: `queue-${type}`,
             name: type.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase()),
             type,
-            pending: Math.floor(Math.random() * 20),
-            processing: Math.floor(Math.random() * 5),
-            failed: Math.floor(Math.random() * 3),
-            completed: Math.floor(Math.random() * 100),
-            avgLatencyMs: Math.round(50 + Math.random() * 200),
+            pending: 0,
+            processing: 0,
+            failed: 0,
+            completed: 0,
+            avgLatencyMs: 0,
         });
     });
     return queueStore;

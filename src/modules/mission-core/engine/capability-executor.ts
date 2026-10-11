@@ -1,11 +1,8 @@
 import { salesService } from "@/src/modules/sales/services/sales.service";
 import { financeService } from "@/src/modules/finance/services/finance.service";
 import { projectService } from "@/src/modules/projects/services/project.service";
-import { businessAssetsService } from "@/src/modules/business-assets/services/business-assets.service";
-import { clientSuccessCapabilityService, buildDefaultClientSuccessState } from "@/src/modules/client-success-capability/services/client-success-capability.service";
 import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 import { validateNoDirectCapabilityCall } from "../lib/orchestration-rules";
-import type { ClientSuccessServiceContext } from "@/src/modules/client-success-capability/types";
 
 export interface CapabilityExecutionContext {
     authUserId: string;
@@ -22,7 +19,7 @@ export async function executeCapabilityAction(
     action: string,
     context: CapabilityExecutionContext,
 ): Promise<Record<string, unknown>> {
-    validateNoDirectCapabilityCall("missionCore", capabilityId);
+    validateNoDirectCapabilityCall("mission-core", capabilityId);
     const { authUserId, email, fullName, payload = {} } = context;
     const timestamp = new Date().toISOString();
 
@@ -35,7 +32,7 @@ export async function executeCapabilityAction(
             case "businessPlatform:generate-proposal": {
                 const proposalResult = await executeCapabilityAction("businessAssets", "generate-proposal", context);
                 missionCore().publishEvent({ type: "ProposalCreated", source: "missionCore", payload: { proposalId: payload.proposalId, ...proposalResult } });
-                return { capabilityId, action, processed: true, proposalId: payload.proposalId, timestamp };
+                return { capabilityId, action, processed: proposalResult.processed === true, proposalId: payload.proposalId, timestamp, ...(typeof proposalResult.error === "string" ? { error: proposalResult.error } : {}) };
             }
             case "sales:qualify-lead": {
                 const lead = await salesService.createLead(authUserId, email, {
@@ -49,13 +46,30 @@ export async function executeCapabilityAction(
                 return { capabilityId, action, processed: true, leadId: lead.id, timestamp };
             }
             case "businessAssets:generate-proposal": {
-                const state = businessAssetsService.getDefaultState();
-                missionCore().publishEvent({ type: "ProposalApproved", source: "missionCore", payload: { proposalRef: state.proposal.reference, clientId: payload.clientId } });
-                return { capabilityId, action, processed: true, proposalRef: state.proposal.reference, timestamp };
+                // Deterministic draft from the published catalog offer — real
+                // content, but NOT persisted and NOT approved. Persist via
+                // businessAnalystService.createProposal and approve via a
+                // human createReviewApproval before acting on it.
+                try {
+                    const { buildProposalDraft } = await import("@/src/modules/sales/lib/proposal-draft");
+                    const draft = buildProposalDraft({
+                        clientName: String(payload.clientName ?? payload.company ?? ""),
+                        opportunityName: payload.opportunityName != null ? String(payload.opportunityName) : undefined,
+                        amount: Number(payload.amount ?? 0),
+                        currency: payload.currency != null ? String(payload.currency) : undefined,
+                    });
+                    missionCore().publishEvent({ type: "ProposalDrafted", source: "missionCore", payload: { title: draft.title, clientId: payload.clientId } });
+                    return { capabilityId, action, processed: true, draft, persisted: false, approvalRequired: true, timestamp };
+                } catch (err) {
+                    return { capabilityId, action, processed: false, error: err instanceof Error ? err.message : "Proposal draft needs clientName and a positive amount", timestamp };
+                }
             }
             case "businessAssets:sign-agreement": {
-                missionCore().publishEvent({ type: "AgreementSigned", source: "missionCore", payload: { clientId: payload.clientId, agreementId: payload.agreementId } });
-                return { capabilityId, action, processed: true, signed: true, clientId: payload.clientId, timestamp };
+                // Refuse: nothing here can legally bind a customer. Signing
+                // requires explicit human authorization plus a configured
+                // signing handoff (external provider or wet-ink process).
+                // Returning processed:false stops lifecycle automation here.
+                return { capabilityId, action, processed: false, error: "Agreement signing requires human authorization and a configured signing handoff; nothing was signed", timestamp };
             }
             case "projects:create-project": {
                 const project = await projectService.createProject(authUserId, email, {
@@ -68,9 +82,11 @@ export async function executeCapabilityAction(
                 return { capabilityId, action, processed: true, projectId: project.id, timestamp };
             }
             case "clientSuccess:run-onboarding": {
-                const csCtx: ClientSuccessServiceContext = { authUserId, email, fullName };
-                const result = await clientSuccessCapabilityService.runAiOnboarding(csCtx, String(payload.clientId ?? ""), buildDefaultClientSuccessState());
-                return { capabilityId, action, processed: true, onboarding: result.profile, timestamp };
+                // Refuse: the underlying onboarding helper returns in-memory
+                // defaults, not a persisted plan. Real onboarding is created
+                // through the customer onboarding wizard records; automation
+                // must not claim a customer was onboarded from mock data.
+                return { capabilityId, action, processed: false, error: "Customer onboarding requires a real onboarding wizard record; mock profiles are never reported as completed", timestamp };
             }
             case "clientSuccess:track-delivery": {
                 missionCore().publishEvent({ type: "WorkflowCompleted", source: "missionCore", payload: { stage: "delivery", clientId: payload.clientId } });

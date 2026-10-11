@@ -83,10 +83,10 @@ const ready = fail === 0 && missingCritical.length === 0;
 
 const md = `# Production Readiness Report
 
-**Version:** 1.0.0-early-access-cutover  
-**Generated:** ${new Date().toISOString()}  
-**Ready:** ${ready ? "YES" : "NO"}  
-**Score:** ${score}/100  
+**Version:** 1.0.0-early-access-cutover
+**Generated:** ${new Date().toISOString()}
+**Ready:** ${ready ? "YES" : "NO"}
+**Score:** ${score}/100
 
 ## Secrets
 

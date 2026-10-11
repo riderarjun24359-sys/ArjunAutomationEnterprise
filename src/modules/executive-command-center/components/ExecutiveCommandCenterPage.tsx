@@ -29,6 +29,10 @@ const FinanceExecutiveWidgetsPanel = dynamic(
 );
 const ExecutiveHrWidgetsPanel = dynamic(() => import("./ExecutiveHrWidgetsPanel").then((m) => m.ExecutiveHrWidgetsPanel), { ssr: false });
 const ExecutiveSecurityWidgetsPanel = dynamic(() => import("./ExecutiveSecurityWidgetsPanel").then((m) => m.ExecutiveSecurityWidgetsPanel), { ssr: false });
+const ExecutiveIntegrationWidgetsPanel = dynamic(
+    () => import("./ExecutiveIntegrationWidgetsPanel").then((m) => m.ExecutiveIntegrationWidgetsPanel),
+    { ssr: false },
+);
 
 function ExecutiveCommandCenterSkeleton() {
     return (
@@ -110,6 +114,8 @@ export function ExecutiveCommandCenterPage() {
             </section>
 
             <ExecutiveChartsPanel charts={snapshot.widgets.charts} />
+
+            <ExecutiveIntegrationWidgetsPanel widgets={snapshot.widgets.integrations} />
             
             <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <CustomerSuccessExecutiveWidgetsPanel widgets={snapshot.widgets.customerSuccess} />

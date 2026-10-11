@@ -5,21 +5,54 @@ import { Card } from "@/src/design-os/components/primitives/Card";
 import { PageTransition } from "@/src/design-os/motion/components/PageTransition";
 import { EntityRow } from "@/src/design-os/components/primitives/EntityRow";
 import { crmService } from "@/src/modules/crm/services/crm.service";
+import { useAuthStore } from "@/src/store/auth.store";
 import type { CrmEnterpriseSnapshot } from "@/src/modules/crm/types/enterprise";
 
 export default function CustomerOsPage() {
+    const user = useAuthStore((s) => s.user);
     const [snapshot, setSnapshot] = useState<CrmEnterpriseSnapshot | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // TODO: Replace with authenticated context
-        crmService.getEnterpriseSnapshot("system", "system@arjun.dev")
-            .then(setSnapshot)
-            .finally(() => setLoading(false));
-    }, []);
+        let cancelled = false;
+        const timer = window.setTimeout(() => {
+            void (async () => {
+                if (!user) {
+                    if (!cancelled) {
+                        setSnapshot(null);
+                        setLoading(false);
+                        setError(null);
+                    }
+                    return;
+                }
+                if (!cancelled) {
+                    setLoading(true);
+                    setError(null);
+                }
+                try {
+                    const data = await crmService.getEnterpriseSnapshot(user.id, user.email, user.fullName);
+                    if (!cancelled) setSnapshot(data);
+                } catch (err) {
+                    if (!cancelled) {
+                        setError(err instanceof Error ? err.message : "Failed to load Customer OS");
+                        setSnapshot(null);
+                    }
+                } finally {
+                    if (!cancelled) setLoading(false);
+                }
+            })();
+        }, 0);
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
+    }, [user]);
 
     if (loading) return <div className="p-6">Loading...</div>;
-    if (!snapshot) return <div className="p-6">Error loading snapshot.</div>;
+    if (!user) return <div className="p-6">Please sign in to view Customer OS.</div>;
+    if (error) return <div className="p-6" role="alert">Error loading customer data: {error}</div>;
+    if (!snapshot) return <div className="p-6">No customer data available yet.</div>;
 
     const { stats, leads, insights } = snapshot;
 
@@ -39,15 +72,14 @@ export default function CustomerOsPage() {
                         <p className="mt-1 text-2xl font-bold" aria-labelledby="active-customers-label">{stats.totalClients}</p>
                     </Card>
                     <Card variant="base">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]" id="pipeline-value-label">Pipeline Value</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]" id="pipeline-value-label">Collected Revenue</p>
                         <p className="mt-1 text-2xl font-bold" aria-labelledby="pipeline-value-label">
-                            {/* Assuming value represents raw amount, needs proper formatting if available in stats */}
                             {stats.collectedRevenueLabel}
                         </p>
                     </Card>
                     <Card variant="base">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]" id="active-cases-label">Active Cases</p>
-                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-processing)]" aria-labelledby="active-cases-label">{stats.totalLeads}</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]" id="active-cases-label">Open Opportunities</p>
+                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-processing)]" aria-labelledby="active-cases-label">{stats.openOpportunities}</p>
                     </Card>
                     <Card variant="insight">
                         <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]" id="pending-tasks-label">Pending Insights</p>

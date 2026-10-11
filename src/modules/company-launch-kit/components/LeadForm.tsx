@@ -29,6 +29,7 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
             phone: formData.get("phone") as string,
             message: formData.get("message") as string,
             source,
+            consent: formData.get("consent") === "on",
         };
 
         try {
@@ -118,6 +119,23 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
                     {errorMessage}
                 </p>
             ) : null}
+            <div className="flex items-start gap-2">
+                <input
+                    id={`consent-${source}`}
+                    name="consent"
+                    type="checkbox"
+                    required
+                    aria-required="true"
+                    className="mt-1 h-4 w-4 rounded border-slate-300"
+                />
+                <label htmlFor={`consent-${source}`} className="text-sm text-slate-600">
+                    I agree to the storage and use of my details for contact about my enquiry, as described in the{" "}
+                    <a href={MARKETING_ROUTES.privacy} className="underline">
+                        privacy notice
+                    </a>
+                    .
+                </label>
+            </div>
             <button
                 type="submit"
                 disabled={status === "loading"}

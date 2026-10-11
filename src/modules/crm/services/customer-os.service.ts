@@ -16,9 +16,11 @@ class CustomerOSService {
             fetchedAt: snapshot.fetchedAt,
             pulse: {
                 activeCustomers: snapshot.stats.totalClients,
-                openOpportunitiesValue: snapshot.stats.totalLeads, // Corrected to totalLeads as placeholder
-                activeSuccessCases: 12,
-                pendingTasks: 8,
+                openOpportunitiesValue: snapshot.stats.openOpportunities,
+                // The CRM enterprise snapshot has no success-case or task
+                // source, so report 0 rather than inventing figures.
+                activeSuccessCases: 0,
+                pendingTasks: 0,
             },
             relationship: {
                 recentOpportunities: snapshot.leads.slice(0, 5),

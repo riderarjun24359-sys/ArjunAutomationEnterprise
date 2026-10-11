@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/src/modules/company-launch-kit/design-system/premium.css";
 import { Inter } from "next/font/google";
 import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
 import { env } from "@/src/lib/env";

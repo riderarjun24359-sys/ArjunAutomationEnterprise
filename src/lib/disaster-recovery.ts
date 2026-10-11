@@ -59,14 +59,31 @@ export async function verifyBackupStatus(organizationId: string): Promise<Backup
     }
 }
 
-export function verifyRestoreProcedure(): RestoreVerificationResult {
+export interface RestoreDrillEvidence {
+    restoreStatus?: string | null;
+    validatedAt?: string | null;
+}
+
+/**
+ * Restore drills require evidence: a recent successful row in
+ * cop_restore_validations (restore_status success-like + validated_at).
+ * Docs alone never pass — pass recent drill rows from the caller (e.g.
+ * customer-operated-platform service) or accept the honest negative.
+ */
+export function verifyRestoreProcedure(drills: RestoreDrillEvidence[] = [], now: number = Date.now()): RestoreVerificationResult {
     const checkedAt = new Date().toISOString();
-    const hasGuide = true;
+    const recent = drills.filter((drill) => {
+        if (!/success|passed|verified|complete/i.test(drill.restoreStatus ?? "")) return false;
+        if (!drill.validatedAt) return false;
+        const at = new Date(drill.validatedAt).getTime();
+        return Number.isFinite(at) && now - at <= 90 * 24 * 60 * 60 * 1000;
+    });
+    if (recent.length > 0) {
+        return { ok: true, detail: `${recent.length} successful restore drill(s) within 90 days — latest evidence accepted`, checkedAt };
+    }
     return {
-        ok: hasGuide,
-        detail: hasGuide
-            ? "Restore procedure documented in docs/DISASTER_RECOVERY.md — validate failover via Platform Operations DR panel"
-            : "Missing disaster recovery documentation",
+        ok: false,
+        detail: "No restore drill evidence in the last 90 days — run a drill and record it in cop_restore_validations (docs/DISASTER_RECOVERY.md alone is not proof)",
         checkedAt,
     };
 }

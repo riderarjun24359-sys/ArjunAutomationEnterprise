@@ -41,6 +41,7 @@ const protectedRoutes = [
     ROUTES.tasks,
     ROUTES.finance,
     ROUTES.crm,
+    ROUTES.customerOs,
     ROUTES.analytics,
     ROUTES.automation,
     ROUTES.settings,

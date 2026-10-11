@@ -18,6 +18,7 @@ export function ClientPortalPanel() {
             <div>
                 <h2 className="text-xl font-semibold text-[var(--dos-text-primary)]">Client Portal</h2>
                 <p className="text-sm text-[var(--dos-text-secondary)]">Dashboard, progress, files, invoices, docs, approvals, meetings, support, and knowledge base.</p>
+                <p className="mt-1 text-sm text-[var(--dos-text-secondary)]"><Badge variant="info">Preview data — illustrative defaults, not persisted records</Badge></p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">

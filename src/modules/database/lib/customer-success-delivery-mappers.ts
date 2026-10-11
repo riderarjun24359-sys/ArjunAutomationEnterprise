@@ -237,6 +237,8 @@ export function mapRenewalForecastSummary(record: DbCsdRenewalForecast, maps?: {
         customerRef: record.customer_ref as string,
         forecastStatus: record.forecast_status as string,
         status: record.status,
+        renewalDate: (record.renewal_date as string | null) ?? null,
+        forecastValue: Number(record.forecast_value ?? 0),
     };
 }
 

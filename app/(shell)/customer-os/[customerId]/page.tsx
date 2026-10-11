@@ -7,6 +7,7 @@ import { PageTransition } from "@/src/design-os/motion/components/PageTransition
 import { EntityRow } from "@/src/design-os/components/primitives/EntityRow";
 import { Button } from "@/src/design-os/components/primitives/Button";
 import { crmService } from "@/src/modules/crm/services/crm.service";
+import { useAuthStore } from "@/src/store/auth.store";
 import { ROUTES } from "@/src/constants/routes";
 import type { ClientProfileBundle } from "@/src/modules/crm/types/enterprise";
 import Link from "next/link";
@@ -14,19 +15,49 @@ import Link from "next/link";
 export default function CustomerWorkspacePage() {
     const params = useParams();
     const customerId = params.customerId as string;
+    const user = useAuthStore((s) => s.user);
     const [bundle, setBundle] = useState<ClientProfileBundle | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!customerId) return;
-        crmService.getClientProfile("system", "system@arjun.dev", customerId)
-            .then(setBundle)
-            .finally(() => setLoading(false));
-    }, [customerId]);
+        let cancelled = false;
+        const timer = window.setTimeout(() => {
+            void (async () => {
+                if (!customerId || !user) {
+                    if (!cancelled) {
+                        setBundle(null);
+                        setLoading(false);
+                        setError(null);
+                    }
+                    return;
+                }
+                if (!cancelled) {
+                    setLoading(true);
+                    setError(null);
+                }
+                try {
+                    const data = await crmService.getClientProfile(user.id, user.email, customerId, user.fullName);
+                    if (!cancelled) setBundle(data);
+                } catch (err) {
+                    if (!cancelled) {
+                        setError(err instanceof Error ? err.message : "Failed to load customer workspace");
+                        setBundle(null);
+                    }
+                } finally {
+                    if (!cancelled) setLoading(false);
+                }
+            })();
+        }, 0);
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
+    }, [customerId, user]);
 
     const intelligence = useMemo(() => {
         if (!bundle) return null;
-        const { client, tasks, projects } = bundle;
+        const { client, tasks } = bundle;
         
         const overdueTasks = tasks.filter(t => t.status !== "completed" && new Date(t.dueDate) < new Date());
         const pendingTasks = tasks.filter(t => t.status === "pending");
@@ -50,9 +81,11 @@ export default function CustomerWorkspacePage() {
     }, [bundle]);
 
     if (loading) return <div className="p-6 text-[var(--dos-text-secondary)]">Loading workspace...</div>;
+    if (!user) return <div className="p-6 text-[var(--dos-text-secondary)]">Please sign in to view this customer workspace.</div>;
+    if (error) return <div className="p-6 text-[var(--dos-text-secondary)]" role="alert">Error loading workspace: {error}</div>;
     if (!bundle || !intelligence) return <div className="p-6 text-[var(--dos-text-secondary)]">Customer not found or unavailable.</div>;
 
-    const { client, timeline, projects, tasks, revenue } = bundle;
+    const { client, timeline, projects, revenue } = bundle;
     const { state, attentionReasons } = intelligence;
 
     return (

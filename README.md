@@ -2,13 +2,17 @@
 
 Production-ready enterprise operating system with Mission Core orchestration, 60+ capabilities, and Design OS UI.
 
-## Quick Start
+## Quick Start (local-first, zero paid keys)
 
 ```bash
 npm install
-cp .env.example .env.local   # configure Supabase + PLATFORM_LEAD_API_KEY
+cp .env.example .env.local   # optional for local UI; Supabase not required to boot
 npm run dev
 ```
+
+No Gemini, Vercel, Stripe, Resend, or Sentry credentials are needed for local
+build, tests, or startup. See [Local-First Runbook](docs/LOCAL_FIRST_RUNBOOK.md)
+for what works offline and what still needs Supabase/hosted services.
 
 ## Documentation
 
@@ -24,8 +28,12 @@ npm run dev
 ## Verification
 
 ```bash
-npm run production-remediation:verify
+npm run test:unit
+npm run build
+npm run production:verify
 ```
+
+See [Local-First Runbook](docs/LOCAL_FIRST_RUNBOOK.md) for the full offline matrix.
 
 ## Core Routes
 

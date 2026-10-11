@@ -20,6 +20,7 @@ import {
 } from "@/src/modules/database/lib/finance-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { isDuplicateInvoiceNumber, validateManualPayment } from "@/src/modules/finance/lib/transaction-guards";
 import type {
     CreateEstimateInput,
     CreateExpenseInput,
@@ -110,6 +111,11 @@ export class FinanceService {
     async createInvoice(authUserId: string, email: string, input: CreateInvoiceInput, fullName?: string | null): Promise<Invoice> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+
+        const existingNumbers = (await databaseService.invoices.listByOrganization(context.organizationId)).map((record) => record.number ?? "");
+        if (isDuplicateInvoiceNumber(existingNumbers, input.number)) {
+            throw new Error(`Invoice number ${input.number.trim()} already exists in this organization`);
+        }
 
         const defaultTaxRate = (await databaseService.taxRates.listByOrganization(context.organizationId)).find((rate) => rate.is_default);
         const payload = buildInvoicePayload(context.organizationId, { ...input, defaultTaxRate: defaultTaxRate ? Number(defaultTaxRate.rate_percent) : 0 });
@@ -206,6 +212,14 @@ export class FinanceService {
 
         const invoiceRecord = await databaseService.invoices.getById(input.invoiceId);
         if (!invoiceRecord) throw new Error("Invoice not found");
+
+        const paymentCheck = validateManualPayment({
+            amount: input.amount,
+            invoiceTotal: Number(invoiceRecord.total),
+            invoiceAmountPaid: Number(invoiceRecord.amount_paid),
+            invoiceStatus: invoiceRecord.status,
+        });
+        if (!paymentCheck.ok) throw new Error(paymentCheck.reason);
 
         const created = await databaseService.payments.create(
             buildPaymentPayload(context.organizationId, {

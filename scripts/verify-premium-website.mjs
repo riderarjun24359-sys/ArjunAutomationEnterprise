@@ -163,7 +163,8 @@ pass("marketing:display_font", marketingLayoutSource.includes("Inter") || market
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
 pass("page:PremiumHomePage", pageSource.includes("PremiumHomePage"));
 pass("page:metadata", pageSource.includes("export const metadata"));
-pass("page:JsonLd", pageSource.includes("JsonLd"));
+// Check for structured data via MarketingStructuredData component (which internally uses JsonLd)
+pass("page:JsonLd", pageSource.includes("MarketingStructuredData") || pageSource.includes("JsonLd"));
 
 pass("page:about_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "about", "page.tsx")).includes("PremiumPageShell"));
 pass("page:services_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "services", "page.tsx")).includes("PremiumPageShell"));

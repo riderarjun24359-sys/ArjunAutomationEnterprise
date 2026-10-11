@@ -7,6 +7,7 @@ export const CUTOVER_CRITICAL_SECRETS = [
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
     "PLATFORM_LEAD_API_KEY",
+    "PLATFORM_ORGANIZATION_ID",
 ] as const;
 
 export const CUTOVER_RECOMMENDED_SECRETS = [
@@ -22,7 +23,6 @@ export const CUTOVER_RECOMMENDED_SECRETS = [
     "OPS_ALERT_WEBHOOK_URL",
     "SENTRY_DSN",
     "BACKUP_ENABLED",
-    "PLATFORM_ORGANIZATION_ID",
 ] as const;
 
 export class ProductionSecretsError extends Error {
@@ -63,7 +63,6 @@ export function listMissingRecommendedSecrets(env: NodeJS.ProcessEnv = process.e
     if (!present(env, "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY")) missing.push("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY");
     if (!present(env, "OPS_ALERT_WEBHOOK_URL") && !present(env, "SENTRY_DSN")) missing.push("OPS_ALERT_WEBHOOK_URL|SENTRY_DSN");
     if (env.BACKUP_ENABLED !== "1" && env.BACKUP_ENABLED !== "true") missing.push("BACKUP_ENABLED");
-    if (!present(env, "PLATFORM_ORGANIZATION_ID")) missing.push("PLATFORM_ORGANIZATION_ID");
     return missing;
 }
 

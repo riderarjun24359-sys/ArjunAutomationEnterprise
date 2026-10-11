@@ -1,3 +1,4 @@
+import { isBlockedByOptOut } from "@/src/modules/communication-hub/lib/consent-gate";
 import {
     buildCommunicationHubLookupMaps,
     buildCnhAuditPayload,
@@ -720,6 +721,16 @@ export class CommunicationHubService {
     async sdkSendNotification(authUserId: string, email: string, input: CnhSdkSendNotificationInput, fullName?: string | null): Promise<CnhSdkSendNotificationResult> {
         const ai = createAiOrchestrationClient(authUserId, email, fullName);
         await ai.executeTask({ taskType: "send_notification", moduleSource: "communication_hub", inputPayload: { ...input } });
+        const optOuts = await this.getOptOutRecords(authUserId, email, fullName);
+        const channelType = input.channelType ?? "email";
+        if (isBlockedByOptOut(optOuts, input.recipient, channelType)) {
+            const blocked = await this.createNotificationQueue(authUserId, email, { communicationHubId: input.communicationHubId, queueKey: input.queueKey, recipient: input.recipient, channelType, deliveryStatus: "blocked-opt-out" }, fullName);
+            const context = await this.getContext(authUserId, email, fullName);
+            if (context) {
+                await databaseService.cnhAuditLogs.create(buildCnhAuditPayload(context.organizationId, "notification_queue", "block", `Notification to ${input.recipient} blocked by active opt-out`, blocked.id));
+            }
+            return { queueId: blocked.id, queueKey: blocked.queueKey, deliveryStatus: blocked.deliveryStatus };
+        }
         const created = await this.createNotificationQueue(authUserId, email, { communicationHubId: input.communicationHubId, queueKey: input.queueKey, recipient: input.recipient, deliveryStatus: "queued" }, fullName);
         return { queueId: created.id, queueKey: created.queueKey, deliveryStatus: created.status };
     }

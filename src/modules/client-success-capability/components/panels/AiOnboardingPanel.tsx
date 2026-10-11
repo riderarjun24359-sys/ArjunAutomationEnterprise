@@ -21,6 +21,7 @@ export function AiOnboardingPanel() {
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--dos-text-primary)]">AI Onboarding</h2>
                     <p className="text-sm text-[var(--dos-text-secondary)]">AI-first requirement analysis, stakeholder mapping, and success planning.</p>
+                    <p className="mt-1 text-sm text-[var(--dos-text-secondary)]"><Badge variant="info">Preview data — illustrative defaults, not persisted records</Badge></p>
                 </div>
                 <Button onClick={() => runAiOnboarding(selectedClientId)} disabled={actionLoading}>
                     {onboarding ? "Re-run Analysis" : "Run AI Onboarding"}

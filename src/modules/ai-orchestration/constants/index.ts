@@ -18,11 +18,12 @@ export const AI_ORCHESTRATION_TABS = {
 } as const;
 
 export const PROVIDER_KEY_OPTIONS = [
+    { value: "local", label: "Local deterministic (no API key)" },
     { value: "openai", label: "OpenAI" },
     { value: "anthropic", label: "Anthropic" },
     { value: "azure", label: "Azure OpenAI" },
     { value: "google", label: "Google AI" },
-    { value: "gemini", label: "Google Gemini" },
+    { value: "gemini", label: "Google Gemini (optional)" },
 ] as const;
 
 export const AGENT_TYPE_OPTIONS = [

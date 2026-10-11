@@ -125,6 +125,8 @@ export interface RenewalForecastSummary {
     customerRef: string;
     forecastStatus: string;
     status: string;
+    renewalDate: string | null;
+    forecastValue: number;
 }
 
 export interface CreateRenewalForecastInput {

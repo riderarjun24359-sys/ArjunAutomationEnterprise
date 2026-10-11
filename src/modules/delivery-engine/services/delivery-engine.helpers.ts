@@ -8,22 +8,41 @@ import type {
     QualityVerificationRecord,
 } from "../types";
 
+/**
+ * Quality "verification" without an automated checker.
+ *
+ * There is no local automated QA executor in this repository, so this helper
+ * must NOT invent scores or findings. It returns every dimension as
+ * not-passed with an explicit manual-verification finding. Persisted rows
+ * therefore read as "human QA required" rather than fake evidence, and the
+ * delivery gate (`canAdvanceToStage`) keeps them out of deployment until a
+ * human records real passing verifications.
+ */
 export function runQualityVerification(engagementId: string): QualityReport {
-    const dimensions: QualityVerificationRecord[] = QUALITY_DIMENSIONS.map((d, i) => ({
+    const dimensions: QualityVerificationRecord[] = QUALITY_DIMENSIONS.map((d) => ({
         id: `qv-${engagementId}-${d.id}`,
         organizationId: "",
         engagementId,
         dimension: d.id,
-        score: 78 + (i % 4) * 5,
-        passed: i !== 2,
-        findings: i === 2 ? "Contrast ratio below WCAG AA on secondary buttons" : "",
+        score: 0,
+        passed: false,
+        findings: "Manual verification required — no automated checks run in this environment",
         createdAt: new Date().toISOString(),
     }));
-    const overallScore = Math.round(dimensions.reduce((s, d) => s + d.score, 0) / dimensions.length);
-    return { engagementId, overallScore, passed: dimensions.every((d) => d.passed), dimensions };
+    return { engagementId, overallScore: 0, passed: false, dimensions };
 }
 
 export function buildDefaultAnalytics(engagementCount: number, completedCount: number): DeliveryAnalyticsSummary {
+    if (engagementCount === 0) {
+        return {
+            avgDeliveryTimeDays: 0,
+            avgBuildTimeHours: 0,
+            avgTestingTimeHours: 0,
+            avgDeploymentTimeHours: 0,
+            clientSatisfactionScore: 0,
+            defectRate: 0,
+        };
+    }
     const factor = Math.max(1, engagementCount);
     return {
         avgDeliveryTimeDays: Math.round(14 - completedCount * 0.5),
@@ -59,6 +78,14 @@ export function recommendBlueprint(projectTitle: string): (typeof PROJECT_BLUEPR
     return PROJECT_BLUEPRINTS.find((b) => b.key === "custom-enterprise") ?? null;
 }
 
+/**
+ * Rule-based delivery suggestions (NOT model output).
+ *
+ * Every recommendation below derives from persisted engagement state
+ * (missing blueprint, current playbook stage). Nothing is invented: no
+ * similarity counts, no percentage claims, no "AI" labeling. Human approves
+ * or dismisses each item; approval records the decision, not an execution.
+ */
 export function generateAiRecommendations(engagements: EngagementRecord[]) {
     const recs: Array<{ recommendationType: "blueprint" | "component" | "duplicate" | "improvement" | "checklist"; title: string; description: string; priority: "low" | "medium" | "high"; engagementId?: string }> = [];
 
@@ -68,7 +95,7 @@ export function generateAiRecommendations(engagements: EngagementRecord[]) {
             recs.push({
                 recommendationType: "blueprint",
                 title: `Use ${bp.name} blueprint`,
-                description: `AI recommends the ${bp.name} blueprint (${bp.estimatedHours}h estimated build).`,
+                description: `Rule-based suggestion: the ${bp.name} blueprint (${bp.estimatedHours}h estimated build) matches this engagement title.`,
                 priority: "high",
                 engagementId: eng.id,
             });
@@ -83,22 +110,6 @@ export function generateAiRecommendations(engagements: EngagementRecord[]) {
             });
         }
     }
-
-    if (engagements.length > 1) {
-        recs.push({
-            recommendationType: "duplicate",
-            title: "Detect duplicate component work",
-            description: "Review component library before building auth modules — 3 similar implementations exist.",
-            priority: "medium",
-        });
-    }
-
-    recs.push({
-        recommendationType: "improvement",
-        title: "Reuse CRM dashboard components",
-        description: "CRM blueprint components can accelerate current build by ~30%.",
-        priority: "low",
-    });
 
     return recs;
 }
@@ -135,20 +146,40 @@ export function buildDashboardMetrics(
     };
 }
 
+/**
+ * No local pipeline executor exists: running a pipeline only records a
+ * `pending` run row so the attempt is visible. It never claims success —
+ * `status` stays `pending` and the summary says how to proceed. Execution
+ * (and the pass/fail outcome) happens outside this helper; record real
+ * results via `createPipelineRun` with an explicit status.
+ */
 export function runAutomationPipeline(pipelineType: (typeof PIPELINE_TYPES)[number]["id"], engagementId: string) {
-    const durations: Record<string, number> = {
-        init: 1200,
-        environment: 4500,
-        quality: 8000,
-        testing: 12000,
-        deployment: 6000,
-        documentation: 3000,
-    };
     return {
         pipelineType,
         engagementId,
-        status: "passed" as const,
-        durationMs: durations[pipelineType] ?? 5000,
-        summary: `${pipelineType} pipeline completed successfully`,
+        status: "pending" as const,
+        durationMs: 0,
+        summary: `${pipelineType} pipeline queued — no local executor; run it manually or configure a worker, then record the outcome`,
     };
+}
+
+/**
+ * Delivery gate: entering `deployment` (or moving beyond it) requires at
+ * least one persisted quality verification for the engagement with every
+ * recorded verification passed. Anything else advances freely. Returns the
+ * human-readable block reason so callers report it instead of failing
+ * silently.
+ */
+export function canAdvanceToStage(
+    nextStageId: string,
+    verifications: Array<{ engagementId?: string | null; passed: boolean }>,
+): { allowed: true } | { allowed: false; reason: string } {
+    if (nextStageId !== "deployment" && nextStageId !== "support") return { allowed: true };
+    if (verifications.length === 0) {
+        return { allowed: false, reason: `QA gate: record passing quality verifications before entering ${nextStageId}` };
+    }
+    if (verifications.some((v) => !v.passed)) {
+        return { allowed: false, reason: "QA gate: failed quality verifications block delivery until resolved and re-verified" };
+    }
+    return { allowed: true };
 }

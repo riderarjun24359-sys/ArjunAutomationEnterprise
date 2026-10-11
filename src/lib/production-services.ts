@@ -43,7 +43,9 @@ export async function buildProductionServicesReport(input?: {
         platformHealthScore: supabaseConfigured ? 94 : 50,
         openErrors: getRecentAlerts(50).filter((a) => a.severity === "critical" && !a.acknowledged).length,
         securityScore: sessionApi ? 90 : 60,
-        backupVerified: true,
+        // This probe does not read backup rows, so it must not claim verification.
+        backupStatus: "unverified",
+        backupDetail: "Backup verification is available from /api/ops/diagnostics",
     });
 
     return {

@@ -23,6 +23,7 @@ import {
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { buildProductionHealthReport } from "@/src/lib/production-health";
+import { EXECUTABLE_ACTIONS, runLocalWorkflow } from "../lib/local-worker";
 import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
 import { taskService } from "@/src/modules/tasks/services/task.service";
 import type {
@@ -172,24 +173,91 @@ export class AutomationService {
         const workflowRecord = await databaseService.workflows.getById(workflowId);
         if (!workflowRecord) throw new Error("Workflow not found");
 
+        // Idempotency for manual runs: a double-click must not create two
+        // executions. Reuse a run started within the window instead.
+        const recent = await databaseService.workflowExecutions.listByOrganization(context.organizationId);
+        const windowStart = Date.now() - 2 * 60_000;
+        const inFlight = recent.find((record) => {
+            const started = new Date(record.started_at ?? record.created_at ?? 0).getTime();
+            return record.workflow_id === workflowId && record.status === "running" && Number.isFinite(started) && started >= windowStart;
+        });
+        if (inFlight) {
+            await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, `Manual execution deduped for "${workflowRecord.name}" (already running)`, "info", workflowId, inFlight.id));
+            const executions = await this.getExecutions(authUserId, email, fullName);
+            const existing = executions.find((item) => item.id === inFlight.id);
+            if (existing) return existing;
+        }
+
         const execution = await databaseService.workflowExecutions.create(buildExecutionPayload(context.organizationId, workflowId, "manual"));
         if (!execution) throw new Error("Failed to start workflow execution");
 
         await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, `Manual execution started for "${workflowRecord.name}"`, "info", workflowId, execution.id));
 
-        const completed = await databaseService.workflowExecutions.update(execution.id, {
-            status: "completed",
-            completed_at: new Date().toISOString(),
-            duration_ms: 1500,
-            result: { steps_executed: 1, status: "ok" },
+        const finish = async (status: string, result: Record<string, unknown>, errorMessage: string, logLevel: "info" | "warn" | "error", logMessage: string) => {
+            const updated = await databaseService.workflowExecutions.update(execution.id, {
+                status,
+                completed_at: new Date().toISOString(),
+                duration_ms: typeof result.durationMs === "number" ? result.durationMs : 0,
+                result,
+                error_message: errorMessage,
+            });
+            await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, logMessage, logLevel, workflowId, execution.id));
+            const executions = await this.getExecutions(authUserId, email, fullName);
+            const found = executions.find((item) => item.id === (updated?.id ?? execution.id));
+            if (!found) throw new Error("Failed to load workflow execution");
+            return found;
+        };
+
+        const [actionRecords, conditionRecords] = await Promise.all([
+            databaseService.workflowActions.listByWorkflow(workflowId),
+            databaseService.workflowConditions.listByWorkflow(workflowId),
+        ]);
+
+        if (actionRecords.length === 0) {
+            return finish("failed",
+                { steps_executed: 0, status: "not-executed", reason: "Workflow has no actions; nothing to execute" },
+                "Workflow has no actions defined",
+                "warn",
+                `Execution for "${workflowRecord.name}" did not run: no actions defined`);
+        }
+
+        const unsupported = [...new Set(actionRecords.map((a) => a.action_type).filter((kind) => !(EXECUTABLE_ACTIONS as readonly string[]).includes(kind)))];
+        if (unsupported.length > 0) {
+            const reason = `Unsupported action kinds for local execution: ${unsupported.join(", ")} (executable: ${EXECUTABLE_ACTIONS.join(", ")})`;
+            return finish("failed",
+                { steps_executed: 0, status: "not-executed", reason },
+                reason,
+                "warn",
+                `Execution for "${workflowRecord.name}" did not run: ${reason}`);
+        }
+
+        const workerResult = await runLocalWorkflow({
+            executionId: execution.id,
+            actions: actionRecords.map((a) => ({ stepOrder: a.step_order, actionType: a.action_type, config: (a.config ?? {}) as Record<string, unknown> })),
+            conditions: conditionRecords.map((c) => ({ field: c.field, operator: c.operator, value: c.value })),
+            triggerPayload: {},
+            ports: {
+                createTask: async (taskInput) => taskService.createTaskSystemWide(context.organizationId, {
+                    title: taskInput.title,
+                    description: taskInput.description,
+                    status: "todo",
+                    priority: "medium",
+                    dueDate: taskInput.dueDate,
+                }),
+                recordLog: async (message, level) => {
+                    await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, message, level, workflowId, execution.id));
+                },
+                now: () => Date.now(),
+            },
         });
 
-        await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, `Execution completed for "${workflowRecord.name}"`, "info", workflowId, execution.id));
-
-        const executions = await this.getExecutions(authUserId, email, fullName);
-        const result = executions.find((item) => item.id === (completed?.id ?? execution.id));
-        if (!result) throw new Error("Failed to load workflow execution");
-        return result;
+        return finish(workerResult.status,
+            { steps_executed: workerResult.steps.filter((s) => s.status === "completed").length, status: workerResult.status, steps: workerResult.steps, durationMs: workerResult.durationMs },
+            workerResult.error ?? "",
+            workerResult.status === "completed" ? "info" : workerResult.status === "cancelled" ? "warn" : "error",
+            workerResult.status === "completed"
+                ? `Execution completed for "${workflowRecord.name}" (${workerResult.steps.length} steps)`
+                : `Execution ${workerResult.status} for "${workflowRecord.name}": ${workerResult.error ?? "see steps"}`);
     }
 
     async getExecutions(authUserId: string, email: string, fullName?: string | null): Promise<WorkflowExecution[]> {

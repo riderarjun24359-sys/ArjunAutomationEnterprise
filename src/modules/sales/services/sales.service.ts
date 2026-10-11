@@ -32,6 +32,8 @@ import {
 } from "@/src/modules/database/lib/sales-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
+import { isOpportunityTransitionAllowed } from "@/src/modules/finance/lib/transaction-guards";
+import { selectDueFollowUps } from "@/src/modules/sales/lib/follow-ups";
 import type {
     ActivitySummary,
     CallLogSummary,
@@ -158,6 +160,11 @@ export class SalesService {
     async updateOpportunityStatus(authUserId: string, email: string, opportunityId: string, input: UpdateOpportunityStatusInput, fullName?: string | null): Promise<OpportunitySummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const current = await databaseService.salesOpportunities.getById(opportunityId);
+        if (!current) throw new Error("Opportunity not found");
+        if (!isOpportunityTransitionAllowed(current.status, input.status)) {
+            throw new Error(`Opportunity status transition from ${current.status} to ${input.status} is not allowed`);
+        }
         const updated = await databaseService.salesOpportunities.update(opportunityId, {
             status: input.status,
             won_at: input.status === "won" ? new Date().toISOString() : null,
@@ -217,6 +224,21 @@ export class SalesService {
         if (!created) throw new Error("Failed to create activity");
         const maps = await this.getMaps(context.organizationId);
         return mapActivitySummary(created, maps);
+    }
+
+    /**
+     * Follow-ups due now or within the horizon — computed from persisted
+     * activities only. Owners act on these manually; nothing is auto-sent.
+     */
+    async getDueFollowUps(authUserId: string, email: string, horizonDays = 7, fullName?: string | null): Promise<ActivitySummary[]> {
+        const activities = await this.getActivities(authUserId, email, fullName);
+        const due = selectDueFollowUps(
+            activities.map((a) => ({ ...a, due_at: a.dueAt, completed_at: a.completedAt })),
+            Date.now(),
+            horizonDays,
+        );
+        const ids = new Set(due.map((d) => d.id));
+        return activities.filter((a) => ids.has(a.id));
     }
 
     async getMeetings(authUserId: string, email: string, fullName?: string | null): Promise<MeetingSummary[]> {

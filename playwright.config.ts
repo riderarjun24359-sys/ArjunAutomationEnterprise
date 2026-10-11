@@ -20,7 +20,10 @@ export default defineConfig({
     webServer: {
         command: "npm run dev",
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
+        // Always start a fresh dev server: reusing a stale process can serve a
+        // build from a previous config/Next version and make browser tests
+        // exercise the wrong bundle (false failures).
+        reuseExistingServer: false,
         timeout: 120_000,
     },
     projects: [

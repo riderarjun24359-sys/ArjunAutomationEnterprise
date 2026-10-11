@@ -130,10 +130,10 @@ const niceClean = nice.filter(Boolean);
 
 const md = `# Final Launch Readiness Report
 
-**Version:** 1.0.0-final-launch-readiness  
-**Generated:** ${new Date().toISOString()}  
-**Final score:** ${score}/100  
-**Decision: ${decision}**  
+**Version:** 1.0.0-final-launch-readiness
+**Generated:** ${new Date().toISOString()}
+**Final score:** ${score}/100
+**Decision: ${decision}**
 
 ## Executive summary
 

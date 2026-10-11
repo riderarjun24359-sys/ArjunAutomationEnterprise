@@ -100,6 +100,12 @@ export function DeliveryPlaybookPanel({ data }: { data: DeliveryEngineData }) {
             <Card>
                 <h2 className="text-lg font-semibold">Delivery Playbook</h2>
                 <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">Lead → Discovery → Scope → Blueprint → Build → Verification → Deployment → Support</p>
+                <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">Deployment is gated: all recorded quality verifications must pass first.</p>
+                {data.actionError ? (
+                    <p role="alert" className="mt-2 text-sm text-red-600">
+                        {data.actionError}
+                    </p>
+                ) : null}
             </Card>
             {data.engagements.length === 0 ? (
                 <EmptyState title="No active deliveries" description="Create an engagement to start the delivery playbook workflow." />
@@ -133,7 +139,7 @@ export function QualityEnginePanel({ data }: { data: DeliveryEngineData }) {
         <div className="space-y-4">
             <Card>
                 <h2 className="text-lg font-semibold">Quality Engine</h2>
-                <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">Auto-verify performance, security, accessibility, brand, SEO, engineering, and business rules.</p>
+                <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">Record manual quality results for performance, security, accessibility, brand, SEO, engineering, and business rules. Deployment stays blocked until every recorded verification passes.</p>
                 {activeEng ? (
                     <Button size="sm" className="mt-4" onClick={() => data.verifyQuality(activeEng.id)}>Run quality verification</Button>
                 ) : null}

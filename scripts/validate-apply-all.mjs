@@ -32,6 +32,18 @@ const databaseUrl = process.env.SUPABASE_DB_URL ?? process.env.DATABASE_URL;
 const authStubSql = `
 create schema if not exists auth;
 
+-- Hosted Supabase always provides anon/authenticated; create them for PGlite.
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'anon') then
+    create role anon;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'authenticated') then
+    create role authenticated;
+  end if;
+end
+$$;
+
 create or replace function auth.uid()
 returns uuid
 language sql
@@ -77,6 +89,13 @@ async function validateAgainstPglite() {
                 sql = sql.replace(
                     /create extension if not exists "uuid-ossp";/gi,
                     "-- uuid-ossp stubbed for embedded validation",
+                );
+                // PGlite (PG17) ships gen_random_uuid() in core; the extension
+                // DDL exists for hosted Postgres. Stub it so local validation
+                // can execute the full migration chain.
+                sql = sql.replace(
+                    /create extension if not exists "pgcrypto";/gi,
+                    "-- pgcrypto stubbed for embedded validation (core in PG13+)",
                 );
                 try {
                     await db.exec(`begin; ${sql} commit;`);

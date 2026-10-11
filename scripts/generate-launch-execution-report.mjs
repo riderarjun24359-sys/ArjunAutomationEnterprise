@@ -79,10 +79,10 @@ const risks = [
 
 const md = `# Launch Execution Report — Early Access
 
-**Version:** 1.0.0-early-access-execution  
-**Generated:** ${new Date().toISOString()}  
-**Decision: ${decision}**  
-**Score:** ${score}/100  
+**Version:** 1.0.0-early-access-execution
+**Generated:** ${new Date().toISOString()}
+**Decision: ${decision}**
+**Score:** ${score}/100
 
 ## Executive launch report
 

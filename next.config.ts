@@ -9,6 +9,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+    // Dev-only: allow the Playwright/E2E harness (which uses 127.0.0.1 while
+    // the dev server binds localhost) to load dev assets. Without this, Next.js
+    // blocks the client bundle cross-origin and pages never hydrate, so browser
+    // tests would exercise an unhydrated form. Has no effect on production.
+    allowedDevOrigins: ["127.0.0.1", "localhost"],
     experimental: {
         optimizePackageImports: ["lucide-react", "framer-motion"],
     },

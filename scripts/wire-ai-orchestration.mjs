@@ -2,7 +2,11 @@ import { aiOrchestrationService } from "../src/modules/ai-orchestration/services
 import { resolveOrganizationContext } from "../src/modules/database/lib/organization-context.ts";
 
 async function wireGeminiProvider(authUserId, email, fullName) {
-    console.log("Starting Gemini provider wiring...");
+    console.log("Starting Gemini provider wiring (optional provider — never required for build/startup)...");
+    const keyPresent = Boolean(process.env.GEMINI_API_KEY?.trim() || process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim());
+    if (!keyPresent) {
+        console.warn("GEMINI_API_KEY not set: registering the Gemini DB record only. External Gemini generation stays disabled until the operator sets GEMINI_API_KEY. Local deterministic fallback remains active.");
+    }
     
     // 1. Resolve context
     const context = await resolveOrganizationContext(authUserId, email, fullName);

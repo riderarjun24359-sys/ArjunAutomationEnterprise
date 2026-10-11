@@ -31,6 +31,7 @@ export function useDeliveryEngine() {
     const [analytics, setAnalytics] = useState<DeliveryAnalyticsSummary | null>(null);
     const [aiRecommendations, setAiRecommendations] = useState<AiDeliveryRecommendation[]>([]);
     const [projects, setProjects] = useState<ProjectSummary[]>([]);
+    const [actionError, setActionError] = useState<string | null>(null);
 
     const ctx = user ? { authUserId: user.id, email: user.email, fullName: user.fullName } : null;
 
@@ -84,7 +85,12 @@ export function useDeliveryEngine() {
 
     const advanceStage = useCallback(async (engagementId: string) => {
         if (!ctx) return;
-        await deliveryEngineService.advancePlaybookStage(ctx, engagementId);
+        setActionError(null);
+        try {
+            await deliveryEngineService.advancePlaybookStage(ctx, engagementId);
+        } catch (err) {
+            setActionError(err instanceof Error ? err.message : "Stage advance failed");
+        }
         await refresh();
     }, [ctx, refresh]);
 
@@ -120,6 +126,8 @@ export function useDeliveryEngine() {
 
     return {
         loading,
+        actionError,
+        clearActionError: () => setActionError(null),
         dashboard,
         blueprints,
         components,

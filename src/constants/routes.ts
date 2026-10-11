@@ -13,6 +13,7 @@ export const ROUTES = {
     dashboard: "/dashboard",
     organization: "/organization",
     crm: "/crm",
+    customerOs: "/customer-os",
     projects: "/projects",
     clients: "/clients",
     tasks: "/tasks",
