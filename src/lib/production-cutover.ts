@@ -209,7 +209,9 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
         id: "email_provider",
         area: "email",
         status: emailOk ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
-        detail: emailOk ? "Resend or SMTP provider configured" : "Configure RESEND_API_KEY or SMTP_*",
+        detail: emailOk
+            ? "Resend or SMTP provider configured"
+            : "Configure RESEND_API_KEY (+ RESEND_FROM / SMTP_FROM) or SMTP_HOST + SMTP_PORT + SMTP_USER + SMTP_PASS + SMTP_FROM (see docs/GO_LIVE_CHECKLIST.md §6)",
     });
     /** Template files are source-tree artefacts: `fail` locally, `warn` in the deployed runtime. */
     const templateStatus = (ok: boolean): CutoverStatus => (ok ? "pass" : sourceTree ? "fail" : "warn");
@@ -250,7 +252,9 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
         id: "payments_gateway",
         area: "payments",
         status: payOk ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
-        detail: payOk ? "Payment gateway configured (Razorpay India-first or Stripe fallback)" : "Configure Razorpay or Stripe for paid plans",
+        detail: payOk
+            ? "Payment gateway configured (Razorpay India-first or Stripe fallback)"
+            : "Configure Razorpay (RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET + RAZORPAY_WEBHOOK_SECRET + plan amounts) or Stripe (STRIPE_SECRET_KEY + NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY + STRIPE_WEBHOOK_SECRET), then register the webhook at /api/payments/webhook (see docs/GO_LIVE_CHECKLIST.md §6)",
     });
     const webhookDetail = `Unified webhook path ${PAYMENT_WEBHOOK_PATH} · Razorpay ${razorpayWebhookOk ? "set" : "missing"} · Stripe ${stripeWebhookOk ? "set" : "missing"}`;
     const webhookRoutePresent = existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/payments/webhook/route.ts"));

@@ -67,7 +67,14 @@ owner refreshed the previously stale `VERCEL_TOKEN`), creating production deploy
 ### Optional follow-ups (do not block the website)
 
 1. **Email authentication:** no MX/TXT (SPF/DKIM/DMARC) or CAA records exist yet — add them when
-   email is required; they are independent of the web records above.
+   email is required; they are independent of the web records above. Record *shapes* (values come
+   from the provider the owner chooses — Resend or the SMTP provider):
+   - `TXT @` → `v=spf1 include:<provider-spf> ~all` (exactly one SPF record per domain)
+   - `TXT <selector>._domainkey` → the provider's DKIM public key (Resend/SMTP dashboards show the selector + value)
+   - `TXT _dmarc` → `v=DMARC1; p=quarantine; rua=mailto:<owner-mailbox>` (start `p=none` while testing, then quarantine/reject)
+   - `MX` only if the domain must *receive* mail ( stubbornly optional for send-only setups)
+   - Optional `CAA 0 issue "letsencrypt.org"` to pin TLS issuance
+   Keep all of these **DNS-only**; they do not interact with the orange-cloud proxy setting.
 2. **Cloudflare proxy:** if re-enabled (orange cloud), set SSL/TLS = **Full (strict)**; never
    *Flexible* (causes `err_too_many_redirects`). The `production-deploy.yml` healthcheck targets
    `https://www.arjunautomations.com`, so it must stay reachable.

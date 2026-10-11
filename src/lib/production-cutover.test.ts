@@ -133,7 +133,9 @@ describe("production cutover: source-tree checks", () => {
             });
         }
         // The only env-driven blocker is the genuinely unconfigured payment gateway.
-        expect(fromRuntime.blockers).toEqual(["payments_gateway: Configure Razorpay or Stripe for paid plans"]);
+        expect(fromRuntime.blockers).toEqual([
+            "payments_gateway: Configure Razorpay (RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET + RAZORPAY_WEBHOOK_SECRET + plan amounts) or Stripe (STRIPE_SECRET_KEY + NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY + STRIPE_WEBHOOK_SECRET), then register the webhook at /api/payments/webhook (see docs/GO_LIVE_CHECKLIST.md §6)",
+        ]);
     });
 
     it("accepts the classic anon key for supabase_env (the key the app actually uses)", () => {

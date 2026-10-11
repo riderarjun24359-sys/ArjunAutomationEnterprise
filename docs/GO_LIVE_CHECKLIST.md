@@ -58,7 +58,10 @@ Complete every item before opening Arjun Automation to paying / invited customer
 
 - [ ] `BACKUP_ENABLED=true`
 - [ ] Platform Operations backup config enabled for production org
-- [ ] Restore drill noted in `docs/DISASTER_RECOVERY.md`
+- [ ] Restore drill recorded in `cop_restore_validations` (a docs note alone is not proof —
+  `/api/ops/go-live` and `/api/ops/launch-execution` only accept drill rows with a successful
+  `restoreStatus` and a `validatedAt` within the last 90 days; mirror the note in
+  `docs/DISASTER_RECOVERY.md` for the runbook)
 
 ## 9. Health endpoints
 

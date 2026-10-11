@@ -237,11 +237,35 @@ not affect `arjunautomations.com` serving normally.
 
 ### Owner — launch features that need external accounts (B2/B3)
 
-- Add a payment provider (Stripe/Razorpay) key + webhook secret, then set
-  `PAYMENT_WEBHOOK_SECRET` so `/api/payments/webhook` can accept real events (today it fails closed
-  with `webhook_secret_missing`).
-- Add email/SMTP credentials for outbound sends/signatures.
-- The `/api/ops/production` report lists these as **warnings** (not blockers).
+- **Payments.** Create the provider account first, then provision *both* the runtime env vars
+  (Vercel project → Settings → Environment Variables, `production`) *and* the repo secrets the
+  manual workflow needs. Exact names — there is intentionally **no** `PAYMENT_WEBHOOK_SECRET`
+  variable; the webhook route reads `STRIPE_WEBHOOK_SECRET` (Stripe) /
+  `RAZORPAY_WEBHOOK_SECRET` (Razorpay), and nothing reads any other name:
+  ```bash
+  # Stripe path
+  gh secret set STRIPE_SECRET_KEY -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set STRIPE_WEBHOOK_SECRET -R riderarjun24359-sys/ArjunAutomationEnterprise
+  # Razorpay path (India-first alternative)
+  gh secret set RAZORPAY_KEY_ID -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set RAZORPAY_KEY_SECRET -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set RAZORPAY_WEBHOOK_SECRET -R riderarjun24359-sys/ArjunAutomationEnterprise
+  # + plan amounts RAZORPAY_STARTER_AMOUNT_MINOR / RAZORPAY_PROFESSIONAL_AMOUNT_MINOR (minor units)
+  ```
+  Then mirror the same values into the Vercel project's `production` env vars and register the
+  provider webhook URL `https://www.arjunautomations.com/api/payments/webhook`. Until then the
+  route correctly fails closed (`webhook_secret_missing`, verified live: HTTP 400).
+- **Email.** Provision `RESEND_API_KEY` (+ `RESEND_FROM`) or the SMTP set (`SMTP_HOST`,
+  `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`) the same way; no sending code runs without
+  them. The `/api/ops/production` report lists these as **warnings** (not blockers).
+- **`register-gemini` bootstrap (optional).** Only needed if the owner ever runs the manual
+  `register-gemini` workflow action; it refuses without all three:
+  ```bash
+  gh secret set ADMIN_USER_ID -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set ADMIN_EMAIL -R riderarjun24359-sys/ArjunAutomationEnterprise
+  gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
+  ```
 
 ### Owner — GitHub plan-gated reviewer rule (optional)
 
