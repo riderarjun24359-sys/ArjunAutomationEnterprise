@@ -27,6 +27,8 @@ Companion docs: `docs/MISSION_CHECKLIST.md` (ledger), `docs/SOFT_LAUNCH_DOMAIN_R
 | GitHub repo | `riderarjun24359-sys/ArjunAutomationEnterprise` (`1325528606`) | secrets + variables synced |
 
 **Only remaining production blocker:** the Cloudflare DNS records in §2 (§7 has the exact steps).
+Separately, the **CI `VERCEL_TOKEN` repo secret is stale** (see §4) — it only affects the manual
+`production-deploy.yml` path, **not** the live site, which the Git integration deploys.
 
 ---
 
@@ -163,8 +165,27 @@ later, add those *in addition to* (not instead of) the records above.
   without `ADMIN_USER_ID`/`ADMIN_EMAIL`/`ADMIN_FULL_NAME`.
 - **Known limitation:** its healthcheck targets `https://www.arjunautomations.com`, which stays
   **530** until §2 is done. The workflow therefore **cannot pass until the DNS records are applied**.
-  Until then, deploy/verify via the CLI against the `*.vercel.app` alias (as done in §1).
-- **Do not dispatch `deploy-production` without owner approval.**
+
+### Dispatch result (2026-10-11, run `38138961359`, action `deploy-production`)
+
+Dispatched once to validate CI + secrets. Real outcome:
+
+| Job | Result |
+|---|---|
+| `Production verify` (`production:verify` + `go-live:verify`) | **success** |
+| `Build and Deploy to Vercel` | **failure** — `curl` exit 22, HTTP **403** on `POST /v13/deployments` |
+| `Post-deploy health checks` | skipped (needs `build-and-deploy`) |
+| `Publish rollback strategy` | skipped (needs `build-and-deploy`) |
+
+- **CI verification passes** with the current repo secrets/variables.
+- **The `VERCEL_TOKEN` repo secret is stale/invalid** (HTTP 403). It **cannot** be replaced from
+  this machine: `POST /v3/user/tokens` and `vercel tokens create` both return
+  **`403 Cannot create tokens for this app`** (OAuth-app restriction). **Owner action:** create a
+  token at Vercel → Account Settings → Tokens, then
+  `gh secret set VERCEL_TOKEN -R riderarjun24359-sys/ArjunAutomationEnterprise`.
+- **Git-integration deploys are unaffected** (they use the Vercel GitHub App, not `VERCEL_TOKEN`) —
+  that is why pushes to `main` still build and promote to production (§1.1, D29).
+- Even after the token is refreshed, the workflow's healthcheck keeps failing until §2 DNS is applied.
 
 ---
 
@@ -196,6 +217,15 @@ Apply the §2 Cloudflare records, then:
 ```bash
 curl -fsS https://www.arjunautomations.com/api/ops/live
 curl -fsS https://www.arjunautomations.com/api/ops/ready
+```
+
+### Owner — refresh the CI token (independent of DNS)
+
+The manual workflow needs a valid `VERCEL_TOKEN`:
+
+```bash
+# Create a token at Vercel → Account Settings → Tokens, then:
+gh secret set VERCEL_TOKEN -R riderarjun24359-sys/ArjunAutomationEnterprise
 ```
 
 ### Owner — validate the production workflow (after DNS works)

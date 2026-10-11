@@ -100,12 +100,24 @@ both Supabase projects exist; env + GitHub secrets provisioned. See
   200 (**`blockers: []`**), `/api/ops/go-live` 200. Auto-deploy from `main` is proven working; no
   manual CLI deploy is required for future releases.
 
+- [x] D30 **Production workflow dispatched + root-caused (2026-10-11).** Ran
+  `gh workflow run production-deploy.yml -f action=deploy-production` (run `38138961359`). Result:
+  `Production verify` **success** (`production:verify` + `go-live:verify` pass on CI); `Build and
+  Deploy to Vercel` **failure** — `curl` exit 22, **HTTP 403** on `POST https://api.vercel.com/v13/deployments`;
+  healthcheck + rollback-notes jobs skipped (they depend on it). Root cause: the **`VERCEL_TOKEN`
+  repo secret is stale/invalid**. Cannot be replaced here — `POST /v3/user/tokens` and
+  `vercel tokens create` both return **`403 Cannot create tokens for this app`** (OAuth-app
+  restriction; existing tokens are not readable). **Git-integration deploys are unaffected** (they
+  use the Vercel GitHub App, not the token), which is why pushes to `main` still promote to
+  production. Owner action: create a dashboard token + `gh secret set VERCEL_TOKEN`.
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
 - B3 External sends/signatures/charges/refunds (needs owner approval + accounts). Unchanged.
 - ~~B4 Production smoke/E2E against live (needs deployment + access)~~ **RESOLVED 2026-10-11 (D27)** — production alias served and smoke **59/59**; ops endpoints 200 (`blockers: []`).
-- B5 **Production recovery** — mostly DONE 2026-10-11; **one owner-only action remains:** apply the Cloudflare DNS records (apex `A 216.198.79.1`+`64.29.17.1`, `www CNAME 8f8ccb61a152a669.vercel-dns-017.com`, **DNS-only**). (a) owning Vercel account/project **recreated and accessible** (D26); (b) Cloudflare origin still points at the dead tunnel → **HTTP 530 / 1033** until the owner repoints DNS (no Cloudflare access on this machine); (c) `PRODUCTION_BASE_URL` set; (d) `Production` required-reviewer gate **cannot** be enabled (HTTP 422, plan limitation) — manual `workflow_dispatch` write-access is the only gate; (e) `ADMIN_*` secrets still absent (workflow refuses `register-gemini` without them). Also: `production-deploy.yml` healthcheck targets the custom domain, so it **cannot pass until DNS is fixed** — deploy/verify via CLI against the `*.vercel.app` alias meanwhile. Exact steps in `docs/PRODUCTION_RECOVERY_RUNBOOK.md` §2/§7.
+- B5 **Production recovery** — mostly DONE 2026-10-11; **one owner-only action remains:** apply the Cloudflare DNS records (apex `A 216.198.79.1`+`64.29.17.1`, `www CNAME 8f8ccb61a152a669.vercel-dns-017.com`, **DNS-only**). (a) owning Vercel account/project **recreated and accessible** (D26); (b) Cloudflare origin still points at the dead tunnel → **HTTP 530 / 1033** until the owner repoints DNS (no Cloudflare access on this machine); (c) `PRODUCTION_BASE_URL` set; (d) `Production` required-reviewer gate **cannot** be enabled (HTTP 422, plan limitation) — manual `workflow_dispatch` write-access is the only gate; (e) `ADMIN_*` secrets still absent (workflow refuses `register-gemini` without them). Also: `production-deploy.yml` healthcheck targets the custom domain, so it **cannot pass until DNS is fixed**. Exact steps in `docs/PRODUCTION_RECOVERY_RUNBOOK.md` §2/§7.
+- B6 **Stale CI `VERCEL_TOKEN` (owner-only).** `production-deploy.yml`'s API deploy returns HTTP 403 with the current repo secret; token creation is blocked on this account (`403 Cannot create tokens for this app`). **Does not affect the live site** (Git integration deploys on push). Owner fix: create a token at Vercel → Account Settings → Tokens, then `gh secret set VERCEL_TOKEN -R riderarjun24359-sys/ArjunAutomationEnterprise`.
 
 ## Environment check (2026-10-11, post-recovery)
 - No `.env.local` or `.env` file present in the working tree; secrets are held only in Vercel/GitHub/Supabase and in local `chmod 600` temp files outside the repo.
