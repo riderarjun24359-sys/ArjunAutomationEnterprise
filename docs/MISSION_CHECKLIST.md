@@ -224,6 +224,29 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     `next build` OK. Live matrix re-verified (all ops 200, diagnostics 401, cutover 503 with 2 true
     blockers, apex 308, webhook 400). No duplicate workflow dispatch (latest run still `38145177440`).
 
+- [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
+  `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
+  (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
+  end at the webhook. Commit **`9524686`** (Git auto-deploy **READY**, live on all production
+  aliases, route smoke **132/132**): Razorpay branch verifies HMAC-SHA256 of the raw payload with
+  `RAZORPAY_WEBHOOK_SECRET`, then shares the durable/memory dedupe and read-only reconciliation
+  pipeline with provider-tagged responses (Stripe keeps precedence when both headers present).
+  Fail-closed contract preserved exactly — live-proven: no headers → 400 `webhook_secret_missing`,
+  Razorpay header without a configured secret → 400 `webhook_secret_missing`, bogus Stripe header
+  → 400 `webhook_secret_missing`. New pure helpers in `webhook-idempotency.ts`
+  (`selectWebhookProvider`, `parseRazorpayWebhookEvent` with `event:entity` namespaced ids so
+  `authorized`/`captured` for one payment do not collide, `extractRazorpaySettlementRef`);
+  `webhook-idempotency` tests **11/11** (4 new, incl. real HMAC vectors). Verifier strengthened
+  (razorpay header/verify/secret + helper assertions). `docs/ROLLBACK_RUNBOOK.md`: instant
+  alias-move procedure for **all three** production aliases (a manual move of one alias does not
+  move the others — verified against Vercel alias semantics). Monitoring forwarder
+  (`forwardExternalError`) reviewed: clean no-op without `OPS_ALERT_WEBHOOK_URL`/`SENTRY_DSN`;
+  diagnostics route session-gated; `verifyRestoreProcedure` + `cop_restore_validations` table
+  confirmed honest (empty drills fail, docs alone are not proof). No credentials exist in any
+  environment (Vercel production + GitHub secrets both hold only the 6 core vars), so provider
+  integration stays owner-blocked. Verified: tsc 0, eslint 0, `test:unit` **132/132**,
+  `production-cutover:verify` OK, `next build` OK. `ready=false` retained (2 true blockers).
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
