@@ -176,6 +176,27 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   consent) **400**, diagnostics anon **401**. Git auto-deploy preserved: project link
   `github`/`repoId 1325528606`/`productionBranch main`, deployment protection off.
 
+- [x] D36 **Cutover report honesty fixed (2026-10-11).** `/api/ops/cutover` (and its
+  `launch-execution` consumer) evaluated 11 source-tree file checks with `process.cwd()` inside the
+  Vercel serverless bundle, where `supabase/migrations`, `instrumentation.ts`, route sources and
+  `docs/*` are never shipped — so it reported **false blockers** (`supabase_migrations: "0 migration
+  SQL files present"`, `secrets_startup_gate`, payment surfaces, monitoring routes, go-live docs) on
+  a host where every migration was applied. Commit **`2e30e3b`**: those checks now report **warn
+  ("not verifiable in the deployed runtime …; enforced in CI by `production-cutover:verify`")**
+  instead of `fail` when the source tree is absent; the local/CI gate is unchanged (missing
+  artefacts still `fail` when the tree is present) and env-driven gates are byte-identical in both
+  contexts. A second defect of the same class: `supabase_env` demanded
+  `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (never provisioned anywhere) while the whole codebase
+  authenticates with `NEXT_PUBLIC_SUPABASE_ANON_KEY` — commit **`3c9984b`** accepts either key. Both
+  Git auto-deploys built to **READY**; live `/api/ops/cutover` now reports only the **two true
+  blockers** (`email_provider`, `payments_gateway` — genuinely unconfigured, B2/B3) with
+  `supabase_migrations` as an honest warning pointing at `schema_migrations` + CI. Pinned by
+  `src/lib/production-cutover.test.ts` **5/5** (repo-root pass, local gate not weakened,
+  runtime warns-not-blocks, env gates identical, anon-key acceptance). Verified: tsc 0, eslint 0,
+  `test:unit` **128/128 (37 files)**, `production-cutover:verify` OK, `next build` OK. Cosmetic note:
+  the report score stays 0 while warnings dominate — the formula is unchanged; `ready=false` and the
+  blocker list are the truthful signals.
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
