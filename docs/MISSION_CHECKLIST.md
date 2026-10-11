@@ -197,6 +197,33 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   the report score stays 0 while warnings dominate — the formula is unchanged; `ready=false` and the
   blocker list are the truthful signals.
 
+- [x] D37 **Owner-setup guidance corrected + enriched (2026-10-11).** No credentials invented, no
+  fake transactions, `ready=false` retained (the two cutover blockers `email_provider` +
+  `payments_gateway` are genuinely unconfigured provider accounts). Commit **`8843e9a`** (Git
+  auto-deploy **READY**, live on `www`/apex/project alias — enriched blocker text verified in the
+  served response):
+  - `email_provider` / `payments_gateway` fail details now name the exact variable sets
+    (Resend/SMTP names, Stripe/Razorpay names + plan amounts, webhook path, checklist refs).
+    Text-only; gate semantics unchanged; regression-test expectation synced (still 5/5).
+  - Runbook §7: replaced the **`PAYMENT_WEBHOOK_SECRET` instruction with reality — that variable
+    exists nowhere** (verified: webhook route reads `STRIPE_WEBHOOK_SECRET`; Razorpay path reads
+    `RAZORPAY_WEBHOOK_SECRET`). Now gives exact `gh secret set` commands, the Vercel-production
+    mirror note, the webhook registration URL, and the `ADMIN_*` bootstrap commands.
+  - `GO_LIVE_CHECKLIST` §8: restore-drill evidence belongs in **`cop_restore_validations`**
+    (what `verifyRestoreProcedure` actually enforces — docs note alone is not proof).
+  - Domain readiness: provider-independent SPF/DKIM/DMARC/MX/CAA record shapes.
+  - Local `.env.example`: `SMTP_PASSWORD` → `SMTP_PASS` (matches code + checklist; file is
+    git-ignored, local effect only).
+  - Reverted three timestamp-only verifier regenerations
+    (`PRODUCTION_READINESS/FINAL_LAUNCH/LAUNCH_EXECUTION_REPORT.md`) — substantive content kept.
+  - Untracked `ExecutiveCommandCenterPage.tsx.pre-integration-widgets.bak` inspected and
+    **preserved**: it is the committed page's parent version minus the `ExecutiveIntegrationWidgetsPanel`
+    integration (panel file exists, committed, unreferenced backup, 7 KB) — no action needed.
+  - Verified: cutover test 5/5, tsc 0, eslint 0, `test:unit` **128/128**, `production-cutover` /
+    `production` / `go-live` / `launch-execution` / `final-launch-readiness` verifiers exit 0,
+    `next build` OK. Live matrix re-verified (all ops 200, diagnostics 401, cutover 503 with 2 true
+    blockers, apex 308, webhook 400). No duplicate workflow dispatch (latest run still `38145177440`).
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
