@@ -1,6 +1,13 @@
 # Master Mission Checklist (persistent local checkpoint)
 
-Branch: main @ fc7afbe. No commit/push/deploy/remote-migration at any point.
+Branch: `main`. **Recovered and paused at the one remaining owner-only step (Cloudflare DNS).**
+Current HEAD before this docs update: `3448462`. Replacement Vercel project is live and healthy;
+both Supabase projects exist; env + GitHub secrets provisioned. See
+`docs/PRODUCTION_RECOVERY_RUNBOOK.md` §0–§2 for the verified state and the exact DNS records.
+
+> Historical note: the earlier version of this file said "No commit/push/deploy at any point."
+> That is no longer true — the recovery deployed to Vercel, migrated a new production Supabase,
+> and pushed to `main`. Entries D26–D28 record what was actually done and verified.
 
 ## DONE (evidenced)
 - [x] D8 PGlite RLS isolation harness: `crm-rls-isolation.test.ts` 8/8 on real Postgres (negative control proves leak detection; cross-org SELECT/INSERT denied, UPDATE/DELETE 0-row filtered, anon denied). Hosted-Supabase live test still blocked.
@@ -49,18 +56,55 @@ Branch: main @ fc7afbe. No commit/push/deploy/remote-migration at any point.
 
 - [x] D25 Verifier sweep + genuine lint defect fixed (2026-10-11). All **8 mission verifiers** re-run to completion: `launch-readiness` **80/80**, `premium-website` **89/89**, `production-remediation` **36/36**, `ai-delivery-model` **6/6**, `production`, `go-live`, `soft-launch` **53/53** — all **EXIT 0**. `company-launch-kit:verify` **initially FAILED 88/89** on `regression:lint`: a genuine `@typescript-eslint/no-unused-vars` warning in `app/(shell)/customer-os/[customerId]/page.tsx` (a D18-modified file) — `projects` destructured but unused in the `useMemo`, and `tasks` destructured but unused in the render scope. Fixed by removing the two unused bindings (no behavior change; the values used are re-read where needed). Re-run: **`company-launch-kit:verify` 89/89 EXIT 0**, `tsc --noEmit` EXIT 0, `test:unit` **117/117 (35 files)**. Also this session: `git diff --check` clean; secret scan clean (only detector regexes + a synthetic `nsk_live_` seed value; no real secrets); no `console.log` in `src`/`app`; `npm audit --omit=dev` **0 vulnerabilities**; Playwright **42 passed / 2 skipped** EXIT 0; local production smoke: `/` 200, `/api/ops/live` 200, `/api/ops/ready` 503, `/api/launch-kit/contact` 400 (empty + no-consent), `/api/payments/webhook` 400 (fail-closed `webhook_secret_missing`).
 
-## BLOCKED (external/owner only)
-- B1 Live RLS/isolation tests + migration apply (needs disposable Supabase + credentials). Supabase CLI sees org `riderarjun24359@gmail.com's Org` (2 INACTIVE EducationOS projects) and org `Arjun Automation` (0 projects) — no isolated Enterprise target.
-- B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets).
-- B3 External sends/signatures/charges/refunds (needs owner approval + accounts).
-- B4 Production smoke/E2E against live (needs deployment + access).
-- B5 **Production recovery** (owner-only): (a) access the owning Vercel account/token to confirm whether `arjunautomationos-enterprise` exists and redeploy (or recreate the project + re-add domains/env); (b) fix the Cloudflare origin (tunnel) or repoint DNS to Vercel; ~~(c) set repo variable `PRODUCTION_BASE_URL`~~ **DONE 2026-10-11** (set to `https://www.arjunautomations.com`); (d) add the `Production` environment required-reviewer gate — **BLOCKED by plan** (HTTP 422; see D24), needs GitHub Pro/Team/Enterprise or an external approval path; (e) add `ADMIN_*` secrets if `register-gemini` is used (the workflow now refuses to run without them). Exact commands in `docs/PRODUCTION_RECOVERY_RUNBOOK.md`.
+- [x] D26 **Production infrastructure recreated (2026-10-11).** Canonical Vercel account
+  `riderarjun24359-sys` / team `arjun-automation` (`team_phuD6suWsaXfLApxkPSXWAqA`) is now the
+  authenticated CLI identity. Created project **`arjunautomationos-enterprise`**
+  (`prj_GoeJ31s6APxX5keDRCVarrgzObOc`), Git-linked to repo `1325528606` (`productionBranch: main`),
+  `framework: nextjs`, `nodeVersion 24.x`, **deployment protection disabled** (`ssoProtection: null`).
+  Set **all** env vars for `preview` + `production` (Supabase URL/anon/service-role,
+  `PLATFORM_LEAD_API_KEY`, `PLATFORM_ORGANIZATION_ID=11111111-1111-1111-1111-111111111111`,
+  `NEXT_PUBLIC_APP_URL`). Created an isolated **free** production Supabase project
+  **`ixassghxogcabfcyjjtz`** (`arjun-enterprise-production`, ap-south-1, `ACTIVE_HEALTHY`), applied
+  **all 63 migrations**, and seeded **only** the platform organisation row (no demo/customer data).
+  Synced GitHub repo secrets (`VERCEL_PROJECT_ID`, `VERCEL_ORG_ID`, Supabase, `PLATFORM_*`) and
+  variables (`NEXT_PUBLIC_APP_URL`, `PRODUCTION_BASE_URL`). Recreated `vercel.json` build config as
+  needed. (First CLI deploy had `framework: null` → every route 404; fixed by setting `nextjs` +
+  redeploy.)
 
-## Environment check (2026-10-11)
-- No `.env.local` or `.env` file present.
-- No Supabase/Stripe/Razorpay/Resend/PLATFORM_* credentials in the environment. Vercel CLI **is** authenticated locally but to account `chittemprashantharjun-5618` (team `arjun-automation1`, 0 projects) — **not** the owning account, so the canonical project is unreachable.
-- B1–B5 remain externally blocked; no authorized disposable instance, provider account, owning-Vercel access, or Cloudflare access.
-- Local preparation: 117/117 unit tests (35 files), tsc clean, `next build` green, Playwright 42 passed/2 skipped.
+- [x] D27 **Deploy + verify production & staging (2026-10-11).** Production deployment `READY`,
+  alias `https://arjunautomationos-enterprise.vercel.app` (`dpl_DnCvkwd21scCo5CrAGrfEDLcg67i`). Live
+  checks: `/` 200, `/api/ops/live` 200, `/api/ops/ready` 200, `/api/ops/health` 200 (score 95),
+  `/api/ops/production` 200 (**`blockers: []`**; warnings only: payment/email/monitoring),
+  `/api/ops/go-live` 200, `/api/ops/diagnostics` 401. **Route smoke 59/59 PASS** on production and
+  **59/59 PASS** on staging. Live RLS/tenant-isolation harness vs staging Supabase **11/11 PASS**.
+  Stable staging alias **`https://arjunautomationos-staging.vercel.app`** created; preview
+  `NEXT_PUBLIC_APP_URL` set to it. Synthetic smoke leads cleaned up afterwards (1 prod, 2 staging).
+  Custom domains `arjunautomations.com` + `www.arjunautomations.com` added and **verified** in the
+  project (apex set to **308 → www**).
+
+- [x] D28 **Domain record capture + Git-deploy fix (2026-10-11).** Captured the **exact** Vercel
+  DNS records: apex `A 216.198.79.1` + `64.29.17.1` (fallback `76.76.21.21`); `www`
+  `CNAME 8f8ccb61a152a669.vercel-dns-017.com` (fallback `cname.vercel-dns.com`); both **DNS-only**
+  during verification. Diagnosed the Git-integration production deploy of `3448462` as **BLOCKED**
+  ("Vercel couldn't find a Git account for the commit author") because the commit author email was
+  the local `*.local` fallback; set repo-local `user.email` to the GitHub-linked noreply address
+  (`309610720+riderarjun24359-sys@users.noreply.github.com`) so future `main` pushes deploy cleanly.
+  **Cloudflare DNS itself was NOT changed** — no Cloudflare access on this machine; records handed
+  to the owner. `production-deploy.yml` healthcheck remains DNS-dependent (targets the custom domain).
+
+## BLOCKED (external/owner only)
+- ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
+- B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
+- B3 External sends/signatures/charges/refunds (needs owner approval + accounts). Unchanged.
+- ~~B4 Production smoke/E2E against live (needs deployment + access)~~ **RESOLVED 2026-10-11 (D27)** — production alias served and smoke **59/59**; ops endpoints 200 (`blockers: []`).
+- B5 **Production recovery** — mostly DONE 2026-10-11; **one owner-only action remains:** apply the Cloudflare DNS records (apex `A 216.198.79.1`+`64.29.17.1`, `www CNAME 8f8ccb61a152a669.vercel-dns-017.com`, **DNS-only**). (a) owning Vercel account/project **recreated and accessible** (D26); (b) Cloudflare origin still points at the dead tunnel → **HTTP 530 / 1033** until the owner repoints DNS (no Cloudflare access on this machine); (c) `PRODUCTION_BASE_URL` set; (d) `Production` required-reviewer gate **cannot** be enabled (HTTP 422, plan limitation) — manual `workflow_dispatch` write-access is the only gate; (e) `ADMIN_*` secrets still absent (workflow refuses `register-gemini` without them). Also: `production-deploy.yml` healthcheck targets the custom domain, so it **cannot pass until DNS is fixed** — deploy/verify via CLI against the `*.vercel.app` alias meanwhile. Exact steps in `docs/PRODUCTION_RECOVERY_RUNBOOK.md` §2/§7.
+
+## Environment check (2026-10-11, post-recovery)
+- No `.env.local` or `.env` file present in the working tree; secrets are held only in Vercel/GitHub/Supabase and in local `chmod 600` temp files outside the repo.
+- Vercel CLI **is** authenticated as the canonical owner `riderarjun24359-sys` (team `arjun-automation`), so the project is reachable and deployable. (The earlier wrong account `chittemprashantharjun-5618` is no longer used.)
+- Supabase CLI: isolated staging + production Enterprise projects exist and are linked; unrelated INACTIVE EducationOS projects are untouched.
+- **Still externally blocked:** Cloudflare DNS (owner-only) and the external providers in B2/B3. `Production` environment protection rule blocked by plan (B5d).
+- Local preparation: **117/117** unit tests (35 files), tsc clean, `next build` green, Playwright 42 passed/2 skipped.
 
 ## Verification notes (85-script `*:verify` sweep)
 - The sweep runner used `timeout 150`, but 26 of the 34 swept `FAIL`s are `scripts/verify-*.mjs` that ignore `SKIP_TSC`/`SKIP_LINT` and re-run `tsc`+`eslint` internally (~3–5 min each). Their sweep `FAIL` is a timeout artifact, not a code failure. Re-run to completion individually: `sprint3:verify` 152/152, `sprint-b1:verify`, `sprint9:verify`, `executive-ai:verify` all exit 0 (the `executive-ai-ecosystem` and `executive-ai` sweep failures also passed standalone — concurrency artifact).

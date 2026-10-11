@@ -1,201 +1,237 @@
 # Production Recovery Runbook — arjunautomations.com
 
-Read-only diagnosis performed 2026-10-11. **No production change was made.**
-Companion: `docs/SOFT_LAUNCH_DOMAIN_READINESS.md` (domain checklist), `docs/ROLLBACK_RUNBOOK.md`.
+**Status: RECOVERED (2026-10-11).** A replacement Vercel project is live and healthy, both
+Supabase projects exist, and all environment/secrets are provisioned. **One owner-only action
+remains: apply the Cloudflare DNS records in §2** (this machine has no Cloudflare access).
 
-## 1. Verified access status (2026-10-11)
+Companion docs: `docs/MISSION_CHECKLIST.md` (ledger), `docs/SOFT_LAUNCH_DOMAIN_READINESS.md`
+(domain checklist), `docs/ROLLBACK_RUNBOOK.md`.
 
-| Surface | Identity | Access | Can act? |
+> Historical (pre-recovery) diagnosis is preserved in **Appendix A** so the same incident can be
+> recognised again. It no longer describes the current state.
+
+---
+
+## 0. Current status at a glance (verified 2026-10-11)
+
+| Surface | Value | State |
+|---|---|---|
+| Vercel account | `riderarjun24359-sys` | authenticated locally |
+| Vercel team | `arjun-automation` (`team_phuD6suWsaXfLApxkPSXWAqA`) | hobby |
+| Vercel project | `arjunautomationos-enterprise` (`prj_GoeJ31s6APxX5keDRCVarrgzObOc`) | framework `nextjs`, Git-linked, deployment protection **off** |
+| Production alias | `https://arjunautomationos-enterprise.vercel.app` | **READY**, `/`+all ops 200 |
+| Staging alias | `https://arjunautomationos-staging.vercel.app` | **READY** (latest preview), ops 200 |
+| Supabase staging | `iplkndwkjuupktxwcksv` | 63 migrations applied |
+| Supabase production | `ixassghxogcabfcyjjtz` (`arjun-enterprise-production`, ap-south-1) | 63 migrations applied, platform org row present |
+| Custom domain | `arjunautomations.com` / `www.arjunautomations.com` | **assigned + verified in Vercel; DNS still points at the dead Cloudflare tunnel (HTTP 530 / error 1033)** |
+| GitHub repo | `riderarjun24359-sys/ArjunAutomationEnterprise` (`1325528606`) | secrets + variables synced |
+
+**Only remaining production blocker:** the Cloudflare DNS records in §2 (§7 has the exact steps).
+
+---
+
+## 1. Verified final state
+
+### 1.1 Vercel
+
+- Project `arjunautomationos-enterprise` — `framework: nextjs`, `nodeVersion: 24.x`, Git-linked to
+  repo id `1325528606`, `productionBranch: main`, `ssoProtection: null` (deployment protection
+  disabled so the site can be tested from outside).
+- Production deployment (CLI, `target: production`, `READY`):
+  `https://arjunautomationos-enterprise-junwa1z87-arjun-automation.vercel.app` →
+  alias `https://arjunautomationos-enterprise.vercel.app`.
+- Domains assigned to the project and **verified**: `www.arjunautomations.com`,
+  `arjunautomations.com` (apex set to **308 → `www.arjunautomations.com`**), plus the
+  `*.vercel.app` project domain.
+- Project env vars (names only), all with values set:
+  - **preview:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+    `SUPABASE_SERVICE_ROLE_KEY`, `PLATFORM_LEAD_API_KEY`, `PLATFORM_ORGANIZATION_ID`,
+    `NEXT_PUBLIC_APP_URL` (= staging alias).
+  - **production:** the same six, with `NEXT_PUBLIC_APP_URL=https://www.arjunautomations.com`.
+  - Secret-type values: `SUPABASE_SERVICE_ROLE_KEY`, `PLATFORM_LEAD_API_KEY` (`sensitive`);
+    the rest `encrypted`. Service-role keys are **never** exposed via `NEXT_PUBLIC_*`, source,
+    logs, or Git.
+
+### 1.2 Supabase
+
+- **Staging** `iplkndwkjuupktxwcksv` and **production** `ixassghxogcabfcyjjtz` both under org
+  `zmwxthjimwfbbwnbeomi` ("Arjun Automation").
+- Production `arjun-enterprise-production` (ap-south-1, `ACTIVE_HEALTHY`) created because no
+  production database existed. **All 63 migrations applied**; only the platform organisation row
+  (`11111111-1111-1111-1111-111111111111`, "Arjun Automation") was seeded — **no demo/customer data**.
+- Staging has all 63 migrations; demo seeds are **not** applied.
+- Live tenant-isolation harness against staging: **11/11 PASS** (user B sees only org B;
+  cross-org INSERT denied 403; UPDATE/DELETE affect 0 rows; anon 401; org B intact).
+
+### 1.3 GitHub (`riderarjun24359-sys/ArjunAutomationEnterprise`)
+
+- Repo **secrets** present: `VERCEL_PROJECT_ID`, `VERCEL_ORG_ID`, `VERCEL_TOKEN`,
+  `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
+  `PLATFORM_LEAD_API_KEY`, `PLATFORM_ORGANIZATION_ID`, `GEMINI_API_KEY`.
+- Repo **variables**: `NEXT_PUBLIC_APP_URL=https://www.arjunautomations.com`,
+  `PRODUCTION_BASE_URL=https://www.arjunautomations.com`.
+- `Production` environment **required-reviewer gate cannot be enabled** — `PUT` returns
+  HTTP 422 "Please ensure the billing plan supports the required reviewers protection rule"
+  (private repo; needs GitHub Pro/Team/Enterprise). Manual `workflow_dispatch` write access is the
+  only gate today.
+
+### 1.4 Verified checks (2026-10-11)
+
+- **Production** `https://arjunautomationos-enterprise.vercel.app`:
+  `/` 200, `/api/ops/live` 200, `/api/ops/ready` 200, `/api/ops/health` 200 (score 95),
+  `/api/ops/production` 200 (**`blockers: []`**; warnings: payment/email/monitoring not configured),
+  `/api/ops/go-live` 200, `/api/ops/diagnostics` 401 (auth-gated).
+  Full route smoke: **59/59 PASS** (includes synthetic lead intake + dedup + fail-closed webhook).
+- **Staging** `https://arjunautomationos-staging.vercel.app`: same ops endpoints 200;
+  route smoke **59/59 PASS**.
+- **Local**: `npx tsc --noEmit` 0; `test:unit` **117/117 (35 files)**; `next build` OK;
+  `eslint .` 0 errors; `npm audit --omit=dev` 0 vulnerabilities; `db:verify` 63 migrations /
+  1178 tables; `db:validate` apply_all.sql on PGlite + 50 seeds PASS; `git diff --check` clean.
+- Synthetic smoke-test leads created during verification were **deleted** afterwards
+  (1 production, 2 staging) so production contains no test/customer data.
+
+---
+
+## 2. Owner action required — Cloudflare DNS (the only remaining step)
+
+`arjunautomations.com` is on Cloudflare nameservers (`lee.ns.cloudflare.com`,
+`angela.ns.cloudflare.com`). Today apex + `www` answer Cloudflare **proxy** IPs whose origin is a
+**disconnected Argo Tunnel** → HTTP **530 / error 1033**. Vercel already owns/verifies the domain,
+so only the records need to change.
+
+**Exact records Vercel requires** (from the project's domain config, 2026-10-11):
+
+| Type | Name | Value(s) | Proxy |
 |---|---|---|---|
-| GitHub (CLI `gh`) | `riderarjun24359-sys` | scopes `repo`, `workflow`, `read:org`, `gist` | read metadata; **cannot** read secret values |
-| Vercel (local CLI) | `chittemprashantharjun-5618` | team `arjun-automation1` ("Arjun Automation", hobby) | **no** — team has **0 projects / 0 deployments** |
-| Vercel (owns the app) | `riderarjun24359-sys` / `riderarjun24359@gmail.com` | team `ArjunAutomation` (slug `arjun-automation`) | **not accessible from this machine** (different account/team) |
-| Cloudflare (DNS) | unknown | zone `arjunautomations.com` on Cloudflare NS | **not accessible from this machine** |
-| Supabase (CLI) | `riderarjun24359@gmail.com's Org` + `Arjun Automation` | 2 **INACTIVE** EducationOS projects; 0 Enterprise | **no** isolated Enterprise target |
+| A | `arjunautomations.com` (apex) | `216.198.79.1` **and** `64.29.17.1` (rank 1; fallback `76.76.21.21`) | **DNS-only (grey cloud)** |
+| CNAME | `www.arjunautomations.com` | `8f8ccb61a152a669.vercel-dns-017.com` (rank 1; fallback `cname.vercel-dns.com`) | **DNS-only (grey cloud)** |
 
-### Evidence
+Steps (owner, in Cloudflare → DNS):
 
-- Repo: `riderarjun24359-sys/ArjunAutomationEnterprise`, id **1325528606**, private, default branch `main`.
-- Repo **secrets (names only)**: `GEMINI_API_KEY`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `PLATFORM_LEAD_API_KEY`, `PLATFORM_ORGANIZATION_ID`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `VERCEL_TOKEN`.
-- Repo **variables**: `NEXT_PUBLIC_APP_URL=https://www.arjunautomations.com` — **`PRODUCTION_BASE_URL` is MISSING**.
-- Environments: `Production` (**no protection rules**), `Production – arjun-automation-enterprise`, `Production – arjunautomationos-enterprise`.
-- Only workflow: `.github/workflows/production-deploy.yml` (`workflow_dispatch` only — no CI, no auto-deploy).
-- DNS: NS `lee.ns.cloudflare.com`, `angela.ns.cloudflare.com`; apex + `www` answer Cloudflare proxy IPs.
-- Custom domain: `https://www.arjunautomations.com` and `https://arjunautomations.com` → **HTTP 530**, body `error code: 1033` (Cloudflare **Argo Tunnel** error) → the domain origin is a Cloudflare Tunnel that is **not connected**. The custom domain is **not** served by Vercel.
-- Vercel deployments (last success 2026-08-25, ref `fc7afbe`): every `*.vercel.app` URL → **HTTP 404**, `server: Vercel`, `x-vercel-error: DEPLOYMENT_NOT_FOUND`.
-- Deploy-time Vercel owner (from masked run logs): team `{"name":"ArjunAutomation","slug":"arjun-automation"}`; project `arjunautomationos-enterprise` (Next.js, node 24.x, region `iad1`, hobby, private), Git-linked to repoId 1325528606, `productionBranch: main`.
-- Project domains assigned at deploy time: `www.arjunautomations.com`, `arjunautomations.com` (+ vercel.app aliases).
-- Project env var names (values masked): `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `PLATFORM_LEAD_API_KEY` (all `production`, type `sensitive`).
-
-### Root causes (two independent failures)
-
-1. **No live Vercel deployment.** The project aliases resolve to Vercel but return `DEPLOYMENT_NOT_FOUND`. Whether the project was deleted or all deployments simply expired (configured `deploymentExpiration.expirationDaysProduction: 30`, last deploy ~47 days ago) **cannot be determined from this machine** — it requires the owning Vercel account/team.
-2. **Cloudflare origin is a disconnected tunnel (1033).** Independently of Vercel, the DNS origin for the custom domain is a Cloudflare Tunnel that is down, so even a live Vercel deployment would not be reached by the custom domain today.
-
-> Changing DNS alone is **not** sufficient: the Vercel origin must also have a live deployment and the domain must be (re)assigned to that project.
-
-## 2. What the deploy workflow does (`production-deploy.yml`)
-
-- Trigger: **`workflow_dispatch` only**; input `action` = `none` (default, no-op) / `register-gemini` / `deploy-production`.
-- `deploy-production` runs:
-  1. `verify` — `npm run production:verify` and `npm run go-live:verify` with `NODE_ENV=production`, `AAOS_DEPLOY_ENV=production`, `NEXT_PUBLIC_APP_URL` (var) and Supabase/PLATFORM secrets. No AI creds (must pass with local fallback).
-  2. `build-and-deploy` — `environment: production`; requires `VERCEL_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_ORG_ID`; `POST https://api.vercel.com/v13/deployments` with body `{ name: "arjunautomationos-enterprise", project: <VERCEL_PROJECT_ID>, target: "production", gitSource: { type: "github", repoId: 1325528606, ref: "main" } }`; polls until `READY`.
-  3. `healthcheck` — **requires repo variable `PRODUCTION_BASE_URL`** and `curl -fsS` probes `/api/ops/live|ready|health|production|go-live`. `curl -fsS` fails on HTTP ≥ 400, so a 503 readiness response fails the job (intended).
-  4. `rollback_notes` — echoes the rollback strategy.
-- It **can deploy to production** (target `production`), but only when dispatched by a user and only if the `Production` environment gate is configured.
-
-### Workflow defects found (2026-10-11; status updated same day)
-
-- ~~**`PRODUCTION_BASE_URL` variable is not set**~~ **FIXED** — set to `https://www.arjunautomations.com` via `gh variable set`.
-- **`Production` environment has no protection rules** — **NOT fixable on this account**: `PUT /repos/.../environments/Production` returns HTTP **422 "Please ensure the billing plan supports the required reviewers protection rule"**. Required reviewers for a private repo need GitHub Pro/Team/Enterprise. The workflow comment now documents this; the only enforcer today is `workflow_dispatch` write access. (Environment names are case-insensitive: `production` matches `Production`.)
-- **`register-gemini` referenced `ADMIN_USER_ID`/`ADMIN_EMAIL`/`ADMIN_FULL_NAME`, which do not exist** — **FIXED (fail-closed)**: a preflight step now refuses to run the job when any of those secrets is empty.
-- **Preflight hardening** — `build-and-deploy` now validates `PRODUCTION_BASE_URL` + `VERCEL_TOKEN`/`VERCEL_PROJECT_ID`/`VERCEL_ORG_ID` **before** any build/deploy, instead of only failing at the post-deploy healthcheck (which previously left a live but unverified deployment).
-- No CI workflow runs on push/PR; only manual dispatch exists.
-
-### Canonical-account evidence (authoritative, from the unmasked deploy log)
-
-GitHub Actions run **32839678440** (last successful deploy, 2026-08-25, ref `fc7afbe`) is **not** fully masked — its `Project check` step printed the raw Vercel project JSON:
-
-- Project name `arjunautomationos-enterprise`; `hasDeployments: true`; framework `nextjs`; `nodeVersion 24.x`; region `iad1`; plan `hobby`; `rootDirectory: null`; `sourceFilesOutsideRootDirectory: true`.
-- Git link: repo `ArjunAutomationEnterprise`, `repoId 1325528606`, org `riderarjun24359-sys`, `productionBranch: main`, `createDeployments: enabled`.
-- Creator/owner: user id **`SARFIa2AdkqxxhCBSUlG9gsU`**, username **`riderarjun24359-sys`**, email **`riderarjun24359@gmail.com`**, GitHub login `riderarjun24359-sys`.
-- Team: **`{"name":"ArjunAutomation","slug":"arjun-automation"}`** (also `oidcTokenClaims.owner = "arjun-automation"`).
-- Domains aliased to production: **`www.arjunautomations.com` + `arjunautomations.com`**.
-- Project env vars present at deploy time (**only four**, all `production`/`sensitive`): `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `PLATFORM_LEAD_API_KEY`. **`PLATFORM_ORGANIZATION_ID` and `SUPABASE_SERVICE_ROLE_KEY` were NOT present** → production was already missing cutover-critical/recommended secrets.
-- **`deploymentExpiration`: `expirationDaysProduction: 30`, `deploymentsToKeep: 10`.** The last deploy is ~47 days old, so the public `404 / DEPLOYMENT_NOT_FOUND` aliases are **most likely expired deployments, not a deleted project**. Public probing cannot distinguish the two: a definitely-nonexistent `*.vercel.app` host returns the **identical** `x-vercel-error: DEPLOYMENT_NOT_FOUND`.
-
-**Local Vercel CLI is the wrong account:** `chittemprashantharjun-5618` (user id `XxRTELwWfzaqNeWogpRsQQpy`, email `chittemprashantharjun@gmail.com`), team `arjun-automation1` (`team_yLYkp0v00npJpvE2cv80AeGN`) → **0 projects** (personal and team); both project names → 404. It is a different Vercel identity from the canonical owner above.
-
-> Consequence: the canonical project cannot be inspected or deployed from this machine. The owner must **authenticate the Vercel CLI as `riderarjun24359-sys`** (or supply a `VERCEL_TOKEN` for that user/team). Do not create a project under `arjun-automation1` — that would be a duplicate under the wrong owner.
-
-## 3. Recovery — compare the two legitimate choices
-
-### Choice A (recommended): restore Vercel as the origin
-
-Prerequisites
-- Access to Vercel account `riderarjun24359-sys` / team `ArjunAutomation` (slug `arjun-automation`), or a `VERCEL_TOKEN` + `VERCEL_ORG_ID` + `VERCEL_PROJECT_ID` with access to that project.
-- Access to the Cloudflare zone for `arjunautomations.com`.
-
-Steps
-1. Confirm whether the project still exists (owning token required):
-   `curl -s -H "Authorization: Bearer $VERCEL_TOKEN" "https://api.vercel.com/v9/projects/arjunautomationos-enterprise?teamId=$VERCEL_ORG_ID"`
-   - `404` → recreate the project (re-import GitHub repo `1325528606`, root `/`), re-add **all** production env vars — the four that existed (`NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `PLATFORM_LEAD_API_KEY`) **plus** the missing cutover-critical/recommended `PLATFORM_ORGANIZATION_ID` and `SUPABASE_SERVICE_ROLE_KEY` — then re-add domains `www.arjunautomations.com` + `arjunautomations.com`.
-   - `200` → proceed to step 2.
-2. Produce a live production deployment:
-   - Preferred: `gh workflow run production-deploy.yml -f action=deploy-production` (after setting `PRODUCTION_BASE_URL`; requires the `Production` gate to be satisfied).
-   - Alternative: push to `main` (Git integration auto-deploys) or redeploy a previous deployment in the Vercel dashboard.
-3. Verify the platform origin before touching DNS:
-   `curl -fsS https://<project>.vercel.app/api/ops/live` → expect 200.
-   `curl -fsS https://<project>.vercel.app/api/ops/ready` → expect 200 (needs Supabase env).
-4. Repoint Cloudflare (see §4) and re-verify the custom domain.
-
-Rollback
-- Vercel: promote the previous deployment (Dashboard → Deployments → Promote), or redeploy a prior commit.
-- Cloudflare: restore the previous proxied record (capture it first). See `docs/ROLLBACK_RUNBOOK.md`.
-
-DNS/TLS implications
-- Use the **exact values from the project's domain card** (`vercel domains inspect arjunautomations.com`). General-purpose values are apex `A 76.76.21.21` (newer projects may show a different anycast IP) and `www` `CNAME` to the project's target (e.g. `<hash>.vercel-dns-<n>.com`; the generic `cname.vercel-dns.com` also works).
-- Because DNS is on **Cloudflare nameservers** (external to Vercel), the domain must be added in the Vercel project; Vercel then shows the required records.
-- **Set the Cloudflare records to DNS-only (grey cloud) so Vercel can verify the domain and complete the SSL (ACME) challenge.** Vercel's KB (Jul 2026) is explicit: a proxied Cloudflare record sits between the public DNS answer and the A record Vercel expects and **blocks verification and the SSL challenge**. Once Vercel has issued the cert you may re-enable the proxy if you want Cloudflare's WAF — but keep SSL/TLS mode **Full (strict)** (never Flexible, which causes `err_too_many_redirects`).
-- DNS-only means Vercel terminates TLS directly (simplest, but exposes the origin). Re-proxying later is optional and reversible.
-
-Risks
-- Domain must be verified inside the Vercel project or TLS will mismatch (525/526). **A proxied Cloudflare record prevents that verification** — do not leave it proxied during issuance.
-- A stale apex `A` record from the previous host blocks verification — delete it first.
-- Deleting/re-adding a project loses deployment history and env vars (must be re-entered).
-- Brief propagation window; do it during a low-traffic period.
-
-### Choice B: restore the Cloudflare Tunnel origin
-
-Prerequisites
-- Access to the Cloudflare Zero Trust account and the origin host that runs `cloudflared`.
-- A running instance of the app on that origin (this repo) — i.e. a persistent host. This is **not** Vercel.
-
-Steps
-1. Identify the tunnel (`cfargotunnel.com` target) and its connector host; restart `cloudflared` / recreate the connector.
-2. Confirm the origin serves `GET /api/ops/live` on the tunnel's ingress.
-3. Verify the custom domain.
-
-Rollback
-- Stop the connector / revert the tunnel DNS target.
-
-Risks
-- The origin host may no longer exist; the tunnel may have pointed at a localhost dev server (never production-grade).
-- Requires operating a persistent host (cost/ops) and **bypasses the Vercel pipeline entirely** — the deploy workflow becomes irrelevant.
-- Recommended only if the tunnel was deliberate production infrastructure.
-
-### Recommendation
-
-**Choice A.** The project was Vercel-hosted with the custom domain assigned and a deploy pipeline exists; the Cloudflare tunnel appears stale/unrelated. Choice B is only correct if the tunnel is intentionally the production origin.
-
-## 4. Cloudflare DNS record change (owner-only, for Choice A)
-
-Current state (observed 2026-10-11 via public DNS): NS `lee.ns.cloudflare.com`/`angela.ns.cloudflare.com`; apex + `www` return Cloudflare **proxy** addresses (A `104.21.56.42`, `172.67.177.66`; AAAA `2606:4700:3033::6815:382a`, `2606:4700:3030::ac43:b142`) with a **disconnected Argo Tunnel** origin (HTTP 530 / 1033). **No MX, TXT/SPF, DKIM, DMARC, or CAA records exist.**
-
-1. Record the **actual zone records** (not just the proxy answers) for rollback — Cloudflare Dashboard → DNS → Export. Capture: apex A/AAAA/CNAME + proxy status, `www` CNAME, and the tunnel CNAME/target. This is required because the proxy answers above hide the origin target.
-2. Add the apex + `www` in the Vercel project, then read the exact targets with `vercel domains inspect arjunautomations.com` (owning account required).
-3. In Cloudflare, replace the apex (`arjunautomations.com`) with `A → 76.76.21.21` (or the card's IP) and `www` with `CNAME → <card target>` (e.g. `<hash>.vercel-dns-<n>.com`). **Set both to DNS-only (grey cloud)** so Vercel can verify the domain and issue the certificate. Delete any stale records first.
-4. Wait for the Vercel domain card to show "Valid Configuration" and TLS to issue, then confirm:
-   `curl -fsS https://www.arjunautomations.com/api/ops/live`.
-5. Optionally re-enable the Cloudflare proxy afterwards; if you do, set SSL/TLS mode = **Full (strict)**.
-
-## 5. Staging procedure (dedicated Enterprise Supabase)
-
-Do **not** activate/migrate/reset either EducationOS project (`ekmvevevzahjjhjmvmev`, `cohgrxjzricwhlbeoiyj`) — both are **INACTIVE** and belong to a different product.
-
-Re-verified 2026-10-11: the authenticated CLI sees two orgs —
-`riderarjun24359@gmail.com's Org` (`jvpmjlaehiwiyuxtzces`, holds the 2 inactive EducationOS projects)
-and **`Arjun Automation` (`zmwxthjimwfbbwnbeomi`, 0 projects)** — so there is still **no** dedicated
-Enterprise staging target.
-
-1. Owner creates a **dedicated** free project in the `Arjun Automation` org (0 projects → within the
-   free 2-project limit; **no charge**). Exact command (owner machine, authenticated CLI):
+1. **Export/record the current zone records first** (Cloudflare → DNS → Export) for rollback —
+   capture the apex A/AAAA, the `www` record, and the tunnel CNAME target.
+2. Delete/replace the stale apex and `www` records with the values above.
+3. Set both to **DNS-only (grey cloud)**. A proxied (orange-cloud) record blocks Vercel's domain
+   verification and the ACME/SSL challenge.
+4. Wait until the Vercel domain card shows "Valid Configuration" and TLS is issued, then verify:
    ```bash
-   npx supabase projects create arjun-enterprise-staging \
-     --org-id zmwxthjimwfbbwnbeomi \
-     --region ap-south-1 \
-     --db-password '<GENERATED-STRONG-PASSWORD>'   # store ONLY in a secret manager, never in chat/repo
+   curl -fsS https://www.arjunautomations.com/api/ops/live    # expect 200
+   curl -fsS https://www.arjunautomations.com/api/ops/ready   # expect 200
+   curl -fsS https://arjunautomations.com/api/ops/live        # expect 200 (then 308 -> www)
    ```
-   If the org already holds 2 active projects the create will be rejected — do not upgrade to a paid plan
-   without explicit owner approval (₹0 budget).
-2. `npx supabase link --project-ref <new-ref>`; store the DB password only in a secret store (never in the repo/chat).
-3. Apply, in order, on the isolated target:
-   `202610100001_crm_rls_remediation.sql`, `202610100002_lead_consent_dedup.sql`, `202610100003_finance_invoice_guards.sql`.
-4. Run RLS/cross-tenant isolation, consent/dedup, and finance invoice-guard tests against the isolated target.
-5. Only after tenant-isolation evidence, promote to production with the rollback plan in `docs/ROLLBACK_RUNBOOK.md`.
-6. `supabase/apply_all.sql` must be reconciled per `docs/APPLY_ALL_RECONCILIATION.md` — never blindly regenerated.
+5. Optional: re-enable the Cloudflare proxy afterwards. If you do, set SSL/TLS = **Full (strict)**
+   (never *Flexible* — it causes `err_too_many_redirects`).
 
-## 6. Preview deployment status
+There are currently **no MX, TXT/SPF, DKIM, DMARC, or CAA records** on the zone; if email is needed
+later, add those *in addition to* (not instead of) the records above.
 
-A safe preview deployment is **not available** with the existing local access: the only visible Vercel team (`arjun-automation1`) has no projects, so a preview would require creating a **duplicate** project (forbidden) and would run without the canonical `production` env-var scopes. Do not deploy a preview until the owning account/team is accessible.
+---
 
-## 7. Next executable command (owner)
+## 3. What the recovery actually did
+
+1. Confirmed the old project/deployments were gone and the local CLI could authenticate as the
+   canonical owner (`riderarjun24359-sys` / team `arjun-automation`).
+2. **Created** project `arjunautomationos-enterprise` (no duplicate; the previous one no longer
+   existed), re-imported the GitHub repo, set `framework: nextjs`, and disabled deployment protection.
+3. Set **all** production + preview env vars (the previous project had only four, and was missing
+   cutover-critical `PLATFORM_ORGANIZATION_ID` + `SUPABASE_SERVICE_ROLE_KEY`).
+4. Created an isolated **free** production Supabase project (`ixassghxogcabfcyjjtz`), applied all
+   63 migrations, and seeded only the platform organisation row.
+5. Deployed with the Vercel CLI (first deploy had `framework: null` → every route 404; fixed by
+   setting `framework: nextjs` and redeploying), then aliased to the production URL and verified
+   every ops endpoint + the 59-route smoke suite.
+6. Re-added both custom domains to the project and set the apex → `www` **308** redirect.
+7. Synced GitHub repo secrets/variables so `production-deploy.yml` can deploy.
+
+> The Git-integration deployment of the pre-recovery commit `3448462` was **BLOCKED**
+> ("Vercel couldn't find a Git account for the commit author") because the commit author email was
+> the local `*.local` fallback. The repo-local `user.email` is now set to the GitHub-linked noreply
+> address, so new commits from `main` deploy normally.
+
+---
+
+## 4. `production-deploy.yml` status
+
+- Trigger: **`workflow_dispatch` only**; input `action` = `none` / `register-gemini` /
+  `deploy-production`.
+- `deploy-production`: verify → build-and-deploy (Vercel REST `POST /v13/deployments`) →
+  **healthcheck** (`curl -fsS` against `PRODUCTION_BASE_URL`) → rollback notes.
+- Fixed / hardened: `PRODUCTION_BASE_URL` is set; the workflow now fails closed before building if
+  `PRODUCTION_BASE_URL` or the `VERCEL_*` secrets are missing; `register-gemini` refuses to run
+  without `ADMIN_USER_ID`/`ADMIN_EMAIL`/`ADMIN_FULL_NAME`.
+- **Known limitation:** its healthcheck targets `https://www.arjunautomations.com`, which stays
+  **530** until §2 is done. The workflow therefore **cannot pass until the DNS records are applied**.
+  Until then, deploy/verify via the CLI against the `*.vercel.app` alias (as done in §1).
+- **Do not dispatch `deploy-production` without owner approval.**
+
+---
+
+## 5. Staging
+
+- Dedicated Enterprise staging Supabase exists (`iplkndwkjuupktxwcksv`); the two unrelated
+  **INACTIVE** EducationOS projects in another org are **not** touched.
+- Stable staging URL: `https://arjunautomationos-staging.vercel.app` (alias of the latest preview
+  deployment). Preview env vars point at the staging Supabase project.
+- To refresh staging: deploy a preview from `main` (`npx vercel deploy --scope arjun-automation`)
+  and re-point the alias:
+  `npx vercel alias set <new-preview-url> arjunautomationos-staging.vercel.app --scope arjun-automation`.
+
+---
+
+## 6. Preview
+
+Preview deployments are available again and were verified (59/59). The previous blocker (wrong
+account, zero projects) no longer applies.
+
+---
+
+## 7. Next commands
+
+### Owner — finish the domain (the only outstanding action)
+
+Apply the §2 Cloudflare records, then:
 
 ```bash
-# 0. Re-authenticate the Vercel CLI as the CANONICAL owner (currently the wrong
-#    account, chittemprashantharjun-5618, is logged in):
-npx vercel login            # sign in as riderarjun24359-sys / riderarjun24359@gmail.com
-npx vercel teams switch arjun-automation     # team slug "arjun-automation"
-npx vercel whoami           # must report riderarjun24359-sys
-
-# 1. Confirm the project exists (owning token):
-VERCEL_TOKEN=<owning-token> VERCEL_ORG_ID=<team_id> VERCEL_PROJECT_ID=<project_id> \
-  node scripts/debug-vercel-auth.mjs
-#   200 → deployments likely only expired; redeploy (step 2).
-#   404 → recreate the project from GitHub repo 1325528606, re-add the 4 project
-#         env vars + PLATFORM_ORGANIZATION_ID + SUPABASE_SERVICE_ROLE_KEY, and
-#         re-add domains www + apex, then deploy.
-#   NOTE: the workflow healthcheck probes live|ready|health|production|go-live with
-#   `curl -fsS` (fails on HTTP>=400). Locally proven (2026-10-11) that with no
-#   Supabase env: live=200 but ready/health/production/go-live=503 and
-#   diagnostics=401. So a production deploy will FAIL its healthcheck until the
-#   full production env (incl. PLATFORM_ORGANIZATION_ID + SUPABASE_SERVICE_ROLE_KEY)
-#   is present on the project. Re-provision all cutover-critical/recommended vars first.
-
-# 2. If it exists, produce a production deployment (OWNER APPROVAL REQUIRED):
-gh workflow run production-deploy.yml -f action=deploy-production
-
-# 3. Verify the platform origin, then repoint Cloudflare (§4).
+curl -fsS https://www.arjunautomations.com/api/ops/live
+curl -fsS https://www.arjunautomations.com/api/ops/ready
 ```
 
-`deploy-production` must **not** be dispatched until the owner approves. `PRODUCTION_BASE_URL` is now set and the workflow fails closed without it; the `Production` required-reviewer gate **cannot** be enabled on the current account plan (HTTP 422), so manual dispatch write-access is the only gate today.
+### Owner — validate the production workflow (after DNS works)
+
+```bash
+gh workflow run production-deploy.yml -f action=deploy-production   # OWNER APPROVAL REQUIRED
+```
+
+### Routine deploy
+
+Git-integration auto-deploys `main` to production (commit author is now GitHub-linked), or:
+
+```bash
+npx vercel deploy --prod --scope arjun-automation
+```
+
+---
+
+## Appendix A — Historical diagnosis (pre-recovery, 2026-10-11)
+
+Retained for incident recognition. **This describes the state before the recovery above.**
+
+- **Two independent failures:**
+  1. **No live Vercel deployment.** Project aliases resolved to Vercel but returned
+     `x-vercel-error: DEPLOYMENT_NOT_FOUND`; the last successful deploy was 2026-08-25 (`fc7afbe`).
+     With `deploymentExpiration.expirationDaysProduction: 30`, expired deployments were the most
+     likely cause; public probing could not distinguish "expired" from "deleted".
+  2. **Cloudflare origin was a disconnected Argo Tunnel.** NS `lee`/`angela.ns.cloudflare.com`;
+     apex + `www` returned Cloudflare proxy IPs (`104.21.56.42`, `172.67.177.66`) with HTTP 530 /
+     error 1033.
+- The authoritative owner identity was recovered from the unmasked GitHub Actions deploy log
+  (run `32839678440`): user id `SARFIa2AdkqxxhCBSUlG9gsU`, username `riderarjun24359-sys`,
+  email `riderarjun24359@gmail.com`, team `{"name":"ArjunAutomation","slug":"arjun-automation"}`.
+  At that time the local Vercel CLI was authenticated as a **different** account
+  (`chittemprashantharjun-5618` / team `arjun-automation1`, 0 projects) — now corrected.
+- The previous project recorded env vars (names only): `NEXT_PUBLIC_APP_URL`,
+  `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `PLATFORM_LEAD_API_KEY` — i.e.
+  `PLATFORM_ORGANIZATION_ID` and `SUPABASE_SERVICE_ROLE_KEY` were **missing** in production.
+- Historical recovery options compared: **Choice A** (Vercel origin — chosen; now completed) vs
+  **Choice B** (restore the Cloudflare Tunnel origin — rejected; the tunnel appears stale and would
+  bypass the Vercel pipeline).
