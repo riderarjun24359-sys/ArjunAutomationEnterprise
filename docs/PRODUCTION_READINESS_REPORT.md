@@ -1,7 +1,7 @@
 # Production Readiness Report
 
 **Version:** 1.0.0-early-access-cutover
-**Generated:** 2026-10-11T06:18:44.108Z
+**Generated:** 2026-10-11T16:38:39.947Z
 **Ready:** NO
 **Score:** 40/100
 
@@ -15,9 +15,9 @@
 
 ## Supabase
 
-- Migration SQL files: 63
+- Migration SQL files: 64
 - RLS enable statements: 1234
-- Policies: 366
+- Policies: 372
 - Apply on production with `npm run db:apply` (or platform pipeline)
 
 ## Email templates
@@ -33,8 +33,8 @@
 |---|---|---|
 | secrets_critical | warn | NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, PLATFORM_LEAD_API_KEY, PLATFORM_ORGANIZATION_ID |
 | secrets_startup_gate | pass | instrumentation.ts |
-| supabase_migrations | pass | 63 files |
-| supabase_rls | pass | 1234 RLS / 366 policies |
+| supabase_migrations | pass | 64 files |
+| supabase_rls | pass | 1234 RLS / 372 policies |
 | email_provider | warn | missing |
 | email_templates | pass | welcome.md:true, verify-email.md:true, invite-teammate.md:true, password-reset.md:true |
 | payments_gateway | warn | missing |

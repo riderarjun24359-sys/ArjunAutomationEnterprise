@@ -1,7 +1,7 @@
 # Launch Execution Report — Early Access
 
 **Version:** 1.0.0-early-access-execution
-**Generated:** 2026-10-11T06:18:37.049Z
+**Generated:** 2026-10-11T16:38:39.369Z
 **Decision: HOLD**
 **Score:** 57/100
 

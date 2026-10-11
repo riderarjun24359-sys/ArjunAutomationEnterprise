@@ -64,11 +64,54 @@ function scanMigrations(cwd = process.cwd()): { files: number; rlsEnable: number
     return { files: files.length, rlsEnable, policies };
 }
 
+/**
+ * True when the full repository source tree is present (local dev / CI).
+ *
+ * The deployed (Vercel) bundle contains only the compiled app output, so
+ * source-tree paths — `supabase/migrations`, `instrumentation.ts`, route
+ * sources, `docs/*` — are absent at runtime. File-presence checks against
+ * those paths must therefore be reported as *unverifiable in the deployed
+ * runtime* (`warn`) rather than `fail`: before this, `/api/ops/cutover`
+ * asserted things like "0 migration SQL files present — apply with
+ * `npm run db:apply` on production" on a host where every migration is
+ * already applied, which is a false blocker nobody could ever clear.
+ */
+function sourceTreePresent(cwd: string): boolean {
+    return existsSync(join(/*turbopackIgnore: true*/ cwd, "supabase", "migrations"));
+}
+
 export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, cwd = process.cwd()): ProductionCutoverReport {
     const secrets = validateSecretLoading(env);
     const production = validateProductionEnvironment(env);
     const goLive = validateGoLiveReadiness(env);
     const checks: CutoverCheck[] = [];
+    const sourceTree = sourceTreePresent(cwd);
+
+    /**
+     * File-presence check. Locally the source tree is authoritative, so an
+     * absent file is a genuine `fail` (kept exactly as before). In the deployed
+     * runtime the source tree is not bundled, so absence means "cannot be
+     * verified here" — reported as `warn` with an explicit note so the report
+     * never claims a source artefact is missing when it simply is not shipped.
+     */
+    const fileCheck = (
+        id: CutoverCheck["id"],
+        area: CutoverCheck["area"],
+        present: boolean,
+        detail: string,
+        runtimeDetail?: string,
+    ): CutoverCheck => {
+        if (present) return { id, area, status: "pass", detail };
+        if (sourceTree) return { id, area, status: "fail", detail };
+        return {
+            id,
+            area,
+            status: "warn",
+            detail: `${runtimeDetail ?? detail} — not verifiable in the deployed runtime (source tree is not bundled); enforced in CI by production-cutover:verify`,
+        };
+    };
+    /** Suffix appended to every check that cannot be evaluated in the deployed bundle. */
+    const RUNTIME_NOTE = "not verifiable in the deployed runtime (source tree is not bundled); enforced in CI production-cutover:verify";
     const migrations = scanMigrations(cwd);
     const emailTemplates = listEmailTemplateStatus(cwd);
     const restore = verifyRestoreProcedure();
@@ -90,12 +133,15 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
             ? "SERVICE_ROLE exposed as NEXT_PUBLIC_*"
             : "Secret loading contract validated (no public service-role leak)",
     });
-    checks.push({
-        id: "secrets_startup_gate",
-        area: "secrets",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "instrumentation.ts")) ? "pass" : "fail",
-        detail: "instrumentation.ts registers assertCriticalProductionSecrets on Node runtime",
-    });
+    checks.push(
+        fileCheck(
+            "secrets_startup_gate",
+            "secrets",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "instrumentation.ts")),
+            "instrumentation.ts registers assertCriticalProductionSecrets on Node runtime",
+            "instrumentation.ts is compiled into the deployed bundle; the secret assertion runs at Node cold start",
+        ),
+    );
 
     // 2. Supabase
     checks.push({
@@ -112,17 +158,25 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
             ? "SUPABASE_SERVICE_ROLE_KEY present (server-only)"
             : "Set SUPABASE_SERVICE_ROLE_KEY for production cutover",
     });
-    checks.push({
-        id: "supabase_migrations",
-        area: "supabase",
-        status: migrations.files > 0 ? "pass" : "fail",
-        detail: `${migrations.files} migration SQL files present — apply with npm run db:apply on production`,
-    });
+    checks.push(
+        fileCheck(
+            "supabase_migrations",
+            "supabase",
+            migrations.files > 0,
+            `${migrations.files} migration SQL files present — apply with npm run db:apply on production`,
+            "Migration SQL files are not part of the serverless bundle; the applied schema is recorded in supabase_migrations.schema_migrations and enforced by CI db:verify",
+        ),
+    );
     checks.push({
         id: "supabase_rls",
         area: "supabase",
         status: migrations.rlsEnable > 0 && migrations.policies > 0 ? "pass" : "warn",
-        detail: `RLS enable statements: ${migrations.rlsEnable}; policies: ${migrations.policies}`,
+        detail:
+            migrations.rlsEnable > 0 && migrations.policies > 0
+                ? `RLS enable statements: ${migrations.rlsEnable}; policies: ${migrations.policies}`
+                : sourceTree
+                  ? `RLS enable statements: ${migrations.rlsEnable}; policies: ${migrations.policies}`
+                  : `RLS statements cannot be scanned from the deployed bundle — ${RUNTIME_NOTE}`,
     });
     checks.push({
         id: "supabase_storage",
@@ -149,27 +203,34 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
         status: emailOk ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
         detail: emailOk ? "Resend or SMTP provider configured" : "Configure RESEND_API_KEY or SMTP_*",
     });
+    /** Template files are source-tree artefacts: `fail` locally, `warn` in the deployed runtime. */
+    const templateStatus = (ok: boolean): CutoverStatus => (ok ? "pass" : sourceTree ? "fail" : "warn");
     checks.push({
         id: "email_templates",
         area: "email",
-        status: templatesOk ? "pass" : "fail",
+        status: templateStatus(templatesOk),
         detail: templatesOk
             ? `Transactional templates: ${CUTOVER_EMAIL_TEMPLATES.map((t) => t.id).join(", ")}`
-            : `Missing templates: ${emailTemplates.filter((t) => !t.present).map((t) => t.id).join(", ")}`,
+            : `Missing templates: ${emailTemplates.filter((t) => !t.present).map((t) => t.id).join(", ")}${sourceTree ? "" : ` — ${RUNTIME_NOTE}`}`,
     });
     checks.push({
         id: "email_password_reset",
         area: "email",
-        status: emailTemplates.some((t) => t.id === "password-reset" && t.present) ? "pass" : "fail",
-        detail: "password-reset.md template for recovery emails",
+        status: templateStatus(emailTemplates.some((t) => t.id === "password-reset" && t.present)),
+        detail: emailTemplates.some((t) => t.id === "password-reset" && t.present)
+            ? "password-reset.md template for recovery emails"
+            : `password-reset.md template for recovery emails is missing${sourceTree ? "" : ` — ${RUNTIME_NOTE}`}`,
     });
+    const onboardingOk = emailTemplates
+        .filter((t) => ["welcome", "verify-email", "invite-teammate"].includes(t.id))
+        .every((t) => t.present);
     checks.push({
         id: "email_onboarding",
         area: "email",
-        status: emailTemplates.filter((t) => ["welcome", "verify-email", "invite-teammate"].includes(t.id)).every((t) => t.present)
-            ? "pass"
-            : "fail",
-        detail: "welcome + verify-email + invite-teammate onboarding templates",
+        status: templateStatus(onboardingOk),
+        detail: onboardingOk
+            ? `welcome + verify-email + invite-teammate onboarding templates`
+            : `onboarding templates (welcome + verify-email + invite-teammate) are missing${sourceTree ? "" : ` — ${RUNTIME_NOTE}`}`,
     });
 
     // 4. Payments
@@ -183,24 +244,43 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
         status: payOk ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
         detail: payOk ? "Payment gateway configured (Razorpay India-first or Stripe fallback)" : "Configure Razorpay or Stripe for paid plans",
     });
-    checks.push({
-        id: "payments_webhook",
-        area: "payments",
-        status: whOk && existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/payments/webhook/route.ts")) ? "pass" : secrets.cutoverRuntime ? "fail" : "warn",
-        detail: `Unified webhook path ${PAYMENT_WEBHOOK_PATH} · Razorpay ${razorpayWebhookOk ? "set" : "missing"} · Stripe ${stripeWebhookOk ? "set" : "missing"}`,
-    });
-    checks.push({
-        id: "payments_subscription_surface",
-        area: "payments",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/services/billing-finance-os.service.ts")) ? "pass" : "fail",
-        detail: "Billing Finance OS subscription lifecycle surface present (unchanged)",
-    });
-    checks.push({
-        id: "payments_invoice_surface",
-        area: "payments",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/components/os/InvoiceCenterPanel.tsx")) ? "pass" : "fail",
-        detail: "Invoice Center flow present in Billing Finance OS",
-    });
+    const webhookDetail = `Unified webhook path ${PAYMENT_WEBHOOK_PATH} · Razorpay ${razorpayWebhookOk ? "set" : "missing"} · Stripe ${stripeWebhookOk ? "set" : "missing"}`;
+    const webhookRoutePresent = existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/payments/webhook/route.ts"));
+    if (whOk && webhookRoutePresent) {
+        checks.push({ id: "payments_webhook", area: "payments", status: "pass", detail: webhookDetail });
+    } else if (!webhookRoutePresent && !sourceTree) {
+        checks.push({
+            id: "payments_webhook",
+            area: "payments",
+            status: "warn",
+            detail: `${webhookDetail} — the webhook route is compiled into the deployed bundle and can be probed at ${PAYMENT_WEBHOOK_PATH} — ${RUNTIME_NOTE}`,
+        });
+    } else {
+        checks.push({
+            id: "payments_webhook",
+            area: "payments",
+            status: secrets.cutoverRuntime ? "fail" : "warn",
+            detail: webhookDetail,
+        });
+    }
+    checks.push(
+        fileCheck(
+            "payments_subscription_surface",
+            "payments",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/services/billing-finance-os.service.ts")),
+            "Billing Finance OS subscription lifecycle surface present (unchanged)",
+            "Billing Finance OS subscription surface is compiled into the deployed bundle",
+        ),
+    );
+    checks.push(
+        fileCheck(
+            "payments_invoice_surface",
+            "payments",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "src/modules/billing-finance/components/os/InvoiceCenterPanel.tsx")),
+            "Invoice Center flow present in Billing Finance OS",
+            "Invoice Center surface is compiled into the deployed bundle",
+        ),
+    );
 
     // 5. Monitoring
     const monitoringOk = envPresent(env, "OPS_ALERT_WEBHOOK_URL") || envPresent(env, "SENTRY_DSN") || envPresent(env, "NEXT_PUBLIC_SENTRY_DSN");
@@ -213,33 +293,45 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     const healthFiles = ["live", "ready", "health", "diagnostics", "production", "go-live", "cutover"].every((name) =>
         existsSync(join(/*turbopackIgnore: true*/ cwd, `app/api/ops/${name}/route.ts`)),
     );
-    checks.push({
-        id: "monitoring_health",
-        area: "monitoring",
-        status: healthFiles ? "pass" : "fail",
-        detail: "Ops health endpoints: live, ready, health, diagnostics, production, go-live, cutover",
-    });
-    checks.push({
-        id: "monitoring_logging",
-        area: "monitoring",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/production-logger.ts")) && existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/ops-monitoring.ts")) ? "pass" : "fail",
-        detail: "production-logger + ops-monitoring present",
-    });
-    checks.push({
-        id: "monitoring_diagnostics",
-        area: "monitoring",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/ops/diagnostics/route.ts")) ? "pass" : "fail",
-        detail: "/api/ops/diagnostics authenticated diagnostics route",
-    });
+    checks.push(
+        fileCheck(
+            "monitoring_health",
+            "monitoring",
+            healthFiles,
+            "Ops health endpoints: live, ready, health, diagnostics, production, go-live, cutover",
+            "Ops health routes are compiled into the deployed bundle; probe /api/ops/* directly",
+        ),
+    );
+    checks.push(
+        fileCheck(
+            "monitoring_logging",
+            "monitoring",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/production-logger.ts")) && existsSync(join(/*turbopackIgnore: true*/ cwd, "src/lib/ops-monitoring.ts")),
+            "production-logger + ops-monitoring present",
+            "production-logger + ops-monitoring are compiled into the deployed bundle",
+        ),
+    );
+    checks.push(
+        fileCheck(
+            "monitoring_diagnostics",
+            "monitoring",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "app/api/ops/diagnostics/route.ts")),
+            "/api/ops/diagnostics authenticated diagnostics route",
+            "/api/ops/diagnostics is compiled into the deployed bundle and returns 401 without a session",
+        ),
+    );
 
     // 6. Final cutover
     const httpsOk = isHttpsUrl(env.NEXT_PUBLIC_APP_URL) || env.NODE_ENV !== "production";
-    checks.push({
-        id: "cutover_go_live_checklist",
-        area: "cutover",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/GO_LIVE_CHECKLIST.md")) ? "pass" : "fail",
-        detail: "docs/GO_LIVE_CHECKLIST.md present for execution",
-    });
+    checks.push(
+        fileCheck(
+            "cutover_go_live_checklist",
+            "cutover",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/GO_LIVE_CHECKLIST.md")),
+            "docs/GO_LIVE_CHECKLIST.md present for execution",
+            "docs/GO_LIVE_CHECKLIST.md is not part of the deployed bundle",
+        ),
+    );
     checks.push({
         id: "cutover_environment",
         area: "cutover",
@@ -248,14 +340,16 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
             ? `Production env score ${production.score}; go-live score ${goLive.score}`
             : `Production blockers: ${production.blockers.join("; ") || "see checks"}`,
     });
-    checks.push({
-        id: "cutover_readiness_report",
-        area: "cutover",
-        status: existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/PRODUCTION_READINESS_REPORT.md")) || existsSync(join(/*turbopackIgnore: true*/ cwd, "scripts/generate-production-readiness-report.mjs"))
-            ? "pass"
-            : "fail",
-        detail: "Production readiness report generator / artifact present",
-    });
+    checks.push(
+        fileCheck(
+            "cutover_readiness_report",
+            "cutover",
+            existsSync(join(/*turbopackIgnore: true*/ cwd, "docs/PRODUCTION_READINESS_REPORT.md")) ||
+                existsSync(join(/*turbopackIgnore: true*/ cwd, "scripts/generate-production-readiness-report.mjs")),
+            "Production readiness report generator / artifact present",
+            "Production readiness report generator / artifact is not part of the deployed bundle",
+        ),
+    );
 
     const fail = checks.filter((c) => c.status === "fail");
     const warn = checks.filter((c) => c.status === "warn");
