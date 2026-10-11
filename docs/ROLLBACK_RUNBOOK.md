@@ -19,7 +19,19 @@ Use when a go-live or production deploy must be reversed quickly.
 
 ## Technical rollback
 
-1. Redeploy previous release artifact / tag
+1. Redeploy previous release artifact / tag. Fastest path on the current stack — re-point the
+   production alias at the previous **READY** production deployment (no rebuild):
+   ```bash
+   npx vercel ls arjunautomationos-enterprise --scope arjun-automation   # pick the prior READY production URL
+   npx vercel alias set <prior-ready-production-url> arjunautomationos-enterprise.vercel.app --scope arjun-automation
+   npx vercel alias set <prior-ready-production-url> www.arjunautomations.com --scope arjun-automation
+   npx vercel alias set <prior-ready-production-url> arjunautomations.com --scope arjun-automation
+   ```
+   Move all three aliases: Vercel assigns every production alias to each new production
+   deployment, but a manual `alias set` moves only the named alias — `www`/apex would otherwise
+   keep serving the bad deployment. After the move, verify
+   `https://www.arjunautomations.com/api/ops/live` (expect 200) and the apex 308 before declaring
+   recovery.
 2. Keep database forward-compatible — prefer app rollback over schema downgrade
 3. If a migration is unsafe, stop writes and follow `docs/DISASTER_RECOVERY.md`
 4. Re-run:

@@ -15,6 +15,23 @@ export interface WebhookEventRef {
     eventType: string;
 }
 
+/** Raw request headers the unified webhook route inspects (names only, never secrets). */
+export type WebhookProvider = "stripe" | "razorpay";
+
+/**
+ * Selects the provider path from the presented signature headers (pure).
+ * Stripe takes precedence when both headers are present so the selection is
+ * deterministic; no header at all means the delivery is unverifiable (null).
+ */
+export function selectWebhookProvider(headers: {
+    stripeSignature: string | null;
+    razorpaySignature: string | null;
+}): WebhookProvider | null {
+    if (headers.stripeSignature) return "stripe";
+    if (headers.razorpaySignature) return "razorpay";
+    return null;
+}
+
 export type DedupeStore = "database" | "memory";
 export type DedupeDecision = "new" | "duplicate";
 
@@ -127,6 +144,71 @@ export function extractStripeSettlementRef(payload: unknown): SettlementReferenc
     const rawAmount = obj.amount_received ?? obj.amount ?? null;
     const amountMinor = typeof rawAmount === "number" && Number.isFinite(rawAmount) ? rawAmount : null;
     const rawCurrency = obj.currency ?? null;
+    const currency = typeof rawCurrency === "string" && rawCurrency.trim() ? rawCurrency.trim() : null;
+    return { reference, amountMinor, currency };
+}
+
+/**
+ * Parses a Razorpay webhook delivery into an idempotency ref (pure).
+ * Razorpay deliveries carry no top-level event id; the payment/order entity id
+ * (`payload.<entity>.entity.id`, e.g. `payload.payment.entity.id`) is the
+ * stable unique key, namespaced here with the Razorpay `event` name so a
+ * `payment.authorized` and its later `payment.captured` for the same entity
+ * do not collide. Returns null (never throws) for unrecognized shapes.
+ */
+export function parseRazorpayWebhookEvent(payload: string): WebhookEventRef | null {
+    try {
+        const parsed = JSON.parse(payload) as {
+            event?: unknown;
+            payload?: Record<string, { entity?: { id?: unknown } } | undefined>;
+        };
+        const eventType = typeof parsed.event === "string" && parsed.event.trim() ? parsed.event.trim() : null;
+        const container = parsed.payload && typeof parsed.payload === "object" ? parsed.payload : null;
+        let entityId: string | null = null;
+        if (container) {
+            for (const key of Object.keys(container)) {
+                const entity = container[key]?.entity;
+                if (entity && typeof entity.id === "string" && entity.id.trim()) {
+                    entityId = entity.id.trim();
+                    break;
+                }
+            }
+        }
+        if (!eventType || !entityId) return null;
+        return { provider: "razorpay", eventId: `${eventType}:${entityId}`, eventType };
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Extracts settlement details from a Razorpay event payload (pure).
+ * Reference convention mirrors the Stripe extractor: entity notes
+ * (`invoice_number` / `invoiceNumber` / `invoice`), else the entity
+ * description. Amount is the entity `amount` in minor units (paise). Returns
+ * nulls (never throws) when the shape is unrecognized — the reconciler
+ * reports those as discrepancies, not failures.
+ */
+export function extractRazorpaySettlementRef(payload: unknown): SettlementReference {
+    const empty: SettlementReference = { reference: null, amountMinor: null, currency: null };
+    if (!payload || typeof payload !== "object") return empty;
+    const container = (payload as { payload?: unknown }).payload;
+    if (!container || typeof container !== "object") return empty;
+    let entity: Record<string, unknown> | null = null;
+    for (const key of Object.keys(container as Record<string, unknown>)) {
+        const candidate = (container as Record<string, { entity?: unknown } | undefined>)[key]?.entity;
+        if (candidate && typeof candidate === "object") {
+            entity = candidate as Record<string, unknown>;
+            break;
+        }
+    }
+    if (!entity) return empty;
+    const notes = (entity.notes as Record<string, unknown> | undefined) ?? {};
+    const rawRef = notes.invoice_number ?? notes.invoiceNumber ?? notes.invoice ?? entity.description ?? null;
+    const reference = typeof rawRef === "string" && rawRef.trim() ? rawRef.trim() : null;
+    const rawAmount = entity.amount ?? null;
+    const amountMinor = typeof rawAmount === "number" && Number.isFinite(rawAmount) ? rawAmount : null;
+    const rawCurrency = entity.currency ?? null;
     const currency = typeof rawCurrency === "string" && rawCurrency.trim() ? rawCurrency.trim() : null;
     return { reference, amountMinor, currency };
 }

@@ -80,6 +80,15 @@ pass("payments:timing_safe", payments.includes("timingSafeEqual"));
 const webhook = readSafe(join(root, "app/api/payments/webhook/route.ts"));
 pass("webhook:rejects_bad_sig", webhook.includes("Invalid webhook signature"));
 pass("webhook:stripe_header", webhook.includes("stripe-signature"));
+pass("webhook:razorpay_header", webhook.includes("x-razorpay-signature"));
+pass("webhook:razorpay_verify", webhook.includes("verifyRazorpayWebhookSignature"));
+pass("webhook:razorpay_secret", webhook.includes("RAZORPAY_WEBHOOK_SECRET"));
+pass("webhook:fail_closed_secret", webhook.includes("webhook_secret_missing"));
+
+const idempotency = readSafe(join(root, "src/lib/webhook-idempotency.ts"));
+pass("webhook:select_provider", idempotency.includes("selectWebhookProvider"));
+pass("webhook:razorpay_parse", idempotency.includes("parseRazorpayWebhookEvent"));
+pass("webhook:razorpay_ref", idempotency.includes("extractRazorpaySettlementRef"));
 
 const api = readSafe(join(root, "app/api/ops/cutover/route.ts"));
 pass("api:cutover", api.includes("validateProductionCutover"));
