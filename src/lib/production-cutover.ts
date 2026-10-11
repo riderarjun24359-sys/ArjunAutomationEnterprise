@@ -144,11 +144,19 @@ export function validateProductionCutover(env: NodeJS.ProcessEnv = process.env, 
     );
 
     // 2. Supabase
+    // The app authenticates with NEXT_PUBLIC_SUPABASE_ANON_KEY (see getSupabaseAnonKey,
+    // production-config.ts, go-live-config.ts). Accept the newer PUBLISHABLE key as an
+    // equivalent — but the classic anon key alone must not fail the gate.
+    const supabasePublicKeyPresent =
+        envPresent(env, "NEXT_PUBLIC_SUPABASE_URL") &&
+        (envPresent(env, "NEXT_PUBLIC_SUPABASE_ANON_KEY") || envPresent(env, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"));
     checks.push({
         id: "supabase_env",
         area: "supabase",
-        status: envPresent(env, "NEXT_PUBLIC_SUPABASE_URL") && envPresent(env, "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY") ? "pass" : "fail",
-        detail: "Supabase URL + anon key",
+        status: supabasePublicKeyPresent ? "pass" : "fail",
+        detail: supabasePublicKeyPresent
+            ? "Supabase URL + public key (anon or publishable)"
+            : "Supabase URL + NEXT_PUBLIC_SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)",
     });
     checks.push({
         id: "supabase_service_role",

@@ -135,4 +135,23 @@ describe("production cutover: source-tree checks", () => {
         // The only env-driven blocker is the genuinely unconfigured payment gateway.
         expect(fromRuntime.blockers).toEqual(["payments_gateway: Configure Razorpay or Stripe for paid plans"]);
     });
+
+    it("accepts the classic anon key for supabase_env (the key the app actually uses)", () => {
+        // Production provisions NEXT_PUBLIC_SUPABASE_ANON_KEY, never the newer
+        // NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY the gate used to demand — so the
+        // anon-key-only shape must pass. The app authenticates via
+        // getSupabaseAnonKey (src/lib/supabase-config.ts).
+        const anonOnly = { ...env };
+        delete anonOnly.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+        for (const cwd of [REPO_ROOT, deployedCwd]) {
+            expect(find("supabase_env", validateProductionCutover(anonOnly, cwd).checks).status).toBe("pass");
+        }
+        const publishableOnly = { ...env };
+        delete publishableOnly.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        expect(find("supabase_env", validateProductionCutover(publishableOnly, REPO_ROOT).checks).status).toBe("pass");
+        const neither = { ...env };
+        delete neither.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        delete neither.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+        expect(find("supabase_env", validateProductionCutover(neither, REPO_ROOT).checks).status).toBe("fail");
+    });
 });
