@@ -1,9 +1,11 @@
 # Master Mission Checklist (persistent local checkpoint)
 
-Branch: `main`. **Recovered and paused at the one remaining owner-only step (Cloudflare DNS).**
-Current HEAD before this docs update: `3448462`. Replacement Vercel project is live and healthy;
-both Supabase projects exist; env + GitHub secrets provisioned. See
-`docs/PRODUCTION_RECOVERY_RUNBOOK.md` §0–§2 for the verified state and the exact DNS records.
+Branch: `main`. **2026-10-11: production deployment pipeline green, custom domain live, and the
+last anonymous RLS exposure closed.** The replacement Vercel project is live and healthy; both
+Supabase projects exist; env + GitHub secrets provisioned; `arjunautomations.com` +
+`www.arjunautomations.com` serve the live deployment over HTTPS (apex 308 → `www`). The previously
+stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
+`docs/PRODUCTION_RECOVERY_RUNBOOK.md` §0–§2 for the verified state.
 
 > Historical note: the earlier version of this file said "No commit/push/deploy at any point."
 > That is no longer true — the recovery deployed to Vercel, migrated a new production Supabase,
@@ -111,13 +113,84 @@ both Supabase projects exist; env + GitHub secrets provisioned. See
   use the Vercel GitHub App, not the token), which is why pushes to `main` still promote to
   production. Owner action: create a dashboard token + `gh secret set VERCEL_TOKEN`.
 
+- [x] D31 **Production workflow GREEN; stale CI token resolved (2026-10-11).** The owner refreshed the
+  `VERCEL_TOKEN` repo secret (`gh secret set`, updated `2026-10-11T13:51:59Z`). Re-dispatched
+  `gh workflow run production-deploy.yml -f action=deploy-production` **exactly once** (run
+  **`38145177440`**) and watched it to completion: **all jobs success** — `Production verify`
+  (`production:verify` + `go-live:verify`), `Build and Deploy to Vercel` (REST `POST /v13/deployments`
+  → poll to `READY`), `Post-deploy health checks` (`/api/ops/live|ready|health|production|go-live`),
+  `Publish rollback strategy`. The workflow created production deployment
+  `dpl_4VaWTXFH965BFiCsxcWoDfWsJtLr` (commit `b35e239`), now aliased to
+  `arjunautomationos-enterprise.vercel.app`, `arjunautomations.com`, and `www.arjunautomations.com`.
+  **B6 is resolved** — HTTP 403 no longer occurs.
+
+- [x] D32 **Custom domain fully verified live (2026-10-11).** `arjunautomations.com` DNS (Cloudflare,
+  NS `lee`/`angela.ns.cloudflare.com`) now matches Vercel's project config **exactly**: apex
+  `A 216.198.79.1` + `64.29.17.1` (Vercel `recommendedIPv4` rank 1) and `www`
+  `CNAME 8f8ccb61a152a669.vercel-dns-017.com` (Vercel `recommendedCNAME` rank 1). Live checks:
+  apex `308 → https://www.arjunautomations.com/`; `www` `/` + all ops endpoints **200**;
+  `/api/ops/diagnostics` **401** (auth-gated); valid Let's Encrypt cert
+  (`CN=www.arjunautomations.com`, valid to 2026-11-08). `www` + apex are `verified: true` in the
+  Vercel project (apex `redirect: www`, `308`). No Cloudflare API access exists on this machine, so
+  the record change was performed by the owner; it is verified from the authoritative public DNS
+  answers, which match Vercel's required values. No MX/TXT/CAA records exist yet (email auth is a
+  soft-launch gap, independent of the web records).
+
+- [x] D33 **Staging refreshed + isolated (2026-10-11).** The staging alias had pointed at a stale
+  preview built without `NEXT_PUBLIC_APP_URL` (`/api/ops/production` → 503). Deployed a fresh preview
+  from `main` (`arjunautomationos-enterprise-bykc3s814-...`) and re-pointed
+  `https://arjunautomationos-staging.vercel.app`. Result: `/` + all ops endpoints **200**,
+  `/api/ops/production` **ready=true, blockers=[]** (score 71; payment/email/monitoring warnings only).
+  Staging uses its own Supabase project `iplkndwkjuupktxwcksv`; production uses
+  `ixassghxogcabfcyjjtz` (verified distinct). Synthetic tenant-isolation leftovers in staging
+  (`a@test.com` profile + membership + `OrgA` crm_client from the earlier live RLS harness) were
+  deleted; both databases now contain only the platform organisation row. Production contains **no**
+  synthetic customer/payment/order data (all business tables 0).
+
+- [x] D34 **Anonymous RLS exposure found and closed (2026-10-11).** A live anon-key probe against
+  production (`GET`/`POST /rest/v1/organization_members` with the public anon key) showed the `anon`
+  role could **read all organisations/memberships** and **pass RLS on membership INSERT** (the insert
+  only failed the `user_id` FK) — an unauthenticated enumeration + privilege-escalation surface left
+  by the open `USING(true)` policies from `202608020001_enterprise_foundation.sql`. Every other
+  foundation table already returned `[]`/401 to anon. Prepared **and applied**
+  `supabase/migrations/202610110001_org_member_anon_lockdown.sql` (idempotent): policies recreated
+  `to authenticated`, membership INSERT restricted to the caller's own row (`user_id =
+  auth_profile_id()`) or an existing org member, membership UPDATE restricted to org members, and all
+  anon privileges revoked. Applied to **staging then production** via the Supabase Management API;
+  both now return **HTTP 401** to anon for `organizations`/`organization_members`. Authenticated
+  behavior is unchanged (browser repositories use the user JWT; the single-org onboarding bootstrap is
+  preserved). Proven by a new PGlite test
+  `supabase/migrations/org-member-anon-lockdown.test.ts` **6/6** (incl. a negative control that
+  detects the open exposure). Migration version recorded in `supabase_migrations.schema_migrations`
+  on both projects. Residual (documented, separate): authenticated users can still read across orgs
+  because the app intentionally allows single-org bootstrap reads; tightening that is app-coupled.
+
+- [x] D35 **Independent release verification (2026-10-11).** Local: `tsc --noEmit` 0;
+  `test:unit` **123/123 (36 files)** (includes the new lockdown test); `next build` OK (exit 0);
+  `eslint .` **0 errors** (377 pre-existing warnings); `db:verify` **64 migration files / 1178
+  tables**; `db:validate` PASS (apply_all.sql executes on PGlite; 50 seeds FK-resolve);
+  `npm audit --omit=dev` **0 vulnerabilities**; `production-remediation:verify` **36/36**;
+  `soft-launch:verify` **53/53**. Live production: **125/125 static routes** return 200/307/308;
+  ops endpoints 200 (`/api/ops/production` → `blockers: []`); fail-closed probes — webhook
+  (`/api/payments/webhook` no signature) **400 `webhook_secret_missing`**, contact (empty / no
+  consent) **400**, diagnostics anon **401**. Git auto-deploy preserved: project link
+  `github`/`repoId 1325528606`/`productionBranch main`, deployment protection off.
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
 - B3 External sends/signatures/charges/refunds (needs owner approval + accounts). Unchanged.
 - ~~B4 Production smoke/E2E against live (needs deployment + access)~~ **RESOLVED 2026-10-11 (D27)** — production alias served and smoke **59/59**; ops endpoints 200 (`blockers: []`).
-- B5 **Production recovery** — mostly DONE 2026-10-11; **one owner-only action remains:** apply the Cloudflare DNS records (apex `A 216.198.79.1`+`64.29.17.1`, `www CNAME 8f8ccb61a152a669.vercel-dns-017.com`, **DNS-only**). (a) owning Vercel account/project **recreated and accessible** (D26); (b) Cloudflare origin still points at the dead tunnel → **HTTP 530 / 1033** until the owner repoints DNS (no Cloudflare access on this machine); (c) `PRODUCTION_BASE_URL` set; (d) `Production` required-reviewer gate **cannot** be enabled (HTTP 422, plan limitation) — manual `workflow_dispatch` write-access is the only gate; (e) `ADMIN_*` secrets still absent (workflow refuses `register-gemini` without them). Also: `production-deploy.yml` healthcheck targets the custom domain, so it **cannot pass until DNS is fixed**. Exact steps in `docs/PRODUCTION_RECOVERY_RUNBOOK.md` §2/§7.
-- B6 **Stale CI `VERCEL_TOKEN` (owner-only).** `production-deploy.yml`'s API deploy returns HTTP 403 with the current repo secret; token creation is blocked on this account (`403 Cannot create tokens for this app`). **Does not affect the live site** (Git integration deploys on push). Owner fix: create a token at Vercel → Account Settings → Tokens, then `gh secret set VERCEL_TOKEN -R riderarjun24359-sys/ArjunAutomationEnterprise`.
+- ~~B5 **Production recovery**~~ **RESOLVED 2026-10-11 (D31–D33).** Cloudflare DNS now matches Vercel
+  exactly (apex `A 216.198.79.1`+`64.29.17.1`, `www CNAME 8f8ccb61a152a669.vercel-dns-017.com`) and
+  the custom domain serves over HTTPS (apex 308 → www); `production-deploy.yml` (incl. its
+  custom-domain healthcheck) is **green** (run `38145177440`). Remaining non-blocking caveat: the
+  `Production` required-reviewer gate **cannot** be enabled (HTTP 422, plan limitation) — manual
+  `workflow_dispatch` write-access is the only gate; and `ADMIN_*` secrets are still absent
+  (`register-gemini` refuses without them). Neither blocks the live site.
+- ~~B6 **Stale CI `VERCEL_TOKEN` (owner-only)**~~ **RESOLVED 2026-10-11 (D31).** The owner set the
+  token (`gh secret set VERCEL_TOKEN`, updated `13:51:59Z`); run `38145177440` deployed via the Vercel
+  REST API successfully (no HTTP 403). Git-integration deploys were never affected.
 
 ## Environment check (2026-10-11, post-recovery)
 - No `.env.local` or `.env` file present in the working tree; secrets are held only in Vercel/GitHub/Supabase and in local `chmod 600` temp files outside the repo.

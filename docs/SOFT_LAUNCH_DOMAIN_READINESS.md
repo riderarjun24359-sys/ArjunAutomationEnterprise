@@ -42,31 +42,35 @@ the certificate is issued, and then keep SSL/TLS = **Full (strict)**.
 
 Markdown templates live under `src/modules/company-launch-kit/content/emails/` and soft-launch copies under `src/modules/soft-launch/content/emails/`.
 
-## Current production status (updated 2026-10-11 after recovery)
+## Current production status (updated 2026-10-11 — verified live)
 
 **Vercel origin: RESTORED.** Project `arjunautomationos-enterprise`
 (`prj_GoeJ31s6APxX5keDRCVarrgzObOc`, team `arjun-automation`) is live:
 `https://arjunautomationos-enterprise.vercel.app` (production) and
 `https://arjunautomationos-staging.vercel.app` (staging) both return `/` 200 and all ops endpoints
-200 (`/api/ops/production` → `blockers: []`). Route smoke 59/59 on both. Staging RLS 11/11.
-Custom domains `arjunautomations.com` + `www.arjunautomations.com` are assigned and **verified** in
-the project (apex → 308 → `www`).
+200 (`/api/ops/production` → `blockers: []`). Route smoke **125/125** static routes on production.
 
-**Custom domain: still owner-blocked on DNS.** `https://www.arjunautomations.com` and the apex
-still return **HTTP 530 / error 1033** because Cloudflare DNS proxied records point at a
-**disconnected Argo Tunnel** and not at Vercel. Nameservers remain
-`lee.ns.cloudflare.com`, `angela.ns.cloudflare.com`. This machine has **no Cloudflare access**, so the
-records above must be applied by the owner. Once applied, the domain serves the live Vercel project.
+**Custom domain: LIVE and VERIFIED.** `https://www.arjunautomations.com` serves `/` + all ops
+endpoints **200** over a valid Let's Encrypt certificate (`CN=www.arjunautomations.com`, valid to
+2026-11-08); the apex `https://arjunautomations.com` returns **308 → `https://www.arjunautomations.com/`**.
+Public DNS now matches Vercel's required values **exactly** — apex `A 216.198.79.1` + `64.29.17.1`
+(Vercel `recommendedIPv4` rank 1) and `www` `CNAME 8f8ccb61a152a669.vercel-dns-017.com` (Vercel
+`recommendedCNAME` rank 1). Both domains report `verified: true` in the Vercel project. Nameservers
+remain `lee.ns.cloudflare.com`, `angela.ns.cloudflare.com`. The record change was performed by the
+owner (this machine has no Cloudflare access); it is confirmed from the authoritative public DNS
+answers that match Vercel's config, and from Vercel having issued TLS + served traffic.
 
-### Owner action to finish (Cloudflare → DNS)
+**CI deploy pipeline: GREEN.** `production-deploy.yml` run `38145177440` succeeded end-to-end (the
+owner refreshed the previously stale `VERCEL_TOKEN`), creating production deployment
+`dpl_4VaWTXFH965BFiCsxcWoDfWsJtLr` (commit `b35e239`).
 
-1. Replace apex + `www` records with the values in the DNS checklist above.
-2. Set them **DNS-only (grey cloud)** so Vercel can verify the domain and issue TLS.
-3. Re-verify `curl -fsS https://www.arjunautomations.com/api/ops/live` (expect 200).
-4. Optionally re-enable the proxy afterwards with SSL/TLS = **Full (strict)**.
+### Optional follow-ups (do not block the website)
 
-No MX/TXT (SPF/DKIM/DMARC) or CAA records exist yet; add them when email is required — they are
-independent of the web records above.
+1. **Email authentication:** no MX/TXT (SPF/DKIM/DMARC) or CAA records exist yet — add them when
+   email is required; they are independent of the web records above.
+2. **Cloudflare proxy:** if re-enabled (orange cloud), set SSL/TLS = **Full (strict)**; never
+   *Flexible* (causes `err_too_many_redirects`). The `production-deploy.yml` healthcheck targets
+   `https://www.arjunautomations.com`, so it must stay reachable.
 
 ### Historical diagnosis (pre-recovery, retained for reference)
 
@@ -76,7 +80,7 @@ independent of the web records above.
   **HTTP 404 / `DEPLOYMENT_NOT_FOUND`**; the local `vercel` CLI was unauthenticated or on the wrong
   account. That was the second, independent failure.
 - Recovery (D26–D28 in `docs/MISSION_CHECKLIST.md`) recreated the project, migrated a new production
-  Supabase, redeployed, and re-verified — leaving only the Cloudflare DNS change above.
+  Supabase, redeployed, and re-verified — leaving only the Cloudflare DNS change, which is now done.
 
 ### Follow-up evidence (2026-10-11, read-only — SUPERSEDED by the recovery above)
 
