@@ -37,9 +37,10 @@ Companion docs: `docs/MISSION_CHECKLIST.md` (ledger), `docs/SOFT_LAUNCH_DOMAIN_R
 - Project `arjunautomationos-enterprise` — `framework: nextjs`, `nodeVersion: 24.x`, Git-linked to
   repo id `1325528606`, `productionBranch: main`, `ssoProtection: null` (deployment protection
   disabled so the site can be tested from outside).
-- Production deployment (CLI, `target: production`, `READY`):
-  `https://arjunautomationos-enterprise-junwa1z87-arjun-automation.vercel.app` →
-  alias `https://arjunautomationos-enterprise.vercel.app`.
+- Production deployment: **Git-integration build of `main` commit `0ea0293`**,
+  `https://arjunautomationos-enterprise-6x5pxyzzk-arjun-automation.vercel.app` (`READY`),
+  aliased to `https://arjunautomationos-enterprise.vercel.app`. (An earlier CLI production deploy
+  `...-junwa1z87-...` served the same content before the docs commit.)
 - Domains assigned to the project and **verified**: `www.arjunautomations.com`,
   `arjunautomations.com` (apex set to **308 → `www.arjunautomations.com`**), plus the
   `*.vercel.app` project domain.
@@ -145,8 +146,9 @@ later, add those *in addition to* (not instead of) the records above.
 
 > The Git-integration deployment of the pre-recovery commit `3448462` was **BLOCKED**
 > ("Vercel couldn't find a Git account for the commit author") because the commit author email was
-> the local `*.local` fallback. The repo-local `user.email` is now set to the GitHub-linked noreply
-> address, so new commits from `main` deploy normally.
+> the local `*.local` fallback. The repo-local `user.email` was reset to the GitHub-linked noreply
+> address; the next commit (`0ea0293`) then built via Git integration to **`READY`** and the
+> production alias now serves it — **auto-deploy from `main` is confirmed working.**
 
 ---
 

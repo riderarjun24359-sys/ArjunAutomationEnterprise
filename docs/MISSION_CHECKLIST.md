@@ -92,6 +92,14 @@ both Supabase projects exist; env + GitHub secrets provisioned. See
   **Cloudflare DNS itself was NOT changed** — no Cloudflare access on this machine; records handed
   to the owner. `production-deploy.yml` healthcheck remains DNS-dependent (targets the custom domain).
 
+- [x] D29 **Git auto-deploy verified end-to-end (2026-10-11).** Pushed docs commit **`0ea0293`**
+  (author now GitHub-linked) to `main`; Vercel Git integration built it to **`READY`** (`6x5pxyzzk`)
+  — **no longer BLOCKED** — and the production alias
+  `https://arjunautomationos-enterprise.vercel.app` now serves that build. Re-checked GET endpoints:
+  `/` 200, `/api/ops/live` 200, `/api/ops/ready` 200, `/api/ops/health` 200, `/api/ops/production`
+  200 (**`blockers: []`**), `/api/ops/go-live` 200. Auto-deploy from `main` is proven working; no
+  manual CLI deploy is required for future releases.
+
 ## BLOCKED (external/owner only)
 - ~~B1 Live RLS/isolation tests + migration apply~~ **RESOLVED 2026-10-11 (D26–D27)** — isolated Enterprise staging (`iplkndwkjuupktxwcksv`) and production (`ixassghxogcabfcyjjtz`) projects exist under org `zmwxthjimwfbbwnbeomi`; all 63 migrations applied to both; live RLS harness **11/11 PASS**.
 - B2 Payment provider→invoice mapping + live webhook (needs provider account/secrets). Unchanged: no Stripe/Razorpay keys. `/api/payments/webhook` correctly fails closed (`webhook_secret_missing`).
