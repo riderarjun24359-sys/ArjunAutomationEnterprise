@@ -53,7 +53,21 @@ where schemaname = 'public'
   and tablename in (
     'organizations','organization_members','user_profiles',
     'crm_clients','crm_leads','crm_deals','crm_activities','crm_tasks',
-    'sales_leads','invoices','payments','organization_invitations'
+    'sales_leads','invoices','payments','organization_invitations',
+    'project_management','storage_objects',
+    'csg_success_plans','csg_onboarding_sessions','csg_delivery_milestones',
+    'csg_feedback_responses','csg_escalations','csg_renewals',
+    'csg_improvement_items','csg_audit_logs',
+    'de_blueprints','de_components','de_engagements','de_pipeline_runs',
+    'de_quality_verifications','de_knowledge_entries','de_analytics_metrics',
+    'de_ai_recommendations',
+    'executive_recommendations','executive_collaboration',
+    'executive_audit_logs','executive_approvals',
+    'eae_agent_tasks','eae_recommendations','eae_collaboration_events',
+    'eae_approval_requests',
+    'pr_readiness_snapshots','pr_system_alerts',
+    'executive_agents','executive_tasks','executive_agent_metrics',
+    'executive_health','executive_memory'
   )
 order by tablename, policyname;
 
@@ -64,7 +78,13 @@ union all select 'invoices', count(*) from public.invoices
 union all select 'payments', count(*) from public.payments
 union all select 'sales_leads', count(*) from public.sales_leads
 union all select 'organizations', count(*) from public.organizations
-union all select 'organization_members', count(*) from public.organization_members;
+union all select 'organization_members', count(*) from public.organization_members
+union all select 'project_management', count(*) from public.project_management
+union all select 'storage_objects', count(*) from public.storage_objects
+union all select 'csg_success_plans', count(*) from public.csg_success_plans
+union all select 'de_blueprints', count(*) from public.de_blueprints
+union all select 'executive_recommendations', count(*) from public.executive_recommendations
+union all select 'executive_approvals', count(*) from public.executive_approvals;
 
 -- 1c. Who holds a platform-admin role (needed before 202610120002, §2 step 5):
 select p.email, m.organization_id, m.role_name, m.is_active
@@ -78,8 +98,13 @@ order by p.email;
 `orgs_update` on `organizations`, `memberships_select` on `organization_members`,
 and `profiles_select` / `profiles_update` on `user_profiles` are `USING (true)`
 for `authenticated`; `memberships_insert` allows `user_id = auth_profile_id()`
-into **any** organization. If the pre-state already differs (a migration was
-partly applied), stop and reconcile against `supabase/apply_all.sql` first.
+into **any** organization. `project_management` and `storage_objects` carry
+`USING (true)` / `WITH CHECK (true)` select/insert/update; the 31 module tables
+(`csg_*`, `de_*`, `executive_*`, `eae_*`, `pr_*`) have **no policies at all**.
+If §1b shows rows in `project_management` / `storage_objects`, their open
+policies are a *live* cross-tenant hole, not a latent one — prioritize step 6.
+If the pre-state already differs (a migration was partly applied), stop and
+reconcile against `supabase/apply_all.sql` first.
 
 ## 2. Apply order (staging, one file at a time)
 
@@ -156,7 +181,7 @@ want an all-or-nothing apply.
    the 11 orphaned/dead tables (`eae_*`, `pr_*`, 5 unused `executive_*`) stay
    fully locked.
 
-## 3. Positive / negative probes (staging, after each file; full set after step 5)
+## 3. Positive / negative probes (staging, after each file; full set after step 7)
 
 Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.
 `$ANON` and `$JWT_A` / `$JWT_B` are key/ token values kept in your shell only.
@@ -177,9 +202,18 @@ Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/
 | 12 | member invites `admin` | 403 (`Cannot invite…`) |
 | 13 | founder invites `member`; invitee `GET /api/organization/invitations/mine`; `POST …/accept` | invite visible, accept succeeds, membership created |
 | 14 | platform admin (post step 5a) `GET /organizations?select=*` | all orgs (analytics still work) |
+| 15 | A `GET /project_management?select=*` and `GET /storage_objects?select=*` | `[]` (step 6 locked the last open policies) |
+| 16 | A `POST /project_management` any row in org B | 401/403 — cross-org insert blocked |
+| 17 | A (member of org A) `GET /csg_success_plans?organization_id=eq.<orgA>` | own org's rows (step 7 enabled the dashboard reads) |
+| 18 | A `GET /csg_success_plans?organization_id=eq.<orgB>` (and same for `de_blueprints`, `executive_recommendations`, `executive_approvals`) | `[]` (cross-org denied) |
+| 19 | B (member of org B only) `GET /csg_success_plans?organization_id=eq.<orgA>` | `[]` (negative control from the other side) |
 
-Local mirror of probes 3–9 and the platform-admin case: `npm run rls:verify`
-(21 probes, incl. the two negative controls that fail without `202610120001`).
+Local mirror of probes 3–9, 14 and the platform-admin case: `npm run rls:verify`
+(82 probes, incl. the module-table block: same-tenant positive reads,
+cross-tenant SELECT/INSERT/UPDATE denied, memberless sees nothing, and a
+policy-shape assertion over all 20 enabled tables). Open-policy scan:
+`npm run rls:audit` must exit 0 with WARN listing only the 11 intentionally
+locked tables (`eae_*`, `pr_*`, 5 unused `executive_*`).
 
 ## 4. Expected results
 
@@ -188,6 +222,11 @@ Local mirror of probes 3–9 and the platform-admin case: `npm run rls:verify`
   pass locally.
 - Step 5: the same, plus `user_profiles` reads narrowed; probe 14 passes only
   when step 5a ran.
+- Step 6: probes 15–16 deny; `project_management` / `storage_objects` policies
+  show `is_organization_member(organization_id)` in the §1a re-query.
+- Step 7: probes 17–19 pass (own-org module rows readable, cross-org denied);
+  the §1a re-query shows the `{table}_select|_insert|_update` trio on all 20
+  enabled tables and still zero policies on the 11 locked ones.
 
 ## 5. Recovery / rollback
 
@@ -215,6 +254,42 @@ create policy profiles_update on public.user_profiles for update using (true) wi
 drop function if exists public.organization_is_memberless(uuid);
 drop function if exists public.is_platform_admin();
 drop function if exists public.shares_organization_with(uuid);
+
+-- Undo 202610120003 (restores the open foundation policies — only do this to
+-- back out the whole step; the pre-state §1a output is authoritative)
+drop policy if exists projects_select on public.project_management;
+create policy projects_select on public.project_management for select using (true);
+drop policy if exists projects_insert on public.project_management;
+create policy projects_insert on public.project_management for insert with check (true);
+drop policy if exists projects_update on public.project_management;
+create policy projects_update on public.project_management for update using (true) with check (true);
+drop policy if exists storage_select on public.storage_objects;
+create policy storage_select on public.storage_objects for select using (true);
+drop policy if exists storage_insert on public.storage_objects;
+create policy storage_insert on public.storage_objects for insert with check (true);
+drop policy if exists storage_update on public.storage_objects;
+create policy storage_update on public.storage_objects for update using (true) with check (true);
+
+-- Undo 202610120004 (drops the 60 added policies; tables return to full deny,
+-- which was the pre-state — nothing to restore)
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array[
+    'csg_success_plans','csg_onboarding_sessions','csg_delivery_milestones',
+    'csg_feedback_responses','csg_escalations','csg_renewals',
+    'csg_improvement_items','csg_audit_logs',
+    'de_blueprints','de_components','de_engagements','de_pipeline_runs',
+    'de_quality_verifications','de_knowledge_entries','de_analytics_metrics',
+    'de_ai_recommendations',
+    'executive_recommendations','executive_collaboration',
+    'executive_audit_logs','executive_approvals'
+  ] loop
+    execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
+    execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);
+    execute format('drop policy if exists %I_update on public.%I', tbl, tbl);
+  end loop;
+end $$;
 ```
 
 Data changes from steps 3–4 (unique indexes) are additive; to remove them,

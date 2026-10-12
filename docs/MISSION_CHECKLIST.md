@@ -448,6 +448,26 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   - `apply_all.sql` regenerated (68 migrations + 50 seeds); `db:verify` PASS (68),
     `db:validate` PASS.
 
+- [x] D48 **Deployment probe, executable rollback proof, storage residual fix (2026-10-12).**
+  Push confirmed server-side (`ls-remote` = `217b7d3`) but Vercel reported no deployment
+  record; no authorized path exists to inspect Vercel-side status (no `VERCEL_TOKEN`,
+  GitHub App endpoints need an app JWT) — recorded as a watch item, no manual dispatch
+  (would be a duplicate; D47 had no runtime changes). Still no Supabase access from any
+  legitimate route (no CLI/DB URL/token, Docker down, CI has no apply job) — migrations
+  stay owner-applied. Executable work completed instead:
+  - `scripts/verify-rollback.mjs` (`npm run db:rollback-verify`): extracts the §5 rollback
+    SQL from the procedure doc and proves it restores pre-state — 46/46 PASS (open identity
+    policies, open legacy trio, 31 module tables at zero policies, 120002 functions dropped).
+  - Procedure doc completed for steps 6–7: §1a captures all 45 affected tables, §1b counts
+    legacy/module rows (rows in `project_management`/`storage_objects` = live hole flag),
+    probes 15–19, step 6–7 expected results, rollback DDL for 120003/120004.
+  - Residual find: no migration creates the `organization-uploads` bucket or `storage.objects`
+    policies — uploads fail closed until the owner acts. Added `OWNER_ACTIONS.md` §6c with
+    copy-pasteable private-bucket + org-scoped storage RLS (SELECT+INSERT only, no open
+    `USING(true)`); fixed §6b "five/66" staleness → seven/68.
+  - `app/api/storage/signed-url/route.test.ts`: 5 regression tests locking the org-prefix
+    tenant guard incl. the `org-a-evil` sibling-prefix boundary. Suite now 211/211.
+
 
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery

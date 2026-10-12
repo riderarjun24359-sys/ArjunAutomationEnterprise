@@ -128,9 +128,9 @@ gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
 
 The workflow refuses `register-gemini` without all three — that refusal is the safe default.
 
-## 6b. Apply the five prepared hardening migrations (staging first, then production)
+## 6b. Apply the seven prepared hardening migrations (staging first, then production)
 
-`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 66 files and
+`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 68 files and
 PGlite execution both pass), but **no machine on this project can reach the hosted databases**
 (no Supabase CLI, no `SUPABASE_DB_URL` locally) — applying is an owner step in the Supabase
 dashboard (staging `iplkndwkjuupktxwcksv` first, production `ixassghxogcabfcyjjtz` second) or via
@@ -192,6 +192,51 @@ runs 34 positive/negative RLS probes (all PASS), including the negative controls
 without `202610120001`/`202610120002`. It proves the migration *semantics*; it is **not** evidence of
 a remote apply. Run it against staging only with a disposable project by setting `SUPABASE_DB_URL`
 (the harness commits fixture rows, so never point it at production data you care about).
+
+## 6c. Supabase Storage bucket + policies (uploads fail closed until this exists)
+
+No migration creates the `organization-uploads` bucket or any `storage.objects`
+policy, so uploads/signing fail closed today (safe, but inert). The app writes
+objects to `{orgUuid}/{profileUuid}/{stamp}-{file}` (`buildObjectPath`) and the
+signed-url route enforces the org-prefix in code — but the real enforcement
+boundary is Storage RLS, which only you can create. Do it in the dashboard
+(staging first), bucket **private**, and do NOT use an open `USING (true)`
+policy to "make uploads work" — that would expose every tenant's files:
+
+```sql
+-- Precheck: bucket must exist (error here = create it in Storage UI first, private).
+select count(*) from storage.objects where bucket_id = 'organization-uploads';
+
+insert into storage.buckets (id, name, public)
+values ('organization-uploads', 'organization-uploads', false)
+on conflict (id) do nothing;
+
+-- Org-member-only read of your own org's folder.
+drop policy if exists "org member read" on storage.objects;
+create policy "org member read" on storage.objects for select to authenticated
+using (bucket_id = 'organization-uploads' and exists (
+  select 1 from public.organization_members om
+  join public.user_profiles p on p.id = om.user_id
+  where om.organization_id = ((storage.foldername(name))[1])::uuid
+    and om.is_active and p.auth_user_id = auth.uid()
+));
+
+-- Org-member-only upload into your own org's folder (no UPDATE/DELETE: no code
+-- path updates or deletes storage objects, so those stay denied).
+drop policy if exists "org member upload" on storage.objects;
+create policy "org member upload" on storage.objects for insert to authenticated
+with check (bucket_id = 'organization-uploads' and exists (
+  select 1 from public.organization_members om
+  join public.user_profiles p on p.id = om.user_id
+  where om.organization_id = ((storage.foldername(name))[1])::uuid
+    and om.is_active and p.auth_user_id = auth.uid()
+));
+```
+
+**Verify:** signed in as org-A member, upload a file via the app (200), then as an
+org-B member request its signed URL path — must 403. (Unrelated: the
+`public.storage_objects` *table* locked by migration `202610120003` is an unused
+stub repository, not this bucket.)
 
 ## 7. Explicitly NOT required
 
