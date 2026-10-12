@@ -1,0 +1,59 @@
+# TEMPORARY: redeploy the staging project to current main (read code path only —
+# no env/secret changes, no database access). Aborts unless exactly one
+# non-production project matches. Delete after use.
+name: Repair Staging Deploy (temporary)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  repair-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Discover staging project and deploy current main
+        run: |
+          set -euo pipefail
+          echo "--- team projects (names only) ---"
+          curl -fsS "https://api.vercel.com/v9/projects?teamId=$VERCEL_ORG_ID" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" > projects.json
+          node -e "const p=require('./projects.json'); for (const x of p.projects||[]) console.log('-', x.name)"
+          STAGING_ID="$(node -p "
+            const ps=(require('./projects.json').projects||[]).filter(x=>/staging/i.test(x.name||'') && x.id!=='$VERCEL_PROJECT_ID');
+            if (ps.length!==1) { console.error('expected exactly 1 staging project, found '+ps.length); process.exit(1); }
+            ps[0].id
+          ")"
+          echo "Staging project resolved (id redacted from log above only by id, see names list)."
+          TMP_PAYLOAD="$(mktemp)"
+          cat > "$TMP_PAYLOAD" <<EOF
+          {
+            "name": "staging-repair",
+            "project": "$STAGING_ID",
+            "target": "production",
+            "gitSource": { "type": "github", "repoId": "1325528606", "ref": "main" }
+          }
+          EOF
+          curl -fsS -X POST https://api.vercel.com/v13/deployments \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data @"$TMP_PAYLOAD" > deployment.json
+          rm -f "$TMP_PAYLOAD"
+          DEPLOYMENT_ID="$(node -p "JSON.parse(require('fs').readFileSync('deployment.json','utf8')).id || ''")"
+          if [ -z "$DEPLOYMENT_ID" ]; then echo "no deployment id" >&2; cat deployment.json >&2; exit 1; fi
+          echo "Deployment created: $DEPLOYMENT_ID"
+          for i in $(seq 1 30); do
+            curl -fsS -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v13/deployments/${DEPLOYMENT_ID}?teamId=${VERCEL_ORG_ID}" > deployment-status.json
+            STATUS="$(node -p "JSON.parse(require('fs').readFileSync('deployment-status.json','utf8')).status || ''")"
+            echo "Attempt ${i}/30: status=${STATUS}"
+            case "$STATUS" in
+              READY) echo "READY"; exit 0 ;;
+              ERROR|CANCELED) cat deployment-status.json >&2; exit 1 ;;
+            esac
+            sleep 20
+          done
+          echo "Timed out waiting for READY" >&2
+          exit 1
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
