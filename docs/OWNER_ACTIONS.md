@@ -128,13 +128,15 @@ gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
 
 The workflow refuses `register-gemini` without all three — that refusal is the safe default.
 
-## 6b. Apply the four prepared hardening migrations (staging first, then production)
+## 6b. Apply the five prepared hardening migrations (staging first, then production)
 
-`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 65 files and
+`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 66 files and
 PGlite execution both pass), but **no machine on this project can reach the hosted databases**
 (no Supabase CLI, no `SUPABASE_DB_URL` locally) — applying is an owner step in the Supabase
 dashboard (staging `iplkndwkjuupktxwcksv` first, production `ixassghxogcabfcyjjtz` second) or via
-the Management API. Apply in filename order, one file at a time:
+the Management API. Apply in filename order, one file at a time. The full copy-pasteable runbook
+(pre-state capture, per-file prechecks, positive/negative probes, rollback DDL) is
+**`docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md`** — use it; do not improvise SQL.
 
 0. **`202610120001_org_membership_escalation_lockdown.sql` — APPLY FIRST (critical, live on
    production).** `202610110001` only removed *anon* access; the authenticated policies still let
@@ -156,6 +158,16 @@ the Management API. Apply in filename order, one file at a time:
    status allowlist, non-negative amounts, `amount_paid <= total`. **Prerequisite:** resolve
    duplicate numbers / negative / overpaid rows first via the Finance manual
    payment-confirmation path (never silent-adjust).
+4. **`202610120002_read_scope_lockdown.sql` — APPLY LAST, and only after the platform-admin
+   prerequisite below and a staging pass.** Narrowed authenticated reads: `orgs_select`,
+   `memberships_select` to the caller's own org/member scope; `user_profiles` reads to
+   self + shared-org + platform admins (from self-only); profiles writes restated self-only.
+   Adds SECURITY-DEFINER `public.is_platform_admin()` (an active `super_admin` membership) and
+   `public.shares_organization_with(uuid)`. **Prerequisite:** an operator must hold an active
+   `super_admin` membership *before* this is applied, or platform-wide analytics lose cross-org
+   visibility — see `docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md §2 step 5a`. **Effect:**
+   the legacy "adopt a memberless organization" bootstrap becomes unreachable and unprovisioned
+   users resolve to `null` (fail closed) until they use the onboarding wizard — intentional.
 
 After each: re-run `npm run db:verify`, live-probe staging with the anon key (expect 401 on the
 remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then
@@ -163,11 +175,11 @@ repeat on production. Until applied, the code-level guards are the only enforcem
 defense-in-depth, not a live outage.
 
 **Local proof the migrations behave correctly (no hosted access needed):** `npm run rls:verify`
-boots an embedded PostgreSQL 17, applies the full 65-migration chain, seeds independent tenants, and
-runs 21 positive/negative RLS probes (all PASS), including the two negative controls that *fail*
-without `202610120001`. It proves the migration *semantics*; it is **not** evidence of a remote
-apply. Run it against staging only with a disposable project by setting `SUPABASE_DB_URL` (the
-harness commits fixture rows, so never point it at production data you care about).
+boots an embedded PostgreSQL 17, applies the full 66-migration chain, seeds independent tenants, and
+runs 34 positive/negative RLS probes (all PASS), including the negative controls that *fail*
+without `202610120001`/`202610120002`. It proves the migration *semantics*; it is **not** evidence of
+a remote apply. Run it against staging only with a disposable project by setting `SUPABASE_DB_URL`
+(the harness commits fixture rows, so never point it at production data you care about).
 
 ## 7. Explicitly NOT required
 

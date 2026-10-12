@@ -1,0 +1,217 @@
+# Staging → Production migration procedure (prepared hardening set)
+
+**Status of this document:** the operator runbook for applying the prepared RLS
+migrations. **Nothing here has been applied by the engineering session that wrote
+it** — no database was reachable (see "Why this is a manual step"). Every command
+is copy-pasteable into the Supabase dashboard SQL Editor.
+
+## Which databases
+
+| Environment | Project ref | Apply order |
+| --- | --- | --- |
+| Staging (first) | `iplkndwkjuupktxwcksv` | always staging first, then re-probe |
+| Production (only after staging passes) | `ixassghxogcabfcyjjtz` | same order, same probes |
+
+## Why this is a manual step
+
+The engineering environment has **no database reachability**:
+
+- no `supabase` binary on PATH and no `SUPABASE_ACCESS_TOKEN` for the CLI (the
+  bundled CLI at `node_modules/.bin/supabase` is unauthenticated);
+- no `SUPABASE_DB_URL` / `DATABASE_URL` locally (`.env.local` holds only a Vercel
+  OIDC token);
+- Docker daemon is down (no local Supabase stack);
+- the only workflow is `.github/workflows/production-deploy.yml`
+  (`workflow_dispatch`), and it does **not** apply migrations.
+
+`scripts/apply-migrations.mjs` (`npm run db:apply`) requires `SUPABASE_DB_URL`
+(or `DATABASE_URL`). `scripts/check-remote-schema.mjs` (`npm run db:check-remote`)
+requires `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY`. None are
+present, so the apply is an owner action through the dashboard or the Management
+API. **Do not paste secrets into chat or tickets.**
+
+Local semantics are proven by `npm run rls:verify` (embedded PostgreSQL 17, full
+chain, 21 probes incl. 2 negative controls) — that is *not* evidence of a remote
+apply.
+
+## 0. Preconditions (do all of these before touching staging)
+
+1. Dashboard access to the staging project with SQL Editor rights.
+2. A **second** test identity that is a member of a *different* organization
+   (for cross-tenant negative probes), and a brand-new signed-up identity with no
+   membership (for the bootstrap probe).
+3. A recent backup / restore point for staging (Supabase → Database → Backups).
+4. `docs/OWNER_ACTIONS.md §6b` open beside this document.
+
+## 1. Capture pre-state (read-only — run on staging, keep the output as the rollback artifact)
+
+```sql
+-- 1a. Current policies on the affected tables.
+select tablename, policyname, cmd, roles, qual, with_check
+from pg_policies
+where schemaname = 'public'
+  and tablename in (
+    'organizations','organization_members','user_profiles',
+    'crm_clients','crm_leads','crm_deals','crm_activities','crm_tasks',
+    'sales_leads','invoices','payments','organization_invitations'
+  )
+order by tablename, policyname;
+
+-- 1b. Duplicate / invalid data that blocks the finance + lead indexes
+--     (see the precheck queries in §2, steps 3 and 4). Row counts:
+select 'crm_clients' t, count(*) from public.crm_clients
+union all select 'invoices', count(*) from public.invoices
+union all select 'payments', count(*) from public.payments
+union all select 'sales_leads', count(*) from public.sales_leads
+union all select 'organizations', count(*) from public.organizations
+union all select 'organization_members', count(*) from public.organization_members;
+
+-- 1c. Who holds a platform-admin role (needed before 202610120002, §2 step 5):
+select p.email, m.organization_id, m.role_name, m.is_active
+from public.organization_members m
+join public.user_profiles p on p.id = m.user_id
+where m.role_name = 'super_admin' and m.is_active
+order by p.email;
+```
+
+**Expected pre-state (what the current chain leaves):** `orgs_select` and
+`orgs_update` on `organizations`, `memberships_select` on `organization_members`,
+and `profiles_select` / `profiles_update` on `user_profiles` are `USING (true)`
+for `authenticated`; `memberships_insert` allows `user_id = auth_profile_id()`
+into **any** organization. If the pre-state already differs (a migration was
+partly applied), stop and reconcile against `supabase/apply_all.sql` first.
+
+## 2. Apply order (staging, one file at a time)
+
+Paste each file's full contents into the SQL Editor and run. Each migration is
+wrapped in its own `do $$ … $$` / idempotent `drop policy if exists … create
+policy …`, so re-running is safe. Wrap manual runs in `begin; … commit;` if you
+want an all-or-nothing apply.
+
+1. **`202610120001_org_membership_escalation_lockdown.sql`** — *apply first,
+   critical.* Fixes the live self-join escalation and `orgs_update USING(true)`.
+   No data prerequisite.
+2. **`202610100001_crm_rls_remediation.sql`** — replaces the open `USING(true)`
+   policies on the legacy `crm_*` tables with `is_organization_member(...)` and
+   revokes anon. No data prerequisite (those tables are orphaned; live code uses
+   `clients`/`sales_*`).
+3. **`202610100002_lead_consent_dedup.sql`** — adds consent columns + partial
+   unique `(organization_id, lower(email))`.
+   **Precheck (must return 0 rows) — clean *before* applying:**
+   ```sql
+   select organization_id, lower(email) e, count(*)
+   from public.sales_leads group by 1,2 having count(*) > 1;
+   ```
+4. **`202610100003_finance_invoice_guards.sql`** — unique
+   `(organization_id, lower(number))`, status allowlist, non-negative amounts,
+   `amount_paid <= total`.
+   **Precheck (must return 0 rows) — resolve via the Finance manual
+   payment-confirmation path, never a silent adjust:**
+   ```sql
+   select organization_id, lower(number) n, count(*)
+   from public.invoices group by 1,2 having count(*) > 1;
+   select id from public.invoices
+   where total < 0 or amount_paid < 0 or amount_paid > total;
+   ```
+5. **`202610120002_read_scope_lockdown.sql`** — *HELD / apply LAST, and only after
+   step 5a.* Narrows authenticated READS of `organizations`,
+   `organization_members` and `user_profiles` to member/platform-admin scope.
+
+   **5a. Prerequisite (do this on staging BEFORE applying step 5):** ensure at
+   least one operator holds an active `super_admin` membership — that is the
+   DB-visible platform-admin marker `public.is_platform_admin()` reads.
+   ```sql
+   -- Example: promote an existing operator inside the platform org.
+   update public.organization_members m
+   set role_name = 'super_admin', updated_at = now()
+   from public.user_profiles p
+   where m.user_id = p.id
+     and p.email = '<operator-email>'
+     and m.organization_id = '<platform-org-uuid>';
+   ```
+   Then confirm `select public.is_platform_admin();` (as that user's JWT) returns
+   true. Without this, platform-wide analytics correctly return only the
+   operator's own org — so grant the role first, do not skip.
+
+   **Effect to expect after step 5:** the legacy "adopt a memberless
+   organization" bootstrap in `src/modules/database/lib/organization-context.ts`
+   becomes unreachable for unprovisioned users (they can no longer list
+   memberless orgs) — a signed-in user with no membership now resolves to `null`
+   (fail closed) until provisioned through the `/onboarding` wizard, which uses
+   the service-role provisioning route. This is intentional.
+
+## 3. Positive / negative probes (staging, after each file; full set after step 5)
+
+Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.
+`$ANON` and `$JWT_A` / `$JWT_B` are key/ token values kept in your shell only.
+
+| # | Probe | Expected |
+| --- | --- | --- |
+| 1 | anon `GET /organization_members?select=*` | `[]` or 401 |
+| 2 | anon `GET /organizations?select=*` | `[]` or 401 |
+| 3 | A (member of org A) `GET /organizations?id=eq.<orgA>` | 1 row (own org) |
+| 4 | A `GET /organizations?id=eq.<orgB>` | `[]` (cross-org denied) |
+| 5 | A `POST /organization_members` `{organization_id:<orgB>, user_id:<A-profile>, role_name:'member'}` | 401/403 — **self-join blocked** |
+| 6 | A `PATCH /organizations?id=eq.<orgB>` `{name:'hacked'}` | `[]` (0 rows updated) |
+| 7 | A `GET /user_profiles?id=eq.<profileB>` | `[]` (cross-org profile denied) |
+| 8 | A `GET /organization_members?organization_id=eq.<orgB>` | `[]` |
+| 9 | A `GET /invoices?organization_id=eq.<orgB>` | `[]` |
+| 10 | brand-new user `GET /api/organization/provision` | `needsProvisioning: true`, `organization: null` |
+| 11 | brand-new user `POST /api/organization/provision` (create org) | 201; then `GET /organization_members` shows them as `founder` of their **own** org only |
+| 12 | member invites `admin` | 403 (`Cannot invite…`) |
+| 13 | founder invites `member`; invitee `GET /api/organization/invitations/mine`; `POST …/accept` | invite visible, accept succeeds, membership created |
+| 14 | platform admin (post step 5a) `GET /organizations?select=*` | all orgs (analytics still work) |
+
+Local mirror of probes 3–9 and the platform-admin case: `npm run rls:verify`
+(21 probes, incl. the two negative controls that fail without `202610120001`).
+
+## 4. Expected results
+
+- Steps 1–4: "Success. No rows returned." Re-running the §1a query shows the
+  `crm_*`/org/member/finance policies narrowed; `db:verify`/`db:validate` still
+  pass locally.
+- Step 5: the same, plus `user_profiles` reads narrowed; probe 14 passes only
+  when step 5a ran.
+
+## 5. Recovery / rollback
+
+Every object here is a policy drop/create, so rollback is restoring the captured
+pre-state DDL from §1a. The exact pre-state definitions:
+
+```sql
+-- Undo 202610120001
+drop policy if exists orgs_update on public.organizations;
+create policy orgs_update on public.organizations for update to authenticated
+  using (true) with check (true);
+drop policy if exists memberships_insert on public.organization_members;
+create policy memberships_insert on public.organization_members for insert to authenticated
+  with check (user_id = public.auth_profile_id() or public.is_organization_member(organization_id));
+
+-- Undo 202610120002
+drop policy if exists orgs_select on public.organizations;
+create policy orgs_select on public.organizations for select to authenticated using (true);
+drop policy if exists memberships_select on public.organization_members;
+create policy memberships_select on public.organization_members for select to authenticated using (true);
+drop policy if exists profiles_select on public.user_profiles;
+create policy profiles_select on public.user_profiles for select using (true);
+drop policy if exists profiles_update on public.user_profiles;
+create policy profiles_update on public.user_profiles for update using (true) with check (true);
+drop function if exists public.organization_is_memberless(uuid);
+drop function if exists public.is_platform_admin();
+drop function if exists public.shares_organization_with(uuid);
+```
+
+Data changes from steps 3–4 (unique indexes) are additive; to remove them,
+`drop index if exists` the named indexes from those migration files. Never
+delete rows to make an index build succeed — resolve duplicates deliberately.
+
+If a probe fails on staging, **stop**, run the rollback above, and open an
+incident (`docs/INCIDENT_RESPONSE.md`). Do not proceed to production.
+
+## 6. Production
+
+Only after every staging probe passes **and** the production prerequisites
+(dedupe cleanup for steps 3–4; step-5a `super_admin` granted) are satisfied:
+repeat §1–§3 on production `ixassghxogcabfcyjjtz`, capturing the same pre-state
+and keeping the same rollback artifact. Re-run `npm run db:verify` locally and
+the live route probes afterward.

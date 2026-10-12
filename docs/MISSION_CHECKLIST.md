@@ -380,6 +380,39 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   platform-analytics repositories list organizations) — tightening those is an app-coupled change,
   deferred and documented. This migration is the highest-priority owner apply (staging first).
 
+- [x] D44 **Server-side identity/tenant resolution was broken — fixed (2026-10-12).** Found while
+  tracing the read-scope dependencies: `secureApiRoute` resolved role and `organizationId` via
+  `resolveOrganizationContext` → `databaseService` → `getRepositoryClient()`, and that client is
+  **deliberately browser-only** (`repository-client.ts` returns `null` when `window` is undefined).
+  On the server it therefore always returned `role: "member"` and `organizationId: null`, so every
+  authenticated org-scoped route 403'd ("No organization context") — invitations, teams, storage
+  upload/signed-url, business-assets exports, launch-kit contact, ops/diagnostics — and every
+  role/permission gate denied. The defect was invisible because the route tests mock `secureApiRoute`
+  and `vitest.config.ts` runs jsdom (where `window` exists). Fix: `api-security.ts` now resolves via
+  `resolveServerIdentity()` against the server-only service-role client, scoped strictly to the
+  **validated session's** `auth_user_id` (identity never client-supplied; fails closed if the client
+  is unavailable; unknown roles collapse to `member`). New regression test
+  `src/lib/api-security.test.ts` (5 tests) pins role/org resolution, permission gating, and
+  fail-closed behavior. No RLS/security gate weakened. Tests **205/205**. (This also means the D41/D42
+  onboarding teammate/invite steps are now actually functional server-side.)
+
+- [x] D45 **Read-scope lockdown prepared + full staging→production runbook (2026-10-12).** The D43
+  residual (authenticated `orgs_select`/`memberships_select USING(true)`) is now addressed as a
+  PREPARED migration `supabase/migrations/202610120002_read_scope_lockdown.sql`:
+  SECURITY-DEFINER `public.is_platform_admin()` (active `super_admin` membership — the DB-visible
+  platform marker) and `public.shares_organization_with(uuid)`; `orgs_select` → member-or-platform-
+  admin; `memberships_select` → own rows / member org / platform admin; `user_profiles` select →
+  self + shared-org + platform admin (broadened from the self-only policy `202608020004` established,
+  to support the teammate directory under RLS) and profile writes restated self-only. Deliberately
+  **HELD/unapplied** with a hard prerequisite (grant the operator an active `super_admin` membership
+  first, else platform analytics lose cross-org visibility). Avoids hard-coding the platform-org UUID.
+  The full operator procedure — pre-state capture, per-file prechecks, ordered apply, 14
+  positive/negative probes, and rollback DDL — is `docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md`
+  (staging `iplkndwkjuupktwcksv` first). `rls:verify` extended to **34 probes** (fixtures: platform
+  admin + memberless user), all PASS; negative-control run (migration 002 removed) fails the org/
+  membership/platform-admin-read probes exactly as expected. `apply_all.sql` regenerated (66
+  migrations + 50 seeds); `db:verify` PASS (66), `db:validate` PASS.
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
@@ -418,6 +451,15 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
 - ~~B6 **Stale CI `VERCEL_TOKEN` (owner-only)**~~ **RESOLVED 2026-10-11 (D31).** The owner set the
   token (`gh secret set VERCEL_TOKEN`, updated `13:51:59Z`); run `38145177440` deployed via the Vercel
   REST API successfully (no HTTP 403). Git-integration deploys were never affected.
+- **B7 Prepared hardening migrations unapplied (owner-only, needs DB reachability).** Four migrations
+  plus the D45 read-scope lockdown (`202610120001`, `202610100001`, `202610100002`, `202610100003`,
+  `202610120002`) are present in `supabase/migrations/` + `supabase/apply_all.sql` but **cannot be
+  applied from this environment** — no `supabase` CLI auth, no `SUPABASE_DB_URL`/`DATABASE_URL`, Docker
+  down, and no CI migration-apply workflow. Local semantics are proven by `npm run rls:verify`
+  (34 probes, 66-migration chain). Owner applies staging-first per
+  `docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md` (§2 order + §2 step 5a `super_admin`
+  prerequisite for `202610120002`). Not a live outage: code-level guards are active; `202610120001`
+  is the hottest (live authenticated self-join/`orgs_update` write escalation).
 
 ## Environment check (2026-10-11, post-recovery)
 - No `.env.local` or `.env` file present in the working tree; secrets are held only in Vercel/GitHub/Supabase and in local `chmod 600` temp files outside the repo.

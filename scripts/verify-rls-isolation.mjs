@@ -6,9 +6,11 @@
  * organizations with members, then switches to the `authenticated`/`anon` roles
  * with `request.jwt.claims` set, exactly as Supabase's RLS engine evaluates
  * `auth.uid()`. Proves:
- *   - the three prepared tenant-isolation migrations
+ *   - the prepared tenant-isolation migrations
  *     (202610100001 CRM RLS, 202610100002 lead consent/dedup,
- *      202610100003 finance guards) behave correctly;
+ *      202610100003 finance guards, 202610120001 membership/org write
+ *      escalation lockdown, 202610120002 authenticated read-scope lockdown)
+ *     behave correctly;
  *   - the 202610110001 anon lockdown holds;
  *   - the repo-standard is_organization_member(organization_id) pattern denies
  *     cross-organization reads/writes for a representative table (invoices).
@@ -37,9 +39,13 @@ const ORG3 = "00000000-0000-4000-8000-0000000000a3";
 const PROF1 = "00000000-0000-4000-8000-0000000000b1";
 const PROF2 = "00000000-0000-4000-8000-0000000000b2";
 const PROF3 = "00000000-0000-4000-8000-0000000000b3";
+const PROF4 = "00000000-0000-4000-8000-0000000000b4"; // platform admin (super_admin)
+const PROF5 = "00000000-0000-4000-8000-0000000000b5"; // memberless
 const AUTH1 = "00000000-0000-4000-8000-0000000000c1";
 const AUTH2 = "00000000-0000-4000-8000-0000000000c2";
 const AUTH3 = "00000000-0000-4000-8000-0000000000c3";
+const AUTH4 = "00000000-0000-4000-8000-0000000000c4";
+const AUTH5 = "00000000-0000-4000-8000-0000000000c5";
 
 // Supabase-compatible auth stub: uid()/role() read the request JWT claims.
 const authStub = `
@@ -88,13 +94,16 @@ await db.exec(`
 insert into public.user_profiles (id, auth_user_id, email, full_name) values
   ('${PROF1}', '${AUTH1}', 'one@test.dev', 'One'),
   ('${PROF2}', '${AUTH2}', 'two@test.dev', 'Two'),
-  ('${PROF3}', '${AUTH3}', 'three@test.dev', 'Three');
+  ('${PROF3}', '${AUTH3}', 'three@test.dev', 'Three'),
+  ('${PROF4}', '${AUTH4}', 'admin@test.dev', 'Admin'),
+  ('${PROF5}', '${AUTH5}', 'nobody@test.dev', 'Nobody');
 insert into public.organizations (id, name, slug) values
   ('${ORG1}', 'Org One', 'org-one'),
   ('${ORG2}', 'Org Two', 'org-two'),
   ('${ORG3}', 'Empty Org', 'org-empty');
 insert into public.organization_members (organization_id, user_id, role_name, is_active) values
   ('${ORG1}', '${PROF1}', 'founder', true),
+  ('${ORG1}', '${PROF4}', 'super_admin', true),
   ('${ORG2}', '${PROF2}', 'founder', true);
 insert into public.crm_clients (organization_id, name, contact_email, manager_name) values
   ('${ORG1}', 'Client One', 'a@x.com', 'Manager One'),
@@ -238,6 +247,43 @@ await expectOk(
     `insert into public.sales_leads (organization_id, lead_name, email) values ('${ORG2}', 'Lead C', 'alice@x.com')`,
     "leads: same email allowed in a different org",
 );
+await resetRole();
+
+// --- 202610120002: authenticated read-scope lockdown ----------------------
+// Ordinary member of ORG1 sees only their own org / peers / profile.
+await asAuth(AUTH1);
+await expectRows(`select id from public.organizations where id = '${ORG1}'`, 1, "reads: member sees own org");
+await expectRows(`select id from public.organizations where id = '${ORG2}'`, 0, "reads: member cannot see other org");
+await expectRows(
+    `select id from public.organization_members where organization_id = '${ORG2}'`,
+    0,
+    "reads: member cannot list other org's members",
+);
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: member cannot read other-org profile");
+await expectRows(`select id from public.user_profiles where id = '${PROF1}'`, 1, "reads: member reads own profile");
+await expectRows(
+    `update public.user_profiles set full_name = 'Hacked' where id = '${PROF2}' returning id`,
+    0,
+    "profiles: cross-user UPDATE affects 0 rows",
+);
+await expectRows(
+    `update public.user_profiles set full_name = 'One' where id = '${PROF1}' returning id`,
+    1,
+    "profiles: self UPDATE allowed",
+);
+await resetRole();
+
+// A memberless user sees nothing of anyone else.
+await asAuth(AUTH5);
+await expectRows("select id from public.organizations", 0, "reads: memberless user sees no orgs");
+await expectRows("select id from public.organization_members", 0, "reads: memberless user sees no memberships");
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: memberless user cannot read other profile");
+await resetRole();
+
+// Platform admin (active super_admin membership) retains cross-org visibility.
+await asAuth(AUTH4);
+await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
 await resetRole();
 
 await db.close();
