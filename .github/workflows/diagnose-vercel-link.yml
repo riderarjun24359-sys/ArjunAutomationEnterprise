@@ -18,9 +18,9 @@ jobs:
             -H "Authorization: Bearer $VERCEL_TOKEN" \
             | jq '{name, framework, link: {type: .link.type, repo: .link.repo, productionBranch: .link.productionBranch}}'
           echo "--- last 8 deployments (origin + sha) ---"
-          curl -fsS "https://api.vercel.com/v12/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=8" \
+          curl -fsS "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&teamId=$VERCEL_ORG_ID&limit=8" \
             -H "Authorization: Bearer $VERCEL_TOKEN" \
-            | jq '.deployments[] | {state, url, source: (.meta.githubCommitSha // "non-git"), sha: (.meta.githubCommitSha // .meta.githubCommitMessage // "n/a"), createdAt}'
+            | jq '.deployments[] | {state, url, gitSha: (.meta.githubCommitSha // "non-git"), created: .createdAt}'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
