@@ -10,7 +10,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Portfolio",
-    description: "Explore Arjun Automation portfolio — AI automation, CRM, ERP, school management, business automation, AI agents, and integrations.",
+    description: "Explore Arjun Automation portfolio — representative AI automation, CRM, ERP, school management, business automation, AI agents, and integration solutions.",
     path: MARKETING_ROUTES.portfolio,
 };
 
@@ -31,7 +31,7 @@ export default function PortfolioPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Portfolio"
-                description="Real enterprise automation outcomes across industries and use cases."
+                description="Representative solution outcomes across industries and use cases. Metrics shown are illustrative solution targets, not audited client results."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

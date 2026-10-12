@@ -10,7 +10,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Case Studies",
-    description: "Enterprise automation case studies from Arjun Automation — measurable outcomes across industries.",
+    description: "Representative enterprise automation case studies from Arjun Automation — illustrative outcomes across industries.",
     path: MARKETING_ROUTES.caseStudies,
 };
 
@@ -31,7 +31,7 @@ export default function CaseStudiesPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Case Studies"
-                description="Measurable outcomes from enterprise automation deployments."
+                description="Representative outcomes from enterprise automation solution designs. Figures are illustrative targets, not audited client measurements."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="space-y-12">

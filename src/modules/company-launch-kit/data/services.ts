@@ -240,7 +240,7 @@ export const SERVICE_ITEMS: ServiceItem[] = [
             "Proactive health scoring and renewal support",
         ],
         benefits: [
-            "99.9% uptime SLA for managed clients",
+            "Continuous health monitoring with live status endpoints",
             "Reduced internal ops burden",
             "Proactive issue detection and resolution",
             "Continuous platform evolution without disruption",

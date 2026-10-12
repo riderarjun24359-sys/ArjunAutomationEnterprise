@@ -10,15 +10,15 @@ import type {
 } from "@/src/modules/trust-conversion/types";
 
 export const TRUSTED_BY_CONTENT = {
-    title: "Trusted by growing enterprises",
-    subtitle: "Organizations across industries rely on Arjun Automation for mission-critical operations.",
+    title: "Built for growing enterprises",
+    subtitle: "Industry-focused solutions for mission-critical operations.",
     clientLogos: [
-        { name: "Nova Manufacturing", initials: "NM" },
-        { name: "Helix Health Group", initials: "HH" },
-        { name: "Summit Retail Co.", initials: "SR" },
-        { name: "Atlas Professional", initials: "AP" },
-        { name: "Vertex Hospitality", initials: "VH" },
-        { name: "Pioneer Logistics", initials: "PL" },
+        { name: "Manufacturing", initials: "MFG" },
+        { name: "Healthcare", initials: "HLT" },
+        { name: "Retail & Commerce", initials: "RTL" },
+        { name: "Professional Services", initials: "SVC" },
+        { name: "Hospitality", initials: "HSP" },
+        { name: "Education", initials: "EDU" },
     ] satisfies TrustLogo[],
     industries: [
         "Manufacturing",
@@ -43,10 +43,10 @@ export const TRUSTED_BY_CONTENT = {
         { label: "GDPR Aware", description: "Privacy-by-design data handling" },
     ] satisfies TrustBadge[],
     counters: [
-        { value: 120, suffix: "+", label: "Projects Delivered" },
-        { value: 480, suffix: "+", label: "Automations Built" },
-        { value: 36, suffix: "+", label: "Business Solutions" },
-        { value: 98, suffix: "%", label: "Client Retention" },
+        { value: 130, suffix: "+", label: "Application Pages" },
+        { value: 90, suffix: "+", label: "Authenticated Routes" },
+        { value: 64, suffix: "", label: "Versioned DB Migrations" },
+        { value: 9, suffix: "", label: "Live Health Endpoints" },
     ] satisfies TrustCounter[],
 };
 

@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-08-04T05:17:50.671Z
+-- Generated: 2026-10-12T01:45:37.647Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (50):
+--   Migrations (64):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -56,6 +56,20 @@
 --     - 202608020048_enterprise_governance_platform.sql
 --     - 202608020049_arjun_automation_growth_engine.sql
 --     - 202608020050_aage_operational_growth_engine.sql
+--     - 20260805_audit_rls_remediation.sql
+--     - 202608060001_business_platform_v1.sql
+--     - 202608060002_delivery_engine_v1.sql
+--     - 202608060003_production_readiness_v1.sql
+--     - 202608060004_executive_ai_ecosystem_v1.sql
+--     - 202608060005_executive_ai.sql
+--     - 202608060006_customer_success_global_ops.sql
+--     - 202608060007_ai_command_center.sql
+--     - 202608070001_grant_platform_founder.sql
+--     - 20260815120000_durable_webhook_idempotency.sql
+--     - 202610100001_crm_rls_remediation.sql
+--     - 202610100002_lead_consent_dedup.sql
+--     - 202610100003_finance_invoice_guards.sql
+--     - 202610110001_org_member_anon_lockdown.sql
 --   Seeds (50):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
@@ -244,9 +258,9 @@ create policy role_perms_select on public.role_permissions for select using (tru
 drop policy if exists role_perms_insert on public.role_permissions;
 create policy role_perms_insert on public.role_permissions for insert with check (true);
 drop policy if exists audit_logs_select on public.audit_logs;
-create policy audit_logs_select on public.audit_logs for select using (organization_id is null or public.is_organization_member(organization_id));
+create policy audit_logs_select on public.audit_logs for select using (true);
 drop policy if exists audit_logs_insert on public.audit_logs;
-create policy audit_logs_insert on public.audit_logs for insert with check (organization_id is null or public.is_organization_member(organization_id));
+create policy audit_logs_insert on public.audit_logs for insert with check (true);
 drop policy if exists storage_select on public.storage_objects;
 create policy storage_select on public.storage_objects for select using (true);
 drop policy if exists storage_insert on public.storage_objects;
@@ -1545,7 +1559,9 @@ on conflict (key) do update set description = excluded.description, resource = e
 -- =============================================================================
 -- MIGRATION: 202608020008_enterprise_settings.sql
 -- =============================================================================
--- Sprint 15: Enterprise Settings & Administration
+create extension if not exists "pgcrypto";
+
+-- Sprint 15: Enterprise Settings & Administration-- Sprint 15: Enterprise Settings & Administration
 
 create table if not exists public.organization_settings (
   id uuid primary key default gen_random_uuid(),
@@ -24513,6 +24529,1139 @@ values
   ('aage.approve', 'Approve growth engine gates and actions', 'arjun_automation_growth_engine'),
   ('aage.admin', 'Administer Arjun Automation growth engine', 'arjun_automation_growth_engine')
 on conflict (key) do update set description = excluded.description, resource = excluded.resource;
+
+-- =============================================================================
+-- MIGRATION: 20260805_audit_rls_remediation.sql
+-- =============================================================================
+/**
+ * Production remediation: org-scoped audit_logs RLS policies.
+ * Apply: psql $SUPABASE_DB_URL -f supabase/migrations/20260805_audit_rls_remediation.sql
+ */
+drop policy if exists audit_logs_select on public.audit_logs;
+drop policy if exists audit_logs_insert on public.audit_logs;
+drop policy if exists audit_logs_update on public.audit_logs;
+drop policy if exists audit_logs_delete on public.audit_logs;
+
+create policy audit_logs_select on public.audit_logs
+    for select using (
+        organization_id is null
+        or public.is_organization_member(organization_id)
+    );
+
+create policy audit_logs_insert on public.audit_logs
+    for insert with check (
+        organization_id is null
+        or public.is_organization_member(organization_id)
+    );
+
+create policy audit_logs_update on public.audit_logs
+    for update using (
+        organization_id is null
+        or public.is_organization_member(organization_id)
+    );
+
+create policy audit_logs_delete on public.audit_logs
+    for delete using (
+        organization_id is null
+        or public.is_organization_member(organization_id)
+    );
+
+-- =============================================================================
+-- MIGRATION: 202608060001_business_platform_v1.sql
+-- =============================================================================
+-- Business Platform v1.0 — unified client lifecycle
+
+create table if not exists public.business_consultations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  title text not null,
+  scheduled_at timestamptz not null,
+  duration_minutes integer not null default 30,
+  status text not null default 'scheduled' check (status in ('scheduled', 'completed', 'cancelled', 'no_show')),
+  assigned_to uuid references public.employees(id) on delete set null,
+  meeting_notes text not null default '',
+  requirements text not null default '',
+  ai_summary text not null default '',
+  source text not null default 'manual',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.business_proposals (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  lead_id uuid references public.sales_leads(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  opportunity_id uuid references public.sales_opportunities(id) on delete set null,
+  title text not null,
+  status text not null default 'draft' check (status in ('draft', 'review', 'sent', 'viewed', 'accepted', 'rejected', 'expired')),
+  version integer not null default 1,
+  total_amount numeric(14,2) not null default 0,
+  source_type text not null default 'business_platform',
+  source_id text not null default '',
+  document_ref text not null default '',
+  approval_status text not null default 'pending' check (approval_status in ('pending', 'approved', 'rejected')),
+  valid_until date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.business_lifecycle_events (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid not null,
+  stage text not null,
+  event_type text not null,
+  notes text not null default '',
+  created_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.business_ai_recommendations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entity_type text not null,
+  entity_id uuid,
+  recommendation_type text not null,
+  title text not null,
+  description text not null default '',
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'pending' check (status in ('pending', 'approved', 'dismissed', 'executed')),
+  requires_approval boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_business_consultations_org on public.business_consultations(organization_id);
+create index if not exists idx_business_proposals_org on public.business_proposals(organization_id);
+create index if not exists idx_business_lifecycle_events_org on public.business_lifecycle_events(organization_id);
+create index if not exists idx_business_ai_recommendations_org on public.business_ai_recommendations(organization_id);
+
+alter table public.business_consultations enable row level security;
+alter table public.business_proposals enable row level security;
+alter table public.business_lifecycle_events enable row level security;
+alter table public.business_ai_recommendations enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060002_delivery_engine_v1.sql
+-- =============================================================================
+-- Delivery Engine v1.0 — internal execution system for AI-accelerated client delivery
+
+create table if not exists public.de_blueprints (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  blueprint_key text not null,
+  name text not null,
+  category text not null,
+  description text not null default '',
+  estimated_build_hours numeric(8,2) not null default 0,
+  component_count integer not null default 0,
+  reuse_score numeric(5,2) not null default 0,
+  status text not null default 'active' check (status in ('draft', 'active', 'archived')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, blueprint_key)
+);
+
+create table if not exists public.de_components (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  component_key text not null,
+  name text not null,
+  category text not null,
+  blueprint_key text not null default '',
+  description text not null default '',
+  reuse_count integer not null default 0,
+  status text not null default 'production' check (status in ('draft', 'production', 'deprecated')),
+  source_project_id uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, component_key)
+);
+
+create table if not exists public.de_engagements (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  project_id uuid references public.projects(id) on delete set null,
+  client_id uuid references public.clients(id) on delete set null,
+  title text not null,
+  blueprint_key text not null default '',
+  playbook_stage text not null default 'lead' check (playbook_stage in ('lead', 'discovery', 'scope', 'blueprint', 'build', 'verification', 'deployment', 'support')),
+  status text not null default 'active' check (status in ('active', 'paused', 'completed', 'cancelled')),
+  assigned_to text not null default '',
+  notes text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.de_pipeline_runs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid references public.de_engagements(id) on delete cascade,
+  pipeline_type text not null check (pipeline_type in ('init', 'environment', 'quality', 'testing', 'deployment', 'documentation')),
+  status text not null default 'pending' check (status in ('pending', 'running', 'passed', 'failed')),
+  duration_ms integer not null default 0,
+  summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.de_quality_verifications (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid references public.de_engagements(id) on delete cascade,
+  dimension text not null check (dimension in ('performance', 'security', 'accessibility', 'brand', 'seo', 'engineering', 'business_rules')),
+  score numeric(5,2) not null default 0,
+  passed boolean not null default false,
+  findings text not null default '',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.de_knowledge_entries (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  entry_type text not null check (entry_type in ('lesson', 'solution', 'fix', 'architecture', 'pattern')),
+  title text not null,
+  content text not null default '',
+  tags text not null default '',
+  source_engagement_id uuid references public.de_engagements(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.de_analytics_metrics (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  metric_key text not null,
+  metric_value numeric(14,4) not null default 0,
+  unit text not null default '',
+  period text not null default 'all_time',
+  created_at timestamptz not null default now(),
+  unique (organization_id, metric_key, period)
+);
+
+create table if not exists public.de_ai_recommendations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engagement_id uuid references public.de_engagements(id) on delete set null,
+  recommendation_type text not null check (recommendation_type in ('blueprint', 'component', 'duplicate', 'improvement', 'checklist')),
+  title text not null,
+  description text not null default '',
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'pending' check (status in ('pending', 'approved', 'dismissed', 'executed')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_de_blueprints_org on public.de_blueprints(organization_id);
+create index if not exists idx_de_components_org on public.de_components(organization_id);
+create index if not exists idx_de_engagements_org on public.de_engagements(organization_id);
+create index if not exists idx_de_pipeline_runs_org on public.de_pipeline_runs(organization_id);
+create index if not exists idx_de_quality_verifications_org on public.de_quality_verifications(organization_id);
+create index if not exists idx_de_knowledge_entries_org on public.de_knowledge_entries(organization_id);
+create index if not exists idx_de_analytics_metrics_org on public.de_analytics_metrics(organization_id);
+create index if not exists idx_de_ai_recommendations_org on public.de_ai_recommendations(organization_id);
+
+alter table public.de_blueprints enable row level security;
+alter table public.de_components enable row level security;
+alter table public.de_engagements enable row level security;
+alter table public.de_pipeline_runs enable row level security;
+alter table public.de_quality_verifications enable row level security;
+alter table public.de_knowledge_entries enable row level security;
+alter table public.de_analytics_metrics enable row level security;
+alter table public.de_ai_recommendations enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060003_production_readiness_v1.sql
+-- =============================================================================
+-- Production Readiness v1.0 — health snapshots and system alerts
+
+create table if not exists public.pr_readiness_snapshots (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  overall_score numeric(5,2) not null default 0,
+  observability_score numeric(5,2) not null default 0,
+  resilience_score numeric(5,2) not null default 0,
+  backup_score numeric(5,2) not null default 0,
+  security_score numeric(5,2) not null default 0,
+  scalability_score numeric(5,2) not null default 0,
+  quality_score numeric(5,2) not null default 0,
+  risk_score numeric(5,2) not null default 0,
+  snapshot_data jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.pr_system_alerts (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  alert_type text not null check (alert_type in ('security', 'performance', 'reliability', 'backup', 'ai', 'delivery', 'database')),
+  severity text not null default 'medium' check (severity in ('low', 'medium', 'high', 'critical')),
+  title text not null,
+  detail text not null default '',
+  resolved boolean not null default false,
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create index if not exists idx_pr_readiness_snapshots_org on public.pr_readiness_snapshots(organization_id);
+create index if not exists idx_pr_system_alerts_org on public.pr_system_alerts(organization_id);
+
+alter table public.pr_readiness_snapshots enable row level security;
+alter table public.pr_system_alerts enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060004_executive_ai_ecosystem_v1.sql
+-- =============================================================================
+-- Executive AI Ecosystem v1.0 — coordinated executive AI organization
+
+create table if not exists public.eae_agent_tasks (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  task_type text not null,
+  title text not null,
+  detail text not null default '',
+  status text not null default 'pending' check (status in ('pending', 'in_progress', 'completed', 'cancelled')),
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.eae_recommendations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  title text not null,
+  detail text not null default '',
+  confidence numeric(5,2) not null default 0,
+  requires_approval boolean not null default false,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'dismissed', 'executed')),
+  source_modules text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.eae_collaboration_events (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  event_type text not null check (event_type in ('task_routed', 'conflict_resolved', 'recommendation_merged', 'approval_requested', 'approval_granted')),
+  agent_keys text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.eae_approval_requests (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  recommendation_id uuid references public.eae_recommendations(id) on delete set null,
+  agent_key text not null,
+  action_summary text not null,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  requested_by text not null default 'orchestrator',
+  resolved_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create index if not exists idx_eae_agent_tasks_org on public.eae_agent_tasks(organization_id);
+create index if not exists idx_eae_recommendations_org on public.eae_recommendations(organization_id);
+create index if not exists idx_eae_collaboration_events_org on public.eae_collaboration_events(organization_id);
+create index if not exists idx_eae_approval_requests_org on public.eae_approval_requests(organization_id);
+
+alter table public.eae_agent_tasks enable row level security;
+alter table public.eae_recommendations enable row level security;
+alter table public.eae_collaboration_events enable row level security;
+alter table public.eae_approval_requests enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060005_executive_ai.sql
+-- =============================================================================
+-- Executive AI v1.0 — full enterprise AI leadership layer
+
+create table if not exists public.executive_agents (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  name text not null,
+  role text not null,
+  version text not null default '1.0',
+  status text not null default 'active' check (status in ('active', 'paused', 'deprecated')),
+  health_score numeric(5,2) not null default 85,
+  permissions jsonb not null default '[]',
+  capabilities jsonb not null default '[]',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (organization_id, agent_key)
+);
+
+create table if not exists public.executive_tasks (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  task_type text not null,
+  title text not null,
+  detail text not null default '',
+  status text not null default 'pending' check (status in ('pending', 'in_progress', 'completed', 'cancelled')),
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  sla_due_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.executive_recommendations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  title text not null,
+  detail text not null default '',
+  explanation text not null default '',
+  confidence numeric(5,2) not null default 0,
+  votes integer not null default 0,
+  requires_approval boolean not null default false,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'dismissed', 'executed')),
+  source_modules text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.executive_collaboration (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  event_type text not null check (event_type in ('discussion', 'vote', 'consensus', 'conflict_resolved', 'task_routed', 'approval_requested')),
+  agent_keys text not null default '',
+  summary text not null default '',
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.executive_approvals (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  recommendation_id uuid references public.executive_recommendations(id) on delete set null,
+  agent_key text not null,
+  action_summary text not null,
+  policy_key text not null default 'critical_action',
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  requested_by text not null default 'orchestrator',
+  resolved_by uuid references public.user_profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create table if not exists public.executive_memory (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  source_module text not null,
+  memory_key text not null,
+  memory_value jsonb not null default '{}',
+  fetched_at timestamptz not null default now(),
+  unique (organization_id, source_module, memory_key)
+);
+
+create table if not exists public.executive_health (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  company_health_score numeric(5,2) not null default 0,
+  agent_health jsonb not null default '{}',
+  recorded_at timestamptz not null default now()
+);
+
+create table if not exists public.executive_audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null default 'system',
+  action text not null,
+  detail text not null default '',
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.executive_agent_metrics (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  agent_key text not null,
+  metric_key text not null,
+  metric_value numeric(14,4) not null default 0,
+  recorded_at timestamptz not null default now()
+);
+
+create index if not exists idx_executive_agents_org on public.executive_agents(organization_id);
+create index if not exists idx_executive_tasks_org on public.executive_tasks(organization_id);
+create index if not exists idx_executive_recommendations_org on public.executive_recommendations(organization_id);
+create index if not exists idx_executive_collaboration_org on public.executive_collaboration(organization_id);
+create index if not exists idx_executive_approvals_org on public.executive_approvals(organization_id);
+create index if not exists idx_executive_memory_org on public.executive_memory(organization_id);
+create index if not exists idx_executive_health_org on public.executive_health(organization_id);
+create index if not exists idx_executive_audit_logs_org on public.executive_audit_logs(organization_id);
+create index if not exists idx_executive_agent_metrics_org on public.executive_agent_metrics(organization_id);
+
+alter table public.executive_agents enable row level security;
+alter table public.executive_tasks enable row level security;
+alter table public.executive_recommendations enable row level security;
+alter table public.executive_collaboration enable row level security;
+alter table public.executive_approvals enable row level security;
+alter table public.executive_memory enable row level security;
+alter table public.executive_health enable row level security;
+alter table public.executive_audit_logs enable row level security;
+alter table public.executive_agent_metrics enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060006_customer_success_global_ops.sql
+-- =============================================================================
+-- Customer Success & Global Operations v1.0
+
+create table if not exists public.csg_success_plans (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid,
+  title text not null,
+  goals jsonb not null default '[]',
+  status text not null default 'active' check (status in ('draft', 'active', 'completed', 'archived')),
+  health_score numeric(5,2) not null default 75,
+  owner_name text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_onboarding_sessions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid,
+  project_id uuid,
+  requirements jsonb not null default '[]',
+  checklist jsonb not null default '[]',
+  team_assignment jsonb not null default '[]',
+  timeline jsonb not null default '[]',
+  status text not null default 'in_progress' check (status in ('pending', 'in_progress', 'ready', 'completed')),
+  kickoff_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_delivery_milestones (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  project_id uuid,
+  engagement_id uuid,
+  title text not null,
+  stage text not null default 'planning',
+  due_at timestamptz,
+  status text not null default 'pending' check (status in ('pending', 'in_progress', 'blocked', 'completed', 'approved')),
+  risk_level text not null default 'low' check (risk_level in ('low', 'medium', 'high', 'critical')),
+  requires_client_approval boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_feedback_responses (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid,
+  feedback_type text not null check (feedback_type in ('csat', 'nps', 'feature_request', 'improvement', 'complaint')),
+  score numeric(5,2),
+  comment text not null default '',
+  status text not null default 'open' check (status in ('open', 'reviewed', 'resolved', 'closed')),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_escalations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid,
+  ticket_id uuid,
+  reason text not null,
+  severity text not null default 'medium' check (severity in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'open' check (status in ('open', 'assigned', 'resolved', 'closed')),
+  assigned_to text not null default '',
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create table if not exists public.csg_renewals (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  client_id uuid,
+  renewal_date date not null,
+  amount numeric(14,2) not null default 0,
+  probability numeric(5,2) not null default 70,
+  status text not null default 'upcoming' check (status in ('upcoming', 'in_negotiation', 'renewed', 'churned', 'lost')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_improvement_items (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  source_module text not null,
+  title text not null,
+  detail text not null default '',
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'backlog' check (status in ('backlog', 'planned', 'in_progress', 'done')),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.csg_audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  action text not null,
+  module_key text not null default 'global-ops',
+  detail text not null default '',
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_csg_success_plans_org on public.csg_success_plans(organization_id);
+create index if not exists idx_csg_onboarding_sessions_org on public.csg_onboarding_sessions(organization_id);
+create index if not exists idx_csg_delivery_milestones_org on public.csg_delivery_milestones(organization_id);
+create index if not exists idx_csg_feedback_responses_org on public.csg_feedback_responses(organization_id);
+create index if not exists idx_csg_escalations_org on public.csg_escalations(organization_id);
+create index if not exists idx_csg_renewals_org on public.csg_renewals(organization_id);
+create index if not exists idx_csg_improvement_items_org on public.csg_improvement_items(organization_id);
+create index if not exists idx_csg_audit_logs_org on public.csg_audit_logs(organization_id);
+
+alter table public.csg_success_plans enable row level security;
+alter table public.csg_onboarding_sessions enable row level security;
+alter table public.csg_delivery_milestones enable row level security;
+alter table public.csg_feedback_responses enable row level security;
+alter table public.csg_escalations enable row level security;
+alter table public.csg_renewals enable row level security;
+alter table public.csg_improvement_items enable row level security;
+alter table public.csg_audit_logs enable row level security;
+
+drop policy if exists "business_consultations_org_access" on public.business_consultations;
+create policy "business_consultations_org_access"
+on public.business_consultations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_proposals_org_access" on public.business_proposals;
+create policy "business_proposals_org_access"
+on public.business_proposals
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_lifecycle_events_org_access" on public.business_lifecycle_events;
+create policy "business_lifecycle_events_org_access"
+on public.business_lifecycle_events
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+drop policy if exists "business_ai_recommendations_org_access" on public.business_ai_recommendations;
+create policy "business_ai_recommendations_org_access"
+on public.business_ai_recommendations
+for all
+using (public.is_organization_member(organization_id))
+with check (public.is_organization_member(organization_id));
+
+-- =============================================================================
+-- MIGRATION: 202608060007_ai_command_center.sql
+-- =============================================================================
+-- AI Command Center v1.0
+
+create table if not exists public.acc_alerts (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  severity text not null default 'medium' check (severity in ('low', 'medium', 'high', 'critical')),
+  source_module text not null default 'system',
+  title text not null,
+  detail text not null default '',
+  status text not null default 'open' check (status in ('open', 'acknowledged', 'resolved')),
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+create table if not exists public.acc_recommendations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  engine_key text not null,
+  title text not null,
+  detail text not null default '',
+  confidence numeric(5,2) not null default 0,
+  priority text not null default 'medium' check (priority in ('low', 'medium', 'high', 'critical')),
+  status text not null default 'pending' check (status in ('pending', 'accepted', 'dismissed', 'executed')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.acc_decisions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  decision_type text not null,
+  summary text not null,
+  rationale text not null default '',
+  confidence numeric(5,2) not null default 0,
+  status text not null default 'proposed' check (status in ('proposed', 'approved', 'rejected', 'executed')),
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.acc_automations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  automation_key text not null,
+  title text not null,
+  status text not null default 'idle' check (status in ('idle', 'running', 'succeeded', 'failed')),
+  last_run_at timestamptz,
+  result_summary text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.acc_health_snapshots (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  system_health numeric(5,2) not null default 0,
+  client_health numeric(5,2) not null default 0,
+  support_sla numeric(5,2) not null default 0,
+  delivery_health numeric(5,2) not null default 0,
+  agent_health numeric(5,2) not null default 0,
+  metadata jsonb not null default '{}',
+  recorded_at timestamptz not null default now()
+);
+
+create table if not exists public.acc_audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  action text not null,
+  detail text not null default '',
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_acc_alerts_org on public.acc_alerts(organization_id);
+create index if not exists idx_acc_recommendations_org on public.acc_recommendations(organization_id);
+create index if not exists idx_acc_decisions_org on public.acc_decisions(organization_id);
+create index if not exists idx_acc_automations_org on public.acc_automations(organization_id);
+create index if not exists idx_acc_health_snapshots_org on public.acc_health_snapshots(organization_id);
+create index if not exists idx_acc_audit_logs_org on public.acc_audit_logs(organization_id);
+
+alter table public.acc_alerts enable row level security;
+alter table public.acc_recommendations enable row level security;
+alter table public.acc_decisions enable row level security;
+alter table public.acc_automations enable row level security;
+alter table public.acc_health_snapshots enable row level security;
+alter table public.acc_audit_logs enable row level security;
+
+create policy "acc_alerts_org" on public.acc_alerts for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_recommendations_org" on public.acc_recommendations for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_decisions_org" on public.acc_decisions for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_automations_org" on public.acc_automations for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_health_snapshots_org" on public.acc_health_snapshots for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+create policy "acc_audit_logs_org" on public.acc_audit_logs for all using (organization_id in (select organization_id from public.organization_members where user_id = auth.uid()));
+
+-- =============================================================================
+-- MIGRATION: 202608070001_grant_platform_founder.sql
+-- =============================================================================
+-- =============================================================================
+-- Production-safe: expand organization_members.role_name CHECK + assign Founder
+--
+-- Current CHECK allows: super_admin | admin | manager | member | viewer
+-- App RBAC also needs:  founder | owner
+--
+-- Scope (only):
+--   1) Expand organization_members_role_name_check
+--   2) Assign chittemprashantharjun@gmail.com -> founder
+--
+-- Does NOT:
+--   - modify handle_new_profile()
+--   - modify triggers
+--   - change RLS policies
+-- =============================================================================
+
+-- 1) Expand allowed membership roles (idempotent drop/add)
+alter table public.organization_members
+  drop constraint if exists organization_members_role_name_check;
+
+alter table public.organization_members
+  add constraint organization_members_role_name_check
+  check (
+    role_name = any (
+      array[
+        'super_admin'::text,
+        'admin'::text,
+        'founder'::text,
+        'owner'::text,
+        'manager'::text,
+        'member'::text,
+        'viewer'::text
+      ]
+    )
+  );
+
+-- 2) Assign Founder role to the designated account (idempotent)
+update public.organization_members om
+set
+  role_name = 'founder',
+  updated_at = now()
+from public.user_profiles up
+where om.user_id = up.id
+  and lower(up.email) = lower('chittemprashantharjun@gmail.com')
+  and om.is_active = true
+  and om.role_name is distinct from 'founder';
+
+-- Verification (optional, run after apply):
+-- select pg_get_constraintdef(oid)
+-- from pg_constraint
+-- where conrelid = 'public.organization_members'::regclass
+--   and conname = 'organization_members_role_name_check';
+--
+-- select up.email, om.role_name, om.is_active
+-- from public.organization_members om
+-- join public.user_profiles up on up.id = om.user_id
+-- where lower(up.email) = lower('chittemprashantharjun@gmail.com');
+
+-- =============================================================================
+-- MIGRATION: 20260815120000_durable_webhook_idempotency.sql
+-- =============================================================================
+-- Create idempotency table
+create table if not exists public.webhook_idempotency (
+    event_id text primary key,
+    provider text not null default 'stripe',
+    created_at timestamptz default now()
+);
+
+-- Ensure RLS is enabled and secure
+alter table public.webhook_idempotency enable row level security;
+create policy "No access for anyone" on public.webhook_idempotency for all using (false);
+
+-- =============================================================================
+-- MIGRATION: 202610100001_crm_rls_remediation.sql
+-- =============================================================================
+-- CRM RLS remediation (legacy crm_* tables).
+--
+-- STATUS: PREPARED ONLY — NOT APPLIED to any database (local or remote).
+-- Apply path (owner action, non-production first):
+--   1. Test on a disposable Supabase branch/instance with representative data.
+--   2. Regenerate/verify supabase/apply_all.sql so it includes this migration.
+--   3. Run `npm run db:verify` and tenant-isolation tests before any promotion.
+--
+-- CONTEXT: supabase/migrations/202608020002_crm_foundation.sql created
+-- crm_clients / crm_leads / crm_deals / crm_activities / crm_tasks with
+-- USING(true) / WITH CHECK(true) SELECT/INSERT/UPDATE policies and NO delete
+-- policy. Those tables are currently orphaned (no service imports them; live
+-- code uses clients/sales_*), but open policies mean any future GRANT or
+-- mis-scoped read exposes every tenant's rows. This migration replaces the
+-- open policies with the repo-standard
+-- public.is_organization_member(organization_id) pattern (defined in
+-- 202608020004_enterprise_data_platform.sql) and applies least-privilege
+-- grants: nothing for anon, select/insert/update/delete for authenticated.
+-- RLS stays enforced through membership in public.organization_members.
+
+do $$
+declare
+    tbl text;
+begin
+    foreach tbl in array array['crm_clients', 'crm_leads', 'crm_deals', 'crm_activities', 'crm_tasks']
+    loop
+        execute format('drop policy if exists %I on public.%I', tbl || '_select', tbl);
+        execute format('drop policy if exists %I on public.%I', tbl || '_insert', tbl);
+        execute format('drop policy if exists %I on public.%I', tbl || '_update', tbl);
+        execute format('drop policy if exists %I on public.%I', tbl || '_delete', tbl);
+
+        execute format(
+            'create policy %I on public.%I for select using (public.is_organization_member(organization_id))',
+            tbl || '_select', tbl
+        );
+        execute format(
+            'create policy %I on public.%I for insert with check (public.is_organization_member(organization_id))',
+            tbl || '_insert', tbl
+        );
+        execute format(
+            'create policy %I on public.%I for update using (public.is_organization_member(organization_id)) with check (public.is_organization_member(organization_id))',
+            tbl || '_update', tbl
+        );
+        execute format(
+            'create policy %I on public.%I for delete using (public.is_organization_member(organization_id))',
+            tbl || '_delete', tbl
+        );
+
+        execute format('revoke all on public.%I from anon, authenticated', tbl);
+        execute format('grant select, insert, update, delete on public.%I to authenticated', tbl);
+    end loop;
+end
+$$;
+
+-- =============================================================================
+-- MIGRATION: 202610100002_lead_consent_dedup.sql
+-- =============================================================================
+-- Lead consent proof + email dedup (sales_leads).
+--
+-- STATUS: PREPARED ONLY — NOT APPLIED to any database (local or remote).
+-- Apply path: same as 202610100001 (non-production first, then db:verify).
+--
+-- CONTEXT: public lead intake now requires explicit privacy consent
+-- (app/api/launch-kit/contact + src/lib/lead-intake.ts) and dedups on
+-- (organization_id, lower(email)) in code. This migration makes both durable:
+-- consent columns for proof, and a partial unique index so duplicates are
+-- impossible even under concurrent submissions. Runtime code reads these
+-- columns only after this migration is applied; until then consent proof
+-- lives in the sales audit log (see contact route).
+-- NOTE: emails are normalized (trim + lowercase) before insert by
+-- normalizeLeadEmail; pre-existing rows with differently-cased duplicates
+-- must be cleaned before applying or the unique index build will fail.
+
+alter table public.sales_leads
+    add column if not exists consent_given boolean not null default false,
+    add column if not exists consent_at timestamptz,
+    add column if not exists consent_notice_version text not null default '';
+
+comment on column public.sales_leads.consent_given is 'Privacy-notice consent captured at intake (lead-intake.ts, notice version in consent_notice_version)';
+comment on column public.sales_leads.consent_notice_version is 'Version of the privacy notice the lead accepted, e.g. 2026-10-01';
+
+create unique index if not exists sales_leads_org_email_uidx
+    on public.sales_leads (organization_id, lower(email))
+    where email <> '';
+
+-- =============================================================================
+-- MIGRATION: 202610100003_finance_invoice_guards.sql
+-- =============================================================================
+-- Finance invoice/payment guards (second line of defense behind service checks).
+--
+-- STATUS: PREPARED ONLY — NOT APPLIED to any database (local or remote).
+-- Apply path: same as 202610100001 (non-production first, then db:verify).
+-- BEFORE APPLYING: validate existing data — duplicate invoice numbers or
+-- negative/overpaid rows will fail the statements below. Clean or reconcile
+-- first; the finance module's manual payment-confirmation path is the honest
+-- place to resolve overpayments (never silent adjustment).
+--
+-- CONTEXT: src/modules/finance/lib/transaction-guards.ts enforces these rules
+-- in code (unique numbers per org, lifecycle transitions, payment <= balance).
+-- This migration mirrors them at the database level.
+
+-- Unique invoice numbers per organization (case-insensitive).
+create unique index if not exists invoices_org_number_uidx
+    on public.invoices (organization_id, lower(number));
+
+-- Lifecycle allowlist mirrors isInvoiceTransitionAllowed (draft/sent/paid/overdue/void).
+alter table public.invoices
+    drop constraint if exists invoices_status_check;
+alter table public.invoices
+    add constraint invoices_status_check
+    check (status in ('draft', 'sent', 'paid', 'overdue', 'void'));
+
+-- Amounts are never negative and paid never exceeds the total.
+alter table public.invoices
+    drop constraint if exists invoices_amounts_check;
+alter table public.invoices
+    add constraint invoices_amounts_check
+    check (subtotal >= 0 and tax_amount >= 0 and total >= 0 and amount_paid >= 0 and amount_paid <= total);
+
+-- Manual payments are always positive.
+alter table public.payments
+    drop constraint if exists payments_amount_check;
+alter table public.payments
+    add constraint payments_amount_check
+    check (amount > 0);
+
+-- =============================================================================
+-- MIGRATION: 202610110001_org_member_anon_lockdown.sql
+-- =============================================================================
+-- Organization / membership anon lockdown.
+--
+-- STATUS: APPLIED to staging + production (2026-10-11, via the Supabase Management API).
+-- Idempotent and reversible (drop/create policies).
+-- Removes unauthenticated (anon) access to public.organizations and
+-- public.organization_members while preserving the existing AUTHENTICATED
+-- behavior used by the single-org onboarding bootstrap
+-- (src/modules/database/lib/organization-context.ts) and the browser
+-- repository layer (src/modules/database/lib/repository-client.ts -> the
+-- caller's Supabase JWT, i.e. role `authenticated`).
+--
+-- CONTEXT: 202608020001_enterprise_foundation.sql created
+--   orgs_select / orgs_insert / orgs_update and
+--   memberships_select / memberships_insert / memberships_update with
+--   USING(true) / WITH CHECK(true) and no role restriction, while Supabase's
+--   default privileges granted the `anon` role table privileges.
+--
+-- LIVE EVIDENCE (2026-10-11, production Supabase, public anon key):
+--   GET  /rest/v1/organization_members?select=*   -> 200 + rows (leak)
+--   POST /rest/v1/organization_members            -> passed RLS, failed only
+--                                                    the user_id FK (escalation)
+-- Every other foundation table (user_profiles, audit_logs, permission_*,
+-- role_permissions, storage_objects, project_*) already returns [] / 401 to
+-- anon. These two were the last anonymous-exposed tables.
+--
+-- SCOPE: recreate the six policies `to authenticated`, restrict membership
+-- INSERT to the caller's own row (or an existing org member), restrict
+-- membership UPDATE to org members, and revoke all anon privileges.
+-- Authenticated semantics are intentionally unchanged: the single-org
+-- onboarding bootstrap depends on listing organizations + counting members
+-- before a membership row exists, so tightening those authenticated reads is a
+-- separate, app-coupled change (tracked in docs/MISSION_CHECKLIST.md).
+
+do $$
+begin
+    -- organizations
+    drop policy if exists orgs_select on public.organizations;
+    drop policy if exists orgs_insert on public.organizations;
+    drop policy if exists orgs_update on public.organizations;
+    create policy orgs_select on public.organizations for select to authenticated using (true);
+    create policy orgs_insert on public.organizations for insert to authenticated with check (true);
+    create policy orgs_update on public.organizations for update to authenticated using (true) with check (true);
+
+    -- organization_members
+    drop policy if exists memberships_select on public.organization_members;
+    drop policy if exists memberships_insert on public.organization_members;
+    drop policy if exists memberships_update on public.organization_members;
+    create policy memberships_select on public.organization_members for select to authenticated using (true);
+    create policy memberships_insert on public.organization_members for insert to authenticated
+        with check (user_id = public.auth_profile_id() or public.is_organization_member(organization_id));
+    create policy memberships_update on public.organization_members for update to authenticated
+        using (public.is_organization_member(organization_id))
+        with check (public.is_organization_member(organization_id));
+end
+$$;
+
+revoke all on public.organizations from anon;
+revoke all on public.organization_members from anon;
+grant select, insert, update, delete on public.organizations to authenticated;
+grant select, insert, update, delete on public.organization_members to authenticated;
 
 -- =============================================================================
 -- SEED: 001_enterprise_seed.sql

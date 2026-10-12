@@ -25,8 +25,8 @@ Companion docs: `docs/MISSION_CHECKLIST.md` (ledger), `docs/SOFT_LAUNCH_DOMAIN_R
 | Vercel project | `arjunautomationos-enterprise` (`prj_GoeJ31s6APxX5keDRCVarrgzObOc`) | framework `nextjs`, Git-linked, deployment protection **off** |
 | Production alias | `https://arjunautomationos-enterprise.vercel.app` | **READY**, `/`+all ops 200 |
 | Staging alias | `https://arjunautomationos-staging.vercel.app` | **READY** (latest preview), ops 200 |
-| Supabase staging | `iplkndwkjuupktxwcksv` | 64 migrations applied |
-| Supabase production | `ixassghxogcabfcyjjtz` (`arjun-enterprise-production`, ap-south-1) | 64 migrations applied, platform org row present |
+| Supabase staging | `iplkndwkjuupktxwcksv` | 61 applied (60-chain + `202610110001` lockdown); 3 prepared pending (§7) |
+| Supabase production | `ixassghxogcabfcyjjtz` (`arjun-enterprise-production`, ap-south-1) | 61 applied, platform org row present; 3 prepared pending (§7) |
 | Custom domain | `arjunautomations.com` / `www.arjunautomations.com` | **LIVE over HTTPS** — apex `308 → www`; DNS matches Vercel exactly; Let's Encrypt cert valid to 2026-11-08 |
 | GitHub repo | `riderarjun24359-sys/ArjunAutomationEnterprise` (`1325528606`) | secrets + variables synced; `VERCEL_TOKEN` refreshed |
 | CI deploy workflow | `production-deploy.yml` | **GREEN** — run `38145177440`, all jobs success |
@@ -66,9 +66,12 @@ HTTP 422); optionally add MX/TXT/CAA (email auth, independent of the web records
 - **Staging** `iplkndwkjuupktxwcksv` and **production** `ixassghxogcabfcyjjtz` both under org
   `zmwxthjimwfbbwnbeomi` ("Arjun Automation").
 - Production `arjun-enterprise-production` (ap-south-1, `ACTIVE_HEALTHY`) created because no
-  production database existed. **All 64 migrations applied**; only the platform organisation row
+  production database existed. **61 migrations applied** (60-file chain +
+  `202610110001_org_member_anon_lockdown.sql`); only the platform organisation row
   (`11111111-1111-1111-1111-111111111111`, "Arjun Automation") was seeded — **no demo/customer data**.
-- Staging has all 64 migrations; demo seeds are **not** applied.
+  Three hardening migrations are **prepared, reviewed, and tested but NOT applied** (see §7) —
+  production relies on the code-level guards until they are.
+- Staging has the same 61 applied; demo seeds are **not** applied.
 - Live tenant-isolation harness against staging: **11/11 PASS** (user B sees only org B;
   cross-org INSERT denied 403; UPDATE/DELETE affect 0 rows; anon 401; org B intact).
 - **Anon RLS lockdown (D34).** A live anon-key probe found the `organizations`/`organization_members`

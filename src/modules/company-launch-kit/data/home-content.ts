@@ -14,10 +14,10 @@ export const HERO_CONTENT = {
     primaryCta: { label: "Book Free Consultation", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "View Our Work", href: MARKETING_ROUTES.portfolio },
     stats: [
-        { value: 120, suffix: "+", label: "Projects Delivered" },
-        { value: 480, suffix: "+", label: "Automations Built" },
-        { value: 36, suffix: "+", label: "Business Solutions" },
-        { value: 24, suffix: "/7", label: "Expert Support" },
+        { value: 130, suffix: "+", label: "Application Pages" },
+        { value: 90, suffix: "+", label: "Authenticated Routes" },
+        { value: 64, suffix: "", label: "Versioned DB Migrations" },
+        { value: 9, suffix: "", label: "Live Health Endpoints" },
     ],
     trust: {
         industries: {
@@ -177,7 +177,7 @@ export const ENTERPRISE_PLATFORM_CONTENT = {
         "SSO, SAML, and role-based access control",
         "API-first with webhook integrations",
         "Configurable data residency",
-        "99.9% uptime SLA for managed clients",
+        "Continuous health monitoring with live status endpoints",
     ],
 };
 

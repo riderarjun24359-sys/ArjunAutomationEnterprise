@@ -122,6 +122,31 @@ gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
 
 The workflow refuses `register-gemini` without all three — that refusal is the safe default.
 
+## 6b. Apply the three prepared hardening migrations (staging first, then production)
+
+`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 64 files and
+PGlite execution both pass), but **no machine on this project can reach the hosted databases**
+(no Supabase CLI, no `SUPABASE_DB_URL` locally) — applying is an owner step in the Supabase
+dashboard (staging `iplkndwkjuupktxwcksv` first, production `ixassghxogcabfcyjjtz` second) or via
+the Management API. Apply in filename order, one file at a time:
+
+1. `202610100001_crm_rls_remediation.sql` — replaces open `USING(true)` policies on the legacy
+   `crm_clients/crm_leads/crm_deals/crm_activities/crm_tasks` tables with
+   `is_organization_member(organization_id)` + revokes anon. No data prerequisite (tables are
+   orphaned; live code uses `clients`/`sales_*`).
+2. `202610100002_lead_consent_dedup.sql` — adds `consent_given/consent_at/consent_notice_version`
+   to `sales_leads` + partial unique index `(organization_id, lower(email))`. **Prerequisite:**
+   clean differently-cased duplicate emails first or the index build fails.
+3. `202610100003_finance_invoice_guards.sql` — unique `(organization_id, lower(number))`,
+   status allowlist, non-negative amounts, `amount_paid <= total`. **Prerequisite:** resolve
+   duplicate numbers / negative / overpaid rows first via the Finance manual
+   payment-confirmation path (never silent-adjust).
+
+After each: re-run `npm run db:verify`, live-probe staging with the anon key (expect 401 on the
+remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then
+repeat on production. Until applied, the code-level guards are the only enforcement — this is
+defense-in-depth, not a live outage.
+
 ## 7. Explicitly NOT required
 
 - **GitHub `Production` reviewer rule** — cannot be enabled on the current plan (HTTP 422);
