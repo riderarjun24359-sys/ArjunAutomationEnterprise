@@ -33,6 +33,9 @@ pass("chain:production_readiness", readiness.status === 0, readiness.status !== 
 const golive = spawnVerify(root, "scripts/verify-go-live.mjs");
 pass("chain:go_live", golive.status === 0, golive.status !== 0 ? "failed" : "ok");
 
+const rls = spawnVerify(root, "scripts/verify-rls-isolation.mjs");
+pass("chain:rls_isolation", rls.status === 0, rls.status !== 0 ? "failed" : "ok");
+
 const failed = results.filter((r) => !r.pass);
 console.log(`predeploy:verify ${results.filter((r) => r.pass).length}/${results.length}`);
 for (const r of results) {

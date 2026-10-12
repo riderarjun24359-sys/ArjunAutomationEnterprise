@@ -53,7 +53,10 @@ async function resolveOrganizationContextUncached(
         // organization, exposing that tenant's data.
         const organizations = await databaseService.organizations.list({ limit: 10 });
         for (const candidate of organizations) {
-            const existingMembers = await databaseService.memberships.listByOrganization(candidate.id);
+            // Any-status check: an org that has EVER had a member (active or
+            // inactive) is never adoptable — this closes the abandoned-org
+            // edge where all members were deactivated but data remains.
+            const existingMembers = await databaseService.memberships.listByOrganizationAnyStatus(candidate.id);
             if (existingMembers.length === 0) {
                 organizationId = candidate.id;
                 break;

@@ -15,8 +15,13 @@ Repo secrets live in GitHub → repo → Settings → Secrets and variables → 
 ## 1. Email provider (clears `email_provider`; `ready` stays false without it)
 
 **Do locally (no login needed):** nothing — templates (`welcome`, `verify-email`,
-`invite-teammate`, `password-reset`) and the config gate (`src/lib/email-config.ts`,
-`src/lib/production-email.ts`) are implemented and tested.
+`invite-teammate`, `password-reset`), the config gate (`src/lib/email-config.ts`,
+`src/lib/production-email.ts`), and the real fail-closed sender
+(`src/lib/email-delivery.ts`, Resend HTTP API via `fetch`, no new dependency) are implemented and
+tested. The sender returns `not_configured` and makes **no network call** until a key is set, and
+only reports success when the provider returns a message id. It is wired best-effort into the
+invitation route (`/api/organization/invitations` POST): a skipped/failed notification never fails
+the request.
 
 **Owner dashboard work (pick ONE provider):**
 
@@ -33,7 +38,8 @@ Repo secrets live in GitHub → repo → Settings → Secrets and variables → 
 
 **Verify (safe, sends nothing):** `npm run launch-email:verify` locally;
 live: `/api/ops/cutover` `email_provider` flips to pass. No unsolicited mail is ever sent by
-verification — the repo contains templates and gates only, no bulk sender.
+verification — the repo contains templates, gates, and a per-recipient sender only; there is no
+bulk sender.
 
 ## 2. Payment provider (clears `payments_gateway`; pick ONE — Stripe or Razorpay)
 
@@ -122,14 +128,23 @@ gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
 
 The workflow refuses `register-gemini` without all three — that refusal is the safe default.
 
-## 6b. Apply the three prepared hardening migrations (staging first, then production)
+## 6b. Apply the four prepared hardening migrations (staging first, then production)
 
-`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 64 files and
+`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 65 files and
 PGlite execution both pass), but **no machine on this project can reach the hosted databases**
 (no Supabase CLI, no `SUPABASE_DB_URL` locally) — applying is an owner step in the Supabase
 dashboard (staging `iplkndwkjuupktxwcksv` first, production `ixassghxogcabfcyjjtz` second) or via
 the Management API. Apply in filename order, one file at a time:
 
+0. **`202610120001_org_membership_escalation_lockdown.sql` — APPLY FIRST (critical, live on
+   production).** `202610110001` only removed *anon* access; the authenticated policies still let
+   any signed-in user (a) insert a membership row for their own profile into **any** organization
+   (self-join ⇒ read all of that tenant's data) and (b) update **any** organization row. This
+   migration adds a SECURITY-DEFINER `organization_is_memberless(uuid)` helper, restricts
+   `memberships_insert` (own row only into a memberless org, or an existing member adding rows) and
+   `orgs_update` (own org only). No data prerequisite. **Hottest priority** — verified locally via
+   the negative-control probes in `npm run rls:verify`. Tightening the (still-permissive)
+   authenticated *reads* is a separate app-coupled change, not in this migration.
 1. `202610100001_crm_rls_remediation.sql` — replaces open `USING(true)` policies on the legacy
    `crm_clients/crm_leads/crm_deals/crm_activities/crm_tasks` tables with
    `is_organization_member(organization_id)` + revokes anon. No data prerequisite (tables are
@@ -146,6 +161,13 @@ After each: re-run `npm run db:verify`, live-probe staging with the anon key (ex
 remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then
 repeat on production. Until applied, the code-level guards are the only enforcement — this is
 defense-in-depth, not a live outage.
+
+**Local proof the migrations behave correctly (no hosted access needed):** `npm run rls:verify`
+boots an embedded PostgreSQL 17, applies the full 65-migration chain, seeds independent tenants, and
+runs 21 positive/negative RLS probes (all PASS), including the two negative controls that *fail*
+without `202610120001`. It proves the migration *semantics*; it is **not** evidence of a remote
+apply. Run it against staging only with a disposable project by setting `SUPABASE_DB_URL` (the
+harness commits fixture rows, so never point it at production data you care about).
 
 ## 7. Explicitly NOT required
 

@@ -16,6 +16,23 @@ export class MembershipRepository extends BaseRepository<OrganizationMember> {
         return (data ?? []) as OrganizationMember[];
     }
 
+    /**
+     * Any-status listing (includes is_active=false rows). Used ONLY for
+     * lifecycle decisions where "has this org ever had a member?" matters:
+     * bootstrap eligibility and founder-vs-member role resolution. Never for
+     * rendering/directory use, which must stay active-only via listByOrganization.
+     */
+    async listByOrganizationAnyStatus(organizationId: string): Promise<OrganizationMember[]> {
+        const client = getRepositoryClient();
+        if (!client) {
+            return [];
+        }
+
+        const { data, error } = await client.from(this.table).select("*").eq("organization_id", organizationId);
+        mapRepositoryError(error, "Failed to list memberships");
+        return (data ?? []) as OrganizationMember[];
+    }
+
     async getByUser(userId: string): Promise<OrganizationMember[]> {
         const client = getRepositoryClient();
         if (!client) {
@@ -45,7 +62,10 @@ export class MembershipRepository extends BaseRepository<OrganizationMember> {
 
         let resolvedRole: UserRoleName = roleName ?? "member";
         if (!roleName) {
-            const orgMembers = await this.listByOrganization(organizationId);
+            // Founder is granted only when the org has NEVER had a member
+            // (active or inactive): an abandoned org whose members were all
+            // deactivated must not elevate a new adopter to founder.
+            const orgMembers = await this.listByOrganizationAnyStatus(organizationId);
             resolvedRole = orgMembers.length === 0 ? "founder" : "member";
         }
 

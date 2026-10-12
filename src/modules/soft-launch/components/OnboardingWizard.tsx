@@ -11,6 +11,7 @@ import { Input } from "@/src/design-os/components/Input";
 import { Select } from "@/src/design-os/components/Select";
 import { LoadingState } from "@/src/design-os/components/LoadingState";
 import { ProgressIndicator } from "@/src/design-os/motion/components/ProgressIndicator";
+import { INVITABLE_ROLES, canGrantInvite } from "@/src/lib/organization-provisioning";
 
 type ServerOrg = { id: string; name: string; slug: string; status: string } | null;
 type ServerTeam = { id: string; name: string; slug: string };
@@ -41,6 +42,7 @@ export function OnboardingWizard() {
     const [teamName, setTeamName] = useState("");
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteRole, setInviteRole] = useState("member");
+    const [myRole, setMyRole] = useState("member");
     const [actionError, setActionError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
     const [checklist, setChecklist] = useState<Record<string, boolean>>(() =>
@@ -73,6 +75,8 @@ export function OnboardingWizard() {
             }
             if (!parts.status.ok) throw new Error("Could not load organization state.");
             setOrg(parts.status.body.organization as ServerOrg);
+            const membership = parts.status.body.membership as { roleName?: string } | null;
+            setMyRole(membership?.roleName ?? "member");
             setMyInvites(parts.mine.ok ? ((parts.mine.body.invitations as MyInvite[]) ?? []) : []);
             setTeams(parts.teams.ok ? ((parts.teams.body.teams as ServerTeam[]) ?? []) : []);
             setInvites(parts.invites.ok ? ((parts.invites.body.invitations as ServerInvite[]) ?? []) : []);
@@ -119,6 +123,17 @@ export function OnboardingWizard() {
     }, [loading, loadError, org, router]);
 
     const progress = useMemo(() => Math.round(((step + 1) / ONBOARDING_STEPS.length) * 100), [step]);
+
+    // Only offer roles the caller may actually grant (server enforces this too).
+    const allowedInviteRoles = useMemo(
+        () => INVITABLE_ROLES.filter((role) => canGrantInvite(myRole, role).ok),
+        [myRole],
+    );
+    const effectiveInviteRole = useMemo(() => {
+        if (allowedInviteRoles.includes(inviteRole as (typeof INVITABLE_ROLES)[number])) return inviteRole;
+        if (allowedInviteRoles.includes("member")) return "member";
+        return allowedInviteRoles[0] ?? "member";
+    }, [allowedInviteRoles, inviteRole]);
     const stepMeta = ONBOARDING_STEPS[step] ?? ONBOARDING_STEPS[0];
 
     if (loading) {
@@ -207,7 +222,7 @@ export function OnboardingWizard() {
             const res = await fetch("/api/organization/invitations", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
-                body: JSON.stringify({ email: inviteEmail, roleName: inviteRole }),
+                body: JSON.stringify({ email: inviteEmail, roleName: effectiveInviteRole }),
             });
             const { ok, body } = await readJson(res);
             if (ok) {
@@ -337,8 +352,8 @@ export function OnboardingWizard() {
                 {step === 2 ? (
                     <div className="space-y-4">
                         <p className="text-sm text-[var(--dos-text-secondary)]">
-                            Invite teammates by email. They join by signing in and accepting from this page — no email
-                            delivery is configured yet, so share the invite out-of-band.
+                            Invite teammates by email. We email the invite automatically once an email provider is
+                            configured; otherwise share this page — they join by signing in and accepting from here.
                         </p>
                         <div className="flex gap-2">
                             <Input
@@ -347,13 +362,14 @@ export function OnboardingWizard() {
                                 placeholder="teammate@company.com"
                                 type="email"
                             />
-                            <Select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} aria-label="Invite role">
-                                <option value="viewer">Viewer</option>
-                                <option value="member">Member</option>
-                                <option value="manager">Manager</option>
-                                <option value="admin">Admin</option>
+                            <Select value={effectiveInviteRole} onChange={(e) => setInviteRole(e.target.value)} aria-label="Invite role">
+                                {allowedInviteRoles.map((role) => (
+                                    <option key={role} value={role}>
+                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                    </option>
+                                ))}
                             </Select>
-                            <Button type="button" variant="secondary" disabled={busy || !inviteEmail.includes("@")} onClick={() => void sendInvite()}>
+                            <Button type="button" variant="secondary" disabled={busy || !inviteEmail.includes("@") || allowedInviteRoles.length === 0} onClick={() => void sendInvite()}>
                                 Invite
                             </Button>
                         </div>

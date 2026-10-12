@@ -10,6 +10,47 @@ import { z } from "zod";
 export const INVITABLE_ROLES = ["viewer", "member", "manager", "admin"] as const;
 export type InvitableRole = (typeof INVITABLE_ROLES)[number];
 
+/** Relative privilege ordering used to prevent invite escalation. */
+export const ROLE_RANK: Record<string, number> = {
+    viewer: 0,
+    member: 1,
+    manager: 2,
+    admin: 3,
+    founder: 4,
+    owner: 5,
+    super_admin: 6,
+};
+
+/**
+ * Invite gate: the inviter must hold at least a `member` role and may only
+ * grant a role at or below their own. This is the server-side guard against a
+ * low-privilege member inviting an admin (escalation). Founder/owner may grant
+ * any invitable role (admin included); viewers cannot invite at all.
+ */
+export function canGrantInvite(
+    inviterRole: string,
+    invitedRole: string,
+): { ok: true } | { ok: false; reason: string } {
+    const inviterRank = ROLE_RANK[inviterRole];
+    const invitedRank = ROLE_RANK[invitedRole];
+    if (inviterRank === undefined) {
+        return { ok: false, reason: "Unknown inviter role" };
+    }
+    if (invitedRank === undefined) {
+        return { ok: false, reason: `Role ${invitedRole} cannot be granted by invitation` };
+    }
+    if (inviterRank < 1) {
+        return { ok: false, reason: "Requires at least a member role to invite" };
+    }
+    if (invitedRank > inviterRank) {
+        return {
+            ok: false,
+            reason: `Cannot invite the ${invitedRole} role with your ${inviterRole} role`,
+        };
+    }
+    return { ok: true };
+}
+
 /** Normalize a free-text name into a URL-safe slug (`Acme Ops!` -> `acme-ops`). */
 export function slugifyOrganizationName(name: string): string {
     return name

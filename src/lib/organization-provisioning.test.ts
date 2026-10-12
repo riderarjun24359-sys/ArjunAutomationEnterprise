@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+    canGrantInvite,
     invitationInputSchema,
     provisionInputSchema,
     resolveSlug,
@@ -45,5 +46,25 @@ describe("organization provisioning contracts", () => {
             acceptInvitationInputSchema.safeParse({ invitationId: "00000000-0000-0000-0000-000000000000" }).success,
         ).toBe(true);
         expect(acceptInvitationInputSchema.safeParse({ invitationId: "nope" }).success).toBe(false);
+    });
+
+    it("prevents invite escalation via role rank", () => {
+        // Viewers cannot invite at all.
+        expect(canGrantInvite("viewer", "member").ok).toBe(false);
+        // A member may invite peers/juniors but never a manager or admin.
+        expect(canGrantInvite("member", "member").ok).toBe(true);
+        expect(canGrantInvite("member", "viewer").ok).toBe(true);
+        expect(canGrantInvite("member", "manager").ok).toBe(false);
+        expect(canGrantInvite("member", "admin").ok).toBe(false);
+        // Managers cap at manager.
+        expect(canGrantInvite("manager", "manager").ok).toBe(true);
+        expect(canGrantInvite("manager", "admin").ok).toBe(false);
+        // Admins may grant admin, founders/owners may grant any invitable role.
+        expect(canGrantInvite("admin", "admin").ok).toBe(true);
+        expect(canGrantInvite("founder", "admin").ok).toBe(true);
+        expect(canGrantInvite("owner", "admin").ok).toBe(true);
+        // Unknown/ungrantable roles fail closed.
+        expect(canGrantInvite("member", "super_admin").ok).toBe(false);
+        expect(canGrantInvite("ghost", "member").ok).toBe(false);
     });
 });

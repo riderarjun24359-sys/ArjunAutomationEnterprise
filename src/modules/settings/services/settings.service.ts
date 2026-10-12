@@ -24,6 +24,7 @@ import {
     mapUserPreferences,
 } from "@/src/modules/database/lib/settings-mappers";
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
+import { canGrantInvite } from "@/src/lib/organization-provisioning";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import type {
     ApiKey,
@@ -201,6 +202,13 @@ export class SettingsService {
     async createInvitation(authUserId: string, email: string, input: CreateInvitationInput, fullName?: string | null): Promise<OrganizationInvitation> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        // Role gate: the inviter must be an active member and may only grant a
+        // role at or below their own (blocks member-to-admin escalation).
+        const memberships = await databaseService.memberships.getByUser(context.profileId);
+        const mine = memberships.find((membership) => membership.organization_id === context.organizationId) ?? null;
+        if (!mine) throw new Error("You are not an active member of this organization");
+        const gate = canGrantInvite(mine.role_name, input.roleName);
+        if (!gate.ok) throw new Error(gate.reason);
         const created = await databaseService.organizationInvitations.create(buildInvitationPayload(context.organizationId, context.profileId, input));
         if (!created) throw new Error("Failed to create invitation");
         return mapOrganizationInvitation(created);

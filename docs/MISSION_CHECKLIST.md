@@ -305,6 +305,81 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     (no staging DB access locally); all-inactive-org bootstrap edge and `updateTaskById` system-path
     guard exception remain as documented in D40. `.bak` preserved; single deploy (no extra dispatch).
 
+- [x] D42 **Tenant-lifecycle holes closed + real RLS proof + fail-closed email (2026-10-12).** From
+  the D41 residual-risk list, three concrete items were executed (this checkpoint commit):
+  - **Abandoned-org bootstrap adoption closed.** `organization-context` bootstrapped a
+    member-less user by attaching them to any organization whose *active* member list was empty
+    (`memberships.listByOrganization` filters `is_active=true`), so an org whose members were all
+    deactivated but whose data remained was still adoptable (and `ensureMembership` would have
+    granted the adopter `founder`). Added `MembershipRepository.listByOrganizationAnyStatus`
+    (includes `is_active=false`) and used it for BOTH the bootstrap eligibility check and the
+    founder-vs-member decision. An org that has *ever* had a member is never adoptable. Regression
+    tests: abandoned (all-inactive) org is not adopted; an existing active membership is preferred
+    without probing empty orgs.
+  - **Invitation role-escalation closed.** Neither `settings.service.createInvitation` nor the new
+    `/api/organization/invitations` POST enforced who may grant which role — any `member` (or
+    `viewer`) could invite an `admin`. Added `ROLE_RANK` + `canGrantInvite(inviterRole, invitedRole)`
+    (`src/lib/organization-provisioning.ts`): the inviter must be at least `member` and may only
+    grant a role at or below their own (founder/owner → admin; member → member/viewer; viewer →
+    none). Enforced in BOTH the API route (fetches the caller's active membership role; 403 with
+    reason) and the settings service (defense in depth). Regression tests cover escalation denial,
+    viewer denial, missing membership, and legitimate founder→admin / member→member grants.
+  - **Real, fail-closed transactional email.** The email surface was config-detection only — no
+    sender existed, so "onboarding/invite email" was never actually deliverable. Added
+    `src/lib/email-delivery.ts` (Resend HTTP API via runtime `fetch`, no new dependency):
+    `renderEmailTemplate` (renders the existing markdown templates, extracts `Subject:`), and
+    `sendTransactionalEmail` returning an explicit union result — `not_configured` /
+    `unsupported_provider` (SMTP recognised but not sendable in code) / `from_address_missing` /
+    `unknown_template` / `send_failed` / `{ok:true,id}`. Nothing is claimed sent without a provider
+    id; no network call occurs when unconfigured. Wired best-effort into the invitation route
+    (durable invite is never failed by a skipped/failed notification; result logged truthfully).
+  - **Real-Postgres tenant-isolation proof for the PREPARED migrations.** `scripts/verify-rls-isolation.mjs`
+    (+ `npm run rls:verify`, wired into `predeploy:verify`) boots a fresh embedded PostgreSQL 17
+    (PGlite), applies the **full migration chain**, seeds independent tenants, and switches
+    role with `request.jwt.claims` exactly as Supabase evaluates `auth.uid()`. (Probes and counts
+    are extended by D43 below.) PASS:
+    `202610100001` CRM RLS (owner reads own; cross-org SELECT filtered, INSERT blocked, UPDATE/DELETE
+    0 rows); `202610110001` anon lockdown (organizations/organization_members/crm_clients all
+    `permission denied` for `anon`); representative standard pattern (invoices cross-org SELECT
+    filtered); `202610100003` finance guards (invalid status, overpaid, duplicate case-insensitive
+    number, non-positive payment all rejected; valid invoice accepted); `202610100002` lead consent
+    columns + `(org, lower(email))` dedup (duplicate blocked, same email allowed in another org).
+    This is local *proof of the migration semantics*, **not** evidence of a remote apply — the four
+    prepared migrations remain unapplied to staging/production (owner action, `docs/OWNER_ACTIONS.md §6b`).
+    D43 adds the fourth (the membership-escalation lockdown) and its probes.
+  - Tests **200/200** (was 179 → +21: provisioning +1, org-context +2, invitations +4,
+    settings.service +5 new file, email-delivery +9 new file). Verified: tsc 0, eslint 0 errors,
+    `db:verify` PASS (65 migrations), `db:validate` PASS, `next build` EXIT 0, all mission verifiers
+    green (launch-readiness, premium-website, production-remediation, ai-delivery-model,
+    company-launch-kit, mission-core, security-center, production, go-live, soft-launch,
+    production-cutover, platform-operations, operations, production-readiness). Pre-existing
+    env-blocked failures unchanged (`launch-email:verify`, `final-launch-readiness:verify` — no
+    provider secrets). `apply_all.sql` regenerated (65 migrations + 50 seeds). `.bak` preserved;
+    single deploy (no extra dispatch).
+
+- [x] D43 **CRITICAL cross-tenant escalation found + prepared lockdown (2026-10-12).** While
+  auditing the foundation policies it became clear that `202610110001_org_member_anon_lockdown.sql`
+  (APPLIED to staging + production 2026-10-11) only removed *anon* access to
+  `organizations`/`organization_members`; the **authenticated** write policies were left open:
+  - `memberships_insert WITH CHECK (user_id = auth_profile_id() OR is_organization_member(org))`
+    lets any signed-in user insert a membership row for **their own profile into any organization**.
+  - `orgs_update USING(true) WITH CHECK(true)` lets any signed-in user update **any** organization row.
+  Impact: self-join an arbitrary tenant ⇒ `is_organization_member()` becomes true ⇒ read every
+  repo-standard-guarded table (clients, projects, invoices, sales_leads, crm_*, …); then
+  `memberships_update USING(is_organization_member(org))` lets the attacker raise their own role to
+  admin. **Proven locally with negative controls** — before the fix, `scripts/verify-rls-isolation.mjs`
+  fails exactly two probes ("membership: cross-org self-join blocked" → *statement succeeded*;
+  "orgs: cross-org UPDATE affects 0 rows" → *got 1*), and the cascaded invoice probes fail as a
+  consequence. Fix prepared as `supabase/migrations/202610120001_org_membership_escalation_lockdown.sql`
+  (PREPARED ONLY, not applied): a SECURITY-DEFINER `organization_is_memberless(org_id)` helper
+  (recursion-safe inside the memberships policy, counts ALL statuses) plus tightened
+  `memberships_insert` (own row only into a memberless org, or an existing member adding rows) and
+  `orgs_update` (own org only). Bootstrap is preserved: a first-run user may still found a
+  **memberless** org (positive-control probe passes). After the fix, **21/21 probes PASS**.
+  Authenticated *reads* of orgs/members remain broad by design here (single-org bootstrap +
+  platform-analytics repositories list organizations) — tightening those is an app-coupled change,
+  deferred and documented. This migration is the highest-priority owner apply (staging first).
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
