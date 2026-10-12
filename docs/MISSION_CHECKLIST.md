@@ -487,6 +487,21 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
   Secrets sweep: no hardcoded values, no tracked `.env`.
 
+- [x] D51 **Vercel truth via CI probe, DNS evidence, duplicate ownership (2026-10-12).**
+  Temporary read-only CI diagnostic (deleted after use) returned the decisive evidence:
+  project link is correct (`github / ArjunAutomationEnterprise / main`), and Vercel's own
+  deployment list shows **every push auto-built** (6889561, b0a2bf3, 12db6c6×2, 32c48a4,
+  37237d8, a0f49b6 all READY) — only **GitHub record-posting** is broken, not builds.
+  Consequence owned: the two `deploy-production` dispatches duplicated git builds that were
+  already proceeding (harmless — identical code, green healthchecks — but redundant; the
+  "stale homepage" fingerprint was edge-cache staleness, `x-vercel-cache: HIT age 183`,
+  not a missing build). End state verified correct regardless: production serves b0a2bf3
+  content (68/10, badges). Owner action narrowed to: Vercel dashboard → GitHub App /
+  deployment-status reporting (builds work; commit-status records don't).
+  Public-DNS evidence for email: Resend DKIM **published** at `resend._domainkey`, DMARC
+  present, no MX/apex-SPF (harmless for sending) — owner step is now dashboard-Verify +
+  key creation only, no DNS change (OWNER_ACTIONS §1 updated).
+
 - [x] D50 **Deployment recovery + second marketing-truth pass (2026-10-12).** Git-integration
   silence confirmed across 3 pushes (pushes land on `main`; Vercel reports nothing; no
   authorized Vercel-side visibility exists). Single documented recovery: one
@@ -499,6 +514,8 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   replaced with verified properties (RLS, tenant isolation, RBAC, audit trails). Sweep
   confirms no other stale marketing copies; in-product ISO/SOC2/GDPR references are
   compliance-*tracking* features with empty states, not certification claims (left intact).
+  *(Note added in D51: the "silence" above was record-posting only — Vercel git builds were
+  proceeding all along; the recovery dispatches were redundant. See D51.)*
 
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
