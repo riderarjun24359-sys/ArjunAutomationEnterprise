@@ -469,6 +469,24 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     tenant guard incl. the `org-a-evil` sibling-prefix boundary. Suite now 211/211.
 
 
+- [x] D49 **Dead identity hook removed, local-library honesty, marketing truth, auth a11y (2026-10-12).**
+  localStorage audit (8 files): 7 are legit UI-state/cache with server-backed loads; the
+  document library is local-only by design — added an explicit "browser only, not shared;
+  receivables live in Finance" notice to `DocumentLibraryPanel` (linked `/finance` route
+  verified to exist). Deleted dead `useSecurityCenter` hook (hardcoded "platform-user" /
+  "org-default" identity, shared localStorage key — zero consumers, unexported; the live
+  `useSecurityCenterOs` already uses the real session fail-closed). Marketing audit of
+  `home-content.ts`: stats corrected to verified counts (68 migrations, 10 health endpoints;
+  130 pages / 94 shell routes confirm the 130+/90+ claims), removed unimplemented "SSO, SAML"
+  and "Configurable data residency" bullets (no SSO login flow exists; residency unreferenced
+  outside marketing copy) in favor of verified RBAC/rate-limiting/headers claims, softened
+  "Full audit trail on every action", and aligned homepage case-study framing with the
+  case-studies page's existing "illustrative targets, not audited measurements" disclosure
+  (detail pages use unnamed segments — no named fake clients anywhere). AuthForm a11y:
+  associated all labels (`htmlFor`/`id`), `role="alert"`/`role="status"` on dynamic
+  messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
+  Secrets sweep: no hardcoded values, no tracked `.env`.
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead

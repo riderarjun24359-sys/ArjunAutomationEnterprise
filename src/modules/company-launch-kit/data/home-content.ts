@@ -16,8 +16,8 @@ export const HERO_CONTENT = {
     stats: [
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },
-        { value: 64, suffix: "", label: "Versioned DB Migrations" },
-        { value: 9, suffix: "", label: "Live Health Endpoints" },
+        { value: 68, suffix: "", label: "Versioned DB Migrations" },
+        { value: 10, suffix: "", label: "Live Health Endpoints" },
     ],
     trust: {
         industries: {
@@ -117,19 +117,19 @@ export const SOLUTIONS_CONTENT = {
         { title: "Finance & Billing", description: "Invoicing, revenue recognition, expenses, and board-ready reporting." },
         { title: "AI Orchestration", description: "Configurable AI workers with approval gates and full audit trails." },
         { title: "Workflow Engine", description: "Visual automation designer with triggers, conditions, and integrations." },
-        { title: "Governance & Compliance", description: "Audit logs, access controls, policy enforcement, and data residency." },
+        { title: "Governance & Compliance", description: "Audit logs, access controls, policy enforcement, and tenant isolation." },
     ],
 };
 
 export const PORTFOLIO_CONTENT = {
     title: "Featured work",
-    subtitle: "Real outcomes from AI-accelerated enterprise automation deployments.",
+    subtitle: "Illustrative solution designs from AI-accelerated enterprise automation engagements.",
     cta: { label: "View all portfolio", href: MARKETING_ROUTES.portfolio },
 };
 
 export const CASE_STUDIES_CONTENT = {
     title: "Case studies",
-    subtitle: "Measurable impact across industries and scale.",
+    subtitle: "Illustrative target outcomes from solution designs — not audited client measurements.",
     studies: [
         {
             title: "70% reduction in manual processing",
@@ -173,10 +173,10 @@ export const ENTERPRISE_PLATFORM_CONTENT = {
     subtitle: "Multi-tenant architecture with the security and governance your IT team demands.",
     features: [
         "Row-level security and tenant isolation",
-        "Full audit trail on every action",
-        "SSO, SAML, and role-based access control",
+        "Audit trails across every module",
+        "Role-based access control with tenant-scoped permissions",
         "API-first with webhook integrations",
-        "Configurable data residency",
+        "Rate limiting and security headers on every route",
         "Continuous health monitoring with live status endpoints",
     ],
 };

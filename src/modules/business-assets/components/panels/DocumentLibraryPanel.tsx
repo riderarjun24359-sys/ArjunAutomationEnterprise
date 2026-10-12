@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Card } from "@/src/design-os/components/Card";
 import { FieldInput } from "../shared/FormField";
 import { Badge } from "@/src/design-os/components/Badge";
 import { Button } from "@/src/design-os/components/Button";
 import { Dialog } from "@/src/design-os/components/Dialog";
+import { ROUTES } from "@/src/constants/routes";
 import { getAllDocuments, searchDocuments, deleteDocument } from "../../lib/document-library";
 import { downloadPdf, exportToPdf } from "../../lib/export-pdf";
 import { downloadDocx, exportToDocx } from "../../lib/export-docx";
@@ -45,6 +47,16 @@ export function DocumentLibraryPanel() {
 
     return (
         <div className="space-y-6">
+            <Card>
+                <p className="text-sm text-[var(--dos-text-secondary)]">
+                    Local library — documents are saved in this browser only and are not shared with
+                    your team. To record a receivable, create it in{" "}
+                    <Link href={ROUTES.finance} className="underline">
+                        Finance
+                    </Link>
+                    .
+                </p>
+            </Card>
             <div className="flex flex-wrap gap-4">
                 <FieldInput id="lib-search" label="Search documents" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by title or content..." className="min-w-[240px]" />
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">

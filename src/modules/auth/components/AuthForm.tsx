@@ -146,28 +146,28 @@ export function AuthForm({ mode }: AuthFormProps) {
                 </div>
             ) : null}
 
-            {message ? <div className="rounded-2xl border border-[var(--dos-success)] bg-[var(--dos-success)]/10 p-4 text-sm text-[var(--dos-success)]">{message}</div> : null}
-            {displayedError ? <div className="rounded-2xl border border-[var(--dos-error)] bg-[var(--dos-error)]/10 p-4 text-sm text-[var(--dos-error)]">{displayedError}</div> : null}
+            {message ? <div role="status" className="rounded-2xl border border-[var(--dos-success)] bg-[var(--dos-success)]/10 p-4 text-sm text-[var(--dos-success)]">{message}</div> : null}
+            {displayedError ? <div role="alert" className="rounded-2xl border border-[var(--dos-error)] bg-[var(--dos-error)]/10 p-4 text-sm text-[var(--dos-error)]">{displayedError}</div> : null}
 
             {mode === "sign-up" ? (
                 <div>
-                    <label className={labelClasses}>Full name</label>
-                    <input {...form.register("fullName")} className={inputClasses} placeholder="Enter your full name" />
-                    {"fullName" in errors && errors.fullName ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.fullName.message)}</p> : null}
+                    <label htmlFor="auth-fullname" className={labelClasses}>Full name</label>
+                    <input id="auth-fullname" autoComplete="name" aria-invalid={Boolean("fullName" in errors && errors.fullName)} aria-describedby={("fullName" in errors && errors.fullName) ? "auth-fullname-error" : undefined} {...form.register("fullName")} className={inputClasses} placeholder="Enter your full name" />
+                    {"fullName" in errors && errors.fullName ? <p id="auth-fullname-error" className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.fullName.message)}</p> : null}
                 </div>
             ) : null}
 
             <div>
-                <label className={labelClasses}>Email</label>
-                <input type="email" {...form.register("email")} className={inputClasses} placeholder="name@company.com" />
-                {"email" in errors && errors.email ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.email.message)}</p> : null}
+                <label htmlFor="auth-email" className={labelClasses}>Email</label>
+                <input id="auth-email" type="email" autoComplete="email" aria-invalid={Boolean("email" in errors && errors.email)} aria-describedby={("email" in errors && errors.email) ? "auth-email-error" : undefined} {...form.register("email")} className={inputClasses} placeholder="name@company.com" />
+                {"email" in errors && errors.email ? <p id="auth-email-error" className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.email.message)}</p> : null}
             </div>
 
             {mode !== "forgot-password" ? (
                 <div>
-                    <label className={labelClasses}>Password</label>
-                    <input type="password" {...form.register("password")} className={inputClasses} placeholder="••••••••" />
-                    {"password" in errors && errors.password ? <p className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.password.message)}</p> : null}
+                    <label htmlFor="auth-password" className={labelClasses}>Password</label>
+                    <input id="auth-password" type="password" autoComplete={mode === "sign-up" ? "new-password" : "current-password"} aria-invalid={Boolean("password" in errors && errors.password)} aria-describedby={("password" in errors && errors.password) ? "auth-password-error" : undefined} {...form.register("password")} className={inputClasses} placeholder="••••••••" />
+                    {"password" in errors && errors.password ? <p id="auth-password-error" className="mt-1.5 text-xs text-[var(--dos-error)]">{String(errors.password.message)}</p> : null}
                 </div>
             ) : null}
 
