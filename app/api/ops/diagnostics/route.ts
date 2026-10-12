@@ -12,9 +12,15 @@ import {
     measureAsync,
     opsLog,
 } from "@/src/lib/ops-monitoring";
-import { buildDisasterRecoveryDiagnostics } from "@/src/lib/disaster-recovery";
+import {
+    buildDisasterRecoveryDiagnostics,
+    evaluateBackupSnapshot,
+    type BackupVerificationResult,
+    type RestoreDrillEvidence,
+} from "@/src/lib/disaster-recovery";
 import { authServerService } from "@/src/services/auth.server";
 import { assertSupabaseConfigured } from "@/src/lib/supabase-config";
+import { createClient } from "@supabase/supabase-js";
 
 /** Authenticated system diagnostics for soft-launch operations. */
 export async function GET(request: Request) {
@@ -38,7 +44,62 @@ export async function GET(request: Request) {
 
         const session = await authServerService.validateSession();
         const documentationPresent = existsSync(join(process.cwd(), "docs", "DISASTER_RECOVERY.md"));
-        const dr = await buildDisasterRecoveryDiagnostics(context?.organizationId ?? null, documentationPresent);
+        // Server-side evidence read: the repository layer is browser-bound
+        // (getRepositoryClient() is null on the server), so without this the
+        // backup/restore checks could never observe an enabled config or a
+        // recorded drill. Reads use the caller's own session JWT — never the
+        // service role — and are strictly scoped to the authenticated
+        // organization, so tenant isolation holds. Any failure (no org, no
+        // token, RLS deny, infra error) falls back to the honest defaults.
+        const organizationId = context?.organizationId ?? null;
+        let serverBackup: BackupVerificationResult | null = null;
+        let drillEvidence: RestoreDrillEvidence[] = [];
+        const accessToken = session.session?.accessToken;
+        if (organizationId && session.valid && accessToken) {
+            try {
+                const { url, anonKey } = assertSupabaseConfigured();
+                const authed = createClient(url, anonKey, {
+                    auth: { persistSession: false, autoRefreshToken: false },
+                    global: { headers: { Authorization: `Bearer ${accessToken}` } },
+                });
+                const cfgRes = await authed
+                    .from("backup_configs")
+                    .select("id,is_enabled")
+                    .eq("organization_id", organizationId)
+                    .limit(100);
+                const configs = cfgRes.error ? [] : (cfgRes.data ?? []);
+                const configIds = configs
+                    .map((c) => c.id)
+                    .filter((id): id is string => typeof id === "string" && id.length > 0)
+                    .slice(0, 20);
+                let runs: Array<{ config_id?: unknown; status?: unknown }> = [];
+                if (configIds.length > 0) {
+                    const runRes = await authed
+                        .from("backup_runs")
+                        .select("config_id,status")
+                        .in("config_id", configIds)
+                        .limit(400);
+                    runs = runRes.error ? [] : (runRes.data ?? []);
+                }
+                serverBackup = evaluateBackupSnapshot(configs, runs);
+                const drillRes = await authed
+                    .from("cop_restore_validations")
+                    .select("restore_status,validated_at")
+                    .eq("organization_id", organizationId)
+                    .order("validated_at", { ascending: false })
+                    .limit(20);
+                drillEvidence = drillRes.error
+                    ? []
+                    : (drillRes.data ?? []).map((row) => ({
+                          restoreStatus: row.restore_status ?? null,
+                          validatedAt: row.validated_at ?? null,
+                      }));
+            } catch {
+                serverBackup = null;
+                drillEvidence = [];
+            }
+        }
+        const dr = await buildDisasterRecoveryDiagnostics(organizationId, documentationPresent, drillEvidence, serverBackup);
         const health = buildProductionHealthReport({
             platformHealthScore: supabaseOk ? 94 : 50,
             openErrors: getRecentLogs(50, "error").length,
