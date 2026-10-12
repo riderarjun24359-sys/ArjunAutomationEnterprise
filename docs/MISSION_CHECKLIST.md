@@ -413,6 +413,23 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   membership/platform-admin-read probes exactly as expected. `apply_all.sql` regenerated (66
   migrations + 50 seeds); `db:verify` PASS (66), `db:validate` PASS.
 
+- [x] D46 **Open-policy audit tool + legacy-table lockdown (2026-10-12).** Audited every
+  server API route, service-role operation, invite flow, storage path, and the finance/CRM/task
+  guard layers — all are tenant-scoped and fail closed (the D44 server-identity fix holds). Swept
+  the **final** RLS policy state for open policies and found the last hole: `project_management`
+  and `storage_objects` still carried foundation `USING(true)`/`WITH CHECK(true)` (cross-tenant
+  read+write for any authenticated user). Both are orphaned/unused today, but the open policies
+  are a latent cross-tenant hole. Fixes:
+  - New audit tool `scripts/audit-open-policies.mjs` (`npm run rls:audit`): applies the full
+    chain and **FAILS** on any `USING(true)`/`WITH CHECK(true)` policy for authenticated/public on a
+    tenant table, **WARNs** on deny-by-default tables. Caught the 6 open policies; now exits 0.
+  - Prepared `supabase/migrations/202610120003_legacy_table_rls_lockdown.sql` (HELD, no data
+    prerequisite): tightens both tables to `is_organization_member(organization_id)` `to authenticated`.
+  - `apply_all.sql` regenerated (67 migrations + 50 seeds); `db:verify` PASS (67), `db:validate`
+    PASS, `rls:verify` 34/34, `rls:audit` exit 0. Deny-by-default module tables (`eae_*`, `de_*`,
+    `executive_*`, `csg_*`, `pr_*`) documented as a functional (not security) consideration.
+
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead

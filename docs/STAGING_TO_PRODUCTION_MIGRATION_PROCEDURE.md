@@ -140,6 +140,14 @@ want an all-or-nothing apply.
    (fail closed) until provisioned through the `/onboarding` wizard, which uses
    the service-role provisioning route. This is intentional.
 
+6. **`202610120003_legacy_table_rls_lockdown.sql`** — closes the last open policies
+   (`project_management`, `storage_objects` still had foundation
+   `USING(true)`/`WITH CHECK(true)` — cross-tenant read+write for any authenticated
+   user). Both are currently orphaned/unused, but the open policies are a latent
+   hole. Tightens them to `is_organization_member(organization_id)`. No data
+   prerequisite. After this, `npm run rls:audit` exits 0 (no open policies on any
+   tenant table).
+
 ## 3. Positive / negative probes (staging, after each file; full set after step 5)
 
 Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.

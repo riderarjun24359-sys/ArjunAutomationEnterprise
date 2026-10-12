@@ -1,11 +1,11 @@
 -- =============================================================================
 -- Arjun Automation OS Enterprise — Production apply_all.sql
 -- =============================================================================
--- Generated: 2026-10-12T07:40:48.091Z
+-- Generated: 2026-10-12T11:59:33.960Z
 -- Apply manually in Supabase SQL Editor (do not auto-execute from CI).
 --
 -- Contents:
---   Migrations (66):
+--   Migrations (67):
 --     - 202608020001_enterprise_foundation.sql
 --     - 202608020002_crm_foundation.sql
 --     - 202608020003_project_management.sql
@@ -72,6 +72,7 @@
 --     - 202610110001_org_member_anon_lockdown.sql
 --     - 202610120001_org_membership_escalation_lockdown.sql
 --     - 202610120002_read_scope_lockdown.sql
+--     - 202610120003_legacy_table_rls_lockdown.sql
 --   Seeds (50):
 --     - 001_enterprise_seed.sql
 --     - 002_crm_seed.sql
@@ -25761,14 +25762,21 @@ $$;
 --   orgs_select, orgs_insert, orgs_update,
 --   profiles_select, profiles_insert, profiles_update,
 --   memberships_select, memberships_insert, memberships_update.
--- 202610110001 recreated the organizations/organization_members policies
--- `to authenticated` but kept the reads broad; 202610120001 fixed the WRITE
--- escalation (self-join + orgs_update). This migration fixes the remaining
--- cross-tenant READS and the user_profiles WRITE:
+-- 202608020004_enterprise_data_platform.sql ALREADY replaced the user_profiles
+-- policies with self-only (`auth_user_id = auth.uid()`), so profiles were NOT
+-- left open. 202610110001 recreated the organizations/organization_members
+-- policies `to authenticated` but kept the reads broad; 202610120001 fixed the
+-- WRITE escalation (membership self-join + orgs_update).
+--
+-- What this migration changes:
 --   * orgs_select USING(true)        -> any signed-in user enumerates every org.
 --   * memberships_select USING(true) -> enumerates every org's member list.
---   * profiles_select USING(true)    -> enumerates every user's email/name.
---   * profiles_update USING(true)    -> any signed-in user can edit ANY profile.
+--   * profiles_select self-only      -> broadened ON PURPOSE to self + people who
+--                                       share an organization + platform admins,
+--                                       so the teammate directory works under
+--                                       RLS (this is a scope fix, not a hole fix).
+--   * profiles_insert/update         -> restated as self-only (`auth_user_id =
+--                                       auth.uid()`), matching 202608020004.
 --
 -- DESIGN: reads are scoped to (i) the caller's own rows, (ii) organizations the
 -- caller is an active member of, or (iii) platform admins. Platform-admin is the
@@ -25855,6 +25863,62 @@ begin
     create policy profiles_update on public.user_profiles for update to authenticated
         using (auth_user_id = auth.uid())
         with check (auth_user_id = auth.uid());
+end
+$$;
+
+-- =============================================================================
+-- MIGRATION: 202610120003_legacy_table_rls_lockdown.sql
+-- =============================================================================
+-- Legacy-table RLS lockdown: `project_management` + `storage_objects`.
+--
+-- STATUS: PREPARED / HELD — NOT APPLIED to any database. Apply with the other
+-- prepared hardening migrations (see
+-- docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md); it is idempotent and
+-- carries no data prerequisite.
+--
+-- WHY: these two tables kept their foundation `USING (true)` / `WITH CHECK
+-- (true)` policies, so ANY authenticated user could read, insert, and update
+-- ANY row in them (cross-tenant read + write). The app no longer reads them
+-- (`project_management` is an orphaned Sprint-9 parent whose child tables were
+-- repointed to `projects` by 202608020004; `storage_objects`' repository is a
+-- stub), but the open policies are a latent hole: any data placed in these
+-- tables is world-readable/writable, and reconnecting either table would expose
+-- it. Detected by `npm run rls:audit` (open-policy scan over the full chain).
+--
+-- FIX: replace the open policies with the repo-standard
+-- `is_organization_member(organization_id)` pattern, `to authenticated` (which
+-- also closes the anon path). No DELETE policy existed, so delete stays
+-- deny-by-default (secure).
+
+do $$
+begin
+    -- project_management ---------------------------------------------------
+    drop policy if exists projects_select on public.project_management;
+    create policy projects_select on public.project_management for select to authenticated
+        using (public.is_organization_member(organization_id));
+
+    drop policy if exists projects_insert on public.project_management;
+    create policy projects_insert on public.project_management for insert to authenticated
+        with check (public.is_organization_member(organization_id));
+
+    drop policy if exists projects_update on public.project_management;
+    create policy projects_update on public.project_management for update to authenticated
+        using (public.is_organization_member(organization_id))
+        with check (public.is_organization_member(organization_id));
+
+    -- storage_objects ------------------------------------------------------
+    drop policy if exists storage_select on public.storage_objects;
+    create policy storage_select on public.storage_objects for select to authenticated
+        using (public.is_organization_member(organization_id));
+
+    drop policy if exists storage_insert on public.storage_objects;
+    create policy storage_insert on public.storage_objects for insert to authenticated
+        with check (public.is_organization_member(organization_id));
+
+    drop policy if exists storage_update on public.storage_objects;
+    create policy storage_update on public.storage_objects for update to authenticated
+        using (public.is_organization_member(organization_id))
+        with check (public.is_organization_member(organization_id));
 end
 $$;
 

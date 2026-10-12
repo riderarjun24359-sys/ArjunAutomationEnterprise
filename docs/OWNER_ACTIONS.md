@@ -168,6 +168,12 @@ the Management API. Apply in filename order, one file at a time. The full copy-p
    visibility — see `docs/STAGING_TO_PRODUCTION_MIGRATION_PROCEDURE.md §2 step 5a`. **Effect:**
    the legacy "adopt a memberless organization" bootstrap becomes unreachable and unprovisioned
    users resolve to `null` (fail closed) until they use the onboarding wizard — intentional.
+5. **`202610120003_legacy_table_rls_lockdown.sql`** — closes the last open policies found by
+   `npm run rls:audit`: `project_management` and `storage_objects` still had foundation
+   `USING(true)`/`WITH CHECK(true)` (cross-tenant read+write for any authenticated user).
+   Both are currently orphaned/unused, but the open policies are a latent hole. Tightens them
+   to `is_organization_member(organization_id)` `to authenticated`. No data prerequisite.
+   `npm run rls:audit` now exits 0 (no open policies on any tenant table).
 
 After each: re-run `npm run db:verify`, live-probe staging with the anon key (expect 401 on the
 remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then
