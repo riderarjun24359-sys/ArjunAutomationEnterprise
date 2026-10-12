@@ -57,7 +57,7 @@ export class AiEnterpriseBrainService {
         // 2. Recovery Verification
         const incidentTask = tasks.find(t => t.title.includes("Enterprise Ops Priority") && t.status === "todo");
         if (incidentTask && !criticalHealth && highRiskClients.length === 0) {
-            await taskService.updateTaskById(incidentTask.id, { status: "done" });
+            await taskService.updateTaskById(incidentTask.id, { status: "done" }, organizationId);
             await databaseService.aiOrchestrationAuditLogs.create({
                 organization_id: organizationId,
                 action: "remediation_verified",
@@ -73,7 +73,7 @@ export class AiEnterpriseBrainService {
         if (incidentTask) {
             const createdAt = new Date(incidentTask.createdAt).getTime();
             if (Date.now() - createdAt > 3600000) { // 1 hour
-                await taskService.updateTaskById(incidentTask.id, { priority: "urgent" });
+                await taskService.updateTaskById(incidentTask.id, { priority: "urgent" }, organizationId);
                 await databaseService.aiOrchestrationAuditLogs.create({
                     organization_id: organizationId,
                     action: "prioritize_operations",

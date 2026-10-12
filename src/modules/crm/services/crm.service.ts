@@ -75,7 +75,12 @@ export class CrmService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return false;
 
+        // Tenant guard: verify the lead belongs to the caller's organization
+        // before moving it. Without this, a known UUID from another tenant
+        // could be transitioned.
         if (origin === "sales_lead") {
+            const existing = await databaseService.salesLeads.getById(leadId);
+            if (!existing || existing.organization_id !== context.organizationId) return false;
             const updated = await databaseService.salesLeads.update(leadId, {
                 status: stage,
                 updated_at: new Date().toISOString(),
@@ -83,6 +88,8 @@ export class CrmService {
             return Boolean(updated);
         }
 
+        const existingClient = await databaseService.clients.getById(leadId);
+        if (!existingClient || existingClient.organization_id !== context.organizationId) return false;
         const updated = await databaseService.clients.update(leadId, {
             lifecycle_stage: stage,
             status: stage === "won" ? "active" : stage === "lost" ? "inactive" : "lead",
@@ -102,7 +109,10 @@ export class CrmService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return undefined;
         const record = await databaseService.clients.getById(id);
-        return record ? mapClientDetail(record) : undefined;
+        // Tenant guard: never return a client that belongs to another organization,
+        // even if its UUID is known. RLS is the backstop; this is the service gate.
+        if (!record || record.organization_id !== context.organizationId) return undefined;
+        return mapClientDetail(record);
     }
 
     async getLeads(authUserId: string, email: string, fullName?: string | null): Promise<LeadSummary[]> {

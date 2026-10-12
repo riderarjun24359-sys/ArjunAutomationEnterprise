@@ -44,8 +44,21 @@ async function resolveOrganizationContextUncached(
     let organizationId = memberships[0]?.organization_id ?? null;
 
     if (!organizationId) {
-        const organizations = await databaseService.organizations.list({ limit: 1 });
-        organizationId = organizations[0]?.id ?? null;
+        // Secure bootstrap: a user with no membership is attached ONLY to an
+        // organization that has no members yet (genuine first-run bootstrap —
+        // ensureMembership then makes them founder). A stranger is never
+        // auto-joined to a populated tenant: they resolve to null (fail
+        // closed) until provisioned via an explicit membership/invite.
+        // Previously any authenticated user was attached to the first-listed
+        // organization, exposing that tenant's data.
+        const organizations = await databaseService.organizations.list({ limit: 10 });
+        for (const candidate of organizations) {
+            const existingMembers = await databaseService.memberships.listByOrganization(candidate.id);
+            if (existingMembers.length === 0) {
+                organizationId = candidate.id;
+                break;
+            }
+        }
     }
 
     if (!organizationId) {

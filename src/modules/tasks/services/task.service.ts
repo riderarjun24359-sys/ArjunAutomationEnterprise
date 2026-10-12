@@ -142,11 +142,15 @@ export class TaskService {
     }
 
     async updateTask(authUserId: string, email: string, id: string, input: UpdateTaskInput, fullName?: string | null): Promise<Task | undefined> {
-        if (input.status) {
-            const current = await this.getTask(authUserId, email, id, fullName);
-            if (current && !isTaskTransitionAllowed(current.status, input.status)) {
-                throw new Error(`Task status transition from ${current.status} to ${input.status} is not allowed`);
-            }
+        // Tenant guard first: resolve the task inside the caller's organization.
+        // A foreign id yields no current task, and we must refuse BEFORE any
+        // write (previously the update executed and only the re-read failed).
+        const current = await this.getTask(authUserId, email, id, fullName);
+        if (!current) {
+            return undefined;
+        }
+        if (input.status && !isTaskTransitionAllowed(current.status, input.status)) {
+            throw new Error(`Task status transition from ${current.status} to ${input.status} is not allowed`);
         }
         const updated = await databaseService.tasks.update(id, buildUpdateTaskPayload(input));
         if (!updated) {
@@ -160,7 +164,18 @@ export class TaskService {
         return this.getTask(authUserId, email, id, fullName);
     }
 
-    async updateTaskById(id: string, input: UpdateTaskInput): Promise<Task | undefined> {
+    /**
+     * System/automation path with an explicit organization scope. Unlike the
+     * user path it carries no session, so the caller must pass the owning
+     * organizationId and the task is verified against it before any write.
+     * No transition guard here by design: incident automation legitimately
+     * closes `todo` tasks directly; the user-facing updateTask keeps the guard.
+     */
+    async updateTaskById(id: string, input: UpdateTaskInput, organizationId: string): Promise<Task | undefined> {
+        const existing = await databaseService.tasks.getById(id);
+        if (!existing || existing.organization_id !== organizationId) {
+            return undefined;
+        }
         const updated = await databaseService.tasks.update(id, buildUpdateTaskPayload(input));
         if (!updated) {
             return undefined;
@@ -170,13 +185,17 @@ export class TaskService {
             await databaseService.tasks.setLabelAssignments(id, input.labelIds);
         }
 
-        const orgId = updated.organization_id;
-        const tasks = await this.getTasksForOrg(orgId);
+        const tasks = await this.getTasksForOrg(organizationId);
         return tasks.find(t => t.id === id);
     }
 
 
     async deleteTask(authUserId: string, email: string, id: string): Promise<boolean> {
+        // Tenant guard: only delete tasks visible inside the caller's organization.
+        const current = await this.getTask(authUserId, email, id);
+        if (!current) {
+            return false;
+        }
         return databaseService.tasks.delete(id);
     }
 
