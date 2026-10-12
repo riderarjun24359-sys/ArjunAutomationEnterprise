@@ -19,11 +19,26 @@ export const workflowFormSchema = z.object({
     triggerType: z.enum(["event", "schedule", "webhook", "manual"]),
     eventName: z.string().optional(),
     actionType: z.enum(["notify", "email", "webhook", "ai_task", "create_task", "update_record", "delay"]),
+    actionMessage: z.string().optional(),
+    actionUrl: z.string().optional(),
+    actionEvent: z.string().optional(),
+    webhookName: z.string().optional(),
     conditionField: z.string().optional(),
     conditionOperator: z.enum(["equals", "not_equals", "greater_than", "less_than", "contains"]).optional(),
     conditionValue: z.string().optional(),
     cronExpression: z.string().optional(),
     timezone: z.string().optional(),
+}).superRefine((values, ctx) => {
+    if (values.actionType === "webhook" && !values.actionUrl?.trim() && !values.webhookName?.trim()) {
+        ctx.addIssue({ code: "custom", path: ["actionUrl"], message: "Webhook actions need a target URL or a named webhook" });
+    }
+    if ((values.actionType === "notify" || values.actionType === "create_task") && !values.actionMessage?.trim()) {
+        ctx.addIssue({
+            code: "custom",
+            path: ["actionMessage"],
+            message: values.actionType === "notify" ? "Notification message is required" : "Task title is required",
+        });
+    }
 });
 
 export type AiAgentFormValues = z.infer<typeof aiAgentFormSchema>;

@@ -76,3 +76,56 @@ describe("local-worker", () => {
         expect(planStepRetries([{ stepOrder: 1, actionType: "x", status: "completed", attempts: 1, idempotencyKey: "e:1" }], 3, 60, NOW)).toEqual([]);
     });
 });
+
+describe("local-worker webhook action", () => {
+    const run = (config: Record<string, unknown>, deliverWebhook?: WorkerPorts["deliverWebhook"]) =>
+        runLocalWorkflow({
+            executionId: "e9",
+            actions: [{ stepOrder: 1, actionType: "webhook", config }],
+            conditions: [],
+            triggerPayload: {},
+            ports: ports({ deliverWebhook }),
+        });
+
+    it("delivers through the port with idempotency key and clamped timeout", async () => {
+        const seen: Array<Record<string, unknown>> = [];
+        const result = await run(
+            { url: "https://hooks.example.com/x", event: "lead.created", payload: { a: 1 }, timeoutMs: 999999 },
+            async (input) => { seen.push({ ...input }); return { ok: true, attempts: 2, responseStatus: 200 }; },
+        );
+        expect(result.status).toBe("completed");
+        expect(result.steps[0].responseStatus).toBe(200);
+        expect(seen).toHaveLength(1);
+        expect(seen[0]).toMatchObject({ url: "https://hooks.example.com/x", event: "lead.created", idempotencyKey: "e9:1", timeoutMs: 60000 });
+    });
+
+    it("passes non-object payloads as empty objects and defaults the event", async () => {
+        const seen: Array<Record<string, unknown>> = [];
+        await run(
+            { webhookName: "crm", payload: "nope" },
+            async (input) => { seen.push({ ...input }); return { ok: true, attempts: 1, responseStatus: 204 }; },
+        );
+        expect(seen[0]).toMatchObject({ webhookName: "crm", event: "automation.event", payload: {} });
+    });
+
+    it("fails without url/name, and without a delivery port", async () => {
+        const noTarget = await run({}, async () => ({ ok: true, attempts: 1, responseStatus: 200 }));
+        expect(noTarget.status).toBe("failed");
+        expect(String(noTarget.error)).toMatch(/config\.url or config\.webhookName/);
+
+        const noPort = await run({ url: "https://hooks.example.com/x" });
+        expect(noPort.status).toBe("failed");
+        expect(String(noPort.error)).toMatch(/no deliverWebhook port/);
+    });
+
+    it("records port failures with response status", async () => {
+        const result = await run(
+            { url: "https://hooks.example.com/x" },
+            async () => ({ ok: false, attempts: 3, responseStatus: 503, error: "HTTP 503" }),
+        );
+        expect(result.status).toBe("failed");
+        expect(result.steps[0].attempts).toBe(3);
+        expect(result.steps[0].responseStatus).toBe(503);
+        expect(result.error).toBe("HTTP 503");
+    });
+});

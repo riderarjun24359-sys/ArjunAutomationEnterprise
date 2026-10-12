@@ -67,7 +67,8 @@ where schemaname = 'public'
     'eae_approval_requests',
     'pr_readiness_snapshots','pr_system_alerts',
     'executive_agents','executive_tasks','executive_agent_metrics',
-    'executive_health','executive_memory'
+    'executive_health','executive_memory',
+    'integration_webhooks','integration_deliveries'
   )
 order by tablename, policyname;
 
@@ -180,8 +181,15 @@ want an all-or-nothing apply.
    cross-tenant access stays denied (`rls:verify` module block: 48 probes), and
    the 11 orphaned/dead tables (`eae_*`, `pr_*`, 5 unused `executive_*`) stay
    fully locked.
+8. **`202610120005_integration_webhooks.sql`** — creates `integration_webhooks`
+   (named targets: URL + HMAC secret + host allowlist) and `integration_deliveries`
+   (append-only log) with the repo-standard SELECT/INSERT/UPDATE trio
+   (`is_organization_member`, no DELETE). Enables the automation engine's `webhook`
+   action end to end. No data prerequisite. Secrets are readable by org members
+   under RLS (org trust boundary — same as every other org row); the service
+   resolves them server-side only, never through action configs.
 
-## 3. Positive / negative probes (staging, after each file; full set after step 7)
+## 3. Positive / negative probes (staging, after each file; full set after step 8)
 
 Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.
 `$ANON` and `$JWT_A` / `$JWT_B` are key/ token values kept in your shell only.
@@ -207,6 +215,9 @@ Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/
 | 17 | A (member of org A) `GET /csg_success_plans?organization_id=eq.<orgA>` | own org's rows (step 7 enabled the dashboard reads) |
 | 18 | A `GET /csg_success_plans?organization_id=eq.<orgB>` (and same for `de_blueprints`, `executive_recommendations`, `executive_approvals`) | `[]` (cross-org denied) |
 | 19 | B (member of org B only) `GET /csg_success_plans?organization_id=eq.<orgA>` | `[]` (negative control from the other side) |
+| 20 | A `GET /integration_webhooks?organization_id=eq.<orgA>` | own org's named targets (**without** `secret` values in any list response) |
+| 21 | A `GET /integration_webhooks?organization_id=eq.<orgB>` and `GET /integration_deliveries?organization_id=eq.<orgB>` | `[]` (cross-org denied) |
+| 22 | `POST` a webhook delivery to an org-B-owned URL from an org-A workflow run | blocked; delivery row (if any) lands under org A only |
 
 Local mirror of probes 3–9, 14 and the platform-admin case: `npm run rls:verify`
 (82 probes, incl. the module-table block: same-tenant positive reads,
@@ -227,6 +238,8 @@ locked tables (`eae_*`, `pr_*`, 5 unused `executive_*`).
 - Step 7: probes 17–19 pass (own-org module rows readable, cross-org denied);
   the §1a re-query shows the `{table}_select|_insert|_update` trio on all 20
   enabled tables and still zero policies on the 11 locked ones.
+- Step 8: probes 20–22 pass; `integration_webhooks` / `integration_deliveries`
+  show the policy trio; no `secret` value ever appears in a list response.
 
 ## 5. Recovery / rollback
 
@@ -272,6 +285,7 @@ create policy storage_update on public.storage_objects for update using (true) w
 
 -- Undo 202610120004 (drops the 60 added policies; tables return to full deny,
 -- which was the pre-state — nothing to restore)
+-- Undo 202610120005 (drops the 6 added policies; same full-deny pre-state)
 do $$
 declare tbl text;
 begin
@@ -283,7 +297,8 @@ begin
     'de_quality_verifications','de_knowledge_entries','de_analytics_metrics',
     'de_ai_recommendations',
     'executive_recommendations','executive_collaboration',
-    'executive_audit_logs','executive_approvals'
+    'executive_audit_logs','executive_approvals',
+    'integration_webhooks','integration_deliveries'
   ] loop
     execute format('drop policy if exists %I_select on public.%I', tbl, tbl);
     execute format('drop policy if exists %I_insert on public.%I', tbl, tbl);

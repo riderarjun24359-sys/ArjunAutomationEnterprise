@@ -487,6 +487,30 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
   Secrets sweep: no hardcoded values, no tracked `.env`.
 
+- [x] D52 **Governed outbound webhooks, ranked retrieval, routing evals (2026-10-13).**
+  Market audit: workflow engine (definitions/executions/approvals/audit), local execution
+  with retry planning, knowledge CRUD, idempotency, and approvals are genuinely implemented;
+  gaps were the UI-promised-but-unexecutable `webhook` action, 1/0-substring "semantic"
+  search, and unmeasured command routing. No new dependency justified anything material
+  without a paid/service counterpart (langchain/temporal/bullmq/vector-embedding all
+  rejected with reasons) — zero new deps installed.
+  - `automation/lib/webhook-action.ts` (pure, 13 tests): https-only, per-org host allowlist,
+    SSRF/loopback/metadata rejection, `t=…,v1=…` HMAC over `timestamp.body`, idempotency
+    keys, bounded timeout/retries with per-attempt audit records.
+  - Worker `webhook` branch + service port (secret resolved server-side from named
+    `integration_webhooks` rows or single-host-scoped inline URLs; deliveries persisted;
+    secrets never listed) + repo/registration + prepared `202610120005` (RLS trio, no
+    DELETE) + 11 harness probes (93/93 total) + 5 service tests incl. secret-non-exposure.
+    Also fixed the pre-existing gap that UI-created workflows of ANY type failed at runtime
+    (no config path): form schema/UI/handler now capture message/title/URL/event/name with
+    fail-fast validation.
+  - Knowledge scorer rewritten (title-weighted multi-token + phrase bonus + hit-centered
+    snippets, 7 tests); `command-routing-evals` dataset (50 cases over real nav config)
+    caught and fixed a REAL priority bug (early contains shadowed later prefix: "automat"
+    misrouted) — 9/9 green.
+  - Procedure doc extended to step 8 (probes 20–22, rollback for 120005, now covered by the
+    drift-proof 48-assertion rollback verifier); `apply_all.sql` at 69 migrations.
+
 - [x] D51 **Vercel truth via CI probe, DNS evidence, duplicate ownership (2026-10-12).**
   Temporary read-only CI diagnostic (deleted after use) returned the decisive evidence:
   project link is correct (`github / ArjunAutomationEnterprise / main`), and Vercel's own

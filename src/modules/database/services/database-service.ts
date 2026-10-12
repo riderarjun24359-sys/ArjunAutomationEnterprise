@@ -566,6 +566,8 @@ export const databaseService = {
     aixExecutiveHealth: databaseAccess.aixExecutiveHealth,
     aixExecutiveFailures: databaseAccess.aixExecutiveFailures,
     aixAuditLogs: databaseAccess.aixAuditLogs,
+    integrationWebhooks: databaseAccess.integrationWebhooks,
+    integrationDeliveries: databaseAccess.integrationDeliveries,
     elrReadinessHubs: databaseAccess.elrReadinessHubs,
     elrEnvironmentValidations: databaseAccess.elrEnvironmentValidations,
     elrConfigurationValidations: databaseAccess.elrConfigurationValidations,

@@ -59,6 +59,20 @@ export function AutomationPage() {
     const [showAgentForm, setShowAgentForm] = useState(false);
 
     const handleCreateWorkflow = async (values: WorkflowFormValues) => {
+        const actionConfig: Record<string, unknown> =
+            values.actionType === "webhook"
+                ? {
+                        ...(values.actionUrl?.trim() ? { url: values.actionUrl.trim() } : {}),
+                        ...(values.webhookName?.trim() ? { webhookName: values.webhookName.trim() } : {}),
+                        ...(values.actionEvent?.trim() ? { event: values.actionEvent.trim() } : {}),
+                    }
+                : values.actionType === "notify" || values.actionType === "create_task"
+                  ? {
+                        ...((values.actionType === "notify"
+                            ? { message: values.actionMessage?.trim() }
+                            : { title: values.actionMessage?.trim() }) as Record<string, unknown>),
+                    }
+                  : {};
         await createWorkflow({
             name: values.name,
             description: values.description,
@@ -66,7 +80,7 @@ export function AutomationPage() {
             templateId: values.templateId || null,
             agentId: values.agentId || null,
             triggers: [{ triggerType: values.triggerType, eventName: values.eventName, isActive: true }],
-            actions: [{ actionType: values.actionType, stepOrder: 1, agentId: values.agentId || null }],
+            actions: [{ actionType: values.actionType, stepOrder: 1, agentId: values.agentId || null, config: actionConfig }],
             conditions: values.conditionField
                 ? [{ field: values.conditionField, operator: values.conditionOperator ?? "equals", value: values.conditionValue ?? "" }]
                 : [],

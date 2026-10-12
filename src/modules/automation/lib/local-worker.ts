@@ -18,7 +18,7 @@
  * would fabricate execution.
  */
 
-export const EXECUTABLE_ACTIONS = ["create_task", "notify"] as const;
+export const EXECUTABLE_ACTIONS = ["create_task", "notify", "webhook"] as const;
 
 export interface WorkerStepInput {
     stepOrder: number;
@@ -35,6 +35,14 @@ export interface WorkerConditionInput {
 export interface WorkerPorts {
     createTask: (input: { title: string; description: string; dueDate: string }) => Promise<{ id: string }>;
     recordLog: (message: string, level: "info" | "warn" | "error") => Promise<void>;
+    deliverWebhook?: (input: {
+        url: string;
+        webhookName: string;
+        event: string;
+        payload: Record<string, unknown>;
+        idempotencyKey: string;
+        timeoutMs: number;
+    }) => Promise<{ ok: boolean; attempts: number; responseStatus: number | null; error?: string }>;
     now: () => number;
 }
 
@@ -47,6 +55,7 @@ export interface WorkerStepResult {
     attempts: number;
     idempotencyKey: string;
     taskId?: string;
+    responseStatus?: number | null;
     error?: string;
 }
 
@@ -139,8 +148,42 @@ export async function runLocalWorkflow(input: {
             }
             await input.ports.recordLog(message, "info");
             steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "completed", attempts: 1, idempotencyKey });
+        } else if (action.actionType === "webhook") {
+            const url = stringField(action.config, "url");
+            const webhookName = stringField(action.config, "webhookName");
+            if (!url && !webhookName) {
+                steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "failed", attempts: 1, idempotencyKey, error: "webhook needs config.url or config.webhookName" });
+                return finish({ status: "failed", steps, error: "webhook needs config.url or config.webhookName" });
+            }
+            if (!input.ports.deliverWebhook) {
+                steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "failed", attempts: 1, idempotencyKey, error: "webhook delivery is unavailable in this runtime (no deliverWebhook port)" });
+                return finish({ status: "failed", steps, error: "webhook delivery is unavailable in this runtime (no deliverWebhook port)" });
+            }
+            const event = stringField(action.config, "event") || "automation.event";
+            const payload = action.config["payload"];
+            const timeoutRaw = action.config["timeoutMs"];
+            const timeoutMs = typeof timeoutRaw === "number" && Number.isFinite(timeoutRaw) ? Math.min(60000, Math.max(1000, Math.floor(timeoutRaw))) : 8000;
+            try {
+                const delivered = await input.ports.deliverWebhook({
+                    url,
+                    webhookName,
+                    event,
+                    payload: payload && typeof payload === "object" ? (payload as Record<string, unknown>) : {},
+                    idempotencyKey,
+                    timeoutMs,
+                });
+                if (!delivered.ok) {
+                    steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "failed", attempts: delivered.attempts, idempotencyKey, responseStatus: delivered.responseStatus, error: delivered.error ?? "webhook delivery failed" });
+                    return finish({ status: "failed", steps, error: delivered.error ?? "webhook delivery failed" });
+                }
+                steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "completed", attempts: delivered.attempts, idempotencyKey, responseStatus: delivered.responseStatus });
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "failed", attempts: 1, idempotencyKey, error: message });
+                return finish({ status: "failed", steps, error: message });
+            }
         } else {
-            const reason = `Unsupported action '${action.actionType}': only ${EXECUTABLE_ACTIONS.join(", ")} execute locally (email/webhook/ai_task need providers; update_record/delay need privileges/scheduling)`;
+            const reason = `Unsupported action '${action.actionType}': only ${EXECUTABLE_ACTIONS.join(", ")} execute locally (email/ai_task need providers; update_record/delay need privileges/scheduling)`;
             steps.push({ stepOrder: action.stepOrder, actionType: action.actionType, status: "failed", attempts: 0, idempotencyKey, error: reason });
             return finish({ status: "failed", steps, error: reason });
         }

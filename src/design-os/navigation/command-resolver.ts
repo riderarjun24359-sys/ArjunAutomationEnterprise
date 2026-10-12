@@ -37,14 +37,19 @@ export function resolveCommand(
         }
     }
 
+    // 3. Prefix matches outrank contains matches globally: scan every label
+    // for a prefix hit before falling back to substring search. (A single
+    // interleaved pass let an early contains-hit shadow a later prefix-hit,
+    // e.g. "automat" resolved to AI Automation Engine instead of Automation.)
     for (const item of authorizedNavigation) {
-        const label = normalizeQuery(item.label);
+        if (normalizeQuery(item.label).startsWith(normalizedQuery)) {
+            return { item, matchType: "PREFIX" };
+        }
+    }
 
-        // 3. Prefix Match
-        if (label.startsWith(normalizedQuery)) return { item, matchType: "PREFIX" };
-        
+    for (const item of authorizedNavigation) {
         // 4. Contains Match
-        if (label.includes(normalizedQuery)) return { item, matchType: "CONTAINS" };
+        if (normalizeQuery(item.label).includes(normalizedQuery)) return { item, matchType: "CONTAINS" };
     }
 
     return null;

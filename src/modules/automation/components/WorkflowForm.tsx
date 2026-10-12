@@ -17,6 +17,7 @@ interface WorkflowFormProps {
 }
 
 export function WorkflowForm({ agents, templates, onSubmit, submitLabel = "Create Workflow" }: WorkflowFormProps) {
+    const [actionType, setActionType] = useState<WorkflowFormValues["actionType"]>("notify");
     const [defaultValues] = useState<WorkflowFormValues>(() => ({
         name: "",
         description: "",
@@ -24,6 +25,10 @@ export function WorkflowForm({ agents, templates, onSubmit, submitLabel = "Creat
         triggerType: "event",
         eventName: "",
         actionType: "notify",
+        actionMessage: "",
+        actionUrl: "",
+        actionEvent: "",
+        webhookName: "",
         conditionField: "",
         conditionOperator: "equals",
         conditionValue: "",
@@ -39,6 +44,7 @@ export function WorkflowForm({ agents, templates, onSubmit, submitLabel = "Creat
         resolver: zodResolver(workflowFormSchema),
         defaultValues,
     });
+    const selectedActionType = actionType;
 
     return (
         <Card hover>
@@ -99,12 +105,38 @@ export function WorkflowForm({ agents, templates, onSubmit, submitLabel = "Creat
                 </div>
                 <div>
                     <label className="mb-1.5 block text-sm font-medium">Action Type</label>
-                    <select {...register("actionType")} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900">
+                    <select {...register("actionType", { onChange: (e) => setActionType(e.target.value as WorkflowFormValues["actionType"]) })} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900">
                         {ACTION_TYPE_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                     </select>
                 </div>
+                {(selectedActionType === "notify" || selectedActionType === "create_task") && (
+                    <div>
+                        <label className="mb-1.5 block text-sm font-medium">
+                            {selectedActionType === "notify" ? "Notification message" : "Task title"}
+                        </label>
+                        <input {...register("actionMessage")} placeholder={selectedActionType === "notify" ? "Deployment finished" : "Follow up with the client"} className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900" />
+                        {errors.actionMessage ? <p className="mt-1 text-xs text-red-600">{errors.actionMessage.message}</p> : null}
+                    </div>
+                )}
+                {selectedActionType === "webhook" && (
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium">Target URL (https)</label>
+                            <input {...register("actionUrl")} placeholder="https://hooks.example.com/events" className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900" />
+                            {errors.actionUrl ? <p className="mt-1 text-xs text-red-600">{errors.actionUrl.message}</p> : null}
+                        </div>
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium">Named webhook (optional)</label>
+                            <input {...register("webhookName")} placeholder="crm" className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900" />
+                        </div>
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium">Event name</label>
+                            <input {...register("actionEvent")} placeholder="automation.event" className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm dark:border-slate-800 dark:bg-slate-900" />
+                        </div>
+                    </div>
+                )}
                 <div className="grid gap-4 sm:grid-cols-3">
                     <div>
                         <label className="mb-1.5 block text-sm font-medium">Condition Field</label>

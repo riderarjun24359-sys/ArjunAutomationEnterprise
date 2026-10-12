@@ -63,7 +63,7 @@ if (!fence) {
     console.error("FAIL: no ```sql fence found in §5");
     process.exit(2);
 }
-for (const marker of ["Undo 202610120001", "Undo 202610120002", "Undo 202610120003", "Undo 202610120004"]) {
+for (const marker of ["Undo 202610120001", "Undo 202610120002", "Undo 202610120003", "Undo 202610120004", "Undo 202610120005"]) {
     if (!fence[1].includes(marker)) {
         console.error(`FAIL: §5 rollback SQL is missing ${marker}`);
         process.exit(2);
@@ -125,6 +125,7 @@ const modules = [
     "pr_readiness_snapshots", "pr_system_alerts",
     "executive_agents", "executive_tasks", "executive_agent_metrics",
     "executive_health", "executive_memory",
+    "integration_webhooks", "integration_deliveries",
 ];
 for (const tbl of modules) {
     const r = await db.query("select count(*)::int as n from pg_policies where schemaname='public' and tablename=$1;", [tbl]);

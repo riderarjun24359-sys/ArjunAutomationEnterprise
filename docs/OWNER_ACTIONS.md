@@ -133,9 +133,9 @@ gh secret set ADMIN_FULL_NAME -R riderarjun24359-sys/ArjunAutomationEnterprise
 
 The workflow refuses `register-gemini` without all three — that refusal is the safe default.
 
-## 6b. Apply the seven prepared hardening migrations (staging first, then production)
+## 6b. Apply the eight prepared hardening migrations (staging first, then production)
 
-`supabase/apply_all.sql` already includes them (regenerated 2026-10-12; `db:verify` 68 files and
+`supabase/apply_all.sql` already includes them (regenerated; `db:verify` 69 files and
 PGlite execution both pass), but **no machine on this project can reach the hosted databases**
 (no Supabase CLI, no `SUPABASE_DB_URL` locally) — applying is an owner step in the Supabase
 dashboard (staging `iplkndwkjuupktxwcksv` first, production `ixassghxogcabfcyjjtz` second) or via
@@ -185,6 +185,11 @@ the Management API. Apply in filename order, one file at a time. The full copy-p
    delivery-engine ×8, executive-ai ×4 used). No DELETE (no code path deletes).
    Keeps 11 tables locked (deprecated `eae_*` ×4, in-memory `pr_*` ×2, 5 dead
    `executive_*` constants) — see the migration header for the full inventory.
+7. **`202610120005_integration_webhooks.sql`** — creates `integration_webhooks`
+   (named targets: URL + HMAC secret + host allowlist) and `integration_deliveries`
+   (append-only log) with the repo-standard trio (no DELETE). Enables the automation
+   engine's `webhook` action. Secrets are org-member-readable under RLS (org trust
+   boundary); the service resolves them server-side only, never via action configs.
 
 After each: re-run `npm run db:verify`, live-probe staging with the anon key (expect 401 on the
 remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then

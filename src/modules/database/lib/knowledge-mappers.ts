@@ -294,17 +294,70 @@ export const buildCrossModuleLinks = (input: { crossLinks: import("@/src/modules
     };
 };
 
+const MIN_TOKEN_LENGTH = 2;
+const MAX_RESULTS = 50;
+const TITLE_WEIGHT = 3;
+const PHRASE_BONUS = 2;
+const MAX_TERM_FREQUENCY = 5;
+
+function tokenize(text: string): string[] {
+    return text
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter((token) => token.length >= MIN_TOKEN_LENGTH);
+}
+
+function countOccurrences(haystack: string, term: string): number {
+    if (!term) return 0;
+    return haystack.split(term).length - 1;
+}
+
+function snippetAround(text: string, terms: string[]): string {
+    const lower = text.toLowerCase();
+    let first = -1;
+    for (const term of terms) {
+        const at = lower.indexOf(term);
+        if (at >= 0 && (first < 0 || at < first)) first = at;
+    }
+    if (first < 0) return text.slice(0, 160);
+    const start = Math.max(0, first - 60);
+    const window = text.slice(start, start + 160);
+    return `${start > 0 ? "…" : ""}${window}${start + 160 < text.length ? "…" : ""}`;
+}
+
+const round2 = (value: number): number => Math.round(value * 100) / 100;
+
 export const searchSemanticIndex = (records: DbKnowledgeSemanticIndex[], entries: DbKnowledgeEntry[], query: string, maps: LookupMaps): KnowledgeSearchResult[] => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return [];
-    return records
-        .filter((record) => record.search_text.toLowerCase().includes(normalized))
-        .map((record) => ({
+    void entries;
+    const terms = tokenize(query);
+    if (terms.length === 0) return [];
+    const phrase = query.trim().toLowerCase();
+    const ranked: KnowledgeSearchResult[] = [];
+    for (const record of records) {
+        const title = (entryTitle(maps, record.entry_id) ?? "").toLowerCase();
+        const text = (record.search_text ?? "").toLowerCase();
+        let score = 0;
+        let matchedTerms = 0;
+        for (const term of terms) {
+            const inTitle = title.includes(term);
+            const frequency = countOccurrences(text, term);
+            if (!inTitle && frequency === 0) continue;
+            matchedTerms += 1;
+            score += (inTitle ? TITLE_WEIGHT : 0) + Math.min(frequency, MAX_TERM_FREQUENCY);
+        }
+        if (matchedTerms === 0) continue;
+        if (phrase.length >= MIN_TOKEN_LENGTH && (text.includes(phrase) || title.includes(phrase))) {
+            score += PHRASE_BONUS;
+        }
+        score += matchedTerms / terms.length;
+        ranked.push({
             entryId: record.entry_id,
             entryTitle: entryTitle(maps, record.entry_id) ?? "Unknown",
-            matchPreview: record.search_text.slice(0, 160),
-            score: record.search_text.toLowerCase().indexOf(normalized) >= 0 ? 1 : 0,
-        }));
+            matchPreview: snippetAround(record.search_text ?? "", terms),
+            score: round2(score),
+        });
+    }
+    return ranked.sort((a, b) => b.score - a.score).slice(0, MAX_RESULTS);
 };
 
 export const buildEntryPayload = (organizationId: string, input: CreateEntryInput) => ({

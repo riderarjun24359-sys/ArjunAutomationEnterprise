@@ -124,6 +124,12 @@ insert into public.executive_recommendations (organization_id, agent_key, title)
 insert into public.executive_approvals (organization_id, agent_key, action_summary) values
   ('${ORG1}', 'agent-a', 'Approve X'),
   ('${ORG2}', 'agent-a', 'Approve Y');
+insert into public.integration_webhooks (organization_id, name, url, secret) values
+  ('${ORG1}', 'crm', 'https://hooks.example.com/events', 'test-secret-16-chars!!'),
+  ('${ORG2}', 'crm', 'https://hooks.example.com/events', 'test-secret-16-chars!!');
+insert into public.integration_deliveries (organization_id, event, target_host, status, attempts) values
+  ('${ORG1}', 'lead.created', 'hooks.example.com', 'delivered', 1),
+  ('${ORG2}', 'lead.created', 'hooks.example.com', 'delivered', 1);
 `);
 
 async function asAuth(authId) {
@@ -370,6 +376,37 @@ for (const t of MODULE_TABLES) {
     await expectRows(`select id from public.${t.tbl} where organization_id = '${ORG2}'`, 0, `module: ${t.tbl} business-data isolation holds for platform admin`);
 }
 await resetRole();
+
+// --- 202610120005: governed outbound webhooks --------------------------------
+// Named targets + delivery log. Same-tenant positive, cross-tenant denied,
+// memberless sees nothing; policy-shape assertion reuses the module gate.
+await asAuth(AUTH1);
+await expectRows(`select id from public.integration_webhooks where organization_id = '${ORG1}'`, 1, "webhooks: same-tenant read");
+await expectRows(`select id from public.integration_webhooks where organization_id = '${ORG2}'`, 0, "webhooks: cross-org read denied");
+await expectError(
+    `insert into public.integration_webhooks (organization_id, name, url, secret) values ('${ORG2}', 'evil', 'https://evil.example.net/x', 'x')`,
+    "webhooks: cross-org INSERT blocked",
+);
+await expectRows(
+    `update public.integration_webhooks set name = 'Hacked' where organization_id = '${ORG2}' returning id`,
+    0,
+    "webhooks: cross-org UPDATE affects 0 rows",
+);
+await expectRows(`select id from public.integration_deliveries where organization_id = '${ORG1}'`, 1, "deliveries: same-tenant read");
+await expectRows(`select id from public.integration_deliveries where organization_id = '${ORG2}'`, 0, "deliveries: cross-org read denied");
+await expectError(
+    `insert into public.integration_deliveries (organization_id, event) values ('${ORG2}', 'evil')`,
+    "deliveries: cross-org INSERT blocked",
+);
+await resetRole();
+
+await asAuth(AUTH5);
+await expectRows("select id from public.integration_webhooks", 0, "webhooks: memberless sees nothing");
+await expectRows("select id from public.integration_deliveries", 0, "deliveries: memberless sees nothing");
+await resetRole();
+
+await expectModulePolicy("integration_webhooks");
+await expectModulePolicy("integration_deliveries");
 
 // Policy-shape gate over all 20 tables enabled by 202610120004.
 for (const tbl of [

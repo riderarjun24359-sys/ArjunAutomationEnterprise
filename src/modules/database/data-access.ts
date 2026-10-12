@@ -2,6 +2,10 @@ import { OrganizationRepository } from "@/src/modules/database/repositories/orga
 import { ProfileRepository } from "@/src/modules/database/repositories/profile-repository";
 import { MembershipRepository } from "@/src/modules/database/repositories/membership-repository";
 import { AuditRepository } from "@/src/modules/database/repositories/audit-repository";
+import {
+    IntegrationWebhookRepository,
+    IntegrationDeliveryRepository,
+} from "@/src/modules/database/repositories/integration-webhook-repositories";
 import { StorageRepository } from "@/src/modules/database/repositories/storage-repository";
 import { ClientRepository } from "@/src/modules/database/repositories/client-repository";
 import { ActivityLogRepository } from "@/src/modules/database/repositories/activity-log-repository";
@@ -1848,6 +1852,8 @@ export class DatabaseAccessLayer {
     readonly aixExecutiveHealth: AixExecutiveHealthRepository;
     readonly aixExecutiveFailures: AixExecutiveFailureRepository;
     readonly aixAuditLogs: AixAuditLogRepository;
+    readonly integrationWebhooks: IntegrationWebhookRepository;
+    readonly integrationDeliveries: IntegrationDeliveryRepository;
     readonly elrReadinessHubs: ElrReadinessHubRepository;
     readonly elrEnvironmentValidations: ElrEnvironmentValidationRepository;
     readonly elrConfigurationValidations: ElrConfigurationValidationRepository;
@@ -3023,6 +3029,8 @@ export class DatabaseAccessLayer {
         this.aixExecutiveHealth = new AixExecutiveHealthRepository();
         this.aixExecutiveFailures = new AixExecutiveFailureRepository();
         this.aixAuditLogs = new AixAuditLogRepository();
+        this.integrationWebhooks = new IntegrationWebhookRepository();
+        this.integrationDeliveries = new IntegrationDeliveryRepository();
         this.elrReadinessHubs = new ElrReadinessHubRepository();
         this.elrEnvironmentValidations = new ElrEnvironmentValidationRepository();
         this.elrConfigurationValidations = new ElrConfigurationValidationRepository();
