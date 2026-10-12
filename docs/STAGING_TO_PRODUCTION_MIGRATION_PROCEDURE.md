@@ -37,18 +37,25 @@ apply.
 ## 0. Preconditions (do all of these before touching staging)
 
 1. Dashboard access to the staging project with SQL Editor rights.
-2. **Staging must serve the current code with a configured backend.** Verified 2026-10-12:
+2. **Staging must be a real, team-backed deployment — verified 2026-10-12 it is not.**
+   A read-only CI probe of the Vercel team API proved the team contains exactly ONE
+   project (`arjunautomationos-enterprise`); `arjunautomationos-staging.vercel.app` is
+   backed by no team project (different account or orphaned URL) and serves a stale
+   build. Owner must EITHER (a) confirm which account owns that URL and repair it there,
+   OR (b) provision a proper staging project in the team, deploy current `main` to it,
+   and point this runbook at its URL. There is no authorized self-service path to either.
+3. **Staging must serve the current code with a configured backend.** Verified 2026-10-12:
    staging served a stale build (old marketing copy, `GET /api/organization/teams` → 404
    vs 401 on production) and its cutover reports `supabase_env` + `supabase_migrations`
    blockers. Before step 1: deploy the current `main` to staging, set the staging
    Supabase URL/anon key, and confirm `GET /api/organization/teams` returns 401 (not 404)
    and the homepage shows the current stats. Migrating a stale/unconfigured staging
    proves nothing.
-3. A **second** test identity that is a member of a *different* organization
+4. A **second** test identity that is a member of a *different* organization
    (for cross-tenant negative probes), and a brand-new signed-up identity with no
    membership (for the bootstrap probe).
-4. A recent backup / restore point for staging (Supabase → Database → Backups).
-5. `docs/OWNER_ACTIONS.md §6b` open beside this document.
+5. A recent backup / restore point for staging (Supabase → Database → Backups).
+6. `docs/OWNER_ACTIONS.md §6b` open beside this document.
 
 ## 1. Capture pre-state (read-only — run on staging, keep the output as the rollback artifact)
 

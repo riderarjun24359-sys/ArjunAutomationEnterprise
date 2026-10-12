@@ -487,6 +487,15 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
   Secrets sweep: no hardcoded values, no tracked `.env`.
 
+- [x] D54 **Staging proven unrepairable self-service; runbook hardened (2026-10-13).**
+  Built a temporary read-only CI probe (deleted after use; 3 dispatches: 1 failed on
+  v12 endpoint, 1 failed on a `node -p` multiline-capture bug, 1 green) establishing:
+  the Vercel team holds exactly ONE project, so `arjunautomationos-staging.vercel.app`
+  is backed by no team project — different account or orphaned URL. Guard refused to
+  touch production (explicit project-ID exclusion worked). Runbook §0 now states the
+  staging-existence prerequisite with both owner options. All other external paths
+  re-verified absent (no Supabase/CLI/token/Docker/MCP/provider access).
+
 - [x] D53 **Runbook reconciliation, staging truth, rollback completion (2026-10-13).**
   Verified the 8-file procedure against actual migration contents instead of trusting it:
   the rollback section covered only 120001–120005. Added the missing pieces, all proven by
