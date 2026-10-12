@@ -37,16 +37,16 @@ export const TRUSTED_BY_CONTENT = {
         "AI Orchestration",
     ],
     badges: [
-        { label: "SOC 2 Ready", description: "Enterprise security controls and audit readiness" },
         { label: "RLS Enforced", description: "Row-level security on every tenant data path" },
-        { label: "ISO Aligned", description: "Processes aligned with ISO 27001 practices" },
-        { label: "GDPR Aware", description: "Privacy-by-design data handling" },
+        { label: "Tenant Isolation", description: "Cross-tenant reads and writes denied by default" },
+        { label: "RBAC", description: "Role-based access with invitation gates" },
+        { label: "Audit Trails", description: "Audit logging across every module" },
     ] satisfies TrustBadge[],
     counters: [
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },
-        { value: 64, suffix: "", label: "Versioned DB Migrations" },
-        { value: 9, suffix: "", label: "Live Health Endpoints" },
+        { value: 68, suffix: "", label: "Versioned DB Migrations" },
+        { value: 10, suffix: "", label: "Live Health Endpoints" },
     ] satisfies TrustCounter[],
 };
 

@@ -487,6 +487,19 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
   Secrets sweep: no hardcoded values, no tracked `.env`.
 
+- [x] D50 **Deployment recovery + second marketing-truth pass (2026-10-12).** Git-integration
+  silence confirmed across 3 pushes (pushes land on `main`; Vercel reports nothing; no
+  authorized Vercel-side visibility exists). Single documented recovery: one
+  `deploy-production` dispatch (run `38283705103`, **success** — verify, Vercel API deploy,
+  healthchecks, rollback publish all green). Deployment `7019546295` = `12db6c6` Production
+  success; Vercel build `dpl_D8xLnZQLZtkSBmSSuMrRbLmsE2ZN` logged READY. Fingerprinting the
+  live homepage then caught a REAL miss: the rendered 64/9 stats come from
+  `trust-conversion-content.ts`, not the `home-content.ts` fixed in D49 — second copy now
+  corrected to 68/10, and its unaudited "SOC 2 Ready / ISO Aligned / GDPR Aware" badges
+  replaced with verified properties (RLS, tenant isolation, RBAC, audit trails). Sweep
+  confirms no other stale marketing copies; in-product ISO/SOC2/GDPR references are
+  compliance-*tracking* features with empty states, not certification claims (left intact).
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
