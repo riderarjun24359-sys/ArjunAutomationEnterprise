@@ -26,7 +26,12 @@ the request.
 **Owner dashboard work (pick ONE provider):**
 
 - **Option A — Resend (recommended):** at https://resend.com → API Keys → create key;
-  Domains → add + verify `arjunautomations.com` (make the DNS records in §4 first).
+  Domains → verify `arjunautomations.com`. **DNS is already correct — verified 2026-10-12
+  via public lookup: the Resend DKIM public key IS published at
+  `resend._domainkey.arjunautomations.com`, and `_dmarc` exists (`p=none`). No DNS change
+  is needed unless Resend's dashboard reports otherwise; just press Verify.** (No MX and no
+  apex SPF exist — harmless for Resend sending, which signs with DKIM; only add SPF/MX if
+  you also want to *receive* mail or a receiver demands it.)
   Then set:
   - Vercel `production`: `RESEND_API_KEY`, `RESEND_FROM` (e.g. `noreply@arjunautomations.com`)
   - Repo secret: `RESEND_API_KEY` (only needed for CI verification)
