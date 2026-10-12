@@ -224,6 +224,26 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     `next build` OK. Live matrix re-verified (all ops 200, diagnostics 401, cutover 503 with 2 true
     blockers, apex 308, webhook 400). No duplicate workflow dispatch (latest run still `38145177440`).
 
+- [x] D39 **Backup/drill evidence actually readable + OWNER_ACTIONS.md (2026-10-12).** Found that
+  `buildDisasterRecoveryDiagnostics` accepted drill rows only as a parameter no caller ever
+  supplied, and every repository read is browser-bound (`getRepositoryClient()` is null on the
+  server) — so backup configs and `cop_restore_validations` rows were **structurally unobservable**
+  from `/api/ops/diagnostics`; owner setup could never flip the gate. Commit **`26edf30`** (Git
+  auto-deploy **READY**, live on all production aliases): pure `evaluateBackupSnapshot`
+  (`verifyBackupStatus` keeps identical semantics on top of it); builder accepts optional
+  `drillEvidence` + `serverBackup` (defaults preserve all callers); the diagnostics route reads
+  `backup_configs`/`backup_runs`/`cop_restore_validations` with the **caller's session JWT (never
+  service-role), strictly org-scoped**, all failures falling back to the honest defaults.
+  `disaster-recovery` tests **7/7** (5 new). New **`docs/OWNER_ACTIONS.md`**: exact var/secret
+  names only (all validated against implementation; `SMTP_PASS` canonical, no
+  `PAYMENT_WEBHOOK_SECRET`), local-vs-dashboard separation, drill-row shape (`organization_id` +
+  `hub_id` from `cop_operated_hubs` + `restore_key/status/validated_at`), safe verification steps,
+  explicit not-required list, single next action (§1 Resend). Verified: tsc 0, eslint 0,
+  `test:unit` **137/137**, `production-cutover`/`go-live` verifiers OK, `next build` OK, live
+  matrix green (ops 200, diagnostics 401, cutover `ready=false` with the 2 true blockers, webhook
+  400 `webhook_secret_missing`, staging green). No credentials invented, no writes, no fake
+  evidence; `.bak` preserved; no duplicate dispatches.
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
