@@ -274,6 +274,37 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     ai-delivery-model 6/6, company-launch-kit 89/89, production/go-live/soft-launch OK),
     `db:verify`/`db:validate` PASS, `next build` OK. `.bak` preserved; no duplicate dispatches.
 
+- [x] D41 **Real server-side onboarding provisioning (2026-10-12).** The onboarding wizard was
+  **localStorage-only** (`aaos.soft-launch.onboarding.v1`) — it "completed" a tenant that never
+  existed server-side, which is why the D40 bootstrap-by-attach path had to accept an orphan user.
+  Replaced with a real, session-derived provisioning flow (this checkpoint commit):
+  - New routes `app/api/organization/`: `provision` (GET real org/membership status, POST create
+    tenant + founder membership), `teams` (GET/POST workspace teams, per-org slug), `invitations`
+    (GET/POST org-scoped invites), `invitations/mine` (GET by **session email** — how an invited
+    user with no tenant discovers it), `invitations/accept` (POST redeem by session email).
+  - **Identity is always the authenticated session** (`secureApiRoute` → `context.user`); the body
+    carries only new-tenant details — no client-supplied user/org ids are trusted. All routes
+    fail closed (503) without the service-role client; 401 unauthenticated, 403 no org context.
+  - Idempotent + partial-failure-safe: a caller with any membership gets the existing tenant
+    (retries never duplicate); duplicate pending invites return the existing row; accept is
+    idempotent and, if membership succeeds but invite-marking fails, returns the membership with
+    `inviteMarkedAccepted:false`; if the org row is created but the membership insert fails the
+    orphan org is deleted before failing 500.
+  - Validation (`src/lib/organization-provisioning.ts`, zod): slug rule (lowercase/digits/hyphens),
+    role enum **excludes `super_admin`** (invitable: viewer/member/manager/admin), UUID-gated accept.
+  - Wizard rewritten: loads real state, redirects to sign-in on 401, offers pending invites,
+    provisions org/team/invites against the routes; **localStorage removed** as source of truth.
+  - Tests **26/26 new** (`organization-provisioning` 5, `provision` 8, `teams` 4, `invitations` 4,
+    `accept` 5) via an in-memory supabase-js fake — covering 401, unauthenticated, invalid input,
+    duplicate/retry, cross-org read isolation, and partial-failure cleanup. Verified: tsc 0,
+    eslint 0 errors, `test:unit` **179/179**, `db:verify` 64 PASS, `db:validate` PGlite PASS, all
+    mission verifiers green (launch-readiness 80/80, premium-website 89/89, production-remediation
+    36/36, ai-delivery-model 6/6, company-launch-kit 89/89, mission-core 111/111, security-center
+    116/116, production/go-live/soft-launch OK), `next build` OK.
+  - Residual tenant-isolation risks unchanged: the three prepared RLS migrations remain **unapplied**
+    (no staging DB access locally); all-inactive-org bootstrap edge and `updateTaskById` system-path
+    guard exception remain as documented in D40. `.bak` preserved; single deploy (no extra dispatch).
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
