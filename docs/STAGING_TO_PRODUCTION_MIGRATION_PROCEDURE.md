@@ -37,11 +37,18 @@ apply.
 ## 0. Preconditions (do all of these before touching staging)
 
 1. Dashboard access to the staging project with SQL Editor rights.
-2. A **second** test identity that is a member of a *different* organization
+2. **Staging must serve the current code with a configured backend.** Verified 2026-10-12:
+   staging served a stale build (old marketing copy, `GET /api/organization/teams` → 404
+   vs 401 on production) and its cutover reports `supabase_env` + `supabase_migrations`
+   blockers. Before step 1: deploy the current `main` to staging, set the staging
+   Supabase URL/anon key, and confirm `GET /api/organization/teams` returns 401 (not 404)
+   and the homepage shows the current stats. Migrating a stale/unconfigured staging
+   proves nothing.
+3. A **second** test identity that is a member of a *different* organization
    (for cross-tenant negative probes), and a brand-new signed-up identity with no
    membership (for the bootstrap probe).
-3. A recent backup / restore point for staging (Supabase → Database → Backups).
-4. `docs/OWNER_ACTIONS.md §6b` open beside this document.
+4. A recent backup / restore point for staging (Supabase → Database → Backups).
+5. `docs/OWNER_ACTIONS.md §6b` open beside this document.
 
 ## 1. Capture pre-state (read-only — run on staging, keep the output as the rollback artifact)
 
@@ -71,6 +78,34 @@ where schemaname = 'public'
     'integration_webhooks','integration_deliveries'
   )
 order by tablename, policyname;
+
+-- 1a2. Current table grants on the affected tables (needed to roll back the
+--     GRANT/REVOKE in 202610100001 — no earlier migration issued these grants,
+--     so this output is the only restore source).
+select table_name, grantee, privilege_type, is_grantable
+from information_schema.role_table_grants
+where table_schema = 'public'
+  and table_name in (
+    'organizations','organization_members','user_profiles',
+    'crm_clients','crm_leads','crm_deals','crm_activities','crm_tasks',
+    'sales_leads','invoices','payments','organization_invitations',
+    'project_management','storage_objects',
+    'csg_success_plans','csg_onboarding_sessions','csg_delivery_milestones',
+    'csg_feedback_responses','csg_escalations','csg_renewals',
+    'csg_improvement_items','csg_audit_logs',
+    'de_blueprints','de_components','de_engagements','de_pipeline_runs',
+    'de_quality_verifications','de_knowledge_entries','de_analytics_metrics',
+    'de_ai_recommendations',
+    'executive_recommendations','executive_collaboration',
+    'executive_audit_logs','executive_approvals',
+    'eae_agent_tasks','eae_recommendations','eae_collaboration_events',
+    'eae_approval_requests',
+    'pr_readiness_snapshots','pr_system_alerts',
+    'executive_agents','executive_tasks','executive_agent_metrics',
+    'executive_health','executive_memory',
+    'integration_webhooks','integration_deliveries'
+  )
+order by table_name, grantee, privilege_type;
 
 -- 1b. Duplicate / invalid data that blocks the finance + lead indexes
 --     (see the precheck queries in §2, steps 3 and 4). Row counts:
@@ -247,6 +282,30 @@ Every object here is a policy drop/create, so rollback is restoring the captured
 pre-state DDL from §1a. The exact pre-state definitions:
 
 ```sql
+-- Undo 202610100001 (restores the open foundation policies on the five crm_*
+-- tables and drops the org-scoped _delete policies, which did not exist before.
+-- Grants are NOT hardcoded here: no migration before 202610100001 issued grants
+-- on these tables, so restore them from your §1a grants capture below.)
+do $$
+declare tbl text;
+begin
+  foreach tbl in array array['crm_clients','crm_leads','crm_deals','crm_activities','crm_tasks'] loop
+    execute format('drop policy if exists %I on public.%I', tbl || '_select', tbl);
+    execute format('drop policy if exists %I on public.%I', tbl || '_insert', tbl);
+    execute format('drop policy if exists %I on public.%I', tbl || '_update', tbl);
+    execute format('drop policy if exists %I on public.%I', tbl || '_delete', tbl);
+    execute format('create policy %I on public.%I for select using (true)', tbl || '_select', tbl);
+    execute format('create policy %I on public.%I for insert with check (true)', tbl || '_insert', tbl);
+    execute format('create policy %I on public.%I for update using (true) with check (true)', tbl || '_update', tbl);
+  end loop;
+end $$;
+
+-- Undo 202610100002 (drops the lead dedup index; data is untouched)
+drop index if exists public.sales_leads_org_email_uidx;
+-- Undo 202610100003 (drops the invoice guard index; data is untouched — re-apply
+-- the migration to rebuild it after duplicates resolve)
+drop index if exists public.invoices_org_number_uidx;
+
 -- Undo 202610120001
 drop policy if exists orgs_update on public.organizations;
 create policy orgs_update on public.organizations for update to authenticated

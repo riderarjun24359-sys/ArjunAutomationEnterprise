@@ -63,7 +63,7 @@ if (!fence) {
     console.error("FAIL: no ```sql fence found in §5");
     process.exit(2);
 }
-for (const marker of ["Undo 202610120001", "Undo 202610120002", "Undo 202610120003", "Undo 202610120004", "Undo 202610120005"]) {
+for (const marker of ["Undo 202610100001", "Undo 202610100002", "Undo 202610100003", "Undo 202610120001", "Undo 202610120002", "Undo 202610120003", "Undo 202610120004", "Undo 202610120005"]) {
     if (!fence[1].includes(marker)) {
         console.error(`FAIL: §5 rollback SQL is missing ${marker}`);
         process.exit(2);
@@ -99,6 +99,21 @@ p = await policy("user_profiles", "profiles_select");
 record("rollback: profiles_select open", isOpen(p));
 p = await policy("user_profiles", "profiles_update");
 record("rollback: profiles_update open", isOpen(p));
+
+// --- crm tables back to open pre-state, delete policies gone ------------------
+for (const tbl of ["crm_clients", "crm_leads", "crm_deals", "crm_activities", "crm_tasks"]) {
+    for (const name of [`${tbl}_select`, `${tbl}_insert`, `${tbl}_update`]) {
+        record(`rollback: ${tbl}.${name} open`, isOpen(await policy(tbl, name)));
+    }
+    const del = await db.query("select count(*)::int as n from pg_policies where schemaname='public' and tablename=$1 and policyname=$2;", [tbl, `${tbl}_delete`]);
+    record(`rollback: ${tbl}_delete absent`, del.rows[0].n === 0, del.rows[0].n === 0 ? "" : "still exists");
+}
+
+// --- dedup/guard indexes dropped ------------------------------------------------
+for (const idx of ["sales_leads_org_email_uidx", "invoices_org_number_uidx"]) {
+    const r = await db.query("select count(*)::int as n from pg_indexes where schemaname='public' and indexname=$1;", [idx]);
+    record(`rollback: index ${idx} dropped`, r.rows[0].n === 0, r.rows[0].n === 0 ? "" : "still exists");
+}
 
 // --- legacy tables back to open pre-state ----------------------------------
 for (const [tbl, names] of [

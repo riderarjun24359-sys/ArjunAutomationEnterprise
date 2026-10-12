@@ -487,6 +487,22 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   messages, `aria-invalid`/`aria-describedby` on fields, correct `autoComplete` tokens.
   Secrets sweep: no hardcoded values, no tracked `.env`.
 
+- [x] D53 **Runbook reconciliation, staging truth, rollback completion (2026-10-13).**
+  Verified the 8-file procedure against actual migration contents instead of trusting it:
+  the rollback section covered only 120001–120005. Added the missing pieces, all proven by
+  the drift-proof verifier: "Undo 202610100001" (restores the open crm_* trio, drops the
+  _delete policies that never existed pre-migration; grants restorable only from the NEW
+  §1a2 grants capture, since no earlier migration issued them), "Undo 202610100002 /
+  100003" with the exact index names (`sales_leads_org_email_uidx`,
+  `invoices_org_number_uidx`). Rollback verifier now asserts crm openness, _delete absence,
+  and index removal. §1a2 grants capture added; §0 now requires staging to serve current
+  code with a configured backend first.
+  Live staging evidence (new): staging serves a STALE build (old marketing copy, teams
+  route 404 vs production 401) and its cutover reports `supabase_env`/`supabase_migrations`
+  blockers — staging is not currently a valid migration target; owner must deploy +
+  configure it first. MCP avenue checked (no servers configured); leftover Vercel OIDC
+  token expired 2026-10-11 (dead end confirmed, not used).
+
 - [x] D52 **Governed outbound webhooks, ranked retrieval, routing evals (2026-10-13).**
   Market audit: workflow engine (definitions/executions/approvals/audit), local execution
   with retry planning, knowledge CRUD, idempotency, and approvals are genuinely implemented;
