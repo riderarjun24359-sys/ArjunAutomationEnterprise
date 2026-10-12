@@ -17,10 +17,6 @@ jobs:
           curl -fsS "https://api.vercel.com/v9/projects?teamId=$VERCEL_ORG_ID" \
             -H "Authorization: Bearer $VERCEL_TOKEN" > projects.json
           node -e "const p=require('./projects.json'); for (const x of p.projects||[]) console.log('-', x.name)"
-          echo "--- production project domains (are any staging-like?) ---"
-          curl -fsS "https://api.vercel.com/v9/projects/$VERCEL_PROJECT_ID/domains?teamId=$VERCEL_ORG_ID" \
-            -H "Authorization: Bearer $VERCEL_TOKEN" \
-            | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);for(const d of j.domains||[])console.log('-',d.name);})"
           STAGING_ID="$(node -p "
             const ps=(require('./projects.json').projects||[]).filter(x=>/staging/i.test(x.name||'') && x.id!=='$VERCEL_PROJECT_ID');
             if (ps.length===0) { console.log('NO_STAGING_PROJECT'); } else {
