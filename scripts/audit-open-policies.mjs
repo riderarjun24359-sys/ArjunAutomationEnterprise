@@ -104,5 +104,29 @@ console.log("\n=== Tenant tables with RLS but no SELECT policy (deny-by-default)
 if (!noSelect.length) console.log("  none");
 for (const t of noSelect) console.log(`  ${t}`);
 
+// 3) Full existing-policy inventory for the WARN tables, so an owner (or a
+// follow-up migration) can see exactly what already exists before adding
+// tenant-scoped policies. Prints: policyname [cmd] roles=... using=... check=...
+if (noSelect.length) {
+    console.log("\n=== Existing policies on WARN tables (any cmd, any role) ===");
+    for (const t of noSelect) {
+        const inv = await db.query(
+            `select policyname, cmd, roles, qual, with_check from pg_policies
+             where schemaname = 'public' and tablename = $1
+             order by policyname;`,
+            [t],
+        );
+        if (!inv.rows?.length) {
+            console.log(`  ${t}: <no policies at all — full deny>`);
+            continue;
+        }
+        for (const p of inv.rows) {
+            console.log(
+                `  ${t}.${p.policyname} [${p.cmd}] roles=${JSON.stringify(p.roles)} using=${p.qual ?? "null"} check=${p.with_check ?? "null"}`,
+            );
+        }
+    }
+}
+
 await db.close();
 process.exit(openRows.length === 0 ? 0 : 1);

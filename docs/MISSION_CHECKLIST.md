@@ -429,6 +429,25 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
     PASS, `rls:verify` 34/34, `rls:audit` exit 0. Deny-by-default module tables (`eae_*`, `de_*`,
     `executive_*`, `csg_*`, `pr_*`) documented as a functional (not security) consideration.
 
+- [x] D47 **Module-table tenant access restored safely (2026-10-12).** Inventoried all 31
+  deny-by-default tables (RLS on, zero policies) and traced each module's tenant model:
+  every CSG (×8) / delivery-engine (×8) / executive-ai-used (×4) repository query filters by
+  `organization_id`, services consume them, and routes render them — genuinely implemented.
+  Locked out: deprecated `eae_*` (×4, zero src refs), `pr_*` (×2, service computes in-memory,
+  never persisted), 5 dead `executive_*` TABLE constants (agents/tasks/metrics/health/memory —
+  never consumed; the one stray `executive_health` string is an audit label on the separate
+  already-scoped `aix_*` tables). Zero `.delete()` calls anywhere → DELETE stays denied.
+  - Prepared `supabase/migrations/202610120004_module_tables_tenant_reads.sql` (HELD):
+    SELECT/INSERT/UPDATE `to authenticated` with `is_organization_member(organization_id)`
+    on the 20 tables; platform-admin cross-org visibility stays identity-layer-only
+    (orgs/members/profiles), matching invoices/clients — enforced by probes.
+  - `scripts/verify-rls-isolation.mjs` extended to **82 probes**: 20 data probes (same-tenant
+    positive, cross-tenant SELECT/INSERT/UPDATE denied on 4 representative tables), 8
+    memberless/platform-admin probes, 20 policy-shape assertions (tenant-scoped trio, no open
+    policy) — 0 failures. `rls:audit` WARN now lists exactly the 11 locked tables.
+  - `apply_all.sql` regenerated (68 migrations + 50 seeds); `db:verify` PASS (68),
+    `db:validate` PASS.
+
 
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery

@@ -174,6 +174,12 @@ the Management API. Apply in filename order, one file at a time. The full copy-p
    Both are currently orphaned/unused, but the open policies are a latent hole. Tightens them
    to `is_organization_member(organization_id)` `to authenticated`. No data prerequisite.
    `npm run rls:audit` now exits 0 (no open policies on any tenant table).
+6. **`202610120004_module_tables_tenant_reads.sql`** — grants minimal org-scoped
+   SELECT/INSERT/UPDATE (`to authenticated`, `is_organization_member`) to the 20
+   module tables that back genuinely implemented, UI-wired dashboards (CSG ×8,
+   delivery-engine ×8, executive-ai ×4 used). No DELETE (no code path deletes).
+   Keeps 11 tables locked (deprecated `eae_*` ×4, in-memory `pr_*` ×2, 5 dead
+   `executive_*` constants) — see the migration header for the full inventory.
 
 After each: re-run `npm run db:verify`, live-probe staging with the anon key (expect 401 on the
 remediated tables) plus an authenticated second-org user (expect cross-org deny), and only then

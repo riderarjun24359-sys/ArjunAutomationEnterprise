@@ -9,7 +9,8 @@
  *   - the prepared tenant-isolation migrations
  *     (202610100001 CRM RLS, 202610100002 lead consent/dedup,
  *      202610100003 finance guards, 202610120001 membership/org write
- *      escalation lockdown, 202610120002 authenticated read-scope lockdown)
+ *      escalation lockdown, 202610120002 authenticated read-scope lockdown,
+ *      202610120003 legacy-table lockdown, 202610120004 module-table tenant reads)
  *     behave correctly;
  *   - the 202610110001 anon lockdown holds;
  *   - the repo-standard is_organization_member(organization_id) pattern denies
@@ -111,6 +112,18 @@ insert into public.crm_clients (organization_id, name, contact_email, manager_na
 insert into public.invoices (organization_id, number, status, total, amount_paid) values
   ('${ORG1}', 'INV-1', 'draft', 100, 0),
   ('${ORG2}', 'INV-2', 'draft', 200, 0);
+insert into public.csg_success_plans (organization_id, title) values
+  ('${ORG1}', 'Plan One'),
+  ('${ORG2}', 'Plan Two');
+insert into public.de_blueprints (organization_id, blueprint_key, name, category) values
+  ('${ORG1}', 'bp-one', 'BP One', 'web'),
+  ('${ORG2}', 'bp-two', 'BP Two', 'web');
+insert into public.executive_recommendations (organization_id, agent_key, title) values
+  ('${ORG1}', 'agent-a', 'Rec One'),
+  ('${ORG2}', 'agent-a', 'Rec Two');
+insert into public.executive_approvals (organization_id, agent_key, action_summary) values
+  ('${ORG1}', 'agent-a', 'Approve X'),
+  ('${ORG2}', 'agent-a', 'Approve Y');
 `);
 
 async function asAuth(authId) {
@@ -145,6 +158,29 @@ async function expectOk(sql, label) {
         record(label, true);
     } catch (error) {
         record(label, false, `error: ${String(error.message).split("\n")[0]}`);
+    }
+}
+async function expectModulePolicy(table) {
+    // Every table enabled by 202610120004 must carry exactly the tenant-scoped
+    // trio (select/insert/update TO authenticated, is_organization_member on
+    // organization_id) and no open USING/WITH CHECK-true policy.
+    try {
+        const res = await db.query(
+            `select policyname, cmd, roles::text as roles, coalesce(qual, '') as qual, coalesce(with_check, '') as wc from pg_policies where schemaname = 'public' and tablename = '${table}';`,
+        );
+        const need = [[`${table}_select`, "SELECT"], [`${table}_insert`, "INSERT"], [`${table}_update`, "UPDATE"]];
+        const bad = [];
+        for (const [name, cmd] of need) {
+            const p = res.rows.find((r) => r.policyname === name && r.cmd === cmd);
+            const expr = p ? `${p.qual} ${p.wc}` : "";
+            const ok = Boolean(p) && p.roles.includes("authenticated") && expr.includes("is_organization_member") && expr.includes("organization_id");
+            if (!ok) bad.push(name);
+        }
+        const open = res.rows.filter((r) => /(^|[^_a-z])true([^_a-z]|$)/i.test(`${r.qual} ${r.wc}`) && !/is_organization_member/.test(`${r.qual} ${r.wc}`));
+        if (open.length) bad.push(`open:${open.map((r) => r.policyname).join(",")}`);
+        record(`module policy: ${table} tenant-scoped trio, no open policy`, bad.length === 0, bad.length ? bad.join("; ") : "");
+    } catch (error) {
+        record(`module policy: ${table} tenant-scoped trio, no open policy`, false, String(error.message).split("\n")[0]);
     }
 }
 
@@ -285,6 +321,69 @@ await asAuth(AUTH4);
 await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
 await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
 await resetRole();
+
+// --- 202610120004: module-table tenant reads --------------------------------
+// One representative table per enabled module family. AUTH1 founds ORG1 only.
+// Same-tenant positive reads must work (dashboards were inert under full deny);
+// cross-tenant SELECT/INSERT/UPDATE must fail; memberless sees nothing; the
+// platform admin keeps cross-org visibility.
+const MODULE_TABLES = [
+    { tbl: "csg_success_plans", col: "title", evil: "'Plan Evil'", insCols: "title", insVals: "'Evil'" },
+    { tbl: "de_blueprints", col: "name", evil: "'BP Evil'", insCols: "blueprint_key, name, category", insVals: "'evil', 'Evil', 'web'" },
+    { tbl: "executive_recommendations", col: "title", evil: "'Rec Evil'", insCols: "agent_key, title", insVals: "'agent-a', 'Evil'" },
+    { tbl: "executive_approvals", col: "action_summary", evil: "'Approve Evil'", insCols: "agent_key, action_summary", insVals: "'agent-a', 'Evil'" },
+];
+await asAuth(AUTH1);
+for (const t of MODULE_TABLES) {
+    await expectRows(`select id from public.${t.tbl} where organization_id = '${ORG1}'`, 1, `module: ${t.tbl} same-tenant read`);
+    await expectRows(`select id from public.${t.tbl} where organization_id = '${ORG2}'`, 0, `module: ${t.tbl} cross-org read denied`);
+    await expectError(
+        `insert into public.${t.tbl} (organization_id, ${t.insCols}) values ('${ORG2}', ${t.insVals})`,
+        `module: ${t.tbl} cross-org INSERT blocked`,
+    );
+    await expectRows(
+        `update public.${t.tbl} set ${t.col} = ${t.evil} where organization_id = '${ORG2}' returning id`,
+        0,
+        `module: ${t.tbl} cross-org UPDATE affects 0 rows`,
+    );
+    await expectRows(
+        `update public.${t.tbl} set ${t.col} = ${t.evil} where organization_id = '${ORG1}' returning id`,
+        1,
+        `module: ${t.tbl} same-tenant UPDATE allowed`,
+    );
+}
+await resetRole();
+
+// A memberless user sees nothing in the module tables either.
+await asAuth(AUTH5);
+for (const t of MODULE_TABLES) {
+    await expectRows(`select id from public.${t.tbl}`, 0, `module: ${t.tbl} memberless sees nothing`);
+}
+await resetRole();
+
+// Platform admin (super_admin in ORG1) keeps cross-org visibility on the
+// identity layer only (organizations/members/profiles per 202610120002).
+// Business/module rows stay member-scoped — exactly like invoices and
+// crm_clients — so the admin sees 0 of ORG2's module rows here.
+await asAuth(AUTH4);
+for (const t of MODULE_TABLES) {
+    await expectRows(`select id from public.${t.tbl} where organization_id = '${ORG2}'`, 0, `module: ${t.tbl} business-data isolation holds for platform admin`);
+}
+await resetRole();
+
+// Policy-shape gate over all 20 tables enabled by 202610120004.
+for (const tbl of [
+    "csg_success_plans", "csg_onboarding_sessions", "csg_delivery_milestones",
+    "csg_feedback_responses", "csg_escalations", "csg_renewals",
+    "csg_improvement_items", "csg_audit_logs",
+    "de_blueprints", "de_components", "de_engagements", "de_pipeline_runs",
+    "de_quality_verifications", "de_knowledge_entries", "de_analytics_metrics",
+    "de_ai_recommendations",
+    "executive_recommendations", "executive_collaboration",
+    "executive_audit_logs", "executive_approvals",
+]) {
+    await expectModulePolicy(tbl);
+}
 
 await db.close();
 

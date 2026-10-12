@@ -147,6 +147,14 @@ want an all-or-nothing apply.
    hole. Tightens them to `is_organization_member(organization_id)`. No data
    prerequisite. After this, `npm run rls:audit` exits 0 (no open policies on any
    tenant table).
+7. **`202610120004_module_tables_tenant_reads.sql`** — grants minimal org-scoped
+   SELECT/INSERT/UPDATE to the 20 module tables behind the CSG, delivery-engine,
+   and executive-ai dashboards (all repository queries already filter by
+   `organization_id`; no DELETE — no code path deletes). No data prerequisite.
+   After this, those dashboards read their own org's rows instead of empty sets,
+   cross-tenant access stays denied (`rls:verify` module block: 48 probes), and
+   the 11 orphaned/dead tables (`eae_*`, `pr_*`, 5 unused `executive_*`) stay
+   fully locked.
 
 ## 3. Positive / negative probes (staging, after each file; full set after step 5)
 
