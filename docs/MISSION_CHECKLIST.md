@@ -244,6 +244,36 @@ stale CI `VERCEL_TOKEN` is fixed (workflow run `38145177440` green). See
   400 `webhook_secret_missing`, staging green). No credentials invented, no writes, no fake
   evidence; `.bak` preserved; no duplicate dispatches.
 
+- [x] D40 **Tenant-authz hardening + marketing honesty + apply_all regen (2026-10-12).** From the
+  read-only audit queue, authorization defects only (no speculative changes):
+  - `crm.service getClient/moveLeadStage`: org-equality gate before return/update (cross-tenant
+    UUID access closed). `task.service updateTask`: resolve-in-org first, refuse foreign ids
+    **before** writing (previously wrote then failed the re-read); `updateTaskById` now requires
+    the owning `organizationId` (both ai-enterprise-brain call sites pass theirs; system path
+    intentionally keeps no transition guard — documented); `deleteTask` refuses foreign ids.
+  - `organization-context`: no-membership users attach **only to a memberless org** (first-run
+    bootstrap → founder); strangers resolve null instead of joining the first populated tenant.
+  - Regression tests **16/16** (`crm.service` 6, `task.service` 5, `organization-context` 5,
+    incl. cross-org refusals with no-write assertions). Residual: orgs emptied by deactivation
+    (inactive members, data retained) still count as bootstrap-eligible — archive such orgs;
+    authenticated cross-org SELECT on orgs/members persists (app-coupled, D34).
+  - Marketing: `99.9% uptime SLA` removed everywhere public (contradicted repo honesty test);
+    hero/trust counters now product-factual (130+ pages / 90+ routes / 64 migrations / 9
+    endpoints); fictional logos replaced with served-industry labels + reframed heading;
+    portfolio/case-studies labeled representative/illustrative. No verifier asserts on that copy.
+  - `apply_all.sql` regenerated (64+50, +1154 content lines, −2 hand-merged audit_logs lines
+    superseded by `20260805_audit_rls_remediation.sql`): `db:verify` 64 PASS, PGlite execution
+    PASS. Seed-bundling contract unchanged (manual apply only). Runbook corrected to 61 applied
+    + 3 prepared pending; OWNER_ACTIONS §6b gives exact per-migration effects, data
+    prerequisites, and staging-first order (no staging access from here — owner step).
+  - Commits **`8d8feaa`** (authz) + **`dcdb27b`** (marketing/artifact/docs); deploy
+    `dpl_4Q1n55MWZd` (`dcdb27b`) production READY. Live-proven: 99.9% count 0, factual counters
+    served, fictional names 0, portfolio qualifier served, ops 200s. Verified: tsc 0, eslint 0
+    (1 pre-existing warning elsewhere), `test:unit` **153/153**, all 8 mission verifiers green
+    (launch-readiness 80/80, premium-website 89/89, production-remediation 36/36,
+    ai-delivery-model 6/6, company-launch-kit 89/89, production/go-live/soft-launch OK),
+    `db:verify`/`db:validate` PASS, `next build` OK. `.bak` preserved; no duplicate dispatches.
+
 - [x] D38 **Razorpay webhook verification + rollback procedure (2026-10-11).** The unified
   `/api/payments/webhook` receiver verified **Stripe only** — every Razorpay delivery
   (`x-razorpay-signature`) was rejected, so the documented India-first Razorpay path was a dead
