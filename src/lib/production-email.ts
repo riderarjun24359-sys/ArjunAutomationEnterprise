@@ -13,6 +13,7 @@ export const CUTOVER_EMAIL_TEMPLATES = [
     { id: "verify-email", file: "verify-email.md", path: "src/modules/soft-launch/content/emails/verify-email.md", purpose: "transactional" },
     { id: "invite-teammate", file: "invite-teammate.md", path: "src/modules/soft-launch/content/emails/invite-teammate.md", purpose: "onboarding" },
     { id: "password-reset", file: "password-reset.md", path: "src/modules/soft-launch/content/emails/password-reset.md", purpose: "password_reset" },
+    { id: "lead-owner-alert", file: "lead-owner-alert.md", path: "src/modules/soft-launch/content/emails/lead-owner-alert.md", purpose: "transactional" },
 ] as const;
 
 const EMAIL_TEMPLATE_DIRECTORY = "src/modules/soft-launch/content/emails";

@@ -9,6 +9,8 @@ import {
 } from "@/src/lib/lead-intake";
 import { buildLeadPayload, buildSalesAuditPayload } from "@/src/modules/database/lib/sales-mappers";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import { qualifyLead } from "@/src/lib/lead-qualification";
+import { notifyOwnerOfLead } from "@/src/lib/lead-notify";
 import { lazyMissionCoreClient } from "@/src/modules/mission-core/sdk/lazy-mission-core-client";
 
 const escapeLike = (value: string): string => value.replace(/[\\%_]/g, (m) => `\\${m}`);
@@ -21,8 +23,10 @@ const escapeLike = (value: string): string => value.replace(/[\\%_]/g, (m) => `\
  *
  * Writes use the server-only service-role client because this route has no
  * user JWT for RLS; every insert is org-scoped in code and recorded in the
- * sales audit log with the consent proof. No external message is sent —
- * follow-up happens from the pipeline, by a human.
+ * sales audit log with the consent proof. Owner notification is fail-open
+ * and best-effort (lead-notify.ts): when RESEND_API_KEY + a sender/owner
+ * address are configured the owner gets an alert email, otherwise the
+ * attempt is a no-op and follow-up happens from the pipeline, by a human.
  */
 export async function POST(request: Request) {
     const platformKeyProvided = Boolean(request.headers.get("x-platform-key"));
@@ -120,6 +124,45 @@ export async function POST(request: Request) {
             organizationId,
             metadata: { email: lead.email, source: lead.source, consent: PRIVACY_NOTICE_VERSION, leadId },
         });
+        // Runtime qualification (fail-safe, additive audit metadata only):
+        // the verdict routes human follow-up priority. It never authorizes
+        // research, outreach, or marketing use, and never changes this
+        // response — intake succeeds identically either way.
+        let qualification: { verdict: string; score: number } | null = null;
+        try {
+            qualification = qualifyLead({ name: lead.name, email: lead.email, company: lead.company, source: lead.source });
+            await logApiAudit({
+                action: "lead_qualified",
+                organizationId,
+                metadata: { leadId, verdict: qualification.verdict, score: qualification.score },
+            });
+        } catch {
+            // Intentionally swallowed: qualification is advisory only.
+        }
+        // Fail-open owner notification: the lead is already stored + audited
+        // above. A notification failure must never lose the lead or change
+        // this response. When unconfigured, this is a no-op and the manual
+        // Supabase-dashboard fallback (marketing/leads/README.md) applies.
+        try {
+            const notification = await notifyOwnerOfLead({
+                leadId,
+                leadName: lead.name,
+                leadEmail: lead.email,
+                company: lead.company,
+                phone: lead.phone,
+                message: lead.message,
+                source: lead.source,
+                consentVersion: PRIVACY_NOTICE_VERSION,
+                receivedAt: new Date().toISOString(),
+            });
+            await logApiAudit({
+                action: "lead_notification_attempt",
+                organizationId,
+                metadata: { leadId, notificationOk: notification.ok, notificationReason: notification.reason },
+            });
+        } catch {
+            // Intentionally swallowed: notification is best-effort only.
+        }
         lazyMissionCoreClient().publishEvent({ type: "LeadGenerated", source: "customerJourney", payload: { leadId } });
 
         const status = (created as { status?: string }).status ?? "new";
