@@ -52,13 +52,15 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
     }
 
     const inputClass =
-        "w-full rounded-lg border border-slate-300 px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700/20";
+        "w-full rounded-lg border border-[var(--premium-border)] px-4 py-2.5 text-[var(--premium-fg)] placeholder:text-[var(--premium-fg-muted)] focus:border-[var(--dos-brand-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--dos-brand-primary)]/20";
+
+    const labelClass = "mb-1 block text-sm font-medium text-[var(--premium-fg-muted)]";
 
     return (
         <form onSubmit={handleSubmit} className={compact ? "space-y-3" : "space-y-4"} aria-label="Contact form">
             <div className={compact ? "grid gap-3 sm:grid-cols-2" : "grid gap-4 sm:grid-cols-2"}>
                 <div>
-                    <label htmlFor={`name-${source}`} className="mb-1 block text-sm font-medium text-slate-700">
+                    <label htmlFor={`name-${source}`} className={labelClass}>
                         Full Name <span aria-hidden="true">*</span>
                     </label>
                     <input
@@ -72,7 +74,7 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
                     />
                 </div>
                 <div>
-                    <label htmlFor={`email-${source}`} className="mb-1 block text-sm font-medium text-slate-700">
+                    <label htmlFor={`email-${source}`} className={labelClass}>
                         Work Email <span aria-hidden="true">*</span>
                     </label>
                     <input
@@ -88,13 +90,13 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
             </div>
             <div className={compact ? "grid gap-3 sm:grid-cols-2" : "grid gap-4 sm:grid-cols-2"}>
                 <div>
-                    <label htmlFor={`company-${source}`} className="mb-1 block text-sm font-medium text-slate-700">
+                    <label htmlFor={`company-${source}`} className={labelClass}>
                         Company
                     </label>
                     <input id={`company-${source}`} name="company" type="text" autoComplete="organization" className={inputClass} />
                 </div>
                 <div>
-                    <label htmlFor={`phone-${source}`} className="mb-1 block text-sm font-medium text-slate-700">
+                    <label htmlFor={`phone-${source}`} className={labelClass}>
                         Phone
                     </label>
                     <input id={`phone-${source}`} name="phone" type="tel" autoComplete="tel" className={inputClass} />
@@ -102,7 +104,7 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
             </div>
             {!compact ? (
                 <div>
-                    <label htmlFor={`message-${source}`} className="mb-1 block text-sm font-medium text-slate-700">
+                    <label htmlFor={`message-${source}`} className={labelClass}>
                         How can we help?
                     </label>
                     <textarea
@@ -115,7 +117,7 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
                 </div>
             ) : null}
             {errorMessage ? (
-                <p role="alert" className="text-sm text-red-600">
+                <p role="alert" className="text-sm text-[var(--dos-error)]">
                     {errorMessage}
                 </p>
             ) : null}
@@ -126,11 +128,11 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
                     type="checkbox"
                     required
                     aria-required="true"
-                    className="mt-1 h-4 w-4 rounded border-slate-300"
+                    className="mt-1 h-4 w-4 rounded border-[var(--premium-border)]"
                 />
-                <label htmlFor={`consent-${source}`} className="text-sm text-slate-600">
+                <label htmlFor={`consent-${source}`} className="text-sm text-[var(--premium-fg-muted)]">
                     I agree to the storage and use of my details for contact about my enquiry, as described in the{" "}
-                    <a href={MARKETING_ROUTES.privacy} className="underline">
+                    <a href={MARKETING_ROUTES.privacy} className="underline hover:text-[var(--dos-brand-primary)]">
                         privacy notice
                     </a>
                     .
@@ -139,7 +141,7 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
             <button
                 type="submit"
                 disabled={status === "loading"}
-                className="w-full rounded-lg bg-indigo-700 px-6 py-3 font-medium text-white transition hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-700/20 disabled:opacity-60 sm:w-auto"
+                className="w-full rounded-lg bg-[var(--dos-brand-primary)] px-6 py-3 font-medium text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--dos-brand-primary)]/20 disabled:opacity-60 sm:w-auto"
             >
                 {status === "loading" ? "Sending..." : submitLabel}
             </button>

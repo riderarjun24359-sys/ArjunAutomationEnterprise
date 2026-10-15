@@ -1,40 +1,135 @@
+/* ==================================================================
+   Arjun Automation — Premium marketing design system
+   ------------------------------------------------------------------
+   Brand: matte black + deep charcoal surfaces, vivid burnt orange
+   accents, white / muted-gray type. Angular dividers, thin technical
+   borders, subtle grids and controlled orange glows.
+
+   Everything is SCOPED to `.premium-theme` (wrapping the whole marketing
+   layout), so the authenticated app shell keeps its own palette.
+   ================================================================== */
+
 :root {
-    --premium-bg: var(--dos-surface);
-    --premium-bg-secondary: var(--dos-surface-secondary);
-    --premium-fg: var(--dos-text-primary);
-    --premium-fg-muted: var(--dos-text-secondary);
-    --premium-border: var(--dos-border);
-    --premium-glass: var(--dos-glass-bg);
-    --premium-glass-border: var(--dos-glass-border);
-    --premium-accent: var(--dos-brand-primary);
-    --premium-accent-glow: var(--dos-shadow-glow);
-    /* Retain aurora/mesh for backward compatibility in cinematic hero */
-    --premium-aurora-1: rgba(99, 102, 241, 0.15);
-    --premium-aurora-2: rgba(6, 182, 212, 0.12);
-    --premium-aurora-3: rgba(139, 92, 246, 0.1);
-    --premium-mesh-1: #6366f1;
-    --premium-mesh-2: #06b6d4;
-    --premium-mesh-3: #8b5cf6;
+    /* Brand tokens — the marketing surface is dark by design. */
+    --premium-bg: #08080a;
+    --premium-bg-secondary: #101013;
+    --premium-bg-tertiary: #16161a;
+    --premium-surface: #121216;
+    --premium-fg: #f6f6f7;
+    --premium-fg-muted: #a2a2ac;
+    --premium-border: rgba(255, 255, 255, 0.09);
+    --premium-border-subtle: rgba(255, 255, 255, 0.05);
+    --premium-glass: rgba(14, 14, 17, 0.72);
+    --premium-glass-border: rgba(255, 255, 255, 0.08);
+    --premium-accent: #ff6a00;
+    --premium-accent-hover: #ff8a33;
+    --premium-accent-soft: rgba(255, 106, 0, 0.12);
+    --premium-accent-line: rgba(255, 106, 0, 0.28);
+    --premium-accent-glow: 0 0 0 1px rgba(255, 106, 0, 0.18), 0 24px 56px -20px rgba(255, 106, 0, 0.34);
+
+    /* Retain aurora/mesh names for the cinematic hero — orange biased. */
+    --premium-aurora-1: rgba(255, 106, 0, 0.14);
+    --premium-aurora-2: rgba(217, 78, 0, 0.12);
+    --premium-aurora-3: rgba(255, 138, 61, 0.1);
+    --premium-mesh-1: #ff6a00;
+    --premium-mesh-2: #d94e00;
+    --premium-mesh-3: #ff8a3d;
+
     --premium-shadow: var(--dos-elevation-2);
     --premium-radius: var(--dos-radius-2xl);
     --font-display: var(--dos-font-display);
 }
 
+/* Kept for the theme contract; the marketing surface is dark-only. */
 .dark {
-    --premium-bg: var(--dos-surface);
-    --premium-bg-secondary: var(--dos-surface-secondary);
-    --premium-fg: var(--dos-text-primary);
-    --premium-fg-muted: var(--dos-text-secondary);
-    --premium-border: var(--dos-border);
-    --premium-glass: var(--dos-glass-bg);
-    --premium-glass-border: var(--dos-glass-border);
-    --premium-accent: var(--dos-brand-primary);
-    --premium-accent-glow: var(--dos-shadow-glow);
+    --premium-bg: #08080a;
+    --premium-bg-secondary: #101013;
+    --premium-fg: #f6f6f7;
+    --premium-fg-muted: #a2a2ac;
+    --premium-border: rgba(255, 255, 255, 0.09);
+    --premium-glass: rgba(14, 14, 17, 0.72);
+    --premium-glass-border: rgba(255, 255, 255, 0.08);
+    --premium-accent: #ff6a00;
+    --premium-accent-glow: 0 0 0 1px rgba(255, 106, 0, 0.18), 0 24px 56px -20px rgba(255, 106, 0, 0.3);
 }
 
+/* ==================================================================
+   Scoped brand + palette remap
+   ------------------------------------------------------------------
+   Layer 1 — repoint the design-OS tokens for the dark marketing tree.
+   Layer 2 — Tailwind v4 compiles e.g. `bg-indigo-700` to
+   `var(--color-indigo-700)`; remapping the palette variables here
+   re-skins every legacy call site at once. Values are chosen for a
+   DARK surface: shades used as *text* (indigo-950) go light, shades
+   used as *surfaces* (indigo-50) go dark.
+   ================================================================== */
 .premium-theme {
     background-color: var(--premium-bg);
     color: var(--premium-fg);
+
+    /* --- design-OS tokens --- */
+    --dos-surface: #08080a;
+    --dos-surface-secondary: #101013;
+    --dos-surface-tertiary: #1b1b20;
+    --dos-surface-elevated: #131317;
+    --dos-surface-overlay: rgba(8, 8, 10, 0.82);
+
+    --dos-text-primary: #f6f6f7;
+    --dos-text-secondary: #a2a2ac;
+    --dos-text-tertiary: #78787f;
+
+    --dos-border: rgba(255, 255, 255, 0.09);
+    --dos-border-subtle: rgba(255, 255, 255, 0.05);
+    --dos-border-strong: rgba(255, 255, 255, 0.18);
+    --dos-border-focus: #ff8a33;
+
+    --dos-brand-primary: #ff6a00;
+    --dos-brand-primary-hover: #ff8a3d;
+    --dos-brand-secondary: #ff8a3d;
+
+    --dos-glass-bg: rgba(14, 14, 17, 0.72);
+    --dos-glass-border: rgba(255, 255, 255, 0.08);
+
+    --dos-shadow-glow: var(--premium-accent-glow);
+
+    /* --- Tailwind palette remap (indigo / cyan / violet / blue → orange) --- */
+    --color-indigo-50: #1c1006;
+    --color-indigo-100: #ffe3cc;
+    --color-indigo-200: #7a3d10;
+    --color-indigo-300: #ffbe8f;
+    --color-indigo-400: #ff9d5c;
+    --color-indigo-500: #ff7a1f;
+    --color-indigo-600: #ff8a3d;
+    --color-indigo-700: #ff6a00;
+    --color-indigo-800: #ffc59b;
+    --color-indigo-900: #ffe0c9;
+    --color-indigo-950: #f4f4f5;
+
+    --color-cyan-300: #ffbe8f;
+    --color-cyan-400: #ff9d5c;
+    --color-cyan-500: #ff7a1f;
+    --color-cyan-700: #d94e00;
+    --color-cyan-950: #3d1600;
+
+    --color-violet-300: #ffbe8f;
+    --color-violet-400: #ff9d5c;
+    --color-violet-500: #ff7a1f;
+    --color-violet-700: #d94e00;
+
+    --color-blue-400: #ff9d5c;
+
+    /* --- Tailwind palette remap (slate → neutral tuned for dark) --- */
+    --color-slate-50: #141418;
+    --color-slate-100: #1b1b20;
+    --color-slate-200: #2b2b31;
+    --color-slate-300: #3a3a41;
+    --color-slate-400: #8b8b94;
+    --color-slate-500: #9a9aa3;
+    --color-slate-600: #a8a8b1;
+    --color-slate-700: #b8b8c0;
+    --color-slate-800: #232329;
+    --color-slate-900: #101014;
+    --color-slate-950: #0a0a0c;
 }
 
 .premium-glass {
@@ -50,7 +145,7 @@
     inset: 0;
     opacity: 0.035;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTies='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .premium-aurora {
@@ -80,14 +175,174 @@
 }
 
 /* Resolves against the self-hosted next/font family on the marketing tree, and
-   falls back to the design-OS sans stack everywhere else. (The old
-   `var(--font-display)` chain was never defined, so this class was a no-op.) */
+   falls back to the design-OS sans stack everywhere else. */
 .font-display {
     font-family: var(--font-inter, var(--dos-font-sans));
     font-weight: 700;
     letter-spacing: -0.022em;
 }
 
+/* ------------------------------------------------------------------
+   Cinematic primitives
+   ------------------------------------------------------------------ */
+.premium-grid-bg {
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
+}
+
+/* Angular, technical divider — a hard orange tick, not a soft rule. */
+.premium-divider {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, var(--premium-accent) 0%, var(--premium-accent-line) 22%, transparent 68%);
+}
+
+.premium-divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -3px;
+    height: 7px;
+    width: 2px;
+    background: var(--premium-accent);
+    box-shadow: 0 0 12px var(--premium-accent);
+}
+
+.premium-angle {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 1.5rem 100%, 0 calc(100% - 1rem));
+}
+
+.premium-glow {
+    box-shadow:
+        0 0 0 1px rgba(255, 106, 0, 0.16),
+        0 28px 70px -30px rgba(255, 106, 0, 0.35);
+}
+
+.premium-accent-line {
+    display: inline-block;
+    width: 2.25rem;
+    height: 2px;
+    background: var(--premium-accent);
+    box-shadow: 0 0 14px rgba(255, 106, 0, 0.6);
+}
+
+/* Angular corner accent used on hero / panels. */
+.premium-corner {
+    position: absolute;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-top: 2px solid var(--premium-accent);
+    border-left: 2px solid var(--premium-accent);
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Premium surface primitives
+   Shared building blocks for marketing sections so cards, icon tiles,
+   eyebrows and CTA panels are defined once rather than patched per page.
+   ------------------------------------------------------------------ */
+.premium-card {
+    position: relative;
+    border: 1px solid var(--premium-border);
+    border-radius: var(--dos-radius-2xl);
+    background: var(--premium-bg-secondary);
+    box-shadow: var(--dos-shadow-sm);
+    transition:
+        border-color var(--dos-duration-normal) var(--dos-easing-default),
+        box-shadow var(--dos-duration-normal) var(--dos-easing-default),
+        transform var(--dos-duration-normal) var(--dos-easing-default);
+}
+
+.premium-card:hover {
+    border-color: color-mix(in oklab, var(--premium-accent) 38%, var(--premium-border));
+    box-shadow: var(--premium-accent-glow);
+    transform: translateY(-2px);
+}
+
+.premium-card-icon {
+    display: inline-flex;
+    height: 2.75rem;
+    width: 2.75rem;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--dos-radius-xl);
+    border: 1px solid color-mix(in oklab, var(--premium-accent) 28%, transparent);
+    background: color-mix(in oklab, var(--premium-accent) 10%, var(--premium-bg-secondary));
+    color: var(--premium-accent);
+}
+
+.premium-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--premium-accent);
+}
+
+.premium-eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+}
+
+.premium-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid var(--premium-border);
+    border-radius: 9999px;
+    background: var(--premium-bg-secondary);
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8125rem;
+    color: var(--premium-fg-muted);
+    transition: border-color var(--dos-duration-normal) var(--dos-easing-default);
+}
+
+.premium-chip:hover {
+    border-color: color-mix(in oklab, var(--premium-accent) 45%, var(--premium-border));
+}
+
+.premium-cta-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--dos-radius-3xl);
+    border: 1px solid color-mix(in oklab, var(--premium-accent) 38%, transparent);
+    background:
+        radial-gradient(120% 150% at 12% 0%, rgba(255, 106, 0, 0.32), transparent 55%),
+        radial-gradient(130% 130% at 100% 100%, rgba(217, 78, 0, 0.34), transparent 58%),
+        linear-gradient(140deg, #0b0b0d 0%, #1a1206 55%, #0b0b0d 100%);
+    box-shadow:
+        0 0 0 1px rgba(255, 106, 0, 0.14),
+        0 40px 80px -40px rgba(255, 106, 0, 0.35);
+    color: #ffffff;
+}
+
+.premium-cta-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 35%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 35%, transparent 78%);
+    pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Motion
+   ------------------------------------------------------------------ */
 @keyframes premium-float {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-12px) rotate(2deg); }
@@ -105,12 +360,8 @@
 }
 
 @keyframes hero-fade-up {
-    from {
-        transform: translateY(14px);
-    }
-    to {
-        transform: translateY(0);
-    }
+    from { transform: translateY(14px); }
+    to { transform: translateY(0); }
 }
 
 .hero-fade-up {
@@ -158,100 +409,6 @@
 
 .hero-panel-float-c {
     animation: premium-float 9s ease-in-out infinite 1s;
-}
-
-/* ------------------------------------------------------------------
-   Premium surface primitives
-   Shared building blocks for marketing sections so cards, icon tiles,
-   eyebrows and CTA panels are defined once rather than patched per page.
-   They consume the design-OS tokens (radius / elevation / colour).
-   ------------------------------------------------------------------ */
-.premium-card {
-    position: relative;
-    border: 1px solid var(--premium-border);
-    border-radius: var(--dos-radius-2xl);
-    background: var(--premium-bg);
-    box-shadow: var(--dos-shadow-sm);
-    transition:
-        border-color var(--dos-duration-normal) var(--dos-easing-default),
-        box-shadow var(--dos-duration-normal) var(--dos-easing-default),
-        transform var(--dos-duration-normal) var(--dos-easing-default);
-}
-
-.premium-card:hover {
-    border-color: color-mix(in oklab, var(--premium-accent) 38%, var(--premium-border));
-    box-shadow: var(--dos-shadow-lg);
-    transform: translateY(-2px);
-}
-
-.premium-card-icon {
-    display: inline-flex;
-    height: 2.75rem;
-    width: 2.75rem;
-    flex: none;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--dos-radius-xl);
-    border: 1px solid color-mix(in oklab, var(--premium-accent) 24%, transparent);
-    background: color-mix(in oklab, var(--premium-accent) 9%, var(--premium-bg));
-    color: var(--premium-accent);
-}
-
-.premium-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--premium-accent);
-}
-
-.premium-eyebrow::before {
-    content: "";
-    width: 1.75rem;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.55;
-}
-
-.premium-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    border: 1px solid var(--premium-border);
-    border-radius: var(--dos-radius-full);
-    background: var(--premium-bg);
-    padding: 0.4rem 0.85rem;
-    font-size: 0.8125rem;
-    color: var(--dos-text-secondary);
-    transition: border-color var(--dos-duration-normal) var(--dos-easing-default);
-}
-
-.premium-cta-panel {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--dos-radius-3xl);
-    border: 1px solid color-mix(in oklab, var(--premium-accent) 32%, transparent);
-    background:
-        radial-gradient(120% 150% at 12% 0%, rgba(59, 130, 246, 0.30), transparent 55%),
-        radial-gradient(130% 130% at 100% 100%, rgba(99, 102, 241, 0.34), transparent 58%),
-        linear-gradient(140deg, #0a1024 0%, #131c44 55%, #0a1024 100%);
-    box-shadow: var(--dos-shadow-xl);
-    color: #ffffff;
-}
-
-.premium-cta-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 35%, transparent 78%);
-    -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 35%, transparent 78%);
-    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

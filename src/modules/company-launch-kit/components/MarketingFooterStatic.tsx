@@ -30,23 +30,31 @@ const FOOTER_LINKS = {
 };
 
 const LINK_CLASS =
-    "inline-block rounded py-1 text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70";
+    "inline-block rounded py-1 text-[var(--premium-fg-muted)] transition-colors hover:text-[var(--premium-fg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]";
 
-/** Arjun Automation OS Marketing Footer */
+/** Arjun Automation — Premium Cinematic Footer */
 export function MarketingFooterStatic() {
+    const year = new Date().getFullYear();
+
     return (
-        <footer className="border-t border-slate-800 bg-[#070c1a] text-slate-400">
-            <div className="premium-container py-14 sm:py-16">
+        <footer className="relative border-t border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] text-[var(--premium-fg-muted)]">
+            {/* Technical grid underlay */}
+            <div className="absolute inset-0 premium-grid-bg pointer-events-none" aria-hidden="true" />
+
+            {/* Angular divider accent line */}
+            <div className="premium-divider" aria-hidden="true" />
+
+            <div className="premium-container relative py-14 sm:py-16">
                 <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
                     <div className="lg:col-span-4">
                         <BrandLogo variant="inverse" className="h-8" />
-                        <p className="mt-5 max-w-sm text-sm leading-relaxed">
+                        <p className="mt-5 max-w-sm text-sm leading-relaxed text-[var(--premium-fg-muted)]">
                             Expert engineering for growing organizations — a unified platform, AI-native workflows, and
                             delivery you can measure.
                         </p>
                         <a
                             href="mailto:sales@arjunautomations.com"
-                            className={`mt-5 inline-flex items-center gap-2 text-sm font-medium text-slate-300 ${LINK_CLASS}`}
+                            className={`mt-5 inline-flex items-center gap-2 text-sm font-medium text-[var(--premium-fg-muted)] ${LINK_CLASS}`}
                         >
                             <Mail className="h-4 w-4" aria-hidden="true" />
                             sales@arjunautomations.com
@@ -62,7 +70,7 @@ export function MarketingFooterStatic() {
                         ] as const
                     ).map(([title, links]) => (
                         <nav key={title} className="lg:col-span-2" aria-label={`Footer — ${title}`}>
-                            <h3 className="text-sm font-semibold text-white">{title}</h3>
+                            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-accent)]">{title}</h3>
                             <ul className="mt-4 space-y-2.5 text-sm">
                                 {links.map((link) => (
                                     <li key={link.href}>
@@ -76,9 +84,9 @@ export function MarketingFooterStatic() {
                     ))}
                 </div>
 
-                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 text-sm sm:flex-row">
-                    <p>© {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
-                    <p className="text-slate-500">Built by Arjun Automation.</p>
+                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[var(--premium-border)] pt-8 text-sm sm:flex-row">
+                    <p className="text-[var(--premium-fg-muted)]">© {year} Arjun Automation. All rights reserved.</p>
+                    <p className="text-[var(--premium-fg-muted)]">Built by Arjun Automation.</p>
                 </div>
             </div>
         </footer>

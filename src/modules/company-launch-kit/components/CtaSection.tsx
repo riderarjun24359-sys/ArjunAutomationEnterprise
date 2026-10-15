@@ -19,22 +19,23 @@ export function CtaSection({
     secondaryHref = MARKETING_ROUTES.portfolio,
 }: CtaSectionProps) {
     return (
-        <section className="bg-indigo-700 py-16 text-white" aria-labelledby="cta-heading">
-            <div className="mx-auto max-w-7xl px-6 text-center lg:px-8">
-                <h2 id="cta-heading" className="text-3xl font-semibold tracking-tight sm:text-4xl">
+        <section className="premium-cta-panel" aria-labelledby="cta-heading">
+            <div className="premium-cta-grid" aria-hidden="true" />
+            <div className="mx-auto max-w-7xl px-6 relative text-center lg:px-8 py-16">
+                <h2 id="cta-heading" className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
                     {title}
                 </h2>
-                <p className="mx-auto mt-4 max-w-2xl text-lg text-indigo-100">{description}</p>
+                <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--premium-fg-muted)]">{description}</p>
                 <div className="mt-8 flex flex-wrap justify-center gap-4">
                     <Link
                         href={primaryHref}
-                        className="rounded-lg bg-white px-6 py-3 font-medium text-indigo-700 transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        className="inline-flex items-center justify-center rounded-lg bg-[var(--dos-brand-primary)] px-6 py-3 font-medium text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--dos-brand-primary)]/50"
                     >
                         {primaryLabel}
                     </Link>
                     <Link
                         href={secondaryHref}
-                        className="rounded-lg border border-white/30 px-6 py-3 font-medium text-white transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50"
+                        className="inline-flex items-center justify-center rounded-lg border border-[var(--premium-border)] px-6 py-3 font-medium text-[var(--premium-fg)] transition hover:bg-[var(--premium-glass)] focus:outline-none focus:ring-2 focus:ring-[var(--dos-border-focus)]"
                     >
                         {secondaryLabel}
                     </Link>

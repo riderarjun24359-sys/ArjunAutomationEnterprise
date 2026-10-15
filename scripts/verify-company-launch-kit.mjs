@@ -136,7 +136,7 @@ pass("env:gsc", envSource.includes("NEXT_PUBLIC_GSC_VERIFICATION"));
 
 const layoutSource = readFileSync(join(moduleRoot, "components", "MarketingLayout.tsx"), "utf8");
 pass("a11y:skip_link", layoutSource.includes("Skip to main content") || layoutSource.includes("skip"));
-pass("branding:indigo_700", layoutSource.includes("indigo-700") || readFileSync(join(root, "app", "(marketing)", "layout.tsx"), "utf8").includes("indigo"));
+pass("branding:premium_accent", layoutSource.includes("--dos-brand-primary") || layoutSource.includes("premium-accent"));
 
 const leadFormSource = readFileSync(join(moduleRoot, "components", "LeadForm.tsx"), "utf8");
 pass("a11y:form_labels", leadFormSource.includes("<label") && leadFormSource.includes("htmlFor"));
