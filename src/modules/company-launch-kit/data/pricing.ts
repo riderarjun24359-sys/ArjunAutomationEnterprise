@@ -57,8 +57,8 @@ export const MANAGED_SUPPORT_TIERS: PricingTier[] = [
     },
     {
         name: "Enterprise",
-        description: "24/7 SLA-backed support for mission-critical operations.",
-        scope: ["24/7 monitoring and response", "Dedicated support team", "Uptime monitoring with live status endpoints", "Executive business reviews"],
+        description: "Extended-coverage support for mission-critical operations (terms by agreement).",
+        scope: ["Extended-hours monitoring and response", "Dedicated support team", "Platform health and readiness endpoints", "Executive business reviews"],
         indicativeRange: "Custom — contact sales",
     },
 ];

@@ -9,7 +9,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Contact",
-    description: "Contact Arjun Automation for sales, partnerships, and customer success. We respond within one business day.",
+    description: "Contact Arjun Automation for sales, partnerships, and customer success. We aim to respond within one business day.",
     path: MARKETING_ROUTES.contact,
 };
 
@@ -32,7 +32,7 @@ const CHANNELS = [
 
 const QUALIFICATION_STEPS = [
     "Share your industry, team size, and primary operational challenge",
-    "We schedule a 30-minute discovery call within one business day",
+    "We aim to schedule a 30-minute discovery call within one business day",
     "Receive a scoped recommendation — platform, industry pack, or consulting engagement",
     "Optional: technical discovery workshop before formal proposal",
 ];
@@ -43,7 +43,7 @@ export default function ContactPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Contact Us"
-                description="Schedule a discovery call or send us a message. Our team responds within one business day."
+                description="Schedule a discovery call or send us a message. Our team aims to respond within one business day."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="grid gap-12 lg:grid-cols-2">

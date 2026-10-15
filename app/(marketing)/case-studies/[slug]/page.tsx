@@ -43,7 +43,10 @@ export default async function CaseStudyDetailPage({ params }: Props) {
     return (
         <>
             <MarketingStructuredData title={study.title} description={study.challenge} path={path} breadcrumbs={breadcrumbs} />
-            <PremiumPageShell title={study.title} description={`${study.industry} · ${study.client}`}>
+            <PremiumPageShell
+                title={study.title}
+                description={`${study.industry} · ${study.client} — illustrative case study; figures are target outcomes, not audited client measurements.`}
+            >
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
                 <div className="space-y-12">

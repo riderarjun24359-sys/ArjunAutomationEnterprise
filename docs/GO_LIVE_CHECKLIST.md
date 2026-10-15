@@ -75,6 +75,7 @@ Complete every item before opening Arjun Automation to paying / invited customer
 ## 10. Production security
 
 - [ ] HTTPS only; HSTS at edge
+- [ ] Local validation served loopback-only (`next start -H 127.0.0.1 -p <port>` — verified 2026-10-13: binds `127.0.0.1` only; bare `next start` binds all interfaces)
 - [ ] Session hardening (validateSession / refresh) verified
 - [ ] Storage security checks green
 - [ ] Rate limits on ops + lead APIs

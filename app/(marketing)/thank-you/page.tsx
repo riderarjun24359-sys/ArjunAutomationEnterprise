@@ -5,7 +5,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
     title: "Thank You",
-    description: "Thank you for contacting Arjun Automation. Our team will respond within one business day.",
+    description: "Thank you for contacting Arjun Automation. Our team aims to respond within one business day.",
     path: "/thank-you",
     noIndex: true,
 });
@@ -19,7 +19,7 @@ export default function ThankYouPage() {
                 </div>
                 <h1 className="mt-6 text-3xl font-semibold text-indigo-950">Thank you for reaching out</h1>
                 <p className="mt-4 text-slate-600">
-                    We have received your message. A member of the Arjun Automation team will respond within one business day.
+                    We have received your message. A member of the Arjun Automation team aims to respond within one business day.
                 </p>
                 <div className="mt-8 flex flex-wrap justify-center gap-4">
                     <Link href={MARKETING_ROUTES.home} className="rounded-lg bg-indigo-700 px-6 py-3 font-medium text-white hover:bg-indigo-600">

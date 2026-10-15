@@ -106,3 +106,126 @@ body {
 .dos-text-body { font-size: 1rem; line-height: 1.7; font-weight: 400; color: var(--dos-text-secondary); }
 .dos-text-caption { font-size: 0.8125rem; line-height: 1.6; letter-spacing: 0.05em; font-weight: 600; text-transform: uppercase; color: var(--dos-text-tertiary); }
 
+/* ==================================================================
+   Token completion layer
+   ------------------------------------------------------------------
+   These tokens are consumed throughout the app (card radii, elevation,
+   glass surfaces, semantic colour, focus rings, z-layers) but were only
+   ever exported from TypeScript. With no CSS custom property backing
+   them, every `var(...)` above resolves to the property's initial value:
+   square corners, no shadows, transparent glass, and — most importantly —
+   no visible focus ring. Rounded, shadowed, focus-visible UI below the
+   token layer is impossible until these exist, so they are defined here
+   as the single source of truth. Theme-independent tokens live in :root;
+   colour/elevation tokens are overridden for the .dark theme.
+   ================================================================== */
+:root {
+    /* Radii — mirrors src/design-os/tokens/radii.ts */
+    --dos-radius-none: 0;
+    --dos-radius-sm: 0.375rem;
+    --dos-radius-md: 0.5rem;
+    --dos-radius-lg: 0.75rem;
+    --dos-radius-xl: 1rem;
+    --dos-radius-2xl: 1.25rem;
+    --dos-radius-3xl: 1.5rem;
+    --dos-radius-full: 9999px;
+
+    /* Motion — legacy fast duration token */
+    --dos-duration-fast: 150ms;
+
+    /* Layering — mirrors src/design-os/tokens/elevation.ts zIndex */
+    --dos-z-dropdown: 1000;
+    --dos-z-sticky: 1100;
+    --dos-z-modal: 1300;
+    --dos-z-command: 1700;
+
+    /* Typography */
+    --dos-font-display: var(--dos-font-sans);
+
+    /* Borders */
+    --dos-border-strong: rgba(30, 41, 59, 0.22);
+    --dos-border-focus: #2563eb;
+
+    /* Elevation — restrained, navy-tinted in light theme */
+    --dos-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --dos-shadow-md: 0 4px 10px -2px rgba(15, 23, 42, 0.08), 0 1px 3px -1px rgba(15, 23, 42, 0.06);
+    --dos-shadow-lg: 0 16px 32px -12px rgba(15, 23, 42, 0.16), 0 4px 10px -4px rgba(15, 23, 42, 0.08);
+    --dos-shadow-xl: 0 28px 56px -20px rgba(15, 23, 42, 0.22), 0 8px 18px -8px rgba(15, 23, 42, 0.10);
+    --dos-shadow-glow: 0 0 0 1px rgba(59, 130, 246, 0.14), 0 22px 48px -18px rgba(59, 130, 246, 0.32);
+    --dos-elevation-0: none;
+    --dos-elevation-1: var(--dos-shadow-sm);
+    --dos-elevation-2: var(--dos-shadow-md);
+    --dos-elevation-3: var(--dos-shadow-lg);
+    --dos-elevation-4: var(--dos-shadow-xl);
+    --dos-elevation-glow: var(--dos-shadow-glow);
+
+    /* Glass */
+    --dos-glass-bg: rgba(255, 255, 255, 0.72);
+    --dos-glass-border: rgba(15, 23, 42, 0.08);
+    --dos-glass-blur: 16px;
+    --dos-glass-shadow: var(--dos-shadow-lg);
+
+    /* Semantic colour */
+    --dos-accent: #4f46e5;
+    --dos-accent-contrast: #ffffff;
+    --dos-brand-secondary: #0ea5e9;
+    --dos-ai-accent: #7c3aed;
+    --dos-success: #16a34a;
+    --dos-success-muted: rgba(22, 163, 74, 0.10);
+    --dos-warning: #d97706;
+    --dos-warning-muted: rgba(217, 119, 6, 0.12);
+    --dos-error: #dc2626;
+    --dos-error-muted: rgba(220, 38, 38, 0.10);
+    --dos-info: #2563eb;
+    --dos-info-muted: rgba(37, 99, 235, 0.10);
+
+    /* Semantic text */
+    --dos-text-inverse: #ffffff;
+    --dos-text-link: var(--dos-brand-primary);
+    --dos-text-success: var(--dos-success);
+    --dos-text-warning: var(--dos-warning);
+    --dos-text-critical: var(--dos-error);
+
+    /* Surfaces */
+    --dos-surface-overlay: rgba(2, 6, 23, 0.55);
+    --dos-bg-active: var(--dos-surface-active);
+}
+
+.dark {
+    /* Borders */
+    --dos-border-strong: rgba(241, 245, 249, 0.20);
+    --dos-border-focus: #60a5fa;
+
+    /* Elevation — deeper, blacker in dark theme */
+    --dos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --dos-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5), 0 1px 3px -1px rgba(0, 0, 0, 0.4);
+    --dos-shadow-lg: 0 16px 36px -12px rgba(0, 0, 0, 0.6), 0 4px 10px -4px rgba(0, 0, 0, 0.4);
+    --dos-shadow-xl: 0 28px 60px -20px rgba(0, 0, 0, 0.7), 0 8px 18px -8px rgba(0, 0, 0, 0.5);
+    --dos-shadow-glow: 0 0 0 1px rgba(96, 165, 250, 0.22), 0 22px 52px -18px rgba(37, 99, 235, 0.45);
+
+    /* Glass */
+    --dos-glass-bg: rgba(15, 23, 42, 0.62);
+    --dos-glass-border: rgba(241, 245, 249, 0.10);
+
+    /* Semantic colour */
+    --dos-accent: #818cf8;
+    --dos-accent-contrast: #0b1120;
+    --dos-brand-secondary: #38bdf8;
+    --dos-ai-accent: #a78bfa;
+    --dos-success: #4ade80;
+    --dos-success-muted: rgba(74, 222, 128, 0.14);
+    --dos-warning: #fbbf24;
+    --dos-warning-muted: rgba(251, 191, 36, 0.14);
+    --dos-error: #f87171;
+    --dos-error-muted: rgba(248, 113, 113, 0.14);
+    --dos-info: #60a5fa;
+    --dos-info-muted: rgba(96, 165, 250, 0.14);
+
+    /* Text */
+    --dos-text-inverse: #020617;
+    --dos-text-link: #93c5fd;
+
+    /* Surfaces */
+    --dos-surface-overlay: rgba(2, 6, 23, 0.7);
+}
+

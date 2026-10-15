@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Mail } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 
@@ -23,63 +24,63 @@ const FOOTER_LINKS = {
     ],
     legal: [
         { label: "Privacy Policy", href: MARKETING_ROUTES.privacy },
-        { label: "Terms of Service", href: MARKETING_ROUTES.terms },
-        { label: "Cookie Policy", href: MARKETING_ROUTES.cookies },
+        { label: "Terms", href: MARKETING_ROUTES.terms },
+        { label: "Cookies", href: MARKETING_ROUTES.cookies },
     ],
 };
 
-/** Zero-JS marketing footer for fast first paint. */
+const LINK_CLASS =
+    "inline-block rounded py-1 text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/70";
+
+/** Arjun Automation OS Marketing Footer */
 export function MarketingFooterStatic() {
     return (
-        <footer className="border-t border-[var(--premium-border)] bg-slate-950 text-slate-300" aria-label="Site footer">
-            <div className="premium-container py-16">
-                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
-                    <div className="lg:col-span-2">
-                        <Link href={MARKETING_ROUTES.home} className="inline-block">
-                            <BrandLogo variant="inverse" className="max-h-8" label="Arjun Automation Enterprises" />
-                        </Link>
-                        <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
-                            Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.
+        <footer className="border-t border-slate-800 bg-[#070c1a] text-slate-400">
+            <div className="premium-container py-14 sm:py-16">
+                <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+                    <div className="lg:col-span-4">
+                        <BrandLogo variant="inverse" className="h-8" />
+                        <p className="mt-5 max-w-sm text-sm leading-relaxed">
+                            Expert engineering for growing organizations — a unified platform, AI-native workflows, and
+                            delivery you can measure.
                         </p>
-                        <p className="mt-4 text-sm text-slate-400">sales@arjunautomations.com</p>
+                        <a
+                            href="mailto:sales@arjunautomations.com"
+                            className={`mt-5 inline-flex items-center gap-2 text-sm font-medium text-slate-300 ${LINK_CLASS}`}
+                        >
+                            <Mail className="h-4 w-4" aria-hidden="true" />
+                            sales@arjunautomations.com
+                        </a>
                     </div>
 
-                    {Object.entries({ Company: FOOTER_LINKS.company, Solutions: FOOTER_LINKS.solutions, Resources: FOOTER_LINKS.resources }).map(
-                        ([title, links]) => (
-                            <div key={title}>
-                                <h3 className="text-sm font-semibold text-white">{title}</h3>
-                                <ul className="mt-3 space-y-2">
-                                    {links.map((link) => (
-                                        <li key={link.href}>
-                                            <Link href={link.href} className="text-slate-400 hover:text-indigo-400">
-                                                {link.label}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ),
-                    )}
-
-                    <div>
-                        <h3 className="text-sm font-semibold text-white">Legal</h3>
-                        <ul className="mt-3 space-y-2">
-                            {FOOTER_LINKS.legal.map((link) => (
-                                <li key={link.href}>
-                                    <Link href={link.href} className="text-slate-400 hover:text-indigo-400">
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {(
+                        [
+                            ["Company", FOOTER_LINKS.company],
+                            ["Solutions", FOOTER_LINKS.solutions],
+                            ["Resources", FOOTER_LINKS.resources],
+                            ["Legal", FOOTER_LINKS.legal],
+                        ] as const
+                    ).map(([title, links]) => (
+                        <nav key={title} className="lg:col-span-2" aria-label={`Footer — ${title}`}>
+                            <h3 className="text-sm font-semibold text-white">{title}</h3>
+                            <ul className="mt-4 space-y-2.5 text-sm">
+                                {links.map((link) => (
+                                    <li key={link.href}>
+                                        <Link href={link.href} className={LINK_CLASS}>
+                                            {link.label}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    ))}
                 </div>
 
-                <p className="mt-12 border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
-                    © {new Date().getFullYear()} Arjun Automation. All rights reserved.
-                </p>
+                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 text-sm sm:flex-row">
+                    <p>© {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
+                    <p className="text-slate-500">Built by Arjun Automation.</p>
+                </div>
             </div>
         </footer>
     );
 }
-

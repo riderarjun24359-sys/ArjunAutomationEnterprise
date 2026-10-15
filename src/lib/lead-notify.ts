@@ -119,7 +119,13 @@ export async function notifyOwnerOfLead(
             },
             { env, cwd: deps.cwd, fetchImpl: deps.fetchImpl },
         );
-        if (result.ok) return { attempted: true, ok: true, reason: "sent" };
+        if (result.ok) {
+            // Preserve the provider message id (non-secret): it is the only
+            // key that correlates this audit row with the Resend dashboard
+            // message and its Deliverability Insights.
+            const sentReason = result.id ? `sent:${result.id}` : "sent";
+            return { attempted: true, ok: true, reason: sanitizeReason(sentReason) };
+        }
         return { attempted: true, ok: false, reason: sanitizeReason(result.detail ? `${result.reason}: ${result.detail}` : result.reason) };
     } catch (error) {
         return {

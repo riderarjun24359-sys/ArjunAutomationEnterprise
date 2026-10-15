@@ -1,94 +1,80 @@
-"use client";
-
 import Link from "next/link";
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { AnimatedGridPattern } from "@/src/components/magic/AnimatedGridPattern";
-import { Spotlight } from "@/src/components/magic/Spotlight";
+import { Check } from "lucide-react";
 import { HERO_CONTENT } from "@/src/modules/company-launch-kit/data/home-content";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
-
-import { ArjunOSVisualization } from '@/src/modules/public-site/components/3d/ArjunOSVisualization';
-
-const Environment3D = dynamic(() => import('@/src/modules/public-site/components/3d/Environment3D'), {
-    ssr: false,
-    loading: () => <div className="w-full h-full bg-[var(--dos-surface-tertiary)] animate-pulse rounded-[var(--dos-radius-2xl)]" />
-});
+import { HeroProductConcept } from "@/src/modules/company-launch-kit/components/premium/ui/HeroProductConcept";
 
 const CTA_PRIMARY =
-    "inline-flex items-center justify-center rounded-full bg-[var(--dos-brand-primary)] px-8 py-3 text-sm font-semibold text-[var(--dos-surface)] transition-all hover:scale-105 hover:bg-[var(--dos-brand-primary-hover)] active:scale-95 focus-visible:ring-2 focus-visible:ring-offset-2";
+    "inline-flex items-center justify-center rounded-full bg-[var(--dos-brand-primary)] px-7 py-3.5 text-sm font-semibold text-white shadow-[var(--dos-shadow-md)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2";
 
 const CTA_SECONDARY =
-    "inline-flex items-center justify-center rounded-full border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] px-8 py-3 text-sm font-semibold text-[var(--dos-text-primary)] transition-all hover:bg-[var(--dos-surface-secondary)] hover:border-[var(--dos-border-strong)] active:scale-95";
+    "inline-flex items-center justify-center rounded-full border border-[var(--dos-border-strong)] bg-[var(--dos-surface-elevated)] px-7 py-3.5 text-sm font-semibold text-[var(--dos-text-primary)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--dos-surface-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2";
 
-/** Cinematic Digital Command Center Hero */
+/**
+ * Hero — server-rendered. Background and entrance motion are pure CSS
+ * (`.hero-grid-bg`, `.hero-fade-up`), so the homepage ships no WebGL or
+ * animation-library JavaScript. The product visual is an honestly labelled
+ * concept (see HeroProductConcept), never a fabricated live screenshot.
+ */
 export function HeroSection() {
     return (
-        <section className="relative min-h-[90vh] flex items-center pt-20 pb-12 overflow-hidden" aria-labelledby="hero-heading">
-            {/* Atmospheric Background Layer */}
-            <div className="absolute inset-0 z-0">
-                <Spotlight className="w-full h-full opacity-50">
-                    <AnimatedGridPattern className="z-10 opacity-20" />
-                </Spotlight>
+        <section
+            className="relative overflow-hidden border-b border-[var(--dos-border-subtle)] pb-16 pt-28 sm:pt-32 lg:pb-24 lg:pt-36"
+            aria-labelledby="hero-heading"
+        >
+            {/* Atmospheric background — CSS only, clipped by the section */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+                <div className="hero-grid-bg absolute inset-0" />
+                <div className="absolute -left-40 -top-40 h-[560px] w-[560px] rounded-full bg-[var(--dos-brand-primary)] opacity-[0.10] blur-[120px]" />
+                <div className="absolute -right-32 top-1/3 h-[480px] w-[480px] rounded-full bg-[var(--dos-brand-accent)] opacity-[0.10] blur-[120px]" />
             </div>
 
-            <div className="premium-container relative w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                
-                {/* Content Layer */}
-                <div className="z-20 space-y-8">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                    >
-                        <span className="dos-text-caption text-[var(--dos-brand-primary)] mb-4 block">
-                            {HERO_CONTENT.eyebrow}
-                        </span>
-                        <h1 id="hero-heading" className="dos-text-display text-[var(--dos-text-primary)] mb-6">
+            <div className="premium-container relative w-full">
+                <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+                    {/* Content */}
+                    <div className="hero-fade-up max-w-2xl">
+                        <p className="premium-eyebrow">{HERO_CONTENT.eyebrow}</p>
+
+                        <h1
+                            id="hero-heading"
+                            className="font-display mt-5 text-4xl font-bold leading-[1.05] tracking-[-0.03em] text-[var(--dos-text-primary)] sm:text-5xl lg:text-6xl"
+                        >
                             Run your business on one intelligent system.
                         </h1>
-                        <p className="dos-text-body max-w-xl">
+
+                        <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--dos-text-secondary)] sm:text-lg">
                             {HERO_CONTENT.subheadline}
                         </p>
-                    </motion.div>
-                    
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="flex flex-wrap gap-4"
-                    >
-                        <Link href={MARKETING_ROUTES.contact} className={CTA_PRIMARY}>
-                            Get Started
-                        </Link>
-                        <Link href={MARKETING_ROUTES.portfolio} className={CTA_SECONDARY}>
-                            View Our Work
-                        </Link>
-                    </motion.div>
+
+                        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <Link href={HERO_CONTENT.primaryCta.href} className={CTA_PRIMARY}>
+                                {HERO_CONTENT.primaryCta.label}
+                            </Link>
+                            <Link href={HERO_CONTENT.secondaryCta.href} className={CTA_SECONDARY}>
+                                {HERO_CONTENT.secondaryCta.label}
+                            </Link>
+                        </div>
+
+                        <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-3">
+                            {HERO_CONTENT.trustIndicators.map((item) => (
+                                <li
+                                    key={item}
+                                    className="flex items-center gap-2 text-sm font-medium text-[var(--dos-text-secondary)]"
+                                >
+                                    <Check
+                                        className="h-4 w-4 shrink-0 text-[var(--dos-brand-primary)]"
+                                        aria-hidden="true"
+                                    />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Honest product-concept visual */}
+                    <div className="hero-fade-up hero-delay-2 w-full">
+                        <HeroProductConcept />
+                    </div>
                 </div>
-
-                {/* Immersive Product-Focused Layer */}
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-                    className="relative aspect-[4/3] rounded-[var(--dos-radius-2xl)] overflow-hidden border border-[var(--dos-border-subtle)] shadow-[var(--dos-shadow-glow)]"
-                >
-                    {/* Environmental Background */}
-                    <div className="absolute inset-0 z-0 bg-[var(--dos-surface-elevated)]">
-                        <Suspense fallback={<div className="w-full h-full bg-[var(--dos-surface-tertiary)] animate-pulse" />}>
-                            <Environment3D />
-                        </Suspense>
-                    </div>
-
-                    {/* Product Composition */}
-                    <div className="absolute inset-0 z-10 flex items-center justify-center p-8">
-                        <Suspense fallback={<div className="w-full h-full bg-[var(--dos-surface-tertiary)] animate-pulse" />}>
-                            <ArjunOSVisualization />
-                        </Suspense>
-                    </div>
-                </motion.div>
             </div>
         </section>
     );

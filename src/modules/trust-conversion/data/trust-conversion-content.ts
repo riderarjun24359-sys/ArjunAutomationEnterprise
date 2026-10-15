@@ -46,7 +46,7 @@ export const TRUSTED_BY_CONTENT = {
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },
         { value: 68, suffix: "", label: "Versioned DB Migrations" },
-        { value: 10, suffix: "", label: "Live Health Endpoints" },
+        { value: 4, suffix: "", label: "Health & Status Endpoints" },
     ] satisfies TrustCounter[],
 };
 
@@ -99,7 +99,7 @@ export const WHY_ARJUN_CONTENT = {
         {
             title: "Dedicated Support",
             outcome: "Expert response when it counts",
-            description: "24/7 platform monitoring, SLA-backed support tiers, and direct access to engineers who built your system.",
+            description: "Defined support windows, clear escalation paths, and direct access to the engineers who built your system.",
             icon: "headphones",
         },
     ] satisfies ValueCard[],
@@ -169,7 +169,7 @@ export const SERVICES_PREVIEW_CONTENT = {
         },
         {
             title: "AI Chatbots",
-            businessValue: "24/7 intelligent support without sacrificing quality",
+            businessValue: "Automated after-hours responses with human escalation",
             benefits: ["Knowledge-base grounding", "Escalation routing", "Conversation analytics"],
             cta: { label: "AI Capabilities", href: MARKETING_ROUTES.services },
             icon: "message",
@@ -197,7 +197,7 @@ export const TRUST_METRICS_CONTENT = {
     metrics: [
         {
             title: "Fast Response",
-            description: "Initial engineering response within one business day on all qualified inquiries.",
+            description: "We target an initial engineering response within one business day on qualified inquiries.",
             icon: "timer",
         },
         {
@@ -217,7 +217,7 @@ export const TRUST_METRICS_CONTENT = {
         },
         {
             title: "Long-term Support",
-            description: "Post-launch partnership with SLA tiers and dedicated success management.",
+            description: "Post-launch partnership with defined support windows and dedicated success management.",
             icon: "life-buoy",
         },
         {

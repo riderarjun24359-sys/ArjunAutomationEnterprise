@@ -50,7 +50,7 @@ export default function LaunchCrmPage() {
                     </div>
                     <div className="rounded-2xl border border-indigo-200 bg-indigo-50 p-8">
                         <h2 className="text-lg font-semibold text-indigo-950">Download the guide</h2>
-                        <p className="mt-2 text-sm text-slate-600">Enter your details and our team will send the guide within one business day.</p>
+                        <p className="mt-2 text-sm text-slate-600">Enter your details and our team aims to send the guide within one business day.</p>
                         <div className="mt-6">
                             <LeadForm source="launch-crm" compact submitLabel="Get the Guide" />
                         </div>

@@ -11,6 +11,7 @@ import {
     Wrench,
     type LucideIcon,
 } from "lucide-react";
+import { SectionHeader } from "@/src/modules/trust-conversion/components/ui/SectionHeader";
 import { SERVICES_PREVIEW_CONTENT } from "@/src/modules/trust-conversion/data/trust-conversion-content";
 
 const ICONS: Record<string, LucideIcon> = {
@@ -31,12 +32,7 @@ export function ServicesPreviewSection() {
     return (
         <section className="premium-section bg-[var(--premium-bg-secondary)]" aria-labelledby="services-preview-heading">
             <div className="premium-container">
-                <div className="tc-reveal mx-auto max-w-3xl text-center">
-                    <h2 id="services-preview-heading" className="font-display text-3xl font-bold sm:text-4xl">
-                        {title}
-                    </h2>
-                    <p className="mt-3 text-[var(--premium-fg-muted)]">{subtitle}</p>
-                </div>
+                <SectionHeader id="services-preview-heading" title={title} subtitle={subtitle} />
 
                 <ul className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                     {services.map((service, index) => {
@@ -44,25 +40,42 @@ export function ServicesPreviewSection() {
                         const delayClass = index % 3 === 0 ? "" : `tc-reveal-delay-${Math.min(index % 3, 3)}`;
                         return (
                             <li key={service.title} className={`tc-reveal ${delayClass}`.trim()}>
-                                <article className="tc-card flex h-full flex-col p-6">
-                                    <div className="flex items-start gap-3">
-                                        <Icon className="mt-0.5 h-6 w-6 shrink-0 text-indigo-700" aria-hidden="true" />
-                                        <div>
-                                            <h3 className="text-lg font-semibold text-slate-900">{service.title}</h3>
-                                            <p className="mt-2 text-sm font-medium text-indigo-800">{service.businessValue}</p>
+                                <article className="premium-card flex h-full flex-col p-6">
+                                    <div className="flex items-start gap-4">
+                                        <span className="premium-card-icon">
+                                            <Icon className="h-6 w-6" aria-hidden="true" />
+                                        </span>
+                                        <div className="min-w-0">
+                                            <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">
+                                                {service.title}
+                                            </h3>
+                                            <p className="mt-1.5 text-sm font-medium text-[var(--premium-accent)]">
+                                                {service.businessValue}
+                                            </p>
                                         </div>
                                     </div>
-                                    <ul className="mt-4 flex-1 space-y-1.5" aria-label={`${service.title} key benefits`}>
+
+                                    <ul
+                                        className="mt-5 flex-1 space-y-2"
+                                        aria-label={`${service.title} key benefits`}
+                                    >
                                         {service.benefits.map((benefit) => (
-                                            <li key={benefit} className="flex items-start gap-2 text-sm text-slate-600">
-                                                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-600" aria-hidden="true" />
+                                            <li
+                                                key={benefit}
+                                                className="flex items-start gap-2.5 text-sm text-[var(--dos-text-secondary)]"
+                                            >
+                                                <span
+                                                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
+                                                    aria-hidden="true"
+                                                />
                                                 {benefit}
                                             </li>
                                         ))}
                                     </ul>
+
                                     <Link
                                         href={service.cta.href}
-                                        className="mt-6 inline-flex items-center justify-center rounded-xl bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                                        className="mt-6 inline-flex items-center justify-center rounded-full border border-[var(--dos-border-strong)] bg-[var(--dos-surface-elevated)] px-4 py-2.5 text-sm font-semibold text-[var(--dos-text-primary)] transition duration-200 hover:border-[var(--dos-brand-primary)] hover:bg-[var(--dos-brand-primary)] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2"
                                     >
                                         {service.cta.label}
                                     </Link>

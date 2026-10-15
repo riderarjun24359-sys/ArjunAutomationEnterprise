@@ -52,7 +52,10 @@ export default async function PortfolioDetailPage({ params }: Props) {
     return (
         <>
             <MarketingStructuredData title={item.title} description={item.overview} path={path} breadcrumbs={breadcrumbs} />
-            <PremiumPageShell title={item.title} description={item.tagline}>
+            <PremiumPageShell
+                title={item.title}
+                description={`${item.tagline} — illustrative solution design; outcomes are target figures, not audited client results.`}
+            >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{item.category}</span>
 

@@ -51,10 +51,6 @@ export function buildOrganizationJsonLd() {
         logo: `${LAUNCH_KIT_SEO.siteUrl}/launch-kit/logo.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
         email: "sales@arjunautomations.com",
-        sameAs: [
-            "https://www.linkedin.com/company/arjunautomation",
-            "https://twitter.com/arjunautomation",
-        ],
         contactPoint: {
             "@type": "ContactPoint",
             contactType: "sales",

@@ -2,19 +2,19 @@
 
 .tc-card {
     border: 1px solid var(--premium-border);
-    border-radius: 1rem;
-    background: var(--premium-glass);
+    border-radius: var(--dos-radius-2xl);
+    background: var(--premium-bg);
+    box-shadow: var(--dos-shadow-sm);
     transition:
-        border-color 0.25s ease,
-        box-shadow 0.25s ease,
-        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: transform;
+        border-color var(--dos-duration-normal) var(--dos-easing-default),
+        box-shadow var(--dos-duration-normal) var(--dos-easing-default),
+        transform var(--dos-duration-normal) var(--dos-easing-default);
 }
 
 .tc-card:hover,
 .tc-card:focus-within {
-    border-color: rgba(99, 102, 241, 0.35);
-    box-shadow: 0 12px 32px rgba(99, 102, 241, 0.12);
+    border-color: color-mix(in oklab, var(--premium-accent) 38%, var(--premium-border));
+    box-shadow: var(--dos-shadow-lg);
     transform: translateY(-2px);
 }
 
@@ -26,31 +26,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.75rem;
+    border-radius: var(--dos-radius-xl);
     border: 1px solid var(--premium-border);
     background: var(--premium-bg);
     color: var(--premium-fg-muted);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tc-logo:hover {
-    border-color: rgba(99, 102, 241, 0.4);
+    border-color: color-mix(in oklab, var(--premium-accent) 45%, var(--premium-border));
     color: var(--premium-fg);
+    box-shadow: var(--dos-shadow-md);
 }
 
 .tc-badge {
-    border-radius: 0.75rem;
+    border-radius: var(--dos-radius-xl);
     border: 1px solid var(--premium-border);
     background: var(--premium-bg);
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1rem;
     text-align: center;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .tc-badge:hover {
-    border-color: rgba(99, 102, 241, 0.35);
+    border-color: color-mix(in oklab, var(--premium-accent) 38%, var(--premium-border));
+    box-shadow: var(--dos-shadow-md);
+    transform: translateY(-1px);
 }
 
 .tc-timeline-line {
@@ -59,21 +62,21 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: linear-gradient(to bottom, #6366f1, #06b6d4);
-    opacity: 0.35;
+    background: linear-gradient(to bottom, var(--dos-brand-accent), var(--dos-brand-primary));
+    opacity: 0.4;
 }
 
 .tc-step-dot {
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 9999px;
+    border-radius: var(--dos-radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.875rem;
     font-weight: 700;
-    background: #4338ca;
-    color: #fff;
+    background: var(--dos-brand-accent);
+    color: #ffffff;
     flex-shrink: 0;
     box-shadow: 0 0 0 4px var(--premium-bg);
 }

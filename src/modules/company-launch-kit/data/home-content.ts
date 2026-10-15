@@ -17,7 +17,7 @@ export const HERO_CONTENT = {
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },
         { value: 68, suffix: "", label: "Versioned DB Migrations" },
-        { value: 10, suffix: "", label: "Live Health Endpoints" },
+        { value: 4, suffix: "", label: "Health & Status Endpoints" },
     ],
     trust: {
         industries: {
@@ -89,7 +89,7 @@ export const SERVICES_CONTENT = {
         },
         {
             title: "Managed Support",
-            description: "24/7 platform monitoring, updates, and customer success for production environments.",
+            description: "Business-hours platform monitoring, updates, and customer success for production environments.",
             timeline: "Ongoing subscription",
         },
     ],
@@ -177,7 +177,7 @@ export const ENTERPRISE_PLATFORM_CONTENT = {
         "Role-based access control with tenant-scoped permissions",
         "API-first with webhook integrations",
         "Rate limiting and security headers on every route",
-        "Continuous health monitoring with live status endpoints",
+        "Health, readiness, and liveness endpoints exposed by the platform",
     ],
 };
 
@@ -209,14 +209,14 @@ export const FAQ_CONTENT = {
         },
         {
             question: "Do you offer managed support after go-live?",
-            answer: "Yes. Our managed support tier includes 24/7 monitoring, platform updates, a dedicated Customer Success Manager, and SLA-backed response times.",
+            answer: "Yes. Our managed support tier includes monitored platform updates, clear escalation paths, a dedicated Customer Success Manager, and an initial response target within one business day.",
         },
     ],
 };
 
 export const CTA_CONTENT = {
     title: "Ready for enterprise automation?",
-    subtitle: "Start with a requirement analysis. Our engineering team responds within one business day.",
+    subtitle: "Start with a requirement analysis. Our engineering team aims to respond within one business day.",
     primaryCta: { label: "Start Requirement Analysis", href: MARKETING_ROUTES.contact },
     secondaryCta: { label: "View Case Studies", href: MARKETING_ROUTES.caseStudies },
 };

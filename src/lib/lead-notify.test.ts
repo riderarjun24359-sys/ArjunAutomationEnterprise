@@ -76,7 +76,7 @@ describe("notifyOwnerOfLead", () => {
     it("sends via Resend with PII-free subject and redacted result", async () => {
         const impl = fetchMock(async () => new Response(JSON.stringify({ id: "msg_1" }), { status: 200 }));
         const result = await notifyOwnerOfLead(LEAD, { env: { ...CONFIGURED }, fetchImpl: impl });
-        expect(result).toEqual({ attempted: true, ok: true, reason: "sent" });
+        expect(result).toEqual({ attempted: true, ok: true, reason: "sent:msg_1" });
         expect(impl).toHaveBeenCalledTimes(1);
         const [, init] = impl.mock.calls[0];
         const body = JSON.parse(String(init?.body)) as { to: string[]; subject: string; text: string };
@@ -90,6 +90,12 @@ describe("notifyOwnerOfLead", () => {
         expect(body.text).toContain("2026-10-01");
         // Result never echoes the secret.
         expect(JSON.stringify(result)).not.toContain("rk_test_key_abc123");
+    });
+
+    it("records bare sent when the provider omits a message id", async () => {
+        const impl = fetchMock(async () => new Response("{}", { status: 200 }));
+        const result = await notifyOwnerOfLead(LEAD, { env: { ...CONFIGURED }, fetchImpl: impl });
+        expect(result).toEqual({ attempted: true, ok: true, reason: "sent" });
     });
 
     it("returns failure (never throws) when the provider rejects", async () => {

@@ -224,9 +224,9 @@ export const SERVICE_ITEMS: ServiceItem[] = [
     {
         slug: "managed-support",
         title: "Managed Support",
-        tagline: "24/7 platform monitoring, updates, and customer success.",
+        tagline: "Platform monitoring, updates, and customer success for production systems.",
         description:
-            "Ongoing managed support for production environments — monitoring, platform updates, dedicated CSM, and SLA-backed response.",
+            "Ongoing managed support for production environments — monitoring, platform updates, dedicated CSM, and defined response windows.",
         problems: [
             "Internal teams lack capacity for platform operations",
             "Delayed response to production incidents",
@@ -234,25 +234,25 @@ export const SERVICE_ITEMS: ServiceItem[] = [
             "No proactive customer success or health monitoring",
         ],
         solutions: [
-            "24/7 monitoring and alerting with defined SLAs",
+            "Monitoring and alerting with defined response windows",
             "Platform updates and security patch management",
             "Dedicated Customer Success Manager",
             "Proactive health scoring and renewal support",
         ],
         benefits: [
-            "Continuous health monitoring with live status endpoints",
+            "Health, readiness, and liveness endpoints exposed by the platform",
             "Reduced internal ops burden",
             "Proactive issue detection and resolution",
             "Continuous platform evolution without disruption",
         ],
         process: [
             { phase: "Onboard", description: "Environment review, runbook setup, and escalation paths" },
-            { phase: "Monitor", description: "24/7 health monitoring and alerting" },
+            { phase: "Monitor", description: "Health monitoring and alerting" },
             { phase: "Maintain", description: "Scheduled updates and security patches" },
             { phase: "Support", description: "Incident response and user support" },
             { phase: "Review", description: "Monthly health reports and optimization recommendations" },
         ],
-        technologies: ["Platform Operations", "Observability", "Incident Management", "Health Scoring", "SLA Tracking"],
+        technologies: ["Platform Operations", "Observability", "Incident Management", "Health Scoring", "Response-time Tracking"],
         deliverables: [
             "Monitoring and alerting configuration",
             "Platform update schedule",
@@ -262,7 +262,7 @@ export const SERVICE_ITEMS: ServiceItem[] = [
         faqs: [
             {
                 question: "What SLA tiers are available?",
-                answer: "Standard (business hours), Professional (extended hours), and Enterprise (24/7 with dedicated response team).",
+                answer: "Standard (business hours), Professional (extended hours), and Enterprise (round-the-clock coverage arranged by agreement, with a dedicated response team).",
             },
             {
                 question: "Can managed support be added after go-live?",
