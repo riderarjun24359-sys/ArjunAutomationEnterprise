@@ -4,7 +4,7 @@ export const alt = "Talk to Arjun Automation";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
-export default function OpengraphImage() {
+export default async function OpengraphImage() {
     return renderOgImage({
         eyebrow: "Contact",
         title: "Book a free consultation",

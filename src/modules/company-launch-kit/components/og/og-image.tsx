@@ -17,10 +17,40 @@
  * fonts can be loaded; `woff2` is rejected. Every element with more than one
  * child needs an explicit `display` value.
  */
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ImageResponse } from "next/og";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
+
+/**
+ * Font for the share cards.
+ *
+ * Satori renders with a bare system fallback unless a font is supplied, which
+ * is what the first version of these cards did — legible, but not the site's
+ * typeface. `Geist-Regular.ttf` ships inside `next/dist/compiled/@vercel/og`,
+ * so this adds no network dependency at build time.
+ *
+ * Note: the marketing pages use Inter. Geist is very close at card sizes and
+ * is the only face available offline here; swapping in Inter would mean
+ * fetching it during the build, which would make image generation fail if the
+ * network is unavailable in CI.
+ *
+ * Satori accepts only ttf/otf/woff — woff2 is rejected.
+ */
+const FONT_PATH = path.join(process.cwd(), "node_modules/next/dist/compiled/@vercel/og/Geist-Regular.ttf");
+
+let cachedFont: Promise<ArrayBuffer> | null = null;
+
+async function loadFont(): Promise<Array<{ name: string; data: ArrayBuffer; weight: 400; style: "normal" }>> {
+    if (!cachedFont) {
+        cachedFont = readFile(FONT_PATH).then((buffer) =>
+            buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer,
+        );
+    }
+    return [{ name: "Geist", data: await cachedFont, weight: 400, style: "normal" }];
+}
 
 /** Brand palette, mirrored from the premium theme CSS variables. */
 const COLORS = {
@@ -49,11 +79,14 @@ export interface OgImageOptions {
 }
 
 /**
- * Builds a 1200x630 share card. Returns a Response so it can be used directly
- * from an `opengraph-image.tsx` default export or a route handler.
+ * Builds a 1200x630 share card. Returns a Promise<Response> so it can be used
+ * directly from an `opengraph-image.tsx` default export or a route handler.
+ *
+ * Async because the font has to be read from disk first.
  */
-export function renderOgImage(options: OgImageOptions): Response {
+export async function renderOgImage(options: OgImageOptions): Promise<Response> {
     const { eyebrow, title, subtitle, stat, statLabel, footer } = options;
+    const fonts = await loadFont();
 
     return new ImageResponse(
         (
@@ -67,7 +100,7 @@ export function renderOgImage(options: OgImageOptions): Response {
                     backgroundColor: COLORS.bg,
                     backgroundImage: `linear-gradient(135deg, ${COLORS.surface} 0%, ${COLORS.bg} 55%)`,
                     padding: "72px 80px",
-                    fontFamily: "sans-serif",
+                    fontFamily: "Geist",
                 }}
             >
                 {/* Brand row */}
@@ -204,7 +237,7 @@ export function renderOgImage(options: OgImageOptions): Response {
                 </div>
             </div>
         ),
-        OG_SIZE,
+        { ...OG_SIZE, fonts },
     );
 }
 
