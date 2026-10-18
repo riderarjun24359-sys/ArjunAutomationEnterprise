@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { MarketingFooterStatic } from "@/src/modules/company-launch-kit/components/MarketingFooterStatic";
 import { MarketingHeaderStatic } from "@/src/modules/company-launch-kit/components/MarketingHeaderStatic";
 import { WhatsAppFloat } from "@/src/modules/company-launch-kit/components/WhatsAppFloat";
-import { AnalyticsScripts } from "@/src/modules/company-launch-kit/components/AnalyticsScripts";
+import { CookieConsent } from "@/src/modules/company-launch-kit/components/consent/CookieConsent";
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
     return (
@@ -18,9 +18,14 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
                 {children}
             </main>
             <MarketingFooterStatic />
-            {/* Renders nothing until a real phone number / analytics ID is configured. */}
+            {/* Renders nothing until a real phone number is configured. */}
             <WhatsAppFloat />
-            <AnalyticsScripts />
+            {/*
+                Owns the cookie-consent decision. The analytics tags mount only
+                after consent is granted, so GA4 cannot fire without it — see
+                components/consent/CookieConsent.tsx.
+            */}
+            <CookieConsent />
         </div>
     );
 }

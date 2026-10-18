@@ -90,16 +90,20 @@ export const COMPANY_PROFILE = {
     /**
      * Registered office.
      *
-     * City and country are set; the street line and PIN code are not, because a
-     * registered address must match your incorporation documents and we will
-     * not invent one. Partial addresses render whatever is real — the layout
-     * does not require a street line to display a city.
+     * `street` holds the locality, `city` the city it sits in — Balanagar is a
+     * locality within Secunderabad, not a city in its own right, so putting it
+     * in `street` keeps the JSON-LD `PostalAddress` structured correctly rather
+     * than emitting an address line that does not exist.
+     *
+     * A registered address must match your incorporation documents. If this is
+     * a working address rather than the registered one, override it with
+     * NEXT_PUBLIC_COMPANY_ADDRESS_STREET and friends.
      */
     address: {
-        street: envString("NEXT_PUBLIC_COMPANY_ADDRESS_STREET"),
-        city: envString("NEXT_PUBLIC_COMPANY_CITY") ?? "Hyderabad",
+        street: envString("NEXT_PUBLIC_COMPANY_ADDRESS_STREET") ?? "Balanagar",
+        city: envString("NEXT_PUBLIC_COMPANY_CITY") ?? "Secunderabad",
         region: envString("NEXT_PUBLIC_COMPANY_REGION") ?? "Telangana",
-        postalCode: envString("NEXT_PUBLIC_COMPANY_POSTAL_CODE"),
+        postalCode: envString("NEXT_PUBLIC_COMPANY_POSTAL_CODE") ?? "500042",
         country: envString("NEXT_PUBLIC_COMPANY_COUNTRY") ?? "India",
         countryCode: envString("NEXT_PUBLIC_COMPANY_COUNTRY_CODE") ?? "IN",
     } as CompanyAddress,
