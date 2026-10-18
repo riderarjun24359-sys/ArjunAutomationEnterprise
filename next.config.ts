@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { ANALYTICS, ANALYTICS_CSP_ORIGINS } from "./src/config/analytics";
 
 /**
  * Content Security Policy.
@@ -26,12 +27,18 @@ function buildCsp(): string {
         connectSources.push(supabaseOrigin, "wss://*.supabase.co");
     }
 
-    if (process.env.NEXT_PUBLIC_GA4_ID || process.env.NEXT_PUBLIC_GTM_ID) {
-        scriptSources.push("https://www.googletagmanager.com");
-        connectSources.push("https://www.google-analytics.com", "https://region1.google-analytics.com");
+    /**
+     * Analytics origins are driven by the same config the tags themselves read
+     * (`src/config/analytics.ts`), so the policy and the tags cannot drift.
+     * Without this the browser blocks the tag outright: the site would look
+     * correctly configured while silently recording nothing.
+     */
+    if (ANALYTICS.ga4Id || ANALYTICS.gtmId) {
+        scriptSources.push(...ANALYTICS_CSP_ORIGINS.script);
+        connectSources.push(...ANALYTICS_CSP_ORIGINS.connect);
     }
 
-    if (process.env.NEXT_PUBLIC_META_PIXEL_ID) {
+    if (ANALYTICS.metaPixelId) {
         scriptSources.push("https://connect.facebook.net");
         connectSources.push("https://www.facebook.com");
     }
