@@ -60,8 +60,15 @@ const rawPhone =
     envString("NEXT_PUBLIC_COMPANY_PHONE") ?? envString("NEXT_PUBLIC_CONTACT_PHONE") ?? DEFAULT_PHONE;
 
 export const COMPANY_PROFILE = {
-    /** Legal entity name. Must match your registration documents exactly. */
-    legalName: envString("NEXT_PUBLIC_COMPANY_LEGAL_NAME") ?? "Arjun Automations",
+    /**
+     * Legal entity name — must match your registration documents exactly, since
+     * it appears on the Terms page as the contracting party and in schema.org.
+     *
+     * `ArjunAutomations` is written as one word. `tradingName` below stays
+     * "Arjun Automation" because that is the spaced form used in headings and
+     * logo lockups; the two are intentionally different.
+     */
+    legalName: envString("NEXT_PUBLIC_COMPANY_LEGAL_NAME") ?? "ArjunAutomations",
     /** Short trading name used in headings and logo lockups. */
     tradingName: "Arjun Automation",
     tagline: "Enterprise automation, delivered as a working system.",
