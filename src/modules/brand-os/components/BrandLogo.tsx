@@ -17,16 +17,18 @@ const LOGO_PATHS: Record<BrandLogoVariant, string> = {
  *
  * These MUST match the `width`/`height` attributes baked into each SVG file.
  * `w-auto h-auto` in the class list tells the browser to fall back to the
- * image's intrinsic size; the logo SVGs therefore carry explicit dimensions
- * so the mark never collapses to zero.
+ * image's intrinsic size, so a mismatch here collapses the logo to zero.
+ *
+ * Values as of the outlined rewrite: the wordmark is 320x48, the symbol and
+ * monogram 48x48, the stacked lockup 140x104.
  */
 const LOGO_DIMENSIONS: Record<BrandLogoVariant, { width: number; height: number }> = {
     horizontal: { width: 320, height: 48 },
-    secondary: { width: 260, height: 48 },
-    vertical: { width: 80, height: 104 },
+    secondary: { width: 320, height: 48 },
+    vertical: { width: 140, height: 104 },
     symbol: { width: 48, height: 48 },
     monogram: { width: 48, height: 48 },
-    inverse: { width: 260, height: 48 },
+    inverse: { width: 320, height: 48 },
 };
 
 export type BrandLogoProps = {
