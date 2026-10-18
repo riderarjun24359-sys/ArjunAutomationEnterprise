@@ -22,6 +22,15 @@
  * localStorage is used rather than a cookie so the value is not itself a
  * tracking cookie. It is wrapped in try/catch because Safari private mode and
  * some embedded webviews throw on access.
+ *
+ * REACTIVITY
+ * ----------
+ * The decision is exposed as an external store consumed via
+ * `useSyncExternalStore`, rather than component state updated from an effect.
+ * React forbids reading `window` during server render, and localStorage is
+ * exactly that — an external mutable value. `useSyncExternalStore` gives the
+ * server a stable snapshot and the client the real one, so there is no
+ * hydration mismatch and no setState-in-effect cascade.
  */
 
 export const CONSENT_STORAGE_KEY = "aa_consent_v1";
@@ -47,7 +56,7 @@ export const DEFAULT_CONSENT: ConsentState = {
 /**
  * Maps our state onto the Consent Mode v2 signal names.
  * `essential` maps to the storage categories that are strictly necessary for
- * the site to function and are always granted once a decision exists.
+ * the site to function.
  */
 export function consentSignals(state: ConsentState): Record<string, ConsentDecision> {
     return {
@@ -94,14 +103,48 @@ export function writeConsent(decision: "accept" | "reject"): ConsentState {
     } catch {
         // Non-fatal: the decision still applies to this page view.
     }
+    emitConsentChange();
     return state;
+}
+
+/* ------------------------------------------------------------------ *
+ * External store plumbing for useSyncExternalStore
+ * ------------------------------------------------------------------ */
+
+type Listener = () => void;
+const listeners = new Set<Listener>();
+
+export function subscribeConsent(listener: Listener): () => void {
+    listeners.add(listener);
+    return () => {
+        listeners.delete(listener);
+    };
+}
+
+/** Client snapshot. Returns null when no decision has been made yet. */
+export function getConsentSnapshot(): ConsentState | null {
+    return readConsent();
+}
+
+/**
+ * Server snapshot. Always null, so the server never renders the banner and
+ * never triggers analytics. React re-checks with the client snapshot right
+ * after hydration.
+ */
+export function getConsentServerSnapshot(): null {
+    return null;
+}
+
+function emitConsentChange(): void {
+    for (const listener of listeners) listener();
 }
 
 /**
  * Declares the gtag queue and pushes the default-deny state.
  *
  * Must run before gtag.js is injected. Creates `window.dataLayer` and a
- * `window.gtag` shim if the tag has not loaded yet, so queued calls are not lost.
+ * `window.gtag` shim if the tag has not loaded yet, so queued calls are not
+ * lost.
  */
 export function pushDefaultConsent(): void {
     const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
@@ -122,8 +165,13 @@ export function pushDefaultConsent(): void {
          * appears in the console, and analytics records nothing, forever.
          * Verified empirically on this project: the `arguments` form sends the
          * /g/collect beacon; the rest-array form sends zero requests.
+         *
+         * `prefer-rest-params` is disabled because honouring that rule here is
+         * precisely what breaks analytics.
          */
+        // eslint-disable-next-line prefer-rest-params
         w.gtag = function gtag() {
+            // eslint-disable-next-line prefer-rest-params
             w.dataLayer?.push(arguments);
         };
     }

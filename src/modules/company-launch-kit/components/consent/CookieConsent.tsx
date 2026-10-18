@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { ANALYTICS } from "@/src/config/analytics";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import {
     applyConsent,
-    DEFAULT_CONSENT,
+    getConsentServerSnapshot,
+    getConsentSnapshot,
     pushDefaultConsent,
-    readConsent,
+    subscribeConsent,
     writeConsent,
-    type ConsentState,
 } from "./consent";
 
 /** DOM id for the injected gtag.js, so re-mounts cannot double-inject. */
@@ -23,52 +23,46 @@ const GTAG_SCRIPT_ID = "aa-ga4-script";
  * the decision, and the analytics tags mount only once that decision exists, so
  * there is no window where GA4 can load without consent.
  *
+ * The decision lives in an external store consumed via `useSyncExternalStore`
+ * rather than in component state. `localStorage` cannot be read during server
+ * render, and this avoids a setState-in-effect cascade that would re-render
+ * the whole marketing tree on every visit.
+ *
  * Behaviour
  * ---------
- * - `pushDefaultConsent()` runs in a `useLayoutEffect`-equivalent (effect on
- *   mount) so default-deny is queued before gtag.js can execute.
+ * - `pushDefaultConsent()` runs on mount so default-deny is queued before
+ *   gtag.js can execute.
  * - A stored decision is replayed on mount; returning visitors get no banner
  *   and GA4 loads immediately.
- * - Rejecting stores a denial. Nothing loads, and the banner stays dismissed —
+ * - Rejecting stores a denial. Nothing loads and the banner stays dismissed —
  *   there is no nagging re-prompt.
  *
  * Accessibility
  * -------------
- * The dialog is a labelled `role="dialog"` with `aria-modal`, focus moves into
- * it on open, Escape does nothing (dismissing without a choice would imply
- * consent), and both actions are real buttons with visible focus rings.
+ * A labelled `role="dialog"` with `aria-modal` and `aria-describedby`. Both
+ * actions are real buttons with visible focus rings. Escape is intentionally
+ * NOT wired: dismissing without a choice would imply consent.
  */
 export function CookieConsent() {
-    const [decided, setDecided] = useState<ConsentState | null>(null);
-    const [ready, setReady] = useState(false);
-    const [canLoadAnalytics, setCanLoadAnalytics] = useState(false);
+    // null means "no decision stored yet" (and is also the server snapshot).
+    const stored = useSyncExternalStore(subscribeConsent, getConsentSnapshot, getConsentServerSnapshot);
 
-    // Declare default-deny first, then replay any stored decision.
+    // Declare default-deny on mount, before gtag.js can run.
     useEffect(() => {
         pushDefaultConsent();
-
-        const stored = readConsent();
-        setDecided(stored ?? DEFAULT_CONSENT);
-        setReady(true);
-
-        if (stored) {
-            applyConsent(stored);
-            if (stored.analytics === "granted") setCanLoadAnalytics(true);
-        }
+        if (stored) applyConsent(stored);
+        // `stored` is intentionally read once on mount: replaying the decision
+        // on every change would be redundant, writeConsent already applies it.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const decide = useCallback((choice: "accept" | "reject") => {
         const state = writeConsent(choice);
         applyConsent(state);
-        setDecided(state);
-        if (state.analytics === "granted") setCanLoadAnalytics(true);
     }, []);
 
-    // Gate loading on `ready` too: during SSR and the first paint we must not
-    // render the analytics tags, because we do not yet know the stored answer.
-    const ga4Id = ready && canLoadAnalytics ? ANALYTICS.ga4Id : null;
-
-    const showBanner = ready && decided?.decidedAt === "";
+    const analyticsGranted = stored?.analytics === "granted";
+    const showBanner = stored === null;
 
     return (
         <>
@@ -82,10 +76,16 @@ export function CookieConsent() {
                 >
                     <div className="premium-container flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-6">
                         <div className="min-w-0">
-                            <h2 id="cookie-consent-title" className="text-sm font-semibold text-[var(--premium-fg)]">
+                            <h2
+                                id="cookie-consent-title"
+                                className="text-sm font-semibold text-[var(--premium-fg)]"
+                            >
                                 We use cookies
                             </h2>
-                            <p id="cookie-consent-body" className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[var(--premium-fg-muted)]">
+                            <p
+                                id="cookie-consent-body"
+                                className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[var(--premium-fg-muted)]"
+                            >
                                 We use analytics cookies to understand which pages are useful. Nothing is loaded and
                                 nothing is tracked until you choose. Read our{" "}
                                 <Link
@@ -129,10 +129,9 @@ export function CookieConsent() {
                 GA4 mounts only after consent. Injection happens in an effect
                 rather than during render: appending a <script> to document.head
                 is a side effect, and doing it in the render body means React
-                can run it twice or discard the work on a re-render. The id
-                guard keeps injection idempotent regardless.
+                can run it twice or discard the work on a re-render.
             */}
-            {ga4Id ? <GtagLoader ga4Id={ga4Id} /> : null}
+            {analyticsGranted && ANALYTICS.ga4Id ? <GtagLoader ga4Id={ANALYTICS.ga4Id} /> : null}
         </>
     );
 }
