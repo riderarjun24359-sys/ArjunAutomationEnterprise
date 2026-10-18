@@ -71,9 +71,22 @@ export function TeamSection({ compact = false }: { compact?: boolean }) {
                                     <p className="text-sm text-indigo-600 dark:text-indigo-400">{member.role}</p>
 
                                     {member.bio ? (
-                                        <p className="mt-3 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                                            {member.bio}
-                                        </p>
+                                        /* Split on blank lines so a multi-paragraph
+                                           bio renders as separate <p> elements.
+                                           Rendering "\n\n" inside one <p> collapses
+                                           to spaces in HTML and the paragraphs run
+                                           together. Single newlines stay as-is. */
+                                        member.bio
+                                            .split(/\n\s*\n/)
+                                            .filter((paragraph) => paragraph.trim().length > 0)
+                                            .map((paragraph) => (
+                                                <p
+                                                    key={paragraph.slice(0, 40)}
+                                                    className="mt-3 text-sm leading-relaxed text-[var(--premium-fg-muted)] first:mt-3"
+                                                >
+                                                    {paragraph.trim()}
+                                                </p>
+                                            ))
                                     ) : null}
 
                                     {member.linkedin ? (
