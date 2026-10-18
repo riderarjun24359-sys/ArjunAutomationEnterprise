@@ -24,15 +24,15 @@ export const BRAND_OS_TAB_LIST: BrandOsTab[] = [
 export const BRAND_OS_PERMISSIONS = ["brand-os.view", "brand-os.edit", "brand-os.export", "brand-os.admin"] as const;
 
 export const BRAND_OS_THEME = {
-    primary: "indigo-700",
-    primaryHover: "indigo-600",
-    ring: "indigo-500/20",
-    text: "text-indigo-700",
-    textDark: "dark:text-indigo-400",
-    bg: "bg-indigo-700",
-    bgHover: "hover:bg-indigo-600",
-    border: "border-indigo-200 dark:border-indigo-800",
-    surface: "bg-white/80 dark:bg-indigo-950/80",
+    primary: "orange-500",
+    primaryHover: "orange-600",
+    ring: "orange-500/20",
+    text: "text-orange-500",
+    textDark: "dark:text-orange-400",
+    bg: "bg-orange-500",
+    bgHover: "hover:bg-orange-600",
+    border: "border-orange-200 dark:border-orange-800",
+    surface: "bg-white/80 dark:bg-orange-950/80",
 } as const;
 
 export const BRAND_OS_DOCUMENT_REGISTRY = BRAND_DOCUMENTS;

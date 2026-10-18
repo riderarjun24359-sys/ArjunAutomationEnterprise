@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" role="img" aria-label="Arjun Automation symbol">
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" role="img" aria-label="Arjun Automation symbol">
   <title>Arjun Automation Symbol</title>
-  <!-- Vertex Arc Mark: original geometric identity  upward precision, orbital foundation -->
-  <path d="M8 36 L24 8 L40 36" stroke="#4338CA" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 28 H35" stroke="#4338CA" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M10 36 C16 42 32 42 38 36" stroke="#4338CA" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- Vertex Arc Mark: upward precision, orbital foundation. Brand accent orange. -->
+  <path d="M8 36 L24 8 L40 36" stroke="#FF6A00" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 28 H35" stroke="#FF6A00" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M10 36 C16 42 32 42 38 36" stroke="#FF6A00" stroke-width="2.4" stroke-linecap="round"/>
 </svg>

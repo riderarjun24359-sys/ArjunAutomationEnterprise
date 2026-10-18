@@ -74,7 +74,7 @@ export default function ContactPage() {
                                 {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
                                     <a
                                         href={`tel:${COMPANY_PROFILE.phoneE164}`}
-                                        className="inline-flex items-center gap-2 rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                                        className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
                                     >
                                         <Phone className="h-4 w-4" aria-hidden="true" />
                                         {COMPANY_PROFILE.phoneDisplay}
@@ -95,7 +95,7 @@ export default function ContactPage() {
 
                                 <a
                                     href={`mailto:${COMPANY_PROFILE.emails.sales}`}
-                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
                                 >
                                     <Mail className="h-4 w-4" aria-hidden="true" />
                                     Email sales
@@ -105,9 +105,9 @@ export default function ContactPage() {
                             <dl className="mt-8 space-y-4">
                                 {CHANNELS.map((channel) => (
                                     <div key={channel.label}>
-                                        <dt className="text-sm font-medium text-indigo-700">{channel.label}</dt>
+                                        <dt className="text-sm font-medium text-orange-500">{channel.label}</dt>
                                         <dd className="mt-1">
-                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-indigo-700">
+                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-orange-500">
                                                 {channel.value}
                                             </a>
                                         </dd>
@@ -116,7 +116,7 @@ export default function ContactPage() {
 
                                 {addressLine ? (
                                     <div>
-                                        <dt className="text-sm font-medium text-indigo-700">Registered office</dt>
+                                        <dt className="text-sm font-medium text-orange-500">Registered office</dt>
                                         <dd className="mt-1 flex items-start gap-2 text-[var(--premium-fg-muted)]">
                                             <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                                             <span>{addressLine}</span>
@@ -126,13 +126,13 @@ export default function ContactPage() {
 
                                 {COMPANY_PROFILE.gstin ? (
                                     <div>
-                                        <dt className="text-sm font-medium text-indigo-700">GSTIN</dt>
+                                        <dt className="text-sm font-medium text-orange-500">GSTIN</dt>
                                         <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.gstin}</dd>
                                     </div>
                                 ) : null}
 
                                 <div>
-                                    <dt className="text-sm font-medium text-indigo-700">Office hours</dt>
+                                    <dt className="text-sm font-medium text-orange-500">Office hours</dt>
                                     <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.officeHours}</dd>
                                 </div>
                             </dl>
@@ -145,7 +145,7 @@ export default function ContactPage() {
                             <ol className="mt-4 space-y-3">
                                 {QUALIFICATION_STEPS.map((step, index) => (
                                     <li key={step} className="flex gap-3 text-sm text-[var(--premium-fg-muted)]">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-700 text-xs font-semibold text-white">
+                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-500 text-xs font-semibold text-white">
                                             {index + 1}
                                         </span>
                                         {step}
@@ -156,11 +156,11 @@ export default function ContactPage() {
 
                         <p className="text-sm text-[var(--premium-fg-muted)]">
                             Review{" "}
-                            <Link href={MARKETING_ROUTES.pricing} className="text-indigo-700 hover:text-indigo-600">
+                            <Link href={MARKETING_ROUTES.pricing} className="text-orange-500 hover:text-orange-600">
                                 pricing
                             </Link>{" "}
                             and{" "}
-                            <Link href={MARKETING_ROUTES.faq} className="text-indigo-700 hover:text-indigo-600">
+                            <Link href={MARKETING_ROUTES.faq} className="text-orange-500 hover:text-orange-600">
                                 FAQ
                             </Link>{" "}
                             before your call.

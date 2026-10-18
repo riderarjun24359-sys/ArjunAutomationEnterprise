@@ -68,7 +68,7 @@ export function BusinessPlatformPage() {
             </StaggerReveal>
 
             <Card>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-indigo-600">Client lifecycle</h2>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-orange-600">Client lifecycle</h2>
                 <div className="mt-4">
                     <LifecyclePipeline dashboard={data.dashboard} />
                 </div>

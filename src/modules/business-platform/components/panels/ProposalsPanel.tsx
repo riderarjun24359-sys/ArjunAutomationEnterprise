@@ -44,7 +44,7 @@ export function ProposalsPanel({ data }: { data: BusinessPlatformData }) {
                                 <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">
                                     v{p.version} · ${p.totalAmount.toLocaleString()} · {p.documentRef}
                                 </p>
-                                <p className="mt-1 text-xs text-indigo-600">Approval: {p.approvalStatus}</p>
+                                <p className="mt-1 text-xs text-orange-600">Approval: {p.approvalStatus}</p>
                             </div>
                         ))
                     )}

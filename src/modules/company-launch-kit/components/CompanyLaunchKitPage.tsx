@@ -30,11 +30,11 @@ const MARKETING_PAGES = [
 
 export function CompanyLaunchKitPage() {
     return (
-        <div className={`mx-auto flex max-w-7xl flex-col gap-8 text-indigo-950`}>
+        <div className={`mx-auto flex max-w-7xl flex-col gap-8 text-orange-950`}>
             <header className={`rounded-[2rem] border ${LAUNCH_KIT_THEME.border} ${LAUNCH_KIT_THEME.surface} p-6 shadow-sm`}>
                 <p className={`text-sm font-medium uppercase tracking-[0.24em] ${LAUNCH_KIT_THEME.text}`}>V2 Company Launch Kit</p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Complete Arjun Automation Launch</h1>
-                <p className="mt-3 max-w-2xl text-sm text-indigo-600">
+                <p className="mt-3 max-w-2xl text-sm text-orange-600">
                     Public marketing website, portfolio, sales documents, email templates, marketing assets, SEO, and analytics — brand-consistent with Brand OS.
                 </p>
                 <Link
@@ -51,21 +51,21 @@ export function CompanyLaunchKitPage() {
             <div className="grid gap-6 lg:grid-cols-2">
                 {LAUNCH_KIT_SECTIONS.map((section) => (
                     <section key={section.id} className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                        <h2 className="text-lg font-semibold text-indigo-950">{section.label}</h2>
+                        <h2 className="text-lg font-semibold text-orange-950">{section.label}</h2>
                         <p className="mt-1 text-sm text-slate-600">{section.description}</p>
                     </section>
                 ))}
             </div>
 
             <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-indigo-950">
+                <h2 className="flex items-center gap-2 text-lg font-semibold text-orange-950">
                     <Globe className="h-5 w-5" aria-hidden="true" />
                     Marketing Pages ({MARKETING_PAGES.length})
                 </h2>
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                     {MARKETING_PAGES.map((page) => (
                         <li key={page.href}>
-                            <Link href={page.href} target="_blank" className="text-sm text-indigo-700 hover:text-indigo-600">
+                            <Link href={page.href} target="_blank" className="text-sm text-orange-500 hover:text-orange-600">
                                 {page.label} →
                             </Link>
                         </li>
@@ -74,11 +74,11 @@ export function CompanyLaunchKitPage() {
             </section>
 
             <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                <h2 className="text-lg font-semibold text-indigo-950">Portfolio ({PORTFOLIO_ITEMS.length} items)</h2>
+                <h2 className="text-lg font-semibold text-orange-950">Portfolio ({PORTFOLIO_ITEMS.length} items)</h2>
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                     {PORTFOLIO_ITEMS.map((item) => (
                         <li key={item.slug}>
-                            <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} target="_blank" className="text-sm text-indigo-700 hover:text-indigo-600">
+                            <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} target="_blank" className="text-sm text-orange-500 hover:text-orange-600">
                                 {item.title}
                             </Link>
                         </li>
@@ -88,7 +88,7 @@ export function CompanyLaunchKitPage() {
 
             <div className="grid gap-6 lg:grid-cols-2">
                 <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                    <h2 className="flex items-center gap-2 text-lg font-semibold text-indigo-950">
+                    <h2 className="flex items-center gap-2 text-lg font-semibold text-orange-950">
                         <FileText className="h-5 w-5" aria-hidden="true" />
                         Sales Documents ({LAUNCH_KIT_DOCUMENT_FILES.length})
                     </h2>
@@ -102,7 +102,7 @@ export function CompanyLaunchKitPage() {
                 </section>
 
                 <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                    <h2 className="flex items-center gap-2 text-lg font-semibold text-indigo-950">
+                    <h2 className="flex items-center gap-2 text-lg font-semibold text-orange-950">
                         <Mail className="h-5 w-5" aria-hidden="true" />
                         Email Templates ({LAUNCH_KIT_EMAIL_FILES.length})
                     </h2>
@@ -117,14 +117,14 @@ export function CompanyLaunchKitPage() {
             </div>
 
             <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-indigo-950">
+                <h2 className="flex items-center gap-2 text-lg font-semibold text-orange-950">
                     <NextImage src="/icons/file.svg" className="h-5 w-5" aria-hidden="true" alt="File icon" width={20} height={20} />
                     Blog Posts ({BLOG_POSTS.length})
                 </h2>
                 <ul className="mt-4 space-y-2">
                     {BLOG_POSTS.map((post) => (
                         <li key={post.slug}>
-                            <Link href={MARKETING_ROUTES.blogPost(post.slug)} target="_blank" className="text-sm text-indigo-700 hover:text-indigo-600">
+                            <Link href={MARKETING_ROUTES.blogPost(post.slug)} target="_blank" className="text-sm text-orange-500 hover:text-orange-600">
                                 {post.title}
                             </Link>
                         </li>
@@ -133,7 +133,7 @@ export function CompanyLaunchKitPage() {
             </section>
 
             <section className={`rounded-2xl border ${LAUNCH_KIT_THEME.border} bg-white p-6`}>
-                <h2 className="text-lg font-semibold text-indigo-950">Social Post Template Preview</h2>
+                <h2 className="text-lg font-semibold text-orange-950">Social Post Template Preview</h2>
                 <div className="mt-6">
                     <SocialPostTemplate />
                 </div>

@@ -58,7 +58,7 @@ export default function IndustriesPage() {
                                 <tr key={ind.name} className="border-b border-[var(--premium-border)]">
                                     <td className="py-4 pr-4 font-medium">{ind.name}</td>
                                     <td className="py-4 pr-4 text-sm text-[var(--premium-fg-muted)]">{ind.useCases}</td>
-                                    <td className="py-4 text-sm text-indigo-700">{ind.pack}</td>
+                                    <td className="py-4 text-sm text-orange-500">{ind.pack}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -66,11 +66,11 @@ export default function IndustriesPage() {
                 </div>
                 <p className="mt-8 text-sm text-[var(--premium-fg-muted)]">
                     Explore our{" "}
-                    <Link href={MARKETING_ROUTES.portfolio} className="text-indigo-700 hover:text-indigo-600">
+                    <Link href={MARKETING_ROUTES.portfolio} className="text-orange-500 hover:text-orange-600">
                         portfolio
                     </Link>{" "}
                     and{" "}
-                    <Link href={MARKETING_ROUTES.caseStudies} className="text-indigo-700 hover:text-indigo-600">
+                    <Link href={MARKETING_ROUTES.caseStudies} className="text-orange-500 hover:text-orange-600">
                         case studies
                     </Link>{" "}
                     for industry-specific outcomes.

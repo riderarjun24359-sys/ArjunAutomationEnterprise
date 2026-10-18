@@ -131,7 +131,8 @@ export function LeadForm({ source, submitLabel = "Get in Touch", compact = false
                     className="mt-1 h-4 w-4 rounded border-[var(--premium-border)]"
                 />
                 <label htmlFor={`consent-${source}`} className="text-sm text-[var(--premium-fg-muted)]">
-                    I agree to the storage and use of my details for contact about my enquiry, as described in the{" "}
+                    <span className="text-[var(--dos-brand-primary)]">*</span> I agree to the storage and use of my
+                    details for contact about my enquiry, as described in the{" "}
                     <a href={MARKETING_ROUTES.privacy} className="underline hover:text-[var(--dos-brand-primary)]">
                         privacy notice
                     </a>

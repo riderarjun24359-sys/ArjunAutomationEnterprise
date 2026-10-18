@@ -59,7 +59,7 @@ export function BrandOsPage() {
     const salesDocs = getDocumentsByCategory("sales-kit");
 
     return (
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-indigo-950 dark:text-indigo-100">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-orange-950 dark:text-orange-100">
             <motion.header
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -67,7 +67,7 @@ export function BrandOsPage() {
             >
                 <p className={`text-sm font-medium uppercase tracking-[0.24em] ${BRAND_OS_THEME.text}`}>V2 Brand OS</p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Official Arjun Automation Brand Foundation</h1>
-                <p className="mt-3 max-w-2xl text-sm text-indigo-600 dark:text-indigo-400">
+                <p className="mt-3 max-w-2xl text-sm text-orange-600 dark:text-orange-400">
                     Authoritative brand book, visual identity, service library, company profile, sales kit, and asset library — documentation-first, PDF-ready, and separate from operational growth engine tables.
                 </p>
             </motion.header>
@@ -88,7 +88,7 @@ export function BrandOsPage() {
                         className={`rounded-full px-4 py-2 text-sm font-medium transition ${
                             activeTab === tab.id
                                 ? `${BRAND_OS_THEME.bg} text-white`
-                                : `border border-slate-200 text-indigo-700 hover:border-indigo-300 dark:border-slate-800 dark:text-indigo-300`
+                                : `border border-slate-200 text-orange-500 hover:border-orange-300 dark:border-slate-800 dark:text-orange-300`
                         }`}
                     >
                         {tab.label}
@@ -131,7 +131,7 @@ export function BrandOsPage() {
                             type="button"
                             onClick={() => setSelectedDocId(doc.id)}
                             className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                                selectedDocId === doc.id ? "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200" : "text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400"
+                                selectedDocId === doc.id ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200" : "text-orange-600 hover:bg-indigo-50 dark:text-orange-400"
                             }`}
                         >
                             {doc.title}

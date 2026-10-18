@@ -93,6 +93,32 @@
     --dos-shadow-glow: var(--premium-accent-glow);
 
     /* --- Tailwind palette remap (indigo / cyan / violet / blue → orange) --- */
+    /*
+     * WHY THE ORANGE LADDER IS DECLARED HERE TOO
+     * ------------------------------------------
+     * Call sites were migrated from `indigo-*` class names to `orange-*` so
+     * the markup describes the actual brand instead of relying on a remap to
+     * turn blue into orange. Tailwind's stock orange ladder is NOT the brand
+     * orange (stock orange-500 is #f97316; the brand is #ff6a00) and is not
+     * tuned for a dark surface. Declaring `--color-orange-*` here keeps the
+     * rendered result identical to the remapped indigo while the class names
+     * finally tell the truth.
+     *
+     * The indigo/cyan/violet/blue entries are retained because the authenticated
+     * app-shell modules and the auth pages still reference those names.
+     */
+    --color-orange-50: #1c1006;
+    --color-orange-100: #ffe3cc;
+    --color-orange-200: #7a3d10;
+    --color-orange-300: #ffbe8f;
+    --color-orange-400: #ff9d5c;
+    --color-orange-500: #ff7a1f;
+    --color-orange-600: #ff8a3d;
+    --color-orange-700: #ff6a00;
+    --color-orange-800: #ffc59b;
+    --color-orange-900: #ffe0c9;
+    --color-orange-950: #f4f4f5;
+
     --color-indigo-50: #1c1006;
     --color-indigo-100: #ffe3cc;
     --color-indigo-200: #7a3d10;

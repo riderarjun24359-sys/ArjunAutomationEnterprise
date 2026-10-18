@@ -1,12 +1,12 @@
 :root {
     /* Brand - Arjun OS Identity (Engineered Precision) */
-    --dos-brand-primary: #3b82f6; /* Calmer, technical blue */
-    --dos-brand-primary-hover: #60a5fa;
-    --dos-brand-accent: #6366f1; /* Deep, sophisticated indigo */
+    --dos-brand-primary: #ea580c; /* Arjun orange — deepened for contrast on light surfaces */
+    --dos-brand-primary-hover: #c2410c;
+    --dos-brand-accent: #ff6a00; /* Brand orange */
     
     /* Atmosphere - Precise, not generic */
-    --dos-mesh-1: rgba(59, 130, 246, 0.06);
-    --dos-mesh-2: rgba(99, 102, 241, 0.05);
+    --dos-mesh-1: rgba(255, 106, 0, 0.06);
+    --dos-mesh-2: rgba(255, 138, 61, 0.05);
 
     /* Surface - Pristine Lab (Light Theme) */
     --dos-surface: #ffffff;
@@ -120,6 +120,25 @@ body {
    colour/elevation tokens are overridden for the .dark theme.
    ================================================================== */
 :root {
+    /* --- Tailwind palette remap: orange ladder -> brand orange ---
+       Shell modules were migrated from indigo-* to orange-* class names so the
+       markup matches the actual brand. Tailwind's stock orange ladder is not
+       the brand colour and is not tuned for a dark surface, so it is remapped
+       here, mirroring src/modules/company-launch-kit/design-system/premium.css.
+       Values are chosen for a DARK surface: shades used as text (950) go light,
+       shades used as surfaces (50) go dark. */
+    --color-orange-50: #1c1006;
+    --color-orange-100: #ffe3cc;
+    --color-orange-200: #7a3d10;
+    --color-orange-300: #ffbe8f;
+    --color-orange-400: #ff9d5c;
+    --color-orange-500: #ff7a1f;
+    --color-orange-600: #ff8a3d;
+    --color-orange-700: #ff6a00;
+    --color-orange-800: #ffc59b;
+    --color-orange-900: #ffe0c9;
+    --color-orange-950: #f4f4f5;
+
     /* Radii — mirrors src/design-os/tokens/radii.ts */
     --dos-radius-none: 0;
     --dos-radius-sm: 0.375rem;
@@ -144,7 +163,7 @@ body {
 
     /* Borders */
     --dos-border-strong: rgba(30, 41, 59, 0.22);
-    --dos-border-focus: #2563eb;
+    --dos-border-focus: #ea580c;
 
     /* Elevation — restrained, navy-tinted in light theme */
     --dos-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -192,9 +211,28 @@ body {
 }
 
 .dark {
+    /* --- Tailwind palette remap: orange ladder -> brand orange ---
+       Shell modules were migrated from indigo-* to orange-* class names so the
+       markup matches the actual brand. Tailwind's stock orange ladder is not
+       the brand colour and is not tuned for a dark surface, so it is remapped
+       here, mirroring src/modules/company-launch-kit/design-system/premium.css.
+       Values are chosen for a DARK surface: shades used as text (950) go light,
+       shades used as surfaces (50) go dark. */
+    --color-orange-50: #1c1006;
+    --color-orange-100: #ffe3cc;
+    --color-orange-200: #7a3d10;
+    --color-orange-300: #ffbe8f;
+    --color-orange-400: #ff9d5c;
+    --color-orange-500: #ff7a1f;
+    --color-orange-600: #ff8a3d;
+    --color-orange-700: #ff6a00;
+    --color-orange-800: #ffc59b;
+    --color-orange-900: #ffe0c9;
+    --color-orange-950: #f4f4f5;
+
     /* Borders */
     --dos-border-strong: rgba(241, 245, 249, 0.20);
-    --dos-border-focus: #60a5fa;
+    --dos-border-focus: #ff8a3d;
 
     /* Elevation — deeper, blacker in dark theme */
     --dos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -223,7 +261,7 @@ body {
 
     /* Text */
     --dos-text-inverse: #020617;
-    --dos-text-link: #93c5fd;
+    --dos-text-link: #fdba74;
 
     /* Surfaces */
     --dos-surface-overlay: rgba(2, 6, 23, 0.7);

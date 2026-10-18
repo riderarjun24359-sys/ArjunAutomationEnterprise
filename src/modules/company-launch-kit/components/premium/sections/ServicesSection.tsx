@@ -22,7 +22,7 @@ export function ServicesSection() {
                             <GlassCard>
                                 <h3 className="text-lg font-semibold">{service.title}</h3>
                                 <p className="mt-3 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{service.description}</p>
-                                <p className="mt-4 flex items-center gap-2 text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                                <p className="mt-4 flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400">
                                     <Clock className="h-4 w-4" aria-hidden="true" />
                                     {service.timeline}
                                 </p>

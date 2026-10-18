@@ -18,11 +18,11 @@ export function AnimatedLink({ href, children, className, external }: AnimatedLi
     return (
         <Comp
             {...props}
-            className={cn("group relative inline-flex items-center text-sm font-medium text-[var(--premium-fg-muted)] hover:text-indigo-600 dark:hover:text-indigo-400", className)}
+            className={cn("group relative inline-flex items-center text-sm font-medium text-[var(--premium-fg-muted)] hover:text-orange-600 dark:hover:text-orange-400", className)}
         >
             {children}
             <motion.span
-                className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-indigo-600 dark:bg-indigo-400"
+                className="absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-orange-600 dark:bg-orange-400"
                 whileHover={{ scaleX: 1 }}
                 transition={{ duration: 0.3 }}
             />

@@ -55,7 +55,7 @@ export default function AboutPage() {
                                 "Partnership Mindset — We succeed when our clients succeed long after go-live.",
                             ].map((value) => (
                                 <li key={value} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-indigo-700" aria-hidden="true" />
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
                                     {value}
                                 </li>
                             ))}

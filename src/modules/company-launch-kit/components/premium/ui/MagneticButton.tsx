@@ -19,9 +19,9 @@ export function MagneticButton({ children, href, variant = "primary", className,
     const { ref, onMouseMove, onMouseLeave } = useMagnetic<HTMLButtonElement>();
 
     const styles = cn(
-        "relative inline-flex items-center justify-center overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50",
-        variant === "primary" && "bg-indigo-700 text-white hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500",
-        variant === "secondary" && "border border-[var(--premium-border)] bg-[var(--premium-glass)] text-[var(--premium-fg)] hover:border-indigo-500/30",
+        "relative inline-flex items-center justify-center overflow-hidden rounded-xl px-6 py-3 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50",
+        variant === "primary" && "bg-orange-500 text-white hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-500",
+        variant === "secondary" && "border border-[var(--premium-border)] bg-[var(--premium-glass)] text-[var(--premium-fg)] hover:border-orange-500/30",
         variant === "ghost" && "text-[var(--premium-fg-muted)] hover:text-[var(--premium-fg)]",
         className,
     );

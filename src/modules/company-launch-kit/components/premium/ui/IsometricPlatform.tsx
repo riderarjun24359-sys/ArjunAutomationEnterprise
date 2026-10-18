@@ -19,7 +19,7 @@ export function IsometricPlatform({ className }: IsometricPlatformProps) {
                 animate={reduced ? undefined : { rotateZ: [-45, -42, -45] }}
                 transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             >
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-800 shadow-lg shadow-indigo-500/30" />
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-orange-600 to-orange-800 shadow-lg shadow-orange-500/30" />
                 <div
                     className="absolute -top-8 left-4 h-16 w-16 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700 shadow-md"
                     style={{ transform: "translateZ(24px)" }}
@@ -33,7 +33,7 @@ export function IsometricPlatform({ className }: IsometricPlatformProps) {
                     style={{ transform: "translateZ(16px)" }}
                 />
             </motion.div>
-            <div className="absolute bottom-0 left-1/2 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+            <div className="absolute bottom-0 left-1/2 h-px w-3/4 -translate-x-1/2 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
         </div>
     );
 }

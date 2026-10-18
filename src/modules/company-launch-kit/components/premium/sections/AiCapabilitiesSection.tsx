@@ -32,7 +32,7 @@ export function AiCapabilitiesSection() {
                         <SectionReveal key={cap.title} delay={i * 0.08}>
                             <motion.div whileHover={reduced ? undefined : { y: -6 }}>
                                 <GlassCard>
-                                    <div className="mb-3 h-1 w-12 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-500" />
+                                    <div className="mb-3 h-1 w-12 rounded-full bg-gradient-to-r from-orange-600 to-cyan-500" />
                                     <h3 className="font-semibold">{cap.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{cap.description}</p>
                                 </GlassCard>

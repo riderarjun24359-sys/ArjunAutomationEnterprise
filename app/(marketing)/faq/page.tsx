@@ -45,11 +45,11 @@ export default function FaqPage() {
                 <FaqAccordionStatic />
                 <p className="mt-10 text-sm text-[var(--premium-fg-muted)]">
                     Still have questions?{" "}
-                    <Link href={MARKETING_ROUTES.contact} className="font-medium text-indigo-700 hover:text-indigo-600">
+                    <Link href={MARKETING_ROUTES.contact} className="font-medium text-orange-500 hover:text-orange-600">
                         Contact our team
                     </Link>{" "}
                     or explore our{" "}
-                    <Link href={MARKETING_ROUTES.resources} className="font-medium text-indigo-700 hover:text-indigo-600">
+                    <Link href={MARKETING_ROUTES.resources} className="font-medium text-orange-500 hover:text-orange-600">
                         resources
                     </Link>
                     .

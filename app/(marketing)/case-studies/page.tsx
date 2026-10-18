@@ -37,9 +37,9 @@ export default function CaseStudiesPage() {
                 <div className="space-y-12">
                     {CASE_STUDY_ITEMS.map((study) => (
                         <article key={study.slug} className="premium-glass rounded-2xl p-8">
-                            <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{study.industry}</span>
+                            <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{study.industry}</span>
                             <h2 className="mt-2 text-2xl font-semibold">
-                                <Link href={MARKETING_ROUTES.caseStudyItem(study.slug)} className="hover:text-indigo-700">
+                                <Link href={MARKETING_ROUTES.caseStudyItem(study.slug)} className="hover:text-orange-500">
                                     {study.title}
                                 </Link>
                             </h2>
@@ -56,14 +56,14 @@ export default function CaseStudiesPage() {
                             </div>
                             <div className="mt-6 flex flex-wrap gap-2">
                                 {study.results.slice(0, 3).map((result) => (
-                                    <span key={result} className="rounded-full bg-indigo-700/10 px-3 py-1 text-xs font-medium text-indigo-700">
+                                    <span key={result} className="rounded-full bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-500">
                                         {result}
                                     </span>
                                 ))}
                             </div>
                             <Link
                                 href={MARKETING_ROUTES.caseStudyItem(study.slug)}
-                                className="mt-4 inline-block text-sm font-medium text-indigo-700 hover:text-indigo-600"
+                                className="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-600"
                             >
                                 Read full case study →
                             </Link>

@@ -43,7 +43,7 @@ export function PremiumFooter() {
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
                     <div className="lg:col-span-2">
                         <Link href={MARKETING_ROUTES.home} className="flex items-center gap-2">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">AA</span>
                             <span className="font-display text-lg font-semibold text-white">Arjun Automation</span>
                         </Link>
                         <p className="mt-4 max-w-sm text-sm text-slate-400 leading-relaxed">
@@ -59,7 +59,7 @@ export function PremiumFooter() {
                                 <ul className="mt-3 space-y-2">
                                     {links.map((link) => (
                                         <li key={link.href}>
-                                            <AnimatedLink href={link.href} className="text-slate-400 hover:text-indigo-400">
+                                            <AnimatedLink href={link.href} className="text-slate-400 hover:text-orange-400">
                                                 {link.label}
                                             </AnimatedLink>
                                         </li>
@@ -74,7 +74,7 @@ export function PremiumFooter() {
                     <p className="text-sm text-slate-400">&copy; {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
                     <div className="flex gap-4">
                         {FOOTER_LINKS.legal.map((link) => (
-                            <AnimatedLink key={link.href} href={link.href} className="text-slate-400 hover:text-indigo-400">
+                            <AnimatedLink key={link.href} href={link.href} className="text-slate-400 hover:text-orange-400">
                                 {link.label}
                             </AnimatedLink>
                         ))}

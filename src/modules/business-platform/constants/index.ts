@@ -66,7 +66,7 @@ export const PROPOSAL_STATUS_OPTIONS = [
 ] as const;
 
 export const BUSINESS_PLATFORM_THEME = {
-    accent: "text-indigo-600 dark:text-indigo-400",
+    accent: "text-orange-600 dark:text-orange-400",
     text: "text-[var(--dos-text-secondary)]",
     badge: "Enterprise Business Platform v1.0",
 } as const;

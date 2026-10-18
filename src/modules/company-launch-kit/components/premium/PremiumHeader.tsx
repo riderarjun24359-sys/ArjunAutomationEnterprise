@@ -37,9 +37,9 @@ export function PremiumHeader() {
             <div className="premium-container flex items-center justify-between py-4">
                 <Link
                     href={MARKETING_ROUTES.home}
-                    className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                    className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                 >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">AA</span>
                     <span className="font-display text-lg font-semibold">Arjun Automation</span>
                 </Link>
 
@@ -49,9 +49,9 @@ export function PremiumHeader() {
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "rounded-lg px-3 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50",
+                                "rounded-lg px-3 py-2 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50",
                                 pathname === item.href
-                                    ? "text-indigo-700 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-950/50"
+                                    ? "text-orange-500 bg-indigo-50 dark:text-orange-300 dark:bg-orange-950/50"
                                     : "text-[var(--premium-fg-muted)] hover:text-[var(--premium-fg)]",
                             )}
                             aria-current={pathname === item.href ? "page" : undefined}
@@ -65,7 +65,7 @@ export function PremiumHeader() {
                     <ThemeToggle />
                     <Link
                         href={ROUTES.auth.signIn}
-                        className="inline-flex items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:bg-indigo-600 dark:hover:bg-indigo-500"
+                        className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 dark:bg-orange-600 dark:hover:bg-orange-500"
                     >
                         Get Started
                     </Link>
@@ -75,7 +75,7 @@ export function PremiumHeader() {
                     <ThemeToggle />
                     <button
                         type="button"
-                        className="rounded-lg p-2 text-[var(--premium-fg-muted)] hover:bg-[var(--premium-glass)] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                        className="rounded-lg p-2 text-[var(--premium-fg-muted)] hover:bg-[var(--premium-glass)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-expanded={mobileOpen}
                         aria-controls="mobile-nav"
@@ -100,7 +100,7 @@ export function PremiumHeader() {
                                 onClick={() => setMobileOpen(false)}
                                 className={cn(
                                     "rounded-lg px-3 py-2 text-sm font-medium",
-                                    pathname === item.href ? "text-indigo-700 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-950/50" : "text-[var(--premium-fg-muted)]",
+                                    pathname === item.href ? "text-orange-500 bg-indigo-50 dark:text-orange-300 dark:bg-orange-950/50" : "text-[var(--premium-fg-muted)]",
                                 )}
                             >
                                 {item.label}
@@ -108,7 +108,7 @@ export function PremiumHeader() {
                         ))}
                         <Link
                             href={ROUTES.auth.signIn}
-                            className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-indigo-700 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600"
+                            className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600"
                             onClick={() => setMobileOpen(false)}
                         >
                             Get Started

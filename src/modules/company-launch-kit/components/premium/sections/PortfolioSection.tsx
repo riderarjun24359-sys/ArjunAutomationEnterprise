@@ -23,7 +23,7 @@ export function PortfolioSection() {
                         </div>
                         <Link
                             href={PORTFOLIO_CONTENT.cta.href}
-                            className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                            className="text-sm font-medium text-orange-600 hover:text-orange-500 dark:text-orange-400"
                         >
                             {PORTFOLIO_CONTENT.cta.label} &rarr;
                         </Link>
@@ -33,9 +33,9 @@ export function PortfolioSection() {
                 <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {items.map((item, i) => (
                         <SectionReveal key={item.slug} delay={i * 0.1}>
-                            <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 rounded-2xl">
+                            <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 rounded-2xl">
                                 <MorphCard>
-                                    <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400">{item.category}</span>
+                                    <span className="text-xs font-medium text-orange-600 dark:text-orange-400">{item.category}</span>
                                     <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{item.tagline}</p>
                                 </MorphCard>

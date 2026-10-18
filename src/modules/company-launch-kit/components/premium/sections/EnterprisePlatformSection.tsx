@@ -18,7 +18,7 @@ export function EnterprisePlatformSection() {
                         <ul className="mt-8 space-y-3">
                             {ENTERPRISE_PLATFORM_CONTENT.features.map((feature) => (
                                 <li key={feature} className="flex items-start gap-3 text-sm">
-                                    <Check className="mt-0.5 h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                                    <Check className="mt-0.5 h-5 w-5 shrink-0 text-orange-600 dark:text-orange-400" aria-hidden="true" />
                                     {feature}
                                 </li>
                             ))}
@@ -27,7 +27,7 @@ export function EnterprisePlatformSection() {
 
                     <SectionReveal delay={0.2}>
                         <div className="relative">
-                            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/10 blur-2xl" aria-hidden="true" />
+                            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-orange-500/20 to-cyan-500/10 blur-2xl" aria-hidden="true" />
                             <div className="relative mx-auto max-w-md">
                                 <div className="rounded-[2rem] border-4 border-slate-800 bg-slate-900 p-2 shadow-2xl dark:border-slate-700">
                                     <div className="overflow-hidden rounded-[1.5rem] bg-[var(--premium-bg)]">

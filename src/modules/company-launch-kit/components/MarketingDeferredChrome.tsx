@@ -32,7 +32,7 @@ function MarketingHeaderPlaceholder() {
         <header className="sticky top-0 z-50 bg-transparent">
             <div className="premium-container flex items-center justify-between py-4">
                 <span className="flex items-center gap-2">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">AA</span>
                     <span className="font-display text-lg font-semibold">Arjun Automation</span>
                 </span>
             </div>

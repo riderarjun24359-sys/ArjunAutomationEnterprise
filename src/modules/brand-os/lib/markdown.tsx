@@ -13,7 +13,7 @@ function inlineFormat(text: string): React.ReactNode[] {
         }
         const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
         if (linkMatch) {
-            return <a key={index} href={linkMatch[2]} className="text-indigo-700 underline dark:text-indigo-400">{linkMatch[1]}</a>;
+            return <a key={index} href={linkMatch[2]} className="text-orange-500 underline dark:text-orange-400">{linkMatch[1]}</a>;
         }
         return <Fragment key={index}>{part}</Fragment>;
     });
@@ -88,7 +88,7 @@ export function renderMarkdown(content: string): React.ReactNode[] {
         if (line.startsWith("> ")) {
             flushList();
             nodes.push(
-                <blockquote key={key++} className="my-4 border-l-4 border-indigo-300 pl-4 italic text-slate-600 dark:border-indigo-600 dark:text-slate-400">
+                <blockquote key={key++} className="my-4 border-l-4 border-orange-300 pl-4 italic text-slate-600 dark:border-orange-600 dark:text-slate-400">
                     {inlineFormat(line.slice(2))}
                 </blockquote>,
             );

@@ -102,8 +102,8 @@ export const SECURITY_CENTER_TAB_LIST = [
 ] as const;
 
 export const SECURITY_CENTER_THEME = {
-    accent: "text-indigo-600 dark:text-indigo-400",
-    border: "border-indigo-200/60 dark:border-indigo-800/60",
-    surface: "bg-indigo-50/50 dark:bg-indigo-950/30",
-    text: "text-indigo-700 dark:text-indigo-300",
+    accent: "text-orange-600 dark:text-orange-400",
+    border: "border-orange-200/60 dark:border-orange-800/60",
+    surface: "bg-indigo-50/50 dark:bg-orange-950/30",
+    text: "text-orange-500 dark:text-orange-300",
 } as const;

@@ -91,7 +91,7 @@ export function IntegrationPlatformPage() {
     return (
         <div className="mx-auto flex max-w-7xl flex-col gap-6 text-slate-900 dark:text-slate-100">
             <motion.header initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/80">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-indigo-600">V2 Program A Sprint 6</p>
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-orange-600">V2 Program A Sprint 6</p>
                 <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Enterprise Integration Platform</h1>
                 <p className="mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
                     Integration layer for the entire SaaS platform: connected services, payment & accounting connectors, public API platform, webhook delivery, integration marketplace, API analytics, and integration operations dashboard with security-first audit and the shared Integration Platform SDK.
@@ -100,7 +100,7 @@ export function IntegrationPlatformPage() {
             <IntegrationPlatformStats stats={integrationPlatform.stats} />
             <div className="flex flex-wrap gap-2">
                 {tabs.map((tab) => (
-                    <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${activeTab === tab.id ? "bg-indigo-600 text-white" : "border border-slate-200 text-slate-600 hover:border-indigo-300 dark:border-slate-800 dark:text-slate-300"}`}>{tab.label}</button>
+                    <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${activeTab === tab.id ? "bg-orange-600 text-white" : "border border-slate-200 text-slate-600 hover:border-orange-300 dark:border-slate-800 dark:text-slate-300"}`}>{tab.label}</button>
                 ))}
             </div>
             {activeTab === INTG_TABS.overview ? <IntegrationPlatformOverviewPanel data={integrationPlatform} /> : null}

@@ -55,11 +55,11 @@ export default async function SearchPage({ searchParams }: Props) {
                             type="search"
                             defaultValue={q}
                             placeholder="Search services, portfolio, blog..."
-                            className="flex-1 rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] px-4 py-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                            className="flex-1 rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] px-4 py-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                         />
                         <button
                             type="submit"
-                            className="rounded-xl bg-indigo-700 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                            className="rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                         >
                             Search
                         </button>
@@ -78,9 +78,9 @@ export default async function SearchPage({ searchParams }: Props) {
                                         <li key={result.href}>
                                             <Link
                                                 href={result.href}
-                                                className="block premium-glass rounded-xl p-5 transition hover:ring-2 hover:ring-indigo-700/30"
+                                                className="block premium-glass rounded-xl p-5 transition hover:ring-2 hover:ring-orange-500/30"
                                             >
-                                                <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">
+                                                <span className="text-xs font-medium uppercase tracking-wider text-orange-500">
                                                     {result.category}
                                                 </span>
                                                 <h2 className="mt-1 font-semibold">{result.title}</h2>
@@ -93,7 +93,7 @@ export default async function SearchPage({ searchParams }: Props) {
                         ) : (
                             <p className="text-[var(--premium-fg-muted)]">
                                 No results for &ldquo;{q}&rdquo;. Try different keywords or{" "}
-                                <Link href={MARKETING_ROUTES.contact} className="text-indigo-700">
+                                <Link href={MARKETING_ROUTES.contact} className="text-orange-500">
                                     contact us
                                 </Link>
                                 .

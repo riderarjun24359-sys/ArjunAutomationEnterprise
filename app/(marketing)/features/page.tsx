@@ -42,7 +42,7 @@ export default function FeaturesPage() {
                     ))}
                 </div>
                 <div className="mt-10 flex flex-wrap gap-3">
-                    <Link href={ROUTES.auth.signUp} className="rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white">
+                    <Link href={ROUTES.auth.signUp} className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white">
                         Start free trial
                     </Link>
                     <Link href={MARKETING_ROUTES.pricing} className="rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold">

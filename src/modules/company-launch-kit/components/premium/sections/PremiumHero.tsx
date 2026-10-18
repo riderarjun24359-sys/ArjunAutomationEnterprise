@@ -15,7 +15,7 @@ const HeroEnterpriseIllustration = dynamic(
         import("@/src/modules/company-launch-kit/components/premium/sections/HeroEnterpriseIllustration").then(
             (m) => m.HeroEnterpriseIllustration,
         ),
-    { ssr: false, loading: () => <div className="aspect-[4/3] w-full max-w-md rounded-2xl bg-indigo-950/20 lg:max-w-none" aria-hidden="true" /> },
+    { ssr: false, loading: () => <div className="aspect-[4/3] w-full max-w-md rounded-2xl bg-orange-950/20 lg:max-w-none" aria-hidden="true" /> },
 );
 
 const ParticleField = dynamic(
@@ -32,10 +32,10 @@ const TRUST_SECTIONS = [
 ] as const;
 
 const CTA_PRIMARY =
-    "relative inline-flex items-center justify-center rounded-xl bg-indigo-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 dark:bg-indigo-600 dark:hover:bg-indigo-500";
+    "relative inline-flex items-center justify-center rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 dark:bg-orange-600 dark:hover:bg-orange-500";
 
 const CTA_SECONDARY =
-    "relative inline-flex items-center justify-center rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] px-6 py-3 text-sm font-semibold text-[var(--premium-fg)] transition-colors hover:border-indigo-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50";
+    "relative inline-flex items-center justify-center rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] px-6 py-3 text-sm font-semibold text-[var(--premium-fg)] transition-colors hover:border-orange-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50";
 
 export function PremiumHero() {
     const reduced = useReducedMotion();
@@ -80,7 +80,7 @@ export function PremiumHero() {
             <div className="premium-container relative z-10 flex min-h-[88vh] flex-col justify-center pb-16 pt-28 sm:pt-32 lg:pb-20 lg:pt-36">
                 <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16 xl:gap-20">
                     <div className="lg:col-span-7 xl:col-span-6">
-                        <p className="hero-fade-up text-xs font-semibold uppercase tracking-[0.28em] text-indigo-600 dark:text-indigo-400 sm:text-sm">
+                        <p className="hero-fade-up text-xs font-semibold uppercase tracking-[0.28em] text-orange-600 dark:text-orange-400 sm:text-sm">
                             {HERO_CONTENT.eyebrow}
                         </p>
 
@@ -115,7 +115,7 @@ export function PremiumHero() {
                                 const Icon = TRUST_ICONS[i] ?? Shield;
                                 return (
                                     <li key={label} className="flex items-center gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                        <Icon className="h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                                        <Icon className="h-4 w-4 shrink-0 text-orange-600 dark:text-orange-400" aria-hidden="true" />
                                         {label}
                                     </li>
                                 );
@@ -135,7 +135,7 @@ export function PremiumHero() {
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
                         {TRUST_SECTIONS.map((section) => (
                             <div key={section.title} className="premium-glass rounded-xl border border-[var(--premium-border)] p-5 sm:p-6">
-                                <h2 className="text-sm font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+                                <h2 className="text-sm font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400">
                                     {section.title}
                                 </h2>
                                 <ul className="mt-4 flex flex-wrap gap-2">
@@ -159,7 +159,7 @@ export function PremiumHero() {
                 >
                     {HERO_CONTENT.stats.map((stat) => (
                         <div key={stat.label} className="text-center sm:text-left">
-                            <p className="font-display text-3xl font-bold tabular-nums text-indigo-600 dark:text-indigo-400 sm:text-4xl">
+                            <p className="font-display text-3xl font-bold tabular-nums text-orange-600 dark:text-orange-400 sm:text-4xl">
                                 <HeroStatCounter value={stat.value} suffix={stat.suffix} />
                             </p>
                             <p className="mt-1.5 text-sm text-[var(--premium-fg-muted)]">{stat.label}</p>

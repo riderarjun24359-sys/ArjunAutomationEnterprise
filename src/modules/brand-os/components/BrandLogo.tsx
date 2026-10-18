@@ -12,13 +12,21 @@ const LOGO_PATHS: Record<BrandLogoVariant, string> = {
     inverse: "/brand/logos/monochrome-white.svg",
 };
 
+/**
+ * Intrinsic sizes.
+ *
+ * These MUST match the `width`/`height` attributes baked into each SVG file.
+ * `w-auto h-auto` in the class list tells the browser to fall back to the
+ * image's intrinsic size; the logo SVGs therefore carry explicit dimensions
+ * so the mark never collapses to zero.
+ */
 const LOGO_DIMENSIONS: Record<BrandLogoVariant, { width: number; height: number }> = {
-    horizontal: { width: 200, height: 30 },
-    secondary: { width: 180, height: 30 },
-    vertical: { width: 80, height: 100 },
-    symbol: { width: 32, height: 32 },
-    monogram: { width: 32, height: 32 },
-    inverse: { width: 200, height: 30 },
+    horizontal: { width: 320, height: 48 },
+    secondary: { width: 260, height: 48 },
+    vertical: { width: 80, height: 104 },
+    symbol: { width: 48, height: 48 },
+    monogram: { width: 48, height: 48 },
+    inverse: { width: 260, height: 48 },
 };
 
 export type BrandLogoProps = {
@@ -41,7 +49,7 @@ export function BrandLogo({ variant = "secondary", className, priority = false, 
             width={width}
             height={height}
             priority={priority}
-            className={cn("h-auto w-auto max-h-9", className)}
+            className={cn("h-auto max-h-9 w-auto", className)}
             unoptimized
         />
     );

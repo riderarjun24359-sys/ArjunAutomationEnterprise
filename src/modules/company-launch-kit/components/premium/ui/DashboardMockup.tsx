@@ -43,7 +43,7 @@ export function DashboardMockup({ className }: DashboardMockupProps) {
                                 transition={{ delay: 0.2 + i * 0.1 }}
                             >
                                 <p className="text-[10px] text-[var(--premium-fg-muted)]">{label}</p>
-                                <p className="mt-1 text-lg font-semibold text-indigo-600 dark:text-indigo-400">
+                                <p className="mt-1 text-lg font-semibold text-orange-600 dark:text-orange-400">
                                     {i === 0 ? "$2.4M" : i === 1 ? "47" : "128"}
                                 </p>
                             </motion.div>
@@ -54,7 +54,7 @@ export function DashboardMockup({ className }: DashboardMockupProps) {
                             {[40, 65, 45, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, i) => (
                                 <motion.div
                                     key={i}
-                                    className="flex-1 rounded-t bg-gradient-to-t from-indigo-600 to-indigo-400"
+                                    className="flex-1 rounded-t bg-gradient-to-t from-orange-600 to-orange-400"
                                     initial={{ height: 0 }}
                                     animate={{ height: `${h}%` }}
                                     transition={{ delay: 0.5 + i * 0.05, duration: 0.6 }}

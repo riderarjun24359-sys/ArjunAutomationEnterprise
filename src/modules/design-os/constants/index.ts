@@ -21,7 +21,7 @@ export const DESIGN_OS_TAB_LIST: { id: DesignOsTab; label: string }[] = [
 ];
 
 export const DESIGN_OS_THEME = {
-    accent: "text-indigo-600 dark:text-indigo-400",
-    badge: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300",
-    border: "border-indigo-200 dark:border-indigo-800",
+    accent: "text-orange-600 dark:text-orange-400",
+    badge: "bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300",
+    border: "border-orange-200 dark:border-orange-800",
 } as const;

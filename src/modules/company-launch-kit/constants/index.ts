@@ -1,12 +1,12 @@
 export const LAUNCH_KIT_THEME = {
-    primary: "indigo-700",
-    primaryHover: "indigo-600",
-    ring: "indigo-500/20",
-    text: "text-indigo-700",
-    textLight: "text-indigo-600",
-    bg: "bg-indigo-700",
-    bgHover: "hover:bg-indigo-600",
-    border: "border-indigo-200",
+    primary: "orange-500",
+    primaryHover: "orange-600",
+    ring: "orange-500/20",
+    text: "text-orange-500",
+    textLight: "text-orange-600",
+    bg: "bg-orange-500",
+    bgHover: "hover:bg-orange-600",
+    border: "border-orange-200",
     surface: "bg-white",
 } as const;
 

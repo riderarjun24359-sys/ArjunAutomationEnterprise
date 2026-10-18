@@ -33,8 +33,8 @@ export function MarketingFooter() {
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
                     <div className="lg:col-span-2">
                         <Link href={MARKETING_ROUTES.home} className="flex items-center gap-2">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-700 text-sm font-bold text-white">AA</span>
-                            <span className="text-lg font-semibold text-indigo-950">Arjun Automation</span>
+                            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">AA</span>
+                            <span className="text-lg font-semibold text-orange-950">Arjun Automation</span>
                         </Link>
                         <p className="mt-4 max-w-sm text-sm text-slate-600">
                             Enterprise automation. Without the enterprise wait. One platform, every operation, AI-native from the ground up.
@@ -44,11 +44,11 @@ export function MarketingFooter() {
                         </p>
                     </div>
                     <div>
-                        <h3 className="text-sm font-semibold text-indigo-950">Company</h3>
+                        <h3 className="text-sm font-semibold text-orange-950">Company</h3>
                         <ul className="mt-3 space-y-2">
                             {FOOTER_LINKS.company.map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700/20 rounded">
+                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 rounded">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -56,11 +56,11 @@ export function MarketingFooter() {
                         </ul>
                     </div>
                     <div>
-                        <h3 className="text-sm font-semibold text-indigo-950">Solutions</h3>
+                        <h3 className="text-sm font-semibold text-orange-950">Solutions</h3>
                         <ul className="mt-3 space-y-2">
                             {FOOTER_LINKS.solutions.map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700/20 rounded">
+                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 rounded">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -68,11 +68,11 @@ export function MarketingFooter() {
                         </ul>
                     </div>
                     <div>
-                        <h3 className="text-sm font-semibold text-indigo-950">Resources</h3>
+                        <h3 className="text-sm font-semibold text-orange-950">Resources</h3>
                         <ul className="mt-3 space-y-2">
                             {FOOTER_LINKS.resources.map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700/20 rounded">
+                                    <Link href={link.href} className="text-sm text-slate-600 hover:text-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 rounded">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -84,7 +84,7 @@ export function MarketingFooter() {
                     <p className="text-sm text-slate-500">&copy; {new Date().getFullYear()} Arjun Automation. All rights reserved.</p>
                     <div className="flex gap-4">
                         {FOOTER_LINKS.legal.map((link) => (
-                            <Link key={link.href} href={link.href} className="text-sm text-slate-500 hover:text-indigo-700">
+                            <Link key={link.href} href={link.href} className="text-sm text-slate-500 hover:text-orange-500">
                                 {link.label}
                             </Link>
                         ))}

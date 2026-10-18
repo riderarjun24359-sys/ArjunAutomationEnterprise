@@ -57,7 +57,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
                 description={`${item.tagline} — illustrative solution design; outcomes are target figures, not audited client results.`}
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
-                <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{item.category}</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{item.category}</span>
 
                 <div className="mt-8 space-y-12">
                     <section aria-labelledby="overview-heading">
@@ -89,7 +89,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
                         <ul className="mt-4 space-y-2">
                             {item.features.map((f) => (
                                 <li key={f} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-700" aria-hidden="true" />
+                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
                                     {f}
                                 </li>
                             ))}
@@ -133,7 +133,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
                         </div>
                     </section>
 
-                    <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-indigo-700 hover:text-indigo-600">
+                    <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-orange-500 hover:text-orange-600">
                         Read case study format →
                     </Link>
                 </div>

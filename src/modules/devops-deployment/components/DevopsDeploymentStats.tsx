@@ -11,7 +11,7 @@ export function DevopsDeploymentStats({ stats }: DevopsDeploymentStatsProps) {
         { title: "Deployment Approvals", value: String(stats?.pendingDeploymentApprovals ?? 0), detail: `${stats?.releaseVersionCount ?? 0} versions • ${stats?.healthCheckCount ?? 0} health checks`, trend: "up" as const },
     ];
     return (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 [&_p:last-child]:text-indigo-600 dark:[&_p:last-child]:text-indigo-400">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 [&_p:last-child]:text-orange-600 dark:[&_p:last-child]:text-orange-400">
             {cards.map((card) => <StatCard key={card.title} title={card.title} value={card.value} detail={card.detail} trend={card.trend} tone={card.tone} />)}
         </section>
     );

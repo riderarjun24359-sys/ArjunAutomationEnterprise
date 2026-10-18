@@ -27,7 +27,7 @@ export function FaqSection() {
                                 <div className="overflow-hidden rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)]">
                                     <button
                                         type="button"
-                                        className="flex w-full items-center justify-between px-6 py-4 text-left font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                                        className="flex w-full items-center justify-between px-6 py-4 text-left font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                                         onClick={() => setOpenIndex(isOpen ? null : i)}
                                         aria-expanded={isOpen}
                                     >

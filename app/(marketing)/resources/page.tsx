@@ -65,11 +65,11 @@ export default function ResourcesPage() {
                                 <Link
                                     key={guide.href}
                                     href={guide.href}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-indigo-700/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                                 >
                                     <h3 className="text-lg font-semibold">{guide.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{guide.description}</p>
-                                    <span className="mt-4 inline-block text-sm font-medium text-indigo-700">Read guide →</span>
+                                    <span className="mt-4 inline-block text-sm font-medium text-orange-500">Read guide →</span>
                                 </Link>
                             ))}
                         </div>
@@ -84,15 +84,15 @@ export default function ResourcesPage() {
                                 <Link
                                     key={study.slug}
                                     href={MARKETING_ROUTES.caseStudyItem(study.slug)}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-indigo-700/30"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30"
                                 >
-                                    <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">{study.industry}</span>
+                                    <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{study.industry}</span>
                                     <h3 className="mt-2 font-semibold">{study.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">{study.challenge}</p>
                                 </Link>
                             ))}
                         </div>
-                        <Link href={MARKETING_ROUTES.caseStudies} className="mt-4 inline-block text-sm font-medium text-indigo-700">
+                        <Link href={MARKETING_ROUTES.caseStudies} className="mt-4 inline-block text-sm font-medium text-orange-500">
                             View all case studies →
                         </Link>
                     </section>
@@ -106,15 +106,15 @@ export default function ResourcesPage() {
                                 <Link
                                     key={post.slug}
                                     href={MARKETING_ROUTES.blogPost(post.slug)}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-indigo-700/30"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30"
                                 >
-                                    <span className="text-xs font-medium text-indigo-700">{post.category}</span>
+                                    <span className="text-xs font-medium text-orange-500">{post.category}</span>
                                     <h3 className="mt-2 font-semibold">{post.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">{post.excerpt}</p>
                                 </Link>
                             ))}
                         </div>
-                        <Link href={MARKETING_ROUTES.blog} className="mt-4 inline-block text-sm font-medium text-indigo-700">
+                        <Link href={MARKETING_ROUTES.blog} className="mt-4 inline-block text-sm font-medium text-orange-500">
                             View all articles →
                         </Link>
                     </section>
@@ -131,7 +131,7 @@ export default function ResourcesPage() {
                                 { label: "Contact", href: MARKETING_ROUTES.contact },
                             ].map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-indigo-700 hover:text-indigo-600">
+                                    <Link href={link.href} className="text-orange-500 hover:text-orange-600">
                                         {link.label}
                                     </Link>
                                 </li>

@@ -19,7 +19,7 @@ export function LifecyclePipeline({ dashboard }: LifecyclePipelineProps) {
                     return (
                         <li key={stage.id} className="flex items-center">
                             <div className="flex flex-col items-center rounded-xl border border-[var(--dos-border)] bg-[var(--dos-surface)] px-3 py-2 min-w-[88px]">
-                                <span className="text-lg font-bold text-indigo-600">{count}</span>
+                                <span className="text-lg font-bold text-orange-600">{count}</span>
                                 <span className="text-xs text-[var(--dos-text-secondary)]">{stage.label}</span>
                             </div>
                             {!isLast && (

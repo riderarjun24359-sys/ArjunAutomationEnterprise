@@ -42,7 +42,7 @@ export default function CareersPage() {
         <>
             <section className="bg-indigo-50 py-16">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <h1 className="text-4xl font-semibold tracking-tight text-indigo-950">Careers</h1>
+                    <h1 className="text-4xl font-semibold tracking-tight text-orange-950">Careers</h1>
                     <p className="mt-4 max-w-3xl text-lg text-slate-600">
                         Join a team building the enterprise operating system for the next generation of organizations.
                     </p>
@@ -52,30 +52,30 @@ export default function CareersPage() {
             <section className="py-16">
                 <div className="mx-auto max-w-3xl px-6 lg:px-8 space-y-8">
                     <div>
-                        <h2 className="text-2xl font-semibold text-indigo-950">Why Arjun Automation</h2>
+                        <h2 className="text-2xl font-semibold text-orange-950">Why Arjun Automation</h2>
                         <p className="mt-4 text-slate-600 leading-relaxed">
                             We are builders, operators, and partners — not just vendors. Our team works on meaningful enterprise automation challenges across restaurants, healthcare, education, retail, and professional services. You will ship production features used by real organizations, not slide decks.
                         </p>
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-semibold text-indigo-950">Open Positions</h2>
+                        <h2 className="text-2xl font-semibold text-orange-950">Open Positions</h2>
                         <div className="mt-6 space-y-4">
                             {openings.map((job) => (
                                 <article key={job.title} className="rounded-2xl border border-slate-200 p-6">
-                                    <h3 className="text-lg font-semibold text-indigo-950">{job.title}</h3>
-                                    <p className="mt-1 text-sm text-indigo-700">{job.location} · {job.type}</p>
+                                    <h3 className="text-lg font-semibold text-orange-950">{job.title}</h3>
+                                    <p className="mt-1 text-sm text-orange-500">{job.location} · {job.type}</p>
                                     <p className="mt-3 text-sm text-slate-600">{job.description}</p>
                                 </article>
                             ))}
                         </div>
                         <p className="mt-6 text-sm text-slate-600">
                             Interested? Send your resume to{" "}
-                            <a href="mailto:careers@arjunautomations.com" className="text-indigo-700 hover:text-indigo-600">
+                            <a href="mailto:careers@arjunautomations.com" className="text-orange-500 hover:text-orange-600">
                                 careers@arjunautomations.com
                             </a>{" "}
                             or{" "}
-                            <Link href={MARKETING_ROUTES.contact} className="text-indigo-700 hover:text-indigo-600">
+                            <Link href={MARKETING_ROUTES.contact} className="text-orange-500 hover:text-orange-600">
                                 contact us
                             </Link>.
                         </p>

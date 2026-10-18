@@ -32,7 +32,7 @@ export function WhyUsSection() {
                         return (
                             <SectionReveal key={pillar.title} delay={i * 0.1}>
                                 <MorphCard>
-                                    <Icon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+                                    <Icon className="h-8 w-8 text-orange-600 dark:text-orange-400" aria-hidden="true" />
                                     <h3 className="mt-4 text-lg font-semibold">{pillar.title}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{pillar.description}</p>
                                 </MorphCard>

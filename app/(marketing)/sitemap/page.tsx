@@ -64,7 +64,7 @@ export default function SitemapPage() {
                         <ul className="mt-4 space-y-2">
                             {MAIN_PAGES.map((page) => (
                                 <li key={page.href}>
-                                    <Link href={page.href} className="text-indigo-700 hover:text-indigo-600">
+                                    <Link href={page.href} className="text-orange-500 hover:text-orange-600">
                                         {page.label}
                                     </Link>
                                 </li>
@@ -79,7 +79,7 @@ export default function SitemapPage() {
                         <ul className="mt-4 space-y-2">
                             {SERVICE_ITEMS.map((service) => (
                                 <li key={service.slug}>
-                                    <Link href={MARKETING_ROUTES.serviceItem(service.slug)} className="text-indigo-700 hover:text-indigo-600">
+                                    <Link href={MARKETING_ROUTES.serviceItem(service.slug)} className="text-orange-500 hover:text-orange-600">
                                         {service.title}
                                     </Link>
                                 </li>
@@ -94,7 +94,7 @@ export default function SitemapPage() {
                         <ul className="mt-4 space-y-2">
                             {PORTFOLIO_ITEMS.map((item) => (
                                 <li key={item.slug}>
-                                    <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} className="text-indigo-700 hover:text-indigo-600">
+                                    <Link href={MARKETING_ROUTES.portfolioItem(item.slug)} className="text-orange-500 hover:text-orange-600">
                                         {item.title}
                                     </Link>
                                 </li>
@@ -109,7 +109,7 @@ export default function SitemapPage() {
                         <ul className="mt-4 space-y-2">
                             {BLOG_POSTS.map((post) => (
                                 <li key={post.slug}>
-                                    <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="text-indigo-700 hover:text-indigo-600">
+                                    <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="text-orange-500 hover:text-orange-600">
                                         {post.title}
                                     </Link>
                                 </li>
@@ -120,7 +120,7 @@ export default function SitemapPage() {
 
                 <p className="mt-12 text-sm text-[var(--premium-fg-muted)]">
                     Machine-readable sitemap:{" "}
-                    <Link href="/sitemap.xml" className="text-indigo-700">
+                    <Link href="/sitemap.xml" className="text-orange-500">
                         /sitemap.xml
                     </Link>
                 </p>

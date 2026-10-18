@@ -60,14 +60,14 @@ export default function PortfolioPage() {
                         <Link
                             key={item.slug}
                             href={MARKETING_ROUTES.caseStudyItem(item.slug)}
-                            className="premium-glass group rounded-2xl p-6 transition hover:ring-2 hover:ring-indigo-700/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                            className="premium-glass group rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                         >
-                            <span className="text-xs font-medium uppercase tracking-wider text-indigo-700">
+                            <span className="text-xs font-medium uppercase tracking-wider text-orange-500">
                                 {item.industry}
                             </span>
-                            <h2 className="mt-2 text-xl font-semibold group-hover:text-indigo-700">{item.title}</h2>
+                            <h2 className="mt-2 text-xl font-semibold group-hover:text-orange-500">{item.title}</h2>
                             <p className="mt-3 text-sm text-[var(--premium-fg-muted)] line-clamp-3">{item.challenge}</p>
-                            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-indigo-700">
+                            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-orange-500">
                                 Read the case study
                                 <span aria-hidden="true">→</span>
                             </span>
@@ -83,7 +83,7 @@ export default function PortfolioPage() {
                     </p>
                     <Link
                         href={MARKETING_ROUTES.portfolioItem("integrations")}
-                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-orange-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                     >
                         Integration Platform
                         <span aria-hidden="true">→</span>

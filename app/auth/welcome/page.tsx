@@ -26,7 +26,7 @@ export default function WelcomePage() {
                 <li>First project checklist</li>
             </ol>
             <div className="mt-10 flex flex-wrap gap-3">
-                <Link href={ROUTES.onboarding} className="rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white">
+                <Link href={ROUTES.onboarding} className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white">
                     Start onboarding
                 </Link>
                 <Link href={ROUTES.dashboard} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold">

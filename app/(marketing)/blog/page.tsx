@@ -16,7 +16,7 @@ export default function BlogPage() {
         <>
             <section className="bg-indigo-50 py-16">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <h1 className="text-4xl font-semibold tracking-tight text-indigo-950">Blog</h1>
+                    <h1 className="text-4xl font-semibold tracking-tight text-orange-950">Blog</h1>
                     <p className="mt-4 max-w-3xl text-lg text-slate-600">
                         Enterprise automation insights, AI worker strategies, and platform best practices.
                     </p>
@@ -29,9 +29,9 @@ export default function BlogPage() {
                         <div className="lg:col-span-2 space-y-8">
                             {BLOG_POSTS.map((post) => (
                                 <article key={post.slug} className="rounded-2xl border border-slate-200 p-8">
-                                    <span className="text-xs font-medium text-indigo-700">{post.category}</span>
-                                    <h2 className="mt-2 text-2xl font-semibold text-indigo-950">
-                                        <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="hover:text-indigo-700">
+                                    <span className="text-xs font-medium text-orange-500">{post.category}</span>
+                                    <h2 className="mt-2 text-2xl font-semibold text-orange-950">
+                                        <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="hover:text-orange-500">
                                             {post.title}
                                         </Link>
                                     </h2>
@@ -40,7 +40,7 @@ export default function BlogPage() {
                                         <span>{post.author}</span>
                                         <span>{post.readTime}</span>
                                     </div>
-                                    <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="mt-4 inline-block text-sm font-medium text-indigo-700 hover:text-indigo-600">
+                                    <Link href={MARKETING_ROUTES.blogPost(post.slug)} className="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-600">
                                         Read article &rarr;
                                     </Link>
                                 </article>

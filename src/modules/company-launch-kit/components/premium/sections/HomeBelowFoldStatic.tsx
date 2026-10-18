@@ -40,7 +40,7 @@ export function HomeBelowFoldStatic() {
                             <li key={service.title} className="rounded-xl border border-[var(--premium-border)] bg-[var(--premium-bg)] p-6">
                                 <h3 className="font-semibold">{service.title}</h3>
                                 <p className="mt-2 text-sm leading-relaxed text-[var(--premium-fg-muted)]">{service.description}</p>
-                                <p className="mt-4 text-xs font-medium uppercase tracking-wider text-indigo-800">{service.timeline}</p>
+                                <p className="mt-4 text-xs font-medium uppercase tracking-wider text-orange-800">{service.timeline}</p>
                             </li>
                         ))}
                     </ul>
@@ -58,7 +58,7 @@ export function HomeBelowFoldStatic() {
                             <li key={industry.name}>
                                 <Link
                                     href={industry.href}
-                                    className="block h-full rounded-xl border border-[var(--premium-border)] p-6 transition hover:border-indigo-500/30"
+                                    className="block h-full rounded-xl border border-[var(--premium-border)] p-6 transition hover:border-orange-500/30"
                                 >
                                     <h3 className="font-semibold">{industry.name}</h3>
                                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{industry.description}</p>
@@ -88,21 +88,21 @@ export function HomeBelowFoldStatic() {
 
             <section className="premium-section" aria-labelledby="cta-heading">
                 <div className="premium-container">
-                    <div className="rounded-2xl border border-indigo-500/20 bg-indigo-950 px-8 py-12 text-center text-white sm:px-12">
+                    <div className="rounded-2xl border border-orange-500/20 bg-orange-950 px-8 py-12 text-center text-white sm:px-12">
                         <h2 id="cta-heading" className="font-display text-3xl font-bold sm:text-4xl">
                             {CTA_CONTENT.title}
                         </h2>
-                        <p className="mx-auto mt-4 max-w-2xl text-indigo-100">{CTA_CONTENT.subtitle}</p>
+                        <p className="mx-auto mt-4 max-w-2xl text-orange-100">{CTA_CONTENT.subtitle}</p>
                         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                             <Link
                                 href={CTA_CONTENT.primaryCta.href}
-                                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-indigo-900 hover:bg-indigo-50"
+                                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-semibold text-orange-900 hover:bg-indigo-50"
                             >
                                 {CTA_CONTENT.primaryCta.label}
                             </Link>
                             <Link
                                 href={CTA_CONTENT.secondaryCta.href}
-                                className="inline-flex items-center justify-center rounded-xl border border-indigo-300/40 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-900/50"
+                                className="inline-flex items-center justify-center rounded-xl border border-orange-300/40 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-900/50"
                             >
                                 {CTA_CONTENT.secondaryCta.label}
                             </Link>

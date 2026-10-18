@@ -56,12 +56,12 @@ import {
 } from "@/src/modules/devops-deployment/schemas";
 
 type DevopsDeploymentData = ReturnType<typeof useDevopsDeployment>;
-const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-indigo-500/20 focus:ring-4 dark:border-slate-800 dark:bg-slate-950";
+const inputClass = "w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none ring-orange-500/20 focus:ring-4 dark:border-slate-800 dark:bg-slate-950";
 function SaveButton({ loading, label = "Save changes" }: { loading?: boolean; label?: string }) {
-    return <button type="submit" disabled={loading} className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:opacity-60">{loading ? "Saving..." : label}</button>;
+    return <button type="submit" disabled={loading} className="rounded-full bg-orange-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-500 disabled:opacity-60">{loading ? "Saving..." : label}</button>;
 }
 function ListCard({ title, subtitle, meta }: { title: string; subtitle: string; meta?: string }) {
-    return <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800"><p className="font-medium">{title}</p><p className="text-sm text-slate-500">{subtitle}</p>{meta ? <p className="mt-1 text-xs text-indigo-600">{meta}</p> : null}</div>;
+    return <div className="rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800"><p className="font-medium">{title}</p><p className="text-sm text-slate-500">{subtitle}</p>{meta ? <p className="mt-1 text-xs text-orange-600">{meta}</p> : null}</div>;
 }
 function EngagementSelect({ data, ...props }: { data: DevopsDeploymentData } & React.SelectHTMLAttributes<HTMLSelectElement>) {
     return <select {...props} className={inputClass}><option value="">Engagement</option>{data.engagementOptions.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}</select>;

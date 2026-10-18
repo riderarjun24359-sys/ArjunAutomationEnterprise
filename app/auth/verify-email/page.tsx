@@ -20,7 +20,7 @@ export default function VerifyEmailPage() {
                 We sent a verification link to your inbox. Open the message and confirm your address to activate soft-launch access. If you already clicked the link in email, continue to welcome.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-                <Link href={ROUTES.auth.welcome} className="rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white">
+                <Link href={ROUTES.auth.welcome} className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white">
                     Continue to welcome
                 </Link>
                 <Link href={ROUTES.auth.signIn} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold">

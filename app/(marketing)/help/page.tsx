@@ -37,7 +37,7 @@ export default function HelpCenterPage() {
                         <article key={topic.title} className="rounded-3xl border border-[var(--premium-border)] p-6">
                             <h2 className="text-xl font-semibold">{topic.title}</h2>
                             <p className="mt-3 text-sm text-[var(--premium-fg-muted)]">{topic.body}</p>
-                            <Link href={topic.href} className="mt-4 inline-flex text-sm font-semibold text-indigo-700 underline">
+                            <Link href={topic.href} className="mt-4 inline-flex text-sm font-semibold text-orange-500 underline">
                                 Open
                             </Link>
                         </article>

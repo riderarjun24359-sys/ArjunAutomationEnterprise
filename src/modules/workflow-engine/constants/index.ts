@@ -64,11 +64,11 @@ export const DWE_PERMISSIONS = ["dwe.view", "dwe.manage", "dwe.approve", "dwe.ad
 
 
 export const DWE_THEME = {
-    primary: "indigo-600",
-    primaryHover: "indigo-500",
-    ring: "indigo-500/20",
-    text: "text-indigo-600",
-    textDark: "dark:text-indigo-400",
-    bg: "bg-indigo-600",
-    bgHover: "hover:bg-indigo-500",
+    primary: "orange-600",
+    primaryHover: "orange-500",
+    ring: "orange-500/20",
+    text: "text-orange-600",
+    textDark: "dark:text-orange-400",
+    bg: "bg-orange-600",
+    bgHover: "hover:bg-orange-500",
 } as const;

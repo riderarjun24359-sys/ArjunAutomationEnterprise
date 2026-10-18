@@ -66,7 +66,7 @@ export function BrandOsDocPanel({ document }: BrandOsDocPanelProps) {
                         <button
                             type="button"
                             onClick={handlePrint}
-                            className="inline-flex items-center gap-2 rounded-full bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-600 print:hidden"
+                            className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 print:hidden"
                         >
                             <Printer className="h-4 w-4" />
                             Print / PDF

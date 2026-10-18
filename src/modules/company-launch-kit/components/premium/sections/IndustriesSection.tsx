@@ -30,11 +30,11 @@ export function IndustriesSection() {
                     >
                         <Link
                             href={industry.href}
-                            className="group block h-full rounded-2xl border border-[var(--premium-border)] bg-[var(--premium-glass)] p-6 transition hover:-translate-y-1 hover:shadow-[var(--premium-shadow)] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                            className="group block h-full rounded-2xl border border-[var(--premium-border)] bg-[var(--premium-glass)] p-6 transition hover:-translate-y-1 hover:shadow-[var(--premium-shadow)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                         >
                             <div className="flex items-start justify-between">
-                                <h3 className="text-lg font-semibold group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{industry.name}</h3>
-                                <ArrowUpRight className="h-5 w-5 text-[var(--premium-fg-muted)] transition group-hover:text-indigo-600" aria-hidden="true" />
+                                <h3 className="text-lg font-semibold group-hover:text-orange-600 dark:group-hover:text-orange-400">{industry.name}</h3>
+                                <ArrowUpRight className="h-5 w-5 text-[var(--premium-fg-muted)] transition group-hover:text-orange-600" aria-hidden="true" />
                             </div>
                             <p className="mt-3 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{industry.description}</p>
                         </Link>
