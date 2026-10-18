@@ -185,7 +185,7 @@ body {
     --dos-glass-shadow: var(--dos-shadow-lg);
 
     /* Semantic colour */
-    --dos-accent: #4f46e5;
+    --dos-accent: #c2410c;
     --dos-accent-contrast: #ffffff;
     --dos-brand-secondary: #0ea5e9;
     --dos-ai-accent: #7c3aed;
@@ -195,8 +195,8 @@ body {
     --dos-warning-muted: rgba(217, 119, 6, 0.12);
     --dos-error: #dc2626;
     --dos-error-muted: rgba(220, 38, 38, 0.10);
-    --dos-info: #2563eb;
-    --dos-info-muted: rgba(37, 99, 235, 0.10);
+    --dos-info: #ff7a1f;
+    --dos-info-muted: rgba(255, 122, 31, 0.10);
 
     /* Semantic text */
     --dos-text-inverse: #ffffff;
@@ -246,7 +246,7 @@ body {
     --dos-glass-border: rgba(241, 245, 249, 0.10);
 
     /* Semantic colour */
-    --dos-accent: #818cf8;
+    --dos-accent: #ff7a1f;
     --dos-accent-contrast: #0b1120;
     --dos-brand-secondary: #38bdf8;
     --dos-ai-accent: #a78bfa;
@@ -256,8 +256,8 @@ body {
     --dos-warning-muted: rgba(251, 191, 36, 0.14);
     --dos-error: #f87171;
     --dos-error-muted: rgba(248, 113, 113, 0.14);
-    --dos-info: #60a5fa;
-    --dos-info-muted: rgba(96, 165, 250, 0.14);
+    --dos-info: #ff9d5c;
+    --dos-info-muted: rgba(255, 157, 92, 0.14);
 
     /* Text */
     --dos-text-inverse: #020617;
