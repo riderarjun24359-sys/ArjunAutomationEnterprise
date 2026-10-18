@@ -8,7 +8,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Upgrade plan",
-    description: "Compare Free Trial, Starter, Professional, and Enterprise plans and continue to the soft-launch upgrade flow.",
+    description: "Compare Free Trial, Starter, Professional, and Enterprise plans and continue to the plan upgrade flow.",
     path: MARKETING_ROUTES.upgrade,
 };
 
@@ -16,6 +16,7 @@ export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
+    noIndex: true,
 });
 
 const breadcrumbs = [

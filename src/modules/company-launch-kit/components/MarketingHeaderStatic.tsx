@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Phone } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
+import { COMPANY_PROFILE, HAS_PHONE } from "@/src/config/company-profile";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
 
@@ -8,8 +10,12 @@ import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
  * one row beside the logo and CTA at 1024px without clipping, so the desktop
  * bar surfaces the highest-intent destinations and the mobile menu keeps the
  * complete list. Both are rendered from the same source of truth.
+ *
+ * Portfolio, Features, Solutions, Blog and FAQ were previously absent from the
+ * desktop bar even though every one of them was in the sitemap — they were only
+ * reachable from the footer, which buried pages that were meant to rank.
  */
-const DESKTOP_NAV_LABELS = ["About", "Services", "Industries", "Case Studies", "Pricing", "Resources"];
+const DESKTOP_NAV_LABELS = ["About", "Services", "Industries", "Case Studies", "Portfolio", "Pricing", "Resources"];
 
 const NAV_LINK =
     "relative rounded-full px-3.5 py-2 text-sm font-medium text-[var(--dos-text-secondary)] transition-colors hover:bg-[var(--dos-surface-secondary)] hover:text-[var(--dos-text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] before:absolute before:bottom-0 before:left-1/2 before:-translate-x-1/2 before:w-0 before:h-[1px] before:bg-[var(--premium-accent)] before:transition before:duration-200 hover:before:w-[calc(100%-1rem)]";
@@ -19,6 +25,16 @@ const CTA_LINK =
 
 const MOBILE_LINK =
     "block rounded-[var(--dos-radius-lg)] px-4 py-3 text-sm font-medium text-[var(--dos-text-primary)] transition-colors hover:bg-[var(--dos-surface-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]";
+
+/**
+ * Note: no `display` utility here on purpose. This class is combined with a
+ * responsive `hidden xl:inline-flex` at the call site, and Tailwind resolves
+ * conflicting display utilities by stylesheet order rather than class
+ * attribute order — baking `inline-flex` in here would beat the `hidden` and
+ * reintroduce the 1024px overflow.
+ */
+const PHONE_LINK =
+    "items-center gap-2 rounded-full px-3.5 py-2.5 text-sm font-medium text-[var(--dos-text-secondary)] transition-colors hover:bg-[var(--dos-surface-secondary)] hover:text-[var(--dos-text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]";
 
 /** Arjun Automation — Premium Cinematic Header */
 export function MarketingHeaderStatic() {
@@ -50,7 +66,24 @@ export function MarketingHeaderStatic() {
                     ))}
                 </nav>
 
-                <div className="hidden lg:block">
+                <div className="hidden items-center gap-3 lg:flex">
+                    {/* Click-to-call. Only rendered once a real number is
+                        configured — see src/config/company-profile.ts.
+
+                        Hidden below `xl`: at the 1024px `lg` breakpoint the bar
+                        already carries seven nav items plus the CTA, and adding
+                        the phone label pushed the document to 1085px wide,
+                        causing horizontal scroll. The number is still reachable
+                        from the mobile menu, the contact page and the footer, so
+                        no information is lost. */}
+                    {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
+                        <a href={`tel:${COMPANY_PROFILE.phoneE164}`} className={`${PHONE_LINK} hidden xl:inline-flex`}>
+
+                            <Phone className="h-4 w-4" aria-hidden="true" />
+                            <span className="sr-only">Call </span>
+                            {COMPANY_PROFILE.phoneDisplay}
+                        </a>
+                    ) : null}
                     <Link href={MARKETING_ROUTES.contact} className={CTA_LINK}>
                         Book Free Consultation
                     </Link>
@@ -90,6 +123,12 @@ export function MarketingHeaderStatic() {
                                 {item.label}
                             </Link>
                         ))}
+                        {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
+                            <a href={`tel:${COMPANY_PROFILE.phoneE164}`} className={`${MOBILE_LINK} flex items-center gap-2`}>
+                                <Phone className="h-4 w-4" aria-hidden="true" />
+                                {COMPANY_PROFILE.phoneDisplay}
+                            </a>
+                        ) : null}
                         <Link
                             href={MARKETING_ROUTES.contact}
                             className="mt-3 block w-full rounded-full bg-[var(--dos-brand-primary)] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2"

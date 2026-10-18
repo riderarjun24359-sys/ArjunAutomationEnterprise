@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
+import { TeamSection } from "@/src/modules/company-launch-kit/components/TeamSection";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { buildMetadata } from "@/src/lib/seo";
 
@@ -61,6 +62,10 @@ export default function AboutPage() {
                         </ul>
                     </div>
                 </div>
+
+                {/* Named people. Buyers committing five-figure budgets need to see
+                    who they are working with — see components/TeamSection.tsx. */}
+                <TeamSection compact />
             </PremiumPageShell>
 
             <CtaSection title="Partner with us" description="Whether you are scaling locations, consolidating internal tools, or launching a new operation — we are ready to help." />

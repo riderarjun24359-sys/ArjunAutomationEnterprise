@@ -12,17 +12,25 @@ export default function manifest(): MetadataRoute.Manifest {
         background_color: "#ffffff",
         theme_color: SOFT_LAUNCH_BRANDING.primaryColor,
         lang: "en",
+        // PWA install prompts require raster icons at declared sizes — an SVG
+        // entry is rejected by the installability check in Chrome and Edge.
         icons: [
             {
-                src: SOFT_LAUNCH_BRANDING.faviconPath,
-                sizes: "any",
-                type: "image/svg+xml",
+                src: SOFT_LAUNCH_BRANDING.icon192Path,
+                sizes: "192x192",
+                type: "image/png",
                 purpose: "any",
             },
             {
-                src: SOFT_LAUNCH_BRANDING.logoPath,
-                sizes: "any",
-                type: "image/svg+xml",
+                src: SOFT_LAUNCH_BRANDING.icon512Path,
+                sizes: "512x512",
+                type: "image/png",
+                purpose: "any",
+            },
+            {
+                src: SOFT_LAUNCH_BRANDING.icon512Path,
+                sizes: "512x512",
+                type: "image/png",
                 purpose: "maskable",
             },
         ],

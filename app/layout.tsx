@@ -22,19 +22,28 @@ export const metadata: Metadata = {
         siteName: LAUNCH_KIT_SEO.siteName,
         title: LAUNCH_KIT_SEO.defaultTitle,
         description: LAUNCH_KIT_SEO.defaultDescription,
-        images: [{ url: SOFT_LAUNCH_BRANDING.ogImagePath, width: 1200, height: 630, alt: LAUNCH_KIT_SEO.siteName }],
+        // `images` is intentionally omitted. Marketing routes supply their own
+        // `opengraph-image.tsx` (a real PNG); the app-shell routes are behind
+        // auth and are never shared publicly.
     },
     twitter: {
         card: "summary_large_image",
         site: LAUNCH_KIT_SEO.twitterHandle,
         title: LAUNCH_KIT_SEO.defaultTitle,
         description: LAUNCH_KIT_SEO.defaultDescription,
-        images: [SOFT_LAUNCH_BRANDING.ogImagePath],
     },
     icons: {
-        icon: [{ url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" }],
-        shortcut: [SOFT_LAUNCH_BRANDING.faviconPath],
-        apple: [{ url: SOFT_LAUNCH_BRANDING.logoPath }],
+        // SVG for modern browsers, PNG fallbacks for older clients and crawlers.
+        icon: [
+            { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
+            { url: SOFT_LAUNCH_BRANDING.icon192Path, type: "image/png", sizes: "192x192" },
+        ],
+        shortcut: [
+            { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
+            { url: SOFT_LAUNCH_BRANDING.favicon32Path, type: "image/png", sizes: "32x32" },
+        ],
+        // Must be a PNG — iOS does not render an SVG apple-touch-icon.
+        apple: [{ url: SOFT_LAUNCH_BRANDING.appleTouchIconPath, sizes: "180x180", type: "image/png" }],
     },
     manifest: "/manifest.webmanifest",
 };

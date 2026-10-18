@@ -19,6 +19,7 @@ export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
+    noIndex: true,
 });
 
 const breadcrumbs = [

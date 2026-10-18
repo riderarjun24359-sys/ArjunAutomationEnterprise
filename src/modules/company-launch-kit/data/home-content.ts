@@ -1,18 +1,34 @@
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import {
     AI_DELIVERY_FAQ_IMPLEMENTATION,
+    AI_DELIVERY_FAQ_WHY_INVESTMENT,
     AI_DELIVERY_JOURNEY_STEPS,
     AI_DELIVERY_MARKETING,
     AI_DELIVERY_SERVICE_LABEL,
 } from "@/src/constants/ai-delivery-model";
 
 export const HERO_CONTENT = {
-    eyebrow: "Arjun Automation · Enterprise Platform",
-    headline: "Run your business on one platform. Ship outcomes faster.",
+    eyebrow: "Arjun Automation · Business Operations Platform",
+
+    /**
+     * HEADLINE NOTE
+     * ------------
+     * This used to lead with "Run your business on one platform", paired with an
+     * H1 of "Run your business on one intelligent system." Both describe our
+     * architecture — the one thing a prospect cannot evaluate. Nobody has ever
+     * bought a system because it was "intelligent".
+     *
+     * The rewrite leads with the buyer's own problem (work falling through the
+     * gaps) and keeps the platform as the mechanism. The technical claims still
+     * hold further down the page; they just no longer carry the headline alone.
+     */
+    headline: "Stop losing work in the gaps between your tools.",
+
     subheadline:
-        "Arjun Automation helps growing organizations replace fragmented tools with a unified operating system — CRM, projects, finance, and industry workflows in one secure platform. Expert engineering teams design, build, and support solutions that reduce operational drag and accelerate revenue.",
+        "Missed enquiries, retyped data, and tasks nobody chases. We connect the systems you already run into one workflow, so the work gets done without anyone remembering to do it.",
+
     primaryCta: { label: "Book Free Consultation", href: MARKETING_ROUTES.contact },
-    secondaryCta: { label: "View Our Work", href: MARKETING_ROUTES.portfolio },
+    secondaryCta: { label: "See how it works", href: MARKETING_ROUTES.caseStudies },
     stats: [
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },
@@ -195,6 +211,7 @@ export const FAQ_CONTENT = {
     title: "Frequently asked questions",
     items: [
         AI_DELIVERY_FAQ_IMPLEMENTATION,
+        AI_DELIVERY_FAQ_WHY_INVESTMENT,
         {
             question: "Can Arjun Automation integrate with our existing tools?",
             answer: "Yes. Our integration platform supports REST APIs, webhooks, and pre-built connectors for common ERP, accounting, and communication tools.",

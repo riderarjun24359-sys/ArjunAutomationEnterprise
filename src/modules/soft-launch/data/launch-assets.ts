@@ -26,9 +26,9 @@ export const SOFT_LAUNCH_PLANS: SoftLaunchPlan[] = [
         name: "Free Trial",
         priceLabel: "$0",
         billingNote: "14 days · no card required",
-        description: "Explore the full workspace with soft-launch guardrails.",
+        description: "Explore the full workspace with standard usage limits.",
         limits: { users: "5", projects: "3", storage: "2 GB", apiCalls: "10k / month" },
-        features: ["CRM + Projects", "Executive dashboard", "Email support", "Soft-launch onboarding wizard"],
+        features: ["CRM + Projects", "Executive dashboard", "Email support", "Guided onboarding wizard"],
         cta: { label: "Start free trial", href: `${ROUTES.auth.signUp}?plan=free_trial` },
     },
     {
@@ -115,7 +115,7 @@ export const ONBOARDING_STEPS = [
     { id: "organization", title: "Organization setup", description: "Confirm company name, slug, and operating status." },
     { id: "workspace", title: "Workspace creation", description: "Create your first operational workspace/team." },
     { id: "invite", title: "Invite teammates", description: "Send invites for admins and operators." },
-    { id: "checklist", title: "First project checklist", description: "Complete the soft-launch go-live checklist." },
+    { id: "checklist", title: "First project checklist", description: "Complete the go-live checklist." },
 ] as const;
 
 export const FIRST_PROJECT_CHECKLIST = [
@@ -131,15 +131,30 @@ export const HELP_CENTER_TOPICS = [
     { title: "Getting started", body: "Use the onboarding wizard after sign-up to create your organization, workspace, and first project checklist.", href: ROUTES.onboarding },
     { title: "Billing & plans", body: "Compare Free Trial, Starter, Professional, and Enterprise limits on the pricing page.", href: MARKETING_ROUTES.pricing },
     { title: "Security basics", body: "Enable MFA, review RBAC roles, and monitor alerts in Security Center after login.", href: "/security-center" },
-    { title: "Contact support", body: "Reach sales or support through Contact Us for soft-launch assistance.", href: MARKETING_ROUTES.contact },
+    { title: "Contact support", body: "Reach sales or support through Contact Us for platform assistance.", href: MARKETING_ROUTES.contact },
 ] as const;
 
 export const SOFT_LAUNCH_BRANDING = {
     productName: "Arjun Automation",
-    tagline: "Enterprise operating system for soft launch",
+    tagline: "Enterprise operating system for modern operations",
     primaryColor: "#4338ca",
     faviconPath: "/brand/favicon.svg",
     logoPath: "/brand/logos/favicon.svg",
+    /**
+     * Raster icons. Apple touch icons and PWA manifest icons must be PNG —
+     * iOS ignores an SVG `apple-touch-icon`, so a "Save to Home Screen" from
+     * Safari previously produced a blank tile. Rendered from
+     * `public/brand/logos/app-icon.svg`.
+     */
+    appleTouchIconPath: "/brand/icons/apple-touch-icon.png",
+    icon192Path: "/brand/icons/icon-192.png",
+    icon512Path: "/brand/icons/icon-512.png",
+    favicon32Path: "/brand/icons/favicon-32.png",
+    /**
+     * Fallback only. Route-level `opengraph-image.tsx` files override this with
+     * real per-page PNGs, because X/LinkedIn/Facebook/WhatsApp cannot render the
+     * SVG this path used to serve (blank share cards on every link).
+     */
     ogImagePath: "/launch-kit/og-default.svg",
     supportEmail: "support@arjunautomations.com",
     salesEmail: "sales@arjunautomations.com",

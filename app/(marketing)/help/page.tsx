@@ -10,7 +10,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Help Center",
-    description: "Soft-launch help center for getting started, billing, security, and support contacts.",
+    description: "Help center for getting started, billing, security, and support contacts.",
     path: MARKETING_ROUTES.help,
 };
 
@@ -18,6 +18,7 @@ export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
+    noIndex: true,
 });
 
 const breadcrumbs = [
@@ -29,7 +30,7 @@ export default function HelpCenterPage() {
     return (
         <>
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
-            <PremiumPageShell title={PAGE.title} description="Guides and soft-launch support destinations.">
+            <PremiumPageShell title={PAGE.title} description="Guides and support destinations.">
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="mt-10 grid gap-6 md:grid-cols-2">
                     {HELP_CENTER_TOPICS.map((topic) => (

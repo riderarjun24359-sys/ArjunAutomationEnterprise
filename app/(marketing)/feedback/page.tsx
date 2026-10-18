@@ -8,7 +8,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Feedback",
-    description: "Share soft-launch feedback with the Arjun Automation support team.",
+    description: "Share feedback with the Arjun Automation support team.",
     path: MARKETING_ROUTES.feedback,
 };
 
@@ -16,6 +16,7 @@ export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
+    noIndex: true,
 });
 
 const breadcrumbs = [

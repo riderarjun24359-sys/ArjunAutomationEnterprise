@@ -1,6 +1,22 @@
 import { SectionHeader } from "@/src/modules/trust-conversion/components/ui/SectionHeader";
 import { DELIVERY_PROCESS_CONTENT } from "@/src/modules/trust-conversion/data/trust-conversion-content";
 
+/**
+ * Nine-stage delivery process.
+ *
+ * PERFORMANCE NOTE
+ * ----------------
+ * This previously rendered the whole `steps` array twice — once inside a
+ * `hidden ... lg:grid` desktop timeline and again inside an `lg:hidden` mobile
+ * timeline. Both copies shipped in the HTML payload on every request, so mobile
+ * visitors downloaded the desktop markup (including nine connector <span>s and
+ * nine <h3>s) only for it to be hidden by CSS. That roughly doubled the
+ * homepage payload.
+ *
+ * It now renders a single <ol> and uses CSS to reflow it: one column on mobile,
+ * nine across from the `lg` breakpoint. Same visual result, half the markup, and
+ * one set of headings for search engines and screen readers.
+ */
 export function DeliveryProcessSection() {
     const { title, subtitle, steps } = DELIVERY_PROCESS_CONTENT;
 
@@ -9,8 +25,7 @@ export function DeliveryProcessSection() {
             <div className="premium-container">
                 <SectionHeader id="delivery-process-heading" title={title} subtitle={subtitle} />
 
-                {/* Desktop timeline */}
-                <ol className="tc-reveal tc-reveal-delay-1 mt-14 hidden gap-x-3 gap-y-8 lg:grid lg:grid-cols-9">
+                <ol className="tc-reveal tc-reveal-delay-1 mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-9 lg:gap-3">
                     {steps.map((step) => (
                         <li key={step.title} className="relative text-center">
                             <span
@@ -19,9 +34,11 @@ export function DeliveryProcessSection() {
                             >
                                 {step.step}
                             </span>
+                            {/* Connector line — decorative, and only meaningful in the
+                                desktop grid, so it is hidden below `lg`. */}
                             {step.step < steps.length ? (
                                 <span
-                                    className="absolute left-[calc(50%+1.5rem)] top-5 h-px w-[calc(100%-3rem)] bg-[var(--dos-border-strong)]"
+                                    className="absolute left-[calc(50%+1.5rem)] top-5 hidden h-px w-[calc(100%-3rem)] bg-[var(--dos-border-strong)] lg:block"
                                     aria-hidden="true"
                                 />
                             ) : null}
@@ -32,26 +49,6 @@ export function DeliveryProcessSection() {
                         </li>
                     ))}
                 </ol>
-
-                {/* Mobile / tablet timeline */}
-                <div className="relative mt-12 lg:hidden">
-                    <span className="tc-timeline-line" aria-hidden="true" />
-                    <ol className="space-y-6">
-                        {steps.map((step) => (
-                            <li key={step.title} className="relative flex gap-4 pl-2">
-                                <span className="tc-step-dot" aria-hidden="true">
-                                    {step.step}
-                                </span>
-                                <article className="tc-card min-w-0 flex-1 p-4">
-                                    <h3 className="font-semibold text-[var(--dos-text-primary)]">{step.title}</h3>
-                                    <p className="mt-1 text-sm leading-relaxed text-[var(--dos-text-secondary)]">
-                                        {step.description}
-                                    </p>
-                                </article>
-                            </li>
-                        ))}
-                    </ol>
-                </div>
             </div>
         </section>
     );

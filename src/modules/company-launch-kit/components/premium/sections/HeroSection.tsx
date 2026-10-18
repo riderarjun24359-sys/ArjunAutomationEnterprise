@@ -41,7 +41,7 @@ export function HeroSection() {
                             id="hero-heading"
                             className="font-display mt-5 text-4xl font-bold leading-[1.02] tracking-[-0.03em] text-[var(--premium-fg)] sm:text-5xl lg:text-6xl xl:text-7xl"
                         >
-                            Run your business on one intelligent system.
+                            {HERO_CONTENT.headline}
                         </h1>
 
                         <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--premium-fg-muted)] sm:text-lg">

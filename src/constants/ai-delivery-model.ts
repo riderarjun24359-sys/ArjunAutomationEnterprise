@@ -18,7 +18,7 @@ export const AI_DELIVERY_LEVELS = [
         level: 2,
         title: "AI Solution Generation",
         description: "Generate the first complete working solution using our internal AI platform.",
-        estimate: "Hours instead of weeks",
+        estimate: "First working version, not a production release",
     },
     {
         level: 3,
@@ -41,12 +41,27 @@ export const AI_DELIVERY_LEVELS = [
 ] as const;
 
 export const AI_DELIVERY_MARKETING = {
-    tagline: "AI-first delivery. Hours to first version. Enterprise rigor after validation.",
+    tagline: "AI-first delivery. Fast to first working version. Enterprise rigor before go-live.",
     policySummary: AI_DELIVERY_POLICY_SUMMARY,
-    firstVersion: "⚡ AI-generated first version within hours.",
-    rapidDelivery: "🚀 Rapid production delivery.",
-    enterpriseDeployment: "⚙ Enterprise deployment after validation.",
-    timelineNote: "📈 Timeline finalized after discovery and integration assessment.",
+
+    /**
+     * CREDIBILITY NOTE
+     * ----------------
+     * These lines previously promised an "AI-generated first version within
+     * hours" on the same site that quotes $45,000–$200,000 implementation
+     * fees. Buyers read the pairing as either a pricing error or a toy, and it
+     * actively undercut the enterprise positioning.
+     *
+     * The claim is now scoped honestly: the *analysis* is fast, the first
+     * working version follows quickly, and production deployment is gated on
+     * validation. Speed is stated as a property of the method, not as a
+     * substitute for the work — which is what enterprise buyers are actually
+     * buying.
+     */
+    firstVersion: "⚡ Requirement analysis starts in the first session.",
+    rapidDelivery: "🚀 A first working version follows shortly after.",
+    enterpriseDeployment: "⚙ Production deployment happens only after validation.",
+    timelineNote: "📈 Scope and schedule are finalized after discovery.",
     enterpriseRoadmap: "Delivery roadmap is finalized after technical discovery.",
     brandPosition:
         "Arjun Automation is an AI-first company. Customers buy speed, automation, quality, scalability, and reliability — not developer hours.",
@@ -66,6 +81,20 @@ export const AI_DELIVERY_FAQ_IMPLEMENTATION = {
     question: "How long does implementation typically take?",
     answer: `${AI_DELIVERY_MARKETING.firstVersion} ${AI_DELIVERY_MARKETING.rapidDelivery} ${AI_DELIVERY_MARKETING.enterpriseDeployment} ${AI_DELIVERY_MARKETING.timelineNote} ${AI_DELIVERY_POLICY_SUMMARY} For large enterprise programs: ${AI_DELIVERY_MARKETING.enterpriseRoadmap}`,
 };
+
+/**
+ * Extra FAQ entry making the pricing/timeline relationship explicit.
+ *
+ * Buyers on a five-figure implementation budget want to know why the fee is
+ * not simply the number of hours spent. This answers that directly instead of
+ * leaving it implied — which is what previously made the speed claims read as
+ * a contradiction of the price list.
+ */
+export const AI_DELIVERY_FAQ_WHY_INVESTMENT = {
+    question: "Why does implementation cost more than the time it takes to build a first version?",
+    answer:
+        "A first working version proves the approach. Going live is a different body of work: integrating with your existing systems, migrating data, hardening security, passing review gates, training your team, and owning the result once real users depend on it. We quote for the go-live, not the prototype — and the prototype is included, so you see the system working before you commit to the rest.",
+} as const;
 
 /** Forbidden in marketing/delivery copy — use verify script to scan */
 export const FORBIDDEN_DELIVERY_TIMELINES = [

@@ -9,6 +9,7 @@ import {
     ENTERPRISE_ENGAGEMENT,
     IMPLEMENTATION_TIERS,
     MANAGED_SUPPORT_TIERS,
+    PILOT_PROGRAMME,
     PRICING_PHILOSOPHY,
 } from "@/src/modules/company-launch-kit/data/pricing";
 import { SOFT_LAUNCH_PLANS } from "@/src/modules/soft-launch/data/launch-assets";
@@ -17,7 +18,7 @@ import { buildMetadata } from "@/src/lib/seo";
 const PAGE = {
     title: "Pricing",
     description:
-        "Soft-launch SaaS plans (Free Trial, Starter, Professional, Enterprise) plus transparent implementation and managed support pricing.",
+        "Platform plans (Free Trial, Starter, Professional, Enterprise) plus transparent implementation and managed support pricing.",
     path: MARKETING_ROUTES.pricing,
 };
 
@@ -45,11 +46,85 @@ export default function PricingPage() {
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
                 <div className="space-y-16">
+                    {/* Pilot programme sits FIRST. For an early-stage business the
+                        realistic entry point is a reduced-fee pilot, not a
+                        five-figure tier — and burying it below the standard
+                        pricing would mean most visitors never scroll to it. */}
+                    <section
+                        aria-labelledby="pilot-heading"
+                        className="rounded-3xl border border-indigo-700/40 bg-indigo-950/10 p-6 sm:p-8"
+                    >
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                            <div className="max-w-2xl">
+                                <h2 id="pilot-heading" className="text-2xl font-semibold">
+                                    {PILOT_PROGRAMME.title}
+                                </h2>
+                                <p className="mt-3 text-[var(--premium-fg-muted)]">{PILOT_PROGRAMME.subtitle}</p>
+                            </div>
+                            <p className="shrink-0 rounded-full border border-indigo-700/50 px-4 py-2 text-sm font-medium text-indigo-300">
+                                {PILOT_PROGRAMME.slots} {PILOT_PROGRAMME.slotsLabel}
+                            </p>
+                        </div>
+
+                        <div className="mt-8 grid gap-8 lg:grid-cols-3">
+                            <div>
+                                <p className="text-4xl font-bold text-indigo-300">{PILOT_PROGRAMME.setupFee}</p>
+                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
+                                    {PILOT_PROGRAMME.setupFeeNote}
+                                </p>
+                                <Link
+                                    href={MARKETING_ROUTES.contact}
+                                    className="mt-6 inline-flex rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                                >
+                                    {PILOT_PROGRAMME.ctaLabel}
+                                </Link>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
+                                    What you get
+                                </h3>
+                                <ul className="mt-4 space-y-2 text-sm">
+                                    {PILOT_PROGRAMME.includes.map((item) => (
+                                        <li key={item} className="flex items-start gap-3">
+                                            <span
+                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400"
+                                                aria-hidden="true"
+                                            />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
+                                    What we ask
+                                </h3>
+                                <ul className="mt-4 space-y-2 text-sm">
+                                    {PILOT_PROGRAMME.expectations.map((item) => (
+                                        <li key={item} className="flex items-start gap-3">
+                                            <span
+                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-indigo-400"
+                                                aria-hidden="true"
+                                            />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <p className="mt-8 border-t border-[var(--premium-border)] pt-6 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
+                            {PILOT_PROGRAMME.honest}
+                        </p>
+                    </section>
+
                     <section aria-labelledby="saas-plans-heading">
                         <div className="flex flex-wrap items-end justify-between gap-4">
                             <div>
                                 <h2 id="saas-plans-heading" className="text-2xl font-semibold">
-                                    Soft-launch SaaS plans
+                                    Platform plans
                                 </h2>
                                 <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                                     Free Trial, Starter, Professional, and Enterprise with clear usage limits.

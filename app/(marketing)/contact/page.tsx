@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { LeadForm } from "@/src/modules/company-launch-kit/components/LeadForm";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
+import {
+    COMPANY_PROFILE,
+    formatAddress,
+    HAS_PHONE,
+    WHATSAPP_DEFAULT_MESSAGE,
+    whatsappLink,
+} from "@/src/config/company-profile";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Contact",
-    description: "Contact Arjun Automation for sales, partnerships, and customer success. We aim to respond within one business day.",
+    description:
+        "Talk to Arjun Automation about automating your operations. Call, WhatsApp or send us the details — we respond within one business day.",
     path: MARKETING_ROUTES.contact,
 };
 
@@ -31,11 +40,17 @@ const CHANNELS = [
 ];
 
 const QUALIFICATION_STEPS = [
-    "Share your industry, team size, and primary operational challenge",
-    "We aim to schedule a 30-minute discovery call within one business day",
-    "Receive a scoped recommendation — platform, industry pack, or consulting engagement",
-    "Optional: technical discovery workshop before formal proposal",
+    "Tell us what is going wrong today — the manual work, the missed enquiries, the chasing",
+    "We reply within one business day, usually with questions and an honest view on fit",
+    "A 30-minute call to see whether automation is genuinely the right fix",
+    "A scoped recommendation with a fixed price — or an honest 'this is not what you need'",
 ];
+
+/** wa.me deep link for the contact page, or null when no number is configured. */
+const WHATSAPP_URL = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
+
+/** Single-line registered address, omitting any part not yet configured. */
+const addressLine = formatAddress();
 
 export default function ContactPage() {
     return (
@@ -43,16 +58,51 @@ export default function ContactPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Contact Us"
-                description="Schedule a discovery call or send us a message. Our team aims to respond within one business day."
+                description="Tell us what is going wrong in your operations. We reply within one business day — and we will tell you honestly if automation is not the fix."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="grid gap-12 lg:grid-cols-2">
                     <div className="space-y-10">
                         <section aria-labelledby="channels-heading">
                             <h2 id="channels-heading" className="text-xl font-semibold">
-                                Communication channels
+                                Talk to us
                             </h2>
-                            <dl className="mt-6 space-y-4">
+
+                            {/* Fastest routes first. Call and WhatsApp appear only
+                                once a real number is configured. */}
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
+                                    <a
+                                        href={`tel:${COMPANY_PROFILE.phoneE164}`}
+                                        className="inline-flex items-center gap-2 rounded-full bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                                    >
+                                        <Phone className="h-4 w-4" aria-hidden="true" />
+                                        {COMPANY_PROFILE.phoneDisplay}
+                                    </a>
+                                ) : null}
+
+                                {WHATSAPP_URL ? (
+                                    <a
+                                        href={WHATSAPP_URL}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 rounded-full border border-[#25D366] px-5 py-2.5 text-sm font-semibold text-[#25D366] transition hover:bg-[#25D366]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]"
+                                    >
+                                        <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                                        WhatsApp us
+                                    </a>
+                                ) : null}
+
+                                <a
+                                    href={`mailto:${COMPANY_PROFILE.emails.sales}`}
+                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+                                >
+                                    <Mail className="h-4 w-4" aria-hidden="true" />
+                                    Email sales
+                                </a>
+                            </div>
+
+                            <dl className="mt-8 space-y-4">
                                 {CHANNELS.map((channel) => (
                                     <div key={channel.label}>
                                         <dt className="text-sm font-medium text-indigo-700">{channel.label}</dt>
@@ -63,16 +113,34 @@ export default function ContactPage() {
                                         </dd>
                                     </div>
                                 ))}
+
+                                {addressLine ? (
+                                    <div>
+                                        <dt className="text-sm font-medium text-indigo-700">Registered office</dt>
+                                        <dd className="mt-1 flex items-start gap-2 text-[var(--premium-fg-muted)]">
+                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                                            <span>{addressLine}</span>
+                                        </dd>
+                                    </div>
+                                ) : null}
+
+                                {COMPANY_PROFILE.gstin ? (
+                                    <div>
+                                        <dt className="text-sm font-medium text-indigo-700">GSTIN</dt>
+                                        <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.gstin}</dd>
+                                    </div>
+                                ) : null}
+
                                 <div>
-                                    <dt className="text-sm font-medium text-indigo-700">Office Hours</dt>
-                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">Monday – Friday, 9:00 AM – 6:00 PM IST</dd>
+                                    <dt className="text-sm font-medium text-indigo-700">Office hours</dt>
+                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.officeHours}</dd>
                                 </div>
                             </dl>
                         </section>
 
                         <section aria-labelledby="booking-heading">
                             <h2 id="booking-heading" className="text-xl font-semibold">
-                                Booking workflow
+                                What happens next
                             </h2>
                             <ol className="mt-4 space-y-3">
                                 {QUALIFICATION_STEPS.map((step, index) => (
@@ -100,7 +168,7 @@ export default function ContactPage() {
                     </div>
 
                     <div className="premium-glass rounded-2xl p-8">
-                        <h2 className="text-lg font-semibold">Start requirement analysis</h2>
+                        <h2 className="text-lg font-semibold">Send us the details</h2>
                         <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                             Complete the form for lead qualification. Required fields help us route your inquiry to the right team.
                         </p>

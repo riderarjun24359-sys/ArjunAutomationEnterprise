@@ -11,7 +11,7 @@ import { ROUTES } from "@/src/constants/routes";
 
 const PAGE = {
     title: "Features",
-    description: "Explore Arjun Automation soft-launch features spanning CRM, projects, success, finance, HRMS, integrations, and security.",
+    description: "Explore Arjun Automation platform features spanning CRM, projects, success, finance, HRMS, integrations, and security.",
     path: MARKETING_ROUTES.features,
 };
 
