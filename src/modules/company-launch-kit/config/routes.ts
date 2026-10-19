@@ -26,6 +26,7 @@ export const MARKETING_ROUTES = {
     terms: "/terms",
     cookies: "/cookies",
     refund: "/refund",
+    payments: "/payments",
     thankYou: "/thank-you",
     launchAutomation: "/launch/automation",
     launchCrm: "/launch/crm",

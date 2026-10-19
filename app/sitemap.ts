@@ -45,6 +45,7 @@ const SECTION_LAST_MODIFIED: Record<string, string> = {
     "/contact": "2026-10-18",
     "/privacy": "2026-10-18",
     "/terms": "2026-10-18",
+    "/payments": "2026-10-19",
     "/cookies": "2026-10-18",
     "/launch/automation": "2026-10-18",
     "/launch/crm": "2026-10-18",
@@ -81,6 +82,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         MARKETING_ROUTES.privacy,
         MARKETING_ROUTES.terms,
         MARKETING_ROUTES.cookies,
+        MARKETING_ROUTES.payments,
         MARKETING_ROUTES.launchAutomation,
         MARKETING_ROUTES.launchCrm,
     ];
