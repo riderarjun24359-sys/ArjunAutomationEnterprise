@@ -36,9 +36,10 @@ const breadcrumbs = [
 
 const methods = [
     {
-        title: "Indian clients — INR",
+        title: "Indian clients — INR (UPI)",
         body: [
-            "UPI or direct bank transfer in Indian Rupees. Account details are issued on your proforma invoice; never through pop-ups or unverified pages.",
+            "Pay by UPI to 7337027357-2@ybl (PhonePe) or 7337027357@idfcfirst (IDFC First Bank). The exact amount and due date are confirmed on your proforma invoice.",
+            "Always quote the invoice reference (AAE-YYYYMM-###) in the payment note so our team can verify your credit the same day.",
         ],
     },
     {
