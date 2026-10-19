@@ -72,23 +72,51 @@ export function consentSignals(state: ConsentState): Record<string, ConsentDecis
 
 /** Reads the stored decision. Returns null when absent or unreadable. */
 export function readConsent(): ConsentState | null {
+    // MANDATORY CACHE: `getConsentSnapshot` is consumed by `useSyncExternalStore`,
+    // which re-renders whenever two consecutive calls return different objects
+    // (Object.is). Parsing the raw JSON on every call therefore created a fresh
+    // object per render: the first store change (pressing Accept) cascaded into
+    // an infinite re-render and crashed the page with React error #185 ("maximum
+    // update depth exceeded") — reproducible in Safari AND Chromium. To fix, only
+    // re-parse when the raw stored value has actually changed.
+    let raw: string | null = null;
     try {
-        const raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw) as Partial<ConsentState>;
-        if (parsed.analytics !== "granted" && parsed.analytics !== "denied") return null;
-        return {
-            essential: parsed.essential === "granted" ? "granted" : "denied",
-            analytics: parsed.analytics,
-            marketing: parsed.marketing === "granted" ? "granted" : "denied",
-            decidedAt: parsed.decidedAt ?? "",
-        };
+        raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
     } catch {
-        // Private mode / storage disabled — treat as "no decision yet" so the
-        // banner still shows and nothing is loaded behind the user's back.
-        return null;
+        // Private mode / storage disabled — same path as "no decision yet".
+        raw = null;
     }
+    if (raw === cache.raw) return cache.value;
+
+    let value: ConsentState | null = null;
+    if (raw) {
+        try {
+            const parsed = JSON.parse(raw) as Partial<ConsentState>;
+            if (parsed.analytics !== "granted" && parsed.analytics !== "denied") value = null;
+            else {
+                value = {
+                    essential: parsed.essential === "granted" ? "granted" : "denied",
+                    analytics: parsed.analytics,
+                    marketing: parsed.marketing === "granted" ? "granted" : "denied",
+                    decidedAt: parsed.decidedAt ?? "",
+                };
+            }
+        } catch {
+            // Corrupt stored value — treat as "no decision yet".
+            value = null;
+        }
+    }
+
+    cache = { raw, value };
+    return value;
 }
+
+let cache: { raw: string | null; value: ConsentState | null } = {
+    // Sentinel that can never be a real localStorage value (the app only stores
+    // JSON strings), so the first read always parses fresh.
+    raw: "__aa_consent_cache_uninitialized__",
+    value: null,
+};
 
 export function writeConsent(decision: "accept" | "reject"): ConsentState {
     const granted = decision === "accept";
