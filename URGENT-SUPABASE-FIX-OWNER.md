@@ -47,6 +47,17 @@ logo + Telugu greeting add cheyandi (optional)
 - Stripe/Razorway lo auto-ga + UPI manual confirm — honestly,
   day-one manual job.
 
+## ⚠️ IMPORTANT — Deploy Manual Rule (2026-10-20 learning)
+Repo deploy workflow **automatic push-trigger LEKUNDA** drinking.
+Code commit+push only repo ki veltundi, live site ki velladhu!
+
+Site deploy = GitHub Actions **manual job**:
+    gh workflow run production-deploy.yml --ref main -f action=deploy-production
+(or) GitHub.com → Actions → "Production Early Access Deploy" → Run workflow → action: `deploy-production`
+
+Personal iddari deploy ki nuvvu code push chesakapadu
+**deploy-production** action run cheyali for site ni update cheyyatam ki.
+
 ---
 
 **After Fix 1+2:** test garganta — meeku personal email tho signup chesi,
