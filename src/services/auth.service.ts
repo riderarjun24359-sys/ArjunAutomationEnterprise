@@ -128,6 +128,31 @@ export const authService = {
         await client.auth.signOut();
     },
 
+    /**
+     * Resend the signup confirmation email (self-service unblock).
+     * Customers whose confirmation mail got rate-limited or spam-trapped can
+     * request a fresh link without waiting on support.
+     */
+    async resendConfirmation(email: string) {
+        assertSupabaseConfigured();
+        const client = supabaseBrowser();
+        if (!client) {
+            throw new Error("Unable to initialize Supabase client.");
+        }
+
+        const { error } = await client.auth.resend({
+            type: "signup",
+            email,
+            options: { emailRedirectTo: `${getAppOrigin()}/auth/callback` },
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        return true;
+    },
+
     async getSession() {
         const client = supabaseBrowser();
         if (!client) {

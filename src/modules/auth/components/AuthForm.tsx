@@ -10,6 +10,8 @@ import { authService } from "@/src/services/auth.service";
 import { useAuthStore } from "@/src/store/auth.store";
 import { ROUTES } from "@/src/constants/routes";
 
+type ResendState = { email: string; status: "sending" | "sent" | "failed" } | null;
+
 const signInSchema = z.object({
     email: z.string().email("Please enter a valid email"),
     password: z.string().min(8, "Password must be at least 8 characters"),
@@ -51,8 +53,8 @@ const getAuthErrorMessage = (error: unknown): string => {
         return "Too many email requests. Please wait a minute before trying again.";
     }
 
-    if (message.includes("email not confirmed")) {
-        return "Please confirm your email address before signing in. Check your inbox for the confirmation link.";
+    if (message.includes("email not confirmed") || message.includes("email_not_confirmed")) {
+        return "Email midha confirmation link ayenu? (spam/promotions folder kuda check cheyandi) — confirmation iyyaka sign-in cheyandi.";
     }
 
     return error.message;
@@ -75,6 +77,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     const searchParams = useSearchParams();
     const [message, setMessage] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [resend, setResendState] = useState<ResendState>(null);
     const setAuth = useAuthStore((state) => state.setAuth);
     const supabaseReady = isSupabaseConfigured();
     const queryErrorMessage = useMemo(() => getQueryErrorMessage(searchParams.get("error")), [searchParams]);
@@ -106,7 +109,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                     const result = await authService.signUp(input);
 
                     if (result.requiresEmailConfirmation) {
-                        setMessage("Account created. Check your email to confirm your address, then sign in.");
+                        setMessage("Account created ✅. Email lo confirmation link click cheyandi (spam/promotions folder kuda check cheyandi) — tarvata sign-in cheyochu. Link radha? Sign-in page daggara 'Resend confirmation' vundi.");
                         return;
                     }
 
@@ -130,6 +133,10 @@ export function AuthForm({ mode }: AuthFormProps) {
                 }
             } catch (error) {
                 setErrorMessage(getAuthErrorMessage(error));
+                const raw = error instanceof Error ? error.message.toLowerCase() : "";
+                if (raw.includes("email not confirmed") || raw.includes("email_not_confirmed")) {
+                    setResendState({ email: (values as { email: string }).email, status: "sent" });
+                }
             }
         },
         [mode, router, searchParams, setAuth],
@@ -148,6 +155,31 @@ export function AuthForm({ mode }: AuthFormProps) {
 
             {message ? <div role="status" className="rounded-2xl border border-[var(--dos-success)] bg-[var(--dos-success)]/10 p-4 text-sm text-[var(--dos-success)]">{message}</div> : null}
             {displayedError ? <div role="alert" className="rounded-2xl border border-[var(--dos-error)] bg-[var(--dos-error)]/10 p-4 text-sm text-[var(--dos-error)]">{displayedError}</div> : null}
+            {resend ? (
+                <div className="flex items-center justify-between gap-4 rounded-2xl border border-[var(--dos-border)] bg-[var(--dos-surface-elevated)] p-4 text-sm">
+                    <span className="text-[var(--dos-text-secondary)]">{resend.status === "sent" ? "Mail radha? Link malli pampinchachu:" : "Confirmation link mallipampustunna..." }</span>
+                    <button
+                        type="button"
+                        disabled={resend.status === "sending"}
+                        onClick={async () => {
+                            setResendState({ ...resend, status: "sending" });
+                            try {
+                                await authService.resendConfirmation(resend.email);
+                                setResendState({ ...resend, status: "sent" });
+                                setMessage("Confirmation link malli pampesanu ✅ — mail check cheyandi (spam/promotions kuda).");
+                                setErrorMessage(null);
+                            } catch (e) {
+                                setResendState({ ...resend, status: "failed" });
+                                setErrorMessage(getAuthErrorMessage(e));
+                            }
+                        }}
+                        className="rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] px-3 py-1.5 font-semibold text-[var(--dos-text-primary)] transition hover:text-[var(--dos-brand-primary)] disabled:opacity-60"
+                        aria-busy={resend.status === "sending"}
+                    >
+                        {resend.status === "sending" ? "Sending..." : resend.status === "sent" ? "Resend confirmation ⭮" : "Try again ⭮"}
+                    </button>
+                </div>
+            ) : null}
 
             {mode === "sign-up" ? (
                 <div>
