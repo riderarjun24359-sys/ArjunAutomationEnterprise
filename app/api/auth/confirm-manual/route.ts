@@ -17,7 +17,7 @@ import { checkRateLimit } from "@/src/modules/security-center/engine/api-securit
  */
 export async function POST(request: Request) {
     const rate = checkRateLimit("auth-confirm-manual", 5, 60_000);
-    if (!rate.ok) {
+    if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limited. Minute lo muppudu try cheyandi." }, { status: 429 });
     }
 
