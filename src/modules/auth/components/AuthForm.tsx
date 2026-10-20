@@ -109,7 +109,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                     const result = await authService.signUp(input);
 
                     if (result.requiresEmailConfirmation) {
-                        setMessage("Account created ✅. Email lo confirmation link click cheyandi (spam/promotions folder kuda check cheyandi) — tarvata sign-in cheyochu. Link radha? Sign-in page daggara 'Resend confirmation' vundi.");
+                        setMessage("Account created ✅. Email lo confirmation link click cheyandi (spam/promotions kuda). Link localhost ki velli 'site can't be reached' aite — open the fix page /auth/fix-confirmation and paste the link there — session 'confirm' completes instantly.");
                         return;
                     }
 

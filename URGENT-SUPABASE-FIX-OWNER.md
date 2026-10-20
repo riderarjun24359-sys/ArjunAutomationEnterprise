@@ -4,12 +4,32 @@
 - Sign-up API ✅ works (tested live — Supabase returns proper responses)
 - Sign-in API ✅ works (tested live — proper `invalid_credentials`)
 - UI forms ✅ render fine (tested in real browser)
-- **Real problem: email confirmation mail delivery + Supabase URL config**
+- **REAL ROOT CAUSE (2026-10-20 owner report): confirmation email link
+  velte `http://localhost:3000` ki veltundi → "localhost refused to connect".
+  Supabase Dashboard **Site URL = localhost:3000** ga set ayyi undi — adi
+  email links nilocalhost ki generate chestundi.**
+
+**RESCUE (already live):** `/auth/fix-confirmation` page — customer localhost
+link paste cheyadam tho in-place confirm chesochu (appku dashboard fix after
+open anthe). Dashboard lo Site URL fix kuda cheyyandhi.
 
 Gmail domain rejection test lo `email_address_invalid` vachindi — Supabase
 throwaway domains block chestundi (adi birdu). Real gmail domain problems
 unna: confirmation mail **radam**|% ra vachina **spam** lo — Supabase
 built-in SMTP rate-limits (2 mail/hour) + reputation issues.
+
+---
+
+## ✅ FIX 0 — Site URL + redirects (MOST URGENT — localhost link cause, 5 min)
+Supabase Dashboard → **Authentication → URL Configuration**
+
+1. **Site URL:** `https://www.arjunautomations.com` ← ippatti varaku localhost:3000 ga undi — email link localhost enuku velthundo its RESCUE
+2. **Redirect URLs** list lo ivi lekapothey ADD:
+   - `https://www.arjunautomations.com/**`
+   - https://www.arjunautomations.com/auth/callback
+   - https://www.arjunautomations.com/auth/reset-password
+   - https://www.arjunautomations.com/auth/welcome
+3. **Save** → test: customer signup email lo link ippudu **http site ki velthundi**.
 
 ---
 

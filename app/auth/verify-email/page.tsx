@@ -26,6 +26,9 @@ export default function VerifyEmailPage() {
                 <Link href={ROUTES.auth.signIn} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold">
                     Back to sign in
                 </Link>
+                <Link href="/auth/fix-confirmation" className="rounded-full border border-orange-300 bg-orange-50 px-5 py-2.5 text-sm font-semibold text-orange-700">
+                    Email link localhost ki vellinda? → Fix chesi confirm chey
+                </Link>
                 <Link href={MARKETING_ROUTES.help} className="rounded-full px-5 py-2.5 text-sm font-semibold underline">
                     Help Center
                 </Link>
