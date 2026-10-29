@@ -10,32 +10,23 @@ export const metadata: Metadata = buildMetadata({
     path: "/careers",
 });
 
-const openings = [
-    {
-        title: "Senior Platform Engineer",
-        location: "Remote (India)",
-        type: "Full-time",
-        description: "Build and extend Arjun Automation OS modules — CRM, workflow engine, integration platform, and AI worker infrastructure.",
-    },
-    {
-        title: "Solution Architect",
-        location: "Remote (Global)",
-        type: "Full-time",
-        description: "Lead enterprise client engagements — discovery, architecture design, integration mapping, and go-live planning.",
-    },
-    {
-        title: "Customer Success Manager",
-        location: "Remote (India)",
-        type: "Full-time",
-        description: "Own client onboarding, adoption, health scores, and renewal for managed support accounts.",
-    },
-    {
-        title: "Technical Writer",
-        location: "Remote",
-        type: "Contract",
-        description: "Create documentation, sales collateral, and training materials for platform modules and industry packs.",
-    },
-];
+/**
+ * No open positions are listed right now.
+ *
+ * An earlier version showed four generic template roles (Senior Platform
+ * Engineer, Solution Architect, Customer Success Manager, Technical Writer)
+ * that were placeholders rather than real, currently-open reqs. Listing roles
+ * we are not actually hiring for misleads candidates, so the section now
+ * states honestly that there are no open positions and points visitors to the
+ * general contact path instead. When a genuine opening exists, add it back as
+ * data and render it from that list.
+ */
+const openings: Array<{
+    title: string;
+    location: string;
+    type: string;
+    description: string;
+}> = [];
 
 export default function CareersPage() {
     return (
@@ -60,17 +51,27 @@ export default function CareersPage() {
 
                     <div>
                         <h2 className="text-2xl font-semibold text-orange-950">Open Positions</h2>
-                        <div className="mt-6 space-y-4">
-                            {openings.map((job) => (
-                                <article key={job.title} className="rounded-2xl border border-slate-200 p-6">
-                                    <h3 className="text-lg font-semibold text-orange-950">{job.title}</h3>
-                                    <p className="mt-1 text-sm text-orange-500">{job.location} · {job.type}</p>
-                                    <p className="mt-3 text-sm text-slate-600">{job.description}</p>
-                                </article>
-                            ))}
-                        </div>
+                        {openings.length > 0 ? (
+                            <div className="mt-6 space-y-4">
+                                {openings.map((job) => (
+                                    <article key={job.title} className="rounded-2xl border border-slate-200 p-6">
+                                        <h3 className="text-lg font-semibold text-orange-950">{job.title}</h3>
+                                        <p className="mt-1 text-sm text-orange-500">{job.location} · {job.type}</p>
+                                        <p className="mt-3 text-sm text-slate-600">{job.description}</p>
+                                    </article>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="mt-6 rounded-2xl border border-slate-200 p-6">
+                                <p className="text-slate-600 leading-relaxed">
+                                    We don&rsquo;t have any open positions at the moment. Please check back later — we post
+                                    here as soon as a role opens up.
+                                </p>
+                            </div>
+                        )}
                         <p className="mt-6 text-sm text-slate-600">
-                            Interested? Send your resume to{" "}
+                            Think you&rsquo;d add something exceptional to the team even without an open role? Introduce
+                            yourself at{" "}
                             <a href="mailto:careers@arjunautomations.com" className="text-orange-500 hover:text-orange-600">
                                 careers@arjunautomations.com
                             </a>{" "}
