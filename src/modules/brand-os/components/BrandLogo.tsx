@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "@/src/lib/cn";
 
-export type BrandLogoVariant = "horizontal" | "secondary" | "vertical" | "symbol" | "monogram" | "inverse";
+export type BrandLogoVariant = "horizontal" | "secondary" | "vertical" | "symbol" | "monogram" | "inverse" | "blue";
 
 const LOGO_PATHS: Record<BrandLogoVariant, string> = {
     horizontal: "/brand/logos/primary-horizontal.svg",
@@ -10,6 +10,8 @@ const LOGO_PATHS: Record<BrandLogoVariant, string> = {
     symbol: "/brand/logos/symbol-only.svg",
     monogram: "/brand/logos/monogram.svg",
     inverse: "/brand/logos/monochrome-white.svg",
+    /** Light-surface lockup: blue symbol + navy wordmark (marketing tree). */
+    blue: "/brand/logos/horizontal-blue.svg",
 };
 
 /**
@@ -29,6 +31,7 @@ const LOGO_DIMENSIONS: Record<BrandLogoVariant, { width: number; height: number 
     symbol: { width: 48, height: 48 },
     monogram: { width: 48, height: 48 },
     inverse: { width: 320, height: 48 },
+    blue: { width: 320, height: 48 },
 };
 
 export type BrandLogoProps = {

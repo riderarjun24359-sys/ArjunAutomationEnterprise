@@ -29,11 +29,12 @@ import { BLOG_POSTS } from "@/src/modules/company-launch-kit/data/blog";
 
 /** Last content edit, per top-level section. Update when that section changes. */
 const SECTION_LAST_MODIFIED: Record<string, string> = {
-    "/": "2026-10-18",
+    "/": "2026-10-29",
     "/about": "2026-10-18",
     "/features": "2026-10-18",
     "/services": "2026-10-18",
     "/industries": "2026-10-18",
+    "/school-erp": "2026-10-29",
     "/solutions": "2026-10-18",
     "/portfolio": "2026-10-18",
     "/case-studies": "2026-10-18",
@@ -69,6 +70,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         MARKETING_ROUTES.features,
         MARKETING_ROUTES.services,
         MARKETING_ROUTES.industries,
+        MARKETING_ROUTES.schoolErp,
         MARKETING_ROUTES.solutions,
         // `/portfolio` is a noindex hub (see its page.tsx) — canonical content
         // lives at `/case-studies`, and the six portfolio detail URLs 301 there.

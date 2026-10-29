@@ -45,7 +45,7 @@ export default function LaunchCrmPage() {
                             ))}
                         </ul>
                         <p>
-                            Based on Arjun Automation CRM deployments achieving 35% pipeline growth and 40% faster quote-to-cash cycles.
+                            Based on how Arjun Automation CRM connects pipeline, delivery, and finance in one workflow.
                         </p>
                     </div>
                     <div className="rounded-2xl border border-orange-200 bg-indigo-50 p-8">

@@ -6,6 +6,7 @@ import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/component
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import { CASE_STUDY_SLUGS } from "@/src/modules/company-launch-kit/data/case-studies";
 import { PORTFOLIO_ITEMS, getPortfolioItem } from "@/src/modules/company-launch-kit/data/portfolio";
 import { buildMetadata } from "@/src/lib/seo";
 
@@ -133,9 +134,17 @@ export default async function PortfolioDetailPage({ params }: Props) {
                         </div>
                     </section>
 
-                    <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-orange-500 hover:text-orange-600">
-                        Read case study format →
-                    </Link>
+                    {/* The integrations solution has no case-study twin — only show
+                        the cross-link when a canonical case study actually exists. */}
+                    {CASE_STUDY_SLUGS.includes(slug as (typeof CASE_STUDY_SLUGS)[number]) ? (
+                        <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-orange-500 hover:text-orange-600">
+                            Read case study format →
+                        </Link>
+                    ) : (
+                        <Link href={MARKETING_ROUTES.caseStudies} className="text-sm font-medium text-orange-500 hover:text-orange-600">
+                            Browse all case studies →
+                        </Link>
+                    )}
                 </div>
             </PremiumPageShell>
             <CtaSection />

@@ -19,7 +19,7 @@ export const BLOG_POSTS: BlogPost[] = [
         publishedAt: "2026-03-15",
         readTime: "6 min read",
         category: "Strategy",
-        content: `Enterprise automation promises efficiency, visibility, and scale. Yet Gartner estimates that over 50% of automation initiatives fail to deliver expected ROI within the first year. After delivering dozens of platform implementations, we see the same failure patterns repeat.
+        content: `Enterprise automation promises efficiency, visibility, and scale. Yet industry research keeps finding that a large share of automation initiatives fail to deliver the expected ROI within the first year. In our work on platform implementations, the same failure patterns repeat.
 
 ## Pattern 1: Tool Sprawl Without Integration Strategy
 
@@ -81,7 +81,7 @@ Each worker operates within governance boundaries. Humans approve before product
 
 ## Measurable Outcomes
 
-Clients activating AI workers report 40% faster delivery cycles, consistent documentation quality, and reduced engineering maintenance on internal tooling. The ROI comes from execution velocity — not conversation volume.
+Clients activating AI workers get more consistent documentation quality and less engineering time lost to maintaining internal tooling. The return comes from execution capacity — not conversation volume.
 
 ## Getting Started
 

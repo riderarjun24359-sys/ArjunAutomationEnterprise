@@ -128,9 +128,21 @@ export const FIRST_PROJECT_CHECKLIST = [
 ] as const;
 
 export const HELP_CENTER_TOPICS = [
-    { title: "Getting started", body: "Use the onboarding wizard after sign-up to create your organization, workspace, and first project checklist.", href: ROUTES.onboarding },
+    {
+        title: "Getting started",
+        body: "Create your account to launch the onboarding wizard — it sets up your organization, workspace, and first project checklist.",
+        // Auth-gated wizard is not reachable for logged-out visitors; the public
+        // path into it is the sign-up page.
+        href: ROUTES.auth.signUp,
+    },
     { title: "Billing & plans", body: "Compare Free Trial, Starter, Professional, and Enterprise limits on the pricing page.", href: MARKETING_ROUTES.pricing },
-    { title: "Security basics", body: "Enable MFA, review RBAC roles, and monitor alerts in Security Center after login.", href: "/security-center" },
+    {
+        title: "Security basics",
+        body: "Multi-factor authentication, role-based access control, and audit logging are built into the platform. Read how we handle data in the privacy policy.",
+        // Security Center is an in-app route; the public destination is the
+        // privacy policy plus a way to ask for the security overview.
+        href: MARKETING_ROUTES.privacy,
+    },
     { title: "Contact support", body: "Reach sales or support through Contact Us for platform assistance.", href: MARKETING_ROUTES.contact },
 ] as const;
 

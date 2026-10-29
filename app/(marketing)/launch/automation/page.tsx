@@ -31,7 +31,7 @@ export default function LaunchAutomationPage() {
                         <h2 className="text-2xl font-semibold text-orange-950">What you will learn</h2>
                         <ul className="space-y-3">
                             {[
-                                "Why 50%+ of automation projects fail — and the four patterns to avoid",
+                                "Why automation projects miss their goals — and the four patterns to avoid",
                                 "Platform vs. point solution: calculating true total cost of ownership",
                                 "The AI-First Delivery Policy: Requirement Analysis → Solution Generation → Expert Review → Customer Validation → Secure Production Deployment",
                                 "AI workers vs. chatbots: why execution beats conversation",

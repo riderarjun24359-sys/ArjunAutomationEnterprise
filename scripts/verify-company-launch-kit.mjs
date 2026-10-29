@@ -124,11 +124,17 @@ const apiSource = readFileSync(join(root, "app", "api", "launch-kit", "contact",
 pass("api:contact_validates", apiSource.includes("safeParse") || apiSource.includes("parse"));
 pass("api:contact_json", apiSource.includes("NextResponse.json"));
 
-const analyticsSource = readFileSync(join(moduleRoot, "components", "AnalyticsScripts.tsx"), "utf8");
-pass("analytics:component", analyticsSource.includes("AnalyticsScripts"));
-pass("analytics:ga4_env", analyticsSource.includes("NEXT_PUBLIC_GA4_ID"));
-pass("analytics:meta_env", analyticsSource.includes("NEXT_PUBLIC_META_PIXEL_ID"));
-pass("analytics:linkedin_env", analyticsSource.includes("NEXT_PUBLIC_LINKEDIN_PARTNER_ID"));
+// Analytics moved out of the deleted AnalyticsScripts.tsx in c6a85c6: config now
+// lives in src/config/analytics.ts and GA4 mounts only through the consent gate.
+const analyticsConfigSource = readFileSync(join(root, "src", "config", "analytics.ts"), "utf8");
+pass("analytics:config", analyticsConfigSource.includes("ANALYTICS"));
+pass("analytics:ga4_env", analyticsConfigSource.includes("NEXT_PUBLIC_GA4_ID"));
+pass("analytics:meta_env", analyticsConfigSource.includes("NEXT_PUBLIC_META_PIXEL_ID"));
+const consentSource = readFileSync(
+    join(moduleRoot, "components", "consent", "CookieConsent.tsx"),
+    "utf8",
+);
+pass("analytics:consent_gate", consentSource.includes("gtag") && consentSource.includes("consent"));
 
 const envSource = readFileSync(join(root, "src", "lib", "env.ts"), "utf8");
 pass("env:ga4", envSource.includes("NEXT_PUBLIC_GA4_ID"));

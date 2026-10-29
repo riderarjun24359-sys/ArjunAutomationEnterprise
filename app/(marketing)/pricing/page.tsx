@@ -61,14 +61,14 @@ export default function PricingPage() {
                                 </h2>
                                 <p className="mt-3 text-[var(--premium-fg-muted)]">{PILOT_PROGRAMME.subtitle}</p>
                             </div>
-                            <p className="shrink-0 rounded-full border border-orange-500/50 px-4 py-2 text-sm font-medium text-orange-300">
+                            <p className="shrink-0 rounded-full border border-orange-500/50 px-4 py-2 text-sm font-medium text-orange-700">
                                 {PILOT_PROGRAMME.slots} {PILOT_PROGRAMME.slotsLabel}
                             </p>
                         </div>
 
                         <div className="mt-8 grid gap-8 lg:grid-cols-3">
                             <div>
-                                <p className="text-4xl font-bold text-orange-300">{PILOT_PROGRAMME.setupFee}</p>
+                                <p className="text-4xl font-bold text-orange-700">{PILOT_PROGRAMME.setupFee}</p>
                                 <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                                     {PILOT_PROGRAMME.setupFeeNote}
                                 </p>

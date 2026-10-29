@@ -11,14 +11,14 @@ import { HERO_CONTENT } from "@/src/modules/company-launch-kit/data/home-content
  * advertised something the site no longer said. Sourcing both from one place
  * makes that class of drift impossible.
  */
-export const alt = "Arjun Automation — Business operations platform";
+export const alt = "Arjun Automation — AI automation for business operations";
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
 export default async function OpengraphImage() {
     return renderOgImage({
-        eyebrow: "Business operations",
+        eyebrow: "AI automation platform",
         title: HERO_CONTENT.headline,
         subtitle: "Missed enquiries, retyped data and tasks nobody chases — connected into one workflow.",
     });

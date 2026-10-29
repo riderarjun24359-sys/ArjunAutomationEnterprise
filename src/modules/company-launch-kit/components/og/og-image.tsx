@@ -54,13 +54,13 @@ async function loadFont(): Promise<Array<{ name: string; data: ArrayBuffer; weig
 
 /** Brand palette, mirrored from the premium theme CSS variables. */
 const COLORS = {
-    bg: "#0a0a0b",
-    surface: "#141416",
-    border: "#2a2a2e",
-    accent: "#ff6b35",
-    accentSoft: "#ff8a5c",
-    fg: "#fafafa",
-    muted: "#a1a1aa",
+    bg: "#0b1220",
+    surface: "#101b3d",
+    border: "#24365f",
+    accent: "#60a5fa",
+    accentSoft: "#93c5fd",
+    fg: "#f8fafc",
+    muted: "#94a3b8",
 } as const;
 
 export interface OgImageOptions {

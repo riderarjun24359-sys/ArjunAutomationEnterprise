@@ -1,161 +1,163 @@
 /* ==================================================================
    Arjun Automation — Premium marketing design system
    ------------------------------------------------------------------
-   Brand: matte black + deep charcoal surfaces, vivid burnt orange
-   accents, white / muted-gray type. Angular dividers, thin technical
-   borders, subtle grids and controlled orange glows.
+   Brand: white / soft-slate surfaces, deep navy type, electric blue
+   accents. Angular dividers, thin technical borders, subtle grids and
+   controlled blue glows. Deep-navy panels (CTA bands, hero
+   illustrations) provide the contrast moments.
 
    Everything is SCOPED to `.premium-theme` (wrapping the whole marketing
    layout), so the authenticated app shell keeps its own palette.
    ================================================================== */
 
 :root {
-    /* Brand tokens — the marketing surface is dark by design. */
-    --premium-bg: #08080a;
-    --premium-bg-secondary: #101013;
-    --premium-bg-tertiary: #16161a;
-    --premium-surface: #121216;
-    --premium-fg: #f6f6f7;
-    --premium-fg-muted: #a2a2ac;
-    --premium-border: rgba(255, 255, 255, 0.09);
-    --premium-border-subtle: rgba(255, 255, 255, 0.05);
-    --premium-glass: rgba(14, 14, 17, 0.72);
-    --premium-glass-border: rgba(255, 255, 255, 0.08);
-    --premium-accent: #ff6a00;
-    --premium-accent-hover: #ff8a33;
-    --premium-accent-soft: rgba(255, 106, 0, 0.12);
-    --premium-accent-line: rgba(255, 106, 0, 0.28);
-    --premium-accent-glow: 0 0 0 1px rgba(255, 106, 0, 0.18), 0 24px 56px -20px rgba(255, 106, 0, 0.34);
+    /* Brand tokens — the marketing surface is light by design. */
+    --premium-bg: #ffffff;
+    --premium-bg-secondary: #f8fafc;
+    --premium-bg-tertiary: #f1f5f9;
+    --premium-bg-elevated: #ffffff;
+    --premium-surface: #ffffff;
+    --premium-fg: #0f172a;
+    --premium-fg-muted: #475569;
+    --premium-border: rgba(15, 23, 42, 0.1);
+    --premium-border-subtle: rgba(15, 23, 42, 0.06);
+    --premium-glass: rgba(255, 255, 255, 0.8);
+    --premium-glass-border: rgba(15, 23, 42, 0.08);
+    --premium-accent: #2563eb;
+    --premium-accent-hover: #1d4ed8;
+    --premium-accent-soft: rgba(37, 99, 235, 0.08);
+    --premium-accent-line: rgba(37, 99, 235, 0.26);
+    --premium-accent-glow: 0 0 0 1px rgba(37, 99, 235, 0.16), 0 24px 56px -20px rgba(37, 99, 235, 0.22);
 
-    /* Retain aurora/mesh names for the cinematic hero — orange biased. */
-    --premium-aurora-1: rgba(255, 106, 0, 0.14);
-    --premium-aurora-2: rgba(217, 78, 0, 0.12);
-    --premium-aurora-3: rgba(255, 138, 61, 0.1);
-    --premium-mesh-1: #ff6a00;
-    --premium-mesh-2: #d94e00;
-    --premium-mesh-3: #ff8a3d;
+    /* Retain aurora/mesh names for the cinematic hero — blue biased. */
+    --premium-aurora-1: rgba(37, 99, 235, 0.1);
+    --premium-aurora-2: rgba(14, 165, 233, 0.08);
+    --premium-aurora-3: rgba(79, 70, 229, 0.08);
+    --premium-mesh-1: #2563eb;
+    --premium-mesh-2: #1e40af;
+    --premium-mesh-3: #3b82f6;
 
     --premium-shadow: var(--dos-elevation-2);
     --premium-radius: var(--dos-radius-2xl);
     --font-display: var(--dos-font-display);
 }
 
-/* Kept for the theme contract; the marketing surface is dark-only. */
+/* Kept for the theme contract; the marketing surface is light-only. */
 .dark {
-    --premium-bg: #08080a;
-    --premium-bg-secondary: #101013;
-    --premium-fg: #f6f6f7;
-    --premium-fg-muted: #a2a2ac;
-    --premium-border: rgba(255, 255, 255, 0.09);
-    --premium-glass: rgba(14, 14, 17, 0.72);
-    --premium-glass-border: rgba(255, 255, 255, 0.08);
-    --premium-accent: #ff6a00;
-    --premium-accent-glow: 0 0 0 1px rgba(255, 106, 0, 0.18), 0 24px 56px -20px rgba(255, 106, 0, 0.3);
+    --premium-bg: #ffffff;
+    --premium-bg-secondary: #f8fafc;
+    --premium-fg: #0f172a;
+    --premium-fg-muted: #475569;
+    --premium-border: rgba(15, 23, 42, 0.1);
+    --premium-glass: rgba(255, 255, 255, 0.8);
+    --premium-glass-border: rgba(15, 23, 42, 0.08);
+    --premium-accent: #2563eb;
+    --premium-accent-glow: 0 0 0 1px rgba(37, 99, 235, 0.16), 0 24px 56px -20px rgba(37, 99, 235, 0.2);
 }
 
 /* ==================================================================
    Scoped brand + palette remap
    ------------------------------------------------------------------
-   Layer 1 — repoint the design-OS tokens for the dark marketing tree.
+   Layer 1 — repoint the design-OS tokens for the marketing tree.
    Layer 2 — Tailwind v4 compiles e.g. `bg-indigo-700` to
    `var(--color-indigo-700)`; remapping the palette variables here
    re-skins every legacy call site at once. Values are chosen for a
-   DARK surface: shades used as *text* (indigo-950) go light, shades
-   used as *surfaces* (indigo-50) go dark.
+   LIGHT surface: shades used as *text* (orange-950 → deep navy) go
+   dark, shades used as *surfaces* (orange-100 → pale blue tint) stay
+   pale.
    ================================================================== */
 .premium-theme {
     background-color: var(--premium-bg);
     color: var(--premium-fg);
 
     /* --- design-OS tokens --- */
-    --dos-surface: #08080a;
-    --dos-surface-secondary: #101013;
-    --dos-surface-tertiary: #1b1b20;
-    --dos-surface-elevated: #131317;
-    --dos-surface-overlay: rgba(8, 8, 10, 0.82);
+    --dos-surface: #ffffff;
+    --dos-surface-secondary: #f8fafc;
+    --dos-surface-tertiary: #f1f5f9;
+    --dos-surface-elevated: #ffffff;
+    --dos-surface-overlay: rgba(15, 23, 42, 0.45);
 
-    --dos-text-primary: #f6f6f7;
-    --dos-text-secondary: #a2a2ac;
-    --dos-text-tertiary: #78787f;
+    --dos-text-primary: #0f172a;
+    --dos-text-secondary: #475569;
+    --dos-text-tertiary: #64748b;
 
-    --dos-border: rgba(255, 255, 255, 0.09);
-    --dos-border-subtle: rgba(255, 255, 255, 0.05);
-    --dos-border-strong: rgba(255, 255, 255, 0.18);
-    --dos-border-focus: #ff8a33;
+    --dos-border: rgba(15, 23, 42, 0.1);
+    --dos-border-subtle: rgba(15, 23, 42, 0.06);
+    --dos-border-strong: rgba(15, 23, 42, 0.22);
+    --dos-border-focus: #2563eb;
 
-    --dos-brand-primary: #ff6a00;
-    --dos-brand-primary-hover: #ff8a3d;
-    --dos-brand-secondary: #ff8a3d;
+    --dos-brand-primary: #2563eb;
+    --dos-brand-primary-hover: #1d4ed8;
+    --dos-brand-secondary: #60a5fa;
 
-    --dos-glass-bg: rgba(14, 14, 17, 0.72);
-    --dos-glass-border: rgba(255, 255, 255, 0.08);
+    --dos-glass-bg: rgba(255, 255, 255, 0.8);
+    --dos-glass-border: rgba(15, 23, 42, 0.08);
 
     --dos-shadow-glow: var(--premium-accent-glow);
 
-    /* --- Tailwind palette remap (indigo / cyan / violet / blue → orange) --- */
+    /* --- Tailwind palette remap (indigo / cyan / violet / blue → brand blue) --- */
     /*
      * WHY THE ORANGE LADDER IS DECLARED HERE TOO
      * ------------------------------------------
      * Call sites were migrated from `indigo-*` class names to `orange-*` so
-     * the markup describes the actual brand instead of relying on a remap to
-     * turn blue into orange. Tailwind's stock orange ladder is NOT the brand
-     * orange (stock orange-500 is #f97316; the brand is #ff6a00) and is not
-     * tuned for a dark surface. Declaring `--color-orange-*` here keeps the
-     * rendered result identical to the remapped indigo while the class names
-     * finally tell the truth.
+     * the markup describes the accent role instead of relying on a remap.
+     * The marketing palette is now the brand BLUE ladder tuned for a light
+     * surface, so `orange-500` renders as brand blue (#2563eb) on the
+     * marketing tree while the authenticated app shell keeps stock orange
+     * from design-os.css.
      *
-     * The indigo/cyan/violet/blue entries are retained because the authenticated
-     * app-shell modules and the auth pages still reference those names.
+     * The indigo/cyan/violet/blue entries are retained because some
+     * modules and the auth pages still reference those names.
      */
-    --color-orange-50: #1c1006;
-    --color-orange-100: #ffe3cc;
-    --color-orange-200: #7a3d10;
-    --color-orange-300: #ffbe8f;
-    --color-orange-400: #ff9d5c;
-    --color-orange-500: #ff7a1f;
-    --color-orange-600: #ff8a3d;
-    --color-orange-700: #ff6a00;
-    --color-orange-800: #ffc59b;
-    --color-orange-900: #ffe0c9;
-    --color-orange-950: #f4f4f5;
+    --color-orange-50: #eff6ff;
+    --color-orange-100: #dbeafe;
+    --color-orange-200: #bfdbfe;
+    --color-orange-300: #93c5fd;
+    --color-orange-400: #60a5fa;
+    --color-orange-500: #2563eb;
+    --color-orange-600: #1d4ed8;
+    --color-orange-700: #1e40af;
+    --color-orange-800: #1e3a8a;
+    --color-orange-900: #172554;
+    --color-orange-950: #101b3d;
 
-    --color-indigo-50: #1c1006;
-    --color-indigo-100: #ffe3cc;
-    --color-indigo-200: #7a3d10;
-    --color-indigo-300: #ffbe8f;
-    --color-indigo-400: #ff9d5c;
-    --color-indigo-500: #ff7a1f;
-    --color-indigo-600: #ff8a3d;
-    --color-indigo-700: #ff6a00;
-    --color-indigo-800: #ffc59b;
-    --color-indigo-900: #ffe0c9;
-    --color-indigo-950: #f4f4f5;
+    --color-indigo-50: #eff6ff;
+    --color-indigo-100: #dbeafe;
+    --color-indigo-200: #bfdbfe;
+    --color-indigo-300: #93c5fd;
+    --color-indigo-400: #60a5fa;
+    --color-indigo-500: #2563eb;
+    --color-indigo-600: #1d4ed8;
+    --color-indigo-700: #1e40af;
+    --color-indigo-800: #1e3a8a;
+    --color-indigo-900: #172554;
+    --color-indigo-950: #101b3d;
 
-    --color-cyan-300: #ffbe8f;
-    --color-cyan-400: #ff9d5c;
-    --color-cyan-500: #ff7a1f;
-    --color-cyan-700: #d94e00;
-    --color-cyan-950: #3d1600;
+    --color-cyan-300: #93c5fd;
+    --color-cyan-400: #60a5fa;
+    --color-cyan-500: #2563eb;
+    --color-cyan-700: #1d4ed8;
+    --color-cyan-950: #101b3d;
 
-    --color-violet-300: #ffbe8f;
-    --color-violet-400: #ff9d5c;
-    --color-violet-500: #ff7a1f;
-    --color-violet-700: #d94e00;
+    --color-violet-300: #93c5fd;
+    --color-violet-400: #60a5fa;
+    --color-violet-500: #2563eb;
+    --color-violet-700: #1d4ed8;
 
-    --color-blue-400: #ff9d5c;
+    --color-blue-400: #60a5fa;
 
-    /* --- Tailwind palette remap (slate → neutral tuned for dark) --- */
-    --color-slate-50: #141418;
-    --color-slate-100: #1b1b20;
-    --color-slate-200: #2b2b31;
-    --color-slate-300: #3a3a41;
-    --color-slate-400: #8b8b94;
-    --color-slate-500: #9a9aa3;
-    --color-slate-600: #a8a8b1;
-    --color-slate-700: #b8b8c0;
-    --color-slate-800: #232329;
-    --color-slate-900: #101014;
-    --color-slate-950: #0a0a0c;
+    /* --- Tailwind palette remap (slate → light slate for light surfaces) --- */
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-300: #cbd5e1;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-700: #334155;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+    --color-slate-950: #020617;
 }
 
 .premium-glass {
@@ -213,14 +215,14 @@
    ------------------------------------------------------------------ */
 .premium-grid-bg {
     background-image:
-        linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+        linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
 }
 
-/* Angular, technical divider — a hard orange tick, not a soft rule. */
+/* Angular, technical divider — a hard blue tick, not a soft rule. */
 .premium-divider {
     position: relative;
     height: 1px;
@@ -244,8 +246,8 @@
 
 .premium-glow {
     box-shadow:
-        0 0 0 1px rgba(255, 106, 0, 0.16),
-        0 28px 70px -30px rgba(255, 106, 0, 0.35);
+        0 0 0 1px rgba(37, 99, 235, 0.16),
+        0 28px 70px -30px rgba(37, 99, 235, 0.32);
 }
 
 .premium-accent-line {
@@ -253,7 +255,7 @@
     width: 2.25rem;
     height: 2px;
     background: var(--premium-accent);
-    box-shadow: 0 0 14px rgba(255, 106, 0, 0.6);
+    box-shadow: 0 0 14px rgba(37, 99, 235, 0.45);
 }
 
 /* Angular corner accent used on hero / panels. */
@@ -339,18 +341,20 @@
     border-color: color-mix(in oklab, var(--premium-accent) 45%, var(--premium-border));
 }
 
+/* Deep-navy contrast band on the light marketing surface. White text,
+   blue glows — the one place the palette inverts. */
 .premium-cta-panel {
     position: relative;
     overflow: hidden;
     border-radius: var(--dos-radius-3xl);
     border: 1px solid color-mix(in oklab, var(--premium-accent) 38%, transparent);
     background:
-        radial-gradient(120% 150% at 12% 0%, rgba(255, 106, 0, 0.32), transparent 55%),
-        radial-gradient(130% 130% at 100% 100%, rgba(217, 78, 0, 0.34), transparent 58%),
-        linear-gradient(140deg, #0b0b0d 0%, #1a1206 55%, #0b0b0d 100%);
+        radial-gradient(120% 150% at 12% 0%, rgba(37, 99, 235, 0.38), transparent 55%),
+        radial-gradient(130% 130% at 100% 100%, rgba(30, 58, 138, 0.45), transparent 58%),
+        linear-gradient(140deg, #0b1220 0%, #101b3d 55%, #0b1220 100%);
     box-shadow:
-        0 0 0 1px rgba(255, 106, 0, 0.14),
-        0 40px 80px -40px rgba(255, 106, 0, 0.35);
+        0 0 0 1px rgba(37, 99, 235, 0.14),
+        0 40px 80px -40px rgba(37, 99, 235, 0.4);
     color: #ffffff;
 }
 

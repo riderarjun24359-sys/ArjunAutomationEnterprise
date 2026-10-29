@@ -32,7 +32,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             "Audit logs on every automated action",
         ],
         benefits: [
-            "70% reduction in manual processing time",
+            "Manual processing replaced by automated intake and routing",
             "Single source of truth across departments",
             "Compliance-ready audit trails",
             "Scalable automation without custom code",
@@ -43,10 +43,10 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/ai-automation/audit-log.png", alt: "Automation audit log view" },
         ],
         results: [
-            "70% reduction in manual processing",
+            "Manual intake and reporting automated end to end",
             "Go-live with AI-accelerated delivery and enterprise validation",
             "12 automated workflows in production",
-            "Zero security incidents post-launch",
+            "Audit trail covering every automated action",
         ],
     },
     {
@@ -68,7 +68,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             "Customer health score integration",
         ],
         benefits: [
-            "35% increase in qualified pipeline",
+            "Follow-up sequences automated across the pipeline",
             "Unified client view across sales and delivery",
             "Faster quote-to-cash cycles",
             "Board-ready revenue reporting",
@@ -79,9 +79,9 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/crm/forecast.png", alt: "Revenue forecast view" },
         ],
         results: [
-            "35% increase in qualified pipeline",
-            "Quote-to-cash cycle reduced by 40%",
-            "100% sales team adoption after rollout",
+            "Pipeline, delivery, and finance on one shared client record",
+            "Quote-to-cash connected as a single workflow",
+            "Role-based access across sales, delivery, and finance",
             "Integrated with finance in single tenant",
         ],
     },
@@ -106,7 +106,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         benefits: [
             "Eliminated duplicate data entry",
             "Real-time inventory and financial visibility",
-            "Reduced reconciliation time by 80%",
+            "Reconciliation automated across connected systems",
             "Single pane for operations leadership",
         ],
         screenshotSlots: [
@@ -115,10 +115,10 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/erp/reconciliation.png", alt: "Financial reconciliation view" },
         ],
         results: [
-            "80% reduction in reconciliation time",
+            "Reconciliation runs automatically between systems",
             "Live sync across 4 ERP modules",
             "AI-accelerated deployment with full validation",
-            "Zero data loss during migration",
+            "Migration planned and validated with the customer",
         ],
     },
     {
@@ -129,7 +129,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         overview:
             "School OS deployment for a multi-campus education group — student lifecycle, academics, staff management, parent portals, and fee collection on one platform.",
         challenge:
-            "A school chain with 12 campuses used five different systems for admissions, academics, fees, and parent communication — causing enrollment delays and parent dissatisfaction.",
+            "A multi-campus school chain used separate systems for admissions, academics, fees, and parent communication — causing enrollment delays and parent dissatisfaction.",
         solution:
             "School OS industry pack with student registry, academic scheduling, fee management, parent/student portals, and campus-level analytics — deployed per campus with central governance.",
         features: [
@@ -140,8 +140,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             "Multi-campus analytics dashboard",
         ],
         benefits: [
-            "Unified experience across 12 campuses",
-            "60% faster enrollment processing",
+            "Unified experience across every campus",
+            "Enrollment, academics, and fees on one student record",
             "Improved parent engagement scores",
             "Compliance-ready student records",
         ],
@@ -151,8 +151,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/school-management/parent-portal.png", alt: "Parent portal home screen" },
         ],
         results: [
-            "12 campuses unified on single platform",
-            "60% faster enrollment processing",
+            "Multi-campus operations unified on a single platform",
+            "Admissions workflow automated end to end",
             "Parent satisfaction up 28 points NPS",
             "Single student record across all campuses",
         ],
@@ -176,8 +176,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             "Mobile-friendly task execution",
         ],
         benefits: [
-            "Consistent processes across 25 locations",
-            "50% faster approval cycles",
+            "Consistent processes across every location",
+            "Approvals routed automatically to the right owner",
             "Real-time regional visibility",
             "Reduced operational variance",
         ],
@@ -187,10 +187,10 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/business-automation/regional-dashboard.png", alt: "Regional performance dashboard" },
         ],
         results: [
-            "50% faster approval cycles",
-            "25 locations standardized with centralized governance",
+            "Approval cycles automated with escalation paths",
+            "Every location standardized under centralized governance",
             "Regional reporting automated daily",
-            "Operational variance reduced by 45%",
+            "Operational variance tracked on shared dashboards",
         ],
     },
     {
@@ -201,7 +201,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         overview:
             "Full AI worker activation — Business Analyst, Solution Architect, Development Factory, QA Engineer, DevOps, and Customer Success agents — integrated into the client's delivery pipeline with audit trails.",
         challenge:
-            "An internal platform team spent 60% of engineering capacity maintaining bespoke internal tools instead of building product features — with no structured AI assistance in their delivery workflow.",
+            "An internal platform team spent most of its engineering capacity maintaining bespoke internal tools instead of building product features — with no structured AI assistance in their delivery workflow.",
         solution:
             "Activated six AI workers within Arjun Automation OS — BA agents draft requirements, Architect agents design solutions, Dev Factory generates code scaffolds, QA runs test suites, all auditable and human-approved.",
         features: [
@@ -213,7 +213,7 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             "Customer Success agent for health scoring",
         ],
         benefits: [
-            "40% faster delivery cycles",
+            "Faster delivery cycles with AI-assisted execution",
             "Consistent documentation quality",
             "Reduced engineering maintenance burden",
             "Full audit trail on AI actions",
@@ -224,10 +224,10 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
             { path: "/launch-kit/screenshots/ai-agents/audit-trail.png", alt: "AI action audit trail" },
         ],
         results: [
-            "40% faster delivery cycles",
-            "6 AI workers in production",
-            "Engineering maintenance down 35%",
-            "100% AI actions auditable",
+            "Delivery cycles accelerated with AI worker roles",
+            "Six AI worker roles configured in the delivery workflow",
+            "Less capacity spent maintaining internal tooling",
+            "Every AI action auditable",
         ],
     },
     {
@@ -261,8 +261,8 @@ export const PORTFOLIO_ITEMS: PortfolioItem[] = [
         ],
         results: [
             "8 critical integrations live with bi-directional sync",
-            "99.7% integration uptime post-launch",
-            "Zero middleware maintenance overhead",
+            "Connected systems observable via health endpoints",
+            "No custom middleware to maintain",
             "Integration errors resolved 3x faster",
         ],
     },

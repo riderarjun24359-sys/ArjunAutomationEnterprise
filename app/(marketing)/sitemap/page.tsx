@@ -32,6 +32,7 @@ const MAIN_PAGES = [
     { label: "About", href: MARKETING_ROUTES.about },
     { label: "Services", href: MARKETING_ROUTES.services },
     { label: "Industries", href: MARKETING_ROUTES.industries },
+    { label: "School ERP", href: MARKETING_ROUTES.schoolErp },
     { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
     { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
     { label: "Pricing", href: MARKETING_ROUTES.pricing },

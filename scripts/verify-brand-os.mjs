@@ -148,7 +148,8 @@ for (const file of moduleFiles) {
 
 const constantsSource = readFileSync(join(moduleRoot, "constants", "index.ts"), "utf8");
 pass("module:BRAND_OS_TABS", constantsSource.includes("BRAND_OS_TABS"));
-pass("module:BRAND_OS_THEME_indigo", constantsSource.includes("indigo-700"));
+// Brand theme moved from indigo to orange in e3e366d (unify colour system).
+pass("module:BRAND_OS_THEME_orange", constantsSource.includes("orange-500") && constantsSource.includes("orange-600"));
 pass("module:BRAND_OS_PERMISSIONS", constantsSource.includes("BRAND_OS_PERMISSIONS"));
 pass("module:document_registry", constantsSource.includes("BRAND_OS_DOCUMENT_REGISTRY") || constantsSource.includes("BRAND_DOCUMENTS"));
 

@@ -64,7 +64,7 @@ export function MarketingHeaderStatic() {
                     className="flex shrink-0 items-center rounded-[var(--dos-radius-lg)] transition hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
                     aria-label="Arjun Automation — Home"
                 >
-                    <BrandLogo variant="secondary" priority className="h-8" />
+                    <BrandLogo variant="blue" priority className="h-8" />
                 </Link>
 
                 {/* Desktop nav.
@@ -107,7 +107,7 @@ export function MarketingHeaderStatic() {
                         </a>
                     ) : null}
                     <Link href={MARKETING_ROUTES.contact} className={CTA_LINK}>
-                        Book Consultation
+                        Book a Demo
                     </Link>
                 </div>
 
@@ -155,7 +155,7 @@ export function MarketingHeaderStatic() {
                             href={MARKETING_ROUTES.contact}
                             className="mt-3 block w-full rounded-full bg-[var(--dos-brand-primary)] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2"
                         >
-                            Book Free Consultation
+                            Book a Demo
                         </Link>
                     </nav>
                 </details>

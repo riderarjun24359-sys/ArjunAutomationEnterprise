@@ -39,7 +39,7 @@ export const SERVICE_ITEMS: ServiceItem[] = [
         ],
         benefits: [
             "Single source of truth across sales, delivery, finance, and operations",
-            "AI-accelerated delivery vs. 12–18 months for custom builds",
+            "AI-accelerated delivery — roadmap finalized after requirement analysis",
             "Enterprise security with RLS and audit logs from day one",
             "Reduced TCO — one platform vs. 10+ point solutions",
         ],
@@ -140,7 +140,7 @@ export const SERVICE_ITEMS: ServiceItem[] = [
             "Integration with CRM, projects, and delivery pipelines",
         ],
         benefits: [
-            "40% faster delivery cycles with consistent documentation",
+            "Consistent, documented delivery with every AI action audited",
             "Reduced engineering maintenance burden",
             "Governed AI with enterprise security controls",
             "Measurable productivity gains from day one",

@@ -35,7 +35,7 @@ export function CtaSection({
                     </Link>
                     <Link
                         href={secondaryHref}
-                        className="inline-flex items-center justify-center rounded-lg border border-[var(--premium-border)] px-6 py-3 font-medium text-[var(--premium-fg)] transition hover:bg-[var(--premium-glass)] focus:outline-none focus:ring-2 focus:ring-[var(--dos-border-focus)]"
+                        className="inline-flex items-center justify-center rounded-lg border border-white/25 px-6 py-3 font-medium text-white transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/60"
                     >
                         {secondaryLabel}
                     </Link>

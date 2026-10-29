@@ -22,6 +22,11 @@ const STATIC_PAGES: SearchIndexEntry[] = [
     { title: "FAQ", description: "Frequently asked questions", href: MARKETING_ROUTES.faq, category: "Page", keywords: ["faq", "questions", "help"] },
     { title: "Resources", description: "Guides, blog, and case studies", href: MARKETING_ROUTES.resources, category: "Page", keywords: ["resources", "guides", "blog"] },
     { title: "Contact", description: "Book a consultation", href: MARKETING_ROUTES.contact, category: "Page", keywords: ["contact", "consultation", "sales"] },
+    { title: "Solutions", description: "Automation solutions by business need", href: MARKETING_ROUTES.solutions, category: "Page", keywords: ["solutions", "automation", "workflow", "integration"] },
+    { title: "Platform Features", description: "Capabilities of the automation platform", href: MARKETING_ROUTES.features, category: "Page", keywords: ["features", "platform", "capabilities", "ai"] },
+    { title: "School ERP", description: "School management and ERP software", href: MARKETING_ROUTES.schoolErp, category: "Page", keywords: ["school", "erp", "education", "students", "admissions"] },
+    { title: "Careers", description: "Open roles and how we work", href: MARKETING_ROUTES.careers, category: "Page", keywords: ["careers", "jobs", "hiring", "roles"] },
+    { title: "Help Center", description: "Answers and support resources", href: MARKETING_ROUTES.help, category: "Page", keywords: ["help", "support", "answers"] },
     { title: "Automation Guide", description: "Enterprise automation launch guide", href: MARKETING_ROUTES.launchAutomation, category: "Resource", keywords: ["automation", "guide", "launch"] },
     { title: "CRM Guide", description: "CRM implementation guide", href: MARKETING_ROUTES.launchCrm, category: "Resource", keywords: ["crm", "guide", "sales"] },
 ];

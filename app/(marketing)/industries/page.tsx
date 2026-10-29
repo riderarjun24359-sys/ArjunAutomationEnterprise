@@ -41,7 +41,7 @@ export default function IndustriesPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Industries We Serve"
-                description="Pre-built industry OS packs accelerate deployment by 60–70% compared to greenfield configuration."
+                description="Pre-built industry OS packs start from proven workflow templates instead of a greenfield configuration."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="overflow-x-auto">

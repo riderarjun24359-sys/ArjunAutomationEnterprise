@@ -161,7 +161,22 @@ pass("marketing:imports_premium_css", marketingLayoutSource.includes("premium.cs
 pass("marketing:display_font", marketingLayoutSource.includes("Inter") || marketingLayoutSource.includes("--font-display"));
 
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
-pass("page:PremiumHomePage", pageSource.includes("PremiumHomePage"));
+// Enterprise AI-automation homepage hero (headline text is line-wrapped in JSX, so match stable fragments)
+pass(
+    "page:hero_ai_automation_headline",
+    pageSource.includes("<h1") &&
+        pageSource.includes("AI Automation Platform") &&
+        pageSource.includes("Automate the work"),
+);
+pass("page:hero_primary_cta_demo", pageSource.includes("Book a Demo") && pageSource.includes('href={MARKETING_ROUTES.contact}'));
+pass("page:hero_secondary_cta_solutions", pageSource.includes("Explore Solutions") && pageSource.includes('href={MARKETING_ROUTES.solutions}'));
+// The school-specific positioning moved to its own route (the h1 is rendered
+// by PremiumPageShell, so match the page's title source instead of the tag).
+const schoolPageSource = readSafe(join(root, "app", "(marketing)", "school-erp", "page.tsx"));
+pass(
+    "page:school_erp_route",
+    schoolPageSource.includes("PremiumPageShell") && schoolPageSource.includes('title="School ERP Software"'),
+);
 pass("page:metadata", pageSource.includes("export const metadata"));
 // Check for structured data via MarketingStructuredData component (which internally uses JsonLd)
 pass("page:JsonLd", pageSource.includes("MarketingStructuredData") || pageSource.includes("JsonLd"));

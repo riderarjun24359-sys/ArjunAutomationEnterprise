@@ -27,8 +27,8 @@ export const HERO_CONTENT = {
     subheadline:
         "Missed enquiries, retyped data, and tasks nobody chases. We connect the systems you already run into one workflow, so the work gets done without anyone remembering to do it.",
 
-    primaryCta: { label: "Book Free Consultation", href: MARKETING_ROUTES.contact },
-    secondaryCta: { label: "See how it works", href: MARKETING_ROUTES.caseStudies },
+    primaryCta: { label: "Book a Demo", href: MARKETING_ROUTES.contact },
+    secondaryCta: { label: "Explore Solutions", href: MARKETING_ROUTES.solutions },
     stats: [
         { value: 130, suffix: "+", label: "Application Pages" },
         { value: 90, suffix: "+", label: "Authenticated Routes" },

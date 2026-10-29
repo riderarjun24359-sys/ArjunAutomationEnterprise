@@ -16,34 +16,34 @@ export interface CaseStudyItem {
 
 const CASE_STUDY_META: Record<string, { title: string; industry: string; client: string }> = {
     "school-management": {
-        title: "12-Campus School Chain Unified on One Platform",
+        title: "Multi-Campus School Chain Unified on One Platform",
         industry: "Education",
-        client: "Multi-campus education group, 8,000+ students",
+        client: "Multi-campus education group",
     },
     "ai-agents": {
-        title: "AI Worker Workforce Cuts Delivery Time 40%",
+        title: "AI Worker Roles Embedded in the Delivery Lifecycle",
         industry: "Technology",
-        client: "Series B SaaS company, 200 employees",
+        client: "B2B SaaS company",
     },
     "business-automation": {
-        title: "25-Location Retail Group Standardizes Operations",
+        title: "Retail Group Standardizes Operations Across Locations",
         industry: "Retail",
-        client: "Regional retail group, 25 locations",
+        client: "Regional retail group",
     },
     "ai-automation": {
-        title: "70% Reduction in Manual Processing",
+        title: "AI Workflow Automation Across Intake and Reporting",
         industry: "Professional Services",
-        client: "400-person professional services firm",
+        client: "Professional services firm",
     },
     crm: {
-        title: "35% Increase in Qualified Pipeline",
+        title: "CRM Unifying Pipeline, Delivery, and Finance",
         industry: "SaaS",
-        client: "Growing SaaS company, 150 employees",
+        client: "Growing SaaS company",
     },
     erp: {
-        title: "80% Reduction in Reconciliation Time",
+        title: "ERP Hub Ending Duplicate Data Entry",
         industry: "Manufacturing",
-        client: "Manufacturing distributor, 500 employees",
+        client: "Manufacturing distributor",
     },
 };
 

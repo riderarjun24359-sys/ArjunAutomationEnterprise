@@ -63,7 +63,7 @@ export function MarketingFooterStatic() {
             <div className="premium-container relative py-14 sm:py-16">
                 <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
                     <div className="lg:col-span-4">
-                        <BrandLogo variant="inverse" className="h-8" />
+                        <BrandLogo variant="blue" className="h-8" />
                         <p className="mt-5 max-w-sm text-sm leading-relaxed text-[var(--premium-fg-muted)]">
                             Expert engineering for growing organizations — a unified platform, AI-native workflows, and
                             delivery you can measure.
