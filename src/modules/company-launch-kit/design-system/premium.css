@@ -1,163 +1,163 @@
 /* ==================================================================
    Arjun Automation — Premium marketing design system
    ------------------------------------------------------------------
-   Brand: white / soft-slate surfaces, deep navy type, electric blue
-   accents. Angular dividers, thin technical borders, subtle grids and
-   controlled blue glows. Deep-navy panels (CTA bands, hero
-   illustrations) provide the contrast moments.
+   Brand: PREMIUM DARK. Deep near-black / slate surfaces, electric
+   blue + violet gradients for highlights, borders and glows. Bright
+   blue accents, generous contrast, subtle technical grids and
+   controlled blue→violet glows. Gradient CTA bands provide the
+   contrast moments.
 
    Everything is SCOPED to `.premium-theme` (wrapping the whole marketing
    layout), so the authenticated app shell keeps its own palette.
+
+   DARK-SURFACE PALETTE CONTRACT
+   -----------------------------
+   Tailwind compiles e.g. `bg-slate-50` / `text-orange-950` to
+   `var(--color-slate-50)` / `var(--color-orange-950)`. We remap those
+   palette variables here so the *semantic direction* inverts for a dark
+   surface:
+     - LOW steps (50–200)  were pale surfaces on white → now DARK tints.
+     - MID steps (300–600) are accents / muted text     → brightened for
+       contrast on dark.
+     - HIGH steps (700–950) were dark text on white     → now LIGHT text.
+   `orange-*` is the brand accent ladder (electric blue). The indigo /
+   cyan / violet / blue entries are retained because some modules still
+   reference those names.
    ================================================================== */
 
 :root {
-    /* Brand tokens — the marketing surface is light by design. */
-    --premium-bg: #ffffff;
-    --premium-bg-secondary: #f8fafc;
-    --premium-bg-tertiary: #f1f5f9;
-    --premium-bg-elevated: #ffffff;
-    --premium-surface: #ffffff;
-    --premium-fg: #0f172a;
-    --premium-fg-muted: #475569;
-    --premium-border: rgba(15, 23, 42, 0.1);
-    --premium-border-subtle: rgba(15, 23, 42, 0.06);
-    --premium-glass: rgba(255, 255, 255, 0.8);
-    --premium-glass-border: rgba(15, 23, 42, 0.08);
-    --premium-accent: #2563eb;
-    --premium-accent-hover: #1d4ed8;
-    --premium-accent-soft: rgba(37, 99, 235, 0.08);
-    --premium-accent-line: rgba(37, 99, 235, 0.26);
-    --premium-accent-glow: 0 0 0 1px rgba(37, 99, 235, 0.16), 0 24px 56px -20px rgba(37, 99, 235, 0.22);
+    /* Brand tokens — the marketing surface is dark by design. */
+    --premium-bg: #05070d;
+    --premium-bg-secondary: #0a0e1a;
+    --premium-bg-tertiary: #0f1526;
+    --premium-bg-elevated: #0c1120;
+    --premium-surface: #0a0e1a;
+    --premium-fg: #eef2f8;
+    --premium-fg-muted: #94a3b8;
+    --premium-border: rgba(148, 163, 184, 0.14);
+    --premium-border-subtle: rgba(148, 163, 184, 0.08);
+    --premium-glass: rgba(15, 23, 42, 0.55);
+    --premium-glass-border: rgba(148, 163, 184, 0.14);
+    --premium-accent: #3b82f6;
+    --premium-accent-hover: #60a5fa;
+    --premium-accent-soft: rgba(59, 130, 246, 0.14);
+    --premium-accent-line: rgba(139, 92, 246, 0.4);
+    --premium-accent-glow: 0 0 0 1px rgba(59, 130, 246, 0.22), 0 24px 56px -20px rgba(139, 92, 246, 0.35);
 
-    /* Retain aurora/mesh names for the cinematic hero — blue biased. */
-    --premium-aurora-1: rgba(37, 99, 235, 0.1);
-    --premium-aurora-2: rgba(14, 165, 233, 0.08);
-    --premium-aurora-3: rgba(79, 70, 229, 0.08);
-    --premium-mesh-1: #2563eb;
-    --premium-mesh-2: #1e40af;
-    --premium-mesh-3: #3b82f6;
+    /* Aurora / mesh — electric blue → violet. */
+    --premium-aurora-1: rgba(59, 130, 246, 0.16);
+    --premium-aurora-2: rgba(139, 92, 246, 0.14);
+    --premium-aurora-3: rgba(99, 102, 241, 0.12);
+    --premium-mesh-1: #3b82f6;
+    --premium-mesh-2: #8b5cf6;
+    --premium-mesh-3: #6366f1;
 
     --premium-shadow: var(--dos-elevation-2);
     --premium-radius: var(--dos-radius-2xl);
     --font-display: var(--dos-font-display);
 }
 
-/* Kept for the theme contract; the marketing surface is light-only. */
+/* Kept for the theme contract; the marketing surface is dark-only. */
 .dark {
-    --premium-bg: #ffffff;
-    --premium-bg-secondary: #f8fafc;
-    --premium-fg: #0f172a;
-    --premium-fg-muted: #475569;
-    --premium-border: rgba(15, 23, 42, 0.1);
-    --premium-glass: rgba(255, 255, 255, 0.8);
-    --premium-glass-border: rgba(15, 23, 42, 0.08);
-    --premium-accent: #2563eb;
-    --premium-accent-glow: 0 0 0 1px rgba(37, 99, 235, 0.16), 0 24px 56px -20px rgba(37, 99, 235, 0.2);
+    --premium-bg: #05070d;
+    --premium-bg-secondary: #0a0e1a;
+    --premium-fg: #eef2f8;
+    --premium-fg-muted: #94a3b8;
+    --premium-border: rgba(148, 163, 184, 0.14);
+    --premium-glass: rgba(15, 23, 42, 0.55);
+    --premium-glass-border: rgba(148, 163, 184, 0.14);
+    --premium-accent: #3b82f6;
+    --premium-accent-glow: 0 0 0 1px rgba(59, 130, 246, 0.22), 0 24px 56px -20px rgba(139, 92, 246, 0.3);
 }
 
 /* ==================================================================
    Scoped brand + palette remap
    ------------------------------------------------------------------
    Layer 1 — repoint the design-OS tokens for the marketing tree.
-   Layer 2 — Tailwind v4 compiles e.g. `bg-indigo-700` to
-   `var(--color-indigo-700)`; remapping the palette variables here
-   re-skins every legacy call site at once. Values are chosen for a
-   LIGHT surface: shades used as *text* (orange-950 → deep navy) go
-   dark, shades used as *surfaces* (orange-100 → pale blue tint) stay
-   pale.
+   Layer 2 — remap the Tailwind palette variables so every legacy
+   call site re-skins to the dark surface at once (see the contract
+   note at the top of this file).
    ================================================================== */
 .premium-theme {
     background-color: var(--premium-bg);
     color: var(--premium-fg);
 
     /* --- design-OS tokens --- */
-    --dos-surface: #ffffff;
-    --dos-surface-secondary: #f8fafc;
-    --dos-surface-tertiary: #f1f5f9;
-    --dos-surface-elevated: #ffffff;
-    --dos-surface-overlay: rgba(15, 23, 42, 0.45);
+    --dos-surface: #0a0e1a;
+    --dos-surface-secondary: #0f1526;
+    --dos-surface-tertiary: #141b2e;
+    --dos-surface-elevated: #0c1120;
+    --dos-surface-overlay: rgba(2, 6, 15, 0.7);
 
-    --dos-text-primary: #0f172a;
-    --dos-text-secondary: #475569;
+    --dos-text-primary: #eef2f8;
+    --dos-text-secondary: #94a3b8;
     --dos-text-tertiary: #64748b;
 
-    --dos-border: rgba(15, 23, 42, 0.1);
-    --dos-border-subtle: rgba(15, 23, 42, 0.06);
-    --dos-border-strong: rgba(15, 23, 42, 0.22);
-    --dos-border-focus: #2563eb;
+    --dos-border: rgba(148, 163, 184, 0.14);
+    --dos-border-subtle: rgba(148, 163, 184, 0.08);
+    --dos-border-strong: rgba(148, 163, 184, 0.28);
+    --dos-border-focus: #60a5fa;
 
     --dos-brand-primary: #2563eb;
-    --dos-brand-primary-hover: #1d4ed8;
-    --dos-brand-secondary: #60a5fa;
+    --dos-brand-primary-hover: #3b82f6;
+    --dos-brand-secondary: #8b5cf6;
 
-    --dos-glass-bg: rgba(255, 255, 255, 0.8);
-    --dos-glass-border: rgba(15, 23, 42, 0.08);
+    --dos-glass-bg: rgba(15, 23, 42, 0.55);
+    --dos-glass-border: rgba(148, 163, 184, 0.14);
 
     --dos-shadow-glow: var(--premium-accent-glow);
 
-    /* --- Tailwind palette remap (indigo / cyan / violet / blue → brand blue) --- */
-    /*
-     * WHY THE ORANGE LADDER IS DECLARED HERE TOO
-     * ------------------------------------------
-     * Call sites were migrated from `indigo-*` class names to `orange-*` so
-     * the markup describes the accent role instead of relying on a remap.
-     * The marketing palette is now the brand BLUE ladder tuned for a light
-     * surface, so `orange-500` renders as brand blue (#2563eb) on the
-     * marketing tree while the authenticated app shell keeps stock orange
-     * from design-os.css.
-     *
-     * The indigo/cyan/violet/blue entries are retained because some
-     * modules and the auth pages still reference those names.
-     */
-    --color-orange-50: #eff6ff;
-    --color-orange-100: #dbeafe;
-    --color-orange-200: #bfdbfe;
+    /* --- Tailwind palette remap: brand accent ladder (electric blue) --- */
+    /* LOW steps = dark surfaces/tints. MID = bright accents. HIGH = light text. */
+    --color-orange-50: #0b1730;
+    --color-orange-100: #10203f;
+    --color-orange-200: #16294f;
     --color-orange-300: #93c5fd;
     --color-orange-400: #60a5fa;
-    --color-orange-500: #2563eb;
-    --color-orange-600: #1d4ed8;
-    --color-orange-700: #1e40af;
-    --color-orange-800: #1e3a8a;
-    --color-orange-900: #172554;
-    --color-orange-950: #101b3d;
+    --color-orange-500: #3b82f6;
+    --color-orange-600: #60a5fa;
+    --color-orange-700: #bfdbfe;
+    --color-orange-800: #dbeafe;
+    --color-orange-900: #eff6ff;
+    --color-orange-950: #eef2f8;
 
-    --color-indigo-50: #eff6ff;
-    --color-indigo-100: #dbeafe;
-    --color-indigo-200: #bfdbfe;
+    --color-indigo-50: #0b1730;
+    --color-indigo-100: #10203f;
+    --color-indigo-200: #16294f;
     --color-indigo-300: #93c5fd;
     --color-indigo-400: #60a5fa;
-    --color-indigo-500: #2563eb;
-    --color-indigo-600: #1d4ed8;
-    --color-indigo-700: #1e40af;
-    --color-indigo-800: #1e3a8a;
-    --color-indigo-900: #172554;
-    --color-indigo-950: #101b3d;
+    --color-indigo-500: #3b82f6;
+    --color-indigo-600: #60a5fa;
+    --color-indigo-700: #bfdbfe;
+    --color-indigo-800: #dbeafe;
+    --color-indigo-900: #eff6ff;
+    --color-indigo-950: #eef2f8;
 
     --color-cyan-300: #93c5fd;
     --color-cyan-400: #60a5fa;
-    --color-cyan-500: #2563eb;
-    --color-cyan-700: #1d4ed8;
-    --color-cyan-950: #101b3d;
+    --color-cyan-500: #3b82f6;
+    --color-cyan-700: #bfdbfe;
+    --color-cyan-950: #eef2f8;
 
-    --color-violet-300: #93c5fd;
-    --color-violet-400: #60a5fa;
-    --color-violet-500: #2563eb;
-    --color-violet-700: #1d4ed8;
+    --color-violet-300: #c4b5fd;
+    --color-violet-400: #a78bfa;
+    --color-violet-500: #8b5cf6;
+    --color-violet-700: #ddd6fe;
 
     --color-blue-400: #60a5fa;
 
-    /* --- Tailwind palette remap (slate → light slate for light surfaces) --- */
-    --color-slate-50: #f8fafc;
-    --color-slate-100: #f1f5f9;
-    --color-slate-200: #e2e8f0;
-    --color-slate-300: #cbd5e1;
-    --color-slate-400: #94a3b8;
-    --color-slate-500: #64748b;
-    --color-slate-600: #475569;
-    --color-slate-700: #334155;
-    --color-slate-800: #1e293b;
-    --color-slate-900: #0f172a;
-    --color-slate-950: #020617;
+    /* --- Tailwind palette remap: slate (surfaces dark, text light) --- */
+    --color-slate-50: #070b14;
+    --color-slate-100: #0a0e1a;
+    --color-slate-200: #111827;
+    --color-slate-300: #1f2937;
+    --color-slate-400: #64748b;
+    --color-slate-500: #94a3b8;
+    --color-slate-600: #a8b6c8;
+    --color-slate-700: #c8d2e0;
+    --color-slate-800: #e2e8f0;
+    --color-slate-900: #eef2f8;
+    --color-slate-950: #f8fafc;
 }
 
 .premium-glass {
@@ -215,18 +215,18 @@
    ------------------------------------------------------------------ */
 .premium-grid-bg {
     background-image:
-        linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+        linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 25%, transparent 80%);
 }
 
-/* Angular, technical divider — a hard blue tick, not a soft rule. */
+/* Angular, technical divider — a hard blue→violet tick, not a soft rule. */
 .premium-divider {
     position: relative;
     height: 1px;
-    background: linear-gradient(90deg, var(--premium-accent) 0%, var(--premium-accent-line) 22%, transparent 68%);
+    background: linear-gradient(90deg, var(--premium-accent) 0%, var(--premium-accent-line) 24%, transparent 68%);
 }
 
 .premium-divider::before {
@@ -246,8 +246,8 @@
 
 .premium-glow {
     box-shadow:
-        0 0 0 1px rgba(37, 99, 235, 0.16),
-        0 28px 70px -30px rgba(37, 99, 235, 0.32);
+        0 0 0 1px rgba(59, 130, 246, 0.22),
+        0 28px 70px -30px rgba(139, 92, 246, 0.4);
 }
 
 .premium-accent-line {
@@ -255,7 +255,7 @@
     width: 2.25rem;
     height: 2px;
     background: var(--premium-accent);
-    box-shadow: 0 0 14px rgba(37, 99, 235, 0.45);
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
 }
 
 /* Angular corner accent used on hero / panels. */
@@ -278,7 +278,7 @@
     position: relative;
     border: 1px solid var(--premium-border);
     border-radius: var(--dos-radius-2xl);
-    background: var(--premium-bg-secondary);
+    background: linear-gradient(180deg, rgba(20, 27, 46, 0.6), rgba(10, 14, 26, 0.6));
     box-shadow: var(--dos-shadow-sm);
     transition:
         border-color var(--dos-duration-normal) var(--dos-easing-default),
@@ -287,9 +287,9 @@
 }
 
 .premium-card:hover {
-    border-color: color-mix(in oklab, var(--premium-accent) 38%, var(--premium-border));
+    border-color: color-mix(in oklab, var(--premium-accent) 45%, var(--premium-border));
     box-shadow: var(--premium-accent-glow);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
 .premium-card-icon {
@@ -300,8 +300,8 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--dos-radius-xl);
-    border: 1px solid color-mix(in oklab, var(--premium-accent) 28%, transparent);
-    background: color-mix(in oklab, var(--premium-accent) 10%, var(--premium-bg-secondary));
+    border: 1px solid color-mix(in oklab, var(--premium-accent) 32%, transparent);
+    background: color-mix(in oklab, var(--premium-accent) 14%, var(--premium-bg-secondary));
     color: var(--premium-accent);
 }
 
@@ -338,23 +338,23 @@
 }
 
 .premium-chip:hover {
-    border-color: color-mix(in oklab, var(--premium-accent) 45%, var(--premium-border));
+    border-color: color-mix(in oklab, var(--premium-accent) 50%, var(--premium-border));
 }
 
-/* Deep-navy contrast band on the light marketing surface. White text,
-   blue glows — the one place the palette inverts. */
+/* Gradient contrast band — electric blue → violet. The one place the
+   palette becomes vivid; stands out against the near-black surface. */
 .premium-cta-panel {
     position: relative;
     overflow: hidden;
     border-radius: var(--dos-radius-3xl);
-    border: 1px solid color-mix(in oklab, var(--premium-accent) 38%, transparent);
+    border: 1px solid color-mix(in oklab, var(--premium-accent) 40%, transparent);
     background:
-        radial-gradient(120% 150% at 12% 0%, rgba(37, 99, 235, 0.38), transparent 55%),
-        radial-gradient(130% 130% at 100% 100%, rgba(30, 58, 138, 0.45), transparent 58%),
-        linear-gradient(140deg, #0b1220 0%, #101b3d 55%, #0b1220 100%);
+        radial-gradient(120% 150% at 12% 0%, rgba(59, 130, 246, 0.45), transparent 55%),
+        radial-gradient(130% 130% at 100% 100%, rgba(139, 92, 246, 0.45), transparent 58%),
+        linear-gradient(140deg, #0a1024 0%, #16204a 55%, #0a1024 100%);
     box-shadow:
-        0 0 0 1px rgba(37, 99, 235, 0.14),
-        0 40px 80px -40px rgba(37, 99, 235, 0.4);
+        0 0 0 1px rgba(59, 130, 246, 0.18),
+        0 40px 80px -40px rgba(139, 92, 246, 0.5);
     color: #ffffff;
 }
 
@@ -441,6 +441,25 @@
     animation: premium-float 9s ease-in-out infinite 1s;
 }
 
+/* Slow drift for the hero motion-graphic placeholder frame. */
+@keyframes placeholder-drift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.placeholder-drift {
+    animation: placeholder-drift 6s ease-in-out infinite;
+}
+
+@keyframes placeholder-sheen {
+    0% { transform: translateX(-120%) skewX(-18deg); }
+    100% { transform: translateX(220%) skewX(-18deg); }
+}
+
+.placeholder-sheen {
+    animation: placeholder-sheen 5.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .premium-aurora,
     .premium-noise::after,
@@ -452,6 +471,8 @@
     .hero-panel-float-a,
     .hero-panel-float-b,
     .hero-panel-float-c,
+    .placeholder-drift,
+    .placeholder-sheen,
     .premium-card {
         animation: none !important;
         transition: none !important;
