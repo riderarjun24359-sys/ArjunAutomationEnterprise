@@ -18,10 +18,10 @@ export function FinancePanel({ data }: { data: BusinessPlatformData }) {
             <Card className="os-panel" hover={false}>
                 <h2 className="dos-text-h2">Finance overview</h2>
                 <div className="mt-6 grid grid-cols-2 gap-4">
-                    <StatItem label="Outstanding" value={stats?.outstandingReceivables ?? "$0"} />
-                    <StatItem label="Collected" value={stats?.paidRevenue ?? "$0"} />
+                    <StatItem label="Outstanding" value={stats?.outstandingReceivables ?? "₹0"} />
+                    <StatItem label="Collected" value={stats?.paidRevenue ?? "₹0"} />
                     <StatItem label="Overdue" value={stats?.overdueInvoices ?? 0} />
-                    <StatItem label="Expenses" value={stats?.totalExpenses ?? "$0"} />
+                    <StatItem label="Expenses" value={stats?.totalExpenses ?? "₹0"} />
                 </div>
             </Card>
             <Card className="os-panel" hover={false}>

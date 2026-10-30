@@ -8,7 +8,7 @@ import { getAllCircuitBreakers } from "@/src/lib/resilience";
 import { assertSupabaseConfigured } from "@/src/lib/supabase-config";
 import { validateProductionEnvironment } from "@/src/lib/production-config";
 
-function rateLimit(request: Request, key: string, limit = 120) {
+async function rateLimit(request: Request, key: string, limit = 120) {
     const ip = getClientIp(request);
     return checkRateLimit(`${key}:${ip}`, limit, 60_000);
 }
@@ -23,7 +23,7 @@ function currentSecurityScore(): number {
 }
 
 export async function GET(request: Request) {
-    const rate = rateLimit(request, "ops-health");
+    const rate = await rateLimit(request, "ops-health");
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429, headers: { "Cache-Control": "no-store" } });
     }

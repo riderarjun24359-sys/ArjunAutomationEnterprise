@@ -69,12 +69,12 @@ Delivery follows the AI-First Delivery Policy for initial support configuration;
 
 | Tier | Support Hours | SLA (P1 Response) | Indicative Annual |
 |------|---------------|-------------------|-------------------|
-| **Standard** | Business hours (IST) | 4 hours | $24,000 – $36,000 |
-| **Premium** | 16/7 coverage | 1 hour | $48,000 – $72,000 |
-| **Enterprise** | 24/7 coverage | 30 minutes | $84,000 – $120,000 |
+| **Standard** | Business hours (IST) | 4 hours | Contact for INR Pricing |
+| **Premium** | 16/7 coverage | 1 hour | Contact for INR Pricing |
+| **Enterprise** | 24/7 coverage | 30 minutes | Contact for INR Pricing |
 
 - Pricing scales with user count, module count, and location count
-- Includes up to agreed monthly support hours; overage at $150/hour
+- Includes up to agreed monthly support hours; overage at Contact for INR Pricing/hour
 - Multi-year discounts: 10% (2-year), 15% (3-year)
 - Platform subscription fees billed separately
 

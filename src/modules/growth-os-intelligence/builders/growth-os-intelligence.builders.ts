@@ -153,7 +153,7 @@ export function buildFounderExecutiveIntelligence(data: GrowthOsIntelligenceRawD
         null;
 
     const dailyBrief = [
-        `Daily brief · MRR $${money(mrr)} · ARR $${money(arr)}`,
+        `Daily brief · MRR ₹${money(mrr)} · ARR ₹${money(arr)}`,
         `Leads ${leads} (${converted} converted)`,
         healthScore != null ? `Growth health ${pct(healthScore)}` : "Growth health pending",
         `${alerts.filter((a) => a.severity !== "info").length} active alerts`,
@@ -169,7 +169,7 @@ export function buildFounderExecutiveIntelligence(data: GrowthOsIntelligenceRawD
 
     const monthlyBoardReport = [
         `Monthly board report`,
-        `MRR $${money(mrr)} / ARR $${money(arr)}`,
+        `MRR ₹${money(mrr)} / ARR ₹${money(arr)}`,
         `KPI scorecards ${scorecards.length}`,
         `Executive summaries ${data.executiveSummaries.length}`,
         `Expansions ${data.expansions.length} · Renewals ${data.renewals.length}`,

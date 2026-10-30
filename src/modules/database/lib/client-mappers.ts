@@ -64,10 +64,10 @@ export const buildClientDashboardStats = (clients: DbClient[], projects: DbProje
 
     const formattedRevenue =
         totalRevenue >= 1_000_000
-            ? `$${Math.round(totalRevenue / 1_000_000)}M`
+            ? `₹${Math.round(totalRevenue / 1_000_000)}M`
             : totalRevenue >= 1000
-              ? `$${Math.round(totalRevenue / 1000)}k`
-              : `$${totalRevenue}`;
+              ? `₹${Math.round(totalRevenue / 1000)}k`
+              : `₹${totalRevenue}`;
 
     return {
         totalClients: clients.length,

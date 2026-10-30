@@ -6,7 +6,7 @@ import { getUptimeSeconds } from "@/src/lib/ops-monitoring";
 /** Liveness — process is up. */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`ops-live:${ip}`, 240, 60_000);
+    const rate = await checkRateLimit(`ops-live:${ip}`, 240, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }

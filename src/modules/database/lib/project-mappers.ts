@@ -99,7 +99,7 @@ export const buildProjectDashboardStats = (project: DbProject | null, milestones
     return {
         health: project?.status === "active" ? "Healthy" : "Planning",
         progress: `${project?.progress ?? 0}%`,
-        budget: project?.budget ?? "$0",
+        budget: project?.budget ?? "₹0",
         timeline: project?.status === "active" ? "On track" : "Planning",
         upcomingDeadlines,
         recentActivity: ["Milestone updated", "New comment added", "Task moved to review"],

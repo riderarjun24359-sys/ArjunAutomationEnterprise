@@ -44,7 +44,7 @@ export function DashboardMockup({ className }: DashboardMockupProps) {
                             >
                                 <p className="text-[10px] text-[var(--premium-fg-muted)]">{label}</p>
                                 <p className="mt-1 text-lg font-semibold text-orange-600 dark:text-orange-400">
-                                    {i === 0 ? "$2.4M" : i === 1 ? "47" : "128"}
+                                    {i === 0 ? "₹2.4M" : i === 1 ? "47" : "128"}
                                 </p>
                             </motion.div>
                         ))}

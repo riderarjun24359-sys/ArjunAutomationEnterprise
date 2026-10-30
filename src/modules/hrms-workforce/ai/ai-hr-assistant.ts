@@ -39,7 +39,7 @@ export function buildAiHrAssistant(snapshot: Omit<HrmsWorkforceSnapshot, "assist
     const dailySummary = [
         `Headcount ${snapshot.stats.headcount} across ${snapshot.stats.departments} departments.`,
         `${snapshot.stats.pendingLeave} pending leave · ${snapshot.stats.openRoles} open roles.`,
-        `Payroll net $${Math.round(snapshot.stats.payrollNetUsd).toLocaleString()}.`,
+        `Payroll net ₹${Math.round(snapshot.stats.payrollNetUsd).toLocaleString()}.`,
         `${snapshot.stats.assetsAssigned} assets assigned · avg performance ${snapshot.executiveWidgets.avgPerformanceRating}.`,
     ].join(" ");
 

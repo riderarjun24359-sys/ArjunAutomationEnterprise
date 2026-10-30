@@ -182,7 +182,7 @@ export function RenewalPlansPanel({ data }: { data: CustomerSuccessData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Renewal plans" description="Contract renewal planning and actions" /><div className="mt-6 space-y-3">
                 {data.renewalPlans.length === 0 ? <EmptyState title="No renewal plans" description="Define renewal plans for customer engagements." /> : data.renewalPlans.map((p) => (
-                    <ListCard key={p.id} title={p.name} subtitle={`${p.planKey} • ${p.engagementTitle}`} meta={`$${p.renewalValueUsd} • ${p.status}`} />
+                    <ListCard key={p.id} title={p.name} subtitle={`${p.planKey} • ${p.engagementTitle}`} meta={`₹${p.renewalValueUsd} • ${p.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create renewal plan" description="Record a renewal plan" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createRenewalPlan(v))}>
@@ -202,7 +202,7 @@ export function ExpansionOpportunitiesPanel({ data }: { data: CustomerSuccessDat
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Expansion opportunities" description="Upsell, cross-sell, and expansion signals" /><div className="mt-6 space-y-3">
                 {data.expansionOpportunities.length === 0 ? <EmptyState title="No expansion opportunities" description="Identify expansion opportunities for customers." /> : data.expansionOpportunities.map((o) => (
-                    <ListCard key={o.id} title={o.name} subtitle={`${o.opportunityKey} • ${o.engagementTitle}`} meta={`${OPPORTUNITY_TYPE_OPTIONS.find((opt) => opt.value === o.opportunityType)?.label ?? o.opportunityType} • $${o.estimatedValueUsd} • ${o.status}`} />
+                    <ListCard key={o.id} title={o.name} subtitle={`${o.opportunityKey} • ${o.engagementTitle}`} meta={`${OPPORTUNITY_TYPE_OPTIONS.find((opt) => opt.value === o.opportunityType)?.label ?? o.opportunityType} • ₹${o.estimatedValueUsd} • ${o.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create expansion opportunity" description="Record an expansion opportunity" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createExpansionOpportunity(v))}>

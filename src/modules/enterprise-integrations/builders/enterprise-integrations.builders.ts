@@ -516,7 +516,7 @@ export function buildExecutiveIntegrationDashboard(
         recommendations,
         summary:
             data.integrationHealth[0]?.summary
-            || `AI usage ${ai.totalUsage}, health ${health.overallScore ?? "—"}, cost $${ai.totalCostUsd}.`,
+            || `AI usage ${ai.totalUsage}, health ${health.overallScore ?? "—"}, cost ₹${ai.totalCostUsd}.`,
     };
 }
 

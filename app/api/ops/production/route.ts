@@ -9,7 +9,7 @@ import { join } from "node:path";
 /** Early Access production status — public summary + env readiness (no secrets). */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`ops-production:${ip}`, 60, 60_000);
+    const rate = await checkRateLimit(`ops-production:${ip}`, 60, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }

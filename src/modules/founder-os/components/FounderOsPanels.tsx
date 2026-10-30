@@ -83,7 +83,7 @@ export function FounderOsOverviewPanel({ data }: { data: FounderOsData }) {
             {data.phase3Stats ? <Card hover><SectionHeader title="Phase 3 executive dashboard" description="Live customer operated platform metrics from COP SDK" /><div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <ListCard title="Live production status" subtitle={data.phase3Stats.liveProductionStatus} meta={`Overall score ${data.phase3Stats.overallOperatedScore.toFixed(1)}`} />
                 <ListCard title="Customer onboarding" subtitle={data.phase3Stats.customerOnboardingStatus} meta={`${data.phase3Stats.pendingApprovals} pending approvals`} />
-                <ListCard title="Revenue today" subtitle={`$${data.phase3Stats.revenueToday.toLocaleString()}`} meta={`${data.phase3Stats.activeIncidents} active incidents`} />
+                <ListCard title="Revenue today" subtitle={`₹${data.phase3Stats.revenueToday.toLocaleString()}`} meta={`${data.phase3Stats.activeIncidents} active incidents`} />
                 <ListCard title="Daily executive briefing" subtitle={data.phase3Stats.dailyExecutiveBriefing} meta={`Platform ${data.phase3Stats.platformAvailability.toFixed(0)}% • CSAT ${data.phase3Stats.customerSatisfactionOverview.toFixed(0)}%`} />
             </div></Card> : null}
             <Card hover><SectionHeader title="AI worker pipeline" description={`${pipeline?.previousWorker ?? "AI Customer Success Manager"} → ${pipeline?.currentWorker ?? "Founder Operating System"} → ${pipeline?.nextWorker ?? "Strategic Execution"}`} /><div className="mt-6 space-y-3">
@@ -171,15 +171,15 @@ export function RevenueRunwayPanel({ data }: { data: FounderOsData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Revenue runway" description="Cash balance, burn rate, and runway projections" /><div className="mt-6 space-y-3">
                 {data.revenueRunway.length === 0 ? <EmptyState title="No revenue runway models" description="Model revenue runway for founder workspaces." /> : data.revenueRunway.map((r) => (
-                    <ListCard key={r.id} title={r.name} subtitle={`${r.runwayKey} • ${r.workspaceTitle}`} meta={`$${r.cashBalanceUsd.toLocaleString()} cash • ${r.runwayMonths} months runway • ${r.status}`} />
+                    <ListCard key={r.id} title={r.name} subtitle={`${r.runwayKey} • ${r.workspaceTitle}`} meta={`₹${r.cashBalanceUsd.toLocaleString()} cash • ${r.runwayMonths} months runway • ${r.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create revenue runway" description="Record a revenue runway model" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createRevenueRunway(v))}>
                 <WorkspaceSelect data={data} {...form.register("workspaceId")} />
                 <input {...form.register("runwayKey")} placeholder="Runway key" className={inputClass} />
                 <input {...form.register("name")} placeholder="Name" className={inputClass} />
-                <input type="number" min={0} step={0.01} {...form.register("monthlyBurnUsd", { valueAsNumber: true })} placeholder="Monthly burn (USD)" className={inputClass} />
-                <input type="number" min={0} step={0.01} {...form.register("cashBalanceUsd", { valueAsNumber: true })} placeholder="Cash balance (USD)" className={inputClass} />
+                <input type="number" min={0} step={0.01} {...form.register("monthlyBurnUsd", { valueAsNumber: true })} placeholder="Monthly burn (INR)" className={inputClass} />
+                <input type="number" min={0} step={0.01} {...form.register("cashBalanceUsd", { valueAsNumber: true })} placeholder="Cash balance (INR)" className={inputClass} />
                 <input type="number" min={0} step={0.1} {...form.register("runwayMonths", { valueAsNumber: true })} placeholder="Runway months" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create runway" />
             </form></Card>
@@ -316,14 +316,14 @@ export function ResourceAllocationsPanel({ data }: { data: FounderOsData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Resource allocations" description="Budget and resource allocation tracking" /><div className="mt-6 space-y-3">
                 {data.resourceAllocations.length === 0 ? <EmptyState title="No resource allocations" description="Define resource allocations for founder workspaces." /> : data.resourceAllocations.map((a) => (
-                    <ListCard key={a.id} title={a.name} subtitle={`${a.allocationKey} • ${a.workspaceTitle}`} meta={`$${a.budgetUsd.toLocaleString()} budget • ${a.status}`} />
+                    <ListCard key={a.id} title={a.name} subtitle={`${a.allocationKey} • ${a.workspaceTitle}`} meta={`₹${a.budgetUsd.toLocaleString()} budget • ${a.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create resource allocation" description="Record a resource allocation" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createResourceAllocation(v))}>
                 <WorkspaceSelect data={data} {...form.register("workspaceId")} />
                 <input {...form.register("allocationKey")} placeholder="Allocation key" className={inputClass} />
                 <input {...form.register("name")} placeholder="Name" className={inputClass} />
-                <input type="number" min={0} step={0.01} {...form.register("budgetUsd", { valueAsNumber: true })} placeholder="Budget (USD)" className={inputClass} />
+                <input type="number" min={0} step={0.01} {...form.register("budgetUsd", { valueAsNumber: true })} placeholder="Budget (INR)" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create allocation" />
             </form></Card>
         </div>
@@ -421,14 +421,14 @@ export function CapitalPlansPanel({ data }: { data: FounderOsData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Capital plans" description="Fundraising targets and use of funds" /><div className="mt-6 space-y-3">
                 {data.capitalPlans.length === 0 ? <EmptyState title="No capital plans" description="Define capital plans for founder workspaces." /> : data.capitalPlans.map((p) => (
-                    <ListCard key={p.id} title={p.name} subtitle={`${p.planKey} • ${p.workspaceTitle}`} meta={`$${p.fundingTargetUsd.toLocaleString()} target • ${p.timeline} • ${p.status}`} />
+                    <ListCard key={p.id} title={p.name} subtitle={`${p.planKey} • ${p.workspaceTitle}`} meta={`₹${p.fundingTargetUsd.toLocaleString()} target • ${p.timeline} • ${p.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create capital plan" description="Record a capital plan" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createCapitalPlan(v))}>
                 <WorkspaceSelect data={data} {...form.register("workspaceId")} />
                 <input {...form.register("planKey")} placeholder="Plan key" className={inputClass} />
                 <input {...form.register("name")} placeholder="Name" className={inputClass} />
-                <input type="number" min={0} step={0.01} {...form.register("fundingTargetUsd", { valueAsNumber: true })} placeholder="Funding target (USD)" className={inputClass} />
+                <input type="number" min={0} step={0.01} {...form.register("fundingTargetUsd", { valueAsNumber: true })} placeholder="Funding target (INR)" className={inputClass} />
                 <input {...form.register("timeline")} placeholder="Timeline" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create plan" />
             </form></Card>
@@ -509,7 +509,7 @@ const knowledge = createKnowledgeClient(userId, email, fullName);
 const csEngagements = await cs.getEngagements();
 const workspace = await fo.startWorkspace({ title: "Q1 Strategic Plan", workspaceKey: "q1-strategic", csEngagementId: csEngagements[0]?.id, clientId, agentId, sessionId });
 const context = await knowledge.resolveContext({ contextKey: "fo-q1-strategic", agentId });
-const okr = await fo.generateArtifact({ workspaceId: workspace.workspaceId, artifactType: "strategic_okr", title: "Q1 Revenue OKR", content: "Achieve $1M ARR" });
+const okr = await fo.generateArtifact({ workspaceId: workspace.workspaceId, artifactType: "strategic_okr", title: "Q1 Revenue OKR", content: "Achieve ₹1M ARR" });
 const runway = await fo.runAnalysis({ workspaceId: workspace.workspaceId, analysisType: "runway", inputPayload: { runwayKey: "RUNWAY-001", name: "Q1 Runway", monthlyBurnUsd: 50000, cashBalanceUsd: 500000, runwayMonths: 10 } });`}</pre>
         </div></Card>
     );
@@ -526,7 +526,7 @@ export function FounderOsPhase3Panel({ data }: { data: FounderOsData }) {
             </div></Card>
             <Card hover><SectionHeader title="Customer & revenue" description="Onboarding progress and daily revenue" /><div className="mt-6 space-y-3">
                 <ListCard title="Customer onboarding" subtitle={p3.customerOnboardingStatus} meta={`${p3.pendingApprovals} pending approvals`} />
-                <ListCard title="Revenue today" subtitle={`$${p3.revenueToday.toLocaleString()}`} meta={`CSAT ${p3.customerSatisfactionOverview.toFixed(0)}%`} />
+                <ListCard title="Revenue today" subtitle={`₹${p3.revenueToday.toLocaleString()}`} meta={`CSAT ${p3.customerSatisfactionOverview.toFixed(0)}%`} />
             </div></Card>
             <Card hover className="xl:col-span-2"><SectionHeader title="Daily executive briefing" description="Executive summary from customer operated platform" /><div className="mt-6">
                 <ListCard title={p3.dailyExecutiveBriefing} subtitle="Customer operated platform executive briefing" meta="Powered by createCustomerOperatedPlatformClient" />
@@ -545,7 +545,7 @@ export function FounderOsPhase4Panel({ data }: { data: FounderOsData }) {
                 <ListCard title="Executive intelligence" subtitle={`${p4.executiveIntelligence.toFixed(1)}`} meta={`${p4.predictiveInsights} predictive insights`} />
             </div></Card>
             <Card hover><SectionHeader title="Forecasts & risk" description="Predictive analytics from enterprise intelligence platform" /><div className="mt-6 space-y-3">
-                <ListCard title="Revenue forecast" subtitle={`$${p4.revenueForecast.toLocaleString()}`} meta={`Customer forecast ${p4.customerForecast.toLocaleString()}`} />
+                <ListCard title="Revenue forecast" subtitle={`₹${p4.revenueForecast.toLocaleString()}`} meta={`Customer forecast ${p4.customerForecast.toLocaleString()}`} />
                 <ListCard title="Risk overview" subtitle={`${p4.riskOverview.toFixed(1)}`} meta={`Mission progress ${p4.missionProgress.toFixed(1)}%`} />
             </div></Card>
             <Card hover className="xl:col-span-2"><SectionHeader title="Enterprise intelligence summary" description="Unified KPI, executive, predictive, and mission metrics" /><div className="mt-6">

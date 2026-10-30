@@ -28,7 +28,7 @@ export async function exportBoardRoomPdf(input: {
     line("Arjun Automation — Board Room Snapshot", 16, 22);
     doc.setFont("helvetica", "normal");
     line(`Generated ${input.board.generatedAt}`, 10, 18);
-    line(`MRR $${input.executive.mrrUsd.toLocaleString()} · ARR $${input.executive.arrUsd.toLocaleString()}`, 12, 18);
+    line(`MRR ₹${input.executive.mrrUsd.toLocaleString()} · ARR ₹${input.executive.arrUsd.toLocaleString()}`, 12, 18);
 
     doc.setFont("helvetica", "bold");
     line("Investor KPIs", 13, 20);

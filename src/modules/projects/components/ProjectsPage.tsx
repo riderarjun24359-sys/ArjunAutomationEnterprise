@@ -55,7 +55,7 @@ export function ProjectsPage() {
                         {[
                             { title: "Health", value: stats?.health ?? "Healthy" },
                             { title: "Progress", value: stats?.progress ?? "0%" },
-                            { title: "Budget", value: stats?.budget ?? "$0" },
+                            { title: "Budget", value: stats?.budget ?? "₹0" },
                             { title: "Timeline", value: stats?.timeline ?? "On track" },
                         ].map((stat) => (
                             <div key={stat.title} className="os-panel p-6">

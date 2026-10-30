@@ -17,7 +17,7 @@ export function buildAiCustomerSuccessAssistant(snapshot: Omit<CustomerSuccessSn
     });
 
     const expansionRecommendations = snapshot.expansion.slice(0, 5).map(
-        (e) => `${e.kind.replace("_", "-")} — ${e.title}: score ${e.opportunityScore}, value $${Math.round(e.expansionValueUsd).toLocaleString()}.`,
+        (e) => `${e.kind.replace("_", "-")} — ${e.title}: score ${e.opportunityScore}, value ₹${Math.round(e.expansionValueUsd).toLocaleString()}.`,
     );
 
     const healthInsights = snapshot.healthCenter.slice(0, 5).map((h) => h.executiveSummary);
@@ -26,7 +26,7 @@ export function buildAiCustomerSuccessAssistant(snapshot: Omit<CustomerSuccessSn
         `Tracking ${snapshot.stats.customersTracked} customers with average health ${snapshot.stats.averageHealth}.`,
         `${snapshot.stats.renewalsNext30Days} renewals due in 30 days.`,
         `${snapshot.stats.highChurnRisk} high churn risks.`,
-        `Expansion pipeline $${Math.round(snapshot.stats.expansionPipelineUsd).toLocaleString()}.`,
+        `Expansion pipeline ₹${Math.round(snapshot.stats.expansionPipelineUsd).toLocaleString()}.`,
         `NRR signal ${snapshot.stats.netRevenueRetention}.`,
     ].join(" ");
 

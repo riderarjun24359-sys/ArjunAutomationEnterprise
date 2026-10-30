@@ -32,11 +32,11 @@ export function parseMoney(value: string | number | null | undefined): number {
     return Number.isFinite(n) ? n : 0;
 }
 
-export function formatCurrency(amount: number, currency = "USD"): string {
+export function formatCurrency(amount: number, currency = "INR"): string {
     try {
         return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
     } catch {
-        return `$${Math.round(amount).toLocaleString()}`;
+        return `₹${Math.round(amount).toLocaleString()}`;
     }
 }
 
@@ -582,7 +582,7 @@ export function createEmptyCrmSnapshot(): CrmEnterpriseSnapshot {
             totalLeads: 0,
             openOpportunities: 0,
             collectedRevenue: 0,
-            collectedRevenueLabel: "$0",
+            collectedRevenueLabel: "₹0",
             conversionRate: 0,
             averageHealthScore: 0,
         },
@@ -593,7 +593,7 @@ export function createEmptyCrmSnapshot(): CrmEnterpriseSnapshot {
         analytics: {
             conversionFunnel: LEAD_STAGES.map(({ label }) => ({ stage: label, count: 0 })),
             winLoss: { won: 0, lost: 0, winRate: 0, wonAmount: 0, lostAmount: 0 },
-            revenue: { collected: 0, outstanding: 0, label: "$0" },
+            revenue: { collected: 0, outstanding: 0, label: "₹0" },
             teamPerformance: [],
         },
         insights: [],

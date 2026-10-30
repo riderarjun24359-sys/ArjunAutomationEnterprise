@@ -25,7 +25,7 @@ import { createClient } from "@supabase/supabase-js";
 /** Authenticated system diagnostics for soft-launch operations. */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`ops-diagnostics:${ip}`, 30, 60_000);
+    const rate = await checkRateLimit(`ops-diagnostics:${ip}`, 30, 60_000);
     if (!rate.allowed) {
         return apiError("Rate limit exceeded", 429);
     }

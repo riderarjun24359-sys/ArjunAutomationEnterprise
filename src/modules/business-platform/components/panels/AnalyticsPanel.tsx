@@ -15,10 +15,10 @@ export function AnalyticsPanel({ data }: { data: BusinessPlatformData }) {
     const finance = data.analytics?.financeStats;
     return (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <MetricCard label="Pipeline value" value={`$${(sales?.pipelineValue ?? 0).toLocaleString()}`} />
+            <MetricCard label="Pipeline value" value={`₹${(sales?.pipelineValue ?? 0).toLocaleString()}`} />
             <MetricCard label="Win rate" value={`${sales?.winRate ?? 0}%`} />
-            <MetricCard label="Closed won" value={`$${(sales?.closedWonValue ?? 0).toLocaleString()}`} />
-            <MetricCard label="Revenue collected" value={finance?.paidRevenue ?? "$0"} />
+            <MetricCard label="Closed won" value={`₹${(sales?.closedWonValue ?? 0).toLocaleString()}`} />
+            <MetricCard label="Revenue collected" value={finance?.paidRevenue ?? "₹0"} />
             <MetricCard label="Active projects" value={data.dashboard?.activeProjects ?? 0} />
             <MetricCard label="Analytics metrics" value={data.analytics?.metrics.length ?? 0} />
         </div>

@@ -50,7 +50,7 @@ import { attemptReconciliation } from "@/src/modules/finance/lib/reconciliation"
  */
 export async function POST(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`payments-webhook:${ip}`, 120, 60_000);
+    const rate = await checkRateLimit(`payments-webhook:${ip}`, 120, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }

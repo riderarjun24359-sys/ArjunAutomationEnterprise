@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`health:${ip}`, 120, 60_000);
+    const rate = await checkRateLimit(`health:${ip}`, 120, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429, headers: { "Cache-Control": "no-store" } });
     }

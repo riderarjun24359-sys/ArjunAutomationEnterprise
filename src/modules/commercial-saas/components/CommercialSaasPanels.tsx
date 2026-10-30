@@ -91,7 +91,7 @@ export function CommercialSaasOverviewPanel({ data }: { data: CommercialSaasData
             <Card hover><SectionHeader title="Commercial SaaS summary" description="Multi-tenant platform metrics: tenants, subscriptions, licenses, usage, billing, and MRR" /><div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <ListCard title="Tenants" subtitle={`${data.stats?.totalTenants ?? 0} total`} meta={`${data.stats?.activeTenants ?? 0} active • ${data.stats?.trialTenants ?? 0} trial`} />
                 <ListCard title="Subscriptions & Licenses" subtitle={`${data.stats?.subscriptionCount ?? 0} subscriptions • ${data.stats?.licenseCount ?? 0} licenses`} meta={`${data.stats?.featureFlagCount ?? 0} feature flags • ${data.stats?.portalApiKeyCount ?? 0} API keys`} />
-                <ListCard title="Revenue Metrics" subtitle={`MRR $${(data.stats?.mrrUsd ?? 0).toFixed(2)} • ARR $${(data.stats?.arrUsd ?? 0).toFixed(2)}`} meta={`${data.stats?.invoiceCount ?? 0} invoices • ${data.stats?.renewalCount ?? 0} renewals`} />
+                <ListCard title="Revenue Metrics" subtitle={`MRR ₹${(data.stats?.mrrUsd ?? 0).toFixed(2)} • ARR ₹${(data.stats?.arrUsd ?? 0).toFixed(2)}`} meta={`${data.stats?.invoiceCount ?? 0} invoices • ${data.stats?.renewalCount ?? 0} renewals`} />
                 <ListCard title="Usage & Health" subtitle={`${data.stats?.usageMeterCount ?? 0} meters • ${data.stats?.registrationCount ?? 0} registrations`} meta={`${(data.stats?.avgHealthScore ?? 0).toFixed(0)}% avg health • ${data.stats?.auditCount ?? 0} audit entries`} />
             </div></Card>
             <Card hover><SectionHeader title="Plan pipeline" description={`${pipeline?.previousStage ?? "Trial"} → ${pipeline?.currentStage ?? "Starter"} → ${pipeline?.nextStage ?? "Growth"}`} /><div className="mt-6 space-y-3">
@@ -291,7 +291,7 @@ export function SubscriptionsPanel({ data }: { data: CommercialSaasData }) {
                 <TenantSelect data={data} {...form.register("tenantId")} />
                 <input {...form.register("subscriptionKey")} placeholder="Subscription key" className={inputClass} />
                 <input {...form.register("planTier")} placeholder="Plan tier" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -523,7 +523,7 @@ export function InvoicesPanel({ data }: { data: CommercialSaasData }) {
                 <TenantSelect data={data} {...form.register("tenantId")} />
                 <input {...form.register("invoiceKey")} placeholder="Invoice key" className={inputClass} />
                 <input {...form.register("invoiceNumber")} placeholder="Invoice number" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -543,7 +543,7 @@ export function BillingCreditsPanel({ data }: { data: CommercialSaasData }) {
                 <TenantSelect data={data} {...form.register("tenantId")} />
                 <input {...form.register("creditKey")} placeholder="Credit key" className={inputClass} />
                 <input {...form.register("reason")} placeholder="Reason" className={inputClass} />
-                <input type="number" step="any" {...form.register("balanceUsd", { valueAsNumber: true })} placeholder="Balance USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("balanceUsd", { valueAsNumber: true })} placeholder="Balance INR" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -582,7 +582,7 @@ export function RecurringBillingPanel({ data }: { data: CommercialSaasData }) {
                 <TenantSelect data={data} {...form.register("tenantId")} />
                 <input {...form.register("billingKey")} placeholder="Billing key" className={inputClass} />
                 <input {...form.register("billingCycle")} placeholder="Billing cycle" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -689,13 +689,13 @@ export function AdminMetricsPanel({ data }: { data: CommercialSaasData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Admin metrics" description="Organization-wide MRR, ARR, churn, and tenant growth metrics" /><div className="mt-6 space-y-3">
                 {data.adminMetrics.length === 0 ? <EmptyState title="No admin metrics" description="Record platform-wide commercial metrics." /> : data.adminMetrics.map((m) => (
-                    <ListCard key={m.id} title={m.metricsKey} subtitle={`${m.metricDate} • ${m.activeTenants} active tenants`} meta={`MRR $${m.mrrUsd.toFixed(2)} • ARR $${m.arrUsd.toFixed(2)} • ${m.avgHealthScore.toFixed(0)}% health`} />
+                    <ListCard key={m.id} title={m.metricsKey} subtitle={`${m.metricDate} • ${m.activeTenants} active tenants`} meta={`MRR ₹${m.mrrUsd.toFixed(2)} • ARR ₹${m.arrUsd.toFixed(2)} • ${m.avgHealthScore.toFixed(0)}% health`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create admin metric" description="Record organization-wide SaaS metrics" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createAdminMetric(v))}>
                 <input {...form.register("metricsKey")} placeholder="Metrics key" className={inputClass} />
-                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="MRR USD" className={inputClass} />
-                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="ARR USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="MRR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="ARR INR" className={inputClass} />
                 <input type="number" {...form.register("activeTenants", { valueAsNumber: true })} placeholder="Active tenants" className={inputClass} />
                 <input type="number" {...form.register("trialTenants", { valueAsNumber: true })} placeholder="Trial tenants" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create metric" />

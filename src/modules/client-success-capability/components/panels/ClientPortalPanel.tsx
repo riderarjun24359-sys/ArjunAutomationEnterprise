@@ -34,7 +34,7 @@ export function ClientPortalPanel() {
                 </Card>
                 <Card>
                     <h3 className="mb-3 font-semibold">Invoices</h3>
-                    <SimpleTable headers={["Number", "Amount", "Status"]} rows={portalData.invoices.map((i) => [i.number, `$${i.amount.toLocaleString()}`, i.status])} />
+                    <SimpleTable headers={["Number", "Amount", "Status"]} rows={portalData.invoices.map((i) => [i.number, `₹${i.amount.toLocaleString()}`, i.status])} />
                 </Card>
                 <Card>
                     <h3 className="mb-3 font-semibold">Approvals</h3>

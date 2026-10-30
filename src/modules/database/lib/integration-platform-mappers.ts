@@ -501,7 +501,7 @@ export const buildPaymentTransactionPayload = (organizationId: string, input: Cr
     connector_id: input.connectorId,
     transaction_key: input.transactionKey ?? "",
     amount: input.amount ?? 0,
-    currency: input.currency ?? "USD",
+    currency: input.currency ?? "INR",
     provider_type: input.providerType ?? "stripe",
     transaction_status: input.transactionStatus ?? "pending",
 });

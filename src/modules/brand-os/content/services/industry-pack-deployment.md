@@ -76,13 +76,13 @@ Customers receive AI-accelerated delivery without compromising enterprise qualit
 
 | Pack | Scope | Indicative Range |
 |------|-------|------------------|
-| **Restaurant OS** | Up to 10 locations, menu + kitchen + orders | $55,000 – $90,000 |
-| **Hospital OS** | Single facility or clinic network (up to 3 sites) | $80,000 – $140,000 |
-| **School OS** | Up to 5 campuses, academics + finance | $50,000 – $85,000 |
-| **Retail OS** | Up to 20 stores, product + POS + inventory | $60,000 – $100,000 |
+| **Restaurant OS** | Up to 10 locations, menu + kitchen + orders | Contact for INR Pricing |
+| **Hospital OS** | Single facility or clinic network (up to 3 sites) | Contact for INR Pricing |
+| **School OS** | Up to 5 campuses, academics + finance | Contact for INR Pricing |
+| **Retail OS** | Up to 20 stores, product + POS + inventory | Contact for INR Pricing |
 
-- Additional locations: $3,000 – $8,000 per location (varies by pack)
-- Additional integrations: $8,000 – $15,000 each
+- Additional locations: Contact for INR Pricing per location (varies by pack)
+- Additional integrations: Contact for INR Pricing each
 - 40% at signing, 30% at UAT, 30% at go-live
 
 ---

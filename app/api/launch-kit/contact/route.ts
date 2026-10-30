@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         if (error || !context) return error ?? NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         organizationId = context.organizationId ?? organizationId;
     } else {
-        const rate = checkRateLimit("lead-intake", 10, 60_000);
+        const rate = await checkRateLimit("lead-intake", 10, 60_000);
         if (!rate.allowed) {
             return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
         }

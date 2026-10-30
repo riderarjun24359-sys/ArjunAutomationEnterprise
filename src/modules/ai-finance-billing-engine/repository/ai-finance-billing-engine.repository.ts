@@ -319,7 +319,7 @@ export class AiFinanceBillingEngineRepository {
             tax_amount: input.taxAmount,
             total: input.total,
             amount_paid: 0,
-            currency: input.currency ?? "USD",
+            currency: input.currency ?? "INR",
             notes: input.notes ?? "",
         });
 

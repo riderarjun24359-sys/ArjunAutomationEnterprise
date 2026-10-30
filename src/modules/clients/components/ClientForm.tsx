@@ -27,7 +27,7 @@ export function ClientForm({ onSubmit, defaultValues, submitLabel = "Save Client
             industry: "saas",
             contactEmail: "",
             manager: "",
-            revenue: "$0",
+            revenue: "₹0",
             phone: "",
             website: "",
             address: "",
@@ -111,7 +111,7 @@ export function ClientForm({ onSubmit, defaultValues, submitLabel = "Save Client
                             id="revenue"
                             {...register("revenue")}
                             className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-emerald-300 dark:border-slate-800 dark:bg-slate-900 dark:focus:border-emerald-700"
-                            placeholder="$248k"
+                            placeholder="₹248k"
                         />
                         {errors.revenue ? <p className="mt-1 text-xs text-rose-600">{errors.revenue.message}</p> : null}
                     </div>

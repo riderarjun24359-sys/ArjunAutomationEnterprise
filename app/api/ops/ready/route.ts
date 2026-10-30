@@ -7,7 +7,7 @@ import { opsLog } from "@/src/lib/ops-monitoring";
 /** Readiness — dependencies required to serve traffic. */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`ops-ready:${ip}`, 120, 60_000);
+    const rate = await checkRateLimit(`ops-ready:${ip}`, 120, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }

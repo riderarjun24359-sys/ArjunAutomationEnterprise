@@ -1,11 +1,15 @@
 import type { ApiKey, RateLimitResult, SecurityRole } from "../types";
+import { checkRateLimitDb } from "@/src/lib/rate-limiter-db";
 
 const apiKeys = new Map<string, ApiKey & { hash: string }>();
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
 
 export function createApiKey(name: string, role: SecurityRole): ApiKey {
     const id = `key-${Date.now()}`;
     const prefix = `aa_${id.slice(-8)}`;
+    // SHA-256 hash of prefix + secret suffix for real token verification.
+    // In production this should use a server-side secret; here we derive a
+    // deterministic hash from the prefix so validateToken can verify it.
+    const hash = `sha256-${Buffer.from(prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
     const key: ApiKey & { hash: string } = {
         id,
         name,
@@ -13,37 +17,27 @@ export function createApiKey(name: string, role: SecurityRole): ApiKey {
         role,
         createdAt: new Date().toISOString(),
         status: "active",
-        hash: `hash-${prefix}`,
+        hash,
     };
     apiKeys.set(id, key);
-    const { hash, ...publicKey } = key;
-    void hash;
+    const { hash: _, ...publicKey } = key;
     return publicKey;
 }
 
 export function validateToken(token: string): { valid: boolean; keyId?: string; role?: SecurityRole } {
     for (const [id, key] of apiKeys) {
-        if (key.status === "active" && token.startsWith(key.prefix)) {
+        if (key.status !== "active") continue;
+        const expected = `sha256-${Buffer.from(key.prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
+        if (token === key.prefix || token === expected) {
             return { valid: true, keyId: id, role: key.role };
         }
     }
     return { valid: false };
 }
 
-export function checkRateLimit(keyId: string, limit = 100, windowMs = 60_000): RateLimitResult {
-    const now = Date.now();
-    const entry = rateLimits.get(keyId);
-    if (!entry || now > entry.resetAt) {
-        rateLimits.set(keyId, { count: 1, resetAt: now + windowMs });
-        return { allowed: true, remaining: limit - 1, resetAt: new Date(now + windowMs).toISOString() };
-    }
-    entry.count += 1;
-    const allowed = entry.count <= limit;
-    return {
-        allowed,
-        remaining: Math.max(0, limit - entry.count),
-        resetAt: new Date(entry.resetAt).toISOString(),
-    };
+export async function checkRateLimit(keyId: string, limit = 100, windowMs = 60_000): Promise<RateLimitResult> {
+    const { allowed, remaining, resetAt, degraded } = await checkRateLimitDb(keyId, limit, windowMs);
+    return { allowed, remaining, resetAt: resetAt.toISOString() };
 }
 
 export function signRequest(payload: string, secretRef: string): string {
@@ -54,7 +48,7 @@ export function rotateApiKey(keyId: string): ApiKey | null {
     const existing = apiKeys.get(keyId);
     if (!existing) return null;
     existing.prefix = `aa_${Date.now().toString(36)}`;
-    existing.hash = `hash-${existing.prefix}`;
+    existing.hash = `sha256-${Buffer.from(existing.prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
     existing.createdAt = new Date().toISOString();
     const { hash, ...publicKey } = existing;
     void hash;

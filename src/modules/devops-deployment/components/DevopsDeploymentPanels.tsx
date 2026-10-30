@@ -406,7 +406,7 @@ export function CostEstimatesPanel({ data }: { data: DevopsDeploymentData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Cost estimates" description="Infrastructure cost estimates and breakdowns" /><div className="mt-6 space-y-3">
                 {data.costEstimates.length === 0 ? <EmptyState title="No cost estimates" description="Estimate infrastructure deployment costs." /> : data.costEstimates.map((e) => (
-                    <ListCard key={e.id} title={e.name} subtitle={`${e.estimateKey} • ${e.engagementTitle}`} meta={`$${e.monthlyCostUsd}/mo • ${e.breakdownCount} line items • ${e.status}`} />
+                    <ListCard key={e.id} title={e.name} subtitle={`${e.estimateKey} • ${e.engagementTitle}`} meta={`₹${e.monthlyCostUsd}/mo • ${e.breakdownCount} line items • ${e.status}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create cost estimate" description="Record a cost estimate" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createCostEstimate(v))}>

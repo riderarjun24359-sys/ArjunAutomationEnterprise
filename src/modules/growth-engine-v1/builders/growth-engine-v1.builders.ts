@@ -410,7 +410,7 @@ export function buildFounderGrowthDashboard(
             id: "mrr-churn",
             severity: "warning" as const,
             title: "Churn MRR exceeds new MRR",
-            detail: `Churn $${analytics.churnMrrUsd} vs new $${analytics.newMrrUsd}.`,
+            detail: `Churn ₹${analytics.churnMrrUsd} vs new ₹${analytics.newMrrUsd}.`,
         });
     }
     if (marketing.conversionRatePercent != null && marketing.conversionRatePercent < 10 && marketing.totalLeads >= 5) {
@@ -431,10 +431,10 @@ export function buildFounderGrowthDashboard(
     }
 
     const summary = [
-        `Daily revenue $${dailyRevenueUsd}.`,
+        `Daily revenue ₹${dailyRevenueUsd}.`,
         `New orgs today ${newOrganizationsToday} (7d ${newOrganizations7d}).`,
         `Active users ${activeUsers}.`,
-        `MRR $${analytics.mrrUsd} · ARR $${analytics.arrUsd}.`,
+        `MRR ₹${analytics.mrrUsd} · ARR ₹${analytics.arrUsd}.`,
         `Lead conversion ${marketing.conversionRatePercent ?? "n/a"}%.`,
     ].join(" ");
 

@@ -73,9 +73,9 @@ Customers receive AI-accelerated delivery without compromising enterprise qualit
 
 | Tier | Scope | Indicative Range |
 |------|-------|------------------|
-| **Essential** | Core modules (CRM, Projects, Tasks, Finance) + identity | $45,000 – $75,000 |
-| **Professional** | Essential + HR, Inventory, Documents + 2 integrations | $75,000 – $120,000 |
-| **Enterprise** | Full module suite + 3 integrations + data migration + AI workers | $120,000 – $200,000 |
+| **Essential** | Core modules (CRM, Projects, Tasks, Finance) + identity | Contact for INR Pricing |
+| **Professional** | Essential + HR, Inventory, Documents + 2 integrations | Contact for INR Pricing |
+| **Enterprise** | Full module suite + 3 integrations + data migration + AI workers | Contact for INR Pricing |
 
 - Pricing excludes platform subscription fees (quoted separately)
 - 40% at signing, 30% at UAT start, 30% at go-live

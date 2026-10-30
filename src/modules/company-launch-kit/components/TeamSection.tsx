@@ -28,7 +28,7 @@ function LinkedInIcon({ className }: { className?: string }) {
  * WHY
  * ---
  * An audit of all 46 marketing pages found zero founder names, zero team
- * photos and zero LinkedIn links — on a site quoting $45,000–$200,000. Buyers
+ * photos and zero LinkedIn links — on a site quoting Contact for INR Pricing. Buyers
  * running vendor due diligence have no way to tell who they are committing to,
  * and anonymous vendors lose deals to identifiable ones.
  *

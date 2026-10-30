@@ -31,7 +31,7 @@ export function RenewalGrowthPanel() {
                 <h3 className="mb-3 font-semibold">Renewals</h3>
                 <SimpleTable
                     headers={["Contract End", "Value", "Probability"]}
-                    rows={renewal.renewals.map((r) => [r.contractEnd, `$${r.value.toLocaleString()}`, `${r.probability}%`])}
+                    rows={renewal.renewals.map((r) => [r.contractEnd, `₹${r.value.toLocaleString()}`, `${r.probability}%`])}
                 />
             </Card>
 

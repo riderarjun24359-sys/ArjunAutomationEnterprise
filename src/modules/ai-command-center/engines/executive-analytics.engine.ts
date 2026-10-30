@@ -32,6 +32,6 @@ export function formatExecutiveBrief(input: {
     return [
         `AI Command Center brief`,
         `System ${input.systemHealth}% · Clients ${input.clientHealth}% · Support SLA ${input.supportSla}% · Delivery ${input.deliveryHealth}%`,
-        `MRR $${Math.round(input.revenue.mrr).toLocaleString()} · ${input.revenue.activeClients} clients · ${input.revenue.pipelineLeads} leads · ${input.revenue.openInvoices} open invoices`,
+        `MRR ₹${Math.round(input.revenue.mrr).toLocaleString()} · ${input.revenue.activeClients} clients · ${input.revenue.pipelineLeads} leads · ${input.revenue.openInvoices} open invoices`,
     ].join("\n");
 }

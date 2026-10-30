@@ -388,8 +388,8 @@ export function FounderDailyBriefPanel({ brief }: { brief: FounderDailyBrief }) 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric label="New orgs today" value={String(brief.newOrganizationsToday)} />
                 <Metric label="New orgs (7d)" value={String(brief.newOrganizations7d)} />
-                <Metric label="MRR" value={`$${brief.revenueMrrUsd}`} />
-                <Metric label="New MRR" value={`$${brief.revenueNewMrrUsd}`} />
+                <Metric label="MRR" value={`₹${brief.revenueMrrUsd}`} />
+                <Metric label="New MRR" value={`₹${brief.revenueNewMrrUsd}`} />
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

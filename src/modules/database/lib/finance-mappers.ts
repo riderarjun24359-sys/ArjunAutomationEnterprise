@@ -23,7 +23,7 @@ import type {
     TaxRate,
 } from "@/src/modules/finance/types";
 
-export const formatMoney = (amount: number, currency = "USD") =>
+export const formatMoney = (amount: number, currency = "INR") =>
     new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
 
 const computeLineTotals = (items: LineItemInput[], defaultTaxRate = 0) => {
@@ -265,7 +265,7 @@ export const buildInvoicePayload = (organizationId: string, input: {
         tax_amount: totals.taxAmount,
         total: totals.total,
         amount_paid: 0,
-        currency: input.currency ?? "USD",
+        currency: input.currency ?? "INR",
         notes: input.notes ?? "",
     };
 };
@@ -294,7 +294,7 @@ export const buildEstimatePayload = (organizationId: string, input: {
         subtotal: totals.subtotal,
         tax_amount: totals.taxAmount,
         total: totals.total,
-        currency: input.currency ?? "USD",
+        currency: input.currency ?? "INR",
         notes: input.notes ?? "",
     };
 };
@@ -374,7 +374,7 @@ export const buildRecurringInvoicePayload = (organizationId: string, input: {
     subtotal: input.subtotal,
     tax_amount: input.taxAmount,
     total: input.total,
-    currency: input.currency ?? "USD",
+    currency: input.currency ?? "INR",
     is_active: input.isActive ?? true,
     notes: input.notes ?? "",
 });

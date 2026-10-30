@@ -68,7 +68,7 @@ export function GrowthEngineV1Page() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="success">Live Supabase</Badge>
-                    <Badge variant="info">${snapshot.analytics.mrrUsd} MRR</Badge>
+                    <Badge variant="info">₹${snapshot.analytics.mrrUsd} MRR</Badge>
                     <span className="text-xs text-[var(--dos-text-tertiary)]">Fetched {snapshot.fetchedAt}</span>
                 </div>
             </div>

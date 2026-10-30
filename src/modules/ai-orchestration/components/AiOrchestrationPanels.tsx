@@ -181,7 +181,7 @@ export function CostsPanel({ data }: { data: AiData }) {
     return (
         <Card hover><SectionHeader title="Cost tracking" description="AI spend by provider and pricing model" /><div className="mt-6 space-y-3">
             {data.costRecords.length === 0 ? <EmptyState title="No cost records" description="Costs will appear as usage is billed." /> : data.costRecords.map((c) => (
-                <ListCard key={c.id} title={c.providerName ?? "Unknown provider"} subtitle={`$${c.costUsd.toFixed(6)} • ${c.pricingModel}`} meta={new Date(c.recordedAt).toLocaleString()} />
+                <ListCard key={c.id} title={c.providerName ?? "Unknown provider"} subtitle={`₹${c.costUsd.toFixed(6)} • ${c.pricingModel}`} meta={new Date(c.recordedAt).toLocaleString()} />
             ))}
         </div></Card>
     );

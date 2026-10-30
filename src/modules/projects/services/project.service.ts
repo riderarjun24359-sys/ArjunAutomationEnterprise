@@ -100,7 +100,7 @@ export class ProjectService {
             status: input.status ?? "planning",
             priority: input.priority ?? "medium",
             progress: 0,
-            budget: "$0",
+            budget: "₹0",
             timeline: "Planning",
             owner_name: fullName ?? email,
             owner_id: context.profileId,

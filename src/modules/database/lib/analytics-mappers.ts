@@ -255,8 +255,8 @@ export const buildAnalyticsDashboardStats = (input: {
     clients: ClientAnalytics;
     automation: AutomationInsights;
 }): AnalyticsDashboardStats => ({
-    totalRevenue: `$${input.revenue.paidTotal.toLocaleString()}`,
-    outstandingInvoices: `$${input.revenue.outstanding.toLocaleString()}`,
+    totalRevenue: `₹${input.revenue.paidTotal.toLocaleString()}`,
+    outstandingInvoices: `₹${input.revenue.outstanding.toLocaleString()}`,
     activeClients: String(input.clients.activeClients),
     activeProjects: String(input.delivery.activeProjects),
     openTasks: String(input.delivery.openTasks),

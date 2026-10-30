@@ -115,7 +115,7 @@ export class ClientService {
                 atRiskClients: 0,
                 inactiveClients: 0,
                 linkedProjects: 0,
-                totalRevenue: "$0",
+                totalRevenue: "₹0",
             };
         }
 

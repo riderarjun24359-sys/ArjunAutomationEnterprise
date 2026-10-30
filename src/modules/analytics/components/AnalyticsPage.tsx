@@ -135,7 +135,7 @@ export function AnalyticsPage() {
                                                 <p className="dos-text-caption text-[var(--dos-text-tertiary)]">{metric.category}</p>
                                             </div>
                                             <span className="font-semibold text-[var(--dos-text-primary)]">
-                                                {metric.unit === "USD" ? `$${metric.value.toLocaleString()}` : metric.unit === "percent" ? `${metric.value}%` : metric.value}
+                                                {metric.unit === "INR" ? `₹${metric.value.toLocaleString()}` : metric.unit === "percent" ? `${metric.value}%` : metric.value}
                                             </span>
                                         </div>
                                     ))

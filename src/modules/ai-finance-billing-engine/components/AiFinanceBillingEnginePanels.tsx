@@ -60,7 +60,7 @@ function Table({ headers, rows, empty }: { headers: string[]; rows: string[][]; 
     );
 }
 
-function moneyLabel(n: number, currency = "USD") {
+function moneyLabel(n: number, currency = "INR") {
     return `${currency} ${n.toLocaleString()}`;
 }
 

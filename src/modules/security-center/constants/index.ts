@@ -102,8 +102,8 @@ export const SECURITY_CENTER_TAB_LIST = [
 ] as const;
 
 export const SECURITY_CENTER_THEME = {
-    accent: "text-orange-600 dark:text-orange-400",
-    border: "border-orange-200/60 dark:border-orange-800/60",
-    surface: "bg-indigo-50/50 dark:bg-orange-950/30",
-    text: "text-orange-500 dark:text-orange-300",
+    accent: "text-[var(--dos-brand-primary)] dark:text-[var(--dos-brand-primary-hover)]",
+    border: "border-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)] dark:border-[color-mix(in_oklab,var(--dos-brand-primary)_20%,transparent)]",
+    surface: "bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)] dark:bg-[color-mix(in_oklab,var(--dos-brand-primary)_8%,transparent)]",
+    text: "text-[var(--dos-brand-primary)] dark:text-[var(--dos-brand-primary-hover)]",
 } as const;

@@ -67,7 +67,7 @@ export class SecurityCenterService {
         return apiSecurityEngine.validateToken(token);
     }
 
-    checkRateLimit(keyId: string): RateLimitResult {
+    async checkRateLimit(keyId: string): Promise<RateLimitResult> {
         return apiSecurityEngine.checkRateLimit(keyId);
     }
 

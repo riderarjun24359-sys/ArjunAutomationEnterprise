@@ -7,10 +7,10 @@ interface FinanceStatsProps {
 
 export function FinanceStats({ stats }: FinanceStatsProps) {
     const cards = [
-        { title: "Paid Revenue", value: stats?.paidRevenue ?? "$0", detail: `${stats?.paymentCount ?? 0} payments`, trend: "up" as const, tone: "accent" as const },
-        { title: "Outstanding AR", value: stats?.outstandingReceivables ?? "$0", detail: `${stats?.overdueInvoices ?? 0} overdue`, trend: stats?.overdueInvoices ? ("down" as const) : ("up" as const) },
-        { title: "Approved Expenses", value: stats?.approvedExpenses ?? "$0", detail: `Total ${stats?.totalExpenses ?? "$0"}`, trend: "up" as const },
-        { title: "Net Position", value: stats?.netPosition ?? "$0", detail: `${stats?.activeRecurring ?? 0} recurring`, trend: "up" as const },
+        { title: "Paid Revenue", value: stats?.paidRevenue ?? "₹0", detail: `${stats?.paymentCount ?? 0} payments`, trend: "up" as const, tone: "accent" as const },
+        { title: "Outstanding AR", value: stats?.outstandingReceivables ?? "₹0", detail: `${stats?.overdueInvoices ?? 0} overdue`, trend: stats?.overdueInvoices ? ("down" as const) : ("up" as const) },
+        { title: "Approved Expenses", value: stats?.approvedExpenses ?? "₹0", detail: `Total ${stats?.totalExpenses ?? "₹0"}`, trend: "up" as const },
+        { title: "Net Position", value: stats?.netPosition ?? "₹0", detail: `${stats?.activeRecurring ?? 0} recurring`, trend: "up" as const },
     ];
 
     return (

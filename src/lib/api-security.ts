@@ -109,18 +109,111 @@ export function getClientIp(request: Request): string {
     );
 }
 
+/**
+ * Extract the origin of the requesting client.
+ *
+ * Priority: Origin header (modern browsers) > Referer header (fallback).
+ * Returns the origin (scheme + host + port) or null if neither is present.
+ */
+export function getRequestOrigin(request: Request): string | null {
+    const origin = request.headers.get("origin");
+    if (origin) return origin;
+
+    const referer = request.headers.get("referer");
+    if (referer) {
+        try {
+            return new URL(referer).origin;
+        } catch {
+            return null;
+        }
+    }
+    return null;
+}
+
+/**
+ * Determine whether the request's origin matches the server's origin.
+ * Returns false when no origin information is available at all.
+ */
+function isSameOriginRequest(request: Request): boolean {
+    const origin = getRequestOrigin(request);
+    if (!origin) return false;
+    try {
+        return origin === new URL(request.url).origin;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * State-changing HTTP methods that require CSRF protection.
+ */
+const STATE_CHANGING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+/**
+ * CSRF guard for state-changing requests.
+ *
+ * Supabase Auth uses cookie-based sessions, so ambient credentials are sent
+ * automatically on cross-origin requests. Without CSRF protection, an
+ * attacker site could trick a logged-in user's browser into making
+ * state-changing requests to this API.
+ *
+ * We validate the Origin header (modern browsers) or Referer header
+ * (fallback) against the server's origin. If neither is present, the
+ * request is rejected — we cannot verify it originated from our own site.
+ */
+export function assertCsrfSafe(request: Request): { ok: true } | { ok: false; error: NextResponse } {
+    const method = request.method?.toUpperCase() ?? "";
+    if (!STATE_CHANGING_METHODS.has(method)) {
+        return { ok: true };
+    }
+
+    const origin = getRequestOrigin(request);
+    if (!origin) {
+        return {
+            ok: false,
+            error: NextResponse.json({ error: "CSRF: missing origin header" }, { status: 403 }),
+        };
+    }
+
+    try {
+        const requestOrigin = new URL(request.url).origin;
+        if (origin !== requestOrigin) {
+            return {
+                ok: false,
+                error: NextResponse.json(
+                    { error: "CSRF: origin mismatch" },
+                    { status: 403 },
+                ),
+            };
+        }
+    } catch {
+        return {
+            ok: false,
+            error: NextResponse.json({ error: "CSRF: invalid request origin" }, { status: 403 }),
+        };
+    }
+
+    return { ok: true };
+}
+
 export async function secureApiRoute(
     request: Request,
     options: SecureApiOptions = {},
 ): Promise<{ context: ApiSecurityContext | null; error: NextResponse | null }> {
     const ip = getClientIp(request);
     const rateKey = options.rateLimitKey ?? ip;
-    const rate = checkRateLimit(rateKey, options.rateLimit ?? 60, 60_000);
+    const rate = await checkRateLimit(rateKey, options.rateLimit ?? 60, 60_000);
     if (!rate.allowed) {
         return {
             context: null,
             error: NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 }),
         };
+    }
+
+    // CSRF protection for state-changing requests.
+    const csrf = assertCsrfSafe(request);
+    if (!csrf.ok) {
+        return { context: null, error: csrf.error };
     }
 
     if (options.allowPublic && options.publicApiKeyEnv) {

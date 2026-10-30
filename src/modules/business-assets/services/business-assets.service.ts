@@ -42,7 +42,7 @@ export function buildDefaultQuotation(): QuotationFormData {
     return {
         reference: `AA-Q-${new Date().getFullYear()}-001`,
         client: defaultClient(),
-        currency: "USD",
+        currency: "INR",
         validUntil: "",
         lineItems: [defaultLineItem()],
         discountPercent: 0,

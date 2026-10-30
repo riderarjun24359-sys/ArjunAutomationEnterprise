@@ -340,7 +340,7 @@ export function ProposalsPanel({ data }: { data: BusinessAnalystData }) {
 }
 
 export function CostEstimatesPanel({ data }: { data: BusinessAnalystData }) {
-    const form = useForm<CostEstimateFormValues>({ resolver: zodResolver(costEstimateFormSchema), defaultValues: { engagementId: "", estimateKey: "", totalAmount: 0, currency: "USD", assumptions: "" } });
+    const form = useForm<CostEstimateFormValues>({ resolver: zodResolver(costEstimateFormSchema), defaultValues: { engagementId: "", estimateKey: "", totalAmount: 0, currency: "INR", assumptions: "" } });
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Cost estimates" description="Project cost estimates linked to engagements" /><div className="mt-6 space-y-3">

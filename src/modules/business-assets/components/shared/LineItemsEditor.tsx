@@ -10,7 +10,7 @@ interface LineItemsEditorProps {
     currency?: string;
 }
 
-export function LineItemsEditor({ items, onChange, currency = "USD" }: LineItemsEditorProps) {
+export function LineItemsEditor({ items, onChange, currency = "INR" }: LineItemsEditorProps) {
     const update = (id: string, field: keyof LineItem, value: string | number) => {
         onChange(items.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
     };

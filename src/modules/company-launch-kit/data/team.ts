@@ -3,7 +3,7 @@
  *
  * IMPORTANT — WHY THIS FILE IS DELIBERATELY SMALL
  * -----------------------------------------------
- * A site that asks for $45,000–$200,000 cannot have zero named humans on it.
+ * A site that asks for Contact for INR Pricing cannot have zero named humans on it.
  * Buyers running vendor due diligence need to know who they are committing to.
  *
  * However, we do not invent people. Every field below is either verified from

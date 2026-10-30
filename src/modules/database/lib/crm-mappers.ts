@@ -27,7 +27,7 @@ export const mapLeadSummary = (client: DbClient): LeadSummary => ({
     contact: client.contact_email,
     stage: (client.lifecycle_stage as LeadSummary["stage"]) ?? "new",
     score: client.lead_score ?? 0,
-    value: client.deal_value ?? "$0",
+    value: client.deal_value ?? "₹0",
     assignedTo: client.assigned_to ?? "Unassigned",
 });
 
@@ -37,11 +37,11 @@ export const mapDealSummary = (log: DbActivityLog): DealSummary => {
     return {
         id: log.id,
         client: log.title,
-        value: String(metadata.value ?? "$0"),
+        value: String(metadata.value ?? "₹0"),
         closeDate: String(metadata.closeDate ?? "—"),
         stage: String(metadata.stage ?? log.action) as DealSummary["stage"],
         probability: Number(metadata.probability ?? 0),
-        revenueMetric: String(metadata.revenueMetric ?? "$0 ARR"),
+        revenueMetric: String(metadata.revenueMetric ?? "₹0 ARR"),
     };
 };
 
@@ -87,7 +87,7 @@ export const buildCrmDashboardStats = (input: {
     return {
         totalClients: activeClients,
         activeDeals: input.deals.length,
-        monthlyRevenue: new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(revenue),
+        monthlyRevenue: new Intl.NumberFormat("en-US", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(revenue),
         newLeads: leads,
         conversionRate: activeClients + leads > 0 ? `${Math.round((activeClients / (activeClients + leads)) * 100)}%` : "0%",
         recentActivities: input.activities.slice(0, 3).map(mapActivitySummary),

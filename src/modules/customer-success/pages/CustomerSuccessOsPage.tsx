@@ -69,7 +69,7 @@ export function CustomerSuccessOsPage() {
         { label: "Avg Health", value: String(snapshot.stats.averageHealth) },
         { label: "Renewals 30d", value: String(snapshot.stats.renewalsNext30Days) },
         { label: "High Churn", value: String(snapshot.stats.highChurnRisk) },
-        { label: "Expansion $", value: `$${Math.round(snapshot.stats.expansionPipelineUsd).toLocaleString()}` },
+        { label: "Expansion $", value: `₹${Math.round(snapshot.stats.expansionPipelineUsd).toLocaleString()}` },
         { label: "NRR", value: String(snapshot.stats.netRevenueRetention) },
     ];
 

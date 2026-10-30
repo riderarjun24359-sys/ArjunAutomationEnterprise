@@ -26,7 +26,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Go-live documentation and runbook",
         ],
         timeline: AI_DELIVERY_SERVICE_LABEL,
-        pricingPlaceholder: "Essential $45K–$75K | Professional $75K–$120K | Enterprise $120K–$200K. 40% signing, 30% validation, 30% production deployment.",
+        pricingPlaceholder: "Essential Contact for INR Pricing | Professional Contact for INR Pricing | Enterprise Contact for INR Pricing. 40% signing, 30% validation, 30% production deployment.",
         industries: ["Professional Services", "Technology & SaaS", "Multi-location Operations", "Growth-stage Companies"],
         technology: ["Arjun Automation OS", "Enterprise Identity", "CRM", "Projects", "Finance", "AI Workers", "REST API Integrations"],
         faq: [
@@ -58,7 +58,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Go-live support and 30-day hypercare",
         ],
         timeline: AI_DELIVERY_SERVICE_LABEL,
-        pricingPlaceholder: "Restaurant OS $35K–$65K | Hospital OS $55K–$95K | School OS $40K–$70K | Retail OS $35K–$60K per deployment.",
+        pricingPlaceholder: "Restaurant OS Contact for INR Pricing | Hospital OS Contact for INR Pricing | School OS Contact for INR Pricing | Retail OS Contact for INR Pricing per deployment.",
         industries: ["Restaurants & Hospitality", "Healthcare", "Education", "Retail"],
         technology: ["Restaurant OS", "Hospital OS", "School OS", "Retail OS", "Arjun Automation OS Core", "Industry Analytics"],
         faq: [
@@ -90,7 +90,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "30-day optimization period post-activation",
         ],
         timeline: AI_DELIVERY_SERVICE_LABEL,
-        pricingPlaceholder: "Starter (2 workers) $25K–$40K | Professional (4 workers) $45K–$70K | Enterprise (all 6) $70K–$110K.",
+        pricingPlaceholder: "Starter (2 workers) Contact for INR Pricing | Professional (4 workers) Contact for INR Pricing | Enterprise (all 6) Contact for INR Pricing.",
         industries: ["Technology & SaaS", "Professional Services", "System Integrators", "Enterprise IT"],
         technology: ["AI Workers (BA, Architect, Dev, QA, DevOps, CS)", "Knowledge Engine", "Workflow Engine", "Audit & Governance"],
         faq: [
@@ -122,7 +122,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Optional: proof-of-concept scope definition",
         ],
         timeline: AI_DELIVERY_SERVICE_LABEL,
-        pricingPlaceholder: "Assessment $15K–$25K | Operating Model Design $25K–$45K | Full Transformation Roadmap $45K–$75K.",
+        pricingPlaceholder: "Assessment Contact for INR Pricing | Operating Model Design Contact for INR Pricing | Full Transformation Roadmap Contact for INR Pricing.",
         industries: ["All Industries", "Mid-market (100–2000 employees)", "Growth-stage Companies", "Enterprise IT"],
         technology: ["Process Mapping", "TCO Modeling", "Automation Opportunity Framework", "Change Management Toolkit"],
         faq: [
@@ -156,7 +156,7 @@ export const DEFAULT_SERVICES_CATALOG: ServiceCatalogItem[] = [
             "Priority escalation channel for P1 incidents",
         ],
         timeline: "Ongoing monthly subscription — rapid onboarding after contract signing",
-        pricingPlaceholder: "Standard $2K–$4K/mo | Premium $5K–$10K/mo | Enterprise $10K–$20K/mo (based on user count and SLA tier).",
+        pricingPlaceholder: "Standard Contact for INR Pricing/mo | Premium Contact for INR Pricing/mo | Enterprise Contact for INR Pricing/mo (based on user count and SLA tier).",
         industries: ["All Industries with active Arjun Automation OS deployment"],
         technology: ["Platform Monitoring", "Alerting & Incident Management", "Backup & DR", "Security Patching", "Analytics & Reporting"],
         faq: [

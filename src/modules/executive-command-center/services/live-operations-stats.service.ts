@@ -12,7 +12,7 @@ function parseMoney(value: string | number | null | undefined): number {
     return Number.isFinite(n) ? n : 0;
 }
 
-function formatCurrency(amount: number, currency = "USD"): string {
+function formatCurrency(amount: number, currency = "INR"): string {
     try {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -20,7 +20,7 @@ function formatCurrency(amount: number, currency = "USD"): string {
             maximumFractionDigits: 0,
         }).format(amount);
     } catch {
-        return `$${Math.round(amount).toLocaleString()}`;
+        return `₹${Math.round(amount).toLocaleString()}`;
     }
 }
 
@@ -84,7 +84,7 @@ export function buildLiveOperationsStatsFromData(data: OrganizationOperationsDat
         (sum, inv) => sum + Math.max(0, Number(inv.total ?? 0) - Number(inv.amount_paid ?? 0)),
         0,
     );
-    const currency = invoices[0]?.currency ?? "USD";
+    const currency = invoices[0]?.currency ?? "INR";
 
     const revenue: RevenueSummaryLive = {
         collected,

@@ -20,7 +20,13 @@ import { ANALYTICS, ANALYTICS_CSP_ORIGINS } from "./src/config/analytics";
  */
 function buildCsp(): string {
     const connectSources = ["'self'"];
-    const scriptSources = ["'self'", "'unsafe-inline'", "'unsafe-eval'"];
+    const scriptSources = ["'self'", "'unsafe-inline'"];
+
+    // 'unsafe-eval' is only needed for React Refresh in development.
+    // Production must not allow eval-based script execution.
+    if (process.env.NODE_ENV !== "production") {
+        scriptSources.push("'unsafe-eval'");
+    }
 
     if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
         const supabaseOrigin = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin;
@@ -65,7 +71,11 @@ const securityHeaders = [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-    { key: "X-DNS-Prefetch-Control", value: "on" },
+    // DNS prefetch can leak browsing patterns; disable in production.
+    { key: "X-DNS-Prefetch-Control", value: "off" },
+    // HSTS: enforce HTTPS for 1 year. includeSubDomains and preload are
+    // intentionally omitted until all subdomains are confirmed HTTPS-ready.
+    { key: "Strict-Transport-Security", value: "max-age=31536000" },
     { key: "Content-Security-Policy", value: buildCsp() },
 ];
 

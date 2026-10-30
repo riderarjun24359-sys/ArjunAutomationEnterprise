@@ -417,7 +417,7 @@ export function ExecutiveAutomationPanel({ executive }: { executive: ExecutiveAu
     return (
         <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Metric label="Automation ROI" value={`$${executive.automationRoi.toLocaleString()}`} />
+                <Metric label="Automation ROI" value={`₹${executive.automationRoi.toLocaleString()}`} />
                 <Metric label="Time saved" value={`${executive.timeSavedHours} h`} />
                 <Metric label="Workflow health" value={executive.workflowHealth ?? "—"} />
             </div>

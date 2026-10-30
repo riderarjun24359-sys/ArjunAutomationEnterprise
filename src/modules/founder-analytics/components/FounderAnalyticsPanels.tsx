@@ -27,9 +27,9 @@ export function ExecutiveDashboardPanel({ executive }: { executive: FounderExecu
     return (
         <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-                <Metric label="MRR" value={`$${executive.mrrUsd.toLocaleString()}`} hint={`Trend ${executive.mrrTrend}`} />
-                <Metric label="ARR" value={`$${executive.arrUsd.toLocaleString()}`} />
-                <Metric label="Cash flow signal" value={`$${executive.cashFlowUsd.toLocaleString()}`} hint="Collected − outstanding" />
+                <Metric label="MRR" value={`₹${executive.mrrUsd.toLocaleString()}`} hint={`Trend ${executive.mrrTrend}`} />
+                <Metric label="ARR" value={`₹${executive.arrUsd.toLocaleString()}`} />
+                <Metric label="Cash flow signal" value={`₹${executive.cashFlowUsd.toLocaleString()}`} hint="Collected − outstanding" />
                 <Metric label="New organizations" value={String(executive.newOrganizations)} hint="Last 30 days" />
                 <Metric label="Active organizations" value={String(executive.activeOrganizations)} />
                 <Metric label="Trial → Paid" value={`${executive.trialToPaidConversionPercent}%`} />
@@ -40,7 +40,7 @@ export function ExecutiveDashboardPanel({ executive }: { executive: FounderExecu
                     label="CSAT"
                     value={executive.customerSatisfactionAvg != null ? String(executive.customerSatisfactionAvg) : "—"}
                 />
-                <Metric label="Revenue forecast" value={`$${executive.revenueForecastUsd.toLocaleString()}`} hint="From MRR forecasts × 12" />
+                <Metric label="Revenue forecast" value={`₹${executive.revenueForecastUsd.toLocaleString()}`} hint="From MRR forecasts × 12" />
                 <Metric label="Subscriptions" value={`${executive.activeSubscriptions}`} hint={`${executive.trialSubscriptions} trial · ${executive.paidSubscriptions} paid`} />
             </div>
         </div>
@@ -55,8 +55,8 @@ export function GrowthCenterPanel({ growth }: { growth: FounderGrowthCenter }) {
                 <Metric label="Organic leads" value={String(growth.organicLeads)} />
                 <Metric label="Paid leads" value={String(growth.paidLeads)} />
                 <Metric label="Referral leads" value={String(growth.referralLeads)} />
-                <Metric label="CAC" value={growth.cacUsd != null ? `$${growth.cacUsd.toLocaleString()}` : "—"} hint="Requires spend data in Supabase" />
-                <Metric label="LTV" value={growth.ltvUsd != null ? `$${growth.ltvUsd.toLocaleString()}` : "—"} />
+                <Metric label="CAC" value={growth.cacUsd != null ? `₹${growth.cacUsd.toLocaleString()}` : "—"} hint="Requires spend data in Supabase" />
+                <Metric label="LTV" value={growth.ltvUsd != null ? `₹${growth.ltvUsd.toLocaleString()}` : "—"} />
                 <Metric label="LTV:CAC" value={growth.ltvToCac != null ? String(growth.ltvToCac) : "—"} />
                 <Metric label="Growth score" value={growth.growthScore != null ? String(growth.growthScore) : "—"} />
             </div>

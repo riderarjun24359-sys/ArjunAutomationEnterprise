@@ -51,7 +51,7 @@ export const PILOT_PROGRAMME = {
         "We are early. Rather than sell you a five-figure engagement on claims alone, we are looking for a small number of founding customers to build the reference base with — in exchange for a reduced setup fee and a testimonial we can publish.",
     slots: 3,
     slotsLabel: "pilot slots available this quarter",
-    setupFee: "$5,000",
+    setupFee: "Contact for INR Pricing",
     setupFeeNote: "setup fee, credited in full against a full engagement if you continue",
     includes: [
         "One real workflow automated end to end — not a demo, not a sandbox",
@@ -73,20 +73,20 @@ export const IMPLEMENTATION_TIERS: PricingTier[] = [
         name: "Essential",
         description: "Core platform for growing organizations ready to unify operations.",
         scope: ["CRM, Projects, Tasks, Finance", "Enterprise identity (MFA, RBAC)", "Standard integrations", "Admin and user training"],
-        indicativeRange: "$45,000 – $75,000",
+        indicativeRange: "Custom Enterprise Pricing — INR",
     },
     {
         name: "Professional",
         description: "Expanded module suite with integrations for multi-department operations.",
         scope: ["Everything in Essential", "HR, Inventory, Documents", "Up to 2 external integrations", "Data migration (agreed volumes)"],
-        indicativeRange: "$75,000 – $120,000",
+        indicativeRange: "Custom Enterprise Pricing — INR",
         highlighted: true,
     },
     {
         name: "Enterprise",
         description: "Full platform with AI workers, complex integrations, and enterprise governance.",
         scope: ["Everything in Professional", "Full module suite + AI workers", "Up to 3 integrations + data migration", "Dedicated project team"],
-        indicativeRange: "$120,000 – $200,000",
+        indicativeRange: "Custom Enterprise Pricing — INR",
     },
 ];
 
@@ -95,20 +95,20 @@ export const MANAGED_SUPPORT_TIERS: PricingTier[] = [
         name: "Standard",
         description: "Business-hours monitoring and support for stable production environments.",
         scope: ["Business-hours support", "Monthly platform updates", "Health reporting", "Email and ticket support"],
-        indicativeRange: "From $2,500/month",
+        indicativeRange: "Contact for INR Pricing",
     },
     {
         name: "Professional",
         description: "Extended coverage with dedicated CSM for growing deployments.",
         scope: ["Extended-hours support", "Dedicated CSM", "Proactive health monitoring", "Quarterly optimization reviews"],
-        indicativeRange: "From $5,000/month",
+        indicativeRange: "Contact for INR Pricing",
         highlighted: true,
     },
     {
         name: "Enterprise",
         description: "Extended-coverage support for mission-critical operations (terms by agreement).",
         scope: ["Extended-hours monitoring and response", "Dedicated support team", "Platform health and readiness endpoints", "Executive business reviews"],
-        indicativeRange: "Custom — contact sales",
+        indicativeRange: "Contact for INR Pricing",
     },
 ];
 

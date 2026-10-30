@@ -117,7 +117,7 @@ export function SalesPipelinePanel({ sales }: { sales: SalesPipeline }) {
     return (
         <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Metric label="Pipeline value" value={`$${sales.pipelineValueUsd}`} />
+                <Metric label="Pipeline value" value={`₹${sales.pipelineValueUsd}`} />
                 <Metric label="Opportunities" value={String(sales.opportunities.length)} />
                 <Metric label="Overdue follow-ups" value={String(sales.overdueFollowUps)} />
                 <Metric label="Win rate" value={sales.winRatePercent != null ? `${sales.winRatePercent}%` : "—"} />
@@ -133,7 +133,7 @@ export function SalesPipelinePanel({ sales }: { sales: SalesPipeline }) {
                             <li key={s.stage} className="rounded-[var(--dos-radius-md)] bg-[var(--dos-surface-tertiary)] p-3 text-sm">
                                 <p className="font-medium">{s.stage}</p>
                                 <p className="mt-1 text-xl font-bold">{s.count}</p>
-                                <p className="text-xs text-[var(--dos-text-tertiary)]">${s.amountUsd}</p>
+                                <p className="text-xs text-[var(--dos-text-tertiary)]">₹${s.amountUsd}</p>
                             </li>
                         ))}
                     </ul>
@@ -269,7 +269,7 @@ export function CustomerLifecyclePanel({ lifecycle }: { lifecycle: CustomerLifec
                                         {r.name} · {r.renewalDate ?? "TBD"}
                                     </span>
                                     <span>
-                                        ${r.valueUsd} · {r.status}
+                                        ₹${r.valueUsd} · {r.status}
                                     </span>
                                 </li>
                             ))}
@@ -288,7 +288,7 @@ export function CustomerLifecyclePanel({ lifecycle }: { lifecycle: CustomerLifec
                                     <span>
                                         {e.name} · {e.type}
                                     </span>
-                                    <span>${e.estimatedValueUsd}</span>
+                                    <span>₹${e.estimatedValueUsd}</span>
                                 </li>
                             ))}
                         </ul>
@@ -303,10 +303,10 @@ export function GrowthAnalyticsPanel({ analytics }: { analytics: GrowthAnalytics
     return (
         <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Metric label="CAC" value={analytics.cacUsd != null ? `$${analytics.cacUsd}` : "—"} />
-                <Metric label="LTV" value={analytics.ltvUsd != null ? `$${analytics.ltvUsd}` : "—"} />
-                <Metric label="MRR" value={`$${analytics.mrrUsd}`} />
-                <Metric label="ARR" value={`$${analytics.arrUsd}`} />
+                <Metric label="CAC" value={analytics.cacUsd != null ? `₹${analytics.cacUsd}` : "—"} />
+                <Metric label="LTV" value={analytics.ltvUsd != null ? `₹${analytics.ltvUsd}` : "—"} />
+                <Metric label="MRR" value={`₹${analytics.mrrUsd}`} />
+                <Metric label="ARR" value={`₹${analytics.arrUsd}`} />
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric
@@ -321,7 +321,7 @@ export function GrowthAnalyticsPanel({ analytics }: { analytics: GrowthAnalytics
                     label="Referral rate"
                     value={analytics.referralRatePercent != null ? `${analytics.referralRatePercent}%` : "—"}
                 />
-                <Metric label="New / Churn MRR" value={`$${analytics.newMrrUsd} / $${analytics.churnMrrUsd}`} />
+                <Metric label="New / Churn MRR" value={`₹${analytics.newMrrUsd} / ₹${analytics.churnMrrUsd}`} />
             </div>
         </div>
     );
@@ -336,7 +336,7 @@ export function FounderGrowthPanel({ founder }: { founder: FounderGrowthDashboar
             </Card>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <Metric label="Daily revenue" value={`$${founder.dailyRevenueUsd}`} />
+                <Metric label="Daily revenue" value={`₹${founder.dailyRevenueUsd}`} />
                 <Metric label="New orgs today" value={String(founder.newOrganizationsToday)} />
                 <Metric label="New orgs (7d)" value={String(founder.newOrganizations7d)} />
                 <Metric label="Active users" value={String(founder.activeUsers)} />

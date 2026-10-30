@@ -285,7 +285,7 @@ export function PayrollPanel({ data }: { data: HrData }) {
                 <SectionHeader title="Payroll cycles" description="Payroll foundation and cycle status" />
                 <div className="mt-6 space-y-3">
                     {data.payrollCycles.length === 0 ? <EmptyState title="No payroll cycles" description="Payroll cycles will appear once configured." /> : data.payrollCycles.map((cycle) => (
-                        <ListCard key={cycle.id} title={cycle.name} subtitle={`${cycle.periodStart} to ${cycle.periodEnd}`} meta={`${cycle.status} • ${cycle.entryCount} entries • $${cycle.totalNetPay.toLocaleString()} net`} />
+                        <ListCard key={cycle.id} title={cycle.name} subtitle={`${cycle.periodStart} to ${cycle.periodEnd}`} meta={`${cycle.status} • ${cycle.entryCount} entries • ₹${cycle.totalNetPay.toLocaleString()} net`} />
                     ))}
                 </div>
             </Card>
@@ -293,7 +293,7 @@ export function PayrollPanel({ data }: { data: HrData }) {
                 <SectionHeader title="Payroll entries" description="Employee compensation entries by cycle" />
                 <div className="mt-6 space-y-3">
                     {data.payrollEntries.length === 0 ? <EmptyState title="No payroll entries" description="Entries appear when payroll is processed." /> : data.payrollEntries.map((entry) => (
-                        <ListCard key={entry.id} title={entry.employeeName} subtitle={`Base $${entry.baseSalary.toLocaleString()} • Allowances $${entry.allowances.toLocaleString()} • Deductions $${entry.deductions.toLocaleString()}`} meta={`Net $${entry.netPay.toLocaleString()} • ${entry.status}`} />
+                        <ListCard key={entry.id} title={entry.employeeName} subtitle={`Base ₹${entry.baseSalary.toLocaleString()} • Allowances ₹${entry.allowances.toLocaleString()} • Deductions ₹${entry.deductions.toLocaleString()}`} meta={`Net ₹${entry.netPay.toLocaleString()} • ${entry.status}`} />
                     ))}
                 </div>
             </Card>

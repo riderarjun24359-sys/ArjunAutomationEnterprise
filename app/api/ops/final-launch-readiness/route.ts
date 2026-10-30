@@ -7,7 +7,7 @@ import { opsLog } from "@/src/lib/ops-monitoring";
 /** Final launch readiness — public summary (no secrets). */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
-    const rate = checkRateLimit(`ops-final-launch:${ip}`, 60, 60_000);
+    const rate = await checkRateLimit(`ops-final-launch:${ip}`, 60, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }

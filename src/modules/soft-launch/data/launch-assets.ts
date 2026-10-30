@@ -24,7 +24,7 @@ export const SOFT_LAUNCH_PLANS: SoftLaunchPlan[] = [
     {
         id: "free_trial",
         name: "Free Trial",
-        priceLabel: "$0",
+        priceLabel: "Free",
         billingNote: "14 days · no card required",
         description: "Explore the full workspace with standard usage limits.",
         limits: { users: "5", projects: "3", storage: "2 GB", apiCalls: "10k / month" },
@@ -34,7 +34,7 @@ export const SOFT_LAUNCH_PLANS: SoftLaunchPlan[] = [
     {
         id: "starter",
         name: "Starter",
-        priceLabel: "$149",
+        priceLabel: "Contact for INR Pricing",
         billingNote: "per organization / month",
         description: "For small teams consolidating CRM and delivery.",
         limits: { users: "15", projects: "25", storage: "25 GB", apiCalls: "100k / month" },
@@ -44,7 +44,7 @@ export const SOFT_LAUNCH_PLANS: SoftLaunchPlan[] = [
     {
         id: "professional",
         name: "Professional",
-        priceLabel: "$499",
+        priceLabel: "Contact for INR Pricing",
         billingNote: "per organization / month",
         description: "For growing companies running multi-module operations.",
         highlighted: true,
@@ -61,7 +61,7 @@ export const SOFT_LAUNCH_PLANS: SoftLaunchPlan[] = [
     {
         id: "enterprise",
         name: "Enterprise",
-        priceLabel: "Custom",
+        priceLabel: "Custom Enterprise Pricing — INR",
         billingNote: "annual · volume pricing",
         description: "For regulated and multi-entity enterprises.",
         limits: { users: "Unlimited", projects: "Unlimited", storage: "Custom", apiCalls: "Custom" },

@@ -26,9 +26,9 @@ export function SalesOverviewPanel({ data }: { data: SalesData }) {
     return (
         <div className="grid gap-6 xl:grid-cols-2">
             <Card hover><SectionHeader title="Revenue summary" description="Pipeline and closed revenue metrics" /><div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <ListCard title="Pipeline" subtitle={`$${(data.stats?.pipelineValue ?? 0).toLocaleString()} total`} />
-                <ListCard title="Weighted" subtitle={`$${(data.stats?.weightedPipeline ?? 0).toLocaleString()} forecast`} />
-                <ListCard title="Closed Won" subtitle={`$${(data.stats?.closedWonValue ?? 0).toLocaleString()}`} />
+                <ListCard title="Pipeline" subtitle={`₹${(data.stats?.pipelineValue ?? 0).toLocaleString()} total`} />
+                <ListCard title="Weighted" subtitle={`₹${(data.stats?.weightedPipeline ?? 0).toLocaleString()} forecast`} />
+                <ListCard title="Closed Won" subtitle={`₹${(data.stats?.closedWonValue ?? 0).toLocaleString()}`} />
                 <ListCard title="Win Rate" subtitle={`${data.stats?.winRate ?? 0}%`} />
             </div></Card>
             <Card hover><SectionHeader title="Cross-module integration" description="Links to CRM, Finance, Projects, Support, HR, Automation, Analytics, Settings" /><div className="mt-6 space-y-3">
@@ -138,7 +138,7 @@ export function QuotesPanel({ data }: { data: SalesData }) {
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Quotes & proposals" description="Formal pricing proposals" /><div className="mt-6 space-y-3">
                 {data.quotes.length === 0 ? <EmptyState title="No quotes" description="Create quotes for opportunities." /> : data.quotes.map((q) => (
-                    <ListCard key={q.id} title={`${q.quoteNumber} — ${q.title}`} subtitle={`${q.clientName ?? "No client"} • ${q.opportunityNumber ?? "No opp"}`} meta={`$${q.totalAmount.toLocaleString()} • ${q.itemCount} items • ${q.status}${q.validUntil ? ` • Valid until ${new Date(q.validUntil).toLocaleDateString()}` : ""}`} />
+                    <ListCard key={q.id} title={`${q.quoteNumber} — ${q.title}`} subtitle={`${q.clientName ?? "No client"} • ${q.opportunityNumber ?? "No opp"}`} meta={`₹${q.totalAmount.toLocaleString()} • ${q.itemCount} items • ${q.status}${q.validUntil ? ` • Valid until ${new Date(q.validUntil).toLocaleDateString()}` : ""}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Create quote" description="Generate a new proposal" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createQuote(v))}>
@@ -159,7 +159,7 @@ export function ForecastingPanel({ data }: { data: SalesData }) {
         <div className="grid gap-6 xl:grid-cols-2">
             <Card hover><SectionHeader title="Revenue forecasting" description="Pipeline and revenue projections" /><div className="mt-6 space-y-3">
                 {data.forecasts.length === 0 ? <EmptyState title="No forecasts" description="Create revenue forecasts." /> : data.forecasts.map((f) => (
-                    <ListCard key={f.id} title={f.forecastPeriod} subtitle={`Pipeline: $${f.pipelineValue.toLocaleString()} • Weighted: $${f.weightedValue.toLocaleString()}`} meta={`Closed: $${f.closedValue.toLocaleString()} • ${new Date(f.forecastDate).toLocaleDateString()}${f.notes ? ` • ${f.notes}` : ""}`} />
+                    <ListCard key={f.id} title={f.forecastPeriod} subtitle={`Pipeline: ₹${f.pipelineValue.toLocaleString()} • Weighted: ₹${f.weightedValue.toLocaleString()}`} meta={`Closed: ₹${f.closedValue.toLocaleString()} • ${new Date(f.forecastDate).toLocaleDateString()}${f.notes ? ` • ${f.notes}` : ""}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Add forecast" description="Record a revenue forecast" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createForecast(v))}>
@@ -260,7 +260,7 @@ export function TargetsPanel({ data }: { data: SalesData }) {
         <div className="grid gap-6 xl:grid-cols-2">
             <Card hover><SectionHeader title="Sales targets" description="Rep quotas and achievement" /><div className="mt-6 space-y-3">
                 {data.targets.length === 0 ? <EmptyState title="No targets" description="Set sales targets for reps." /> : data.targets.map((t) => (
-                    <ListCard key={t.id} title={t.employeeName} subtitle={`${t.periodLabel}: $${t.achievedAmount.toLocaleString()} / $${t.targetAmount.toLocaleString()}`} meta={`${t.achievementPercent}% achieved • ${t.periodStart} to ${t.periodEnd}`} />
+                    <ListCard key={t.id} title={t.employeeName} subtitle={`${t.periodLabel}: ₹${t.achievedAmount.toLocaleString()} / ₹${t.targetAmount.toLocaleString()}`} meta={`${t.achievementPercent}% achieved • ${t.periodStart} to ${t.periodEnd}`} />
                 ))}
             </div></Card>
             <Card hover><SectionHeader title="Set target" description="Create a sales target" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createTarget(v))}>
@@ -279,7 +279,7 @@ export function CommissionsPanel({ data }: { data: SalesData }) {
     return (
         <Card hover><SectionHeader title="Commissions" description="Sales commission foundation" /><div className="mt-6 space-y-3">
             {data.commissions.length === 0 ? <EmptyState title="No commissions" description="Commissions will appear when deals close." /> : data.commissions.map((c) => (
-                <ListCard key={c.id} title={c.employeeName} subtitle={`${c.opportunityNumber ?? "No opp"} • ${c.commissionRate}% rate`} meta={`$${c.commissionAmount.toLocaleString()} • ${c.status} • ${new Date(c.calculatedAt).toLocaleDateString()}`} />
+                <ListCard key={c.id} title={c.employeeName} subtitle={`${c.opportunityNumber ?? "No opp"} • ${c.commissionRate}% rate`} meta={`₹${c.commissionAmount.toLocaleString()} • ${c.status} • ${new Date(c.calculatedAt).toLocaleDateString()}`} />
             ))}
         </div></Card>
     );
@@ -289,7 +289,7 @@ export function WinLossPanel({ data }: { data: SalesData }) {
     return (
         <Card hover><SectionHeader title="Win/Loss analysis" description="Deal outcome analysis" /><div className="mt-6 space-y-3">
             {data.winLossRecords.length === 0 ? <EmptyState title="No win/loss records" description="Records appear when deals close." /> : data.winLossRecords.map((r) => (
-                <ListCard key={r.id} title={`${r.outcome.toUpperCase()} — ${r.opportunityNumber}`} subtitle={r.opportunityName} meta={`$${r.amount.toLocaleString()} • ${r.reason}${r.competitor ? ` • vs ${r.competitor}` : ""} • ${new Date(r.recordedAt).toLocaleDateString()}`} />
+                <ListCard key={r.id} title={`${r.outcome.toUpperCase()} — ${r.opportunityNumber}`} subtitle={r.opportunityName} meta={`₹${r.amount.toLocaleString()} • ${r.reason}${r.competitor ? ` • vs ${r.competitor}` : ""} • ${new Date(r.recordedAt).toLocaleDateString()}`} />
             ))}
         </div></Card>
     );
@@ -299,11 +299,11 @@ export function SalesReportsPanel({ data }: { data: SalesData }) {
     const report = data.report;
     if (!report) return <EmptyState title="No reports" description="Sales reports will appear once data is available." />;
     const sections = [
-        { title: "Opportunities by stage", rows: report.opportunitiesByStage.map((r) => `${r.stage}: ${r.count} ($${r.value.toLocaleString()})`) },
+        { title: "Opportunities by stage", rows: report.opportunitiesByStage.map((r) => `${r.stage}: ${r.count} (₹${r.value.toLocaleString()})`) },
         { title: "Leads by source", rows: report.leadsBySource.map((r) => `${r.source}: ${r.count}`) },
         { title: "Leads by status", rows: report.leadsByStatus.map((r) => `${r.status}: ${r.count}`) },
-        { title: "Win/Loss breakdown", rows: report.winLossBreakdown.map((r) => `${r.outcome}: ${r.count} ($${r.amount.toLocaleString()})`) },
-        { title: "Forecast trend", rows: report.forecastTrend.map((r) => `${r.period}: $${r.pipeline.toLocaleString()} pipeline, $${r.closed.toLocaleString()} closed`) },
+        { title: "Win/Loss breakdown", rows: report.winLossBreakdown.map((r) => `${r.outcome}: ${r.count} (₹${r.amount.toLocaleString()})`) },
+        { title: "Forecast trend", rows: report.forecastTrend.map((r) => `${r.period}: ₹${r.pipeline.toLocaleString()} pipeline, ₹${r.closed.toLocaleString()} closed`) },
     ];
     return (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

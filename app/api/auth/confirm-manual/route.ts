@@ -16,7 +16,7 @@ import { checkRateLimit } from "@/src/modules/security-center/engine/api-securit
  * never followed into a redirect chain — redirect: manual handles that.
  */
 export async function POST(request: Request) {
-    const rate = checkRateLimit("auth-confirm-manual", 5, 60_000);
+    const rate = await checkRateLimit("auth-confirm-manual", 5, 60_000);
     if (!rate.allowed) {
         return NextResponse.json({ error: "Rate limited. Minute lo muppudu try cheyandi." }, { status: 429 });
     }

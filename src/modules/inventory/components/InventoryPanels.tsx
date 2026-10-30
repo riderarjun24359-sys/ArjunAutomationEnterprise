@@ -100,7 +100,7 @@ export function CatalogPanel({ data }: { data: InventoryData }) {
                                 key={product.id}
                                 title={`${product.sku} — ${product.name}`}
                                 subtitle={`${product.categoryName ?? "Uncategorized"} • ${product.unitOfMeasure}`}
-                                meta={`Stock: ${product.totalStock} • Cost: $${product.unitCost} • Price: $${product.unitPrice} • ${product.status}`}
+                                meta={`Stock: ${product.totalStock} • Cost: ₹${product.unitCost} • Price: ₹${product.unitPrice} • ${product.status}`}
                             />
                         ))
                     )}
@@ -276,7 +276,7 @@ export function PurchaseOrdersPanel({ data }: { data: InventoryData }) {
                                 key={po.id}
                                 title={po.poNumber}
                                 subtitle={`${po.supplierName} • ${po.status}`}
-                                meta={`$${po.totalAmount.toLocaleString()} • ${po.itemCount} items • ${po.financeLinked ? "Finance linked" : "No finance link"} • ${new Date(po.orderDate).toLocaleDateString()}`}
+                                meta={`₹${po.totalAmount.toLocaleString()} • ${po.itemCount} items • ${po.financeLinked ? "Finance linked" : "No finance link"} • ${new Date(po.orderDate).toLocaleDateString()}`}
                             />
                         ))
                     )}
@@ -354,7 +354,7 @@ export function AssetsPanel({ data }: { data: InventoryData }) {
                                 key={asset.id}
                                 title={`${asset.assetTag} — ${asset.name}`}
                                 subtitle={`${asset.category} • S/N: ${asset.serialNumber || "N/A"}`}
-                                meta={`$${asset.purchaseCost.toLocaleString()} • ${asset.warehouseName ?? "No warehouse"} • Project: ${asset.projectName ?? "None"} • Employee: ${asset.employeeName ?? "Unassigned"} • ${asset.status}`}
+                                meta={`₹${asset.purchaseCost.toLocaleString()} • ${asset.warehouseName ?? "No warehouse"} • Project: ${asset.projectName ?? "None"} • Employee: ${asset.employeeName ?? "Unassigned"} • ${asset.status}`}
                             />
                         ))
                     )}
@@ -511,7 +511,7 @@ export function ValuationPanel({ data }: { data: InventoryData }) {
                     data.valuations.map((valuation) => (
                         <ListCard
                             key={valuation.id}
-                            title={`$${valuation.totalValue.toLocaleString()}`}
+                            title={`₹${valuation.totalValue.toLocaleString()}`}
                             subtitle={`${valuation.method} • ${valuation.totalUnits} units`}
                             meta={`${new Date(valuation.valuationDate).toLocaleDateString()}${valuation.notes ? ` • ${valuation.notes}` : ""}`}
                         />
@@ -527,7 +527,7 @@ export function InventoryReportsPanel({ data }: { data: InventoryData }) {
     if (!report) return <EmptyState title="No reports" description="Inventory reports will appear once data is available." />;
 
     const sections = [
-        { title: "Stock by warehouse", rows: report.stockByWarehouse.map((row) => `${row.warehouse}: ${row.units} units ($${row.value.toLocaleString()})`) },
+        { title: "Stock by warehouse", rows: report.stockByWarehouse.map((row) => `${row.warehouse}: ${row.units} units (₹${row.value.toLocaleString()})`) },
         { title: "Movement summary", rows: report.movementSummary.map((row) => `${row.type}: ${row.count}`) },
         { title: "Category distribution", rows: report.categoryDistribution.map((row) => `${row.category}: ${row.products} products`) },
         { title: "Procurement status", rows: report.procurementStatus.map((row) => `${row.status}: ${row.count}`) },

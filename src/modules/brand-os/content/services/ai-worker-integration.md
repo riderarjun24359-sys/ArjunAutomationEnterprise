@@ -75,13 +75,13 @@ Customers receive AI-accelerated delivery without compromising enterprise qualit
 
 | Package | Workers Included | Indicative Range |
 |---------|------------------|------------------|
-| **Starter** | 2 workers (BA + QA) | $25,000 – $40,000 |
-| **Delivery** | 4 workers (BA, Architect, Dev, QA) | $45,000 – $70,000 |
-| **Full Stack** | 6 workers (all roles including DevOps + CS) | $70,000 – $100,000 |
+| **Starter** | 2 workers (BA + QA) | Contact for INR Pricing |
+| **Delivery** | 4 workers (BA, Architect, Dev, QA) | Contact for INR Pricing |
+| **Full Stack** | 6 workers (all roles including DevOps + CS) | Contact for INR Pricing |
 
 - AI compute/usage fees included for first 90 days; ongoing usage per platform plan
 - Knowledge base setup (up to 500 documents): included
-- Additional worker customization: $8,000 – $12,000 per worker
+- Additional worker customization: Contact for INR Pricing per worker
 - 50% at signing, 50% at completion
 
 ---

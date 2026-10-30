@@ -9,7 +9,7 @@ export function InventoryStats({ stats }: InventoryStatsProps) {
     const cards = [
         { title: "Products", value: String(stats?.totalProducts ?? 0), detail: `${stats?.totalStockUnits ?? 0} units in stock`, trend: "up" as const },
         { title: "Warehouses", value: String(stats?.totalWarehouses ?? 0), detail: `${stats?.openTransfers ?? 0} open transfers`, trend: "up" as const },
-        { title: "Inventory Value", value: stats?.inventoryValue ? `$${stats.inventoryValue.toLocaleString()}` : "$0", detail: `${stats?.openAlerts ?? 0} low-stock alerts`, trend: "up" as const, tone: "accent" as const },
+        { title: "Inventory Value", value: stats?.inventoryValue ? `₹${stats.inventoryValue.toLocaleString()}` : "₹0", detail: `${stats?.openAlerts ?? 0} low-stock alerts`, trend: "up" as const, tone: "accent" as const },
         { title: "Assets", value: String(stats?.activeAssets ?? 0), detail: `${stats?.pendingPurchaseOrders ?? 0} pending POs`, trend: "up" as const },
     ];
 

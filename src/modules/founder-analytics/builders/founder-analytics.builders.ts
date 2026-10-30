@@ -383,7 +383,7 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
             category: "revenue",
             severity: "high",
             title: "Revenue drop detected",
-            detail: `MRR trend is down at $${executive.mrrUsd.toLocaleString()} vs prior snapshot.`,
+            detail: `MRR trend is down at ₹${executive.mrrUsd.toLocaleString()} vs prior snapshot.`,
             detectedAt: now,
         });
     }
@@ -395,7 +395,7 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
             category: "payment",
             severity: "critical",
             title: "Failed payment",
-            detail: `$${money(p.amount_usd).toLocaleString()} — ${p.failure_reason || p.payment_status}`,
+            detail: `₹${money(p.amount_usd).toLocaleString()} — ${p.failure_reason || p.payment_status}`,
             detectedAt: p.attempted_at || now,
         });
     }
@@ -470,7 +470,7 @@ export function buildAdvisorBriefing(
     const growthOpportunities: string[] = [];
     if (customers.expansionOpportunities.length) {
         const value = customers.expansionOpportunities.reduce((s, e) => s + e.estimatedValueUsd, 0);
-        growthOpportunities.push(`$${value.toLocaleString()} expansion pipeline across ${customers.expansionOpportunities.length} opportunities.`);
+        growthOpportunities.push(`₹${value.toLocaleString()} expansion pipeline across ${customers.expansionOpportunities.length} opportunities.`);
     }
     if (growth.referralLeads > 0) growthOpportunities.push(`Referral channel delivering ${growth.referralLeads} leads — amplify referral program.`);
     if (growth.organicLeads > growth.paidLeads) growthOpportunities.push("Organic acquisition outpaces paid — double down on SEO/content.");
@@ -483,18 +483,18 @@ export function buildAdvisorBriefing(
         revenueRecommendations.push("Improve trial→paid conversion with onboarding nudges and upgrade CTAs.");
     }
     if (executive.cashFlowUsd < 0) revenueRecommendations.push("Cash flow negative vs outstanding — accelerate collections.");
-    if (growth.ltvUsd) revenueRecommendations.push(`Blended LTV ≈ $${growth.ltvUsd.toLocaleString()} — protect retention to compound ARR.`);
+    if (growth.ltvUsd) revenueRecommendations.push(`Blended LTV ≈ ₹${growth.ltvUsd.toLocaleString()} — protect retention to compound ARR.`);
     if (!revenueRecommendations.length) revenueRecommendations.push("Maintain current pricing discipline and expand top healthy accounts.");
 
     const dailyBriefing = [
-        `MRR $${executive.mrrUsd.toLocaleString()} (${executive.mrrTrend}) · ARR $${executive.arrUsd.toLocaleString()}.`,
+        `MRR ₹${executive.mrrUsd.toLocaleString()} (${executive.mrrTrend}) · ARR ₹${executive.arrUsd.toLocaleString()}.`,
         `Active orgs ${executive.activeOrganizations} · new (30d) ${executive.newOrganizations}.`,
         `Retention ${executive.retentionPercent}% · churn ${executive.churnRatePercent}%.`,
         critical ? `${critical} priority alerts open.` : "No critical founder alerts.",
     ].join(" ");
 
     const weeklyExecutiveSummary = [
-        `Weekly snapshot: forecast ARR $${executive.revenueForecastUsd.toLocaleString()}.`,
+        `Weekly snapshot: forecast ARR ₹${executive.revenueForecastUsd.toLocaleString()}.`,
         `Growth score ${growth.growthScore ?? "n/a"} · landing conversion ${growth.landingConversionRatePercent}%.`,
         `Avg customer health ${customers.averageHealthScore}.`,
         `NPS ${executive.npsScore ?? "n/a"} · CSAT ${executive.customerSatisfactionAvg ?? "n/a"}.`,
@@ -520,10 +520,10 @@ export function buildBoardRoom(
 ): BoardRoomSnapshot {
     const generatedAt = new Date().toISOString();
     const investorKpis = [
-        { label: "MRR", value: `$${executive.mrrUsd.toLocaleString()}`, note: `Trend ${executive.mrrTrend}` },
-        { label: "ARR", value: `$${executive.arrUsd.toLocaleString()}` },
-        { label: "ARR Forecast", value: `$${executive.revenueForecastUsd.toLocaleString()}` },
-        { label: "Net cash position signal", value: `$${executive.cashFlowUsd.toLocaleString()}`, note: "Collected − outstanding" },
+        { label: "MRR", value: `₹${executive.mrrUsd.toLocaleString()}`, note: `Trend ${executive.mrrTrend}` },
+        { label: "ARR", value: `₹${executive.arrUsd.toLocaleString()}` },
+        { label: "ARR Forecast", value: `₹${executive.revenueForecastUsd.toLocaleString()}` },
+        { label: "Net cash position signal", value: `₹${executive.cashFlowUsd.toLocaleString()}`, note: "Collected − outstanding" },
         { label: "Active organizations", value: String(executive.activeOrganizations) },
         { label: "Logo retention", value: `${executive.retentionPercent}%` },
     ];
@@ -531,8 +531,8 @@ export function buildBoardRoom(
     const saasMetrics = [
         { label: "Trial → Paid", value: `${executive.trialToPaidConversionPercent}%` },
         { label: "Churn", value: `${executive.churnRatePercent}%` },
-        { label: "LTV", value: growth.ltvUsd != null ? `$${growth.ltvUsd.toLocaleString()}` : "n/a" },
-        { label: "CAC", value: growth.cacUsd != null ? `$${growth.cacUsd.toLocaleString()}` : "n/a (no spend rows)" },
+        { label: "LTV", value: growth.ltvUsd != null ? `₹${growth.ltvUsd.toLocaleString()}` : "n/a" },
+        { label: "CAC", value: growth.cacUsd != null ? `₹${growth.cacUsd.toLocaleString()}` : "n/a (no spend rows)" },
         { label: "LTV:CAC", value: growth.ltvToCac != null ? String(growth.ltvToCac) : "n/a" },
         { label: "NPS", value: executive.npsScore != null ? String(executive.npsScore) : "n/a" },
         { label: "CSAT", value: executive.customerSatisfactionAvg != null ? String(executive.customerSatisfactionAvg) : "n/a" },
@@ -548,7 +548,7 @@ export function buildBoardRoom(
 
     const monthlyBusinessSnapshot = [
         `Arjun Automation monthly snapshot @ ${generatedAt.slice(0, 10)}.`,
-        `ARR $${executive.arrUsd.toLocaleString()} · MRR $${executive.mrrUsd.toLocaleString()} · Forecast $${executive.revenueForecastUsd.toLocaleString()}.`,
+        `ARR ₹${executive.arrUsd.toLocaleString()} · MRR ₹${executive.mrrUsd.toLocaleString()} · Forecast ₹${executive.revenueForecastUsd.toLocaleString()}.`,
         `Customers: active orgs ${executive.activeOrganizations}, new ${executive.newOrganizations}, health ${customers.averageHealthScore}.`,
         `Growth: organic ${growth.organicLeads} / paid ${growth.paidLeads} / referral ${growth.referralLeads}.`,
         advisor.weeklyExecutiveSummary,

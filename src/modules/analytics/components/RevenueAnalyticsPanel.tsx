@@ -25,10 +25,10 @@ export function RevenueAnalyticsPanel({ revenue }: RevenueAnalyticsPanelProps) {
                 <SectionHeader title="Revenue summary" description="Paid, outstanding, and expense totals" />
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                     {[
-                        { label: "Paid revenue", value: `$${revenue.paidTotal.toLocaleString()}` },
-                        { label: "Outstanding", value: `$${revenue.outstanding.toLocaleString()}` },
-                        { label: "Payments received", value: `$${revenue.paymentTotal.toLocaleString()}` },
-                        { label: "Total expenses", value: `$${revenue.expenseTotal.toLocaleString()}` },
+                        { label: "Paid revenue", value: `₹${revenue.paidTotal.toLocaleString()}` },
+                        { label: "Outstanding", value: `₹${revenue.outstanding.toLocaleString()}` },
+                        { label: "Payments received", value: `₹${revenue.paymentTotal.toLocaleString()}` },
+                        { label: "Total expenses", value: `₹${revenue.expenseTotal.toLocaleString()}` },
                     ].map((item) => (
                         <div key={item.label} className="rounded-2xl border border-slate-200 px-4 py-4 dark:border-slate-800">
                             <p className="text-sm text-slate-500">{item.label}</p>

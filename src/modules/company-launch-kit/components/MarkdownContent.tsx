@@ -15,11 +15,11 @@ function renderInline(text: string) {
         const isExternal = href.startsWith("http");
         parts.push(
             isExternal ? (
-                <a key={match.index} href={href} className="text-orange-500 hover:text-orange-600" target="_blank" rel="noopener noreferrer">
+                <a key={match.index} href={href} className="text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]" target="_blank" rel="noopener noreferrer">
                     {match[1]}
                 </a>
             ) : (
-                <Link key={match.index} href={href} className="text-orange-500 hover:text-orange-600">
+                <Link key={match.index} href={href} className="text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                     {match[1]}
                 </Link>
             ),
@@ -45,7 +45,7 @@ export function MarkdownContent({ content }: { content: string }) {
 
                 if (trimmed.startsWith("## ")) {
                     return (
-                        <h2 key={i} className="mt-8 text-xl font-semibold text-orange-950">
+                        <h2 key={i} className="mt-8 text-xl font-semibold text-[var(--premium-fg)]">
                             {trimmed.slice(3)}
                         </h2>
                     );
@@ -53,7 +53,7 @@ export function MarkdownContent({ content }: { content: string }) {
 
                 if (trimmed.startsWith("**") && trimmed.endsWith("**")) {
                     return (
-                        <p key={i} className="font-semibold text-orange-950">
+                        <p key={i} className="font-semibold text-[var(--premium-fg)]">
                             {trimmed.slice(2, -2)}
                         </p>
                     );

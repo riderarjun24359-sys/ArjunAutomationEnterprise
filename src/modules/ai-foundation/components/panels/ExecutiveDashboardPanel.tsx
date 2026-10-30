@@ -26,7 +26,7 @@ export function ExecutiveDashboardPanel() {
                 </Card>
                 <Card hover>
                     <p className={`text-sm font-medium ${AI_FOUNDATION_THEME.text}`}>Total Cost</p>
-                    <p className="mt-1 text-2xl font-bold text-[var(--dos-text-primary)]">{loading ? "—" : `$${dashboard.totalCostUsd.toFixed(2)}`}</p>
+                    <p className="mt-1 text-2xl font-bold text-[var(--dos-text-primary)]">{loading ? "—" : `₹${dashboard.totalCostUsd.toFixed(2)}`}</p>
                 </Card>
             </div>
             <Card>

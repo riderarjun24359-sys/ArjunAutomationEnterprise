@@ -82,7 +82,7 @@ export function HrmsWorkforceOsPage() {
         { label: "Pending Leave", value: String(snapshot.stats.pendingLeave) },
         { label: "Open Roles", value: String(snapshot.stats.openRoles) },
         { label: "Candidates", value: String(snapshot.stats.candidates) },
-        { label: "Payroll Net", value: `$${Math.round(snapshot.stats.payrollNetUsd).toLocaleString()}` },
+        { label: "Payroll Net", value: `₹${Math.round(snapshot.stats.payrollNetUsd).toLocaleString()}` },
         { label: "Assets Assigned", value: String(snapshot.stats.assetsAssigned) },
     ];
 

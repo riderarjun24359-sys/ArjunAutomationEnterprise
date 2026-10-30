@@ -1,13 +1,13 @@
 export const LAUNCH_KIT_THEME = {
-    primary: "orange-500",
-    primaryHover: "orange-600",
-    ring: "orange-500/20",
-    text: "text-orange-500",
-    textLight: "text-orange-600",
-    bg: "bg-orange-500",
-    bgHover: "hover:bg-orange-600",
-    border: "border-orange-200",
-    surface: "bg-white",
+    primary: "text-[var(--dos-brand-primary)]",
+    primaryHover: "hover:text-[var(--dos-brand-primary-hover)]",
+    ring: "ring-[color-mix(in_oklab,var(--dos-brand-primary)_20%,transparent)]",
+    text: "text-[var(--dos-brand-primary)]",
+    textLight: "text-[var(--dos-brand-primary-hover)]",
+    bg: "bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)]",
+    bgHover: "hover:bg-[color-mix(in_oklab,var(--dos-brand-primary)_8%,transparent)]",
+    border: "border-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]",
+    surface: "bg-[var(--premium-bg-secondary)]",
 } as const;
 
 export const LAUNCH_KIT_SECTIONS = [

@@ -64,7 +64,7 @@ export function AiProviderCenterPanel({ aiProviders }: { aiProviders: AiProvider
                 <Metric label="OpenAI provider" value={aiProviders.openaiConfigured ? "Configured" : "Pending"} />
                 <Metric label="Multi-provider" value={aiProviders.multiProviderReady ? "Ready" : "Single"} />
                 <Metric label="Usage tracking" value={aiProviders.totalUsage} />
-                <Metric label="Cost tracking" value={`$${aiProviders.totalCostUsd}`} />
+                <Metric label="Cost tracking" value={`₹${aiProviders.totalCostUsd}`} />
             </div>
             <Card>
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">AI Provider Center</h3>
@@ -88,7 +88,7 @@ export function AiProviderCenterPanel({ aiProviders }: { aiProviders: AiProvider
                         r.status,
                         String(r.usageRequests),
                         String(r.errorCount),
-                        `$${r.estimatedCostUsd}`,
+                        `₹${r.estimatedCostUsd}`,
                         String(r.rateLimitRpm),
                     ])}
                     empty="No AI providers"
@@ -426,7 +426,7 @@ export function ExecutiveIntegrationPanel({ executive }: { executive: ExecutiveI
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric label="AI usage" value={executive.aiUsage} />
                 <Metric label="Integration health" value={executive.integrationHealth ?? "—"} />
-                <Metric label="Cost overview" value={`$${executive.costOverviewUsd}`} />
+                <Metric label="Cost overview" value={`₹${executive.costOverviewUsd}`} />
                 <Metric label="Failure alerts" value={executive.failureAlerts} />
             </div>
             <Card>

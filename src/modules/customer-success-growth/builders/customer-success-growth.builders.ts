@@ -456,7 +456,7 @@ export function buildFounderDailyBrief(data: CustomerSuccessGrowthRawData): Foun
 
     const summaryParts = [
         `New orgs today ${newOrganizationsToday} (7d ${newOrganizations7d}).`,
-        `MRR $${latestMrr?.mrr_usd ?? 0} (new $${latestMrr?.new_mrr_usd ?? 0}).`,
+        `MRR ₹${latestMrr?.mrr_usd ?? 0} (new ₹${latestMrr?.new_mrr_usd ?? 0}).`,
         `Open support ${openSupportTickets}.`,
         `Adoption ${productUsageAdoptionPercent ?? "n/a"}%.`,
         `Risks needing attention ${risks.length}.`,

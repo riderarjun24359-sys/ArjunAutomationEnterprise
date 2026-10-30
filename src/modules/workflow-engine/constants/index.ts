@@ -64,11 +64,11 @@ export const DWE_PERMISSIONS = ["dwe.view", "dwe.manage", "dwe.approve", "dwe.ad
 
 
 export const DWE_THEME = {
-    primary: "orange-600",
-    primaryHover: "orange-500",
-    ring: "orange-500/20",
-    text: "text-orange-600",
-    textDark: "dark:text-orange-400",
-    bg: "bg-orange-600",
-    bgHover: "hover:bg-orange-500",
+    primary: "text-[var(--dos-brand-primary)]",
+    primaryHover: "hover:text-[var(--dos-brand-primary-hover)]",
+    ring: "ring-[color-mix(in_oklab,var(--dos-brand-primary)_20%,transparent)]",
+    text: "text-[var(--dos-brand-primary)]",
+    textDark: "dark:text-[var(--dos-brand-primary-hover)]",
+    bg: "bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)]",
+    bgHover: "hover:bg-[color-mix(in_oklab,var(--dos-brand-primary)_8%,transparent)]",
 } as const;

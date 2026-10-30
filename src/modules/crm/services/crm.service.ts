@@ -129,11 +129,11 @@ export class CrmService {
         return opportunities.map((opp) => ({
             id: opp.id,
             client: opp.name,
-            value: `$${Number(opp.amount ?? 0).toLocaleString()}`,
+            value: `₹${Number(opp.amount ?? 0).toLocaleString()}`,
             closeDate: opp.expected_close_date ?? "—",
             stage: (opp.status as DealSummary["stage"]) || "discovery",
             probability: Number(opp.probability ?? 0),
-            revenueMetric: `Weighted $${Math.round(Number(opp.amount ?? 0) * (Number(opp.probability ?? 0) / 100)).toLocaleString()}`,
+            revenueMetric: `Weighted ₹${Math.round(Number(opp.amount ?? 0) * (Number(opp.probability ?? 0) / 100)).toLocaleString()}`,
         }));
     }
 

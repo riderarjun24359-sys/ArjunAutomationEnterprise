@@ -48,7 +48,7 @@ export const AI_DELIVERY_MARKETING = {
      * CREDIBILITY NOTE
      * ----------------
      * These lines previously promised an "AI-generated first version within
-     * hours" on the same site that quotes $45,000–$200,000 implementation
+     * hours" on the same site that quotes Contact for INR Pricing implementation
      * fees. Buyers read the pairing as either a pricing error or a toy, and it
      * actively undercut the enterprise positioning.
      *

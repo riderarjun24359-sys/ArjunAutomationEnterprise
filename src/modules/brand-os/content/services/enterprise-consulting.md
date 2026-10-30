@@ -71,9 +71,9 @@ Every engagement follows the five-step AI-first delivery model. Delivery roadmap
 
 | Engagement | Indicative Range |
 |------------|------------------|
-| **Rapid Assessment** | $15,000 – $25,000 |
-| **Operating Model Design** | $35,000 – $60,000 |
-| **Full Transformation Advisory** | $60,000 – $100,000 |
+| **Rapid Assessment** | Contact for INR Pricing |
+| **Operating Model Design** | Contact for INR Pricing |
+| **Full Transformation Advisory** | Contact for INR Pricing |
 
 - Billed weekly or at milestones (agreed in SOW)
 - Travel expenses billed at cost if on-site required

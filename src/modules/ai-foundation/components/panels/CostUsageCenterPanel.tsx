@@ -13,7 +13,7 @@ export function CostUsageCenterPanel() {
             <Card>
                 <p className={`text-sm font-medium ${AI_FOUNDATION_THEME.text}`}>Total Cost</p>
                 <p className="mt-1 text-3xl font-bold text-[var(--dos-text-primary)]">
-                    {loading ? "—" : `$${state.dashboard.totalCostUsd.toFixed(2)}`}
+                    {loading ? "—" : `₹${state.dashboard.totalCostUsd.toFixed(2)}`}
                 </p>
             </Card>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

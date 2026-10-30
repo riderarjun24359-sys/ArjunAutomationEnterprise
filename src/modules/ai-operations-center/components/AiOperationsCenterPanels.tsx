@@ -108,7 +108,7 @@ export function AiAgentMonitorPanel({ agents }: { agents: AiAgentMonitor }) {
                 <Metric label="Active agents" value={agents.activeAgents} />
                 <Metric label="Success/failure rate" value={agents.avgSuccessRate == null ? "—" : `${agents.avgSuccessRate}%`} />
                 <Metric label="Token usage" value={agents.totalTokenUsage.toLocaleString()} />
-                <Metric label="Cost tracking" value={`$${agents.totalCostUsd}`} />
+                <Metric label="Cost tracking" value={`₹${agents.totalCostUsd}`} />
             </div>
             <Card>
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">AI Agent Monitor</h3>
@@ -124,7 +124,7 @@ export function AiAgentMonitorPanel({ agents }: { agents: AiAgentMonitor }) {
                         String(r.runningTasks),
                         r.successRate == null ? "—" : String(r.successRate),
                         String(r.tokenUsage),
-                        `$${r.estimatedCostUsd}`,
+                        `₹${r.estimatedCostUsd}`,
                     ])}
                     empty="No AI agents"
                 />

@@ -28,7 +28,7 @@ export function ClientAnalyticsPanel({ clients }: ClientAnalyticsPanelProps) {
                         { label: "Active clients", value: clients.activeClients },
                         { label: "At-risk clients", value: clients.atRiskClients },
                         { label: "Qualified leads", value: clients.leads },
-                        { label: "Portfolio revenue", value: `$${clients.totalRevenue.toLocaleString()}` },
+                        { label: "Portfolio revenue", value: `₹${clients.totalRevenue.toLocaleString()}` },
                     ].map((item) => (
                         <div key={item.label} className="rounded-2xl border border-slate-200 px-4 py-4 dark:border-slate-800">
                             <p className="text-sm text-slate-500">{item.label}</p>

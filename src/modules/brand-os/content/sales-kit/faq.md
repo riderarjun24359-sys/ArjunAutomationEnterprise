@@ -74,7 +74,7 @@ A: 30-day hypercare included. Managed Support available as ongoing retainer with
 A: Professional services (fixed scope) + annual platform subscription. See Service Library for indicative ranges.
 
 **Q: What's the typical total investment?**  
-A: Mid-market Platform Implementation: $75K–$120K services + $24K–$60K/year subscription. Varies by scope.
+A: Mid-market Platform Implementation: Contact for INR Pricing services + Contact for INR Pricing/year subscription. Varies by scope.
 
 **Q: Are there hidden fees?**  
 A: No. Scope, pricing, and exclusions are documented in the proposal and SOW. Change orders for out-of-scope work only.

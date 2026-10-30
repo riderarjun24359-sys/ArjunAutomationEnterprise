@@ -28,7 +28,7 @@ export function ClientStats({ stats }: ClientStatsProps) {
         },
         {
             title: "Portfolio Revenue",
-            value: stats?.totalRevenue ?? "$0",
+            value: stats?.totalRevenue ?? "₹0",
             detail: `${stats?.inactiveClients ?? 0} inactive`,
             trend: "up" as const,
         },

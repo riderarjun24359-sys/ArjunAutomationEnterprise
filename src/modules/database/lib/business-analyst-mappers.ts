@@ -275,7 +275,7 @@ export const buildProposalPayload = (organizationId: string, input: CreatePropos
 });
 
 export const buildCostEstimatePayload = (organizationId: string, input: CreateCostEstimateInput) => ({
-    organization_id: organizationId, engagement_id: input.engagementId, estimate_key: input.estimateKey, line_items: input.lineItems ?? [], total_amount: input.totalAmount, currency: input.currency ?? "USD", assumptions: input.assumptions ?? "",
+    organization_id: organizationId, engagement_id: input.engagementId, estimate_key: input.estimateKey, line_items: input.lineItems ?? [], total_amount: input.totalAmount, currency: input.currency ?? "INR", assumptions: input.assumptions ?? "",
 });
 
 export const buildTimelineEstimatePayload = (organizationId: string, input: CreateTimelineEstimateInput) => ({
