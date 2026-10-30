@@ -1,8 +1,8 @@
 :root {
-    /* Brand - Arjun OS Identity (Engineered Precision) */
-    --dos-brand-primary: #ea580c; /* Arjun orange — deepened for contrast on light surfaces */
-    --dos-brand-primary-hover: #c2410c;
-    --dos-brand-accent: #ff6a00; /* Brand orange */
+    /* Brand - Arjun Automation OS Identity (Engineered Precision) */
+    --dos-brand-primary: #2563EB; /* Electric blue — primary brand */
+    --dos-brand-primary-hover: #3B82F6;
+    --dos-brand-accent: #8B5CF6; /* Violet accent */
     
     /* Atmosphere - Precise, not generic */
     --dos-mesh-1: rgba(255, 106, 0, 0.06);
@@ -127,17 +127,17 @@ body {
        here, mirroring src/modules/company-launch-kit/design-system/premium.css.
        Values are chosen for a DARK surface: shades used as text (950) go light,
        shades used as surfaces (50) go dark. */
-    --color-orange-50: #1c1006;
-    --color-orange-100: #ffe3cc;
-    --color-orange-200: #7a3d10;
-    --color-orange-300: #ffbe8f;
-    --color-orange-400: #ff9d5c;
-    --color-orange-500: #ff7a1f;
-    --color-orange-600: #ff8a3d;
-    --color-orange-700: #ff6a00;
-    --color-orange-800: #ffc59b;
-    --color-orange-900: #ffe0c9;
-    --color-orange-950: #f4f4f5;
+    --color-orange-50: #0b1120;
+    --color-orange-100: #10203f;
+    --color-orange-200: #1e3a5f;
+    --color-orange-300: #93c5fd;
+    --color-orange-400: #60a5fa;
+    --color-orange-500: #3b82f6;
+    --color-orange-600: #60a5fa;
+    --color-orange-700: #bfdbfe;
+    --color-orange-800: #dbeafe;
+    --color-orange-900: #eff6ff;
+    --color-orange-950: #f8fafc;
 
     /* Radii — mirrors src/design-os/tokens/radii.ts */
     --dos-radius-none: 0;
@@ -185,10 +185,10 @@ body {
     --dos-glass-shadow: var(--dos-shadow-lg);
 
     /* Semantic colour */
-    --dos-accent: #c2410c;
+    --dos-accent: #8B5CF6;
     --dos-accent-contrast: #ffffff;
-    --dos-brand-secondary: #0ea5e9;
-    --dos-ai-accent: #7c3aed;
+    --dos-brand-secondary: #0EA5E9;
+    --dos-ai-accent: #8B5CF6;
     --dos-success: #16a34a;
     --dos-success-muted: rgba(22, 163, 74, 0.10);
     --dos-warning: #d97706;
@@ -218,21 +218,21 @@ body {
        here, mirroring src/modules/company-launch-kit/design-system/premium.css.
        Values are chosen for a DARK surface: shades used as text (950) go light,
        shades used as surfaces (50) go dark. */
-    --color-orange-50: #1c1006;
-    --color-orange-100: #ffe3cc;
-    --color-orange-200: #7a3d10;
-    --color-orange-300: #ffbe8f;
-    --color-orange-400: #ff9d5c;
-    --color-orange-500: #ff7a1f;
-    --color-orange-600: #ff8a3d;
-    --color-orange-700: #ff6a00;
-    --color-orange-800: #ffc59b;
-    --color-orange-900: #ffe0c9;
-    --color-orange-950: #f4f4f5;
+    --color-orange-50: #0b1120;
+    --color-orange-100: #10203f;
+    --color-orange-200: #1e3a5f;
+    --color-orange-300: #93c5fd;
+    --color-orange-400: #60a5fa;
+    --color-orange-500: #3b82f6;
+    --color-orange-600: #60a5fa;
+    --color-orange-700: #bfdbfe;
+    --color-orange-800: #dbeafe;
+    --color-orange-900: #eff6ff;
+    --color-orange-950: #f8fafc;
 
     /* Borders */
     --dos-border-strong: rgba(241, 245, 249, 0.20);
-    --dos-border-focus: #ff8a3d;
+    --dos-border-focus: #60a5fa;
 
     /* Elevation — deeper, blacker in dark theme */
     --dos-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -248,8 +248,8 @@ body {
     /* Semantic colour */
     --dos-accent: #ff7a1f;
     --dos-accent-contrast: #0b1120;
-    --dos-brand-secondary: #38bdf8;
-    --dos-ai-accent: #a78bfa;
+    --dos-brand-secondary: #0EA5E9;
+    --dos-ai-accent: #8B5CF6;
     --dos-success: #4ade80;
     --dos-success-muted: rgba(74, 222, 128, 0.14);
     --dos-warning: #fbbf24;

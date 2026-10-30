@@ -77,7 +77,7 @@ export function buildOrganizationJsonLd() {
         name: LAUNCH_KIT_SEO.siteName,
         legalName: COMPANY_PROFILE.legalName,
         url: LAUNCH_KIT_SEO.siteUrl,
-        logo: `${LAUNCH_KIT_SEO.siteUrl}/brand/logos/primary-horizontal.svg`,
+        logo: `${LAUNCH_KIT_SEO.siteUrl}/brand/logos/horizontal-blue.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
         slogan: COMPANY_PROFILE.tagline,
         email: COMPANY_PROFILE.emails.sales,

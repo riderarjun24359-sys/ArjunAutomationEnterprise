@@ -62,7 +62,7 @@ export function BrandLogo({ variant = "secondary", className, priority = false, 
 
 /** Inline SVG symbol for tight spaces — zero external request */
 export function BrandSymbol({ className, light = false }: { className?: string; light?: boolean }) {
-    const stroke = light ? "#FFFFFF" : "#4338CA";
+    const stroke = light ? "#FFFFFF" : "#2563EB";
     return (
         <svg
             viewBox="0 0 48 48"

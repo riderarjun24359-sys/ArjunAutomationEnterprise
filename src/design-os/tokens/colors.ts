@@ -1,18 +1,43 @@
+/**
+ * Unified brand color tokens — Arjun Automation OS
+ *
+ * Single source of truth for the entire product (marketing site +
+ * authenticated app shell). Replaces the previous three-way split:
+ *   - design-os.css   → orange (#ea580c)
+ *   - colors.ts       → cyan (#38bdf8)
+ *   - premium.css     → blue/violet (#3b82f6 / #8b5cf6)
+ *
+ * Palette direction: deep slate surfaces (enterprise-grade, professional)
+ * with a vibrant electric blue primary and violet accent. Works in both
+ * light and dark modes via the CSS custom properties in design-os.css.
+ */
+
 export const brand = {
-    primary: "#38bdf8",
-    primaryHover: "#7dd3fc",
-    primaryMuted: "#38bdf8",
-    secondary: "#06b6d4",
-    secondaryHover: "#0891b2",
-    accent: "#6366f1",
-    accentHover: "#4f46e5",
+    /** Primary brand — electric blue. Used for primary CTAs, active states, links. */
+    primary: "#2563EB",
+    primaryHover: "#3B82F6",
+    primaryActive: "#1D4ED8",
+    primaryMuted: "rgba(37, 99, 235, 0.12)",
+
+    /** Accent — violet. Used for secondary highlights, AI-related accents. */
+    accent: "#8B5CF6",
+    accentHover: "#A78BFA",
+    accentMuted: "rgba(139, 92, 246, 0.12)",
+
+    /** Secondary — slate/cyan for supporting elements. */
+    secondary: "#0EA5E9",
+    secondaryHover: "#38BDF8",
+    secondaryMuted: "rgba(14, 165, 233, 0.10)",
+
+    /** Restrained metallic gold for "premium" moments (badges, highlights). */
+    gold: "#D4AF37",
 } as const;
 
 export const semantic = {
-    success: { DEFAULT: "#10b981", muted: "#d1fae5", foreground: "#065f46" },
-    warning: { DEFAULT: "#f59e0b", muted: "#fef3c7", foreground: "#92400e" },
-    error: { DEFAULT: "#ef4444", muted: "#fee2e2", foreground: "#991b1b" },
-    info: { DEFAULT: "#3b82f6", muted: "#dbeafe", foreground: "#1e40af" },
+    success: { DEFAULT: "#10B981", muted: "#D1FAE5", foreground: "#065F46" },
+    warning: { DEFAULT: "#F59E0B", muted: "#FEF3C7", foreground: "#92400E" },
+    error: { DEFAULT: "#EF4444", muted: "#FEE2E2", foreground: "#991B1B" },
+    info: { DEFAULT: "#2563EB", muted: "#DBEAFE", foreground: "#1E40AF" },
 } as const;
 
 export const surface = {

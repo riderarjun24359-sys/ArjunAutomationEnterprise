@@ -171,8 +171,12 @@
     "vitest": "^4.1.12"
   },
   "engines": {
-    "node": ">=22.22.1",
+    "node": "^26.10.0",
     "npm": ">=10"
+  },
+  "allowScripts": {
+    "core-js": false,
+    "unrs-resolver": true
   },
   "overrides": {
     "postcss": "8.5.25",

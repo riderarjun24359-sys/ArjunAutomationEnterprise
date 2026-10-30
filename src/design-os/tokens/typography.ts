@@ -1,6 +1,15 @@
+/**
+ * Unified typography tokens — Arjun Automation OS
+ *
+ * Single font family across the product: Inter. Clean, highly legible,
+ * enterprise-grade, and already loaded by the marketing layout via
+ * next/font/google. Geist references removed to eliminate the Inter/Geist
+ * split that caused inconsistent rendering between marketing and app shell.
+ */
+
 export const fontFamily = {
-    sans: "'Geist', system-ui, sans-serif",
-    display: "'Geist', system-ui, sans-serif",
+    sans: "'Inter', system-ui, sans-serif",
+    display: "'Inter', system-ui, sans-serif",
     mono: "'JetBrains Mono', monospace",
 } as const;
 
@@ -14,7 +23,6 @@ export const fontSize = {
     caption: { size: "0.75rem", lineHeight: "1.4", letterSpacing: "0.05em" },
     mono: { size: "0.85rem", lineHeight: "1.5", letterSpacing: "0" },
 } as const;
-
 
 export const fontWeight = {
     light: "300",

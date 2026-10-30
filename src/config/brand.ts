@@ -4,7 +4,7 @@ export const brandConfig = {
     logo: {
         symbol: "/brand/logos/symbol-only.svg",
         monogram: "/brand/logos/monogram.svg",
-        horizontal: "/brand/logos/primary-horizontal.svg",
+        horizontal: "/brand/logos/horizontal-blue.svg",
         vertical: "/brand/logos/primary-vertical.svg",
     },
     colors: {
