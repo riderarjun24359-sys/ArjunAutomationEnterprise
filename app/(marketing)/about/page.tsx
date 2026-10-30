@@ -20,7 +20,7 @@ export default function AboutPage() {
             >
                 <div className="mx-auto max-w-3xl space-y-8">
                     <div>
-                        <h2 className="text-2xl font-semibold">Our Story</h2>
+                        <h2 className="text-2xl font-semibold text-[var(--premium-fg)]">Our Story</h2>
                         <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
                             Arjun Automation was founded on a simple conviction: every organization deserves enterprise-grade automation without enterprise-grade complexity. Born from years of delivering large-scale digital transformation programs, we saw fragmented tools, manual handoffs, and AI bolted on as an afterthought rather than woven into the operating fabric.
                         </p>
@@ -30,21 +30,21 @@ export default function AboutPage() {
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-semibold">Mission</h2>
+                        <h2 className="text-2xl font-semibold text-[var(--premium-fg)]">Mission</h2>
                         <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
                             To democratize enterprise automation by delivering an integrated operating system that empowers every organization to run like a world-class enterprise — with AI-native workflows, industry-ready foundations, and measurable outcomes from day one.
                         </p>
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-semibold">Vision</h2>
+                        <h2 className="text-2xl font-semibold text-[var(--premium-fg)]">Vision</h2>
                         <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
                             A world where every business, regardless of size or industry, operates on intelligent automation — where humans focus on strategy and creativity while AI workers handle execution, and where launching a new digital operation is AI-accelerated without sacrificing enterprise rigor.
                         </p>
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-semibold">Core Values</h2>
+                        <h2 className="text-2xl font-semibold text-[var(--premium-fg)]">Core Values</h2>
                         <ul className="mt-4 space-y-3">
                             {[
                                 "Outcome Over Output — We measure success by client results, not deliverable counts.",
@@ -55,7 +55,7 @@ export default function AboutPage() {
                                 "Partnership Mindset — We succeed when our clients succeed long after go-live.",
                             ].map((value) => (
                                 <li key={value} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]" aria-hidden="true" />
                                     {value}
                                 </li>
                             ))}

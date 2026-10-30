@@ -92,7 +92,7 @@ export default async function CaseStudyDetailPage({ params }: Props) {
                         </div>
                     </section>
 
-                    <Link href={MARKETING_ROUTES.portfolioItem(study.slug)} className="text-sm font-medium text-orange-500 hover:text-orange-600">
+                    <Link href={MARKETING_ROUTES.portfolioItem(study.slug)} className="text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                         View full portfolio entry →
                     </Link>
                 </div>

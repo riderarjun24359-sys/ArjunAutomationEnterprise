@@ -60,14 +60,16 @@ export default function PortfolioPage() {
                         <Link
                             key={item.slug}
                             href={MARKETING_ROUTES.caseStudyItem(item.slug)}
-                            className="premium-glass group rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+                            className="premium-glass group rounded-2xl p-6 transition hover:ring-2 hover:ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                         >
-                            <span className="text-xs font-medium uppercase tracking-wider text-orange-500">
+                            <span className="text-xs font-medium uppercase tracking-wider text-[var(--dos-brand-primary)]">
                                 {item.industry}
                             </span>
-                            <h2 className="mt-2 text-xl font-semibold group-hover:text-orange-500">{item.title}</h2>
+                            <h2 className="mt-2 text-xl font-semibold group-hover:text-[var(--dos-brand-primary-hover)] text-[var(--premium-fg)]">
+                                {item.title}
+                            </h2>
                             <p className="mt-3 text-sm text-[var(--premium-fg-muted)] line-clamp-3">{item.challenge}</p>
-                            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-orange-500">
+                            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--dos-brand-primary)]">
                                 Read the case study
                                 <span aria-hidden="true">→</span>
                             </span>
@@ -76,14 +78,16 @@ export default function PortfolioPage() {
                 </div>
 
                 <div className="mt-12 rounded-2xl border border-[var(--premium-border)] p-6">
-                    <h2 className="text-lg font-semibold">Looking for integration work specifically?</h2>
+                    <h2 className="text-lg font-semibold text-[var(--premium-fg)]">
+                        Looking for integration work specifically?
+                    </h2>
                     <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                         Our integration platform connects payment gateways, accounting systems, POS, EMR and
                         third-party SaaS tools — and is documented separately from the case studies above.
                     </p>
                     <Link
                         href={MARKETING_ROUTES.portfolioItem("integrations")}
-                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-orange-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                     >
                         Integration Platform
                         <span aria-hidden="true">→</span>

@@ -38,25 +38,25 @@ export default function ServicesPage() {
                 <div className="grid gap-8 lg:grid-cols-2">
                     {SERVICE_ITEMS.map((service) => (
                         <article key={service.slug} className="premium-glass rounded-2xl p-8">
-                            <h2 className="text-xl font-semibold">
-                                <Link href={MARKETING_ROUTES.serviceItem(service.slug)} className="hover:text-orange-500">
+                            <h2 className="text-xl font-semibold text-[var(--premium-fg)]">
+                                <Link href={MARKETING_ROUTES.serviceItem(service.slug)} className="hover:text-[var(--dos-brand-primary-hover)]">
                                     {service.title}
                                 </Link>
                             </h2>
                             <p className="mt-3 text-[var(--premium-fg-muted)] leading-relaxed">{service.description}</p>
-                            <p className="mt-4 text-sm font-medium text-orange-500">Delivery: {service.timeline}</p>
-                            <h3 className="mt-4 text-sm font-semibold">Key Deliverables</h3>
+                            <p className="mt-4 text-sm font-medium text-[var(--dos-brand-primary)]">Delivery: {service.timeline}</p>
+                            <h3 className="mt-4 text-sm font-semibold text-[var(--premium-fg-muted)]">Key Deliverables</h3>
                             <ul className="mt-2 space-y-1">
                                 {service.deliverables.slice(0, 4).map((d) => (
                                     <li key={d} className="flex items-center gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-orange-500" aria-hidden="true" />
+                                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--dos-brand-primary)]" aria-hidden="true" />
                                         {d}
                                     </li>
                                 ))}
                             </ul>
                             <Link
                                 href={MARKETING_ROUTES.serviceItem(service.slug)}
-                                className="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-600"
+                                className="mt-4 inline-block text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
                             >
                                 Learn more →
                             </Link>

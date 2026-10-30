@@ -57,7 +57,7 @@ export default function ResourcesPage() {
 
                 <div className="space-y-16">
                     <section aria-labelledby="guides-heading">
-                        <h2 id="guides-heading" className="text-2xl font-semibold">
+                        <h2 id="guides-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Launch guides
                         </h2>
                         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -65,18 +65,24 @@ export default function ResourcesPage() {
                                 <Link
                                     key={guide.href}
                                     href={guide.href}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                                 >
-                                    <h3 className="text-lg font-semibold">{guide.title}</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{guide.description}</p>
-                                    <span className="mt-4 inline-block text-sm font-medium text-orange-500">Read guide →</span>
+                                    <h3 className="text-lg font-semibold text-[var(--premium-fg)]">
+                                        {guide.title}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
+                                        {guide.description}
+                                    </p>
+                                    <span className="mt-4 inline-block text-sm font-medium text-[var(--dos-brand-primary)]">
+                                        Read guide →
+                                    </span>
                                 </Link>
                             ))}
                         </div>
                     </section>
 
                     <section aria-labelledby="case-studies-heading">
-                        <h2 id="case-studies-heading" className="text-2xl font-semibold">
+                        <h2 id="case-studies-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Case studies
                         </h2>
                         <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -84,21 +90,30 @@ export default function ResourcesPage() {
                                 <Link
                                     key={study.slug}
                                     href={MARKETING_ROUTES.caseStudyItem(study.slug)}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]"
                                 >
-                                    <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{study.industry}</span>
-                                    <h3 className="mt-2 font-semibold">{study.title}</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">{study.challenge}</p>
+                                    <span className="text-xs font-medium uppercase tracking-wider text-[var(--dos-brand-primary)]">
+                                        {study.industry}
+                                    </span>
+                                    <h3 className="mt-2 font-semibold text-[var(--premium-fg)]">
+                                        {study.title}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">
+                                        {study.challenge}
+                                    </p>
                                 </Link>
                             ))}
                         </div>
-                        <Link href={MARKETING_ROUTES.caseStudies} className="mt-4 inline-block text-sm font-medium text-orange-500">
+                        <Link
+                            href={MARKETING_ROUTES.caseStudies}
+                            className="mt-4 inline-block text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
+                        >
                             View all case studies →
                         </Link>
                     </section>
 
                     <section aria-labelledby="blog-heading">
-                        <h2 id="blog-heading" className="text-2xl font-semibold">
+                        <h2 id="blog-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Blog
                         </h2>
                         <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -106,21 +121,30 @@ export default function ResourcesPage() {
                                 <Link
                                     key={post.slug}
                                     href={MARKETING_ROUTES.blogPost(post.slug)}
-                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-orange-500/30"
+                                    className="premium-glass rounded-2xl p-6 transition hover:ring-2 hover:ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]"
                                 >
-                                    <span className="text-xs font-medium text-orange-500">{post.category}</span>
-                                    <h3 className="mt-2 font-semibold">{post.title}</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">{post.excerpt}</p>
+                                    <span className="text-xs font-medium text-[var(--dos-brand-primary)]">
+                                        {post.category}
+                                    </span>
+                                    <h3 className="mt-2 font-semibold text-[var(--premium-fg)]">
+                                        {post.title}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] line-clamp-2">
+                                        {post.excerpt}
+                                    </p>
                                 </Link>
                             ))}
                         </div>
-                        <Link href={MARKETING_ROUTES.blog} className="mt-4 inline-block text-sm font-medium text-orange-500">
+                        <Link
+                            href={MARKETING_ROUTES.blog}
+                            className="mt-4 inline-block text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
+                        >
                             View all articles →
                         </Link>
                     </section>
 
                     <section aria-labelledby="quick-links-heading" className="premium-glass rounded-2xl p-8">
-                        <h2 id="quick-links-heading" className="text-xl font-semibold">
+                        <h2 id="quick-links-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
                             Quick links
                         </h2>
                         <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -131,7 +155,10 @@ export default function ResourcesPage() {
                                 { label: "Contact", href: MARKETING_ROUTES.contact },
                             ].map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-orange-500 hover:text-orange-600">
+                                    <Link
+                                        href={link.href}
+                                        className="text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
+                                    >
                                         {link.label}
                                     </Link>
                                 </li>

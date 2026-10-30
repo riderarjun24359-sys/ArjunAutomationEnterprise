@@ -64,7 +64,7 @@ export default function ContactPage() {
                 <div className="grid gap-12 lg:grid-cols-2">
                     <div className="space-y-10">
                         <section aria-labelledby="channels-heading">
-                            <h2 id="channels-heading" className="text-xl font-semibold">
+                            <h2 id="channels-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
                                 Talk to us
                             </h2>
 
@@ -74,7 +74,7 @@ export default function ContactPage() {
                                 {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
                                     <a
                                         href={`tel:${COMPANY_PROFILE.phoneE164}`}
-                                        className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                                        className="inline-flex items-center gap-2 rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                                     >
                                         <Phone className="h-4 w-4" aria-hidden="true" />
                                         {COMPANY_PROFILE.phoneDisplay}
@@ -95,7 +95,7 @@ export default function ContactPage() {
 
                                 <a
                                     href={`mailto:${COMPANY_PROFILE.emails.sales}`}
-                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary-hover)]"
                                 >
                                     <Mail className="h-4 w-4" aria-hidden="true" />
                                     Email sales
@@ -105,9 +105,11 @@ export default function ContactPage() {
                             <dl className="mt-8 space-y-4">
                                 {CHANNELS.map((channel) => (
                                     <div key={channel.label}>
-                                        <dt className="text-sm font-medium text-orange-500">{channel.label}</dt>
+                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
+                                            {channel.label}
+                                        </dt>
                                         <dd className="mt-1">
-                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-orange-500">
+                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">
                                                 {channel.value}
                                             </a>
                                         </dd>
@@ -116,7 +118,9 @@ export default function ContactPage() {
 
                                 {addressLine ? (
                                     <div>
-                                        <dt className="text-sm font-medium text-orange-500">Registered office</dt>
+                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
+                                            Registered office
+                                        </dt>
                                         <dd className="mt-1 flex items-start gap-2 text-[var(--premium-fg-muted)]">
                                             <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                                             <span>{addressLine}</span>
@@ -126,26 +130,34 @@ export default function ContactPage() {
 
                                 {COMPANY_PROFILE.gstin ? (
                                     <div>
-                                        <dt className="text-sm font-medium text-orange-500">GSTIN</dt>
-                                        <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.gstin}</dd>
+                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
+                                            GSTIN
+                                        </dt>
+                                        <dd className="mt-1 text-[var(--premium-fg-muted)]">
+                                            {COMPANY_PROFILE.gstin}
+                                        </dd>
                                     </div>
                                 ) : null}
 
                                 <div>
-                                    <dt className="text-sm font-medium text-orange-500">Office hours</dt>
-                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">{COMPANY_PROFILE.officeHours}</dd>
+                                    <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
+                                        Office hours
+                                    </dt>
+                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">
+                                        {COMPANY_PROFILE.officeHours}
+                                    </dd>
                                 </div>
                             </dl>
                         </section>
 
                         <section aria-labelledby="booking-heading">
-                            <h2 id="booking-heading" className="text-xl font-semibold">
+                            <h2 id="booking-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
                                 What happens next
                             </h2>
                             <ol className="mt-4 space-y-3">
                                 {QUALIFICATION_STEPS.map((step, index) => (
                                     <li key={step} className="flex gap-3 text-sm text-[var(--premium-fg-muted)]">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-500 text-xs font-semibold text-white">
+                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-xs font-semibold text-white">
                                             {index + 1}
                                         </span>
                                         {step}
@@ -156,11 +168,11 @@ export default function ContactPage() {
 
                         <p className="text-sm text-[var(--premium-fg-muted)]">
                             Review{" "}
-                            <Link href={MARKETING_ROUTES.pricing} className="text-orange-500 hover:text-orange-600">
+                            <Link href={MARKETING_ROUTES.pricing} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                                 pricing
                             </Link>{" "}
                             and{" "}
-                            <Link href={MARKETING_ROUTES.faq} className="text-orange-500 hover:text-orange-600">
+                            <Link href={MARKETING_ROUTES.faq} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                                 FAQ
                             </Link>{" "}
                             before your call.
@@ -168,7 +180,7 @@ export default function ContactPage() {
                     </div>
 
                     <div className="premium-glass rounded-2xl p-8">
-                        <h2 className="text-lg font-semibold">Send us the details</h2>
+                        <h2 className="text-lg font-semibold text-[var(--premium-fg)]">Send us the details</h2>
                         <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                             Complete the form for lead qualification. Required fields help us route your inquiry to the right team.
                         </p>
@@ -181,4 +193,3 @@ export default function ContactPage() {
         </>
     );
 }
-

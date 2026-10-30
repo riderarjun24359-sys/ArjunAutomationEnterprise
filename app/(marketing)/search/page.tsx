@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
-import { searchContent } from "@/src/modules/company-launch-kit/data/search-index";
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Search",
-    description: "Search Arjun Automation services, portfolio, resources, and blog articles.",
+    description: "Search Arjun Automation services, case studies, blog articles, and resources.",
     path: MARKETING_ROUTES.search,
+    noIndex: true,
 };
 
 export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
-    noIndex: true,
 });
 
 const breadcrumbs = [
@@ -25,85 +25,62 @@ const breadcrumbs = [
     { name: "Search", path: PAGE.path },
 ];
 
-interface Props {
-    searchParams: Promise<{ q?: string }>;
-}
-
-export default async function SearchPage({ searchParams }: Props) {
-    const { q = "" } = await searchParams;
-    const results = searchContent(q);
-
+export default function SearchPage() {
     return (
         <>
-            <MarketingStructuredData
-                title={PAGE.title}
-                description={PAGE.description}
-                path={PAGE.path}
-                breadcrumbs={breadcrumbs}
-            />
-            <PremiumPageShell title="Search" description="Find services, portfolio work, guides, and articles.">
+            <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
+            <PremiumPageShell title="Search" description="Find services, case studies, blog articles, and resources across Arjun Automation.">
                 <MarketingBreadcrumbs items={breadcrumbs} />
+                <div className="space-y-12">
+                    <section aria-labelledby="quick-search-heading">
+                        <h2 id="quick-search-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">Quick links</h2>
+                        <div className="mt-6 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                            {[
+                                { label: "Services", href: MARKETING_ROUTES.services },
+                                { label: "Solutions", href: MARKETING_ROUTES.solutions },
+                                { label: "Industries", href: MARKETING_ROUTES.industries },
+                                { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
+                                { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
+                                { label: "Pricing", href: MARKETING_ROUTES.pricing },
+                                { label: "Features", href: MARKETING_ROUTES.features },
+                                { label: "Resources", href: MARKETING_ROUTES.resources },
+                            ].map((link) => (
+                                <article key={link.label} className="premium-glass rounded-2xl p-6">
+                                    <Link
+                                        href={link.href}
+                                        className="block text-lg font-semibold text-[var(--premium-fg)] hover:text-[var(--dos-brand-primary-hover)]"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
 
-                <form action={MARKETING_ROUTES.search} method="get" className="max-w-xl" role="search">
-                    <label htmlFor="site-search" className="sr-only">
-                        Search site
-                    </label>
-                    <div className="flex gap-3">
-                        <input
-                            id="site-search"
-                            name="q"
-                            type="search"
-                            defaultValue={q}
-                            placeholder="Search services, portfolio, blog..."
-                            className="flex-1 rounded-xl border border-[var(--premium-border)] bg-[var(--premium-glass)] px-4 py-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-                        />
-                        <button
-                            type="submit"
-                            className="rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-                        >
-                            Search
-                        </button>
-                    </div>
-                </form>
-
-                <div className="mt-10">
-                    {q.trim() ? (
-                        results.length > 0 ? (
-                            <>
-                                <p className="text-sm text-[var(--premium-fg-muted)]">
-                                    {results.length} result{results.length === 1 ? "" : "s"} for &ldquo;{q}&rdquo;
-                                </p>
-                                <ul className="mt-6 space-y-4">
-                                    {results.map((result) => (
-                                        <li key={result.href}>
-                                            <Link
-                                                href={result.href}
-                                                className="block premium-glass rounded-xl p-5 transition hover:ring-2 hover:ring-orange-500/30"
-                                            >
-                                                <span className="text-xs font-medium uppercase tracking-wider text-orange-500">
-                                                    {result.category}
-                                                </span>
-                                                <h2 className="mt-1 font-semibold">{result.title}</h2>
-                                                <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">{result.description}</p>
-                                            </Link>
-                                        </li>
-                                    ))}
+                    <section aria-labelledby="browse-heading" className="premium-glass rounded-2xl p-8">
+                        <h2 id="browse-heading" className="text-xl font-semibold text-[var(--premium-fg)]">Browse by category</h2>
+                        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">Platform</h3>
+                                <ul className="mt-2 space-y-2">
+                                    <li><Link href={MARKETING_ROUTES.services} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">All Services</Link></li>
+                                    <li><Link href={MARKETING_ROUTES.pricing} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">Pricing Plans</Link></li>
+                                    <li><Link href={MARKETING_ROUTES.features} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">Features</Link></li>
                                 </ul>
-                            </>
-                        ) : (
-                            <p className="text-[var(--premium-fg-muted)]">
-                                No results for &ldquo;{q}&rdquo;. Try different keywords or{" "}
-                                <Link href={MARKETING_ROUTES.contact} className="text-orange-500">
-                                    contact us
-                                </Link>
-                                .
-                            </p>
-                        )
-                    ) : (
-                        <p className="text-[var(--premium-fg-muted)]">Enter a search term to find content across our site.</p>
-                    )}
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">Proof</h3>
+                                <ul className="mt-2 space-y-2">
+                                    <li><Link href={MARKETING_ROUTES.caseStudies} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">Case Studies</Link></li>
+                                    <li><Link href={MARKETING_ROUTES.portfolio} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">Portfolio</Link></li>
+                                    <li><Link href={MARKETING_ROUTES.blog} className="text-sm text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">Blog</Link></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </PremiumPageShell>
+            <CtaSection />
         </>
     );
 }

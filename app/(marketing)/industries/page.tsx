@@ -48,17 +48,17 @@ export default function IndustriesPage() {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="border-b border-[var(--premium-border)]">
-                                <th className="pb-4 pr-4 text-sm font-semibold">Industry</th>
-                                <th className="pb-4 pr-4 text-sm font-semibold">Primary Use Cases</th>
-                                <th className="pb-4 text-sm font-semibold">Recommended Pack</th>
+                                <th className="pb-4 pr-4 text-sm font-semibold text-[var(--premium-fg-muted)]">Industry</th>
+                                <th className="pb-4 pr-4 text-sm font-semibold text-[var(--premium-fg-muted)]">Primary Use Cases</th>
+                                <th className="pb-4 text-sm font-semibold text-[var(--premium-fg-muted)]">Recommended Pack</th>
                             </tr>
                         </thead>
                         <tbody>
                             {industries.map((ind) => (
                                 <tr key={ind.name} className="border-b border-[var(--premium-border)]">
-                                    <td className="py-4 pr-4 font-medium">{ind.name}</td>
+                                    <td className="py-4 pr-4 font-medium text-[var(--premium-fg)]">{ind.name}</td>
                                     <td className="py-4 pr-4 text-sm text-[var(--premium-fg-muted)]">{ind.useCases}</td>
-                                    <td className="py-4 text-sm text-orange-500">{ind.pack}</td>
+                                    <td className="py-4 text-sm text-[var(--dos-brand-primary)]">{ind.pack}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -66,11 +66,11 @@ export default function IndustriesPage() {
                 </div>
                 <p className="mt-8 text-sm text-[var(--premium-fg-muted)]">
                     Explore our{" "}
-                    <Link href={MARKETING_ROUTES.portfolio} className="text-orange-500 hover:text-orange-600">
+                    <Link href={MARKETING_ROUTES.portfolio} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                         portfolio
                     </Link>{" "}
                     and{" "}
-                    <Link href={MARKETING_ROUTES.caseStudies} className="text-orange-500 hover:text-orange-600">
+                    <Link href={MARKETING_ROUTES.caseStudies} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                         case studies
                     </Link>{" "}
                     for industry-specific outcomes.

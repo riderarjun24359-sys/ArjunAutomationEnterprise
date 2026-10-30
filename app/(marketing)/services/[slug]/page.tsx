@@ -63,7 +63,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                         <ul className="mt-4 space-y-2">
                             {service.problems.map((problem) => (
                                 <li key={problem} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]" aria-hidden="true" />
                                     {problem}
                                 </li>
                             ))}
@@ -77,7 +77,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                         <ul className="mt-4 space-y-2">
                             {service.solutions.map((solution) => (
                                 <li key={solution} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]" aria-hidden="true" />
                                     {solution}
                                 </li>
                             ))}
@@ -101,11 +101,11 @@ export default async function ServiceDetailPage({ params }: Props) {
                         <h2 id="process-heading" className="text-xl font-semibold">
                             Delivery process
                         </h2>
-                        <p className="mt-2 text-sm text-orange-500">Timeline: {service.timeline}</p>
+                        <p className="mt-2 text-sm text-[var(--dos-brand-primary)]">Timeline: {service.timeline}</p>
                         <ol className="mt-6 space-y-4">
                             {service.process.map((step, index) => (
                                 <li key={step.phase} className="flex gap-4">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-sm font-semibold text-white">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-sm font-semibold text-white">
                                         {index + 1}
                                     </span>
                                     <div>
@@ -148,7 +148,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                     <div className="flex flex-wrap gap-4">
                         <Link
                             href={MARKETING_ROUTES.contact}
-                            className="rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-600"
+                            className="rounded-xl bg-[var(--dos-brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)]"
                         >
                             Book Consultation
                         </Link>

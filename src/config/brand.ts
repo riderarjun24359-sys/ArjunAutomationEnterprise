@@ -20,18 +20,15 @@ export const teamConfig = {
     founder: {
         name: "CHITTEM PRASHANTH ARJUN",
         role: "Founder / Vision & Product Leadership",
-        image: null, // Placeholder for future upload
     },
     members: [
         {
             name: "CHITTEM SAGAR",
             role: "Designer & Developer",
-            image: null, // Placeholder for future upload
         },
         {
             name: "JASMINE G",
             role: "Marketing • CEO • Sales • Business Administration",
-            image: null, // Placeholder for future upload
         },
     ],
 };

@@ -58,7 +58,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
                 description={`${item.tagline} — illustrative solution design; outcomes are target figures, not audited client results.`}
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
-                <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{item.category}</span>
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--dos-brand-primary)]">{item.category}</span>
 
                 <div className="mt-8 space-y-12">
                     <section aria-labelledby="overview-heading">
@@ -90,7 +90,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
                         <ul className="mt-4 space-y-2">
                             {item.features.map((f) => (
                                 <li key={f} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]" aria-hidden="true" />
                                     {f}
                                 </li>
                             ))}
@@ -137,11 +137,11 @@ export default async function PortfolioDetailPage({ params }: Props) {
                     {/* The integrations solution has no case-study twin — only show
                         the cross-link when a canonical case study actually exists. */}
                     {CASE_STUDY_SLUGS.includes(slug as (typeof CASE_STUDY_SLUGS)[number]) ? (
-                        <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-orange-500 hover:text-orange-600">
+                        <Link href={MARKETING_ROUTES.caseStudyItem(slug)} className="text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                             Read case study format →
                         </Link>
                     ) : (
-                        <Link href={MARKETING_ROUTES.caseStudies} className="text-sm font-medium text-orange-500 hover:text-orange-600">
+                        <Link href={MARKETING_ROUTES.caseStudies} className="text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                             Browse all case studies →
                         </Link>
                     )}

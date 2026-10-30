@@ -24,7 +24,7 @@ export const metadata: Metadata = buildMetadata({
 
 const breadcrumbs = [
     { name: "Home", path: MARKETING_ROUTES.home },
-    { name: "Features", path: PAGE.path },
+    { name: "Features", path: MARKETING_ROUTES.features },
 ];
 
 export default function FeaturesPage() {
@@ -35,17 +35,17 @@ export default function FeaturesPage() {
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="mt-10 grid gap-6 md:grid-cols-2">
                     {SOFT_LAUNCH_FEATURES.map((feature) => (
-                        <article key={feature.title} className="rounded-3xl border border-[var(--premium-border)] bg-[var(--premium-bg-elevated)] p-6">
-                            <h2 className="text-xl font-semibold">{feature.title}</h2>
+                        <article key={feature.title} className="rounded-3xl border border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] p-6">
+                            <h2 className="text-xl font-semibold text-[var(--premium-fg)]">{feature.title}</h2>
                             <p className="mt-3 text-sm text-[var(--premium-fg-muted)]">{feature.description}</p>
                         </article>
                     ))}
                 </div>
                 <div className="mt-10 flex flex-wrap gap-3">
-                    <Link href={ROUTES.auth.signUp} className="rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white">
+                    <Link href={ROUTES.auth.signUp} className="rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)]">
                         Start free trial
                     </Link>
-                    <Link href={MARKETING_ROUTES.pricing} className="rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold">
+                    <Link href={MARKETING_ROUTES.pricing} className="rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold text-[var(--premium-fg)] transition hover:border-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
                         View pricing
                     </Link>
                 </div>

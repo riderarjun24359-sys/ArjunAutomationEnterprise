@@ -68,7 +68,7 @@ export function TeamSection({ compact = false }: { compact?: boolean }) {
                                 />
                                 <div className="min-w-0">
                                     <p className="text-base font-semibold">{member.name}</p>
-                                    <p className="text-sm text-orange-600 dark:text-orange-400">{member.role}</p>
+                                    <p className="text-sm text-[var(--dos-brand-primary)] dark:text-[var(--dos-brand-primary-hover)]">{member.role}</p>
 
                                     {member.bio ? (
                                         /* Split on blank lines so a multi-paragraph
@@ -94,7 +94,7 @@ export function TeamSection({ compact = false }: { compact?: boolean }) {
                                             href={member.linkedin}
                                             target="_blank"
                                             rel="noopener noreferrer me"
-                                            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 dark:text-orange-400"
+                                            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--dos-brand-primary)] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50 dark:text-[var(--dos-brand-primary-hover)]"
                                         >
                                             <LinkedInIcon className="h-4 w-4" />
                                             LinkedIn profile

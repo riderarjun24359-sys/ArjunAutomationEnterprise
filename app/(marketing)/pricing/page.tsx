@@ -52,29 +52,31 @@ export default function PricingPage() {
                         pricing would mean most visitors never scroll to it. */}
                     <section
                         aria-labelledby="pilot-heading"
-                        className="rounded-3xl border border-orange-500/40 bg-orange-950/10 p-6 sm:p-8"
+                        className="rounded-3xl border border-[color-mix(in_oklab,var(--dos-brand-primary)_35%,transparent)] bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)] p-6 sm:p-8"
                     >
                         <div className="flex flex-wrap items-start justify-between gap-4">
                             <div className="max-w-2xl">
-                                <h2 id="pilot-heading" className="text-2xl font-semibold">
+                                <h2 id="pilot-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                                     {PILOT_PROGRAMME.title}
                                 </h2>
                                 <p className="mt-3 text-[var(--premium-fg-muted)]">{PILOT_PROGRAMME.subtitle}</p>
                             </div>
-                            <p className="shrink-0 rounded-full border border-orange-500/50 px-4 py-2 text-sm font-medium text-orange-700">
+                            <p className="shrink-0 rounded-full border border-[color-mix(in_oklab,var(--dos-brand-primary)_50%,transparent)] px-4 py-2 text-sm font-medium text-[var(--dos-brand-primary)]">
                                 {PILOT_PROGRAMME.slots} {PILOT_PROGRAMME.slotsLabel}
                             </p>
                         </div>
 
                         <div className="mt-8 grid gap-8 lg:grid-cols-3">
                             <div>
-                                <p className="text-4xl font-bold text-orange-700">{PILOT_PROGRAMME.setupFee}</p>
+                                <p className="text-4xl font-bold text-[var(--dos-brand-primary)]">
+                                    {PILOT_PROGRAMME.setupFee}
+                                </p>
                                 <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                                     {PILOT_PROGRAMME.setupFeeNote}
                                 </p>
                                 <Link
                                     href={MARKETING_ROUTES.contact}
-                                    className="mt-6 inline-flex rounded-full bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400"
+                                    className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                                 >
                                     {PILOT_PROGRAMME.ctaLabel}
                                 </Link>
@@ -88,7 +90,7 @@ export default function PricingPage() {
                                     {PILOT_PROGRAMME.includes.map((item) => (
                                         <li key={item} className="flex items-start gap-3">
                                             <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-400"
+                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
                                                 aria-hidden="true"
                                             />
                                             {item}
@@ -105,7 +107,7 @@ export default function PricingPage() {
                                     {PILOT_PROGRAMME.expectations.map((item) => (
                                         <li key={item} className="flex items-start gap-3">
                                             <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-400"
+                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
                                                 aria-hidden="true"
                                             />
                                             {item}
@@ -123,14 +125,17 @@ export default function PricingPage() {
                     <section aria-labelledby="saas-plans-heading">
                         <div className="flex flex-wrap items-end justify-between gap-4">
                             <div>
-                                <h2 id="saas-plans-heading" className="text-2xl font-semibold">
+                                <h2 id="saas-plans-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                                     Platform plans
                                 </h2>
                                 <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
                                     Free Trial, Starter, Professional, and Enterprise with clear usage limits.
                                 </p>
                             </div>
-                            <Link href={MARKETING_ROUTES.upgrade} className="text-sm font-semibold text-orange-500 underline">
+                            <Link
+                                href={MARKETING_ROUTES.upgrade}
+                                className="text-sm font-semibold text-[var(--dos-brand-primary)] underline hover:text-[var(--dos-brand-primary-hover)]"
+                            >
                                 Open upgrade flow
                             </Link>
                         </div>
@@ -139,13 +144,23 @@ export default function PricingPage() {
                                 <article
                                     key={plan.id}
                                     className={`rounded-3xl border p-6 ${
-                                        plan.highlighted ? "border-orange-500 ring-2 ring-orange-500/30" : "border-[var(--premium-border)]"
+                                        plan.highlighted
+                                            ? "border-[var(--dos-brand-primary)] ring-2 ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]"
+                                            : "border-[var(--premium-border)]"
                                     }`}
                                 >
-                                    <h3 className="text-lg font-semibold">{plan.name}</h3>
-                                    <p className="mt-2 text-3xl font-bold">{plan.priceLabel}</p>
-                                    <p className="mt-1 text-xs text-[var(--premium-fg-muted)]">{plan.billingNote}</p>
-                                    <p className="mt-4 text-sm text-[var(--premium-fg-muted)]">{plan.description}</p>
+                                    <h3 className="text-lg font-semibold text-[var(--premium-fg)]">
+                                        {plan.name}
+                                    </h3>
+                                    <p className="mt-2 text-3xl font-bold text-[var(--premium-fg)]">
+                                        {plan.priceLabel}
+                                    </p>
+                                    <p className="mt-1 text-xs text-[var(--premium-fg-muted)]">
+                                        {plan.billingNote}
+                                    </p>
+                                    <p className="mt-4 text-sm text-[var(--premium-fg-muted)]">
+                                        {plan.description}
+                                    </p>
                                     <ul className="mt-4 space-y-1 text-xs text-[var(--premium-fg-muted)]">
                                         <li>Users: {plan.limits.users}</li>
                                         <li>Projects: {plan.limits.projects}</li>
@@ -159,7 +174,7 @@ export default function PricingPage() {
                                     </ul>
                                     <Link
                                         href={plan.cta.href}
-                                        className="mt-6 inline-flex rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold text-white"
+                                        className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)]"
                                     >
                                         {plan.cta.label}
                                     </Link>
@@ -169,13 +184,16 @@ export default function PricingPage() {
                     </section>
 
                     <section aria-labelledby="philosophy-heading">
-                        <h2 id="philosophy-heading" className="text-2xl font-semibold">
+                        <h2 id="philosophy-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Our pricing philosophy
                         </h2>
                         <ul className="mt-6 space-y-3">
                             {PRICING_PHILOSOPHY.principles.map((principle) => (
                                 <li key={principle} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <span
+                                        className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
+                                        aria-hidden="true"
+                                    />
                                     {principle}
                                 </li>
                             ))}
@@ -183,7 +201,7 @@ export default function PricingPage() {
                     </section>
 
                     <section aria-labelledby="implementation-heading">
-                        <h2 id="implementation-heading" className="text-2xl font-semibold">
+                        <h2 id="implementation-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Implementation packages
                         </h2>
                         <p className="mt-3 text-[var(--premium-fg-muted)]">
@@ -193,18 +211,31 @@ export default function PricingPage() {
                             {IMPLEMENTATION_TIERS.map((tier) => (
                                 <article
                                     key={tier.name}
-                                    className={`premium-glass rounded-2xl p-8 ${tier.highlighted ? "ring-2 ring-orange-500" : ""}`}
+                                    className={`premium-glass rounded-2xl p-8 ${
+                                        tier.highlighted ? "ring-2 ring-[var(--dos-brand-primary)]" : ""
+                                    }`}
                                 >
                                     {tier.highlighted && (
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-orange-500">Most Popular</span>
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--dos-brand-primary)]">
+                                            Most Popular
+                                        </span>
                                     )}
-                                    <h3 className="mt-2 text-xl font-semibold">{tier.name}</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{tier.description}</p>
-                                    <p className="mt-4 text-lg font-semibold text-orange-500">{tier.indicativeRange}</p>
+                                    <h3 className="mt-2 text-xl font-semibold text-[var(--premium-fg)]">
+                                        {tier.name}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
+                                        {tier.description}
+                                    </p>
+                                    <p className="mt-4 text-lg font-semibold text-[var(--dos-brand-primary)]">
+                                        {tier.indicativeRange}
+                                    </p>
                                     <ul className="mt-6 space-y-2">
                                         {tier.scope.map((item) => (
                                             <li key={item} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                                <span
+                                                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
+                                                    aria-hidden="true"
+                                                />
                                                 {item}
                                             </li>
                                         ))}
@@ -215,15 +246,21 @@ export default function PricingPage() {
                     </section>
 
                     <section aria-labelledby="support-heading">
-                        <h2 id="support-heading" className="text-2xl font-semibold">
+                        <h2 id="support-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             Managed support
                         </h2>
                         <div className="mt-8 grid gap-6 lg:grid-cols-3">
                             {MANAGED_SUPPORT_TIERS.map((tier) => (
                                 <article key={tier.name} className="premium-glass rounded-2xl p-8">
-                                    <h3 className="text-xl font-semibold">{tier.name}</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">{tier.description}</p>
-                                    <p className="mt-4 font-semibold text-orange-500">{tier.indicativeRange}</p>
+                                    <h3 className="text-xl font-semibold text-[var(--premium-fg)]">
+                                        {tier.name}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
+                                        {tier.description}
+                                    </p>
+                                    <p className="mt-4 font-semibold text-[var(--dos-brand-primary)]">
+                                        {tier.indicativeRange}
+                                    </p>
                                     <ul className="mt-6 space-y-2">
                                         {tier.scope.map((item) => (
                                             <li key={item} className="text-sm text-[var(--premium-fg-muted)]">
@@ -237,26 +274,32 @@ export default function PricingPage() {
                     </section>
 
                     <section aria-labelledby="enterprise-heading" className="premium-glass rounded-2xl p-8">
-                        <h2 id="enterprise-heading" className="text-2xl font-semibold">
+                        <h2 id="enterprise-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
                             {ENTERPRISE_ENGAGEMENT.title}
                         </h2>
-                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">{ENTERPRISE_ENGAGEMENT.description}</p>
+                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
+                            {ENTERPRISE_ENGAGEMENT.description}
+                        </p>
                         <ol className="mt-8 space-y-4">
                             {ENTERPRISE_ENGAGEMENT.steps.map((step, index) => (
                                 <li key={step.title} className="flex gap-4">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-sm font-semibold text-white">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-sm font-semibold text-white">
                                         {index + 1}
                                     </span>
                                     <div>
-                                        <h3 className="font-semibold">{step.title}</h3>
-                                        <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">{step.description}</p>
+                                        <h3 className="font-semibold text-[var(--premium-fg)]">
+                                            {step.title}
+                                        </h3>
+                                        <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">
+                                            {step.description}
+                                        </p>
                                     </div>
                                 </li>
                             ))}
                         </ol>
                         <Link
                             href={ENTERPRISE_ENGAGEMENT.cta.href}
-                            className="mt-8 inline-flex rounded-xl bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
+                            className="mt-8 inline-flex rounded-xl bg-[var(--dos-brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                         >
                             {ENTERPRISE_ENGAGEMENT.cta.label}
                         </Link>

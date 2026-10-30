@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LeadForm } from "@/src/modules/company-launch-kit/components/LeadForm";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
+import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
+import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
+import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -34,48 +38,59 @@ const solutions = [
 ];
 
 export default function SolutionsPage() {
+    const breadcrumbs = [
+        { name: "Home", path: MARKETING_ROUTES.home },
+        { name: "Solutions", path: "/solutions" },
+    ];
+
     return (
         <>
-            <section className="bg-indigo-50 py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8">
-                    <h1 className="text-4xl font-semibold tracking-tight text-orange-950">Solutions</h1>
-                    <p className="mt-4 max-w-3xl text-lg text-slate-600">
-                        One platform. Every module. AI-native from the ground up.
-                    </p>
-                </div>
-            </section>
-
-            <section className="py-16">
-                <div className="mx-auto max-w-7xl px-6 lg:px-8 space-y-12">
+            <MarketingStructuredData
+                title="Solutions"
+                description="Unified platform, AI-native operations, industry-ready speed, and enterprise trust — four pillars of Arjun Automation OS solutions."
+                path="/solutions"
+                breadcrumbs={breadcrumbs}
+            />
+            <PremiumPageShell
+                title="Solutions"
+                description="One platform. Every module. AI-native from the ground up."
+            >
+                <div className="space-y-16">
                     {solutions.map((solution) => (
                         <article key={solution.title} className="grid gap-8 lg:grid-cols-2 lg:items-start">
                             <div>
-                                <h2 className="text-2xl font-semibold text-orange-950">{solution.title}</h2>
-                                <p className="mt-4 text-slate-600 leading-relaxed">{solution.description}</p>
+                                <h2 className="text-2xl font-semibold text-[var(--premium-fg)]">{solution.title}</h2>
+                                <p className="mt-4 max-w-xl text-[var(--premium-fg-muted)] leading-relaxed">
+                                    {solution.description}
+                                </p>
                             </div>
-                            <ul className="rounded-2xl border border-orange-200 bg-indigo-50 p-6 space-y-3">
+                            <ul className="rounded-2xl border border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] p-6 space-y-3">
                                 {solution.features.map((f) => (
-                                    <li key={f} className="flex items-start gap-3 text-sm text-orange-900">
-                                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange-500" aria-hidden="true" />
+                                    <li key={f} className="flex items-start gap-3 text-sm text-[var(--premium-fg-muted)]">
+                                        <span
+                                            className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
+                                            aria-hidden="true"
+                                        />
                                         {f}
                                     </li>
                                 ))}
                             </ul>
                         </article>
                     ))}
-                </div>
-            </section>
 
-            <section className="bg-slate-50 py-16">
-                <div className="mx-auto max-w-xl px-6 lg:px-8">
-                    <h2 className="text-2xl font-semibold text-orange-950 text-center">Request a solution briefing</h2>
-                    <p className="mt-2 text-center text-slate-600">Our team will map your requirements to the right modules and delivery approach.</p>
-                    <div className="mt-8">
-                        <LeadForm source="solutions-page" />
-                    </div>
+                    <section aria-labelledby="briefing-heading" className="premium-glass rounded-2xl p-8">
+                        <h2 id="briefing-heading" className="text-2xl font-semibold text-[var(--premium-fg)] text-center">
+                            Request a solution briefing
+                        </h2>
+                        <p className="mt-2 text-center text-[var(--premium-fg-muted)]">
+                            Our team will map your requirements to the right modules and delivery approach.
+                        </p>
+                        <div className="mt-8">
+                            <LeadForm source="solutions-page" />
+                        </div>
+                    </section>
                 </div>
-            </section>
-
+            </PremiumPageShell>
             <CtaSection />
         </>
     );

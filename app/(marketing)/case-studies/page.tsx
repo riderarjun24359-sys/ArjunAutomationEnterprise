@@ -37,33 +37,39 @@ export default function CaseStudiesPage() {
                 <div className="space-y-12">
                     {CASE_STUDY_ITEMS.map((study) => (
                         <article key={study.slug} className="premium-glass rounded-2xl p-8">
-                            <span className="text-xs font-medium uppercase tracking-wider text-orange-500">{study.industry}</span>
-                            <h2 className="mt-2 text-2xl font-semibold">
-                                <Link href={MARKETING_ROUTES.caseStudyItem(study.slug)} className="hover:text-orange-500">
+                            <span className="text-xs font-medium uppercase tracking-wider text-[var(--dos-brand-primary)]">
+                                {study.industry}
+                            </span>
+                            <h2 className="mt-2 text-2xl font-semibold text-[var(--premium-fg)]">
+                                <Link href={MARKETING_ROUTES.caseStudyItem(study.slug)} className="hover:text-[var(--dos-brand-primary-hover)]">
                                     {study.title}
                                 </Link>
                             </h2>
                             <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">{study.client}</p>
                             <div className="mt-6 grid gap-6 lg:grid-cols-2">
                                 <div>
-                                    <h3 className="text-sm font-semibold">Challenge</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{study.challenge}</p>
+                                    <h3 className="text-sm font-semibold text-[var(--premium-fg-muted)]">Challenge</h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">
+                                        {study.challenge}
+                                    </p>
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-semibold">Solution</h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">{study.solution}</p>
+                                    <h3 className="text-sm font-semibold text-[var(--premium-fg-muted)]">Solution</h3>
+                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)] leading-relaxed">
+                                        {study.solution}
+                                    </p>
                                 </div>
                             </div>
                             <div className="mt-6 flex flex-wrap gap-2">
                                 {study.results.slice(0, 3).map((result) => (
-                                    <span key={result} className="rounded-full bg-orange-500/10 px-3 py-1 text-xs font-medium text-orange-500">
+                                    <span key={result} className="rounded-full bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)] px-3 py-1 text-xs font-medium text-[var(--dos-brand-primary)]">
                                         {result}
                                     </span>
                                 ))}
                             </div>
                             <Link
                                 href={MARKETING_ROUTES.caseStudyItem(study.slug)}
-                                className="mt-4 inline-block text-sm font-medium text-orange-500 hover:text-orange-600"
+                                className="mt-4 inline-block text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
                             >
                                 Read full case study →
                             </Link>

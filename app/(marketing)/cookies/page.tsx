@@ -10,16 +10,16 @@ export const metadata: Metadata = buildMetadata({
 export default function CookiesPage() {
     return (
         <article className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
-            <h1 className="text-3xl font-semibold text-orange-950">Cookie Policy</h1>
-            <p className="mt-2 text-sm text-slate-500">Last updated: March 1, 2026</p>
+            <h1 className="text-3xl font-semibold text-[var(--premium-fg)]">Cookie Policy</h1>
+            <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">Last updated: March 1, 2026</p>
 
-            <section className="mt-8 space-y-6 text-slate-600">
+            <section className="mt-8 space-y-6 text-[var(--premium-fg-muted)]">
                 <div>
-                    <h2 className="text-xl font-semibold text-orange-950">What Are Cookies</h2>
+                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">What Are Cookies</h2>
                     <p className="mt-2 leading-relaxed">Cookies are small text files stored on your device when you visit a website. They help us provide a better experience and understand how visitors use our site.</p>
                 </div>
                 <div>
-                    <h2 className="text-xl font-semibold text-orange-950">Cookies We Use</h2>
+                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">Cookies We Use</h2>
                     <ul className="mt-2 list-disc pl-6 space-y-2">
                         <li><strong>Essential cookies</strong> — Required for site functionality and security</li>
                         <li><strong>Analytics cookies</strong> — Google Analytics (when NEXT_PUBLIC_GA4_ID is configured) to understand site usage</li>
@@ -27,15 +27,14 @@ export default function CookiesPage() {
                     </ul>
                 </div>
                 <div>
-                    <h2 className="text-xl font-semibold text-orange-950">Managing Cookies</h2>
+                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">Managing Cookies</h2>
                     <p className="mt-2 leading-relaxed">You can control cookies through your browser settings. Disabling cookies may affect site functionality. Analytics and marketing cookies are only loaded when the corresponding environment variables are configured.</p>
                 </div>
                 <div>
-                    <h2 className="text-xl font-semibold text-orange-950">Contact</h2>
+                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">Contact</h2>
                     <p className="mt-2 leading-relaxed">Questions about cookies: sales@arjunautomations.com</p>
                 </div>
             </section>
         </article>
     );
 }
-

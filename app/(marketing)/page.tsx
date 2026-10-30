@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
 import { FaqAccordionStatic } from "@/src/modules/company-launch-kit/components/FaqAccordionStatic";
-import { MarketingHero } from "@/src/modules/company-launch-kit/components/MarketingHero";
+import { HeroSection } from "@/src/modules/company-launch-kit/components/premium/sections/HeroSection";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { buildMetadata } from "@/src/lib/seo";
@@ -138,8 +138,8 @@ export default function HomePage() {
 
             {/* Layout already renders <main id="main-content"> — keep this a plain container. */}
             <div>
-                {/* Hero (client component: Framer Motion fade-in-up + motion-graphic placeholder) */}
-                <MarketingHero />
+                {/* Hero — server-rendered with honest interface concept visual */}
+                <HeroSection />
 
                 {/* Services — 3 focused cards */}
                 <section
