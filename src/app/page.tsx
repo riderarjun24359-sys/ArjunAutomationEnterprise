@@ -1,110 +1,43 @@
-import { Inter } from "next/font/google";
-import { Suspense } from "react";
-
-const inter = Inter({ subsets: ["latin"] });
-
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900">
-      <div className="container mx-auto px-4 py-12">
-        <section className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-            Arjun Automations
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
-            Enterprise-grade automation solutions engineered for high-performance businesses.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 hover:shadow-xl dark:bg-indigo-700 dark:hover:bg-indigo-800">
-              Start Free Trial
-            </button>
-            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white">
-              View Feature Demo
-            </button>
-          </div>
-        </section>
+    <main className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 sm:p-24 selection:bg-cyan-500 selection:text-black">
+      <div className="max-w-4xl w-full text-center space-y-8">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-sm font-medium">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          Arjun Automations Enterprise Platform
+        </div>
+        
+        <h1 className="text-4xl sm:text-7xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
+          Autonomous AI Enterprise Infrastructure
+        </h1>
+        
+        <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Deploy high-end autonomous AI workers, neural orchestration layers, and real-time enterprise intelligence systems for next-generation companies.
+        </p>
 
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              Why Enterprises Choose Arjun
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-6 bg-white rounded-xl shadow-md hover:shadow-2xl transition-all dark:bg-gray-800 dark:hover:bg-gray-700">
-                <div className="flex items-center mb-4">
-                  <div className="bg-indigo-100 dark:bg-indigo-900 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2..." width="20" height="20" fill="none">
-                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2 12l18 9"></path>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    API-First Architecture
-                  </h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Our platform integrates with 50+ enterprise systems through clean, secure APIs.</p>
-              </div>
-              <div className="p-6 bg-white rounded-xl shadow-md hover:shadow-2xl transition-all dark:bg-gray-800 dark:hover:bg-gray-700">
-                <div className="flex items-center mb-4">
-                  <div className="bg-indigo-100 dark:bg-indigo-900 rounded-full p-2 mr-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4l16 16"></path>
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    Real-Time Monitoring
-                  </h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  See system health with granular visibility at every level of your infrastructure.</p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <a href="/contact" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-cyan-500 text-slate-950 font-bold hover:bg-cyan-400 transition-all duration-300 shadow-lg shadow-cyan-500/25">
+            Initialize Platform
+          </a>
+          <a href="/services" className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 border border-slate-800 text-white font-semibold hover:bg-slate-800 transition-all duration-300">
+            Explore Capabilities
+          </a>
+        </div>
 
-        <section className="mb-16">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              Trusted by Global Enterprises
-            </h2>
-            <div className="flex flex-wrap justify-center gap-8">
-              <div className="p-4 rounded-xl bg-white dark:bg-gray-800">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-500">
-                    280+ Clients
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300 mt-2">
-                    Organizations across 15 countries
-                  </p>
-                </div>
-              </div>
-              <div className="p-4 rounded-xl bg-white dark:bg-gray-800">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-500">
-                    99.95% Uptime
-                  </div>
-                  <p className="text-gray-600 dark:text-gray-300 mt-2">
-                    Enterprise-grade reliability
-                  </p>
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-12 border-t border-slate-900 text-left">
+          <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+            <h3 className="text-cyan-400 font-bold text-lg mb-2">Autonomous Core</h3>
+            <p className="text-slate-400 text-sm">Self-healing operational engines designed for 99.999% enterprise uptime.</p>
           </div>
-        </section>
-
-        <section className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-            Ready to automate your business?
-          </h2>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 hover:shadow-xl dark:bg-indigo-700 dark:hover:bg-indigo-800">
-              Start Free Trial
-            </button>
-            <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white">
-              View Feature Demo
-            </button>
+          <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+            <h3 className="text-cyan-400 font-bold text-lg mb-2">Neural Analytics</h3>
+            <p className="text-slate-400 text-sm">Real-time business intelligence processing millions of data points instantly.</p>
           </div>
-        </section>
+          <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+            <h3 className="text-cyan-400 font-bold text-lg mb-2">Secure Orchestration</h3>
+            <p className="text-slate-400 text-sm">Bank-grade encryption with complete multi-tenant enterprise isolation.</p>
+          </div>
+        </div>
       </div>
     </main>
   );
