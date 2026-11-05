@@ -1,4 +1,5 @@
-import { createHash, randomBytes } from "node:crypto";
+import { randomBytes } from "node:crypto";
+import { hashIntegrationApiKey } from "@/src/modules/integration-platform/lib/api-key-crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { supabaseServer } from "@/src/lib/supabase-server";
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
 
         const prefix = `aa_${randomBytes(6).toString("hex")}`;
         const token = `${prefix}.${randomBytes(32).toString("base64url")}`;
-        const keyHash = createHash("sha256").update(token, "utf8").digest("hex");
+        const keyHash = hashIntegrationApiKey(token);
 
         const { data: created, error: insertError } = await admin
             .from("intg_api_keys")
