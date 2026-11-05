@@ -1,3 +1,12 @@
+const bytesToHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+const sha256Hex = async (value: string) => bytesToHex(new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
+const constantTimeHexEqual = (left: string, right: string) => {
+    if (!/^[a-f0-9]{64}$/.test(left) || !/^[a-f0-9]{64}$/.test(right)) return false;
+    let difference = 0;
+    for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+    return difference === 0;
+};
+
 import {
     buildIntegrationHubLookupMaps,
     buildIntgAuditPayload,
