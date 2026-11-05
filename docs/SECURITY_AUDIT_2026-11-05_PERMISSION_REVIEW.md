@@ -68,3 +68,24 @@ Supabase Auth's leaked-password protection is disabled in the current Security A
 ## Current decision
 
 **No production or staging database changes were made.** The findings above are confirmed by catalog queries, but remediation is intentionally held until backup/restore evidence, authorized test identities, and protected staging access are available. CI passing does not replace these live-environment safety gates.
+
+
+## Staging validation update — 2026-11-05
+
+After staging access was confirmed, the isolated trigger-helper hardening migration was applied to **staging only** using the reviewed SQL:
+
+```sql
+ALTER FUNCTION public.set_updated_at() SET search_path = pg_catalog;
+```
+
+- Supabase reported the migration application succeeded.
+- The staging migration ledger now records version `20261105153924`, name `set_updated_at_search_path`.
+- A direct catalog query verified `public.set_updated_at()` has `proconfig = {search_path=pg_catalog}`.
+- A fresh staging Security Advisor run no longer reports `function_search_path_mutable`.
+- Production was not changed.
+- The remote-generated migration version is not yet represented by a matching migration file in the repository. Reconcile this migration-history/source-file alignment before the next schema release; do not replay it on staging.
+- Other staging findings remain: 31 RLS-enabled tables with no policies, two SECURITY DEFINER helpers callable by anon/authenticated, and leaked-password protection disabled.
+- Authenticated tenant tests remain blocked: staging still has no membership rows and no authorized separate-tenant test identities have been confirmed. Staging preview remains SSO-protected.
+- No production migrations, grants, role assignments, Auth settings, or data changes were made.
+
+This is a limited staging hardening success, not production release approval.
