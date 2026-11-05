@@ -55,7 +55,8 @@ create schema if not exists auth;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon; end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
-end $$;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role; end if;
+end $;
 create or replace function auth.uid() returns uuid language sql stable as $fn$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
 $fn$;
@@ -90,6 +91,20 @@ for (const file of files) {
     }
 }
 console.log(`Applied ${files.length} migrations to embedded Postgres.\n`);
+
+// --- 202611050002: atomic rate-limit RPC is service-role only --------------
+await db.exec(`select set_config('request.jwt.claims', '{"role":"authenticated","aud":"authenticated"}', false); set role authenticated;`);
+await expectError(
+    `select * from public.consume_rate_limit('auth-must-not-call', 10, 60000)`,
+    "rate-limits: authenticated role cannot execute counter RPC",
+);
+await resetRole();
+await db.exec(`select set_config('request.jwt.claims', '{"role":"service_role","aud":"service_role"}', false); set role service_role;`);
+const rateOne = await db.query(`select * from public.consume_rate_limit('atomic-test-key', 10, 60000)`);
+const rateTwo = await db.query(`select * from public.consume_rate_limit('atomic-test-key', 10, 60000)`);
+record("rate-limits: first atomic request count is 1", rateOne.rows[0]?.count === 1);
+record("rate-limits: concurrent-safe increment advances count", rateTwo.rows[0]?.count === 2);
+await resetRole();
 
 // Fixtures are inserted as the superuser (RLS bypassed) to set up tenants.
 await db.exec(`
