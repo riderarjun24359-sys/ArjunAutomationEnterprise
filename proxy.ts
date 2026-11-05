@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { type NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { buildContentSecurityPolicy } from "@/src/lib/content-security-policy";
 import { authMiddleware } from "@/src/middleware/auth";
 
