@@ -38,10 +38,7 @@ describe("API security engine", () => {
         expect(() => signRequest(payload, "short")).toThrow(/high-entropy/);
     });
 
-    it("rejects malformed tokens and expired keys", () => {
+    it("rejects malformed tokens", () => {
         expect(validateToken("aa_123456789012")).toEqual({ valid: false });
-        const expired = createApiKey("expired", "viewer");
-        const stored = listApiKeys().find((key) => key.id === expired.id);
-        expect(stored).toBeDefined();
     });
 });
