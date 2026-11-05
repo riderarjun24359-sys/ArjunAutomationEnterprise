@@ -57,7 +57,6 @@ import type {
     ExportMappingSummary,
     CreateAccountingExportInput,
     AccountingExportSummary,
-    CreateApiKeyInput,
     ApiKeySummary,
     CreateApiScopeInput,
     ApiScopeSummary,
@@ -542,14 +541,6 @@ export const buildAccountingExportPayload = (organizationId: string, input: Crea
     export_key: input.exportKey ?? "",
     export_type: input.exportType ?? "invoice",
     export_status: input.exportStatus ?? "pending",
-});
-
-export const buildApiKeyPayload = (organizationId: string, input: CreateApiKeyInput) => ({
-    organization_id: organizationId,
-    hub_id: input.integrationHubId,
-    key_name: input.keyName ?? "",
-    key_prefix: input.keyPrefix ?? "",
-    api_version: input.apiVersion ?? "v1",
 });
 
 export const buildApiScopePayload = (organizationId: string, input: CreateApiScopeInput) => ({
