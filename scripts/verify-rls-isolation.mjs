@@ -338,10 +338,13 @@ await expectRows(`select id from public.invoices where organization_id = '${ORG2
 await resetRole();
 
 // --- 202611050005: API key and scope mutation is admin-only ----------------
-const keyPolicies = await db.query("select policyname, cmd from pg_policies where schemaname='public' and tablename in ('intg_api_keys','intg_api_scopes')");
+const keyPolicies = await db.query("select policyname, cmd, qual, with_check from pg_policies where schemaname='public' and tablename in ('intg_api_keys','intg_api_scopes')");
 console.log("API key RLS policies:", JSON.stringify(keyPolicies.rows));
 await asAuth(AUTH6);
 const memberAdminCheck = await db.query("select public.can_manage_organization_members($1) as allowed", [ORG1]);
+const callerIdentity = await db.query("select public.auth_profile_id() as profile_id");
+const callerMembership = await db.query("select role_name from public.organization_members where organization_id = $1 and user_id = public.auth_profile_id()", [ORG1]);
+console.log("API key caller identity:", JSON.stringify(callerIdentity.rows), JSON.stringify(callerMembership.rows));
 record("API keys: ordinary member is not an org admin", memberAdminCheck.rows[0]?.allowed === false, "allowed=" + memberAdminCheck.rows[0]?.allowed);
 await expectError(
     `insert into public.intg_api_keys (organization_id, hub_id, key_name, key_prefix, key_hash) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'member-minted-key', 'aa_bbbbbbbbbbbb', repeat('1', 64))`,
