@@ -94,8 +94,9 @@ begin
     return new;
   end if;
 
-  if not public.can_manage_organization_members(new.organization_id) then
-    raise exception 'only organization administrators can invite members'
+  if not public.can_manage_organization_members(new.organization_id)
+     and not public.is_platform_super_admin() then
+    raise exception 'only organization administrators or platform super-admins can invite members'
       using errcode = '42501';
   end if;
 
@@ -124,6 +125,7 @@ create policy memberships_insert
     public.can_bootstrap_organization_membership(
       organization_id, user_id, role_name
     )
+    or public.is_platform_super_admin()
     or (
       public.can_manage_organization_members(organization_id)
       and (
