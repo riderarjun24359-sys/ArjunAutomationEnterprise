@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-const { validateIntegrationApiKey } = vi.hoisted(() => ({ validateIntegrationApiKey: vi.fn() }));
+const { validateIntegrationApiKey, checkRateLimitDb } = vi.hoisted(() => ({ validateIntegrationApiKey: vi.fn(), checkRateLimitDb: vi.fn() }));
 
 vi.mock("@/src/modules/integration-platform/lib/api-key-auth", () => ({
     validateIntegrationApiKey,
 }));
+vi.mock("@/src/lib/rate-limiter-db", () => ({ checkRateLimitDb }));
 
 import { GET } from "./route";
 
@@ -15,7 +16,12 @@ const makeRequest = (authorization?: string) => new NextRequest(
 );
 
 describe("GET /api/v1/integration/health", () => {
-    beforeEach(() => validateIntegrationApiKey.mockReset());
+    beforeEach(() => {
+        validateIntegrationApiKey.mockReset();
+        checkRateLimitDb.mockReset().mockResolvedValue({
+            allowed: true, remaining: 119, resetAt: new Date(Date.now() + 60_000), degraded: false,
+        });
+    });
 
     it("rejects missing bearer credentials", async () => {
         const response = await GET(makeRequest());
@@ -64,4 +70,19 @@ describe("GET /api/v1/integration/health", () => {
         const response = await GET(makeRequest("Bearer valid-token"));
         expect(response.status).toBe(200);
     });
+    it("fails closed when distributed rate limiting is degraded", async () => {
+        validateIntegrationApiKey.mockResolvedValue({ apiKeyId: "key-1", organizationId: "org-1", hubId: "hub-1", apiVersion: "v1", scopes: [{ scopeKey: "integration:health:read", permissions: ["read"] }] });
+        checkRateLimitDb.mockResolvedValue({ allowed: true, remaining: 0, resetAt: new Date(Date.now() + 60_000), degraded: true });
+        const response = await GET(makeRequest("Bearer valid-token"));
+        expect(response.status).toBe(503);
+    });
+
+    it("returns 429 when the per-key rate limit is exceeded", async () => {
+        validateIntegrationApiKey.mockResolvedValue({ apiKeyId: "key-1", organizationId: "org-1", hubId: "hub-1", apiVersion: "v1", scopes: [{ scopeKey: "integration:health:read", permissions: ["read"] }] });
+        checkRateLimitDb.mockResolvedValue({ allowed: false, remaining: 0, resetAt: new Date(Date.now() + 60_000), degraded: false });
+        const response = await GET(makeRequest("Bearer valid-token"));
+        expect(response.status).toBe(429);
+        expect(response.headers.get("retry-after")).toBeTruthy();
+    });
+
 });
