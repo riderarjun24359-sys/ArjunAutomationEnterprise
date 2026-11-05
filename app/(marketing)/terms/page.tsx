@@ -14,7 +14,7 @@ export default function TermsPage() {
     return (
         <article className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
             <h1 className="text-3xl font-semibold text-[var(--premium-fg)]">Terms of Service</h1>
-            <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">Last updated: March 1, 2026</p>
+            <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">Last updated: November 6, 2026</p>
 
             {/* Contracting party. Terms signed by an unidentifiable entity are
                 unenforceable, and this is the first section a customer's
@@ -23,12 +23,12 @@ export default function TermsPage() {
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--premium-fg-muted)]">Contracting party</h2>
                 <dl className="mt-3 space-y-1.5">
                     <div className="flex flex-wrap gap-x-2">
-                        <dt className="font-medium">Entity:</dt>
+                        <dt className="font-medium">Business / trading name:</dt>
                         <dd>{COMPANY_PROFILE.legalName}</dd>
                     </div>
                     {addressLine ? (
                         <div className="flex flex-wrap gap-x-2">
-                            <dt className="font-medium">Registered office:</dt>
+                            <dt className="font-medium">Business contact address:</dt>
                             <dd>{addressLine}</dd>
                         </div>
                     ) : null}
@@ -51,13 +51,13 @@ export default function TermsPage() {
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">1. Agreement</h2>
                     <p className="mt-2 leading-relaxed">
-                        By accessing the {COMPANY_PROFILE.legalName} website or using our services, you agree to these
+                        By accessing the {COMPANY_PROFILE.tradingName} website or using our services, you agree to these
                         Terms of Service. If you do not agree, do not use our services.
                     </p>
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">2. Services</h2>
-                    <p className="mt-2 leading-relaxed">Arjun Automation provides enterprise automation platform implementation, consulting, and managed support services. Specific scope, timelines, and pricing are defined in individual client agreements.</p>
+                    <p className="mt-2 leading-relaxed">Arjun Automation provides enterprise automation platform implementation, consulting, and managed support services. Specific scope, timelines, pricing, and the legal contracting party are identified in the signed proposal or service agreement for each engagement.</p>
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">3. Intellectual Property</h2>
