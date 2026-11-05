@@ -423,10 +423,10 @@ historical notes are retained to preserve the original investigation record.
   staging `iplkndwkjuupktxwcksv`, production `ixassghxogcabfcyjjtz`.
 - Both migration ledgers report 64 applied migrations, latest
   `202610110001_org_member_anon_lockdown`.
-- The repair branch contains 75 migration files. These 11 files are not recorded
+- The repair branch contains 76 migration files. These 12 files are not recorded
   in either remote migration ledger:
   `202610120001`–`202610120005`, `202610300001`, and
-  `202611050001`–`202611050005`.
+  `202611050001`–`202611050006`.
 - Production has one organization and one active `founder` membership, but no
   active `super_admin`. Staging has one organization and no membership rows.
 - Staging does not have `public.rate_limits`. Production does have the table,
