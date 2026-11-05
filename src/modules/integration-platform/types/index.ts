@@ -257,7 +257,7 @@ export interface ApiScopeSummary {
 
 export interface CreateApiScopeInput {
     integrationHubId: string;
-    apiKeyId?: string;
+    apiKeyId: string;
     scopeKey?: string;
     scopeName?: string;
     permissions?: unknown[];
