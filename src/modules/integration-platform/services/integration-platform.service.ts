@@ -439,7 +439,7 @@ export class IntegrationPlatformService {
         const expected = Buffer.from(record.key_hash, "hex");
         const actual = Buffer.from(createHash("sha256").update(presentedKey, "utf8").digest("hex"), "hex");
         if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
-        await databaseService.intgApiKeys.update(record.id, { last_used_at: new Date().toISOString() });
+        await databaseService.intgApiKeys.touchLastUsedByOrganization(organizationId, record.id);
         return { id: record.id, organizationId: record.organization_id, hubId: record.hub_id, apiVersion: record.api_version };
     }
 
