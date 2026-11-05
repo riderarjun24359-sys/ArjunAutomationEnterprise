@@ -69,3 +69,16 @@ Rotate request:
 ```
 
 Both actions require an active organization owner/admin membership, resolve the organization from the hub, and scope the update by key ID + organization ID + hub ID. Revocation changes status to `revoked`; rotation replaces the prefix and digest so the old token stops authenticating. The new plaintext token is returned once with `Cache-Control: no-store`. Management attempts are rate-limited.
+
+## Protected API example
+
+A minimal authenticated integration endpoint is available at:
+
+`GET /api/v1/integration/health`
+
+Send the issued key as `Authorization: Bearer <token>`. The key must have an
+active `integration:health:read` scope with `read` (or wildcard) permission.
+Create that scope for the selected API key in the Integration Platform dashboard.
+Missing credentials return 401; invalid, expired, or revoked credentials return
+401; a valid key without the required scope returns 403. Responses are
+`Cache-Control: no-store` and do not expose organization data.
