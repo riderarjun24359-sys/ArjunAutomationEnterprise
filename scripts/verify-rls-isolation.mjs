@@ -238,11 +238,13 @@ await expectRows(
 );
 await resetRole();
 
-// Positive control: a genuinely new user may still found a memberless org.
+// First-tenant bootstrap is performed by the authenticated server-side
+// provisioning route with the service role; browser sessions must not self-insert
+// a founder membership directly, even into a memberless organization.
 await asAuth(AUTH3);
-await expectOk(
+await expectError(
     `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
-    "membership: first-run founder self-join allowed",
+    "membership: direct founder self-join blocked (server provisioning only)",
 );
 await resetRole();
 
