@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { ROUTES } from "@/src/constants/routes";
 import { getSupabaseAnonKey, getSupabaseUrl } from "@/src/lib/supabase-config";
+import { resolveSafeAuthRedirect } from "@/src/lib/safe-auth-redirect";
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url);
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (!error) {
-            return NextResponse.redirect(`${origin}${next}`);
+            return NextResponse.redirect(resolveSafeAuthRedirect({ next, origin, fallback: ROUTES.dashboard }));
         }
     }
 
