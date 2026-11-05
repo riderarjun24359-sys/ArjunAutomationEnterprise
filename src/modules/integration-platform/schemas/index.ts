@@ -116,6 +116,7 @@ export type apiKeysFormValues = z.infer<typeof apiKeysFormSchema>;
 
 export const apiScopesFormSchema = z.object({
     integrationHubId: z.string().min(1),
+    apiKeyId: z.string().uuid(),
     scopeKey: z.string().min(1).optional(),
     scopeName: z.string().min(1).optional(),
 });
