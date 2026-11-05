@@ -231,6 +231,13 @@ want an all-or-nothing apply.
    under RLS (org trust boundary — same as every other org row); the service
    resolves them server-side only, never through action configs.
 
+
+9. **`202611050001_membership_role_management_hardening.sql`** — hardens membership UPDATE in both RLS and a database trigger. Only an active organization administrator may manage other memberships; users cannot change their own role or active state, move a membership between organizations, or grant/manage founder/owner/super-admin roles. A platform super-admin may manage elevated roles. No data prerequisite.
+
+10. **`202611050002_atomic_rate_limit_rpc.sql`** — adds an atomic Postgres counter for serverless rate limiting. EXECUTE is restricted to `service_role`; authenticated and anon callers must be denied. Requires `202610300001_rate_limits.sql` (already in the migration chain). No data prerequisite.
+
+11. **`202611050003_membership_insert_hardening.sql`** — closes membership INSERT escalation. Ordinary members cannot invite; org administrators can invite ordinary roles; platform super-admins can grant elevated roles. First-user founder bootstrap remains available only for a truly memberless organization and is serialized with an organization-row lock. No data prerequisite.
+
 ## 3. Positive / negative probes (staging, after each file; full set after step 8)
 
 Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.
@@ -260,6 +267,13 @@ Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/
 | 20 | A `GET /integration_webhooks?organization_id=eq.<orgA>` | own org's named targets (**without** `secret` values in any list response) |
 | 21 | A `GET /integration_webhooks?organization_id=eq.<orgB>` and `GET /integration_deliveries?organization_id=eq.<orgB>` | `[]` (cross-org denied) |
 | 22 | `POST` a webhook delivery to an org-B-owned URL from an org-A workflow run | blocked; delivery row (if any) lands under org A only |
+
+| 23 | ordinary member A attempts to insert a membership for another user in org A or B | 401/403 |
+| 24 | org admin A invites a normal `member` / `manager` in org A | succeeds |
+| 25 | org admin A attempts to grant `owner`, `founder`, or `super_admin` | 401/403 |
+| 26 | platform super-admin invites an elevated role into another org | succeeds |
+| 27 | member A attempts to change their own role or active state | 401/403 |
+| 28 | authenticated / anon calls `consume_rate_limit` directly | permission denied; service-role call increments atomically |
 
 Local mirror of probes 3–9, 14 and the platform-admin case: `npm run rls:verify`
 (82 probes, incl. the module-table block: same-tenant positive reads,
