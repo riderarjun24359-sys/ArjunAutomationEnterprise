@@ -266,6 +266,14 @@ await expectRows(
     0,
     "membership: ordinary member cannot promote another user",
 );
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'admin', true)`,
+    "membership: ordinary member cannot invite elevated role",
+);
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'member', true)`,
+    "membership: ordinary member cannot invite another user",
+);
 await resetRole();
 
 // Organization founder can assign ordinary roles to teammates, but cannot
@@ -284,6 +292,14 @@ await expectError(
     `update public.organization_members set role_name = 'member' where organization_id = '${ORG1}' and user_id = '${PROF1}'`,
     "membership: founder cannot change own role",
 );
+await expectOk(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'manager', true)`,
+    "membership: founder can invite a normal teammate",
+);
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF5}', 'owner', true)`,
+    "membership: founder cannot invite owner role",
+);
 await resetRole();
 
 // Platform super-admin retains the ability to grant elevated ownership.
@@ -293,12 +309,16 @@ await expectRows(
     1,
     "membership: platform super-admin can grant owner role",
 );
+await expectOk(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG2}', '${PROF3}', 'owner', true)`,
+    "membership: platform super-admin can invite owner role",
+);
 await resetRole();
 
 // Positive control: a genuinely new user may still found a memberless org.
-await asAuth(AUTH3);
+await asAuth(AUTH5);
 await expectOk(
-    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF5}', 'founder', true)`,
     "membership: first-run founder self-join allowed",
 );
 await resetRole();
