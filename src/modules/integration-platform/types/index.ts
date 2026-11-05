@@ -543,6 +543,6 @@ export interface CreateIntegrationFailureInput {
 export interface IntgSdkConnectServiceInput { integrationHubId: string; serviceKey: string; serviceName: string; providerType?: string; }
 export interface IntgSdkConnectServiceResult { serviceId: string; serviceKey: string; connectorStatus: string; }
 export interface IntgSdkIssueApiKeyInput { integrationHubId: string; keyName: string; apiVersion?: string; }
-export interface IntgSdkIssueApiKeyResult { apiKeyId: string; keyName: string; status: string; }
+export interface IntgSdkIssueApiKeyResult { apiKeyId: string; keyName: string; status: string; secret: string; }
 export interface IntgSdkRegisterWebhookInput { integrationHubId: string; webhookKey: string; webhookName: string; targetUrl?: string; }
 export interface IntgSdkRegisterWebhookResult { webhookId: string; webhookKey: string; status: string; }

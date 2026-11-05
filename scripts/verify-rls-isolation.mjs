@@ -54,6 +54,12 @@ create schema if not exists auth;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon; end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
+  -- Supabase migrations grant internal RPC execution to this hosted role.
+  -- Create a local BYPASSRLS equivalent so the isolated PGlite migration
+  -- harness models the role without connecting to any remote database.
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role bypassrls;
+  end if;
 end $$;
 create or replace function auth.uid() returns uuid language sql stable as $fn$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
@@ -235,11 +241,12 @@ await expectRows(
 );
 await resetRole();
 
-// Positive control: a genuinely new user may still found a memberless org.
+// Authenticated users cannot directly create membership rows. First-run
+// organization provisioning must use the trusted server-side onboarding path.
 await asAuth(AUTH3);
-await expectOk(
+await expectError(
     `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
-    "membership: first-run founder self-join allowed",
+    "membership: direct self-join denied; trusted onboarding required",
 );
 await resetRole();
 
@@ -322,10 +329,11 @@ await expectRows("select id from public.organization_members", 0, "reads: member
 await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: memberless user cannot read other profile");
 await resetRole();
 
-// Platform admin (active super_admin membership) retains cross-org visibility.
+// Even a super_admin membership is tenant-scoped by the current identity
+// policies; cross-organization identity reads remain denied at the RLS layer.
 await asAuth(AUTH4);
-await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
-await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
+await expectRows(`select id from public.organizations where id = '${ORG2}'`, 0, "reads: super_admin cannot bypass tenant boundary");
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: super_admin cannot read other-tenant profile");
 await resetRole();
 
 // --- 202610120004: module-table tenant reads --------------------------------
@@ -407,6 +415,42 @@ await resetRole();
 
 await expectModulePolicy("integration_webhooks");
 await expectModulePolicy("integration_deliveries");
+const apiKeyPrivileges = await db.query(`
+    select
+        has_table_privilege('anon', 'public.intg_api_keys', 'select') as anon_select,
+        has_column_privilege('anon', 'public.intg_api_keys', 'key_hash', 'select') as anon_hash_select,
+        has_column_privilege('anon', 'public.intg_api_keys', 'key_hash', 'insert') as anon_hash_insert,
+        has_column_privilege('anon', 'public.intg_api_keys', 'status', 'update') as anon_status_update,
+        has_table_privilege('authenticated', 'public.intg_api_keys', 'select') as auth_table_select,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'select') as auth_hash_select,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'key_prefix', 'select') as auth_prefix_select,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'insert') as auth_hash_insert,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'status', 'update') as auth_status_update,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'update') as auth_hash_update,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'organization_id', 'update') as auth_org_update,
+        has_table_privilege('authenticated', 'public.intg_api_keys', 'delete') as auth_delete;
+`);
+const apiKeyGrant = apiKeyPrivileges.rows[0];
+record("api keys: anon has no table or legacy column privileges",
+    !apiKeyGrant.anon_select && !apiKeyGrant.anon_hash_select && !apiKeyGrant.anon_hash_insert && !apiKeyGrant.anon_status_update);
+record("api keys: hash is not readable by authenticated", !apiKeyGrant.auth_table_select && !apiKeyGrant.auth_hash_select && apiKeyGrant.auth_prefix_select);
+record("api keys: authenticated can insert hash but cannot change it or tenant ownership later",
+    apiKeyGrant.auth_hash_insert && apiKeyGrant.auth_status_update && !apiKeyGrant.auth_hash_update && !apiKeyGrant.auth_org_update);
+record("api keys: authenticated cannot delete keys", !apiKeyGrant.auth_delete);
+const apiKeyPolicies = await db.query(`
+    select policyname, cmd, coalesce(qual, '') as qual, coalesce(with_check, '') as wc, roles::text as roles
+    from pg_policies where schemaname = 'public' and tablename = 'intg_api_keys';
+`);
+for (const [name, command, required] of [
+    ["intg_api_keys_select", "SELECT", "is_organization_member"],
+    ["intg_api_keys_insert", "INSERT", "is_organization_admin"],
+    ["intg_api_keys_update", "UPDATE", "is_organization_admin"],
+]) {
+    const policy = apiKeyPolicies.rows.find((row) => row.policyname === name && row.cmd === command);
+    const expression = policy ? `${policy.qual} ${policy.wc}` : "";
+    record(`api keys: ${command.toLowerCase()} restricted to tenant role`,
+        Boolean(policy) && policy.roles.includes("authenticated") && expression.includes(required) && expression.includes("organization_id"));
+}
 
 // Policy-shape gate over all 20 tables enabled by 202610120004.
 for (const tbl of [

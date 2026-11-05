@@ -28,7 +28,7 @@ const prod = spawnVerify(root, "scripts/verify-production.mjs");
 pass("chain:production_verify", prod.status === 0, prod.status !== 0 ? "failed" : "ok");
 
 const readiness = spawnVerify(root, "scripts/verify-production-readiness.mjs");
-pass("chain:production_readiness", readiness.status === 0, readiness.status !== 0 ? "failed" : "ok");
+pass("chain:production_readiness", readiness.status === 0, readiness.status !== 0 ? (readiness.stderr || readiness.stdout || "failed").slice(-4000) : "ok");
 
 const golive = spawnVerify(root, "scripts/verify-go-live.mjs");
 pass("chain:go_live", golive.status === 0, golive.status !== 0 ? "failed" : "ok");

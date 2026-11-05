@@ -153,6 +153,15 @@ import type {
     IntgSdkRegisterWebhookResult,
 } from "@/src/modules/integration-platform/types";
 
+const bytesToHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+const sha256Hex = async (value: string) => bytesToHex(new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
+const constantTimeHexEqual = (left: string, right: string) => {
+    if (!/^[a-f0-9]{64}$/.test(left) || !/^[a-f0-9]{64}$/.test(right)) return false;
+    let difference = 0;
+    for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+    return difference === 0;
+};
+
 export class IntegrationPlatformService {
     private async getContext(authUserId: string, email: string, fullName?: string | null) {
         return resolveOrganizationContext(authUserId, email, fullName);
@@ -405,14 +414,33 @@ export class IntegrationPlatformService {
         return (await databaseService.intgApiKeys.listByOrganization(context.organizationId)).map((r) => mapApiKeySummary(r, maps));
     }
 
-    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary> {
+    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary & { secret: string }> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.intgApiKeys.create(buildApiKeyPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create apiKeys");
-        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", `ApiKey created`, created.id));
+        const random = globalThis.crypto.getRandomValues(new Uint8Array(44));
+        const prefix = `aae_live_${bytesToHex(random.slice(0, 12))}`;
+        const encodedSecret = btoa(String.fromCharCode(...random.slice(12))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+        const secret = `${prefix}.${encodedSecret}`;
+        const keyHash = await sha256Hex(secret);
+        const created = await databaseService.intgApiKeys.createKeyRecord({
+            ...buildApiKeyPayload(context.organizationId, input),
+            key_prefix: prefix,
+            key_hash: keyHash,
+            status: "active",
+        });
+        if (!created) throw new Error("Failed to create API key");
+        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", "API key issued", created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapApiKeySummary(created, maps);
+        return { ...mapApiKeySummary(created, maps), secret };
+    }
+
+    async revokeApiKey(authUserId: string, email: string, apiKeyId: string, fullName?: string | null): Promise<boolean> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) throw new Error("Unable to resolve organization context");
+        const revoked = await databaseService.intgApiKeys.updateStatusByOrganization(context.organizationId, apiKeyId, "revoked");
+        if (!revoked) return false;
+        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "revoke", "API key revoked", revoked.id));
+        return true;
     }
 
     async getApiScopes(authUserId: string, email: string, fullName?: string | null): Promise<ApiScopeSummary[]> {
@@ -740,7 +768,7 @@ export class IntegrationPlatformService {
         const knowledge = createKnowledgeClient(authUserId, email, fullName);
         await knowledge.search({ query: input.keyName, limit: 3 });
         const created = await this.createApiKey(authUserId, email, { integrationHubId: input.integrationHubId, keyName: input.keyName, apiVersion: input.apiVersion }, fullName);
-        return { apiKeyId: created.id, keyName: created.keyName, status: created.status };
+        return { apiKeyId: created.id, keyName: created.keyName, status: created.status, secret: created.secret };
     }
 
     async sdkRegisterWebhook(authUserId: string, email: string, input: IntgSdkRegisterWebhookInput, fullName?: string | null): Promise<IntgSdkRegisterWebhookResult> {

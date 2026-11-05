@@ -25,10 +25,21 @@ export function runLint(root) {
 }
 
 export function spawnVerify(root, scriptRel) {
-    return spawnSync(process.execPath, [join(root, scriptRel)], {
+    const result = spawnSync(process.execPath, [join(root, scriptRel)], {
         cwd: root,
         encoding: "utf8",
         timeout: 600_000,
         env: process.env,
     });
+
+    // Preserve nested verifier diagnostics. Without this, callers only see a
+    // non-zero status and the CI failure is reported with an empty detail.
+    if (result.status !== 0) {
+        const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+        process.stderr.write(`\n[verification child failed: ${scriptRel}; status=${result.status ?? "null"}; signal=${result.signal ?? "none"}]\n`);
+        if (output) process.stderr.write(`${output.slice(-12_000)}\n`);
+        if (result.error) process.stderr.write(`[spawn error] ${result.error.message}\n`);
+    }
+
+    return result;
 }

@@ -342,21 +342,39 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 }
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":""} });
+    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: { integrationHubId: "", keyName: "", apiVersion: "v1" } });
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-            <Card hover><SectionHeader title="Api Keys" description="Enterprise integration platform api keys" /><div className="mt-6 space-y-3">
-                {data.apiKeys.length === 0 ? <EmptyState title="No api keys" description="Create the first api keys record." /> : data.apiKeys.map((item) => (
-                    <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={`${item.status}`} />
-                ))}
-            </div></Card>
-            <Card hover><SectionHeader title="Create api keys" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
-                <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
-                <input {...form.register("keyName")} placeholder="keyName" className={inputClass} />
-                <input {...form.register("keyPrefix")} placeholder="keyPrefix" className={inputClass} />
-                <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
-                <SaveButton loading={form.formState.isSubmitting} label="Create" />
-            </form></Card>
+            <Card hover>
+                <SectionHeader title="API Keys" description="Secrets are hashed at rest and shown only once." />
+                <div className="mt-6 space-y-3">
+                    {data.apiKeys.length === 0 ? <EmptyState title="No API keys" description="Create the first API key." /> : data.apiKeys.map((item) => (
+                        <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                            <div><p className="font-medium">{item.keyName}</p><p className="text-xs text-slate-500">{item.hubName} • {item.apiVersion} • {item.status}</p></div>
+                            {item.status === "active" ? <button type="button" onClick={() => void data.revokeApiKey(item.id)} className="rounded-full border px-3 py-1.5 text-xs">Revoke</button> : null}
+                        </div>
+                    ))}
+                </div>
+            </Card>
+            <Card hover>
+                <SectionHeader title="Create API key" description="A cryptographically random secret is generated and shown only once." />
+                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => { await data.createApiKey(v); form.reset({ integrationHubId: "", keyName: "", apiVersion: "v1" }); })}>
+                    <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                    <input {...form.register("keyName")} placeholder="Key name" className={inputClass} />
+                    <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
+                    <SaveButton loading={form.formState.isSubmitting} label="Generate key" />
+                </form>
+                {data.newApiKeySecret ? (
+                    <div className="mt-5 rounded-2xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950">
+                        <p className="font-semibold">Copy this key now. It will not be shown again.</p>
+                        <code className="mt-2 block break-all rounded-lg bg-white p-3">{data.newApiKeySecret}</code>
+                        <div className="mt-3 flex gap-2">
+                            <button type="button" onClick={() => void navigator.clipboard.writeText(data.newApiKeySecret ?? "")} className="rounded-full bg-slate-900 px-3 py-1.5 text-xs text-white">Copy key</button>
+                            <button type="button" onClick={data.clearApiKeySecret} className="rounded-full border px-3 py-1.5 text-xs">Hide key</button>
+                        </div>
+                    </div>
+                ) : null}
+            </Card>
         </div>
     );
 }
