@@ -28,3 +28,11 @@ begin
   end loop;
 end
 $$;
+
+-- The SHA-256 digest is authentication material, not dashboard metadata.
+-- Remove table-wide SELECT and grant only the fields required by the UI.
+revoke select on public.intg_api_keys from anon, authenticated;
+grant select (
+  id, organization_id, hub_id, key_name, key_prefix, api_version,
+  expires_at, last_used_at, status, created_at, updated_at
+) on public.intg_api_keys to authenticated;
