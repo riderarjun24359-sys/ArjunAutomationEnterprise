@@ -417,6 +417,13 @@ export class IntegrationPlatformService {
     async createApiScope(authUserId: string, email: string, input: CreateApiScopeInput, fullName?: string | null): Promise<ApiScopeSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const apiKeys = await databaseService.intgApiKeys.listByOrganization(context.organizationId);
+        const selectedKey = apiKeys.find((key) =>
+            key.id === input.apiKeyId &&
+            key.hub_id === input.integrationHubId &&
+            key.status === "active"
+        );
+        if (!selectedKey) throw new Error("Select an active API key belonging to the selected integration hub.");
         const created = await databaseService.intgApiScopes.create(buildApiScopePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create apiScopes");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_scopes", "create", `ApiScope created`, created.id));
