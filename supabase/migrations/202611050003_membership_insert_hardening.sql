@@ -14,21 +14,37 @@ create or replace function public.can_bootstrap_organization_membership(
   target_role text
 )
 returns boolean
-language sql
-stable
+language plpgsql
+volatile
 security definer
 set search_path = public
 set row_security = off
-as $$
-  select
-    target_user_id = public.auth_profile_id()
-    and target_role = 'founder'
-    and not exists (
-      select 1
-      from public.organization_members existing
-      where existing.organization_id = org_id
-    );
-$$;
+as $
+begin
+  -- Serialize first-member claims for this organization. Without the row lock,
+  -- two simultaneous first-run signups could both observe an empty org and
+  -- both receive founder privileges.
+  if target_role <> 'founder'
+     or target_user_id is distinct from public.auth_profile_id() then
+    return false;
+  end if;
+
+  perform 1
+  from public.organizations
+  where id = org_id
+  for update;
+
+  if not found then
+    return false;
+  end if;
+
+  return not exists (
+    select 1
+    from public.organization_members existing
+    where existing.organization_id = org_id
+  );
+end;
+$;
 
 create or replace function public.is_platform_super_admin()
 returns boolean
