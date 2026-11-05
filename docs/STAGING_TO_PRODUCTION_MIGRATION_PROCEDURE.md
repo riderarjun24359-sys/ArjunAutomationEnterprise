@@ -1,5 +1,16 @@
 # Staging → Production migration procedure (prepared hardening set)
 
+> **CURRENT REMOTE AUDIT — 2026-11-05 (authoritative over older historical notes below):**
+> - Supabase production (`ixassghxogcabfcyjjtz`) and staging (`iplkndwkjuupktxwcksv`) are reachable and report `ACTIVE_HEALTHY`.
+> - Both migration ledgers contain 64 applied migrations through `202610110001_org_member_anon_lockdown`. The repair branch has 76 migration files; 12 remain unapplied: `202610120001`–`202610120005`, `202610300001`, and `202611050001`–`202611050006`.
+> - Latest repair-branch CI run #149 passed all checks, including lint, TypeScript, unit tests, migration-chain validation, tenant-isolation tests, production build, pre-deployment verification, and browser E2E smoke.
+> - Production currently has one active founder membership and no active `super_admin`; staging currently has one organization and no membership rows. Do not infer or create an admin identity.
+> - Staging has no `public.rate_limits` table; production has a table with RLS enabled but zero policies and broad table grants to `anon` / `authenticated`. Its origin is unverified and it is absent from the migration ledger. Treat this as schema drift; do not replay `202610300001_rate_limits.sql` blindly.
+> - No migrations, DDL, data writes, privilege changes, or role assignments were made during the remote audit. Backup/restore-point evidence has **not** been verified.
+> - **Release remains blocked** until a recent recoverable backup is evidenced, authorized staging test identities exist (two separate tenants plus a no-membership identity), authenticated cross-tenant probes pass against the live staging project, schema drift is reconciled, and a separately approved production release is authorized.
+>
+> The older "no database reachability", stale-staging, and historical pre-state descriptions later in this document are retained as audit history only. They are not current environment facts and must not override the dated audit above. Use the latest dated audit and the explicit release gates before any database operation.
+
 > **Migration safety gate:** `npm run db:apply` requires `SUPABASE_MIGRATION_TARGET=staging` or `production`. Held tenant/RLS migrations (202610120001–202610120004) are skipped by default; include them only with `ALLOW_HELD_MIGRATIONS=true` after the staging probe checklist passes. Production migration runs additionally require `STAGING_VALIDATION_APPROVED=true`. Do not place these approval flags in committed `.env` files or CI secrets without an approved release process.
 
 
