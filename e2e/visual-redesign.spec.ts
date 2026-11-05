@@ -75,7 +75,7 @@ test.describe("Primary customer journey", () => {
         await page.goto("/", { waitUntil: "networkidle" });
 
         // Primary hero CTA routes to contact.
-        await page.getByRole("link", { name: /book free consultation/i }).first().click();
+        await page.getByRole("link", { name: /book (a )?free consultation/i }).first().click();
         await expect(page).toHaveURL(/\/contact/);
 
         const form = page.locator('form[aria-label="Contact form"]');
@@ -143,7 +143,7 @@ test.describe("Navigation", () => {
 
     test("keyboard focus is visible on the primary CTA", async ({ page }) => {
         await page.goto("/", { waitUntil: "networkidle" });
-        const cta = page.getByRole("link", { name: "Book Free Consultation" }).first();
+        const cta = page.getByRole("link", { name: /book (a )?free consultation/i }).first();
         await cta.focus();
         const outlineVisible = await cta.evaluate((el) => {
             const s = getComputedStyle(el);
@@ -172,7 +172,8 @@ test.describe("Design system applied", () => {
         await page.goto("/", { waitUntil: "networkidle" });
 
         const tokens = await page.evaluate(() => {
-            const root = getComputedStyle(document.documentElement);
+            const scope = document.querySelector<HTMLElement>(".premium-theme") ?? document.documentElement;
+            const root = getComputedStyle(scope);
             const read = (name: string) => root.getPropertyValue(name).trim();
             const card = document.querySelector<HTMLElement>(".premium-card, .tc-card");
             const cs = card ? getComputedStyle(card) : null;
