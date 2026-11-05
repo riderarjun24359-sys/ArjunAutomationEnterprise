@@ -409,7 +409,7 @@ export class IntegrationPlatformService {
     async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary & { secret: string }> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const prefix = `aae_live_${randomBytes(6).toString("hex")}`;
+        const prefix = `aae_live_${randomBytes(12).toString("hex")}`;
         const secret = `${prefix}.${randomBytes(32).toString("base64url")}`;
         const keyHash = createHash("sha256").update(secret, "utf8").digest("hex");
         const created = await databaseService.intgApiKeys.create({
@@ -441,6 +441,15 @@ export class IntegrationPlatformService {
         if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
         await databaseService.intgApiKeys.update(record.id, { last_used_at: new Date().toISOString() });
         return { id: record.id, organizationId: record.organization_id, hubId: record.hub_id, apiVersion: record.api_version };
+    }
+
+    async revokeApiKey(authUserId: string, email: string, apiKeyId: string, fullName?: string | null): Promise<boolean> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) throw new Error("Unable to resolve organization context");
+        const revoked = await databaseService.intgApiKeys.updateStatusByOrganization(context.organizationId, apiKeyId, "revoked");
+        if (!revoked) return false;
+        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "revoke", "API key revoked", revoked.id));
+        return true;
     }
 
     async getApiScopes(authUserId: string, email: string, fullName?: string | null): Promise<ApiScopeSummary[]> {
