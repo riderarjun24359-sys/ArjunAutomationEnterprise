@@ -373,6 +373,15 @@ await expectOk(
     `insert into public.intg_api_scopes (organization_id, hub_id, api_key_id, scope_key, scope_name) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'integration:metrics:read', 'Metrics read')`,
     "API scopes: organization founder may grant scopes",
 );
+await expectError(
+    "select key_hash from public.intg_api_keys limit 1",
+    "API keys: browser roles cannot read credential digests",
+);
+await expectRows(
+    "select id from public.intg_api_keys limit 1",
+    1,
+    "API keys: administrators can read safe key metadata",
+);
 await resetRole();
 
 // --- 202610100003: finance guards -----------------------------------------
