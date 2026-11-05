@@ -6,6 +6,7 @@ import { MarketingStructuredData } from "@/src/modules/company-launch-kit/compon
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { buildMetadata } from "@/src/lib/seo";
+import { SearchContent } from "./SearchContent";
 
 const PAGE = {
     title: "Search",
@@ -32,6 +33,7 @@ export default function SearchPage() {
             <PremiumPageShell title="Search" description="Find services, case studies, blog articles, and resources across Arjun Automation.">
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="space-y-12">
+                    <SearchContent />
                     <section aria-labelledby="quick-search-heading">
                         <h2 id="quick-search-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">Quick links</h2>
                         <div className="mt-6 grid gap-4 sm:grid-cols-3 lg:grid-cols-4">
