@@ -347,7 +347,7 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
     const [managementError, setManagementError] = useState<string | null>(null);
     const [busyKeyId, setBusyKeyId] = useState<string | null>(null);
     const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: { integrationHubId: "", keyName: "", apiVersion: "v1" } });
-    const manageKey = async (item: ApiKeySummary, action: "rotate" | "revoke") => {
+    const manageKey = async (item: (typeof data.apiKeys)[number], action: "rotate" | "revoke") => {
         const confirmed = action === "revoke"
             ? window.confirm("Revoke this API key? Existing integrations using it will stop working.")
             : window.confirm("Rotate this API key? The old secret will stop working immediately.");
