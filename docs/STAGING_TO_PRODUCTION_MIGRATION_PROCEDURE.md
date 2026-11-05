@@ -1,6 +1,6 @@
 # Staging → Production migration procedure (prepared hardening set)
 
-> **Migration safety gate:** `npm run db:apply` now stops before applying anything unless `SUPABASE_MIGRATION_TARGET` is explicitly set to `staging` or `production` and `ALLOW_HELD_MIGRATIONS=true`. The held tenant/RLS migrations (202610120001–202610120004) must be proven on staging first. For production, also set `STAGING_VALIDATION_APPROVED=true` only after the complete staging probe checklist has passed. Do not place these approval flags in committed `.env` files or CI secrets without an approved release process.
+> **Migration safety gate:** `npm run db:apply` requires `SUPABASE_MIGRATION_TARGET=staging` or `production`. Held tenant/RLS migrations (202610120001–202610120004) are skipped by default; include them only with `ALLOW_HELD_MIGRATIONS=true` after the staging probe checklist passes. Production migration runs additionally require `STAGING_VALIDATION_APPROVED=true`. Do not place these approval flags in committed `.env` files or CI secrets without an approved release process.
 
 
 **Status of this document:** the operator runbook for applying the prepared RLS
