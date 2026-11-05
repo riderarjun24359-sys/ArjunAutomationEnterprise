@@ -241,11 +241,12 @@ await expectRows(
 );
 await resetRole();
 
-// Positive control: a genuinely new user may still found a memberless org.
+// Authenticated users cannot directly create membership rows. First-run
+// organization provisioning must use the trusted server-side onboarding path.
 await asAuth(AUTH3);
-await expectOk(
+await expectError(
     `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
-    "membership: first-run founder self-join allowed",
+    "membership: direct self-join denied; trusted onboarding required",
 );
 await resetRole();
 
@@ -328,10 +329,11 @@ await expectRows("select id from public.organization_members", 0, "reads: member
 await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: memberless user cannot read other profile");
 await resetRole();
 
-// Platform admin (active super_admin membership) retains cross-org visibility.
+// Even a super_admin membership is tenant-scoped by the current identity
+// policies; cross-organization identity reads remain denied at the RLS layer.
 await asAuth(AUTH4);
-await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
-await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
+await expectRows(`select id from public.organizations where id = '${ORG2}'`, 0, "reads: super_admin cannot bypass tenant boundary");
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: super_admin cannot read other-tenant profile");
 await resetRole();
 
 // --- 202610120004: module-table tenant reads --------------------------------
