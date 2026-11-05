@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card } from "@/src/components/ui/card";
 import { EmptyState } from "@/src/components/ui/EmptyState";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
@@ -33,14 +33,10 @@ function SettingsForm({
     initialValues: SettingsValues;
     onSave: (values: SettingsValues) => Promise<void>;
 }) {
-    const initialKey = JSON.stringify(initialValues);
     const [values, setValues] = useState<SettingsValues>(initialValues);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        setValues(JSON.parse(initialKey) as SettingsValues);
-    }, [initialKey]);
 
     const submit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
