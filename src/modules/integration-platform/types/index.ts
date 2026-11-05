@@ -234,6 +234,7 @@ export interface CreateAccountingExportInput {
 
 export interface ApiKeySummary {
     id: string;
+    integrationHubId: string;
     hubName: string;
     keyName: string;
     apiVersion: string;
