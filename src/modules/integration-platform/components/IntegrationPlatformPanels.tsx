@@ -357,7 +357,7 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
                 </div>
             </Card>
             <Card hover>
-                <SectionHeader title="Create API key" description="The server generates a cryptographically random secret." />
+                <SectionHeader title="Create API key" description="A cryptographically random secret is generated and shown only once." />
                 <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => { await data.createApiKey(v); form.reset({ integrationHubId: "", keyName: "", apiVersion: "v1" }); })}>
                     <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
                     <input {...form.register("keyName")} placeholder="Key name" className={inputClass} />
