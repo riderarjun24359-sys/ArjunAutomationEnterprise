@@ -1,5 +1,5 @@
 import "server-only";
-import { createHash, timingSafeEqual } from "node:crypto";
+import { isWellFormedIntegrationApiKey, matchesIntegrationApiKey } from "@/src/modules/integration-platform/lib/api-key-crypto";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
 export interface ValidatedIntegrationApiKey {
@@ -16,12 +16,9 @@ export interface ValidatedIntegrationApiKey {
  * from or returned by the database.
  */
 export async function validateIntegrationApiKey(token: string): Promise<ValidatedIntegrationApiKey | null> {
-    if (typeof token !== "string" || token.length < 48 || token.length > 160) return null;
+    if (!isWellFormedIntegrationApiKey(token)) return null;
 
-    const [prefix, secret, extra] = token.split(".");
-    if (extra !== undefined || !/^aa_[a-f0-9]{12}$/.test(prefix ?? "") || !/^[A-Za-z0-9_-]{40,60}$/.test(secret ?? "")) {
-        return null;
-    }
+    const prefix = token.slice(0, token.indexOf("."));
 
     const client = getServiceRoleClient();
     if (!client) return null;
@@ -38,9 +35,7 @@ export async function validateIntegrationApiKey(token: string): Promise<Validate
         if (key.expires_at && Date.parse(key.expires_at) <= Date.now()) return null;
         if (typeof key.key_hash !== "string" || !/^[a-f0-9]{64}$/i.test(key.key_hash)) return null;
 
-        const candidate = createHash("sha256").update(token, "utf8").digest();
-        const expected = Buffer.from(key.key_hash, "hex");
-        if (candidate.length !== expected.length || !timingSafeEqual(candidate, expected)) return null;
+        if (!matchesIntegrationApiKey(token, key.key_hash)) return null;
 
         const { data: scopeRows, error: scopeError } = await client
             .from("intg_api_scopes")
