@@ -322,6 +322,8 @@ await expectOk(
     "membership: first-run founder self-join allowed",
 );
 await resetRole();
+// Restore the fixture to a genuinely memberless state before the read-scope probes.
+await db.exec(`delete from public.organization_members where organization_id = '${ORG3}' and user_id = '${PROF5}'`);
 
 // --- representative standard pattern (invoices) ---------------------------
 await asAuth(AUTH1);
