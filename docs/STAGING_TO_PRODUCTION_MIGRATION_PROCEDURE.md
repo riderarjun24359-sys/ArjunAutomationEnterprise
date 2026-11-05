@@ -445,8 +445,11 @@ historical notes are retained to preserve the original investigation record.
   probes.
 - Both projects still require review of Supabase Security Advisor findings
   (function search paths, SECURITY DEFINER grants, leaked-password protection,
-  and RLS-enabled tables without policies). No Health Advisor findings were
-  reported in the audit.
+  and RLS-enabled tables without policies). The advisor specifically identifies
+  `public.set_updated_at()` as having a mutable search path. Read-only inspection
+  confirms it is a non-SECURITY-DEFINER trigger function whose body only uses
+  `NEW` and `now()`; migration `202611050006` pins its search path to
+  `pg_catalog`. No Health Advisor findings were reported in the audit.
 
 ### Corrected pending-migration sequence
 
@@ -474,8 +477,9 @@ logical group:
     prechecks before creating the unique index.
 11. `202611050005_api_key_admin_rls.sql` — verify the UI only reads the
     explicitly granted metadata columns and that admin-only writes still work.
+12. `202611050006_set_updated_at_search_path.sql` — pins the trigger helper's search path to `pg_catalog`; confirm the function remains attached to all intended update triggers.
 
-The 11 files above are not permission to apply them immediately. Before the
+The 12 files above are not permission to apply them immediately. Before the
 first staging DDL change, obtain evidence of a recent recoverable backup,
 provision two distinct staging test identities in separate organizations plus
 a no-membership identity, and record the authorized platform-admin identity.
