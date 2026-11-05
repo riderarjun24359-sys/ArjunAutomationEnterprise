@@ -187,7 +187,7 @@ export async function PATCH(request: NextRequest) {
 
         const prefix = `aa_${randomBytes(6).toString("hex")}`;
         const token = `${prefix}.${randomBytes(32).toString("base64url")}`;
-        const keyHash = createHash("sha256").update(token, "utf8").digest("hex");
+        const keyHash = hashIntegrationApiKey(token);
         const { data: rotated, error } = await admin.from("intg_api_keys")
             .update({ key_prefix: prefix, key_hash: keyHash, status: "active", updated_at: new Date().toISOString() })
             .eq("id", parsed.data.apiKeyId).eq("organization_id", hub.organization_id)
