@@ -66,8 +66,13 @@ test.describe("Operations endpoints", () => {
         const res = await request.get("/api/ops/health");
         expect([200, 503]).toContain(res.status());
         const json = await res.json();
-        expect(json).toHaveProperty("status");
-        expect(json).toHaveProperty("score");
+        // Public health is intentionally a minimal liveness response; detailed
+        // scores and diagnostics are available only on the authenticated route.
+        expect(json).toMatchObject({ service: "arjun-automation" });
+        expect(["healthy", "degraded", "critical"]).toContain(json.status);
+        expect(typeof json.timestamp).toBe("string");
+        expect(typeof json.uptimeSeconds).toBe("number");
+        expect(typeof json.supabaseConfigured).toBe("boolean");
     });
 });
 
