@@ -77,7 +77,6 @@ import {
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
-import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import type {
     IntegrationHubSummary,
     CreateIntegrationHubInput,
