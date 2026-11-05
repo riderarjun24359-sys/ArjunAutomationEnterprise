@@ -104,6 +104,16 @@ export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
         return (data as DbIntgApiKey | null) ?? null;
     }
 
+    async touchLastUsedByOrganization(organizationId: string, id: string): Promise<void> {
+        const client = getRepositoryClient();
+        if (!client) return;
+        const { error } = await client.from(this.table)
+            .update({ last_used_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            .eq("organization_id", organizationId)
+            .eq("id", id);
+        mapRepositoryError(error, "Failed to update API key usage");
+    }
+
     async updateStatusByOrganization(organizationId: string, id: string, status: "active" | "revoked"): Promise<DbIntgApiKey | null> {
         const client = getRepositoryClient();
         if (!client) return null;
