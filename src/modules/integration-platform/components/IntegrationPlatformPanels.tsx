@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/src/components/ui/card";
@@ -342,21 +343,40 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 }
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":""} });
+    const [issuedToken, setIssuedToken] = useState<string | null>(null);
+    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: { integrationHubId: "", keyName: "", apiVersion: "v1" } });
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-            <Card hover><SectionHeader title="Api Keys" description="Enterprise integration platform api keys" /><div className="mt-6 space-y-3">
-                {data.apiKeys.length === 0 ? <EmptyState title="No api keys" description="Create the first api keys record." /> : data.apiKeys.map((item) => (
-                    <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={`${item.status}`} />
-                ))}
-            </div></Card>
-            <Card hover><SectionHeader title="Create api keys" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
-                <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
-                <input {...form.register("keyName")} placeholder="keyName" className={inputClass} />
-                <input {...form.register("keyPrefix")} placeholder="keyPrefix" className={inputClass} />
-                <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
-                <SaveButton loading={form.formState.isSubmitting} label="Create" />
-            </form></Card>
+            <Card hover>
+                <SectionHeader title="API Keys" description="Organization-scoped API credentials. Secret values are never stored or displayed again." />
+                <div className="mt-6 space-y-3">
+                    {data.apiKeys.length === 0 ? <EmptyState title="No API keys" description="Issue the first API key for an integration hub." /> : data.apiKeys.map((item) => (
+                        <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={item.status} />
+                    ))}
+                </div>
+            </Card>
+            <Card hover>
+                <SectionHeader title="Issue API key" description="Only organization owners and administrators can issue keys." />
+                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (values) => {
+                    const token = await data.createApiKey(values);
+                    setIssuedToken(token);
+                    form.reset({ integrationHubId: "", keyName: "", apiVersion: "v1" });
+                })}>
+                    <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                    <input {...form.register("keyName")} placeholder="Key name" className={inputClass} />
+                    <select {...form.register("apiVersion")} className={inputClass}>
+                        {API_VERSION_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </select>
+                    <SaveButton loading={form.formState.isSubmitting} label="Issue one-time key" />
+                </form>
+                {issuedToken ? (
+                    <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+                        <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Copy this secret now</p>
+                        <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">This is the only time the full key will be shown. It cannot be recovered later.</p>
+                        <input aria-label="New API key secret" readOnly value={issuedToken} onFocus={(event) => event.currentTarget.select()} className="mt-3 w-full rounded-xl border border-amber-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 dark:bg-slate-950 dark:text-slate-100" />
+                    </div>
+                ) : null}
+            </Card>
         </div>
     );
 }
