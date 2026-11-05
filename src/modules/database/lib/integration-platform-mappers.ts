@@ -281,6 +281,7 @@ export const mapAccountingExportSummary = (record: DbIntgAccountingExport, maps:
 
 export const mapApiKeySummary = (record: DbIntgApiKey, maps: LookupMaps): ApiKeySummary => ({
     id: record.id,
+    integrationHubId: record.hub_id,
     hubName: hubName(maps, record.hub_id) ?? "",
     keyName: record.key_name,
     apiVersion: record.api_version,
