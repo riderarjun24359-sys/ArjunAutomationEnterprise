@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { supabaseServer } from "@/src/lib/supabase-server";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import { checkRateLimitDb } from "@/src/lib/rate-limiter-db";
 
 export const runtime = "nodejs";
 
@@ -33,6 +34,14 @@ export async function POST(request: NextRequest) {
     const parsed = issueKeySchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) {
         return NextResponse.json({ error: "Invalid API key request" }, { status: 400 });
+    }
+
+    const rateLimit = await checkRateLimitDb("api-key-issue:" + authData.user.id, 5, 60_000);
+    if (!rateLimit.allowed) {
+        return NextResponse.json(
+            { error: "Too many API key issuance attempts. Try again shortly." },
+            { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000))) } },
+        );
     }
 
     const admin = getServiceRoleClient();
@@ -93,6 +102,9 @@ export async function POST(request: NextRequest) {
             .single();
 
         if (insertError || !created) {
+            if (insertError?.code === "23505") {
+                return NextResponse.json({ error: "An API key with this name already exists in the selected hub." }, { status: 409 });
+            }
             return NextResponse.json({ error: "Unable to issue API key" }, { status: 500 });
         }
 
