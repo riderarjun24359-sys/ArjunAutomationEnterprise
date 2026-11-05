@@ -64,12 +64,15 @@ export async function POST(request: NextRequest) {
         // Resolve the organization from the selected hub, never from client input.
         const { data: hub, error: hubError } = await admin
             .from("intg_integration_hubs")
-            .select("id, organization_id")
+            .select("id, organization_id, status")
             .eq("id", parsed.data.integrationHubId)
             .maybeSingle();
 
         if (hubError || !hub) {
             return NextResponse.json({ error: "Integration hub not found" }, { status: 404 });
+        }
+        if (hub.status !== "active") {
+            return NextResponse.json({ error: "API keys can only be issued for active integration hubs" }, { status: 409 });
         }
 
         const { data: membership, error: membershipError } = await admin
@@ -157,7 +160,7 @@ export async function PATCH(request: NextRequest) {
         if (profileError || !profile) return NextResponse.json({ error: "Organization access denied" }, { status: 403 });
 
         const { data: hub, error: hubError } = await admin
-            .from("intg_integration_hubs").select("id, organization_id")
+            .from("intg_integration_hubs").select("id, organization_id, status")
             .eq("id", parsed.data.integrationHubId).maybeSingle();
         if (hubError || !hub) return NextResponse.json({ error: "Integration hub not found" }, { status: 404 });
 
@@ -167,6 +170,9 @@ export async function PATCH(request: NextRequest) {
             .eq("is_active", true).maybeSingle();
         if (membershipError || !membership || !KEY_MANAGEMENT_ROLES.has(membership.role_name)) {
             return NextResponse.json({ error: "You are not authorized to manage API keys for this organization" }, { status: 403 });
+        }
+        if (parsed.data.action === "rotate" && hub.status !== "active") {
+            return NextResponse.json({ error: "Keys cannot be rotated for an inactive integration hub" }, { status: 409 });
         }
 
         if (parsed.data.action === "revoke") {
