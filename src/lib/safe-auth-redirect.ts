@@ -17,6 +17,11 @@ export function resolveSafeAuthRedirect(input: {
     const fallback = new URL(input.fallback, base);
     const candidateValue = input.next?.trim();
     if (!candidateValue) return fallback.toString();
+    // OAuth `next` is an application path, not an arbitrary relative URL.
+    // Requiring one leading slash blocks @host, backslash and scheme tricks.
+    if (!candidateValue.startsWith("/") || candidateValue.startsWith("//") || candidateValue.startsWith("/\\\\")) {
+        return fallback.toString();
+    }
 
     try {
         const candidate = new URL(candidateValue, base);
