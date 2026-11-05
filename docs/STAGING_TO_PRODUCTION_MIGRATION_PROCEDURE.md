@@ -238,7 +238,7 @@ want an all-or-nothing apply.
 
 11. **`202611050003_membership_insert_hardening.sql`** — closes membership INSERT escalation. Ordinary members cannot invite; org administrators can invite ordinary roles; platform super-admins can grant elevated roles. First-user founder bootstrap remains available only for a truly memberless organization and is serialized with an organization-row lock. No data prerequisite.
 
-## 3. Positive / negative probes (staging, after each file; full set after step 8)
+## 3. Positive / negative probes (staging, after each file; full set after step 11)
 
 Use the anon key + a real signed-in JWT over `https://<staging-ref>.supabase.co/rest/v1/`.
 `$ANON` and `$JWT_A` / `$JWT_B` are key/ token values kept in your shell only.
@@ -296,6 +296,10 @@ locked tables (`eae_*`, `pr_*`, 5 unused `executive_*`).
   enabled tables and still zero policies on the 11 locked ones.
 - Step 8: probes 20–22 pass; `integration_webhooks` / `integration_deliveries`
   show the policy trio; no `secret` value ever appears in a list response.
+
+- Step 9: membership UPDATE probes pass; self-role changes, cross-org membership identity changes, and unauthorized elevated-role grants are denied.
+- Step 10: authenticated / anon EXECUTE of `consume_rate_limit` is denied; service-role increments are atomic.
+- Step 11: ordinary-member invitations are denied, org-admin normal-role invitations succeed, and platform super-admin elevated invitations succeed; concurrent empty-org founder claims serialize to one winner.
 
 ## 5. Recovery / rollback
 
