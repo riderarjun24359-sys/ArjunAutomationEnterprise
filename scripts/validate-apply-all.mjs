@@ -41,8 +41,12 @@ begin
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then
     create role authenticated;
   end if;
+  -- Supabase provides service_role in hosted projects; mirror it in PGlite.
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role;
+  end if;
 end
-$$;
+$;
 
 create or replace function auth.uid()
 returns uuid
