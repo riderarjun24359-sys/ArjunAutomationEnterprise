@@ -415,6 +415,7 @@ await resetRole();
 
 await expectModulePolicy("integration_webhooks");
 await expectModulePolicy("integration_deliveries");
+await expectModulePolicy("intg_api_keys");
 
 // Policy-shape gate over all 20 tables enabled by 202610120004.
 for (const tbl of [
