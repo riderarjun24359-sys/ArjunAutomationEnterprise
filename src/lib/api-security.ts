@@ -201,7 +201,11 @@ export async function secureApiRoute(
     options: SecureApiOptions = {},
 ): Promise<{ context: ApiSecurityContext | null; error: NextResponse | null }> {
     const ip = getClientIp(request);
-    const rateKey = options.rateLimitKey ?? ip;
+    // A configured route key is a namespace, never a shared global bucket.
+    // Always include the client address so one caller cannot exhaust the
+    // quota for every user of a public or authenticated endpoint.
+    const routeNamespace = options.rateLimitKey ?? new URL(request.url).pathname;
+    const rateKey = `${routeNamespace}:${ip}`;
     const rate = await checkRateLimit(rateKey, options.rateLimit ?? 60, 60_000);
     if (!rate.allowed) {
         return {
