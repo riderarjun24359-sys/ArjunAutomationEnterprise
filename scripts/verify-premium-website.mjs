@@ -161,15 +161,33 @@ pass("marketing:imports_premium_css", marketingLayoutSource.includes("premium.cs
 pass("marketing:display_font", marketingLayoutSource.includes("Inter") || marketingLayoutSource.includes("--font-display"));
 
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
-// Enterprise AI-automation homepage hero (headline text is line-wrapped in JSX, so match stable fragments)
+const homeContentSource = readSafe(join(moduleRoot, "data", "home-content.ts"));
+const heroSectionSource = readSafe(join(premiumRoot, "sections", "HeroSection.tsx"));
+const routesSource = readSafe(join(moduleRoot, "config", "routes.ts"));
+// Validate the rendered hero against its single source of truth. The page delegates
+// its H1 and CTA labels/URLs to HERO_CONTENT rather than duplicating copy in page.tsx.
 pass(
     "page:hero_ai_automation_headline",
-    pageSource.includes("<h1") &&
-        pageSource.includes("AI Automation Platform") &&
-        pageSource.includes("Automate the work"),
+    pageSource.includes("<HeroSection") &&
+        heroSectionSource.includes("HERO_CONTENT.headline") &&
+        homeContentSource.includes('headline: "Stop losing work in the gaps between your tools."'),
 );
-pass("page:hero_primary_cta_demo", pageSource.includes("Book a Demo") && pageSource.includes('href={MARKETING_ROUTES.contact}'));
-pass("page:hero_secondary_cta_solutions", pageSource.includes("Explore Solutions") && pageSource.includes('href={MARKETING_ROUTES.solutions}'));
+pass(
+    "page:hero_primary_cta_demo",
+    heroSectionSource.includes("HERO_CONTENT.primaryCta.href") &&
+        heroSectionSource.includes("HERO_CONTENT.primaryCta.label") &&
+        homeContentSource.includes('label: "Book a Demo"') &&
+        homeContentSource.includes("href: MARKETING_ROUTES.contact") &&
+        routesSource.includes('contact: "/contact"'),
+);
+pass(
+    "page:hero_secondary_cta_solutions",
+    heroSectionSource.includes("HERO_CONTENT.secondaryCta.href") &&
+        heroSectionSource.includes("HERO_CONTENT.secondaryCta.label") &&
+        homeContentSource.includes('label: "Explore Solutions"') &&
+        homeContentSource.includes("href: MARKETING_ROUTES.solutions") &&
+        routesSource.includes('solutions: "/solutions"'),
+);
 // The school-specific positioning moved to its own route (the h1 is rendered
 // by PremiumPageShell, so match the page's title source instead of the tag).
 const schoolPageSource = readSafe(join(root, "app", "(marketing)", "school-erp", "page.tsx"));
