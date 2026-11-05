@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { supabaseServer } from "@/src/lib/supabase-server";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
