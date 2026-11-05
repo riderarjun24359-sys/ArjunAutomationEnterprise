@@ -145,7 +145,7 @@ export async function authMiddleware(request: NextRequest) {
         pathname.startsWith("/blog/");
 
     if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute) {
-        return NextResponse.next();
+        return NextResponse.next({ request });
     }
 
     const supabaseContext = createSupabaseMiddlewareClient(request);
