@@ -28,8 +28,6 @@ export function SubscriptionManagementPanel({ items }: { items: SubscriptionMana
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-secondary)] sm:grid-cols-3">
                         <span>Cycle {item.billingCycle}</span>
-                        <span>MRR ${item.mrrUsd.toLocaleString()}</span>
-                        <span>ARR ${item.arrUsd.toLocaleString()}</span>
                         <span>Qty {item.quantity}</span>
                         <span>Payment {item.paymentStatus}</span>
                         <span>

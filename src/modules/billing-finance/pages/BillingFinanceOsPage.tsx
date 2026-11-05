@@ -34,8 +34,6 @@ function Skeleton() {
     );
 }
 
-const formatUsd = (amount: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(amount);
-
 export function BillingFinanceOsPage() {
     const { snapshot, loading, error } = useBillingFinanceOs();
     const {
@@ -111,26 +109,26 @@ export function BillingFinanceOsPage() {
                 <p className="text-[var(--dos-text-secondary)]">{BILLING_FINANCE_OS_THEME.subtitle}</p>
             </header>
 
-            <section aria-label="Financial pulse">
+            <section aria-label="Financial activity">
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <Card variant="base">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">MRR · USD</p>
-                        <p className="mt-1 text-2xl font-bold">{formatUsd(snapshot.stats.mrrUsd)}</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Active subscriptions</p>
+                        <p className="mt-1 text-2xl font-bold">{snapshot.stats.activeSubscriptions}</p>
                     </Card>
                     <Card variant="base">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">ARR · USD</p>
-                        <p className="mt-1 text-2xl font-bold">{formatUsd(snapshot.stats.arrUsd)}</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Open invoices</p>
+                        <p className="mt-1 text-2xl font-bold">{snapshot.stats.openInvoices}</p>
                     </Card>
                     <Card variant="base">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Collected · USD</p>
-                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-success)]">{formatUsd(snapshot.stats.collectedUsd)}</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Failed payments</p>
+                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-critical)]">{snapshot.stats.failedPayments}</p>
                     </Card>
                     <Card variant="insight">
-                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Outstanding · USD</p>
-                        <p className="mt-1 text-2xl font-bold text-[var(--dos-brand-primary)]">{formatUsd(snapshot.stats.outstandingUsd)}</p>
+                        <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Invoice records</p>
+                        <p className="mt-1 text-2xl font-bold">{snapshot.revenue.invoiceCount}</p>
                     </Card>
                 </div>
-                <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">These executive revenue metrics are stored in USD in the current billing data model; INR conversion is not applied.</p>
+                <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">Monetary values appear only when the source record is confirmed to be in INR. Other source amounts remain hidden until currency normalization is complete.</p>
             </section>
 
             <section className="grid gap-6 md:grid-cols-3">
@@ -150,12 +148,12 @@ export function BillingFinanceOsPage() {
                 <div>
                     <h2 className="mb-4 text-lg font-semibold text-[var(--dos-text-primary)]">Financial context</h2>
                     <Card variant="base">
-                        <p className="text-sm font-medium text-[var(--dos-text-tertiary)]">Top accounts (MRR · USD)</p>
+                        <p className="text-sm font-medium text-[var(--dos-text-tertiary)]">Top accounts</p>
                         <ul className="mt-4 space-y-2">
                             {snapshot.revenue.topAccounts.slice(0, 5).map((account) => (
                                 <li key={account.name} className="flex justify-between gap-3 text-sm">
                                     <span className="truncate text-[var(--dos-text-secondary)]">{account.name}</span>
-                                    <span className="font-semibold">{formatUsd(account.mrrUsd)}</span>
+                                    <span className="text-xs text-[var(--dos-text-tertiary)]">Subscription account</span>
                                 </li>
                             ))}
                         </ul>
