@@ -6648,7 +6648,8 @@ export interface DbIntgApiKey {
     hub_id: string;
     key_name: string;
     key_prefix: string;
-    key_hash: string;
+    /** Omitted by browser-safe repository reads; only server-side auth reads the digest. */
+    key_hash?: string;
     api_version: string;
     expires_at?: string | null;
     last_used_at?: string | null;
