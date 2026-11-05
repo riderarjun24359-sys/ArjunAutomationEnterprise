@@ -434,24 +434,6 @@ export class IntegrationPlatformService {
         return { ...mapApiKeySummary(created, maps), secret };
     }
 
-    /**
-     * Verify a presented API key within the caller-selected organization.
-     * The caller must derive organizationId from trusted tenant context, never
-     * from an untrusted request parameter.
-     */
-    async verifyApiKey(organizationId: string, presentedKey: string): Promise<{ id: string; organizationId: string; hubId: string; apiVersion: string } | null> {
-        if (!/^aae_live_[a-f0-9]{24}\.[A-Za-z0-9_-]{43}$/.test(presentedKey)) return null;
-        const separator = presentedKey.indexOf(".");
-        const prefix = presentedKey.slice(0, separator);
-        const record = await databaseService.intgApiKeys.findByPrefix(organizationId, prefix);
-        if (!record || record.status !== "active") return null;
-        if (record.expires_at && Date.parse(record.expires_at) <= Date.now()) return null;
-        const actualHash = await sha256Hex(presentedKey);
-        if (!constantTimeHexEqual(record.key_hash, actualHash)) return null;
-        await databaseService.intgApiKeys.touchLastUsedByOrganization(organizationId, record.id);
-        return { id: record.id, organizationId: record.organization_id, hubId: record.hub_id, apiVersion: record.api_version };
-    }
-
     async revokeApiKey(authUserId: string, email: string, apiKeyId: string, fullName?: string | null): Promise<boolean> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
