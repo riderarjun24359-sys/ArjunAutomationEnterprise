@@ -43,3 +43,29 @@ The endpoint and validator are code changes only. Before production use, validat
 them against a separate Supabase staging project, test active/inactive/expired
 keys and cross-organization isolation, and confirm the migration chain is applied
 there. No production migrations or deployments are performed by this runbook.
+
+## Rotation and revocation
+
+Use the same authenticated same-origin endpoint with `PATCH /api/integration-platform/api-keys`.
+
+Revoke request:
+
+```json
+{
+  "action": "revoke",
+  "apiKeyId": "UUID",
+  "integrationHubId": "UUID"
+}
+```
+
+Rotate request:
+
+```json
+{
+  "action": "rotate",
+  "apiKeyId": "UUID",
+  "integrationHubId": "UUID"
+}
+```
+
+Both actions require an active organization owner/admin membership, resolve the organization from the hub, and scope the update by key ID + organization ID + hub ID. Revocation changes status to `revoked`; rotation replaces the prefix and digest so the old token stops authenticating. The new plaintext token is returned once with `Cache-Control: no-store`. Management attempts are rate-limited.
