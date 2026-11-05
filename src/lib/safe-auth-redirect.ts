@@ -19,7 +19,7 @@ export function resolveSafeAuthRedirect(input: {
     if (!candidateValue) return fallback.toString();
     // OAuth `next` is an application path, not an arbitrary relative URL.
     // Requiring one leading slash blocks @host, backslash and scheme tricks.
-    if (!candidateValue.startsWith("/") || candidateValue.startsWith("//") || candidateValue.startsWith("/\\\\")) {
+    if (!candidateValue.startsWith("/") || candidateValue.startsWith("//") || candidateValue.includes("\\\\")) {
         return fallback.toString();
     }
 
