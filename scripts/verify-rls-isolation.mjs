@@ -415,7 +415,20 @@ await resetRole();
 
 await expectModulePolicy("integration_webhooks");
 await expectModulePolicy("integration_deliveries");
-await expectModulePolicy("intg_api_keys");
+const apiKeyPolicies = await db.query(`
+    select policyname, cmd, coalesce(qual, '') as qual, coalesce(with_check, '') as wc, roles::text as roles
+    from pg_policies where schemaname = 'public' and tablename = 'intg_api_keys';
+`);
+for (const [name, command, required] of [
+    ["intg_api_keys_select", "SELECT", "is_organization_member"],
+    ["intg_api_keys_insert", "INSERT", "is_organization_admin"],
+    ["intg_api_keys_update", "UPDATE", "is_organization_admin"],
+]) {
+    const policy = apiKeyPolicies.rows.find((row) => row.policyname === name && row.cmd === command);
+    const expression = policy ? `${policy.qual} ${policy.wc}` : "";
+    record(`api keys: ${command.toLowerCase()} restricted to tenant role`,
+        Boolean(policy) && policy.roles.includes("authenticated") && expression.includes(required) && expression.includes("organization_id"));
+}
 
 // Policy-shape gate over all 20 tables enabled by 202610120004.
 for (const tbl of [
