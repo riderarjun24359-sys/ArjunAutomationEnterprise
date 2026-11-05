@@ -46,7 +46,7 @@ begin
     create role service_role;
   end if;
 end;
-$;
+$$;
 
 create or replace function auth.uid()
 returns uuid
