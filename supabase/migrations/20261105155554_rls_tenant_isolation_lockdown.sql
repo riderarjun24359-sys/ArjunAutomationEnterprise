@@ -30,7 +30,7 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = pg_catalog
-AS $
+AS $$
   SELECT EXISTS (
     SELECT 1
     FROM public.organization_members om
@@ -38,7 +38,7 @@ AS $
       AND om.is_active = true
       AND om.role_name = 'super_admin'
   );
-$;
+$$;
 REVOKE ALL ON FUNCTION public.is_platform_admin() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.is_platform_admin() TO authenticated, service_role;
 
