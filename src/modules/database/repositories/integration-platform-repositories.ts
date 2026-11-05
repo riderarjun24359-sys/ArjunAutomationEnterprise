@@ -106,25 +106,14 @@ export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
         return (data ?? []) as DbIntgApiKey[];
     }
 
-    async findByPrefix(organizationId: string, keyPrefix: string): Promise<DbIntgApiKey | null> {
+    async createKeyRecord(input: Record<string, unknown>): Promise<DbIntgApiKey | null> {
         const client = getRepositoryClient();
         if (!client) return null;
-        const { data, error } = await client.from(this.table).select("*")
-            .eq("organization_id", organizationId)
-            .eq("key_prefix", keyPrefix)
+        const { data, error } = await client.from(this.table).insert(input)
+            .select("id, organization_id, hub_id, key_name, key_prefix, api_version, expires_at, last_used_at, status, created_at, updated_at")
             .maybeSingle();
-        mapRepositoryError(error, "Failed to find API key");
+        mapRepositoryError(error, "Failed to issue API key");
         return (data as DbIntgApiKey | null) ?? null;
-    }
-
-    async touchLastUsedByOrganization(organizationId: string, id: string): Promise<void> {
-        const client = getRepositoryClient();
-        if (!client) return;
-        const { error } = await client.from(this.table)
-            .update({ last_used_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-            .eq("organization_id", organizationId)
-            .eq("id", id);
-        mapRepositoryError(error, "Failed to update API key usage");
     }
 
     async updateStatusByOrganization(organizationId: string, id: string, status: "active" | "revoked"): Promise<DbIntgApiKey | null> {
