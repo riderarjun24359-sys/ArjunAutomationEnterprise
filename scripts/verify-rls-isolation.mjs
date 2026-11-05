@@ -256,8 +256,9 @@ await resetRole();
 // --- 202611050001: membership role-management hardening ------------------
 // Ordinary members cannot self-promote or modify another membership.
 await asAuth(AUTH6);
-await expectError(
-    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6'`,
+await expectRows(
+    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    0,
     "membership: ordinary member cannot self-promote",
 );
 await expectRows(
