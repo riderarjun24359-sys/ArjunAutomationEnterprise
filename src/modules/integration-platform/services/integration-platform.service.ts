@@ -430,7 +430,7 @@ export class IntegrationPlatformService {
      * from an untrusted request parameter.
      */
     async verifyApiKey(organizationId: string, presentedKey: string): Promise<{ id: string; organizationId: string; hubId: string; apiVersion: string } | null> {
-        if (!/^aae_live_[a-f0-9]{12}\.[A-Za-z0-9_-]{43}$/.test(presentedKey)) return null;
+        if (!/^aae_live_[a-f0-9]{24}\.[A-Za-z0-9_-]{43}$/.test(presentedKey)) return null;
         const separator = presentedKey.indexOf(".");
         const prefix = presentedKey.slice(0, separator);
         const record = await databaseService.intgApiKeys.findByPrefix(organizationId, prefix);
