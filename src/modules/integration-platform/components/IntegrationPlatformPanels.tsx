@@ -344,14 +344,40 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
     const [issuedToken, setIssuedToken] = useState<string | null>(null);
+    const [managementError, setManagementError] = useState<string | null>(null);
+    const [busyKeyId, setBusyKeyId] = useState<string | null>(null);
     const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: { integrationHubId: "", keyName: "", apiVersion: "v1" } });
+    const manageKey = async (item: ApiKeySummary, action: "rotate" | "revoke") => {
+        const confirmed = action === "revoke"
+            ? window.confirm("Revoke this API key? Existing integrations using it will stop working.")
+            : window.confirm("Rotate this API key? The old secret will stop working immediately.");
+        if (!confirmed) return;
+        setBusyKeyId(item.id);
+        setManagementError(null);
+        try {
+            const token = await data.manageApiKey({ action, apiKeyId: item.id, integrationHubId: item.integrationHubId });
+            setIssuedToken(token);
+        } catch (error) {
+            setManagementError(error instanceof Error ? error.message : "Unable to manage API key");
+        } finally {
+            setBusyKeyId(null);
+        }
+    };
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover>
                 <SectionHeader title="API Keys" description="Organization-scoped API credentials. Secret values are never stored or displayed again." />
                 <div className="mt-6 space-y-3">
                     {data.apiKeys.length === 0 ? <EmptyState title="No API keys" description="Issue the first API key for an integration hub." /> : data.apiKeys.map((item) => (
-                        <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={item.status} />
+                        <div key={item.id} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                            <ListCard title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={item.status} />
+                            {item.status === "active" ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    <button type="button" disabled={busyKeyId === item.id} onClick={() => void manageKey(item, "rotate")} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold disabled:opacity-50 dark:border-slate-700"> {busyKeyId === item.id ? "Please wait…" : "Rotate key"} </button>
+                                    <button type="button" disabled={busyKeyId === item.id} onClick={() => void manageKey(item, "revoke")} className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50 dark:border-red-900 dark:text-red-300">Revoke</button>
+                                </div>
+                            ) : null}
+                        </div>
                     ))}
                 </div>
             </Card>
@@ -369,6 +395,7 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
                     </select>
                     <SaveButton loading={form.formState.isSubmitting} label="Issue one-time key" />
                 </form>
+                {managementError ? <p role="alert" className="mt-4 text-sm text-red-600">{managementError}</p> : null}
                 {issuedToken ? (
                     <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
                         <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Copy this secret now</p>
