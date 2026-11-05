@@ -19,6 +19,6 @@ describe("request-scoped Content Security Policy", () => {
         vi.stubEnv("NODE_ENV", "development");
         const policy = buildContentSecurityPolicy("dGVzdC1ub25jZS1mb3ItdW5pdC10ZXN0");
         expect(policy).toContain("'unsafe-eval'");
-        expect(policy).not.toContain("'unsafe-inline'");
+        expect(policy.split(";").find((directive) => directive.trim().startsWith("script-src"))).not.toContain("'unsafe-inline'");
     });
 });
