@@ -1,12 +1,3 @@
-const bytesToHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
-const sha256Hex = async (value: string) => bytesToHex(new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
-const constantTimeHexEqual = (left: string, right: string) => {
-    if (!/^[a-f0-9]{64}$/.test(left) || !/^[a-f0-9]{64}$/.test(right)) return false;
-    let difference = 0;
-    for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
-    return difference === 0;
-};
-
 import {
     buildIntegrationHubLookupMaps,
     buildIntgAuditPayload,
@@ -161,6 +152,15 @@ import type {
     IntgSdkRegisterWebhookInput,
     IntgSdkRegisterWebhookResult,
 } from "@/src/modules/integration-platform/types";
+
+const bytesToHex = (bytes: Uint8Array) => Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+const sha256Hex = async (value: string) => bytesToHex(new Uint8Array(await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value))));
+const constantTimeHexEqual = (left: string, right: string) => {
+    if (!/^[a-f0-9]{64}$/.test(left) || !/^[a-f0-9]{64}$/.test(right)) return false;
+    let difference = 0;
+    for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+    return difference === 0;
+};
 
 export class IntegrationPlatformService {
     private async getContext(authUserId: string, email: string, fullName?: string | null) {
@@ -419,7 +419,7 @@ export class IntegrationPlatformService {
         if (!context) throw new Error("Unable to resolve organization context");
         const random = globalThis.crypto.getRandomValues(new Uint8Array(44));
         const prefix = `aae_live_${bytesToHex(random.slice(0, 12))}`;
-        const encodedSecret = btoa(String.fromCharCode(...random.slice(12))).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
+        const encodedSecret = btoa(String.fromCharCode(...random.slice(12))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         const secret = `${prefix}.${encodedSecret}`;
         const keyHash = await sha256Hex(secret);
         const created = await databaseService.intgApiKeys.create({
