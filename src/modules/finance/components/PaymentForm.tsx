@@ -7,6 +7,7 @@ import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { PAYMENT_METHOD_OPTIONS } from "@/src/modules/finance/constants";
 import { paymentFormSchema, type PaymentFormValues } from "@/src/modules/finance/schemas";
 import type { Invoice } from "@/src/modules/finance/types";
+import { formatMoney } from "@/src/modules/database/lib/finance-mappers";
 
 interface PaymentFormProps {
     invoices: Invoice[];
@@ -40,7 +41,7 @@ export function PaymentForm({ invoices, onSubmit, submitLabel = "Record Payment"
                         <option value="">Select invoice</option>
                         {openInvoices.map((invoice) => (
                             <option key={invoice.id} value={invoice.id}>
-                                {invoice.number} — {invoice.clientName} (${invoice.balanceDue.toFixed(2)} due)
+                                {invoice.number} — {invoice.clientName} ({formatMoney(invoice.balanceDue)} due)
                             </option>
                         ))}
                     </select>
