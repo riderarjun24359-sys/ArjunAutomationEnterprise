@@ -92,6 +92,7 @@ export function useIntegrationPlatform() {
     const [exportMappings, setExportMappings] = useState<ExportMappingSummary[]>([]);
     const [accountingExports, setAccountingExports] = useState<AccountingExportSummary[]>([]);
     const [apiKeys, setApiKeys] = useState<ApiKeySummary[]>([]);
+    const [newApiKeySecret, setNewApiKeySecret] = useState<string | null>(null);
     const [apiScopes, setApiScopes] = useState<ApiScopeSummary[]>([]);
     const [rateLimits, setRateLimits] = useState<RateLimitSummary[]>([]);
     const [apiUsage, setApiUsages] = useState<ApiUsageSummary[]>([]);
@@ -287,7 +288,9 @@ integrationHubsList,
     const createAccountingSyncStatus = useCallback(async (input: CreateAccountingSyncStatusInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingSyncStatus(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createExportMapping = useCallback(async (input: CreateExportMappingInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createExportMapping(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createAccountingExport = useCallback(async (input: CreateAccountingExportInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingExport(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
-    const createApiKey = useCallback(async (input: CreateApiKeyInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiKey(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
+    const createApiKey = useCallback(async (input: CreateApiKeyInput) => { if (!user) throw new Error("Authentication required"); const issued = await integrationPlatformService.createApiKey(user.id, user.email, input, user.fullName); setNewApiKeySecret(issued.secret); await refresh(); return issued; }, [user, refresh]);
+    const revokeApiKey = useCallback(async (apiKeyId: string) => { if (!user) throw new Error("Authentication required"); const revoked = await integrationPlatformService.revokeApiKey(user.id, user.email, apiKeyId, user.fullName); if (revoked) await refresh(); return revoked; }, [user, refresh]);
+    const clearApiKeySecret = useCallback(() => setNewApiKeySecret(null), []);
     const createApiScope = useCallback(async (input: CreateApiScopeInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiScope(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createRateLimit = useCallback(async (input: CreateRateLimitInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createRateLimit(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createApiUsage = useCallback(async (input: CreateApiUsageInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiUsage(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
@@ -337,6 +340,9 @@ integrationHubsList,
         createAccountingExport,
         apiKeys,
         createApiKey,
+        revokeApiKey,
+        newApiKeySecret,
+        clearApiKeySecret,
         apiScopes,
         createApiScope,
         rateLimits,
