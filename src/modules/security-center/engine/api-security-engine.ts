@@ -20,7 +20,8 @@ function issueToken(): { prefix: string; token: string; tokenHash: string } {
 }
 
 function publicKey(key: StoredApiKey): ApiKey {
-    const { tokenHash: _tokenHash, ...safe } = key;
+    const { tokenHash, ...safe } = key;
+    void tokenHash;
     return safe;
 }
 
