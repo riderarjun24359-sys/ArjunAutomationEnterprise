@@ -37,6 +37,15 @@ export async function validateIntegrationApiKey(token: string): Promise<Validate
 
         if (!matchesIntegrationApiKey(token, key.key_hash)) return null;
 
+        const [{ data: hub, error: hubError }, { data: organization, error: organizationError }] = await Promise.all([
+            client.from("intg_integration_hubs").select("id, organization_id, status")
+                .eq("id", key.hub_id).eq("organization_id", key.organization_id).maybeSingle(),
+            client.from("organizations").select("id, status")
+                .eq("id", key.organization_id).maybeSingle(),
+        ]);
+        if (hubError || !hub || hub.status !== "active" ||
+            organizationError || !organization || organization.status !== "active") return null;
+
         const { data: scopeRows, error: scopeError } = await client
             .from("intg_api_scopes")
             .select("scope_key, permissions")
