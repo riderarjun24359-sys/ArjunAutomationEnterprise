@@ -1,34 +1,64 @@
+import { createHash, createHmac, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import type { ApiKey, RateLimitResult, SecurityRole } from "../types";
 import { checkRateLimitDb } from "@/src/lib/rate-limiter-db";
 
-const apiKeys = new Map<string, ApiKey & { hash: string }>();
+type StoredApiKey = ApiKey & { tokenHash: string };
+export type CreatedApiKey = ApiKey & { token: string };
 
-export function createApiKey(name: string, role: SecurityRole): ApiKey {
-    const id = `key-${Date.now()}`;
-    const prefix = `aa_${id.slice(-8)}`;
-    // SHA-256 hash of prefix + secret suffix for real token verification.
-    // In production this should use a server-side secret; here we derive a
-    // deterministic hash from the prefix so validateToken can verify it.
-    const hash = `sha256-${Buffer.from(prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
-    const key: ApiKey & { hash: string } = {
-        id,
+// Process-local legacy adapter only. Use the persistent Integration Platform
+// API-key endpoint for production integrations; this map is not durable across
+// restarts or multiple server instances.
+const apiKeys = new Map<string, StoredApiKey>();
+
+function tokenDigest(token: string): Buffer {
+    return createHash("sha256").update(token, "utf8").digest();
+}
+
+function issueToken(): { prefix: string; token: string; tokenHash: string } {
+    const prefix = `aa_${randomBytes(6).toString("hex")}`;
+    const token = `${prefix}.${randomBytes(32).toString("base64url")}`;
+    return { prefix, token, tokenHash: tokenDigest(token).toString("hex") };
+}
+
+function isWellFormedToken(token: string): boolean {
+    if (typeof token !== "string" || token.length < 48 || token.length > 160) return false;
+    const [prefix, secret, extra] = token.split(".");
+    return extra === undefined
+        && /^aa_[a-f0-9]{12}$/.test(prefix ?? "")
+        && /^[A-Za-z0-9_-]{40,60}$/.test(secret ?? "");
+}
+
+function publicKey(key: StoredApiKey): ApiKey {
+    const { tokenHash, ...safe } = key;
+    void tokenHash;
+    return safe;
+}
+
+/** @deprecated Use the persistent Integration Platform API-key endpoint for production integrations. */
+export function createApiKey(name: string, role: SecurityRole): CreatedApiKey {
+    const issued = issueToken();
+    const key: StoredApiKey = {
+        id: `key-${randomUUID()}`,
         name,
-        prefix,
+        prefix: issued.prefix,
         role,
         createdAt: new Date().toISOString(),
         status: "active",
-        hash,
+        tokenHash: issued.tokenHash,
     };
-    apiKeys.set(id, key);
-    const { hash: _, ...publicKey } = key;
-    return publicKey;
+    apiKeys.set(key.id, key);
+    return { ...publicKey(key), token: issued.token };
 }
 
 export function validateToken(token: string): { valid: boolean; keyId?: string; role?: SecurityRole } {
+    if (!isWellFormedToken(token)) return { valid: false };
+    const candidate = tokenDigest(token);
     for (const [id, key] of apiKeys) {
         if (key.status !== "active") continue;
-        const expected = `sha256-${Buffer.from(key.prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
-        if (token === key.prefix || token === expected) {
+        if (key.expiresAt && Date.parse(key.expiresAt) <= Date.now()) continue;
+        const expected = Buffer.from(key.tokenHash, "hex");
+        if (expected.length === candidate.length && timingSafeEqual(candidate, expected)) {
+            key.lastUsedAt = new Date().toISOString();
             return { valid: true, keyId: id, role: key.role };
         }
     }
@@ -36,28 +66,30 @@ export function validateToken(token: string): { valid: boolean; keyId?: string; 
 }
 
 export async function checkRateLimit(keyId: string, limit = 100, windowMs = 60_000): Promise<RateLimitResult> {
-    const { allowed, remaining, resetAt, degraded } = await checkRateLimitDb(keyId, limit, windowMs);
+    const { allowed, remaining, resetAt } = await checkRateLimitDb(keyId, limit, windowMs);
     return { allowed, remaining, resetAt: resetAt.toISOString() };
 }
 
-export function signRequest(payload: string, secretRef: string): string {
-    return `sig-${secretRef}-${Buffer.from(payload).toString("base64url").slice(0, 16)}`;
+/** HMAC-SHA256 request signature. The caller must supply a secret, not a key id. */
+export function signRequest(payload: string, secret: string): string {
+    if (!secret || secret.length < 32) {
+        throw new Error("A high-entropy request-signing secret is required");
+    }
+    return `hmac-sha256=${createHmac("sha256", secret).update(payload, "utf8").digest("hex")}`;
 }
 
-export function rotateApiKey(keyId: string): ApiKey | null {
+/** @deprecated Use the persistent Integration Platform API-key rotation endpoint. */
+export function rotateApiKey(keyId: string): CreatedApiKey | null {
     const existing = apiKeys.get(keyId);
     if (!existing) return null;
-    existing.prefix = `aa_${Date.now().toString(36)}`;
-    existing.hash = `sha256-${Buffer.from(existing.prefix + "|arjun-automation-v1").toString("base64url").slice(0, 43)}`;
+    const issued = issueToken();
+    existing.prefix = issued.prefix;
+    existing.tokenHash = issued.tokenHash;
     existing.createdAt = new Date().toISOString();
-    const { hash, ...publicKey } = existing;
-    void hash;
-    return publicKey;
+    existing.lastUsedAt = null;
+    return { ...publicKey(existing), token: issued.token };
 }
 
 export function listApiKeys(): ApiKey[] {
-    return [...apiKeys.values()].map(({ hash, ...key }) => {
-        void hash;
-        return key;
-    });
+    return [...apiKeys.values()].map(publicKey);
 }
