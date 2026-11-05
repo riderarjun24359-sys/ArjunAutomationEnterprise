@@ -102,11 +102,18 @@ export async function resolveServerIdentity(
 }
 
 export function getClientIp(request: Request): string {
-    return (
-        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-        request.headers.get("x-real-ip") ??
-        "unknown"
-    );
+    // Prefer the platform-provided single-hop address. If only the forwarding
+    // chain exists, use its final (proxy-appended) hop rather than the first
+    // client-controlled value, which can be spoofed to evade per-IP quotas.
+    const realIp = request.headers.get("x-real-ip")?.trim();
+    if (realIp) return realIp;
+
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    if (forwardedFor) {
+        const hops = forwardedFor.split(",").map((value) => value.trim()).filter(Boolean);
+        if (hops.length > 0) return hops[hops.length - 1];
+    }
+    return "unknown";
 }
 
 /**
