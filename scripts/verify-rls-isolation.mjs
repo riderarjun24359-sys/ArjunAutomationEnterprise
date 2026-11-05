@@ -418,18 +418,24 @@ await expectModulePolicy("integration_deliveries");
 const apiKeyPrivileges = await db.query(`
     select
         has_table_privilege('anon', 'public.intg_api_keys', 'select') as anon_select,
+        has_column_privilege('anon', 'public.intg_api_keys', 'key_hash', 'select') as anon_hash_select,
+        has_column_privilege('anon', 'public.intg_api_keys', 'key_hash', 'insert') as anon_hash_insert,
+        has_column_privilege('anon', 'public.intg_api_keys', 'status', 'update') as anon_status_update,
         has_table_privilege('authenticated', 'public.intg_api_keys', 'select') as auth_table_select,
         has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'select') as auth_hash_select,
         has_column_privilege('authenticated', 'public.intg_api_keys', 'key_prefix', 'select') as auth_prefix_select,
         has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'insert') as auth_hash_insert,
         has_column_privilege('authenticated', 'public.intg_api_keys', 'status', 'update') as auth_status_update,
         has_column_privilege('authenticated', 'public.intg_api_keys', 'key_hash', 'update') as auth_hash_update,
+        has_column_privilege('authenticated', 'public.intg_api_keys', 'organization_id', 'update') as auth_org_update,
         has_table_privilege('authenticated', 'public.intg_api_keys', 'delete') as auth_delete;
 `);
 const apiKeyGrant = apiKeyPrivileges.rows[0];
-record("api keys: anon cannot read", !apiKeyGrant.anon_select);
+record("api keys: anon has no table or legacy column privileges",
+    !apiKeyGrant.anon_select && !apiKeyGrant.anon_hash_select && !apiKeyGrant.anon_hash_insert && !apiKeyGrant.anon_status_update);
 record("api keys: hash is not readable by authenticated", !apiKeyGrant.auth_table_select && !apiKeyGrant.auth_hash_select && apiKeyGrant.auth_prefix_select);
-record("api keys: authenticated can insert hash but cannot change it later", apiKeyGrant.auth_hash_insert && apiKeyGrant.auth_status_update && !apiKeyGrant.auth_hash_update);
+record("api keys: authenticated can insert hash but cannot change it or tenant ownership later",
+    apiKeyGrant.auth_hash_insert && apiKeyGrant.auth_status_update && !apiKeyGrant.auth_hash_update && !apiKeyGrant.auth_org_update);
 record("api keys: authenticated cannot delete keys", !apiKeyGrant.auth_delete);
 const apiKeyPolicies = await db.query(`
     select policyname, cmd, coalesce(qual, '') as qual, coalesce(with_check, '') as wc, roles::text as roles
