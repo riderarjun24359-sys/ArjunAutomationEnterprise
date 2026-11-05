@@ -405,14 +405,41 @@ export class IntegrationPlatformService {
         return (await databaseService.intgApiKeys.listByOrganization(context.organizationId)).map((r) => mapApiKeySummary(r, maps));
     }
 
-    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary> {
+    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary & { secret: string }> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.intgApiKeys.create(buildApiKeyPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create apiKeys");
-        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", `ApiKey created`, created.id));
+        const prefix = `aae_live_${randomBytes(6).toString("hex")}`;
+        const secret = `${prefix}.${randomBytes(32).toString("base64url")}`;
+        const keyHash = createHash("sha256").update(secret, "utf8").digest("hex");
+        const created = await databaseService.intgApiKeys.create({
+            ...buildApiKeyPayload(context.organizationId, input),
+            key_prefix: prefix,
+            key_hash: keyHash,
+            status: "active",
+        });
+        if (!created) throw new Error("Failed to create API key");
+        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", "API key issued", created.id));
         const maps = await this.getMaps(context.organizationId);
-        return mapApiKeySummary(created, maps);
+        return { ...mapApiKeySummary(created, maps), secret };
+    }
+
+    /**
+     * Verify a presented API key within the caller-selected organization.
+     * The caller must derive organizationId from trusted tenant context, never
+     * from an untrusted request parameter.
+     */
+    async verifyApiKey(organizationId: string, presentedKey: string): Promise<{ id: string; organizationId: string; hubId: string; apiVersion: string } | null> {
+        if (!/^aae_live_[a-f0-9]{12}\.[A-Za-z0-9_-]{43}$/.test(presentedKey)) return null;
+        const separator = presentedKey.indexOf(".");
+        const prefix = presentedKey.slice(0, separator);
+        const record = await databaseService.intgApiKeys.findByPrefix(organizationId, prefix);
+        if (!record || record.status !== "active") return null;
+        if (record.expires_at && Date.parse(record.expires_at) <= Date.now()) return null;
+        const expected = Buffer.from(record.key_hash, "hex");
+        const actual = Buffer.from(createHash("sha256").update(presentedKey, "utf8").digest("hex"), "hex");
+        if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
+        await databaseService.intgApiKeys.update(record.id, { last_used_at: new Date().toISOString() });
+        return { id: record.id, organizationId: record.organization_id, hubId: record.hub_id, apiVersion: record.api_version };
     }
 
     async getApiScopes(authUserId: string, email: string, fullName?: string | null): Promise<ApiScopeSummary[]> {
@@ -740,7 +767,7 @@ export class IntegrationPlatformService {
         const knowledge = createKnowledgeClient(authUserId, email, fullName);
         await knowledge.search({ query: input.keyName, limit: 3 });
         const created = await this.createApiKey(authUserId, email, { integrationHubId: input.integrationHubId, keyName: input.keyName, apiVersion: input.apiVersion }, fullName);
-        return { apiKeyId: created.id, keyName: created.keyName, status: created.status };
+        return { apiKeyId: created.id, keyName: created.keyName, status: created.status, secret: created.secret };
     }
 
     async sdkRegisterWebhook(authUserId: string, email: string, input: IntgSdkRegisterWebhookInput, fullName?: string | null): Promise<IntgSdkRegisterWebhookResult> {
