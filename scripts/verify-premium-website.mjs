@@ -170,6 +170,34 @@ pass(
 );
 pass("page:hero_primary_cta_demo", pageSource.includes("Book a Demo") && pageSource.includes('href={MARKETING_ROUTES.contact}'));
 pass("page:hero_secondary_cta_solutions", pageSource.includes("Explore Solutions") && pageSource.includes('href={MARKETING_ROUTES.solutions}'));
+
+// The homepage hero is intentionally data-driven. Validate the actual rendered
+// component and its content contract instead of requiring obsolete copy in page.tsx.
+const heroComponentSource = readSafe(join(premiumRoot, "sections", "HeroSection.tsx"));
+const heroContentSource = readSafe(join(moduleRoot, "data", "home-content.ts"));
+const heroRouteSource = readSafe(join(moduleRoot, "config", "routes.ts"));
+const hasHeroData = heroContentSource.includes('headline: "Stop losing work in the gaps between your tools."');
+const hasPrimaryCta = heroContentSource.includes('label: "Book a Demo"') &&
+    heroContentSource.includes("href: MARKETING_ROUTES.contact") &&
+    heroRouteSource.includes('contact: "/contact"');
+const hasSecondaryCta = heroContentSource.includes('label: "Explore Solutions"') &&
+    heroContentSource.includes("href: MARKETING_ROUTES.solutions") &&
+    heroRouteSource.includes('solutions: "/solutions"');
+const heroContract = [
+    ["page:hero_ai_automation_headline", pageSource.includes("<HeroSection />") &&
+        heroComponentSource.includes("HERO_CONTENT.headline") && hasHeroData],
+    ["page:hero_primary_cta_demo", heroComponentSource.includes("HERO_CONTENT.primaryCta.label") &&
+        heroComponentSource.includes("HERO_CONTENT.primaryCta.href") && hasPrimaryCta],
+    ["page:hero_secondary_cta_solutions", heroComponentSource.includes("HERO_CONTENT.secondaryCta.label") &&
+        heroComponentSource.includes("HERO_CONTENT.secondaryCta.href") && hasSecondaryCta],
+];
+for (const [name, ok] of heroContract) {
+    const existing = results.find((result) => result.check === name);
+    if (existing) {
+        existing.pass = ok;
+        existing.detail = ok ? "validated through the data-driven HeroSection contract" : "homepage hero content or CTA wiring is incomplete";
+    }
+}
 // The school-specific positioning moved to its own route (the h1 is rendered
 // by PremiumPageShell, so match the page's title source instead of the tag).
 const schoolPageSource = readSafe(join(root, "app", "(marketing)", "school-erp", "page.tsx"));
