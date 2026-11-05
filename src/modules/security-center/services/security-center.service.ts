@@ -1,5 +1,4 @@
 import type {
-    ApiKey,
     AuditEvent,
     AuditEventType,
     AuthMethod,
@@ -21,6 +20,7 @@ import * as mfaEngine from "../engine/mfa-engine";
 import * as rbacEngine from "../engine/rbac-engine";
 import * as orgIsolationEngine from "../engine/org-isolation-engine";
 import * as apiSecurityEngine from "../engine/api-security-engine";
+import type { CreatedApiKey } from "../engine/api-security-engine";
 import * as secretsEngine from "../engine/secrets-engine";
 import * as auditEngine from "../engine/audit-engine";
 import * as threatDetectionEngine from "../engine/threat-detection-engine";
@@ -59,10 +59,12 @@ export class SecurityCenterService {
         return orgIsolationEngine.verifyOrgIsolation(orgId);
     }
 
-    createApiKey(name: string, role: SecurityRole): ApiKey {
+    /** @deprecated Use the persistent Integration Platform API-key endpoint for production integrations. */
+    createApiKey(name: string, role: SecurityRole): CreatedApiKey {
         return apiSecurityEngine.createApiKey(name, role);
     }
 
+    /** @deprecated Use the persistent Integration Platform API-key validator for production integrations. */
     validateToken(token: string) {
         return apiSecurityEngine.validateToken(token);
     }
