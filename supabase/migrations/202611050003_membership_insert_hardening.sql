@@ -19,7 +19,7 @@ volatile
 security definer
 set search_path = public
 set row_security = off
-as $
+as $$
 begin
   -- Serialize first-member claims for this organization. Without the row lock,
   -- two simultaneous first-run signups could both observe an empty org and
@@ -44,7 +44,7 @@ begin
     where existing.organization_id = org_id
   );
 end;
-$;
+$$;
 
 create or replace function public.is_platform_super_admin()
 returns boolean
