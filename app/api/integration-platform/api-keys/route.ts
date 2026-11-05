@@ -38,6 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     const rateLimit = await checkRateLimitDb("api-key-issue:" + authData.user.id, 5, 60_000);
+    if (rateLimit.degraded) {
+        return NextResponse.json({ error: "Rate limit service unavailable" }, { status: 503 });
+    }
     if (!rateLimit.allowed) {
         return NextResponse.json(
             { error: "Too many API key issuance attempts. Try again shortly." },
@@ -144,6 +147,9 @@ export async function PATCH(request: NextRequest) {
     if (!parsed.success) return NextResponse.json({ error: "Invalid API key action" }, { status: 400 });
 
     const rateLimit = await checkRateLimitDb("api-key-manage:" + authData.user.id, 10, 60_000);
+    if (rateLimit.degraded) {
+        return NextResponse.json({ error: "Rate limit service unavailable" }, { status: 503 });
+    }
     if (!rateLimit.allowed) {
         return NextResponse.json(
             { error: "Too many API key management attempts. Try again shortly." },
