@@ -8,7 +8,7 @@ create or replace function public.consume_rate_limit(
 returns table(count integer, reset_at timestamptz)
 language plpgsql
 security definer
-set search_path = public
+set search_path = pg_catalog
 as $$
 declare
   v_now timestamptz := clock_timestamp();
@@ -17,10 +17,10 @@ begin
   if p_key is null or length(p_key) < 1 or length(p_key) > 512 then
     raise exception 'invalid rate limit key' using errcode = '22023';
   end if;
-  if p_limit < 1 or p_limit > 1000000 then
+  if p_limit is null or p_limit < 1 or p_limit > 1000000 then
     raise exception 'invalid rate limit limit' using errcode = '22023';
   end if;
-  if p_window_ms < 1000 or p_window_ms > 86400000 then
+  if p_window_ms is null or p_window_ms < 1000 or p_window_ms > 86400000 then
     raise exception 'invalid rate limit window' using errcode = '22023';
   end if;
 
@@ -42,6 +42,11 @@ begin
   returning rl.count, rl.reset_at;
 end;
 $$;
+
+-- The RPC is the only supported access path; remove legacy broad table grants
+-- that may exist from manual schema drift, while preserving server operations.
+revoke all on table public.rate_limits from public, anon, authenticated;
+grant all on table public.rate_limits to service_role;
 
 revoke all on function public.consume_rate_limit(text, integer, integer) from public, anon, authenticated;
 grant execute on function public.consume_rate_limit(text, integer, integer) to service_role;
