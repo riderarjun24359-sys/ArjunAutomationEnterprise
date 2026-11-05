@@ -1,5 +1,5 @@
 import { createHmac } from "node:crypto";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/src/lib/rate-limiter-db", () => ({
     checkRateLimitDb: vi.fn(),
@@ -8,10 +8,6 @@ vi.mock("@/src/lib/rate-limiter-db", () => ({
 import { createApiKey, listApiKeys, rotateApiKey, signRequest, validateToken } from "./api-security-engine";
 
 describe("API security engine", () => {
-    beforeEach(() => {
-        vi.resetModules();
-    });
-
     it("issues unpredictable one-time secrets and rejects the public prefix", () => {
         const first = createApiKey("first", "admin");
         const second = createApiKey("second", "admin");
