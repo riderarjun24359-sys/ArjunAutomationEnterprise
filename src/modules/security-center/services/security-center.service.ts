@@ -1,5 +1,4 @@
 import type {
-    ApiKey,
     AuditEvent,
     AuditEventType,
     AuthMethod,
