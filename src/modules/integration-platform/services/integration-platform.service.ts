@@ -1,4 +1,3 @@
-import { randomBytes, createHash, timingSafeEqual } from "node:crypto";
 import {
     buildIntegrationHubLookupMaps,
     buildIntgAuditPayload,
@@ -409,9 +408,11 @@ export class IntegrationPlatformService {
     async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary & { secret: string }> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const prefix = `aae_live_${randomBytes(12).toString("hex")}`;
-        const secret = `${prefix}.${randomBytes(32).toString("base64url")}`;
-        const keyHash = createHash("sha256").update(secret, "utf8").digest("hex");
+        const random = globalThis.crypto.getRandomValues(new Uint8Array(44));
+        const prefix = `aae_live_${bytesToHex(random.slice(0, 12))}`;
+        const encodedSecret = btoa(String.fromCharCode(...random.slice(12))).replace(/\\+/g, "-").replace(/\\//g, "_").replace(/=+$/g, "");
+        const secret = `${prefix}.${encodedSecret}`;
+        const keyHash = await sha256Hex(secret);
         const created = await databaseService.intgApiKeys.create({
             ...buildApiKeyPayload(context.organizationId, input),
             key_prefix: prefix,
@@ -436,9 +437,8 @@ export class IntegrationPlatformService {
         const record = await databaseService.intgApiKeys.findByPrefix(organizationId, prefix);
         if (!record || record.status !== "active") return null;
         if (record.expires_at && Date.parse(record.expires_at) <= Date.now()) return null;
-        const expected = Buffer.from(record.key_hash, "hex");
-        const actual = Buffer.from(createHash("sha256").update(presentedKey, "utf8").digest("hex"), "hex");
-        if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) return null;
+        const actualHash = await sha256Hex(presentedKey);
+        if (!constantTimeHexEqual(record.key_hash, actualHash)) return null;
         await databaseService.intgApiKeys.touchLastUsedByOrganization(organizationId, record.id);
         return { id: record.id, organizationId: record.organization_id, hubId: record.hub_id, apiVersion: record.api_version };
     }
