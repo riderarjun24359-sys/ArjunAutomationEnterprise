@@ -28,7 +28,6 @@ import {
     mapExportMappingSummary,
     buildAccountingExportPayload,
     mapAccountingExportSummary,
-    buildApiKeyPayload,
     mapApiKeySummary,
     buildApiScopePayload,
     mapApiScopeSummary,
@@ -405,14 +404,8 @@ export class IntegrationPlatformService {
         return (await databaseService.intgApiKeys.listByOrganization(context.organizationId)).map((r) => mapApiKeySummary(r, maps));
     }
 
-    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.intgApiKeys.create(buildApiKeyPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create apiKeys");
-        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", `ApiKey created`, created.id));
-        const maps = await this.getMaps(context.organizationId);
-        return mapApiKeySummary(created, maps);
+    async createApiKey(_authUserId: string, _email: string, _input: CreateApiKeyInput, _fullName?: string | null): Promise<ApiKeySummary> {
+        throw new Error("API key issuance is available only through the authenticated server endpoint.");
     }
 
     async getApiScopes(authUserId: string, email: string, fullName?: string | null): Promise<ApiScopeSummary[]> {
@@ -736,11 +729,8 @@ export class IntegrationPlatformService {
         return { serviceId: created.id, serviceKey: created.serviceKey, connectorStatus: created.connectorStatus };
     }
 
-    async sdkIssueApiKey(authUserId: string, email: string, input: IntgSdkIssueApiKeyInput, fullName?: string | null): Promise<IntgSdkIssueApiKeyResult> {
-        const knowledge = createKnowledgeClient(authUserId, email, fullName);
-        await knowledge.search({ query: input.keyName, limit: 3 });
-        const created = await this.createApiKey(authUserId, email, { integrationHubId: input.integrationHubId, keyName: input.keyName, apiVersion: input.apiVersion }, fullName);
-        return { apiKeyId: created.id, keyName: created.keyName, status: created.status };
+    async sdkIssueApiKey(_authUserId: string, _email: string, _input: IntgSdkIssueApiKeyInput, _fullName?: string | null): Promise<IntgSdkIssueApiKeyResult> {
+        throw new Error("Use IntegrationPlatformClient.issueApiKey() so the authenticated server endpoint can verify the active organization membership.");
     }
 
     async sdkRegisterWebhook(authUserId: string, email: string, input: IntgSdkRegisterWebhookInput, fullName?: string | null): Promise<IntgSdkRegisterWebhookResult> {
