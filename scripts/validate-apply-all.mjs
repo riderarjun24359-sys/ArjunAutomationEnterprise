@@ -63,12 +63,7 @@ as $$
   select 'authenticated'::text;
 $$;
 
-create or replace function gen_random_uuid()
-returns uuid
-language sql
-as $$
-  select gen_random_uuid();
-$$;
+-- PostgreSQL 13+ provides gen_random_uuid() in pg_catalog.
 `;
 
 async function validateAgainstPglite() {
