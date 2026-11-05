@@ -15,6 +15,7 @@ describe("resolveSafeAuthRedirect", () => {
     it("rejects protocol-relative and absolute external destinations", () => {
         for (const next of [
             "//attacker.example/path",
+            "/\\\\attacker.example/path",
             "https://attacker.example/path",
             "@attacker.example",
             "https://www.arjunautomations.com@attacker.example/path",
