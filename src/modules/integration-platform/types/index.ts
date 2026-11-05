@@ -242,9 +242,8 @@ export interface ApiKeySummary {
 
 export interface CreateApiKeyInput {
     integrationHubId: string;
-    keyName?: string;
-    keyPrefix?: string;
-    apiVersion?: string;
+    keyName: string;
+    apiVersion: "v1" | "v2" | "v3";
 }
 
 export interface ApiScopeSummary {
@@ -543,6 +542,6 @@ export interface CreateIntegrationFailureInput {
 export interface IntgSdkConnectServiceInput { integrationHubId: string; serviceKey: string; serviceName: string; providerType?: string; }
 export interface IntgSdkConnectServiceResult { serviceId: string; serviceKey: string; connectorStatus: string; }
 export interface IntgSdkIssueApiKeyInput { integrationHubId: string; keyName: string; apiVersion?: string; }
-export interface IntgSdkIssueApiKeyResult { apiKeyId: string; keyName: string; status: string; }
+export interface IntgSdkIssueApiKeyResult { apiKeyId: string; keyName: string; status: string; token: string; }
 export interface IntgSdkRegisterWebhookInput { integrationHubId: string; webhookKey: string; webhookName: string; targetUrl?: string; }
 export interface IntgSdkRegisterWebhookResult { webhookId: string; webhookKey: string; status: string; }
