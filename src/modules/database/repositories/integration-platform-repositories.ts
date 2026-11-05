@@ -93,6 +93,19 @@ export class IntgAccountingExportRepository extends OrgIntgRepository<DbIntgAcco
 export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
     protected table = "intg_api_keys";
 
+    async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbIntgApiKey[]> {
+        const client = getRepositoryClient();
+        if (!client) return [];
+        const normalized = this.buildQuery(query);
+        const { data, error } = await client.from(this.table)
+            .select("id, organization_id, hub_id, key_name, key_prefix, api_version, expires_at, last_used_at, status, created_at, updated_at")
+            .eq("organization_id", organizationId)
+            .order(normalized.orderBy, { ascending: normalized.orderDirection === "asc" })
+            .range(normalized.offset, normalized.offset + normalized.limit - 1);
+        mapRepositoryError(error, "Failed to list API keys");
+        return (data ?? []) as DbIntgApiKey[];
+    }
+
     async findByPrefix(organizationId: string, keyPrefix: string): Promise<DbIntgApiKey | null> {
         const client = getRepositoryClient();
         if (!client) return null;
