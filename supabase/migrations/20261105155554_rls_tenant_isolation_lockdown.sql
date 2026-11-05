@@ -22,20 +22,40 @@ $$;
 REVOKE ALL ON FUNCTION public.is_organization_admin(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.is_organization_admin(uuid) TO authenticated, service_role;
 
+-- Platform-level visibility is explicit and limited to active super_admin
+-- memberships. Do not infer this role from user-editable profile metadata.
+CREATE OR REPLACE FUNCTION public.is_platform_admin()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog
+AS $
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.organization_members om
+    WHERE om.user_id = public.auth_profile_id()
+      AND om.is_active = true
+      AND om.role_name = 'super_admin'
+  );
+$;
+REVOKE ALL ON FUNCTION public.is_platform_admin() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.is_platform_admin() TO authenticated, service_role;
+
 -- Membership and organization records.
 DROP POLICY IF EXISTS memberships_insert ON public.organization_members;
 DROP POLICY IF EXISTS memberships_update ON public.organization_members;
 DROP POLICY IF EXISTS memberships_select ON public.organization_members;
 CREATE POLICY memberships_select ON public.organization_members
   FOR SELECT TO authenticated
-  USING (public.is_organization_member(organization_id));
+  USING (public.is_organization_member(organization_id) OR public.is_platform_admin());
 
 DROP POLICY IF EXISTS orgs_insert ON public.organizations;
 DROP POLICY IF EXISTS orgs_select ON public.organizations;
 DROP POLICY IF EXISTS orgs_update ON public.organizations;
 CREATE POLICY orgs_select ON public.organizations
   FOR SELECT TO authenticated
-  USING (public.is_organization_member(id));
+  USING (public.is_organization_member(id) OR public.is_platform_admin());
 CREATE POLICY orgs_update ON public.organizations
   FOR UPDATE TO authenticated
   USING (public.is_organization_admin(id))
@@ -290,6 +310,7 @@ CREATE POLICY profiles_select_org_members ON public.user_profiles
         AND om.is_active = true
         AND public.is_organization_member(om.organization_id)
     )
+    OR public.is_platform_admin()
   );
 
 -- Reset browser-role table privileges to match the policies above. Service
