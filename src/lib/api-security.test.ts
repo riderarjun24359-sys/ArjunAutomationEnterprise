@@ -66,6 +66,20 @@ describe("api-security server-side identity resolution", () => {
         mocks.checkRateLimit.mockReturnValue({ allowed: true });
     });
 
+    it("scopes configured rate-limit namespaces to the requesting client", async () => {
+        authenticatedAs("auth-rate");
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-rate" }, { organization_id: "org-rate", role_name: "member" }));
+        const headers = new Map([["x-forwarded-for", "203.0.113.24"]]);
+        const scopedRequest = {
+            url: "https://app.example/api/launch-kit/contact",
+            method: "GET",
+            headers: { get: (name: string) => headers.get(name.toLowerCase()) ?? null },
+        } as unknown as Request;
+
+        await secureApiRoute(scopedRequest, { rateLimitKey: "lead-intake", rateLimit: 12 });
+        expect(mocks.checkRateLimit).toHaveBeenCalledWith("lead-intake:203.0.113.24", 12, 60_000);
+    });
+
     it("resolves role and organization from the server session identity (not the browser client)", async () => {
         authenticatedAs("auth-1");
         mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-1" }, { organization_id: "org-1", role_name: "admin" }));
