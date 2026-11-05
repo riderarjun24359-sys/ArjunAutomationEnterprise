@@ -90,7 +90,20 @@ export class IntgAccountingConnectorRepository extends OrgIntgRepository<DbIntgA
 export class IntgAccountingSyncStatusRepository extends OrgIntgRepository<DbIntgAccountingSyncStatus> { protected table = "intg_accounting_sync_status"; }
 export class IntgExportMappingRepository extends OrgIntgRepository<DbIntgExportMapping> { protected table = "intg_export_mappings"; }
 export class IntgAccountingExportRepository extends OrgIntgRepository<DbIntgAccountingExport> { protected table = "intg_accounting_exports"; }
-export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> { protected table = "intg_api_keys"; }
+export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
+    protected table = "intg_api_keys";
+
+    async findByPrefix(organizationId: string, keyPrefix: string): Promise<DbIntgApiKey | null> {
+        const client = getRepositoryClient();
+        if (!client) return null;
+        const { data, error } = await client.from(this.table).select("*")
+            .eq("organization_id", organizationId)
+            .eq("key_prefix", keyPrefix)
+            .maybeSingle();
+        mapRepositoryError(error, "Failed to find API key");
+        return (data as DbIntgApiKey | null) ?? null;
+    }
+}
 export class IntgApiScopeRepository extends OrgIntgRepository<DbIntgApiScope> { protected table = "intg_api_scopes"; }
 export class IntgRateLimitRepository extends OrgIntgRepository<DbIntgRateLimit> { protected table = "intg_rate_limits"; }
 export class IntgApiUsageRepository extends OrgIntgRepository<DbIntgApiUsage> { protected table = "intg_api_usage"; }
