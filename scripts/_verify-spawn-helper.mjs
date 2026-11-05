@@ -25,10 +25,18 @@ export function runLint(root) {
 }
 
 export function spawnVerify(root, scriptRel) {
-    return spawnSync(process.execPath, [join(root, scriptRel)], {
+    const result = spawnSync(process.execPath, [join(root, scriptRel)], {
         cwd: root,
         encoding: "utf8",
         timeout: 600_000,
         env: process.env,
     });
+
+    if (result.status !== 0) {
+        console.error(`\n[verify-chain] ${scriptRel} failed (exit ${result.status ?? "unknown"}).`);
+        const output = [result.stdout, result.stderr].filter(Boolean).join("\n").trim();
+        if (output) console.error(output.slice(-7000));
+    }
+
+    return result;
 }
