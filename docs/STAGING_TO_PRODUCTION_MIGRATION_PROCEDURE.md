@@ -408,3 +408,84 @@ Only after every staging probe passes **and** the production prerequisites
 repeat §1–§3 on production `ixassghxogcabfcyjjtz`, capturing the same pre-state
 and keeping the same rollback artifact. Re-run `npm run db:verify` locally and
 the live route probes afterward.
+
+---
+
+## 7. Remote audit correction — 2026-11-05
+
+This section supersedes the historical environment/reachability statements above
+where they conflict with the current read-only Supabase and Vercel audit. The
+historical notes are retained to preserve the original investigation record.
+
+### Current observed state
+
+- Both Supabase projects are reachable and report `ACTIVE_HEALTHY`:
+  staging `iplkndwkjuupktxwcksv`, production `ixassghxogcabfcyjjtz`.
+- Both migration ledgers report 64 applied migrations, latest
+  `202610110001_org_member_anon_lockdown`.
+- The repair branch contains 75 migration files. These 11 files are not recorded
+  in either remote migration ledger:
+  `202610120001`–`202610120005`, `202610300001`, and
+  `202611050001`–`202611050005`.
+- Production has one organization and one active `founder` membership, but no
+  active `super_admin`. Staging has one organization and no membership rows.
+- Staging does not have `public.rate_limits`. Production does have the table,
+  but neither project has `public.consume_rate_limit(text,integer,integer)`.
+  Production's table has RLS enabled and zero policies, but table-level grants
+  currently include broad privileges for `anon` and `authenticated`. RLS
+  currently denies access in the absence of policies; nevertheless, these
+  grants should be reconciled to the intended service-role-only access model.
+- The production-only `rate_limits` table is schema drift: it is not represented
+  in the migration ledger. Do not assume it was created by
+  `202610300001_rate_limits.sql`, and do not blindly replay that migration
+  without first reconciling its actual definition, grants, and ownership.
+- Staging prechecks returned zero duplicate lead-email groups, zero duplicate
+  invoice-number groups, zero invalid invoice amounts, and zero unexpected
+  membership roles. This does not substitute for authenticated two-tenant
+  probes.
+- Both projects still require review of Supabase Security Advisor findings
+  (function search paths, SECURITY DEFINER grants, leaked-password protection,
+  and RLS-enabled tables without policies). No Health Advisor findings were
+  reported in the audit.
+
+### Corrected pending-migration sequence
+
+The original apply-order list above predates the final five hardening migrations
+and omits the rate-limit table migration. After backups, staging identities,
+pre-state capture, and all held-migration prerequisites are satisfied, reconcile
+and apply the missing files in this order on staging, validating after each
+logical group:
+
+1. `202610120001_org_membership_escalation_lockdown.sql`
+2. `202610120002_read_scope_lockdown.sql` — held until a real, authorized
+   platform operator has an active `super_admin` membership and staging probes
+   confirm platform analytics remain functional.
+3. `202610120003_legacy_table_rls_lockdown.sql`
+4. `202610120004_module_tables_tenant_reads.sql`
+5. `202610120005_integration_webhooks.sql`
+6. `202610300001_rate_limits.sql` — first reconcile the production-only table
+   drift; verify its columns, constraints, indexes, owner, grants, and RLS state.
+7. `202611050001_membership_role_management_hardening.sql`
+8. `202611050002_atomic_rate_limit_rpc.sql` — requires the verified
+   `rate_limits` table; confirm anon/authenticated EXECUTE is denied and the
+   service-role RPC works.
+9. `202611050003_membership_insert_hardening.sql`
+10. `202611050004_api_key_prefix_uniqueness.sql` — run duplicate-prefix
+    prechecks before creating the unique index.
+11. `202611050005_api_key_admin_rls.sql` — verify the UI only reads the
+    explicitly granted metadata columns and that admin-only writes still work.
+
+The 11 files above are not permission to apply them immediately. Before the
+first staging DDL change, obtain evidence of a recent recoverable backup,
+provision two distinct staging test identities in separate organizations plus
+a no-membership identity, and record the authorized platform-admin identity.
+Do not manufacture or promote an account by guessing its email or identity.
+After staging probes pass, repeat the same controlled sequence on production
+only with a separately verified backup and release approval.
+
+### Actions performed by the audit
+
+All database queries for this correction were read-only. No SQL DDL, data
+mutation, migration application, role assignment, production deployment, or PR
+merge was performed. The existing CI run's successful results remain valid for
+the code commit it tested; they do not certify remote database readiness.
