@@ -78,8 +78,9 @@ begin
       using errcode = '42501';
   end if;
 
-  if old.role_name = 'super_admin' and actor_role <> 'super_admin' then
-    raise exception 'only a platform administrator can manage a platform administrator'
+  if old.role_name in ('super_admin', 'founder', 'owner')
+     and actor_role <> 'super_admin' then
+    raise exception 'only a platform administrator can manage elevated membership roles'
       using errcode = '42501';
   end if;
 
