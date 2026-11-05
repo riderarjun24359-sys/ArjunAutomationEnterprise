@@ -409,7 +409,9 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
 }
 
 export function ApiScopesPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiScopesFormValues>({ resolver: zodResolver(apiScopesFormSchema), defaultValues: {"integrationHubId":"","scopeKey":"","scopeName":""} });
+    const form = useForm<apiScopesFormValues>({ resolver: zodResolver(apiScopesFormSchema), defaultValues: {"integrationHubId":"","apiKeyId":"","scopeKey":"","scopeName":""} });
+    const selectedHubId = form.watch("integrationHubId");
+    const eligibleKeys = data.apiKeys.filter((key) => key.integrationHubId === selectedHubId && key.status === "active");
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Api Scopes" description="Enterprise integration platform api scopes" /><div className="mt-6 space-y-3">
@@ -419,6 +421,10 @@ export function ApiScopesPanel({ data }: { data: IntegrationPlatformData }) {
             </div></Card>
             <Card hover><SectionHeader title="Create api scopes" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiScope(v))}>
                 <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                <select {...form.register("apiKeyId")} className={inputClass} disabled={!selectedHubId || eligibleKeys.length === 0}>
+                    <option value="">Select active API key</option>
+                    {eligibleKeys.map((key) => <option key={key.id} value={key.id}>{key.keyName}</option>)}
+                </select>
                 <input {...form.register("scopeKey")} placeholder="scopeKey" className={inputClass} />
                 <input {...form.register("scopeName")} placeholder="scopeName" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
