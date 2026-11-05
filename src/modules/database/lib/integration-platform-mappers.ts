@@ -550,7 +550,7 @@ export const buildApiScopePayload = (organizationId: string, input: CreateApiSco
     api_key_id: input.apiKeyId,
     scope_key: input.scopeKey ?? "",
     scope_name: input.scopeName ?? "",
-    permissions: input.permissions ?? [],
+    permissions: input.permissions ?? ["read"],
 });
 
 export const buildRateLimitPayload = (organizationId: string, input: CreateRateLimitInput) => ({
