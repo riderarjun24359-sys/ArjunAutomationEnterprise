@@ -57,22 +57,21 @@ export async function GET(request: Request) {
         backupDetail,
     });
 
+    // Public liveness endpoint: expose only what an external monitor needs.
+    // Detailed metrics, alerts, circuit-breaker state and internal diagnostics
+    // remain available through the authenticated /api/ops/diagnostics route.
     const body = {
-        ...report,
+        status: report.status,
         service: "arjun-automation",
+        timestamp: report.timestamp,
         uptimeSeconds: getUptimeSeconds(),
-        uptimeProbe: buildUptimeProbe(),
         supabaseConfigured: supabaseOk,
-        alertsOpen: getRecentAlerts(20).filter((a) => !a.acknowledged && a.severity !== "info").length,
-        performanceSamples: getRecentPerformanceMarks(5),
-        circuitBreakers,
     };
 
     return NextResponse.json(body, {
         status: report.status === "critical" || !supabaseOk ? 503 : 200,
         headers: {
             "Cache-Control": "no-store",
-            "X-Health-Score": String(report.score),
             "X-Uptime-Seconds": String(getUptimeSeconds()),
         },
     });

@@ -1,0 +1,86 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, typecheck, tests, database and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26.10.0"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+      - name: Dependency security audit
+        run: npm audit --audit-level=high
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Validate migration chain
+        run: npm run db:validate
+
+      - name: Tenant isolation tests
+        run: npm run rls:verify
+
+      - name: Production build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      - name: Full pre-deployment verification
+        run: npm run predeploy:verify
+
+  browser-smoke:
+    name: Browser E2E smoke
+    runs-on: ubuntu-latest
+    needs: verify
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26.10.0"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run public journey and responsive browser tests
+        run: npx playwright test e2e/lead-intake.spec.ts e2e/soft-launch.spec.ts e2e/visual-redesign.spec.ts
+        env:
+          CI: "true"
+          NEXT_TELEMETRY_DISABLED: "1"

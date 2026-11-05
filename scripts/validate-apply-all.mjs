@@ -41,6 +41,9 @@ begin
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then
     create role authenticated;
   end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role;
+  end if;
 end
 $$;
 
@@ -60,12 +63,7 @@ as $$
   select 'authenticated'::text;
 $$;
 
-create or replace function gen_random_uuid()
-returns uuid
-language sql
-as $$
-  select gen_random_uuid();
-$$;
+-- PostgreSQL 13+ provides gen_random_uuid() in pg_catalog.
 `;
 
 async function validateAgainstPglite() {

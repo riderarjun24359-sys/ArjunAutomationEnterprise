@@ -57,7 +57,6 @@ import type {
     ExportMappingSummary,
     CreateAccountingExportInput,
     AccountingExportSummary,
-    CreateApiKeyInput,
     ApiKeySummary,
     CreateApiScopeInput,
     ApiScopeSummary,
@@ -282,6 +281,7 @@ export const mapAccountingExportSummary = (record: DbIntgAccountingExport, maps:
 
 export const mapApiKeySummary = (record: DbIntgApiKey, maps: LookupMaps): ApiKeySummary => ({
     id: record.id,
+    integrationHubId: record.hub_id,
     hubName: hubName(maps, record.hub_id) ?? "",
     keyName: record.key_name,
     apiVersion: record.api_version,
@@ -544,21 +544,13 @@ export const buildAccountingExportPayload = (organizationId: string, input: Crea
     export_status: input.exportStatus ?? "pending",
 });
 
-export const buildApiKeyPayload = (organizationId: string, input: CreateApiKeyInput) => ({
-    organization_id: organizationId,
-    hub_id: input.integrationHubId,
-    key_name: input.keyName ?? "",
-    key_prefix: input.keyPrefix ?? "",
-    api_version: input.apiVersion ?? "v1",
-});
-
 export const buildApiScopePayload = (organizationId: string, input: CreateApiScopeInput) => ({
     organization_id: organizationId,
     hub_id: input.integrationHubId,
     api_key_id: input.apiKeyId,
     scope_key: input.scopeKey ?? "",
     scope_name: input.scopeName ?? "",
-    permissions: input.permissions ?? [],
+    permissions: input.permissions ?? ["read"],
 });
 
 export const buildRateLimitPayload = (organizationId: string, input: CreateRateLimitInput) => ({

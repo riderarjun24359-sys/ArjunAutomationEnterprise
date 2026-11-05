@@ -99,4 +99,8 @@ for (const r of results) {
 if (failed.length > 0) process.exit(1);
 
 const chain = spawnVerify(root, "scripts/verify-delivery-engine.mjs");
-if (chain.status !== 0) process.exit(chain.status ?? 1);
+if (chain.status !== 0) {
+    const output = [chain.stdout, chain.stderr].filter(Boolean).join("\n").trim();
+    if (output) console.error(output.slice(-7000));
+    process.exit(chain.status ?? 1);
+}

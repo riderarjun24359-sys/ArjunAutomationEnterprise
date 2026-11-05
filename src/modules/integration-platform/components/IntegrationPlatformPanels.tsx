@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card } from "@/src/components/ui/card";
@@ -342,27 +343,75 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 }
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":""} });
+    const [issuedToken, setIssuedToken] = useState<string | null>(null);
+    const [managementError, setManagementError] = useState<string | null>(null);
+    const [busyKeyId, setBusyKeyId] = useState<string | null>(null);
+    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: { integrationHubId: "", keyName: "", apiVersion: "v1" } });
+    const manageKey = async (item: (typeof data.apiKeys)[number], action: "rotate" | "revoke") => {
+        const confirmed = action === "revoke"
+            ? window.confirm("Revoke this API key? Existing integrations using it will stop working.")
+            : window.confirm("Rotate this API key? The old secret will stop working immediately.");
+        if (!confirmed) return;
+        setBusyKeyId(item.id);
+        setManagementError(null);
+        try {
+            const token = await data.manageApiKey({ action, apiKeyId: item.id, integrationHubId: item.integrationHubId });
+            setIssuedToken(token);
+        } catch (error) {
+            setManagementError(error instanceof Error ? error.message : "Unable to manage API key");
+        } finally {
+            setBusyKeyId(null);
+        }
+    };
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-            <Card hover><SectionHeader title="Api Keys" description="Enterprise integration platform api keys" /><div className="mt-6 space-y-3">
-                {data.apiKeys.length === 0 ? <EmptyState title="No api keys" description="Create the first api keys record." /> : data.apiKeys.map((item) => (
-                    <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={`${item.status}`} />
-                ))}
-            </div></Card>
-            <Card hover><SectionHeader title="Create api keys" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
-                <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
-                <input {...form.register("keyName")} placeholder="keyName" className={inputClass} />
-                <input {...form.register("keyPrefix")} placeholder="keyPrefix" className={inputClass} />
-                <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
-                <SaveButton loading={form.formState.isSubmitting} label="Create" />
-            </form></Card>
+            <Card hover>
+                <SectionHeader title="API Keys" description="Organization-scoped API credentials. Secret values are never stored or displayed again." />
+                <div className="mt-6 space-y-3">
+                    {data.apiKeys.length === 0 ? <EmptyState title="No API keys" description="Issue the first API key for an integration hub." /> : data.apiKeys.map((item) => (
+                        <div key={item.id} className="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                            <ListCard title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={item.status} />
+                            {item.status === "active" ? (
+                                <div className="mt-3 flex flex-wrap gap-2">
+                                    <button type="button" disabled={busyKeyId === item.id} onClick={() => void manageKey(item, "rotate")} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-semibold disabled:opacity-50 dark:border-slate-700"> {busyKeyId === item.id ? "Please wait…" : "Rotate key"} </button>
+                                    <button type="button" disabled={busyKeyId === item.id} onClick={() => void manageKey(item, "revoke")} className="rounded-lg border border-red-300 px-3 py-2 text-xs font-semibold text-red-700 disabled:opacity-50 dark:border-red-900 dark:text-red-300">Revoke</button>
+                                </div>
+                            ) : null}
+                        </div>
+                    ))}
+                </div>
+            </Card>
+            <Card hover>
+                <SectionHeader title="Issue API key" description="Only organization owners and administrators can issue keys." />
+                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (values) => {
+                    const token = await data.createApiKey(values);
+                    setIssuedToken(token);
+                    form.reset({ integrationHubId: "", keyName: "", apiVersion: "v1" });
+                })}>
+                    <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                    <input {...form.register("keyName")} placeholder="Key name" className={inputClass} />
+                    <select {...form.register("apiVersion")} className={inputClass}>
+                        {API_VERSION_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </select>
+                    <SaveButton loading={form.formState.isSubmitting} label="Issue one-time key" />
+                </form>
+                {managementError ? <p role="alert" className="mt-4 text-sm text-red-600">{managementError}</p> : null}
+                {issuedToken ? (
+                    <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+                        <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Copy this secret now</p>
+                        <p className="mt-1 text-xs text-amber-800 dark:text-amber-300">This is the only time the full key will be shown. It cannot be recovered later.</p>
+                        <input aria-label="New API key secret" readOnly value={issuedToken} onFocus={(event) => event.currentTarget.select()} className="mt-3 w-full rounded-xl border border-amber-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 dark:bg-slate-950 dark:text-slate-100" />
+                    </div>
+                ) : null}
+            </Card>
         </div>
     );
 }
 
 export function ApiScopesPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiScopesFormValues>({ resolver: zodResolver(apiScopesFormSchema), defaultValues: {"integrationHubId":"","scopeKey":"","scopeName":""} });
+    const form = useForm<apiScopesFormValues>({ resolver: zodResolver(apiScopesFormSchema), defaultValues: {"integrationHubId":"","apiKeyId":"","scopeKey":"","scopeName":""} });
+    const selectedHubId = form.watch("integrationHubId");
+    const eligibleKeys = data.apiKeys.filter((key) => key.integrationHubId === selectedHubId && key.status === "active");
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover><SectionHeader title="Api Scopes" description="Enterprise integration platform api scopes" /><div className="mt-6 space-y-3">
@@ -372,6 +421,10 @@ export function ApiScopesPanel({ data }: { data: IntegrationPlatformData }) {
             </div></Card>
             <Card hover><SectionHeader title="Create api scopes" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiScope(v))}>
                 <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                <select {...form.register("apiKeyId")} className={inputClass} disabled={!selectedHubId || eligibleKeys.length === 0}>
+                    <option value="">Select active API key</option>
+                    {eligibleKeys.map((key) => <option key={key.id} value={key.id}>{key.keyName}</option>)}
+                </select>
                 <input {...form.register("scopeKey")} placeholder="scopeKey" className={inputClass} />
                 <input {...form.register("scopeName")} placeholder="scopeName" className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />

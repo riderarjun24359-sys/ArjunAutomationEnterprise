@@ -3,6 +3,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import pg from "pg";
+import { createMigrationApplyPlan } from "./migration-apply-policy.mjs";
 
 const { Client } = pg;
 const root = process.cwd();
@@ -16,9 +17,19 @@ if (!databaseUrl) {
     process.exit(1);
 }
 
-const migrationFiles = readdirSync(migrationsDir)
+const migrationPlan = createMigrationApplyPlan(process.env);
+
+const allMigrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();
+
+const migrationFiles = allMigrationFiles.filter((file) => {
+    if (!migrationPlan.shouldApply(file)) {
+        console.log(`HOLD: Skipping staged-only migration ${file} (set ALLOW_HELD_MIGRATIONS=true after review).`);
+        return false;
+    }
+    return true;
+});
 
 const seedFiles = readdirSync(seedsDir)
     .filter((file) => file.endsWith(".sql"))

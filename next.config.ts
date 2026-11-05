@@ -1,71 +1,4 @@
 import type { NextConfig } from "next";
-import { ANALYTICS, ANALYTICS_CSP_ORIGINS } from "./src/config/analytics";
-
-/**
- * Content Security Policy.
- *
- * Added because the site markets itself on "security first" and lists
- * row-level security / tenant isolation as its differentiator — a client
- * security reviewer or a penetration test flags a missing CSP in the first
- * few minutes. Everything the app legitimately needs is allow-listed:
- *
- *  - 'unsafe-inline' for styles: Tailwind v4 injects a runtime style element
- *    and the premium theme sets CSS custom properties via inline style attrs.
- *  - 'unsafe-eval' for scripts: required by React Refresh in development.
- *    Tighten to the Next.js production nonce approach if you later remove it.
- *  - Supabase / Vercel / Google tag hosts are added only when configured.
- *
- * `frame-ancestors 'none'` replaces the older X-Frame-Options for modern
- * browsers; X-Frame-Options is still sent for legacy clients.
- */
-function buildCsp(): string {
-    const connectSources = ["'self'"];
-    const scriptSources = ["'self'", "'unsafe-inline'"];
-
-    // 'unsafe-eval' is only needed for React Refresh in development.
-    // Production must not allow eval-based script execution.
-    if (process.env.NODE_ENV !== "production") {
-        scriptSources.push("'unsafe-eval'");
-    }
-
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
-        const supabaseOrigin = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin;
-        connectSources.push(supabaseOrigin, "wss://*.supabase.co");
-    }
-
-    /**
-     * Analytics origins are driven by the same config the tags themselves read
-     * (`src/config/analytics.ts`), so the policy and the tags cannot drift.
-     * Without this the browser blocks the tag outright: the site would look
-     * correctly configured while silently recording nothing.
-     */
-    if (ANALYTICS.ga4Id || ANALYTICS.gtmId) {
-        scriptSources.push(...ANALYTICS_CSP_ORIGINS.script);
-        connectSources.push(...ANALYTICS_CSP_ORIGINS.connect);
-    }
-
-    if (ANALYTICS.metaPixelId) {
-        scriptSources.push("https://connect.facebook.net");
-        connectSources.push("https://www.facebook.com");
-    }
-
-    return [
-        "default-src 'self'",
-        // Vercel/Next inject inline bootstrap scripts; Tailwind v4 sets theme vars inline.
-        `script-src ${scriptSources.join(" ")}`,
-        `style-src 'self' 'unsafe-inline'`,
-        "img-src 'self' data: blob: https:",
-        "font-src 'self' data:",
-        `connect-src ${connectSources.join(" ")}`,
-        "media-src 'self'",
-        "object-src 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-        "frame-ancestors 'none'",
-        "upgrade-insecure-requests",
-    ].join("; ");
-}
-
 const securityHeaders = [
     { key: "X-Frame-Options", value: "DENY" },
     { key: "X-Content-Type-Options", value: "nosniff" },
@@ -76,7 +9,6 @@ const securityHeaders = [
     // HSTS: enforce HTTPS for 1 year. includeSubDomains and preload are
     // intentionally omitted until all subdomains are confirmed HTTPS-ready.
     { key: "Strict-Transport-Security", value: "max-age=31536000" },
-    { key: "Content-Security-Policy", value: buildCsp() },
 ];
 
 const nextConfig: NextConfig = {

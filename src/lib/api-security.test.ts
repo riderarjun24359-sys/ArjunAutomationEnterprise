@@ -66,6 +66,28 @@ describe("api-security server-side identity resolution", () => {
         mocks.checkRateLimit.mockReturnValue({ allowed: true });
     });
 
+    it("scopes configured rate-limit namespaces to the requesting client", async () => {
+        authenticatedAs("auth-rate");
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-rate" }, { organization_id: "org-rate", role_name: "member" }));
+        const headers = new Map([["x-real-ip", "203.0.113.24"], ["x-forwarded-for", "198.51.100.88, 203.0.113.24"]]);
+        const scopedRequest = {
+            url: "https://app.example/api/launch-kit/contact",
+            method: "GET",
+            headers: { get: (name: string) => headers.get(name.toLowerCase()) ?? null },
+        } as unknown as Request;
+
+        await secureApiRoute(scopedRequest, { rateLimitKey: "lead-intake", rateLimit: 12 });
+        expect(mocks.checkRateLimit).toHaveBeenCalledWith("lead-intake:203.0.113.24", 12, 60_000);
+    });
+
+    it("uses the proxy-appended final hop when x-real-ip is unavailable", async () => {
+        const { getClientIp } = await import("./api-security");
+        const forwardedRequest = {
+            headers: { get: (name: string) => name.toLowerCase() === "x-forwarded-for" ? "198.51.100.88, 203.0.113.24" : null },
+        } as unknown as Request;
+        expect(getClientIp(forwardedRequest)).toBe("203.0.113.24");
+    });
+
     it("resolves role and organization from the server session identity (not the browser client)", async () => {
         authenticatedAs("auth-1");
         mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-1" }, { organization_id: "org-1", role_name: "admin" }));

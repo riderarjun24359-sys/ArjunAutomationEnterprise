@@ -287,7 +287,36 @@ integrationHubsList,
     const createAccountingSyncStatus = useCallback(async (input: CreateAccountingSyncStatusInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingSyncStatus(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createExportMapping = useCallback(async (input: CreateExportMappingInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createExportMapping(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createAccountingExport = useCallback(async (input: CreateAccountingExportInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingExport(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
-    const createApiKey = useCallback(async (input: CreateApiKeyInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiKey(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
+    const createApiKey = useCallback(async (input: CreateApiKeyInput): Promise<string> => {
+        if (!user) throw new Error("Authentication required");
+        const response = await fetch("/api/integration-platform/api-keys", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                integrationHubId: input.integrationHubId,
+                keyName: input.keyName,
+                apiVersion: input.apiVersion,
+            }),
+        });
+        const result = await response.json().catch(() => null) as { token?: string; error?: string } | null;
+        if (!response.ok || !result?.token) {
+            throw new Error(result?.error ?? "Unable to issue API key");
+        }
+        await refresh();
+        return result.token;
+    }, [user, refresh]);
+    const manageApiKey = useCallback(async (input: { action: "rotate" | "revoke"; apiKeyId: string; integrationHubId: string }): Promise<string | null> => {
+        if (!user) throw new Error("Authentication required");
+        const response = await fetch("/api/integration-platform/api-keys", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(input),
+        });
+        const result = await response.json().catch(() => null) as { token?: string; error?: string } | null;
+        if (!response.ok) throw new Error(result?.error ?? "Unable to manage API key");
+        await refresh();
+        return result?.token ?? null;
+    }, [user, refresh]);
     const createApiScope = useCallback(async (input: CreateApiScopeInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiScope(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createRateLimit = useCallback(async (input: CreateRateLimitInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createRateLimit(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createApiUsage = useCallback(async (input: CreateApiUsageInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiUsage(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
@@ -337,6 +366,7 @@ integrationHubsList,
         createAccountingExport,
         apiKeys,
         createApiKey,
+        manageApiKey,
         apiScopes,
         createApiScope,
         rateLimits,

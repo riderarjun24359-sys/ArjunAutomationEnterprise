@@ -16,6 +16,7 @@ import {
 } from "@/src/lib/webhook-idempotency";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 import { attemptReconciliation } from "@/src/modules/finance/lib/reconciliation";
+import { summarizeWebhookReconciliation } from "@/src/lib/webhook-response";
 
 /**
  * Unified payment webhook receiver — verifies the provider signature,
@@ -175,7 +176,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-        { received: true, provider, type: event.eventType, dedupe, fulfillment: "manual-reconciliation", reconciliation },
+        { received: true, provider, type: event.eventType, dedupe, fulfillment: "manual-reconciliation", reconciliation: summarizeWebhookReconciliation(reconciliation) },
         { status: 200, headers: { "Cache-Control": "no-store" } },
     );
 }

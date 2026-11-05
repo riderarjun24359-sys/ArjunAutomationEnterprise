@@ -47,6 +47,7 @@ const AUTH2 = "00000000-0000-4000-8000-0000000000c2";
 const AUTH3 = "00000000-0000-4000-8000-0000000000c3";
 const AUTH4 = "00000000-0000-4000-8000-0000000000c4";
 const AUTH5 = "00000000-0000-4000-8000-0000000000c5";
+const AUTH6 = "00000000-0000-4000-8000-0000000000c6";
 
 // Supabase-compatible auth stub: uid()/role() read the request JWT claims.
 const authStub = `
@@ -54,6 +55,7 @@ create schema if not exists auth;
 do $$ begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon; end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role; end if;
 end $$;
 create or replace function auth.uid() returns uuid language sql stable as $fn$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
@@ -90,6 +92,20 @@ for (const file of files) {
 }
 console.log(`Applied ${files.length} migrations to embedded Postgres.\n`);
 
+// --- 202611050002: atomic rate-limit RPC is service-role only --------------
+await db.exec(`select set_config('request.jwt.claims', '{"role":"authenticated","aud":"authenticated"}', false); set role authenticated;`);
+await expectError(
+    `select * from public.consume_rate_limit('auth-must-not-call', 10, 60000)`,
+    "rate-limits: authenticated role cannot execute counter RPC",
+);
+await resetRole();
+await db.exec(`select set_config('request.jwt.claims', '{"role":"service_role","aud":"service_role"}', false); set role service_role;`);
+const rateOne = await db.query(`select * from public.consume_rate_limit('atomic-test-key', 10, 60000)`);
+const rateTwo = await db.query(`select * from public.consume_rate_limit('atomic-test-key', 10, 60000)`);
+record("rate-limits: first atomic request count is 1", rateOne.rows[0]?.count === 1);
+record("rate-limits: concurrent-safe increment advances count", rateTwo.rows[0]?.count === 2);
+await resetRole();
+
 // Fixtures are inserted as the superuser (RLS bypassed) to set up tenants.
 await db.exec(`
 insert into public.user_profiles (id, auth_user_id, email, full_name) values
@@ -97,7 +113,8 @@ insert into public.user_profiles (id, auth_user_id, email, full_name) values
   ('${PROF2}', '${AUTH2}', 'two@test.dev', 'Two'),
   ('${PROF3}', '${AUTH3}', 'three@test.dev', 'Three'),
   ('${PROF4}', '${AUTH4}', 'admin@test.dev', 'Admin'),
-  ('${PROF5}', '${AUTH5}', 'nobody@test.dev', 'Nobody');
+  ('${PROF5}', '${AUTH5}', 'nobody@test.dev', 'Nobody'),
+  ('00000000-0000-4000-8000-0000000000b6', '${AUTH6}', 'member@test.dev', 'Member');
 insert into public.organizations (id, name, slug) values
   ('${ORG1}', 'Org One', 'org-one'),
   ('${ORG2}', 'Org Two', 'org-two'),
@@ -105,7 +122,8 @@ insert into public.organizations (id, name, slug) values
 insert into public.organization_members (organization_id, user_id, role_name, is_active) values
   ('${ORG1}', '${PROF1}', 'founder', true),
   ('${ORG1}', '${PROF4}', 'super_admin', true),
-  ('${ORG2}', '${PROF2}', 'founder', true);
+  ('${ORG2}', '${PROF2}', 'founder', true),
+  ('${ORG1}', '00000000-0000-4000-8000-0000000000b6', 'member', true);
 insert into public.crm_clients (organization_id, name, contact_email, manager_name) values
   ('${ORG1}', 'Client One', 'a@x.com', 'Manager One'),
   ('${ORG2}', 'Client Two', 'b@x.com', 'Manager Two');
@@ -130,6 +148,12 @@ insert into public.integration_webhooks (organization_id, name, url, secret) val
 insert into public.integration_deliveries (organization_id, event, target_host, status, attempts) values
   ('${ORG1}', 'lead.created', 'hooks.example.com', 'delivered', 1),
   ('${ORG2}', 'lead.created', 'hooks.example.com', 'delivered', 1);
+insert into public.intg_integration_hubs (id, organization_id, hub_key, hub_name) values
+  ('00000000-0000-4000-8000-0000000000d1', '${ORG1}', 'tenant-one', 'Tenant One Hub');
+insert into public.intg_api_keys (id, organization_id, hub_id, key_name, key_prefix, key_hash) values
+  ('00000000-0000-4000-8000-0000000000e1', '${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'tenant-one-key', 'aa_aaaaaaaaaaaa', repeat('0', 64));
+insert into public.intg_api_scopes (id, organization_id, hub_id, api_key_id, scope_key, scope_name) values
+  ('00000000-0000-4000-8000-0000000000f1', '${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'integration:health:read', 'Health read');
 `);
 
 async function asAuth(authId) {
@@ -235,18 +259,129 @@ await expectRows(
 );
 await resetRole();
 
-// Positive control: a genuinely new user may still found a memberless org.
-await asAuth(AUTH3);
+// --- 202611050001: membership role-management hardening ------------------
+// Ordinary members cannot self-promote or modify another membership.
+await asAuth(AUTH6);
+await expectRows(
+    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    0,
+    "membership: ordinary member cannot self-promote",
+);
+await expectRows(
+    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '${PROF1}' returning id`,
+    0,
+    "membership: ordinary member cannot promote another user",
+);
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'admin', true)`,
+    "membership: ordinary member cannot invite elevated role",
+);
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'member', true)`,
+    "membership: ordinary member cannot invite another user",
+);
+await resetRole();
+
+// Organization founder can assign ordinary roles to teammates, but cannot
+// grant ownership/platform roles or alter their own privileges.
+await asAuth(AUTH1);
+await expectRows(
+    `update public.organization_members set role_name = 'manager' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    1,
+    "membership: founder can assign a normal teammate role",
+);
+await expectError(
+    `update public.organization_members set role_name = 'owner' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6'`,
+    "membership: founder cannot grant owner role",
+);
+await expectError(
+    `update public.organization_members set role_name = 'member' where organization_id = '${ORG1}' and user_id = '${PROF1}'`,
+    "membership: founder cannot change own role",
+);
 await expectOk(
-    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF3}', 'manager', true)`,
+    "membership: founder can invite a normal teammate",
+);
+await expectError(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG1}', '${PROF5}', 'owner', true)`,
+    "membership: founder cannot invite owner role",
+);
+await resetRole();
+
+// Platform super-admin retains the ability to grant elevated ownership.
+await asAuth(AUTH4);
+await expectRows(
+    `update public.organization_members set role_name = 'owner' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    1,
+    "membership: platform super-admin can grant owner role",
+);
+await expectOk(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG2}', '${PROF3}', 'owner', true)`,
+    "membership: platform super-admin can invite owner role",
+);
+await resetRole();
+
+// Positive control: a genuinely new user may still found a memberless org.
+await asAuth(AUTH5);
+await expectOk(
+    `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF5}', 'founder', true)`,
     "membership: first-run founder self-join allowed",
 );
 await resetRole();
+// Restore the fixture to a genuinely memberless state before the read-scope probes.
+await db.exec(`delete from public.organization_members where organization_id = '${ORG3}' and user_id = '${PROF5}'`);
 
 // --- representative standard pattern (invoices) ---------------------------
 await asAuth(AUTH1);
 await expectRows("select id from public.invoices", 1, "invoices: owner reads own org");
 await expectRows(`select id from public.invoices where organization_id = '${ORG2}'`, 0, "invoices: cross-org SELECT filtered");
+await resetRole();
+
+// --- 202611050005: API key and scope mutation is admin-only ----------------
+await asAuth(AUTH3); // ordinary manager of ORG1, not an administrator
+await expectError(
+    `insert into public.intg_api_keys (organization_id, hub_id, key_name, key_prefix, key_hash) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'member-minted-key', 'aa_bbbbbbbbbbbb', repeat('1', 64))`,
+    "API keys: ordinary member cannot issue credentials",
+);
+await expectRows(
+    `update public.intg_api_keys set status = 'revoked' where id = '00000000-0000-4000-8000-0000000000e1' returning id`,
+    0,
+    "API keys: ordinary member cannot rotate or revoke credentials",
+);
+await expectRows(
+    `delete from public.intg_api_keys where id = '00000000-0000-4000-8000-0000000000e1' returning id`,
+    0,
+    "API keys: ordinary member cannot delete credentials",
+);
+await expectError(
+    `insert into public.intg_api_scopes (organization_id, hub_id, api_key_id, scope_key, scope_name) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'admin:all', 'Escalated scope')`,
+    "API scopes: ordinary member cannot grant scopes",
+);
+await expectRows(
+    `update public.intg_api_scopes set permissions = '[\"*\"]'::jsonb where id = '00000000-0000-4000-8000-0000000000f1' returning id`,
+    0,
+    "API scopes: ordinary member cannot escalate permissions",
+);
+await resetRole();
+
+await asAuth(AUTH1); // founder of ORG1
+await expectOk(
+    `insert into public.intg_api_keys (organization_id, hub_id, key_name, key_prefix, key_hash) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'founder-issued-key', 'aa_cccccccccccc', repeat('2', 64))`,
+    "API keys: organization founder may issue credentials",
+);
+await expectOk(
+    `insert into public.intg_api_scopes (organization_id, hub_id, api_key_id, scope_key, scope_name) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'integration:metrics:read', 'Metrics read')`,
+    "API scopes: organization founder may grant scopes",
+);
+await expectError(
+    "select key_hash from public.intg_api_keys limit 1",
+    "API keys: browser roles cannot read credential digests",
+);
+await expectRows(
+    "select id from public.intg_api_keys limit 1",
+    1,
+    "API keys: administrators can read safe key metadata",
+);
 await resetRole();
 
 // --- 202610100003: finance guards -----------------------------------------
