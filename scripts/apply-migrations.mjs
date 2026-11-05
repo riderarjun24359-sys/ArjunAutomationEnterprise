@@ -17,37 +17,45 @@ if (!databaseUrl) {
 }
 
 // These tenant/RLS migrations are intentionally held until the staged rollout
-// and its live positive/negative probes have been reviewed. Never apply them
-// accidentally by running the generic migration command against production.
-const HELD_MIGRATIONS = [
+// and its live positive/negative probes have been reviewed. They are excluded
+// from ordinary migration runs and can only be included with an explicit flag.
+const HELD_MIGRATIONS = new Set([
     "202610120001_org_membership_escalation_lockdown.sql",
     "202610120002_read_scope_lockdown.sql",
     "202610120003_legacy_table_rls_lockdown.sql",
     "202610120004_module_tables_tenant_reads.sql",
-];
+]);
 
 const migrationTarget = process.env.SUPABASE_MIGRATION_TARGET?.trim().toLowerCase();
 const allowHeldMigrations = process.env.ALLOW_HELD_MIGRATIONS === "true";
 const stagingApproved = process.env.STAGING_VALIDATION_APPROVED === "true";
 
-if (HELD_MIGRATIONS.length > 0) {
-    if (migrationTarget !== "staging" && migrationTarget !== "production") {
-        console.error("FAIL: Set SUPABASE_MIGRATION_TARGET=staging or production before applying migrations.");
-        process.exit(1);
-    }
-    if (!allowHeldMigrations) {
-        console.error("FAIL: Held tenant/RLS migrations require ALLOW_HELD_MIGRATIONS=true.");
-        process.exit(1);
-    }
-    if (migrationTarget === "production" && !stagingApproved) {
-        console.error("FAIL: Production requires STAGING_VALIDATION_APPROVED=true after all staging probes pass.");
-        process.exit(1);
-    }
+if (migrationTarget !== "staging" && migrationTarget !== "production") {
+    console.error("FAIL: Set SUPABASE_MIGRATION_TARGET=staging or production before applying migrations.");
+    process.exit(1);
 }
 
-const migrationFiles = readdirSync(migrationsDir)
+if (migrationTarget === "production" && !stagingApproved) {
+    console.error("FAIL: Production migrations require STAGING_VALIDATION_APPROVED=true after staging validation.");
+    process.exit(1);
+}
+
+if (allowHeldMigrations && migrationTarget === "production" && !stagingApproved) {
+    console.error("FAIL: Held production migrations require completed staging validation.");
+    process.exit(1);
+}
+
+const allMigrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();
+
+const migrationFiles = allMigrationFiles.filter((file) => {
+    if (HELD_MIGRATIONS.has(file) && !allowHeldMigrations) {
+        console.log(`HOLD: Skipping staged-only migration ${file} (set ALLOW_HELD_MIGRATIONS=true after review).`);
+        return false;
+    }
+    return true;
+});
 
 const seedFiles = readdirSync(seedsDir)
     .filter((file) => file.endsWith(".sql"))
