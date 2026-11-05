@@ -82,3 +82,5 @@ Create that scope for the selected API key in the Integration Platform dashboard
 Missing credentials return 401; invalid, expired, or revoked credentials return
 401; a valid key without the required scope returns 403. Responses are
 `Cache-Control: no-store` and do not expose organization data.
+
+The scope editor requires an active API key from the selected integration hub. New scopes default to the least-privilege `read` permission unless permissions are explicitly supplied by a trusted server-side caller.
