@@ -422,7 +422,7 @@ export class IntegrationPlatformService {
         const encodedSecret = btoa(String.fromCharCode(...random.slice(12))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
         const secret = `${prefix}.${encodedSecret}`;
         const keyHash = await sha256Hex(secret);
-        const created = await databaseService.intgApiKeys.create({
+        const created = await databaseService.intgApiKeys.createKeyRecord({
             ...buildApiKeyPayload(context.organizationId, input),
             key_prefix: prefix,
             key_hash: keyHash,
