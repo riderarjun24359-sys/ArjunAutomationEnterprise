@@ -158,7 +158,9 @@ export async function authMiddleware(request: NextRequest) {
             return NextResponse.redirect(signInUrl);
         }
 
-        return NextResponse.next();
+        // Preserve the nonce-bearing request headers even when Supabase
+        // is not configured; otherwise Next cannot attach the nonce to scripts.
+        return NextResponse.next({ request });
     }
 
     const { supabase, response } = supabaseContext;
