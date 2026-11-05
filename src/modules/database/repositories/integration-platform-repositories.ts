@@ -103,6 +103,18 @@ export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
         mapRepositoryError(error, "Failed to find API key");
         return (data as DbIntgApiKey | null) ?? null;
     }
+
+    async updateStatusByOrganization(organizationId: string, id: string, status: "active" | "revoked"): Promise<DbIntgApiKey | null> {
+        const client = getRepositoryClient();
+        if (!client) return null;
+        const { data, error } = await client.from(this.table).update({ status, updated_at: new Date().toISOString() })
+            .eq("organization_id", organizationId)
+            .eq("id", id)
+            .select("*")
+            .maybeSingle();
+        mapRepositoryError(error, "Failed to update API key status");
+        return (data as DbIntgApiKey | null) ?? null;
+    }
 }
 export class IntgApiScopeRepository extends OrgIntgRepository<DbIntgApiScope> { protected table = "intg_api_scopes"; }
 export class IntgRateLimitRepository extends OrgIntgRepository<DbIntgRateLimit> { protected table = "intg_rate_limits"; }
