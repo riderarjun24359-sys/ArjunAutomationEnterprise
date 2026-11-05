@@ -148,6 +148,12 @@ insert into public.integration_webhooks (organization_id, name, url, secret) val
 insert into public.integration_deliveries (organization_id, event, target_host, status, attempts) values
   ('${ORG1}', 'lead.created', 'hooks.example.com', 'delivered', 1),
   ('${ORG2}', 'lead.created', 'hooks.example.com', 'delivered', 1);
+insert into public.intg_integration_hubs (id, organization_id, hub_key, hub_name) values
+  ('00000000-0000-4000-8000-0000000000d1', '${ORG1}', 'tenant-one', 'Tenant One Hub');
+insert into public.intg_api_keys (id, organization_id, hub_id, key_name, key_prefix, key_hash) values
+  ('00000000-0000-4000-8000-0000000000e1', '${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'tenant-one-key', 'aa_aaaaaaaaaaaa', repeat('0', 64));
+insert into public.intg_api_scopes (id, organization_id, hub_id, api_key_id, scope_key, scope_name) values
+  ('00000000-0000-4000-8000-0000000000f1', '${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'integration:health:read', 'Health read');
 `);
 
 async function asAuth(authId) {
@@ -329,6 +335,44 @@ await db.exec(`delete from public.organization_members where organization_id = '
 await asAuth(AUTH1);
 await expectRows("select id from public.invoices", 1, "invoices: owner reads own org");
 await expectRows(`select id from public.invoices where organization_id = '${ORG2}'`, 0, "invoices: cross-org SELECT filtered");
+await resetRole();
+
+// --- 202611050005: API key and scope mutation is admin-only ----------------
+await asAuth(AUTH6); // ordinary active member of ORG1
+await expectError(
+    `insert into public.intg_api_keys (organization_id, hub_id, key_name, key_prefix, key_hash) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'member-minted-key', 'aa_bbbbbbbbbbbb', repeat('1', 64))`,
+    "API keys: ordinary member cannot issue credentials",
+);
+await expectRows(
+    `update public.intg_api_keys set status = 'revoked' where id = '00000000-0000-4000-8000-0000000000e1' returning id`,
+    0,
+    "API keys: ordinary member cannot rotate or revoke credentials",
+);
+await expectRows(
+    `delete from public.intg_api_keys where id = '00000000-0000-4000-8000-0000000000e1' returning id`,
+    0,
+    "API keys: ordinary member cannot delete credentials",
+);
+await expectError(
+    `insert into public.intg_api_scopes (organization_id, hub_id, api_key_id, scope_key, scope_name) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'admin:all', 'Escalated scope')`,
+    "API scopes: ordinary member cannot grant scopes",
+);
+await expectRows(
+    `update public.intg_api_scopes set permissions = '[\"*\"]'::jsonb where id = '00000000-0000-4000-8000-0000000000f1' returning id`,
+    0,
+    "API scopes: ordinary member cannot escalate permissions",
+);
+await resetRole();
+
+await asAuth(AUTH1); // founder of ORG1
+await expectOk(
+    `insert into public.intg_api_keys (organization_id, hub_id, key_name, key_prefix, key_hash) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', 'founder-issued-key', 'aa_cccccccccccc', repeat('2', 64))`,
+    "API keys: organization founder may issue credentials",
+);
+await expectOk(
+    `insert into public.intg_api_scopes (organization_id, hub_id, api_key_id, scope_key, scope_name) values ('${ORG1}', '00000000-0000-4000-8000-0000000000d1', '00000000-0000-4000-8000-0000000000e1', 'integration:metrics:read', 'Metrics read')`,
+    "API scopes: organization founder may grant scopes",
+);
 await resetRole();
 
 // --- 202610100003: finance guards -----------------------------------------
