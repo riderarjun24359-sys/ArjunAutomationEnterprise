@@ -47,6 +47,7 @@ const AUTH2 = "00000000-0000-4000-8000-0000000000c2";
 const AUTH3 = "00000000-0000-4000-8000-0000000000c3";
 const AUTH4 = "00000000-0000-4000-8000-0000000000c4";
 const AUTH5 = "00000000-0000-4000-8000-0000000000c5";
+const AUTH6 = "00000000-0000-4000-8000-0000000000c6";
 
 // Supabase-compatible auth stub: uid()/role() read the request JWT claims.
 const authStub = `
@@ -97,7 +98,8 @@ insert into public.user_profiles (id, auth_user_id, email, full_name) values
   ('${PROF2}', '${AUTH2}', 'two@test.dev', 'Two'),
   ('${PROF3}', '${AUTH3}', 'three@test.dev', 'Three'),
   ('${PROF4}', '${AUTH4}', 'admin@test.dev', 'Admin'),
-  ('${PROF5}', '${AUTH5}', 'nobody@test.dev', 'Nobody');
+  ('${PROF5}', '${AUTH5}', 'nobody@test.dev', 'Nobody'),
+  ('00000000-0000-4000-8000-0000000000b6', '${AUTH6}', 'member@test.dev', 'Member');
 insert into public.organizations (id, name, slug) values
   ('${ORG1}', 'Org One', 'org-one'),
   ('${ORG2}', 'Org Two', 'org-two'),
@@ -105,7 +107,8 @@ insert into public.organizations (id, name, slug) values
 insert into public.organization_members (organization_id, user_id, role_name, is_active) values
   ('${ORG1}', '${PROF1}', 'founder', true),
   ('${ORG1}', '${PROF4}', 'super_admin', true),
-  ('${ORG2}', '${PROF2}', 'founder', true);
+  ('${ORG2}', '${PROF2}', 'founder', true),
+  ('${ORG1}', '00000000-0000-4000-8000-0000000000b6', 'member', true);
 insert into public.crm_clients (organization_id, name, contact_email, manager_name) values
   ('${ORG1}', 'Client One', 'a@x.com', 'Manager One'),
   ('${ORG2}', 'Client Two', 'b@x.com', 'Manager Two');
@@ -232,6 +235,47 @@ await expectRows(
     `update public.organizations set name = 'Hacked' where id = '${ORG2}' returning id`,
     0,
     "orgs: cross-org UPDATE affects 0 rows",
+);
+await resetRole();
+
+// --- 202611050001: membership role-management hardening ------------------
+// Ordinary members cannot self-promote or modify another membership.
+await asAuth(AUTH6);
+await expectError(
+    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6'`,
+    "membership: ordinary member cannot self-promote",
+);
+await expectRows(
+    `update public.organization_members set role_name = 'admin' where organization_id = '${ORG1}' and user_id = '${PROF1}' returning id`,
+    0,
+    "membership: ordinary member cannot promote another user",
+);
+await resetRole();
+
+// Organization founder can assign ordinary roles to teammates, but cannot
+// grant ownership/platform roles or alter their own privileges.
+await asAuth(AUTH1);
+await expectRows(
+    `update public.organization_members set role_name = 'manager' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    1,
+    "membership: founder can assign a normal teammate role",
+);
+await expectError(
+    `update public.organization_members set role_name = 'owner' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6'`,
+    "membership: founder cannot grant owner role",
+);
+await expectError(
+    `update public.organization_members set role_name = 'member' where organization_id = '${ORG1}' and user_id = '${PROF1}'`,
+    "membership: founder cannot change own role",
+);
+await resetRole();
+
+// Platform super-admin retains the ability to grant elevated ownership.
+await asAuth(AUTH4);
+await expectRows(
+    `update public.organization_members set role_name = 'owner' where organization_id = '${ORG1}' and user_id = '00000000-0000-4000-8000-0000000000b6' returning id`,
+    1,
+    "membership: platform super-admin can grant owner role",
 );
 await resetRole();
 
