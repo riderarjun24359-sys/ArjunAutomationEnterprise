@@ -7,6 +7,7 @@ export interface ValidatedIntegrationApiKey {
     organizationId: string;
     hubId: string;
     apiVersion: string;
+    scopes: Array<{ scopeKey: string; permissions: unknown[] }>;
 }
 
 /**
@@ -41,6 +42,16 @@ export async function validateIntegrationApiKey(token: string): Promise<Validate
         const expected = Buffer.from(key.key_hash, "hex");
         if (candidate.length !== expected.length || !timingSafeEqual(candidate, expected)) return null;
 
+        const { data: scopeRows, error: scopeError } = await client
+            .from("intg_api_scopes")
+            .select("scope_key, permissions")
+            .eq("api_key_id", key.id)
+            .eq("organization_id", key.organization_id)
+            .eq("hub_id", key.hub_id)
+            .eq("status", "active");
+
+        if (scopeError || !Array.isArray(scopeRows)) return null;
+
         // Last-used tracking is scoped by both key id and organization id.
         await client
             .from("intg_api_keys")
@@ -54,6 +65,10 @@ export async function validateIntegrationApiKey(token: string): Promise<Validate
             organizationId: key.organization_id,
             hubId: key.hub_id,
             apiVersion: key.api_version,
+            scopes: scopeRows.map((scope) => ({
+                scopeKey: scope.scope_key,
+                permissions: Array.isArray(scope.permissions) ? scope.permissions : [],
+            })),
         };
     } catch {
         return null;
