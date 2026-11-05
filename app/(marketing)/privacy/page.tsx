@@ -14,7 +14,7 @@ export default function PrivacyPage() {
     return (
         <article className="mx-auto max-w-3xl px-6 py-16 lg:px-8 prose prose-slate">
             <h1 className="text-3xl font-semibold text-[var(--premium-fg)]">Privacy Policy</h1>
-            <p className="text-sm text-[var(--premium-fg-muted)]">Last updated: March 1, 2026</p>
+            <p className="text-sm text-[var(--premium-fg-muted)]">Last updated: November 6, 2026</p>
 
             {/* Data-controller identification.
                 A privacy policy that does not name a legal entity, address or
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--premium-fg-muted)]">Data controller</h2>
                 <dl className="mt-3 space-y-1.5">
                     <div className="flex flex-wrap gap-x-2">
-                        <dt className="font-medium">Registered entity:</dt>
+                        <dt className="font-medium">Business / trading name:</dt>
                         <dd>{COMPANY_PROFILE.legalName}</dd>
                     </div>
                     {HAS_PHONE ? (
@@ -70,10 +70,10 @@ export default function PrivacyPage() {
                 </ul>
 
                 <h2 className="text-xl font-semibold text-[var(--premium-fg)]">4. Data Security</h2>
-                <p>We implement industry-standard security measures including encryption, access controls, and tenant isolation on our platform. Row Level Security (RLS) protects data at the database level.</p>
+                <p>We apply technical and organisational safeguards appropriate to the service and information involved. Specific controls — including access restrictions, encryption, backups, retention, and tenant separation — depend on the product and deployment configuration and are described in the applicable proposal or service agreement. We validate the agreed controls before production go-live. Please do not submit sensitive medical, financial, or other special-category information through a general website enquiry form.</p>
 
                 <h2 className="text-xl font-semibold text-[var(--premium-fg)]">5. Third-Party Services</h2>
-                <p>We may use third-party analytics providers (Google Analytics, Meta Pixel, LinkedIn Insight Tag) subject to their respective privacy policies. These services may collect anonymized usage data.</p>
+                <p>Where analytics or embedded third-party services are enabled, those providers may process technical usage information under their own privacy terms. The providers and purposes applicable to a specific deployment should be disclosed in its cookie notice or service documentation.</p>
 
                 <h2 className="text-xl font-semibold text-[var(--premium-fg)]">6. Your Rights</h2>
                 <p>You may request access to, correction of, or deletion of your personal data by contacting sales@arjunautomations.com. We will respond within 30 days.</p>
