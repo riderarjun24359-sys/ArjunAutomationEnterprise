@@ -116,3 +116,80 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unable to issue API key" }, { status: 500 });
     }
 }
+
+
+const keyActionSchema = z.object({
+    action: z.enum(["rotate", "revoke"]),
+    apiKeyId: z.string().uuid(),
+    integrationHubId: z.string().uuid(),
+}).strict();
+
+export async function PATCH(request: NextRequest) {
+    const origin = request.headers.get("origin");
+    if (!origin || origin !== request.nextUrl.origin) {
+        return NextResponse.json({ error: "Forbidden request origin" }, { status: 403 });
+    }
+
+    const authClient = await supabaseServer();
+    if (!authClient) return NextResponse.json({ error: "Authentication service unavailable" }, { status: 503 });
+
+    const { data: authData, error: authError } = await authClient.auth.getUser();
+    if (authError || !authData.user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+
+    const parsed = keyActionSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) return NextResponse.json({ error: "Invalid API key action" }, { status: 400 });
+
+    const rateLimit = await checkRateLimitDb("api-key-manage:" + authData.user.id, 10, 60_000);
+    if (!rateLimit.allowed) {
+        return NextResponse.json(
+            { error: "Too many API key management attempts. Try again shortly." },
+            { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((rateLimit.resetAt.getTime() - Date.now()) / 1000))) } },
+        );
+    }
+
+    const admin = getServiceRoleClient();
+    if (!admin) return NextResponse.json({ error: "API key service unavailable" }, { status: 503 });
+
+    try {
+        const { data: profile, error: profileError } = await admin
+            .from("user_profiles").select("id").eq("auth_user_id", authData.user.id).maybeSingle();
+        if (profileError || !profile) return NextResponse.json({ error: "Organization access denied" }, { status: 403 });
+
+        const { data: hub, error: hubError } = await admin
+            .from("intg_integration_hubs").select("id, organization_id")
+            .eq("id", parsed.data.integrationHubId).maybeSingle();
+        if (hubError || !hub) return NextResponse.json({ error: "Integration hub not found" }, { status: 404 });
+
+        const { data: membership, error: membershipError } = await admin
+            .from("organization_members").select("role_name")
+            .eq("organization_id", hub.organization_id).eq("user_id", profile.id)
+            .eq("is_active", true).maybeSingle();
+        if (membershipError || !membership || !KEY_MANAGEMENT_ROLES.has(membership.role_name)) {
+            return NextResponse.json({ error: "You are not authorized to manage API keys for this organization" }, { status: 403 });
+        }
+
+        if (parsed.data.action === "revoke") {
+            const { data: revoked, error } = await admin.from("intg_api_keys")
+                .update({ status: "revoked", updated_at: new Date().toISOString() })
+                .eq("id", parsed.data.apiKeyId).eq("organization_id", hub.organization_id)
+                .eq("hub_id", hub.id).eq("status", "active")
+                .select("id, key_name, status, updated_at").maybeSingle();
+            if (error || !revoked) return NextResponse.json({ error: "Active API key not found" }, { status: 404 });
+            return NextResponse.json({ key: revoked }, { headers: { "Cache-Control": "no-store, max-age=0" } });
+        }
+
+        const prefix = `aa_${randomBytes(6).toString("hex")}`;
+        const token = `${prefix}.${randomBytes(32).toString("base64url")}`;
+        const keyHash = createHash("sha256").update(token, "utf8").digest("hex");
+        const { data: rotated, error } = await admin.from("intg_api_keys")
+            .update({ key_prefix: prefix, key_hash: keyHash, status: "active", updated_at: new Date().toISOString() })
+            .eq("id", parsed.data.apiKeyId).eq("organization_id", hub.organization_id)
+            .eq("hub_id", hub.id).eq("status", "active")
+            .select("id, key_name, key_prefix, api_version, status, created_at, updated_at").maybeSingle();
+        if (error || !rotated) return NextResponse.json({ error: "Active API key not found" }, { status: 404 });
+
+        return NextResponse.json({ key: rotated, token }, { headers: { "Cache-Control": "no-store, max-age=0" } });
+    } catch {
+        return NextResponse.json({ error: "Unable to manage API key" }, { status: 500 });
+    }
+}
