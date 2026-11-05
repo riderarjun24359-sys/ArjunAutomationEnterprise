@@ -14,7 +14,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = public
+set search_path = pg_catalog
 set row_security = off
 as $$
   select exists (
@@ -34,7 +34,7 @@ create or replace function public.guard_organization_membership_update()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = pg_catalog
 set row_security = off
 as $$
 declare
