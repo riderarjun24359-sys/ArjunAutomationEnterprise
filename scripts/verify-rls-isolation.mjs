@@ -329,10 +329,6 @@ await resetRole();
 
 // Platform admin (active super_admin membership) retains cross-org visibility.
 await asAuth(AUTH4);
-const adminDebug = await db.query(`select public.auth_profile_id() as profile_id, public.is_platform_admin() as is_platform_admin`);
-const profilePolicies = await db.query(`select policyname, permissive, roles, qual from pg_policies where schemaname = 'public' and tablename = 'user_profiles'`);
-console.log("RLS_DEBUG platform admin:", JSON.stringify(adminDebug.rows));
-console.log("RLS_DEBUG profile policies:", JSON.stringify(profilePolicies.rows));
 await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
 await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
 await resetRole();
