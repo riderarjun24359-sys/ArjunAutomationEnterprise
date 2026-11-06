@@ -116,7 +116,7 @@ export function buildPaymentCenter(data: BillingFinanceRawData): PaymentCenterIt
         source: "brv",
         accountOrClient: accountName(data, p.billing_account_id),
         amountUsd: money(Number(p.amount_usd ?? 0)),
-        currency: p.currency_code || "INR",
+        currency: p.currency_code || "UNKNOWN",
         status: p.payment_status || p.status,
         method: "gateway",
         reference: p.gateway_reference || p.attempt_key,

@@ -118,12 +118,39 @@ export function EnterpriseIdentityPage() {
 
             <section className="min-h-[60vh] rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-8">
                 {activeTab === IDP_TABS.overview ? <EnterpriseIdentityOverviewPanel data={enterpriseIdentity} /> : null}
-                {/* Other panels would follow the same pattern... */}
-                {activeTab !== IDP_TABS.overview && (
-                     <div className="dos-text-secondary text-center p-12">
-                        <p>Module section: {tabs.find(t => t.id === activeTab)?.label} (Redesigned for OS consistency)</p>
-                    </div>
-                )}
+                {activeTab === IDP_TABS.realms ? <RealmsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.providers ? <ProvidersPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.samlConfigs ? <SamlConfigsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.oidcConfigs ? <OidcConfigsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.mfaPolicies ? <MfaPolicysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.mfaEnrollments ? <MfaEnrollmentsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.backupCodes ? <BackupCodesPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.trustedDevices ? <TrustedDevicesPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.sessionPolicies ? <SessionPolicysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.activeSessions ? <ActiveSessionsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.deviceRegistry ? <DeviceRegistrysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.concurrentLoginPolicies ? <ConcurrentLoginPolicysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.rbacRoles ? <RbacRolesPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.permissionGroups ? <PermissionGroupsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.abacPolicies ? <AbacPolicysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.temporaryAccessGrants ? <TemporaryAccessGrantsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.departments ? <DepartmentsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.teams ? <TeamsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.businessUnits ? <BusinessUnitsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.reportingStructures ? <ReportingStructuresPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.invitations ? <InvitationsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.bulkInviteBatches ? <BulkInviteBatchsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.invitationRoles ? <InvitationRolesPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.invitationAudit ? <InvitationAuditsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.loginHistory ? <LoginHistorysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.securityAlerts ? <SecurityAlertsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.riskEvents ? <RiskEventsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.passwordPolicies ? <PasswordPolicysPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.adminMetrics ? <AdminMetricsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.identityHealth ? <IdentityHealthsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.compromisedAccounts ? <CompromisedAccountsPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.audit ? <IdpAuditPanel data={enterpriseIdentity} /> : null}
+                {activeTab === IDP_TABS.api ? <EnterpriseIdentitySdkPanel data={enterpriseIdentity} /> : null}
             </section>
         </PageTransition>
     );

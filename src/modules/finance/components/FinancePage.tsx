@@ -40,7 +40,9 @@ const tabs = [
     { id: FINANCE_TABS.recurring, label: "Recurring" },
     { id: FINANCE_TABS.taxes, label: "Taxes" },
     { id: FINANCE_TABS.reports, label: "Reports" },
-];
+] as const;
+
+const actionClass = "rounded-full bg-[var(--dos-text-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--dos-surface)] transition hover:opacity-90";
 
 export function FinancePage() {
     const {
@@ -149,30 +151,28 @@ export function FinancePage() {
         setShowTaxForm(false);
     };
 
-    if (loading) {
-        return <LoadingState label="Loading finance systems" />;
-    }
+    if (loading) return <LoadingState label="Loading finance systems" />;
 
     return (
-        <PageTransition className="mx-auto max-w-[85rem] space-y-10">
+        <PageTransition className="mx-auto max-w-[85rem] space-y-8">
             <header className="flex flex-col gap-4 border-b border-[var(--dos-border-subtle)] pb-8">
                 <Badge variant="info" className="w-fit">Finance OS Engine</Badge>
                 <div>
-                    {/* Using static titles for now as FINANCE_THEME is missing in constants */}
                     <h1 className="dos-text-display">Finance Control</h1>
                     <p className="mt-4 max-w-3xl dos-text-h3 text-[var(--dos-text-secondary)]">
-                        Enterprise finance and invoicing workspace.
+                        Manage invoices, estimates, payments, expenses, recurring billing, tax rates, and financial reports.
                     </p>
                 </div>
             </header>
 
             <FinanceStats stats={stats} />
 
-            <nav className="flex flex-wrap gap-2 border-b border-[var(--dos-border-subtle)] pb-4">
+            <nav aria-label="Finance sections" className="flex flex-wrap gap-2 border-b border-[var(--dos-border-subtle)] pb-4">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         type="button"
+                        aria-pressed={activeTab === tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={`rounded-full px-5 py-2 text-sm font-semibold transition ${activeTab === tab.id ? "bg-[var(--dos-text-primary)] text-[var(--dos-surface)]" : "text-[var(--dos-text-secondary)] hover:bg-[var(--dos-surface-tertiary)] hover:text-[var(--dos-text-primary)]"}`}
                     >
@@ -181,24 +181,92 @@ export function FinancePage() {
                 ))}
             </nav>
 
-            <section className="min-h-[60vh] rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-8">
-                {activeTab === FINANCE_TABS.overview ? (
-                    <section className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-                        <InvoiceTable
-                            invoices={allInvoices.slice(0, 5)}
-                            selectedInvoiceId={selectedInvoice?.id}
-                            onSelectInvoice={(id) => void selectInvoice(id)}
-                        />
-                        <InvoiceDetailPanel invoice={selectedInvoice} />
-                    </section>
-                ) : null}
-
-                {/* Other modules styled for consistency... */}
-                {activeTab !== FINANCE_TABS.overview && (
-                     <div className="dos-text-secondary text-center p-12">
-                        <p>Module section: {tabs.find(t => t.id === activeTab)?.label} (Redesigned for OS consistency)</p>
-                    </div>
+            <section className="min-h-[50vh] space-y-6 rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-4 sm:p-8">
+                {activeTab === FINANCE_TABS.overview && (
+                    <>
+                        <FinanceFilters searchQuery={searchQuery} statusFilter={statusFilter} onSearchChange={setSearchQuery} onStatusChange={setStatusFilter} />
+                        <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+                            <InvoiceTable invoices={invoices.slice(0, 5)} selectedInvoiceId={selectedInvoice?.id} onSelectInvoice={selectInvoice} />
+                            <InvoiceDetailPanel invoice={selectedInvoice} />
+                        </div>
+                        <div className="grid gap-8 xl:grid-cols-2">
+                            <EstimateTable estimates={estimates.slice(0, 5)} onConvert={convertEstimateToInvoice} />
+                            <ExpenseTable expenses={expenses.slice(0, 5)} />
+                        </div>
+                    </>
                 )}
+
+                {activeTab === FINANCE_TABS.invoices && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Invoices</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowInvoiceForm((value) => !value)}>{showInvoiceForm ? "Close form" : "Create invoice"}</button>
+                        </div>
+                        {showInvoiceForm && <InvoiceForm clients={clients} projects={projects} onSubmit={handleCreateInvoice} />}
+                        <FinanceFilters searchQuery={searchQuery} statusFilter={statusFilter} onSearchChange={setSearchQuery} onStatusChange={setStatusFilter} />
+                        <div className="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+                            <InvoiceTable invoices={invoices} selectedInvoiceId={selectedInvoice?.id} onSelectInvoice={selectInvoice} />
+                            <InvoiceDetailPanel invoice={selectedInvoice} />
+                        </div>
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.estimates && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Estimates</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowEstimateForm((value) => !value)}>{showEstimateForm ? "Close form" : "Create estimate"}</button>
+                        </div>
+                        {showEstimateForm && <EstimateForm clients={clients} projects={projects} onSubmit={handleCreateEstimate} />}
+                        <EstimateTable estimates={estimates} onConvert={convertEstimateToInvoice} />
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.payments && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Payments</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowPaymentForm((value) => !value)}>{showPaymentForm ? "Close form" : "Record payment"}</button>
+                        </div>
+                        {showPaymentForm && <PaymentForm invoices={allInvoices} onSubmit={handleCreatePayment} />}
+                        <PaymentTable payments={payments} />
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.expenses && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Expenses</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowExpenseForm((value) => !value)}>{showExpenseForm ? "Close form" : "Add expense"}</button>
+                        </div>
+                        {showExpenseForm && <ExpenseForm clients={clients} projects={projects} onSubmit={handleCreateExpense} />}
+                        <ExpenseTable expenses={expenses} />
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.recurring && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Recurring invoices</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowRecurringForm((value) => !value)}>{showRecurringForm ? "Close form" : "Create schedule"}</button>
+                        </div>
+                        {showRecurringForm && <RecurringForm clients={clients} projects={projects} onSubmit={handleCreateRecurring} />}
+                        <RecurringTable recurringInvoices={recurringInvoices} />
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.taxes && (
+                    <>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <h2 className="dos-text-h2">Tax rates</h2>
+                            <button type="button" className={actionClass} onClick={() => setShowTaxForm((value) => !value)}>{showTaxForm ? "Close form" : "Add tax rate"}</button>
+                        </div>
+                        {showTaxForm && <TaxRateForm onSubmit={handleCreateTaxRate} />}
+                        <TaxRateTable taxRates={taxRates} />
+                    </>
+                )}
+
+                {activeTab === FINANCE_TABS.reports && <FinanceReports reports={reports} />}
             </section>
         </PageTransition>
     );

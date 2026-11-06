@@ -1,7 +1,8 @@
 import { Card } from "@/src/design-os/components/primitives/Card";
 import { EstimateForm } from "@/src/modules/finance/components/EstimateForm";
 import { EstimateTable } from "@/src/modules/finance/components/EstimateTable";
-import type { FinanceClientOption, FinanceProjectOption, EstimateFormValues, Estimate } from "@/src/modules/finance/types";
+import type { FinanceClientOption, FinanceProjectOption, Estimate } from "@/src/modules/finance/types";
+import type { EstimateFormValues } from "@/src/modules/finance/schemas";
 
 interface EstimateCenterPanelProps {
     estimates: Estimate[];

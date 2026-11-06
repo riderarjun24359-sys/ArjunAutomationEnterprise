@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ROUTES } from "@/src/constants/routes";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { createSupabaseMiddlewareClient } from "@/src/lib/supabase-middleware";
+import { matchesAnyRoutePath } from "@/src/middleware/route-matcher";
 
 const publicMarketingRoutes = [
     MARKETING_ROUTES.home,
@@ -137,8 +138,8 @@ const authRoutes = [
 
 export async function authMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
-    const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
-    const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+    const isProtectedRoute = matchesAnyRoutePath(pathname, protectedRoutes);
+    const isAuthRoute = matchesAnyRoutePath(pathname, authRoutes);
     const isPublicMarketingRoute =
         publicMarketingRoutes.some((route) => pathname === route || (route !== "/" && pathname.startsWith(`${route}/`))) ||
         pathname.startsWith("/portfolio/") ||

@@ -118,12 +118,39 @@ export function EnterpriseGovernancePlatformPage() {
 
             <section className="min-h-[60vh] rounded-[var(--dos-radius-2xl)] bg-[var(--dos-surface-secondary)]/50 p-8">
                 {activeTab === EGP_TABS.overview ? <GovernanceOverviewPanel data={retail} /> : null}
-                {/* Other panels would follow the same pattern... */}
-                {activeTab !== EGP_TABS.overview && (
-                     <div className="dos-text-secondary text-center p-12">
-                        <p>Module section: {tabs.find(t => t.id === activeTab)?.label} (Redesigned for OS consistency)</p>
-                    </div>
-                )}
+                {activeTab === EGP_TABS.governanceHubs ? <GovernanceHubsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.organizationGovernance ? <OrganizationGovernancesPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governancePolicies ? <GovernancePolicysPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceFramework ? <GovernanceFrameworksPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceReviews ? <GovernanceReviewsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceDashboards ? <GovernanceDashboardsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceFramework ? <ComplianceFrameworksPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceControls ? <ComplianceControlsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceEvidence ? <ComplianceEvidencesPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceReports ? <ComplianceReportsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceCalendar ? <ComplianceCalendarsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.auditCenter ? <AuditCentersPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.auditFindings ? <AuditFindingsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.correctiveActions ? <CorrectiveActionsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.auditEvidence ? <AuditEvidencesPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.auditAnalytics ? <AuditAnalyticssPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.dataClassification ? <DataClassificationsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.retentionPolicies ? <RetentionPolicysPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.dataLifecycle ? <DataLifecyclesPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.dataOwnership ? <DataOwnershipsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.dataQuality ? <DataQualitysPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.riskRegister ? <RiskRegistersPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.riskAssessment ? <RiskAssessmentsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.riskMitigation ? <RiskMitigationsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.riskMonitoring ? <RiskMonitoringsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.businessContinuity ? <BusinessContinuitysPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceMetrics ? <GovernanceMetricsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceHealth ? <GovernanceHealthsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.complianceDashboards ? <ComplianceDashboardsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.missionProgress ? <MissionProgresssPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.governanceFailures ? <GovernanceFailuresPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.auditLogs ? <GovernanceAuditLogsPanel data={retail} /> : null}
+                {activeTab === EGP_TABS.api ? <GovernanceSdkPanel data={retail} /> : null}
             </section>
         </PageTransition>
     );

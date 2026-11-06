@@ -1,6 +1,7 @@
 import { TaxRateForm } from "@/src/modules/finance/components/TaxRateForm";
 import { TaxRateTable } from "@/src/modules/finance/components/TaxRateTable";
-import type { TaxRate, TaxRateFormValues } from "@/src/modules/finance/types";
+import type { TaxRate } from "@/src/modules/finance/types";
+import type { TaxRateFormValues } from "@/src/modules/finance/schemas";
 
 interface TaxCenterPanelProps {
     taxRates: TaxRate[];

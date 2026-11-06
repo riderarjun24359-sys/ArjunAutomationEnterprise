@@ -1,7 +1,8 @@
 import { Card } from "@/src/design-os/components/primitives/Card";
 import { ExpenseForm } from "@/src/modules/finance/components/ExpenseForm";
 import { ExpenseTable } from "@/src/modules/finance/components/ExpenseTable";
-import type { FinanceClientOption, FinanceProjectOption, ExpenseFormValues, Expense } from "@/src/modules/finance/types";
+import type { FinanceClientOption, FinanceProjectOption, Expense } from "@/src/modules/finance/types";
+import type { ExpenseFormValues } from "@/src/modules/finance/schemas";
 
 interface ExpenseCenterPanelProps {
     expenses: Expense[];

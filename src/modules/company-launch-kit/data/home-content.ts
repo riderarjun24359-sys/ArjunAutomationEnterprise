@@ -49,7 +49,7 @@ export const HERO_CONTENT = {
             items: ["Discover", "Design", "Build", "Deploy", "Support"],
         },
     },
-    trustIndicators: ["Expert Engineering", "Row-Level Security", "Multi-Tenant", "Enterprise Validation"],
+    trustIndicators: ["Expert Engineering", "Security-Conscious Design", "Role-Based Access", "Validation Before Launch"],
 };
 
 export const WHY_US_CONTENT = {
@@ -73,7 +73,7 @@ export const WHY_US_CONTENT = {
         },
         {
             title: "Enterprise Trust",
-            description: "Row Level Security, tenant isolation, audit logs, and governance modules built in from day one.",
+            description: "Security controls, access policies, and governance features are scoped and validated for each deployment.",
             icon: "shield",
         },
     ],
@@ -186,14 +186,14 @@ export const AI_CAPABILITIES_CONTENT = {
 
 export const ENTERPRISE_PLATFORM_CONTENT = {
     title: "Built for enterprise scale",
-    subtitle: "Multi-tenant architecture with the security and governance your IT team demands.",
+    subtitle: "A platform designed for tenant-aware access controls and deployment-specific security validation.",
     features: [
-        "Row-level security and tenant isolation",
-        "Audit trails across every module",
-        "Role-based access control with tenant-scoped permissions",
-        "API-first with webhook integrations",
-        "Rate limiting and security headers on every route",
-        "Health, readiness, and liveness endpoints exposed by the platform",
+        "Tenant-scoped data access, validated for each deployment",
+        "Audit logging for supported and configured workflows",
+        "Role-based access controls for supported modules",
+        "API and webhook integrations where configured",
+        "Rate limits and security headers on configured endpoints",
+        "Health and readiness endpoints for supported services",
     ],
 };
 
@@ -218,7 +218,7 @@ export const FAQ_CONTENT = {
         },
         {
             question: "Is our data secure and isolated?",
-            answer: "Every tenant runs in an isolated environment with row-level security, encrypted data at rest and in transit, and comprehensive audit logging.",
+            answer: "We design deployments with access controls and tenant-scoped data policies. Isolation, encryption, backups, and audit coverage are validated and documented for each deployment before go-live. Ask us for the security scope applicable to your proposed implementation.",
         },
         {
             question: "What AI capabilities are included?",

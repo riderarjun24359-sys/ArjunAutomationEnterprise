@@ -5,7 +5,7 @@ import { FinanceRow } from "@/src/design-os/components/primitives/FinanceRow";
 
 interface EstimateTableProps {
     estimates: Estimate[];
-    onConvert?: (id: string) => void | Promise<void>;
+    onConvert?: (id: string) => void | Promise<unknown>;
 }
 
 export function EstimateTable({ estimates, onConvert }: EstimateTableProps) {
