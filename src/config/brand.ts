@@ -1,11 +1,11 @@
 export const brandConfig = {
-    companyName: "Arjun Automation OS",
-    productName: "Arjun Automation OS",
+    companyName: "Arjun Automation Enterprises",
+    productName: "Arjun Automation Enterprises",
     logo: {
-        symbol: "/brand/logos/symbol-only.svg",
-        monogram: "/brand/logos/monogram.svg",
-        horizontal: "/brand/logos/horizontal-blue.svg",
-        vertical: "/brand/logos/primary-vertical.svg",
+        symbol: "/brand/logos/arjun-symbol.svg",
+        monogram: "/brand/logos/arjun-symbol.svg",
+        horizontal: "/brand/logos/arjun-enterprise.svg",
+        vertical: "/brand/logos/arjun-enterprise.svg",
     },
     colors: {
         brand: {

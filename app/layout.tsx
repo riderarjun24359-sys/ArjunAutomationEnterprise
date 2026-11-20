@@ -36,14 +36,12 @@ export const metadata: Metadata = {
         // SVG for modern browsers, PNG fallbacks for older clients and crawlers.
         icon: [
             { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
-            { url: SOFT_LAUNCH_BRANDING.icon192Path, type: "image/png", sizes: "192x192" },
         ],
         shortcut: [
             { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
-            { url: SOFT_LAUNCH_BRANDING.favicon32Path, type: "image/png", sizes: "32x32" },
         ],
         // Must be a PNG — iOS does not render an SVG apple-touch-icon.
-        apple: [{ url: SOFT_LAUNCH_BRANDING.appleTouchIconPath, sizes: "180x180", type: "image/png" }],
+        apple: [{ url: SOFT_LAUNCH_BRANDING.faviconPath, sizes: "180x180", type: "image/svg+xml" }],
     },
     manifest: "/manifest.webmanifest",
 };

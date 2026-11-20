@@ -4,7 +4,7 @@ import React from 'react';
 export const brandConfig = {
     name: 'Arjun Automation',
     logo: {
-        path: '/brand/logos/monogram.svg',
+        path: '/brand/logos/arjun-symbol.svg',
         alt: 'Arjun Automation Logo',
     },
     // Future-proofing: easily configurable assets

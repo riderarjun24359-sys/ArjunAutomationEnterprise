@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/src/lib/cn";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { ROUTES } from "@/src/constants/routes";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { NAV_ITEMS } from "@/src/modules/company-launch-kit/data/home-content";
@@ -39,8 +40,7 @@ export function PremiumHeader() {
                     href={MARKETING_ROUTES.home}
                     className="flex items-center gap-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
                 >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">AA</span>
-                    <span className="font-display text-lg font-semibold">Arjun Automation</span>
+                    <BrandLogo variant="blue" priority className="h-9" />
                 </Link>
 
                 <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">

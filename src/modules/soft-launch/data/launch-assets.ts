@@ -150,8 +150,8 @@ export const SOFT_LAUNCH_BRANDING = {
     productName: "Arjun Automation",
     tagline: "Enterprise operating system for modern operations",
     primaryColor: "#4338ca",
-    faviconPath: "/brand/favicon.svg",
-    logoPath: "/brand/logos/favicon.svg",
+    faviconPath: "/brand/logos/arjun-symbol.svg",
+    logoPath: "/brand/logos/arjun-symbol.svg",
     /**
      * Raster icons. Apple touch icons and PWA manifest icons must be PNG —
      * iOS ignores an SVG `apple-touch-icon`, so a "Save to Home Screen" from
