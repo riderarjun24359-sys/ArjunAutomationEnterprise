@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
+import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
 import { whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from "@/src/config/company-profile";
 
 export default function NotFound() {
     const whatsapp = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
     return (
-        <div className="premium-theme min-h-screen">
+        <MarketingLayout>
             <main className="premium-container flex min-h-[70vh] flex-col items-center justify-center py-24 text-center">
                 <p className="text-sm font-semibold tracking-wide text-[var(--dos-brand-primary)]">404</p>
                 <h1 className="mt-4 text-4xl font-bold text-[var(--premium-fg)]">We could not find that page.</h1>
@@ -15,6 +16,6 @@ export default function NotFound() {
                     {whatsapp ? <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#073b1e] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]"><MessageCircle className="h-4 w-4" />WhatsApp us</a> : null}
                 </div>
             </main>
-        </div>
+        </MarketingLayout>
     );
 }
