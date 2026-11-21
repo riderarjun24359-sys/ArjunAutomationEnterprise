@@ -45,9 +45,11 @@ export async function loadCrmPlatformData(
     authUserId: string,
     email: string,
     fullName?: string | null,
-): Promise<CrmPlatformRawData | null> {
+): Promise<CrmPlatformRawData> {
     const context = await resolveOrganizationContext(authUserId, email, fullName);
-    if (!context) return null;
+    if (!context) {
+        throw new Error("No organization is linked to this account. Contact your administrator to finish workspace setup.");
+    }
 
     const orgId = context.organizationId;
     const q = { limit: LIST_LIMIT, orderBy: "created_at" as const, orderDirection: "desc" as const };
@@ -70,22 +72,22 @@ export async function loadCrmPlatformData(
         winLoss,
         documents,
     ] = await Promise.all([
-        databaseService.clients.listByOrganization(orgId, q).catch(() => []),
-        databaseService.clients.listLeads(orgId).catch(() => []),
-        databaseService.salesLeads.listByOrganization(orgId, q).catch(() => []),
-        databaseService.salesOpportunities.listByOrganization(orgId, q).catch(() => []),
-        databaseService.contacts.listByOrganization(orgId, q).catch(() => []),
-        databaseService.projects.listByOrganization(orgId, q).catch(() => []),
-        databaseService.tasks.listByOrganization(orgId, q).catch(() => []),
-        databaseService.invoices.listByOrganization(orgId, q).catch(() => []),
-        databaseService.payments.listByOrganization(orgId, q).catch(() => []),
-        databaseService.activityLogs.listByOrganization(orgId, { ...q, limit: 100 }).catch(() => []),
-        databaseService.salesActivities.listByOrganization(orgId, q).catch(() => []),
-        databaseService.salesCallLogs.listByOrganization(orgId, q).catch(() => []),
-        databaseService.salesEmailTracking.listByOrganization(orgId, q).catch(() => []),
-        databaseService.salesMeetings.listByOrganization(orgId, q).catch(() => []),
-        databaseService.salesWinLossRecords.listByOrganization(orgId, q).catch(() => []),
-        databaseService.documents.listByOrganization(orgId, q).catch(() => []),
+        databaseService.clients.listByOrganization(orgId, q),
+        databaseService.clients.listLeads(orgId),
+        databaseService.salesLeads.listByOrganization(orgId, q),
+        databaseService.salesOpportunities.listByOrganization(orgId, q),
+        databaseService.contacts.listByOrganization(orgId, q),
+        databaseService.projects.listByOrganization(orgId, q),
+        databaseService.tasks.listByOrganization(orgId, q),
+        databaseService.invoices.listByOrganization(orgId, q),
+        databaseService.payments.listByOrganization(orgId, q),
+        databaseService.activityLogs.listByOrganization(orgId, { ...q, limit: 100 }),
+        databaseService.salesActivities.listByOrganization(orgId, q),
+        databaseService.salesCallLogs.listByOrganization(orgId, q),
+        databaseService.salesEmailTracking.listByOrganization(orgId, q),
+        databaseService.salesMeetings.listByOrganization(orgId, q),
+        databaseService.salesWinLossRecords.listByOrganization(orgId, q),
+        databaseService.documents.listByOrganization(orgId, q),
     ]);
 
     return {
