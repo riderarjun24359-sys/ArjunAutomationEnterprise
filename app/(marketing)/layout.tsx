@@ -15,9 +15,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
     ...buildMetadata({
-        title: "Arjun Automation — AI Automation for Business Operations",
+        title: "Arjun Automation Enterprises | WhatsApp and School Management Software | Andhra Pradesh",
         description:
-            "Arjun Automation connects the tools growing organizations already run into one AI-automated workflow — CRM, projects, finance, and industry workflows on a single secure platform.",
+            "WhatsApp fee reminders, attendance alerts, online orders and school management software for schools, shops and clinics in Prakasam and Hyderabad.",
         path: "/",
     }),
     ...(env.NEXT_PUBLIC_GSC_VERIFICATION
