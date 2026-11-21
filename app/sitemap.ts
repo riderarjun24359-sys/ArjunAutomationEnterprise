@@ -13,6 +13,13 @@ const LIVE_PUBLIC_ROUTES = [
     "/terms",
     "/cookies",
     "/refund",
+    "/te",
+    "/te/services",
+    "/te/school-erp",
+    "/te/demos",
+    "/te/pricing",
+    "/te/about",
+    "/te/contact",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
