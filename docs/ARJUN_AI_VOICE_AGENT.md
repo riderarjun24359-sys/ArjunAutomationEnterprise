@@ -89,7 +89,7 @@ Create a real API tool named `capture_arjun_lead` with lifecycle `on_end` (or ca
 - Method: `POST`
 - URL: `https://www.arjunautomations.com/api/ai-voice-agent/tools/capture-lead`
 - Authentication: Bearer token, stored using Sarvam's secure workspace Secrets input; secret value must equal `SARVAM_VOICE_TOOL_SECRET` on Vercel.
-- Body fields: `interactionId` = Sarvam Interaction ID; `leadName`, `companyName`, `email`, `phoneNumber`, `requirement`, `callSummary`, `followUpRequested`, and `preferredCallbackAt` = agent variables collected only with caller consent. Do not send the full transcript.
+- Body fields: `interactionId` = Sarvam Interaction ID; `callerConsent` = explicit yes from the caller to save their contact details; `leadName`, `companyName`, `email`, `phoneNumber`, `requirement`, `callSummary`, `followUpRequested`, and `preferredCallbackAt` = agent variables. The endpoint refuses to save unless `callerConsent=true`. Do not send the full transcript.
 - Timeout: 8 seconds. On failure, tell the caller a team member will follow up only if the caller has requested it; never claim the CRM save succeeded.
 
 Set `ARJUN_VOICE_ORGANIZATION_ID` to the exact Arjun Automation Enterprise organization UUID. The endpoint ignores any organization ID supplied by the model and always uses this server-side tenant setting. The endpoint uses a server-only service-role client, bearer-secret verification, payload limits, E.164 validation, and an idempotency table. This tool is for the company's own lead capture; it is not a generic multi-tenant customer endpoint.
