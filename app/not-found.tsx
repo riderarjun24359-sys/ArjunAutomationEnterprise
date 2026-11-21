@@ -1,37 +1,20 @@
 import Link from "next/link";
-import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import { MessageCircle } from "lucide-react";
+import { whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from "@/src/config/company-profile";
 
 export default function NotFound() {
+    const whatsapp = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
     return (
-        <MarketingLayout>
-            <div className="premium-container flex min-h-[70vh] flex-col items-center justify-center py-24 text-center">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-orange-500">404</p>
-                <h1 className="mt-4 font-display text-4xl font-bold">Page not found</h1>
-                <p className="mt-4 max-w-md text-[var(--premium-fg-muted)]">
-                    The page you are looking for does not exist or has been moved. Let us help you find what you need.
-                </p>
-                <div className="mt-8 flex flex-wrap justify-center gap-4">
-                    <Link
-                        href={MARKETING_ROUTES.home}
-                        className="rounded-xl bg-orange-500 px-6 py-3 font-medium text-white hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-                    >
-                        Back to Home
-                    </Link>
-                    <Link
-                        href={MARKETING_ROUTES.search}
-                        className="rounded-xl border border-[var(--premium-border)] px-6 py-3 font-medium hover:bg-[var(--premium-glass)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-                    >
-                        Search Site
-                    </Link>
-                    <Link
-                        href={MARKETING_ROUTES.contact}
-                        className="rounded-xl border border-[var(--premium-border)] px-6 py-3 font-medium hover:bg-[var(--premium-glass)] focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50"
-                    >
-                        Contact Us
-                    </Link>
+        <div className="premium-theme min-h-screen">
+            <main className="premium-container flex min-h-[70vh] flex-col items-center justify-center py-24 text-center">
+                <p className="text-sm font-semibold tracking-wide text-[var(--dos-brand-primary)]">404</p>
+                <h1 className="mt-4 text-4xl font-bold text-[var(--premium-fg)]">We could not find that page.</h1>
+                <p className="mt-4 max-w-md text-base leading-7 text-[var(--premium-fg-muted)]">The link may have changed. Go back to the home page or message us and we will help you.</p>
+                <div className="mt-8 flex flex-wrap justify-center gap-3">
+                    <Link href="/" className="inline-flex min-h-11 items-center rounded-full bg-[var(--dos-brand-primary)] px-6 py-3 font-semibold text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]">Go to home</Link>
+                    {whatsapp ? <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#073b1e] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]"><MessageCircle className="h-4 w-4" />WhatsApp us</a> : null}
                 </div>
-            </div>
-        </MarketingLayout>
+            </main>
+        </div>
     );
 }
