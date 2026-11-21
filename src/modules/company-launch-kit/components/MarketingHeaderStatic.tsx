@@ -17,9 +17,9 @@ const WA_URL = whatsappLink("Hi, I saw your website. I want to know more about y
 export function MarketingHeaderStatic() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-[var(--premium-border)] bg-[var(--premium-bg)]/95 backdrop-blur-xl">
-            <div className="premium-container flex min-h-16 items-center justify-between gap-4 py-3">
+            <div className="premium-container flex min-h-16 items-center justify-between gap-2 py-3">
                 <Link href="/" className="shrink-0 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]" aria-label="Arjun Automation Enterprises — Home">
-                    <BrandLogo variant="blue" priority className="h-8" />
+                    <BrandLogo variant="blue" priority className="h-7" />
                 </Link>
                 <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
                     {LINKS.map((item) => (
