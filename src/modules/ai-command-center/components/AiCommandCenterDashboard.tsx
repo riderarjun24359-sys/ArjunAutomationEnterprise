@@ -32,7 +32,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
 
                 <Section title="Revenue Summary">
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">${Math.round(dash.revenue.mrr).toLocaleString()}</p></div>
+                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">{dash.revenue.mrr > 0 ? `₹${Math.round(dash.revenue.mrr).toLocaleString("en-IN")}` : "Not reported"}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Active clients</p><p className="text-xl font-bold">{dash.revenue.activeClients}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Open invoices</p><p className="text-xl font-bold">{dash.revenue.openInvoices}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Renewals due</p><p className="text-xl font-bold">{dash.revenue.renewalsDue}</p></div>
