@@ -57,6 +57,8 @@ SARVAM_VOICE_CONNECTION_ID=
 SARVAM_VOICE_AGENT_PHONE_NUMBER=
 SARVAM_VOICE_WEBHOOK_ID=
 SARVAM_VOICE_WEBHOOK_SECRET=
+SARVAM_VOICE_TOOL_SECRET=
+ARJUN_VOICE_ORGANIZATION_ID=
 ARJUN_VOICE_INBOUND_ENABLED=false
 ARJUN_VOICE_OUTBOUND_ENABLED=false
 ```
@@ -69,6 +71,7 @@ Existing Arjun OS variables are also required:
 - `POST /api/ai-voice-agent/consents`: authenticated admin records evidence of a customer-requested callback.
 - `POST /api/ai-voice-agent/outbound`: authenticated admin can start a callback only when an active callback consent exists and the outbound feature flag is explicitly enabled.
 - `POST /api/ai-voice-agent/deployments`: authenticated admin can activate the inbound phone line only when the inbound feature flag is enabled and the request includes `confirmGoLive: true`.
+- `POST /api/ai-voice-agent/tools/capture-lead`: authenticated Sarvam API tool (Bearer secret) saves a qualified call lead into the existing `sales_leads` CRM table and writes a sales call log. A per-organization interaction ledger prevents duplicate lead creation on provider retries.
 - `POST /api/webhooks/sarvam/voice`: receives call outcomes and stores minimal call metadata.
 
 All new database tables have RLS enabled and are not granted to browser roles. The API uses the server-only service-role client only after authentication and organization checks.
@@ -79,6 +82,18 @@ The first release is **not** a cold-outbound dialler. It only supports callbacks
 
 Before any promotional or bulk A2P campaign, obtain the applicable access-provider / registered telemarketer onboarding, designated number series, consent and DND preference checks, and advance A2P/auto-dialer declarations required by the current Indian telecom framework. Have the telephony provider confirm the exact registration path for this entity and use case. Keep promotional campaigns disabled until that review is complete.
 
+## Sarvam API tool configuration
+
+Create a real API tool named `capture_arjun_lead` with lifecycle `on_end` (or call it during the conversation only after the caller agrees to share contact details). Configure:
+
+- Method: `POST`
+- URL: `https://www.arjunautomations.com/api/ai-voice-agent/tools/capture-lead`
+- Authentication: Bearer token, stored using Sarvam's secure workspace Secrets input; secret value must equal `SARVAM_VOICE_TOOL_SECRET` on Vercel.
+- Body fields: `interactionId` = Sarvam Interaction ID; `leadName`, `companyName`, `email`, `phoneNumber`, `requirement`, `callSummary`, `followUpRequested`, and `preferredCallbackAt` = agent variables collected only with caller consent. Do not send the full transcript.
+- Timeout: 8 seconds. On failure, tell the caller a team member will follow up only if the caller has requested it; never claim the CRM save succeeded.
+
+Set `ARJUN_VOICE_ORGANIZATION_ID` to the exact Arjun Automation Enterprise organization UUID. The endpoint ignores any organization ID supplied by the model and always uses this server-side tenant setting. The endpoint uses a server-only service-role client, bearer-secret verification, payload limits, E.164 validation, and an idempotency table. This tool is for the company's own lead capture; it is not a generic multi-tenant customer endpoint.
+
 ## Agent system prompt
 
 You are Arjun Automation Enterprise's AI assistant. Start by identifying yourself as an AI assistant. Speak naturally in Telugu or English based on the caller's preference; code-mix only when the caller does. Keep responses concise, respectful and conversational.
@@ -87,7 +102,7 @@ You may explain only services and pricing contained in the approved company know
 
 For inbound enquiries, identify the caller's business type and requested help, capture their preferred callback time, and offer a human handoff when requested. For outbound calls, call only people with a recorded customer-requested callback consent; state the purpose of the callback and stop immediately if they ask not to be called again.
 
-Do not provide medical, legal, financial or other regulated professional advice. Do not collect passwords, OTPs, card details or unnecessary sensitive personal information. Escalate complaints, negotiation, custom quotations, security questions and uncertain answers to the founder.
+When the caller asks for a callback or demo, ask permission to record their name and best contact details, then invoke `capture_arjun_lead` with the Interaction ID and concise structured fields. Invoke it only after the caller agrees. Never send a transcript or sensitive personal information. If the tool reports a duplicate, processing, or error state, do not claim a new lead was saved.\n\nDo not provide medical, legal, financial or other regulated professional advice. Do not collect passwords, OTPs, card details or unnecessary sensitive personal information. Escalate complaints, negotiation, custom quotations, security questions and uncertain answers to the founder.
 
 ## Cost model (published Sarvam rates; excluding GST)
 
