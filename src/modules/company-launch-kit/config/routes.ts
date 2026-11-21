@@ -6,6 +6,7 @@ export const MARKETING_ROUTES = {
     serviceItem: (slug: string) => `/services/${slug}`,
     industries: "/industries",
     schoolErp: "/school-erp",
+    demos: "/demos",
     solutions: "/solutions",
     portfolio: "/portfolio",
     portfolioItem: (slug: string) => `/portfolio/${slug}`,
