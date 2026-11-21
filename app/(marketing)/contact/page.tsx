@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { MapPin, MessageCircle, Phone } from "lucide-react";
 import { LeadForm } from "@/src/modules/company-launch-kit/components/LeadForm";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
@@ -18,7 +18,7 @@ import { buildMetadata } from "@/src/lib/seo";
 const PAGE = {
     title: "Contact",
     description:
-        "Talk to Arjun Automation about automating your operations. Call, WhatsApp or send us the details — we respond within one business day.",
+        "Talk to Arjun Automation Enterprises about school software, WhatsApp automation or a business website.",
     path: MARKETING_ROUTES.contact,
 };
 
@@ -31,12 +31,6 @@ export const metadata: Metadata = buildMetadata({
 const breadcrumbs = [
     { name: "Home", path: MARKETING_ROUTES.home },
     { name: "Contact", path: PAGE.path },
-];
-
-const CHANNELS = [
-    { label: "Sales & Partnerships", value: "sales@arjunautomations.com", href: "mailto:sales@arjunautomations.com" },
-    { label: "Customer Success", value: "success@arjunautomations.com", href: "mailto:success@arjunautomations.com" },
-    { label: "Support (Managed Clients)", value: "support@arjunautomations.com", href: "mailto:support@arjunautomations.com" },
 ];
 
 const QUALIFICATION_STEPS = [
@@ -93,29 +87,9 @@ export default function ContactPage() {
                                     </a>
                                 ) : null}
 
-                                <a
-                                    href={`mailto:${COMPANY_PROFILE.emails.sales}`}
-                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary-hover)]"
-                                >
-                                    <Mail className="h-4 w-4" aria-hidden="true" />
-                                    Email sales
-                                </a>
-                            </div>
+                         </div>
 
                             <dl className="mt-8 space-y-4">
-                                {CHANNELS.map((channel) => (
-                                    <div key={channel.label}>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                            {channel.label}
-                                        </dt>
-                                        <dd className="mt-1">
-                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">
-                                                {channel.value}
-                                            </a>
-                                        </dd>
-                                    </div>
-                                ))}
-
                                 {addressLine ? (
                                     <div>
                                         <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
