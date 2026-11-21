@@ -17,21 +17,11 @@ const twitterHandle = xProfile
     : undefined;
 
 export const LAUNCH_KIT_SEO = {
-    siteName: "Arjun Automation",
+    siteName: "Arjun Automation Enterprises",
     siteUrl,
-    defaultTitle: "Arjun Automation — AI Automation for Business Operations",
+    defaultTitle: "Arjun Automation Enterprises | WhatsApp and School Management Software | Andhra Pradesh",
     defaultDescription:
-        "Arjun Automation connects the tools growing organizations already run into one AI-automated workflow — CRM, projects, finance, and industry workflows on a single secure platform.",
-    defaultKeywords: [
-        "AI automation",
-        "enterprise automation",
-        "business operating system",
-        "workflow automation",
-        "CRM platform",
-        "process automation",
-        "industry OS",
-        "enterprise software",
-    ],
+        "WhatsApp fee reminders, attendance alerts, online orders and school management software for schools, shops and clinics in Prakasam and Hyderabad.",
     twitterHandle,
-    locale: "en_US",
+    locale: "en_IN",
 } as const;
