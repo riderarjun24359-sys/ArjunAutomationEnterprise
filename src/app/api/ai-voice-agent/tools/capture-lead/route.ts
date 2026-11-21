@@ -16,6 +16,7 @@ interface LeadCaptureInput {
     preferredCallbackAt?: unknown;
     callDirection?: unknown;
     durationSeconds?: unknown;
+    callerConsent?: unknown;
 }
 
 function hasValidToolToken(request: Request): boolean {
@@ -68,12 +69,16 @@ export async function POST(request: Request) {
     const callSummary = cleanText(body.callSummary, 1_000);
     const preferredCallbackAt = cleanText(body.preferredCallbackAt, 100);
     const followUpRequested = body.followUpRequested === true;
+    const callerConsent = body.callerConsent === true;
     const callDirection = body.callDirection === "outbound" ? "outbound" : "inbound";
     const durationSeconds =
         typeof body.durationSeconds === "number" && Number.isFinite(body.durationSeconds)
             ? Math.max(0, Math.min(86_400, Math.round(body.durationSeconds)))
             : 0;
 
+    if (!callerConsent) {
+        return NextResponse.json({ error: "The caller has not consented to saving their contact details" }, { status: 403 });
+    }
     if (interactionId.length < 4 || !leadName || !phoneNumber || !isIndianE164(phoneNumber)) {
         return NextResponse.json({
             error: "A valid interaction ID, caller name, and Indian phone number are required",
