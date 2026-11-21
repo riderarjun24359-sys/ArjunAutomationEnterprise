@@ -83,13 +83,13 @@ export class ProductionReadinessService {
         });
 
         const pillarScores = {
-            observability: Math.min(98, 80 + observability.logs.length / 5),
+            observability: 0,
             resilience: reliabilityScore,
-            backup: backupVerified ? 92 : 65,
+            backup: backupVerified ? 92 : 0,
             security: security.score,
-            scalability: 78,
-            operations: 90,
-            quality: 85,
+            scalability: 0,
+            operations: 0,
+            quality: 0,
         };
 
         const overallScore = Math.round(Object.values(pillarScores).reduce((a, b) => a + b, 0) / Object.values(pillarScores).length);
@@ -100,8 +100,8 @@ export class ProductionReadinessService {
             status: healthReport.status,
             platformHealth: health.score,
             securityStatus: security.score,
-            performanceStatus: Math.min(98, Math.round(100 - (stats.avgResponseTimeMs ?? 200) / 50)),
-            databaseHealth: 90,
+            performanceStatus: stats.avgResponseTimeMs != null ? Math.max(0, Math.min(100, Math.round(100 - stats.avgResponseTimeMs / 50))) : 0,
+            databaseHealth: 0,
             aiHealth,
             deliveryHealth,
             systemAlerts: buildSystemAlerts({ openErrors: resilience.errors.length, riskScore, backupVerified }),
@@ -133,15 +133,15 @@ export class ProductionReadinessService {
                 integrityChecks: [
                     { name: "Backup checksum", passed: backupVerified },
                     { name: "Restore simulation", passed: backup.backups.some((b) => b.restoreSimulated || b.status === "verified") },
-                    { name: "DR failover validation", passed: true },
+                    { name: "DR failover validation", passed: false },
                 ],
             },
             security,
             scalability: {
                 concurrentUsersCapacity: 5000,
-                databaseOptimization: "Org-scoped indexes on all tenant tables; RLS enforced",
-                cachingStrategy: "Next.js static generation + optimizePackageImports; server-first data fetching",
-                horizontalScaling: "Stateless Next.js deployment; Supabase connection pooling ready",
+                databaseOptimization: "Database indexes and tenant RLS require live verification before production use.",
+                cachingStrategy: "Caching effectiveness has not been measured.",
+                horizontalScaling: "Horizontal scaling capacity has not been load-tested.",
                 recommendations: ["Enable Redis cache layer for hot read paths", "Add read replicas at 10k+ concurrent users"],
             },
             productionQuality: {
