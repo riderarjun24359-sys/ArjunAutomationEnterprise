@@ -20,5 +20,5 @@ export function BrandLogo({ variant = "secondary", className, priority = false, 
     return <Image src={src} alt={label} width={width} height={height} priority={priority} unoptimized className={cn("h-auto w-auto max-h-10", className)} />;
 }
 export function BrandSymbol({ className, light = false }: { className?: string; light?: boolean }) {
-    return <Image src={SYMBOL} alt="Arjun Automation" width={256} height={256} unoptimized className={className} />;
+    return <Image src={SYMBOL} alt="Arjun Automation Enterprises" width={256} height={256} unoptimized className={className} />;
 }
