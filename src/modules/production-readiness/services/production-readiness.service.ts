@@ -85,7 +85,7 @@ export class ProductionReadinessService {
         const pillarScores = {
             observability: 0,
             resilience: reliabilityScore,
-            backup: backupVerified ? 92 : 0,
+            backup: backupVerified ? 100 : 0,
             security: security.score,
             scalability: 0,
             operations: 0,
@@ -129,7 +129,7 @@ export class ProductionReadinessService {
             backupRecovery: {
                 backups: backup.backups.map((b) => ({ id: b.id, type: b.type, status: b.status, verified: b.status === "verified" || Boolean(b.verifiedAt), createdAt: b.createdAt })),
                 lastVerified: backup.backups.find((b) => b.verifiedAt)?.verifiedAt ?? null,
-                drPlanStatus: backup.drPlan[0]?.status ?? "configured",
+                drPlanStatus: backup.drPlan[0]?.status ?? "not_verified",
                 integrityChecks: [
                     { name: "Backup checksum", passed: backupVerified },
                     { name: "Restore simulation", passed: backup.backups.some((b) => b.restoreSimulated || b.status === "verified") },
@@ -138,26 +138,26 @@ export class ProductionReadinessService {
             },
             security,
             scalability: {
-                concurrentUsersCapacity: 5000,
+                concurrentUsersCapacity: 0,
                 databaseOptimization: "Database indexes and tenant RLS require live verification before production use.",
                 cachingStrategy: "Caching effectiveness has not been measured.",
                 horizontalScaling: "Horizontal scaling capacity has not been load-tested.",
                 recommendations: ["Enable Redis cache layer for hot read paths", "Add read replicas at 10k+ concurrent users"],
             },
             productionQuality: {
-                dimensions: QUALITY_GATE_DIMENSIONS.map((name, i) => ({
+                dimensions: QUALITY_GATE_DIMENSIONS.map((name) => ({
                     name,
-                    score: 80 + (i % 5) * 3,
-                    passed: i !== 6,
+                    score: 0,
+                    passed: false,
                 })),
                 verifyScripts: [
-                    { name: "production-remediation", status: "pass" },
-                    { name: "platform-operations", status: "pass" },
-                    { name: "security-center", status: "pass" },
-                    { name: "launch-readiness", status: "pass" },
-                    { name: "delivery-engine", status: "pass" },
+                    { name: "production-remediation", status: "not_run" },
+                    { name: "platform-operations", status: "not_run" },
+                    { name: "security-center", status: "not_run" },
+                    { name: "launch-readiness", status: "not_run" },
+                    { name: "delivery-engine", status: "not_run" },
                 ],
-                overallPassed: overallScore >= 80,
+                overallPassed: false,
             },
         };
     }
