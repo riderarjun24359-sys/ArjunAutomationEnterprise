@@ -201,4 +201,4 @@ export function whatsappLink(message: string): string | null {
 }
 
 export const WHATSAPP_DEFAULT_MESSAGE =
-    "Hi, I found Arjun Automation online. I'd like to discuss automating operations for my business.";
+    "Hi, I found Arjun Automation Enterprises online. I'd like to know more about your services.";
