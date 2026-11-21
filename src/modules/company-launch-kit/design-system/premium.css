@@ -482,7 +482,8 @@
 
 
 /* Public marketing copy stays comfortably readable on phones. */
-.premium-theme p {
+.premium-theme p,
+.premium-theme li {
     font-size: 1rem;
     line-height: 1.7;
 }
