@@ -38,7 +38,6 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
     return {
         title,
         description,
-        keywords: input.keywords ?? [...LAUNCH_KIT_SEO.defaultKeywords],
         alternates: { canonical: url },
         robots: input.noIndex ? { index: false, follow: false } : { index: true, follow: true },
         openGraph: {
@@ -80,13 +79,13 @@ export function buildOrganizationJsonLd() {
         logo: `${LAUNCH_KIT_SEO.siteUrl}/brand/logos/horizontal-blue.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
         slogan: COMPANY_PROFILE.tagline,
-        email: COMPANY_PROFILE.emails.sales,
+        ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
         ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
         ...(address ? { address } : {}),
         ...(COMPANY_PROFILE.gstin ? { taxID: COMPANY_PROFILE.gstin } : {}),
         ...(sameAs.length ? { sameAs } : {}),
-        areaServed: "IN",
-        availableLanguage: ["English", "Hindi"],
+        areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
+        availableLanguage: ["English", "Telugu"],
         openingHoursSpecification: {
             "@type": "OpeningHoursSpecification",
             dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -97,16 +96,15 @@ export function buildOrganizationJsonLd() {
             {
                 "@type": "ContactPoint",
                 contactType: "sales",
-                email: COMPANY_PROFILE.emails.sales,
+                ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
                 ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
-                availableLanguage: ["English", "Hindi"],
-                areaServed: "IN",
+                availableLanguage: ["English", "Telugu"],
+                areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
             },
             {
                 "@type": "ContactPoint",
                 contactType: "customer support",
-                email: COMPANY_PROFILE.emails.support,
-                availableLanguage: ["English"],
+                availableLanguage: ["English", "Telugu"],
             },
         ],
     };
