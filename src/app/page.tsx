@@ -25,7 +25,6 @@ const SITE = {
   name: "Arjun Automation Enterprises",
   phone: "[MY_NUMBER]",
   email: "[MY_EMAIL]",
-  whatsappNumber: "[MY_NUMBER]",
   starterPrice: "Rs.[LOW]",
   supermarketDemo: "[DEMO_LINK]",
   schoolDemo: "[DEMO_LINK/SCREENSHOT]",
@@ -34,8 +33,8 @@ const SITE = {
 };
 
 const configured = (value: string) => value && !value.startsWith("[") && value.trim().length > 0;
-const phoneDigits = SITE.whatsappNumber.replace(/\D/g, "");
-const whatsappUrl = configured(SITE.whatsappNumber) && phoneDigits.length >= 10
+const phoneDigits = SITE.phone.replace(/\D/g, "");
+const whatsappUrl = configured(SITE.phone) && phoneDigits.length >= 10
   ? "https://wa.me/" + phoneDigits
   : "#contact";
 
@@ -68,7 +67,7 @@ export default function Home() {
       return;
     }
 
-    if (!configured(SITE.whatsappNumber) || phoneDigits.length < 10) {
+    if (!configured(SITE.phone) || phoneDigits.length < 10) {
       setFormMessage("Before publishing, replace [MY_NUMBER] in the site settings with your WhatsApp number. The form is ready; no details have been sent or stored.");
       return;
     }
@@ -150,14 +149,14 @@ export default function Home() {
                 <small>{te ? "తల్లిదండ్రులకు సందేశం" : "Message to parent"}</small>
                 <strong>{te ? "ఈ రోజు హాజరు నమోదు అయింది." : "Attendance recorded for today."}</strong>
                 <span>{te ? "మీ పిల్లల హాజరు వివరాలు స్కూల్ ద్వారా పంపబడ్డాయి." : "Your child's attendance update is shared by the school."}</span>
-                <time>09:15 AM</time>
+                <time>Sample message</time>
               </div>
               <div className="visual-divider" />
               <div className="visual-order-row"><span className="visual-mini-icon"><ShoppingBag size={16} /></span><span><b>{te ? "కొత్త ఆర్డర్" : "New shop order"}</b><small>{te ? "కస్టమర్ WhatsApp ద్వారా పంపారు" : "Received through WhatsApp"}</small></span><span className="order-status">{te ? "కొత్తది" : "New"}</span></div>
             </div>
             <div className="floating-note note-one"><span className="note-icon"><GraduationCap size={17} /></span><span><b>{te ? "స్కూల్ అప్డేట్స్" : "School updates"}</b><small>{te ? "తల్లిదండ్రులకు సమాచారం" : "Parents stay informed"}</small></span></div>
             <div className="floating-note note-two"><span className="note-icon note-green"><ShoppingBag size={17} /></span><span><b>{te ? "షాప్ ఆర్డర్లు" : "Shop orders"}</b><small>{te ? "ఒకే చోట వివరాలు" : "Details in one place"}</small></span></div>
-            <div className="visual-caption">{te ? "సులభమైనది. ఉపయోగకరమైనది. మీ వ్యాపారానికి సరిపోయేది." : "Simple to use. Built around the way your business works."}</div>
+            <div className="visual-caption">{te ? "నమూనా మాత్రమే — నిజమైన కస్టమర్ డేటా కాదు." : "Illustrative sample — not live customer data."}</div>
           </div>
         </div>
         <div className="container hero-bottom"><span>{te ? "Giddalur, Markapuram, Cumbum మరియు సమీప ప్రాంతాలు" : "Serving Giddalur, Markapuram, Cumbum and nearby"}</span><span className="hero-bottom-line" /><span>{te ? "హైదరాబాద్ స్కూల్స్ కూడా" : "Also serving schools in Hyderabad"}</span></div>
