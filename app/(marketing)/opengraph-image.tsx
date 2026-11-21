@@ -19,6 +19,6 @@ export const contentType = OG_CONTENT_TYPE;
 export default async function OpengraphImage() {
     return renderOgImage({
         title: "Arjun Automation Enterprises - WhatsApp and school software",
-        subtitle: "+91 73370 28357",
+        subtitle: "+91 73370 27357",
     });
 }
