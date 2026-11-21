@@ -1,147 +1,58 @@
 import Link from "next/link";
-import { MapPin, Phone } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
-import { COMPANY_PROFILE, formatAddress, HAS_PHONE } from "@/src/config/company-profile";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import { COMPANY_PROFILE, HAS_PHONE, whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from "@/src/config/company-profile";
 
-const FOOTER_LINKS = {
-    company: [
-        { label: "About", href: MARKETING_ROUTES.about },
-        { label: "Pricing", href: MARKETING_ROUTES.pricing },
-        { label: "Careers", href: MARKETING_ROUTES.careers },
-        { label: "Contact", href: MARKETING_ROUTES.contact },
-    ],
-    solutions: [
-        { label: "Services", href: MARKETING_ROUTES.services },
-        { label: "Industries", href: MARKETING_ROUTES.industries },
-        { label: "Platform", href: MARKETING_ROUTES.features },
-        { label: "Solutions", href: MARKETING_ROUTES.solutions },
-        { label: "Portfolio", href: MARKETING_ROUTES.portfolio },
-        { label: "Case Studies", href: MARKETING_ROUTES.caseStudies },
-    ],
-    resources: [
-        { label: "Resources Hub", href: MARKETING_ROUTES.resources },
-        { label: "Blog", href: MARKETING_ROUTES.blog },
-        { label: "FAQ", href: MARKETING_ROUTES.faq },
-        { label: "Help Center", href: MARKETING_ROUTES.help },
-        { label: "Sitemap", href: MARKETING_ROUTES.sitemap },
-    ],
-    legal: [
-        { label: "Privacy Policy", href: MARKETING_ROUTES.privacy },
-        { label: "Terms", href: MARKETING_ROUTES.terms },
-        { label: "Cookies", href: MARKETING_ROUTES.cookies },
-        { label: "Refund Policy", href: MARKETING_ROUTES.refund },
-    ],
-};
+const GROUPS = [
+    {
+        title: "Company",
+        links: [{ label: "About", href: "/about" }, { label: "Contact", href: "/contact" }],
+    },
+    {
+        title: "Services",
+        links: [
+            { label: "School and College Management", href: "/services#school" },
+            { label: "WhatsApp Automation", href: "/services#whatsapp" },
+            { label: "Business Websites", href: "/services#website" },
+            { label: "School Software", href: "/school-erp" },
+            { label: "Demos", href: "/demos" },
+            { label: "Pricing", href: "/pricing" },
+        ],
+    },
+    {
+        title: "Legal",
+        links: [
+            { label: "Privacy", href: "/privacy" },
+            { label: "Terms", href: "/terms" },
+            { label: "Cookies", href: "/cookies" },
+            { label: "Refund", href: "/refund" },
+        ],
+    },
+];
 
-const SOCIAL_LINKS = [
-    { label: "LinkedIn", href: COMPANY_PROFILE.social.linkedin },
-    { label: "GitHub", href: COMPANY_PROFILE.social.github },
-    { label: "X", href: COMPANY_PROFILE.social.x },
-    { label: "YouTube", href: COMPANY_PROFILE.social.youtube },
-].filter((link): link is { label: string; href: string } => Boolean(link.href));
-
-const LINK_CLASS =
-    "inline-block rounded py-1 text-[var(--premium-fg-muted)] transition-colors hover:text-[var(--premium-fg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]";
-
-const SOCIAL_LINK_CLASS =
-    "inline-flex items-center rounded-[var(--dos-radius-lg)] px-3 py-1.5 text-sm text-[var(--premium-fg-muted)] transition-colors hover:bg-[var(--premium-bg)] hover:text-[var(--premium-fg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]";
-
-/** Arjun Automation — Premium Cinematic Footer */
 export function MarketingFooterStatic() {
-    const addressLine = formatAddress();
-
+    const wa = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
     return (
-        <footer className="relative border-t border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] text-[var(--premium-fg-muted)]">
-            {/* Technical grid underlay */}
-            <div className="absolute inset-0 premium-grid-bg pointer-events-none" aria-hidden="true" />
-
-            {/* Angular divider accent line */}
-            <div className="premium-divider" aria-hidden="true" />
-
-            <div className="premium-container relative py-14 sm:py-16">
-                <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
-                    <div className="lg:col-span-4">
-                        <BrandLogo variant="blue" className="h-8" />
-                        <p className="mt-5 max-w-sm text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                            Expert engineering for growing organizations — a unified platform, AI-native workflows, and
-                            delivery you can measure.
-                        </p>
-
-                        {/* Contact block. Phone and address appear only once they are
-                            genuinely configured — we never print placeholder details. */}
-                        <address className="mt-5 flex flex-col gap-2.5 text-sm not-italic">
-                            {COMPANY_PROFILE.emails.sales ? (
-                                <a href={`mailto:${COMPANY_PROFILE.emails.sales}`} className={`inline-flex items-center gap-2 ${LINK_CLASS}`}>
-                                    {COMPANY_PROFILE.emails.sales}
-                                </a>
-                            ) : null}
-
-                            {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
-                                <a
-                                    href={`tel:${COMPANY_PROFILE.phoneE164}`}
-                                    className={`inline-flex items-center gap-2 ${LINK_CLASS}`}
-                                >
-                                    <Phone className="h-4 w-4 shrink-0" aria-hidden="true" />
-                                    {COMPANY_PROFILE.phoneDisplay}
-                                </a>
-                            ) : null}
-
-                            {addressLine ? (
-                                <span className="inline-flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                    <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                                    <span>{addressLine}</span>
-                                </span>
-                            ) : null}
-                        </address>
-
-                        {SOCIAL_LINKS.length ? (
-                            <div className="mt-5 flex flex-wrap gap-1">
-                                {SOCIAL_LINKS.map((link) => (
-                                    <a
-                                        key={link.label}
-                                        href={link.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer me"
-                                        className={SOCIAL_LINK_CLASS}
-                                    >
-                                        {link.label}
-                                    </a>
-                                ))}
-                            </div>
-                        ) : null}
-                    </div>
-
-                    {(
-                        [
-                            ["Company", FOOTER_LINKS.company],
-                            ["Solutions", FOOTER_LINKS.solutions],
-                            ["Resources", FOOTER_LINKS.resources],
-                            ["Legal", FOOTER_LINKS.legal],
-                        ] as const
-                    ).map(([title, links]) => (
-                        <nav key={title} className="lg:col-span-2" aria-label={`Footer — ${title}`}>
-                            <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-accent)]">
-                                {title}
-                            </h3>
-                            <ul className="mt-4 space-y-2.5 text-sm">
-                                {links.map((link) => (
-                                    <li key={link.href}>
-                                        <Link href={link.href} className={LINK_CLASS}>
-                                            {link.label}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    ))}
+        <footer className="border-t border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] text-[var(--premium-fg-muted)]">
+            <div className="premium-container grid gap-10 py-12 md:grid-cols-[1.3fr_1fr_1.6fr_1fr]">
+                <div>
+                    <Link href="/" aria-label="Arjun Automation Enterprises — Home"><BrandLogo variant="blue" className="h-8" /></Link>
+                    <p className="mt-4 max-w-xs text-sm leading-6">School software, WhatsApp automation and websites for local businesses.</p>
+                    <p className="mt-3 text-sm">Serving Andhra Pradesh and Telangana.</p>
+                    {HAS_PHONE ? <a className="mt-3 inline-block text-sm font-semibold" href={`tel:${COMPANY_PROFILE.phoneE164}`}>{COMPANY_PROFILE.phoneDisplay}</a> : null}
+                    {COMPANY_PROFILE.emails.sales ? <a className="mt-2 block text-sm" href={`mailto:${COMPANY_PROFILE.emails.sales}`}>{COMPANY_PROFILE.emails.sales}</a> : null}
+                    {wa ? <a className="mt-3 inline-flex min-h-11 items-center rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-[#073b1e]" href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a> : null}
                 </div>
-
-                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[var(--premium-border)] pt-8 text-sm sm:flex-row">
-                    <p className="text-[var(--premium-fg-muted)]">
-                        © 2026 Arjun Automation Enterprises. All rights reserved.
-                    </p>
-                </div>
+                {GROUPS.map((group) => (
+                    <nav key={group.title} aria-label={`Footer — ${group.title}`}>
+                        <h2 className="text-sm font-semibold text-[var(--premium-fg)]">{group.title}</h2>
+                        <ul className="mt-4 space-y-2 text-sm">
+                            {group.links.map((item) => <li key={item.href}><Link className="rounded py-1 hover:text-[var(--premium-fg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]" href={item.href}>{item.label}</Link></li>)}
+                        </ul>
+                    </nav>
+                ))}
+            </div>
+            <div className="border-t border-[var(--premium-border)]">
+                <div className="premium-container py-6 text-sm">© 2026 Arjun Automation Enterprises. All rights reserved.</div>
             </div>
         </footer>
     );
