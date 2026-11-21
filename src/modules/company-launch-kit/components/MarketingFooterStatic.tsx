@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 import { COMPANY_PROFILE, formatAddress, HAS_PHONE } from "@/src/config/company-profile";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
@@ -76,7 +76,6 @@ export function MarketingFooterStatic() {
                                 href={`mailto:${COMPANY_PROFILE.emails.sales}`}
                                 className={`inline-flex items-center gap-2 ${LINK_CLASS}`}
                             >
-                                <Mail className="h-4 w-4 shrink-0" aria-hidden="true" />
                                 {COMPANY_PROFILE.emails.sales}
                             </a>
 
@@ -142,15 +141,8 @@ export function MarketingFooterStatic() {
 
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[var(--premium-border)] pt-8 text-sm sm:flex-row">
                     <p className="text-[var(--premium-fg-muted)]">
-                        © {year} {COMPANY_PROFILE.legalName}. All rights reserved.
-                        {COMPANY_PROFILE.gstin ? (
-                            <>
-                                {" "}
-                                <span className="whitespace-nowrap">GSTIN: {COMPANY_PROFILE.gstin}</span>
-                            </>
-                        ) : null}
+                        © 2026 Arjun Automation Enterprises. All rights reserved.
                     </p>
-                    <p className="text-[var(--premium-fg-muted)]">Built by {COMPANY_PROFILE.legalName}.</p>
                 </div>
             </div>
         </footer>
