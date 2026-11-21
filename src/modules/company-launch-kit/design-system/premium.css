@@ -487,3 +487,15 @@
     font-size: 1rem;
     line-height: 1.7;
 }
+
+
+/* Keyboard focus remains visible across all public marketing controls. */
+.premium-theme a:focus-visible,
+.premium-theme button:focus-visible,
+.premium-theme summary:focus-visible,
+.premium-theme input:focus-visible,
+.premium-theme select:focus-visible,
+.premium-theme textarea:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 3px;
+}
