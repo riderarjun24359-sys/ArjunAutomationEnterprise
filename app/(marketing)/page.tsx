@@ -19,9 +19,9 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
-    title: "Arjun Automations — Smart Automations & Custom Software",
+    title: "Arjun Automation Enterprises | WhatsApp and School Management Software | Andhra Pradesh",
     description:
-        "Scale your business with smart automations and custom software. Eliminate manual work, accelerate revenue, and run your operations on one secure, intelligent platform.",
+        "WhatsApp fee reminders, attendance alerts, online orders and school management software for schools, shops and clinics in Prakasam and Hyderabad.",
     path: "/",
 };
 
