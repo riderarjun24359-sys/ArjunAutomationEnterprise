@@ -6,7 +6,7 @@ const addressLine = formatAddress();
 
 export const metadata: Metadata = buildMetadata({
     title: "Terms of Service",
-    description: "Arjun Automation terms of service governing use of our website and platform services.",
+    description: "Arjun Automation Enterprises terms of service governing use of our website and platform services.",
     path: "/terms",
 });
 
@@ -57,11 +57,11 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">2. Services</h2>
-                    <p className="mt-2 leading-relaxed">Arjun Automation provides enterprise automation platform implementation, consulting, and managed support services. Specific scope, timelines, and pricing are defined in individual client agreements.</p>
+                    <p className="mt-2 leading-relaxed">Arjun Automation Enterprises provides enterprise automation platform implementation, consulting, and managed support services. Specific scope, timelines, and pricing are defined in individual client agreements.</p>
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">3. Intellectual Property</h2>
-                    <p className="mt-2 leading-relaxed">Arjun Automation OS, its modules, AI workers, industry packs, documentation, and branding are proprietary to Arjun Automation. Client-specific configurations and data remain the property of the client.</p>
+                    <p className="mt-2 leading-relaxed">Arjun Automation Enterprises OS, its modules, AI workers, industry packs, documentation, and branding are proprietary to Arjun Automation Enterprises. Client-specific configurations and data remain the property of the client.</p>
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">4. Acceptable Use</h2>
@@ -69,7 +69,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">5. Limitation of Liability</h2>
-                    <p className="mt-2 leading-relaxed">To the maximum extent permitted by law, Arjun Automation shall not be liable for indirect, incidental, or consequential damages. Our total liability is limited to fees paid in the twelve months preceding the claim.</p>
+                    <p className="mt-2 leading-relaxed">To the maximum extent permitted by law, Arjun Automation Enterprises shall not be liable for indirect, incidental, or consequential damages. Our total liability is limited to fees paid in the twelve months preceding the claim.</p>
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">6. Governing Law</h2>
@@ -77,7 +77,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">7. Contact</h2>
-                    <p className="mt-2 leading-relaxed">Questions about these terms: sales@arjunautomations.com</p>
+                    <p className="mt-2 leading-relaxed">Questions about these terms: +91 73370 28357</p>
                 </div>
             </section>
         </article>
