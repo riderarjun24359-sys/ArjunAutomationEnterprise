@@ -18,6 +18,7 @@ export function LocalContactForm({ whatsappNumber, telugu = false }: Props) {
         const name = String(data.get("name") ?? "").trim();
         const phone = String(data.get("phone") ?? "").trim();
         const businessType = String(data.get("businessType") ?? "");
+        const businessTypeLabel = telugu ? ({ School: "స్కూల్", College: "కాలేజ్", "Shop or Supermarket": "షాప్ లేదా సూపర్‌మార్కెట్", Clinic: "క్లినిక్", Other: "ఇతర" }[businessType] ?? businessType) : businessType;
         const enquiry = String(data.get("message") ?? "").trim();
         const honeypot = String(data.get("website") ?? "");
 
@@ -36,10 +37,10 @@ export function LocalContactForm({ whatsappNumber, telugu = false }: Props) {
         const whatsappText = [
             (telugu ? "నమస్కారం. మీ వెబ్‌సైట్ చూశాను. మీ సేవల గురించి తెలుసుకోవాలి." : "Hi, I saw your website. I would like to know more about your services."),
             "",
-            `Name: ${name}`,
-            `Phone: ${phone}`,
-            `Business type: ${businessType}`,
-            `Message: ${enquiry}`,
+            `${telugu ? "పేరు" : "Name"}: ${name}`,
+            `${telugu ? "ఫోన్" : "Phone"}: ${phone}`,
+            `${telugu ? "వ్యాపార రకం" : "Business type"}: ${businessTypeLabel}`,
+            `${telugu ? "సందేశం" : "Message"}: ${enquiry}`,
         ].join("\n");
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`;
         window.open(whatsappUrl, "_blank", "noopener,noreferrer");
@@ -85,11 +86,11 @@ export function LocalContactForm({ whatsappNumber, telugu = false }: Props) {
                 <label htmlFor="contact-business" className="block text-sm font-semibold text-[var(--premium-fg)]">{telugu ? "వ్యాపార రకం" : "Business type"}</label>
                 <select id="contact-business" name="businessType" required defaultValue="" className={fieldClass}>
                     <option value="" disabled>{telugu ? "వ్యాపార రకాన్ని ఎంచుకోండి" : "Select your business type"}</option>
-                    <option>{telugu ? "స్కూల్" : "School"}</option>
-                    <option>{telugu ? "కాలేజ్" : "College"}</option>
-                    <option>{telugu ? "షాప్ లేదా సూపర్‌మార్కెట్" : "Shop or Supermarket"}</option>
-                    <option>{telugu ? "క్లినిక్" : "Clinic"}</option>
-                    <option>{telugu ? "ఇతర" : "Other"}</option>
+                    <option value="School">{telugu ? "స్కూల్" : "School"}</option>
+                    <option value="College">{telugu ? "కాలేజ్" : "College"}</option>
+                    <option value="Shop or Supermarket">{telugu ? "షాప్ లేదా సూపర్‌మార్కెట్" : "Shop or Supermarket"}</option>
+                    <option value="Clinic">{telugu ? "క్లినిక్" : "Clinic"}</option>
+                    <option value="Other">{telugu ? "ఇతర" : "Other"}</option>
                 </select>
             </div>
             <div>
