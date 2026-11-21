@@ -61,3 +61,29 @@ comment on table public.ai_voice_contact_consents is
     'Evidence ledger for explicit, customer-requested AI callbacks. Server-only access.';
 comment on table public.ai_voice_call_events is
     'Minimal metadata for inbound and outbound Arjun AI Voice Agent calls. Transcripts are not stored here.';
+
+
+-- Idempotency ledger for Sarvam mid-call / on-end lead-capture API tool calls.
+-- One capture per organization + provider interaction, even when Sarvam retries.
+create table if not exists public.ai_voice_lead_captures (
+    id uuid primary key default gen_random_uuid(),
+    organization_id uuid not null,
+    interaction_id text not null,
+    lead_id uuid references public.sales_leads(id) on delete set null,
+    capture_status text not null default 'processing'
+        check (capture_status in ('processing', 'completed')),
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+    constraint ai_voice_lead_capture_interaction_nonempty check (length(trim(interaction_id)) between 4 and 200),
+    constraint ai_voice_lead_capture_org_interaction_unique unique (organization_id, interaction_id)
+);
+
+create index if not exists ai_voice_lead_captures_org_created_idx
+    on public.ai_voice_lead_captures (organization_id, created_at desc);
+
+alter table public.ai_voice_lead_captures enable row level security;
+revoke all on public.ai_voice_lead_captures from anon, authenticated;
+grant select, insert, update, delete on public.ai_voice_lead_captures to service_role;
+
+comment on table public.ai_voice_lead_captures is
+    'Idempotency ledger for AI voice lead capture. Service-role API only.';
