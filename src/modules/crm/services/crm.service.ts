@@ -9,7 +9,6 @@ import {
 import {
     buildClientProfile,
     buildCrmEnterpriseSnapshot,
-    createEmptyCrmSnapshot,
     queryDirectory,
 } from "./crm-enterprise-builders";
 import { loadCrmPlatformData } from "./crm-platform-data.service";
@@ -38,8 +37,7 @@ export class CrmService {
     }
 
     async getEnterpriseSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<CrmEnterpriseSnapshot> {
-        const data = await loadCrmPlatformData(authUserId, email, fullName).catch(() => null);
-        if (!data) return createEmptyCrmSnapshot();
+        const data = await loadCrmPlatformData(authUserId, email, fullName);
         return buildCrmEnterpriseSnapshot(data);
     }
 
@@ -59,8 +57,7 @@ export class CrmService {
         clientId: string,
         fullName?: string | null,
     ): Promise<ClientProfileBundle | null> {
-        const data = await loadCrmPlatformData(authUserId, email, fullName).catch(() => null);
-        if (!data) return null;
+        const data = await loadCrmPlatformData(authUserId, email, fullName);
         return buildClientProfile(data, clientId);
     }
 
