@@ -6,7 +6,7 @@ const addressLine = formatAddress();
 
 export const metadata: Metadata = buildMetadata({
     title: "Privacy Policy",
-    description: "Arjun Automation privacy policy — how we collect, use, and protect your personal information.",
+    description: "Arjun Automation Enterprises privacy policy — how we collect, use, and protect your personal information.",
     path: "/privacy",
 });
 
@@ -76,10 +76,10 @@ export default function PrivacyPage() {
                 <p>We may use third-party analytics providers (Google Analytics, Meta Pixel, LinkedIn Insight Tag) subject to their respective privacy policies. These services may collect anonymized usage data.</p>
 
                 <h2 className="text-xl font-semibold text-[var(--premium-fg)]">6. Your Rights</h2>
-                <p>You may request access to, correction of, or deletion of your personal data by contacting sales@arjunautomations.com. We will respond within 30 days.</p>
+                <p>You may request access to, correction of, or deletion of your personal data by contacting +91 73370 28357. We will respond within 30 days.</p>
 
                 <h2 className="text-xl font-semibold text-[var(--premium-fg)]">7. Contact</h2>
-                <p>For privacy-related inquiries: sales@arjunautomations.com</p>
+                <p>For privacy-related inquiries: +91 73370 28357</p>
             </section>
         </article>
     );
