@@ -6,7 +6,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3" aria-label="Arjun Automation Enterprises home">
           <Image src="/brand/logos/arjun-enterprise.svg" alt="Arjun Automation Enterprises" width={900} height={240} priority unoptimized className="h-12 w-auto" />
-        </a>
+        </Link>
         <div className="hidden md:flex items-center gap-6">
           <Link href="/services" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Services</Link>
           <Link href="/case-studies" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Case Studies</Link>
