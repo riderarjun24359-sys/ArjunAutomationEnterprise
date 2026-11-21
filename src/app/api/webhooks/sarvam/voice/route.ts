@@ -82,7 +82,8 @@ export async function POST(request: Request) {
             .eq("organization_id", organizationId);
         if (error) return NextResponse.json({ error: "Could not update call event" }, { status: 500 });
     } else {
-        const phoneNumber = typeof payload.user_phone_number === "string" ? payload.user_phone_number : null;
+        const candidatePhone = typeof payload.user_phone_number === "string" ? payload.user_phone_number : "";
+        const phoneNumber = /^\\+91[6-9]\\d{9}$/.test(candidatePhone) ? candidatePhone : null;
         const { error } = await client.from("ai_voice_call_events").upsert({
             organization_id: organizationId,
             direction,
