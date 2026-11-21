@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
-import { WHATSAPP_DEFAULT_MESSAGE, whatsappLink } from "@/src/config/company-profile";
+import { whatsappLink } from "@/src/config/company-profile";
 
 const LINKS = [
     { label: "Services", href: "/services" },
