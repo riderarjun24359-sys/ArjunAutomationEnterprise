@@ -29,6 +29,16 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
         ? input.title
         : `${input.title} | ${LAUNCH_KIT_SEO.siteName}`;
     const description = clampDescription(input.description);
+    const routePath = input.path ?? "/";
+    const isTeluguRoute = routePath === "/te" || routePath.startsWith("/te/");
+    const englishPath = isTeluguRoute ? (routePath.replace(/^\/te(?=\/|$)/, "") || "/") : routePath;
+    const translatedPaths = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"]);
+    const languageAlternates = translatedPaths.has(englishPath)
+        ? {
+              "en-IN": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
+              "te-IN": `${LAUNCH_KIT_SEO.siteUrl}/te${englishPath === "/" ? "" : englishPath}`,
+          }
+        : undefined;
 
     // No `images` key is emitted here on purpose. Route-level `opengraph-image`
     // files (src/modules/company-launch-kit/components/og/og-image.tsx) take
@@ -38,7 +48,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
     return {
         title,
         description,
-        alternates: { canonical: url },
+        alternates: { canonical: url, ...(languageAlternates ? { languages: languageAlternates } : {}) },
         robots: input.noIndex ? { index: false, follow: false } : { index: true, follow: true },
         openGraph: {
             type: "website",
