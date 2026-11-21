@@ -479,3 +479,10 @@
         transform: none !important;
     }
 }
+
+
+/* Public marketing copy stays comfortably readable on phones. */
+.premium-theme p {
+    font-size: 1rem;
+    line-height: 1.7;
+}
