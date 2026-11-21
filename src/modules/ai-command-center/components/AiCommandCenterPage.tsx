@@ -37,7 +37,7 @@ export function AiCommandCenterPage() {
 
             <StaggerReveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">System health</p><p className="mt-1 text-2xl font-bold">{dash?.systemHealth ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Client health</p><p className="mt-1 text-2xl font-bold">{dash?.clientHealth ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Client health</p><p className="mt-1 text-2xl font-bold">{dash && dash.clientHealth > 0 ? `${dash.clientHealth}%` : "Not reported"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Support SLA</p><p className="mt-1 text-2xl font-bold">{dash?.supportSla.slaCompliance ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Delivery health</p><p className="mt-1 text-2xl font-bold">{dash?.deliveryStatus.deliveryHealth ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
             </StaggerReveal>
