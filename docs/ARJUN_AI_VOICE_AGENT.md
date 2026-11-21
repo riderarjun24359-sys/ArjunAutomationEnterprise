@@ -19,7 +19,7 @@ Customer phone
 Approved Indian telephony connection
    |
 Sarvam Voice Agents (ASR + dialogue + TTS)
-   | signed/secret-authenticated call-completion webhook
+   | HMAC-SHA256 signed call-completion webhook
 Vercel Next.js API
    | session-protected actions / server-only service-role writes
 Supabase
@@ -39,11 +39,11 @@ Do not call Sarvam from browser code. Never expose the API key or webhook secret
 5. Create a telephony connection and verify the number in the Sarvam workspace.
 6. Create a webhook config pointing to:
    `https://www.arjunautomations.com/api/webhooks/sarvam/voice`
-7. Add the custom header `X-Arjun-Voice-Secret` with a newly generated high-entropy secret. Store the same value as `SARVAM_VOICE_WEBHOOK_SECRET` in Vercel server environment variables.
+7. Copy the webhook signing secret once and store it as `SARVAM_VOICE_WEBHOOK_SECRET` in Vercel server environment variables. Sarvam returns this secret only when the webhook config is created.
 8. Add the webhook metadata `organization_id` and `direction` to the inbound deployment configuration. For outbound calls, the application supplies organization and call-event metadata.
 9. Deploy inbound only after a human has tested the agent, phone number, transfer behaviour and webhook.
 
-Sarvam's reusable webhook config supports custom headers and HMAC-signed delivery. The application currently authenticates webhook delivery with the custom secret header; add provider HMAC verification as an additional check when the exact signature header contract is confirmed.
+The webhook verifies Sarvam's documented `Sarvam-Signature` and `Sarvam-Timestamp` headers using HMAC-SHA256 over the raw request body, and rejects deliveries older than five minutes. Do not use an inline unsigned webhook URL.
 
 ## Required server environment variables
 
