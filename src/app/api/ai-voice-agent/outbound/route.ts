@@ -48,6 +48,7 @@ export async function POST(request: Request) {
         .eq("purpose", "requested_callback")
         .is("revoked_at", null)
         .lte("granted_at", new Date().toISOString())
+        .gte("granted_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
         .order("granted_at", { ascending: false })
         .limit(1)
         .maybeSingle();
