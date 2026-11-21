@@ -72,12 +72,11 @@ export function MarketingFooterStatic() {
                         {/* Contact block. Phone and address appear only once they are
                             genuinely configured — we never print placeholder details. */}
                         <address className="mt-5 flex flex-col gap-2.5 text-sm not-italic">
-                            <a
-                                href={`mailto:${COMPANY_PROFILE.emails.sales}`}
-                                className={`inline-flex items-center gap-2 ${LINK_CLASS}`}
-                            >
-                                {COMPANY_PROFILE.emails.sales}
-                            </a>
+                            {COMPANY_PROFILE.emails.sales ? (
+                                <a href={`mailto:${COMPANY_PROFILE.emails.sales}`} className={`inline-flex items-center gap-2 ${LINK_CLASS}`}>
+                                    {COMPANY_PROFILE.emails.sales}
+                                </a>
+                            ) : null}
 
                             {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
                                 <a
