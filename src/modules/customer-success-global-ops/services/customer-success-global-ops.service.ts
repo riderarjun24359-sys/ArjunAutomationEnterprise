@@ -1,14 +1,13 @@
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { productionLog } from "@/src/lib/production-logger";
 import { csgRepository } from "../customer-success-global-ops-repository";
-import { buildOnboardingSessions } from "../engines/client-onboarding.engine";
 import { generateAiRecommendations, generateImprovementBacklog } from "../engines/continuous-improvement.engine";
 import { buildSatisfactionTrend, computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
 import {
     computeHealthScores,
 } from "../engines/customer-success-os.engine";
 import { classifyLiveQueue, computeSupportHealth } from "../engines/global-support-center.engine";
-import { buildDeliveryMilestones, computeDeliveryHealth } from "../engines/service-delivery-control.engine";
+import { computeDeliveryHealth } from "../engines/service-delivery-control.engine";
 import { publishGlobalOpsEvent } from "../integrations/mission-core-bridge";
 import {
     fetchBusinessPlatformSnapshot,
