@@ -32,25 +32,15 @@ export function runQualityVerification(engagementId: string): QualityReport {
     return { engagementId, overallScore: 0, passed: false, dimensions };
 }
 
-export function buildDefaultAnalytics(engagementCount: number, completedCount: number): DeliveryAnalyticsSummary {
-    if (engagementCount === 0) {
-        return {
-            avgDeliveryTimeDays: 0,
-            avgBuildTimeHours: 0,
-            avgTestingTimeHours: 0,
-            avgDeploymentTimeHours: 0,
-            clientSatisfactionScore: 0,
-            defectRate: 0,
-        };
-    }
-    const factor = Math.max(1, engagementCount);
+export function buildDefaultAnalytics(_engagementCount: number, _completedCount: number): DeliveryAnalyticsSummary {
+    // No persisted duration, satisfaction, or defect dataset is wired into this view.
     return {
-        avgDeliveryTimeDays: Math.round(14 - completedCount * 0.5),
-        avgBuildTimeHours: Math.round(8 + factor * 2),
-        avgTestingTimeHours: Math.round(4 + factor * 0.5),
-        avgDeploymentTimeHours: Math.round(2 + factor * 0.25),
-        clientSatisfactionScore: Math.min(98, 85 + completedCount * 2),
-        defectRate: Math.max(1, 8 - completedCount),
+        avgDeliveryTimeDays: 0,
+        avgBuildTimeHours: 0,
+        avgTestingTimeHours: 0,
+        avgDeploymentTimeHours: 0,
+        clientSatisfactionScore: 0,
+        defectRate: 0,
     };
 }
 
@@ -139,8 +129,8 @@ export function buildDashboardMetrics(
         pipelinePassRate,
         qualityPassRate,
         knowledgeEntries: knowledgeCount,
-        avgDeliveryDays: 12,
-        defectRate: 4,
+        avgDeliveryDays: 0,
+        defectRate: 0,
         pendingAiRecommendations: pendingAi,
         stageCounts,
     };
