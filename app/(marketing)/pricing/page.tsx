@@ -1,316 +1,54 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
-import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
-import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
-import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
-import {
-    ENTERPRISE_ENGAGEMENT,
-    IMPLEMENTATION_TIERS,
-    MANAGED_SUPPORT_TIERS,
-    PILOT_PROGRAMME,
-    PRICING_PHILOSOPHY,
-} from "@/src/modules/company-launch-kit/data/pricing";
-import { SOFT_LAUNCH_PLANS } from "@/src/modules/soft-launch/data/launch-assets";
+import { CheckCircle2, MinusCircle, MessageCircle } from "lucide-react";
 import { buildMetadata } from "@/src/lib/seo";
-
-const PAGE = {
-    title: "Pricing",
-    description:
-        "Platform plans (Free Trial, Starter, Professional, Enterprise) plus transparent implementation and managed support pricing.",
-    path: MARKETING_ROUTES.pricing,
-};
+import { whatsappLink } from "@/src/config/company-profile";
 
 export const metadata: Metadata = buildMetadata({
-    title: PAGE.title,
-    description: PAGE.description,
-    path: PAGE.path,
+    title: "Pricing",
+    description: "See pricing options for local business websites, school management software and custom projects.",
+    path: "/pricing",
 });
 
-const breadcrumbs = [
-    { name: "Home", path: MARKETING_ROUTES.home },
-    { name: "Pricing", path: PAGE.path },
-];
+function listFromEnv(key: string): string[] {
+    return (process.env[key] ?? "").split("|").map((value) => value.trim()).filter(Boolean);
+}
+
+const localPrice = process.env.NEXT_PUBLIC_LOCAL_STARTER_PRICE?.trim();
+const localIncludes = listFromEnv("NEXT_PUBLIC_LOCAL_STARTER_INCLUDES");
+const localExcludes = listFromEnv("NEXT_PUBLIC_LOCAL_STARTER_EXCLUDES");
+const schoolPrice = process.env.NEXT_PUBLIC_SCHOOL_PACK_PRICE?.trim();
+const schoolIncludes = listFromEnv("NEXT_PUBLIC_SCHOOL_PACK_INCLUDES");
+const schoolExcludes = listFromEnv("NEXT_PUBLIC_SCHOOL_PACK_EXCLUDES");
+const showStarter = Boolean(localPrice && localIncludes.length && localExcludes.length);
+const showSchool = Boolean(schoolPrice && schoolIncludes.length && schoolExcludes.length);
+const whatsapp = whatsappLink("Hi, I would like to discuss pricing for my school or business.");
+
+function PlanCard({ title, price, includes, excludes }: { title: string; price: string; includes: string[]; excludes: string[] }) {
+    return (
+        <article className="flex flex-col rounded-2xl border border-[var(--premium-border)] bg-white p-6">
+            <h2 className="text-xl font-bold text-[var(--premium-fg)]">{title}</h2>
+            <p className="mt-3 text-2xl font-bold text-indigo-800">{price}</p>
+            <div className="mt-7"><h3 className="text-sm font-semibold text-[var(--premium-fg)]">Includes</h3><ul className="mt-3 space-y-2">{includes.map((item) => <li key={item} className="flex gap-2 text-sm leading-6 text-[var(--premium-fg-muted)]"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-indigo-600" />{item}</li>)}</ul></div>
+            <div className="mt-6"><h3 className="text-sm font-semibold text-[var(--premium-fg)]">Not included</h3><ul className="mt-3 space-y-2">{excludes.map((item) => <li key={item} className="flex gap-2 text-sm leading-6 text-[var(--premium-fg-muted)]"><MinusCircle className="mt-1 h-4 w-4 shrink-0 text-slate-400" />{item}</li>)}</ul></div>
+        </article>
+    );
+}
 
 export default function PricingPage() {
     return (
-        <>
-            <MarketingStructuredData
-                title={PAGE.title}
-                description={PAGE.description}
-                path={PAGE.path}
-                breadcrumbs={breadcrumbs}
-            />
-            <PremiumPageShell title={PAGE.title} description={PRICING_PHILOSOPHY.title}>
-                <MarketingBreadcrumbs items={breadcrumbs} />
-
-                <div className="space-y-16">
-                    {/* Pilot programme sits FIRST. For an early-stage business the
-                        realistic entry point is a reduced-fee pilot, not a
-                        five-figure tier — and burying it below the standard
-                        pricing would mean most visitors never scroll to it. */}
-                    <section
-                        aria-labelledby="pilot-heading"
-                        className="rounded-3xl border border-[color-mix(in_oklab,var(--dos-brand-primary)_35%,transparent)] bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)] p-6 sm:p-8"
-                    >
-                        <div className="flex flex-wrap items-start justify-between gap-4">
-                            <div className="max-w-2xl">
-                                <h2 id="pilot-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                                    {PILOT_PROGRAMME.title}
-                                </h2>
-                                <p className="mt-3 text-[var(--premium-fg-muted)]">{PILOT_PROGRAMME.subtitle}</p>
-                            </div>
-                            <p className="shrink-0 rounded-full border border-[color-mix(in_oklab,var(--dos-brand-primary)_50%,transparent)] px-4 py-2 text-sm font-medium text-[var(--dos-brand-primary)]">
-                                {PILOT_PROGRAMME.slots} {PILOT_PROGRAMME.slotsLabel}
-                            </p>
-                        </div>
-
-                        <div className="mt-8 grid gap-8 lg:grid-cols-3">
-                            <div>
-                                <p className="text-4xl font-bold text-[var(--dos-brand-primary)]">
-                                    {PILOT_PROGRAMME.setupFee}
-                                </p>
-                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                    {PILOT_PROGRAMME.setupFeeNote}
-                                </p>
-                                <Link
-                                    href={MARKETING_ROUTES.contact}
-                                    className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
-                                >
-                                    {PILOT_PROGRAMME.ctaLabel}
-                                </Link>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
-                                    What you get
-                                </h3>
-                                <ul className="mt-4 space-y-2 text-sm">
-                                    {PILOT_PROGRAMME.includes.map((item) => (
-                                        <li key={item} className="flex items-start gap-3">
-                                            <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
-                                                aria-hidden="true"
-                                            />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
-                                    What we ask
-                                </h3>
-                                <ul className="mt-4 space-y-2 text-sm">
-                                    {PILOT_PROGRAMME.expectations.map((item) => (
-                                        <li key={item} className="flex items-start gap-3">
-                                            <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
-                                                aria-hidden="true"
-                                            />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <p className="mt-8 border-t border-[var(--premium-border)] pt-6 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                            {PILOT_PROGRAMME.honest}
-                        </p>
-                    </section>
-
-                    <section aria-labelledby="saas-plans-heading">
-                        <div className="flex flex-wrap items-end justify-between gap-4">
-                            <div>
-                                <h2 id="saas-plans-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                                    Platform plans
-                                </h2>
-                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                    Free Trial, Starter, Professional, and Enterprise with clear usage limits.
-                                </p>
-                            </div>
-                            <Link
-                                href={MARKETING_ROUTES.upgrade}
-                                className="text-sm font-semibold text-[var(--dos-brand-primary)] underline hover:text-[var(--dos-brand-primary-hover)]"
-                            >
-                                Open upgrade flow
-                            </Link>
-                        </div>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-4">
-                            {SOFT_LAUNCH_PLANS.map((plan) => (
-                                <article
-                                    key={plan.id}
-                                    className={`rounded-3xl border p-6 ${
-                                        plan.highlighted
-                                            ? "border-[var(--dos-brand-primary)] ring-2 ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]"
-                                            : "border-[var(--premium-border)]"
-                                    }`}
-                                >
-                                    <h3 className="text-lg font-semibold text-[var(--premium-fg)]">
-                                        {plan.name}
-                                    </h3>
-                                    <p className="mt-2 text-3xl font-bold text-[var(--premium-fg)]">
-                                        {plan.priceLabel}
-                                    </p>
-                                    <p className="mt-1 text-xs text-[var(--premium-fg-muted)]">
-                                        {plan.billingNote}
-                                    </p>
-                                    <p className="mt-4 text-sm text-[var(--premium-fg-muted)]">
-                                        {plan.description}
-                                    </p>
-                                    <ul className="mt-4 space-y-1 text-xs text-[var(--premium-fg-muted)]">
-                                        <li>Users: {plan.limits.users}</li>
-                                        <li>Projects: {plan.limits.projects}</li>
-                                        <li>Storage: {plan.limits.storage}</li>
-                                        <li>API calls: {plan.limits.apiCalls}</li>
-                                    </ul>
-                                    <ul className="mt-4 space-y-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {plan.features.map((feature) => (
-                                            <li key={feature}>• {feature}</li>
-                                        ))}
-                                    </ul>
-                                    <Link
-                                        href={plan.cta.href}
-                                        className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)]"
-                                    >
-                                        {plan.cta.label}
-                                    </Link>
-                                </article>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section aria-labelledby="philosophy-heading">
-                        <h2 id="philosophy-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Our pricing philosophy
-                        </h2>
-                        <ul className="mt-6 space-y-3">
-                            {PRICING_PHILOSOPHY.principles.map((principle) => (
-                                <li key={principle} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span
-                                        className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
-                                        aria-hidden="true"
-                                    />
-                                    {principle}
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-
-                    <section aria-labelledby="implementation-heading">
-                        <h2 id="implementation-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Implementation packages
-                        </h2>
-                        <p className="mt-3 text-[var(--premium-fg-muted)]">
-                            Milestone billing: 40% at signing, 30% at UAT start, 30% at go-live. Platform subscription quoted separately.
-                        </p>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-                            {IMPLEMENTATION_TIERS.map((tier) => (
-                                <article
-                                    key={tier.name}
-                                    className={`premium-glass rounded-2xl p-8 ${
-                                        tier.highlighted ? "ring-2 ring-[var(--dos-brand-primary)]" : ""
-                                    }`}
-                                >
-                                    {tier.highlighted && (
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--dos-brand-primary)]">
-                                            Most Popular
-                                        </span>
-                                    )}
-                                    <h3 className="mt-2 text-xl font-semibold text-[var(--premium-fg)]">
-                                        {tier.name}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {tier.description}
-                                    </p>
-                                    <p className="mt-4 text-lg font-semibold text-[var(--dos-brand-primary)]">
-                                        {tier.indicativeRange}
-                                    </p>
-                                    <ul className="mt-6 space-y-2">
-                                        {tier.scope.map((item) => (
-                                            <li key={item} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                                <span
-                                                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
-                                                    aria-hidden="true"
-                                                />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </article>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section aria-labelledby="support-heading">
-                        <h2 id="support-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Managed support
-                        </h2>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-                            {MANAGED_SUPPORT_TIERS.map((tier) => (
-                                <article key={tier.name} className="premium-glass rounded-2xl p-8">
-                                    <h3 className="text-xl font-semibold text-[var(--premium-fg)]">
-                                        {tier.name}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {tier.description}
-                                    </p>
-                                    <p className="mt-4 font-semibold text-[var(--dos-brand-primary)]">
-                                        {tier.indicativeRange}
-                                    </p>
-                                    <ul className="mt-6 space-y-2">
-                                        {tier.scope.map((item) => (
-                                            <li key={item} className="text-sm text-[var(--premium-fg-muted)]">
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </article>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section aria-labelledby="enterprise-heading" className="premium-glass rounded-2xl p-8">
-                        <h2 id="enterprise-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            {ENTERPRISE_ENGAGEMENT.title}
-                        </h2>
-                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
-                            {ENTERPRISE_ENGAGEMENT.description}
-                        </p>
-                        <ol className="mt-8 space-y-4">
-                            {ENTERPRISE_ENGAGEMENT.steps.map((step, index) => (
-                                <li key={step.title} className="flex gap-4">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-sm font-semibold text-white">
-                                        {index + 1}
-                                    </span>
-                                    <div>
-                                        <h3 className="font-semibold text-[var(--premium-fg)]">
-                                            {step.title}
-                                        </h3>
-                                        <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">
-                                            {step.description}
-                                        </p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ol>
-                        <Link
-                            href={ENTERPRISE_ENGAGEMENT.cta.href}
-                            className="mt-8 inline-flex rounded-xl bg-[var(--dos-brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
-                        >
-                            {ENTERPRISE_ENGAGEMENT.cta.label}
-                        </Link>
-                    </section>
-                </div>
-            </PremiumPageShell>
-            <CtaSection
-                title="Need a custom quote?"
-                description="Every organization is different. Book a consultation and we will scope a proposal aligned to your outcomes."
-                primaryLabel="Book Consultation"
-            />
-        </>
+        <div className="premium-container py-16 sm:py-20">
+            <header className="mx-auto max-w-3xl text-center">
+                <p className="text-sm font-semibold text-indigo-700">Pricing</p>
+                <h1 className="mt-3 text-4xl font-bold tracking-tight text-[var(--premium-fg)] sm:text-5xl">Clear prices. Clear work. No surprises.</h1>
+                <p className="mt-5 text-lg leading-8 text-[var(--premium-fg-muted)]">Tell us what you need. We will explain the work, what is included and what is not before you decide.</p>
+            </header>
+            <div className={showStarter && showSchool ? "mt-12 grid gap-5 lg:grid-cols-3" : "mt-12 grid gap-5 md:grid-cols-2"}>
+                {showStarter ? <PlanCard title="Local Business Starter" price={`From ₹${localPrice}`} includes={localIncludes} excludes={localExcludes} /> : null}
+                {showSchool ? <PlanCard title="School Management Pack" price={schoolPrice!} includes={schoolIncludes} excludes={schoolExcludes} /> : null}
+                <PlanCard title="Custom Project" price="Custom quote after we understand your needs." includes={["The work listed in your written quote."]} excludes={["Any work not listed in your written quote."]} />
+            </div>
+            {(!showStarter || !showSchool) ? <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-6 text-[var(--premium-fg-muted)]">For a local business website or school management package, contact us for a quote. We will agree the price and the full list of included work in writing before starting.</p> : <p className="mt-8 text-center text-sm text-[var(--premium-fg-muted)]">Prices are starting points. Final price is agreed in writing before work begins.</p>}
+            <div className="mt-10 text-center">{whatsapp ? <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#073b1e]"><MessageCircle className="h-5 w-5" />Ask for a quote</a> : null}</div>
+        </div>
     );
 }
