@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "@/src/store/auth.store";
 import { aiCommandCenterService } from "../services/ai-command-center.service";
 import type { AccRecommendation, AiCommandCenterDashboard } from "../types";
@@ -8,19 +8,29 @@ import type { AccRecommendation, AiCommandCenterDashboard } from "../types";
 export function useAiCommandCenter() {
     const user = useAuthStore((s) => s.user);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [dashboard, setDashboard] = useState<AiCommandCenterDashboard | null>(null);
 
-    const ctx = user ? { authUserId: user.id, email: user.email, fullName: user.fullName } : null;
+    const ctx = useMemo(
+        () => user ? { authUserId: user.id, email: user.email, fullName: user.fullName } : null,
+        [user],
+    );
 
     const refresh = useCallback(async () => {
         if (!ctx) {
             setLoading(false);
+            setDashboard(null);
+            setError("Sign in to load the AI Command Center.");
             return;
         }
         setLoading(true);
+        setError(null);
         try {
             const data = await aiCommandCenterService.getDashboard(ctx);
             setDashboard(data);
+        } catch (cause) {
+            setDashboard(null);
+            setError(cause instanceof Error ? cause.message : "Unable to load AI Command Center data.");
         } finally {
             setLoading(false);
         }
@@ -45,7 +55,7 @@ export function useAiCommandCenter() {
         setDashboard({ ...dashboard, recommendations: updated });
     }, [dashboard]);
 
-    return { loading, dashboard, refresh, acceptRecommendation, dismissRecommendation };
+    return { loading, error, dashboard, refresh, acceptRecommendation, dismissRecommendation };
 }
 
 export type AiCommandCenterData = ReturnType<typeof useAiCommandCenter>;
