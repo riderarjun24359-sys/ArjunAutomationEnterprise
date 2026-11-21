@@ -49,7 +49,6 @@ const SOCIAL_LINK_CLASS =
 
 /** Arjun Automation — Premium Cinematic Footer */
 export function MarketingFooterStatic() {
-    const year = new Date().getFullYear();
     const addressLine = formatAddress();
 
     return (
