@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
@@ -99,6 +99,11 @@ export default function Home() {
           <nav className="desktop-nav" aria-label="Main navigation">
             {nav.map((item) => <a key={item.href} href={item.href}>{te ? item.te : item.en}</a>)}
           </nav>
+
+          <div className="header-contact">
+            {configured(SITE.phone) ? <a href={"tel:" + SITE.phone}><Phone size={13} /> {SITE.phone}</a> : <span><Phone size={13} /> [MY_NUMBER]</span>}
+            {configured(SITE.email) ? <a href={"mailto:" + SITE.email}><Mail size={13} /> {SITE.email}</a> : <span><Mail size={13} /> [MY_EMAIL]</span>}
+          </div>
 
           <div className="header-actions">
             <button className="language-toggle" onClick={() => setLanguage(te ? "en" : "te")} aria-label="Toggle language">
@@ -234,7 +239,7 @@ export default function Home() {
               </div>
             </article>
             <article className="demo-card">
-              <div className="demo-art school-art"><div className="school-art-building"><div className="school-roof" /><div className="school-building"><span /><span /><span /><span /><b>ABC</b></div></div><div className="school-art-book"><BookOpen size={35} /></div><div className="school-art-sun" /></div>
+              <div className="demo-art school-art"><div className="school-art-building"><div className="school-roof" /><div className="school-building"><span /><span /><span /><span /><b>SCHOOL</b></div></div><div className="school-art-book"><BookOpen size={35} /></div><div className="school-art-sun" /></div>
               <div className="demo-card-body"><div className="demo-label">DEMO PROJECT</div><h3>School management</h3><p>{te ? "ఫీజులు, హాజరు, విద్యార్థుల వివరాలు మరియు తల్లిదండ్రుల సమాచారం కోసం డెమో." : "A sample school system for fees, attendance, student records and parent updates."}</p>
                 {demoLink(SITE.schoolDemo) ? <a className="text-link" href={SITE.schoolDemo} target="_blank" rel="noreferrer">Open demo <ArrowUpRight size={16} /></a> : <span className="demo-placeholder">Add demo link or screenshot: [DEMO_LINK/SCREENSHOT]</span>}
               </div>
