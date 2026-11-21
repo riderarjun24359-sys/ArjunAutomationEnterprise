@@ -31,9 +31,9 @@ export function MarketingHeaderStatic() {
                 <div className="flex items-center gap-2">
                     <LanguageToggle />
                     {WA_URL ? (
-                        <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-[#073b1e] transition hover:bg-[#20bd5a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2">
+                        <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#25D366] px-3 py-2.5 text-sm font-semibold text-[#073b1e] transition hover:bg-[#20bd5a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2">
                             <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                            <span>WhatsApp</span>
+                            <span className="hidden sm:inline">WhatsApp</span>
                         </a>
                     ) : null}
                     <details className="group relative lg:hidden">
