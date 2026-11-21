@@ -62,7 +62,7 @@ export function MarketingHeaderStatic() {
                 <Link
                     href={MARKETING_ROUTES.home}
                     className="flex shrink-0 items-center rounded-[var(--dos-radius-lg)] transition hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
-                    aria-label="Arjun Automation — Home"
+                    aria-label="Arjun Automation Enterprises — Home"
                 >
                     <BrandLogo variant="blue" priority className="h-8" />
                 </Link>
