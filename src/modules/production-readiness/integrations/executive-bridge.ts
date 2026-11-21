@@ -2,19 +2,11 @@ import { executiveCommandCenterService } from "@/src/modules/executive-command-c
 import type { ProductionReadinessContext } from "../types";
 
 export async function fetchAiHealth(ctx: ProductionReadinessContext): Promise<number> {
-    try {
-        const snapshot = await executiveCommandCenterService.getSnapshot(ctx.authUserId, ctx.email, ctx.fullName);
-        return Math.min(98, snapshot.unifiedScore);
-    } catch {
-        return 80;
-    }
+    const snapshot = await executiveCommandCenterService.getSnapshot(ctx.authUserId, ctx.email, ctx.fullName);
+    return Math.min(98, snapshot.unifiedScore);
 }
 
 export async function fetchExecutiveRiskScore(ctx: ProductionReadinessContext): Promise<number> {
-    try {
-        const snapshot = await executiveCommandCenterService.getSnapshot(ctx.authUserId, ctx.email, ctx.fullName);
-        return Math.max(0, Math.min(100, snapshot.risks.filter((r) => r.severity !== "low").length * 12));
-    } catch {
-        return 15;
-    }
+    const snapshot = await executiveCommandCenterService.getSnapshot(ctx.authUserId, ctx.email, ctx.fullName);
+    return Math.max(0, Math.min(100, snapshot.risks.filter((r) => r.severity !== "low").length * 12));
 }
