@@ -11,7 +11,6 @@ export async function POST(request: Request) {
     const secured = await secureApiRoute(request, {
         permission: "automationManage",
         rateLimit: 10,
-        rateLimitKey: "ai-voice-consent",
     });
     if (secured.error) return secured.error;
     if (!secured.context?.organizationId) {
