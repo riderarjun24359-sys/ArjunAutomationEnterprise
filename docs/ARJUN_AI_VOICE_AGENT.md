@@ -57,6 +57,7 @@ SARVAM_VOICE_CONNECTION_ID=
 SARVAM_VOICE_AGENT_PHONE_NUMBER=
 SARVAM_VOICE_WEBHOOK_ID=
 SARVAM_VOICE_WEBHOOK_SECRET=
+ARJUN_VOICE_INBOUND_ENABLED=false
 ARJUN_VOICE_OUTBOUND_ENABLED=false
 ```
 
@@ -67,6 +68,7 @@ Existing Arjun OS variables are also required:
 
 - `POST /api/ai-voice-agent/consents`: authenticated admin records evidence of a customer-requested callback.
 - `POST /api/ai-voice-agent/outbound`: authenticated admin can start a callback only when an active callback consent exists and the outbound feature flag is explicitly enabled.
+- `POST /api/ai-voice-agent/deployments`: authenticated admin can activate the inbound phone line only when the inbound feature flag is enabled and the request includes `confirmGoLive: true`.
 - `POST /api/webhooks/sarvam/voice`: receives call outcomes and stores minimal call metadata.
 
 All new database tables have RLS enabled and are not granted to browser roles. The API uses the server-only service-role client only after authentication and organization checks.
