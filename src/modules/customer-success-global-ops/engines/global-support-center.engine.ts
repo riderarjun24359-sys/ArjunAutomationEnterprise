@@ -6,10 +6,14 @@ export function computeSupportHealth(input: {
     incidents: number;
     avgSatisfaction: number;
 }): number {
-    const sat = input.avgSatisfaction > 0 ? (input.avgSatisfaction / 5) * 100 : 0;
+    const hasSatisfactionData = input.avgSatisfaction > 0;
+    const sat = hasSatisfactionData ? (input.avgSatisfaction / 5) * 100 : 0;
     const ticketPenalty = Math.min(25, input.openTickets * 2);
     const incidentPenalty = input.incidents * 8;
-    return Math.max(0, Math.min(100, Math.round((input.slaCompliance * 0.5 + sat * 0.3 + 100 * 0.2) - ticketPenalty - incidentPenalty)));
+    const base = hasSatisfactionData
+        ? input.slaCompliance * 0.5 + sat * 0.3 + 20
+        : input.slaCompliance;
+    return Math.max(0, Math.min(100, Math.round(base - ticketPenalty - incidentPenalty)));
 }
 
 export function classifyLiveQueue(tickets: SupportTicketSummary[]) {
