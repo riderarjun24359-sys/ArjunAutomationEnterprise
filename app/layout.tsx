@@ -11,7 +11,7 @@ export const metadata: Metadata = {
         template: `%s | ${LAUNCH_KIT_SEO.siteName}`,
     },
     description: appConfig.description,
-    applicationName: SOFT_LAUNCH_BRANDING.productName,
+    applicationName: LAUNCH_KIT_SEO.siteName,
     authors: [{ name: LAUNCH_KIT_SEO.siteName }],
     creator: LAUNCH_KIT_SEO.siteName,
     openGraph: {
