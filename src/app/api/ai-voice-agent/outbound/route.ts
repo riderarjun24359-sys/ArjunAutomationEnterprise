@@ -13,7 +13,6 @@ export async function POST(request: Request) {
     const secured = await secureApiRoute(request, {
         permission: "automationManage",
         rateLimit: 5,
-        rateLimitKey: "ai-voice-outbound",
     });
     if (secured.error) return secured.error;
     if (!secured.context?.organizationId) {
