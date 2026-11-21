@@ -94,9 +94,12 @@ export class CustomerSuccessGlobalOpsService {
             deliveryHealth,
             customerHealth,
             revenueOverview: {
-                mrr: renewals.reduce((s, r) => s + r.amount / 12, 0),
+                // Only persisted renewal records represent contracted revenue.
+                // Generated placeholder renewals remain useful for UI scaffolding,
+                // but must never be presented as real MRR or upcoming renewals.
+                mrr: storedRenewals.reduce((s, renewal) => s + renewal.amount / 12, 0),
                 openInvoices: business.openInvoices,
-                renewalsDue: renewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
+                renewalsDue: storedRenewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
             },
             supportHealth,
             aiRecommendations: [],
