@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
+import { LanguageToggle } from "@/src/modules/company-launch-kit/components/LanguageToggle";
 import { whatsappLink } from "@/src/config/company-profile";
 
 const LINKS = [
@@ -28,6 +29,7 @@ export function MarketingHeaderStatic() {
                     ))}
                 </nav>
                 <div className="flex items-center gap-2">
+                    <LanguageToggle />
                     {WA_URL ? (
                         <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-[#073b1e] transition hover:bg-[#20bd5a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2">
                             <MessageCircle className="h-4 w-4" aria-hidden="true" />
