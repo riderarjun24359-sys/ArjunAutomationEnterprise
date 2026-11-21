@@ -12,7 +12,6 @@ export const metadata: Metadata = {
     },
     description: appConfig.description,
     applicationName: SOFT_LAUNCH_BRANDING.productName,
-    keywords: [...LAUNCH_KIT_SEO.defaultKeywords],
     authors: [{ name: LAUNCH_KIT_SEO.siteName }],
     creator: LAUNCH_KIT_SEO.siteName,
     openGraph: {
@@ -55,7 +54,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" suppressHydrationWarning className="h-full antialiased">
+        <html lang="en-IN" suppressHydrationWarning className="h-full antialiased">
             <body className="min-h-screen bg-background text-foreground">{children}</body>
         </html>
     );
