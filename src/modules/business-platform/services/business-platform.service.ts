@@ -154,57 +154,11 @@ export class BusinessPlatformService {
 
     async getAiRecommendations(ctx: BusinessPlatformContext): Promise<AiRecommendation[]> {
         const orgId = await this.getOrgId(ctx);
-        if (orgId) {
-            const db = await businessPlatformRepository.listAiRecommendations(orgId);
-            if (db.length > 0) return db;
-        }
-        const state = loadState();
-        if (state.aiRecommendations.length === 0) {
-            return this.seedAiRecommendations(orgId ?? "local");
-        }
-        return state.aiRecommendations;
-    }
-
-    private seedAiRecommendations(orgId: string): AiRecommendation[] {
-        const now = new Date().toISOString();
-        return [
-            {
-                id: uid("ai"),
-                organizationId: orgId,
-                entityType: "lead",
-                recommendationType: "follow_up",
-                title: "Follow up on high-score leads",
-                description: "3 leads scored above 70 have no activity in 48 hours. Schedule qualification calls.",
-                priority: "high",
-                status: "pending",
-                requiresApproval: false,
-                createdAt: now,
-            },
-            {
-                id: uid("ai"),
-                organizationId: orgId,
-                entityType: "proposal",
-                recommendationType: "approval",
-                title: "Proposal pending review",
-                description: "Draft proposals awaiting manager approval before client send.",
-                priority: "medium",
-                status: "pending",
-                requiresApproval: true,
-                createdAt: now,
-            },
-            {
-                id: uid("ai"),
-                organizationId: orgId,
-                entityType: "client",
-                recommendationType: "renewal",
-                title: "Renewal opportunity detected",
-                description: "Clients approaching contract end — initiate renewal consultation.",
-                priority: "medium",
-                status: "pending",
-                requiresApproval: true,
-                createdAt: now,
-            },
-        ];
+        if (!orgId) return [];
+        // Recommendations shown as actionable business intelligence must be
+        // persisted for the active organization; never synthesize sample alerts
+        // or fall back to browser-local records that may belong to another user.
+        return businessPlatformRepository.listAiRecommendations(orgId);
     }
 
     async scheduleConsultation(ctx: BusinessPlatformContext, input: CreateConsultationInput): Promise<ConsultationRecord> {
