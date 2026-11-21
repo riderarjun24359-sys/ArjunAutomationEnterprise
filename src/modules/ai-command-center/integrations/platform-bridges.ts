@@ -18,10 +18,13 @@ export async function fetchBusinessSnapshot(ctx: AccContext) {
 
 export async function fetchSupportSnapshot(ctx: AccContext) {
     const stats = await supportService.getDashboardStats(ctx.authUserId, ctx.email, ctx.fullName);
+    const hasSatisfactionData = stats.avgSatisfaction > 0;
     return {
         openTickets: stats.openTickets,
         slaCompliance: stats.slaCompliance,
-        supportHealth: Math.round((stats.slaCompliance + (stats.avgSatisfaction > 0 ? (stats.avgSatisfaction / 5) * 100 : 85)) / 2),
+        supportHealth: hasSatisfactionData
+            ? Math.round((stats.slaCompliance + (stats.avgSatisfaction / 5) * 100) / 2)
+            : stats.slaCompliance,
         incidents: stats.openEscalations,
         knowledgeArticles: stats.knowledgeArticles,
     };
