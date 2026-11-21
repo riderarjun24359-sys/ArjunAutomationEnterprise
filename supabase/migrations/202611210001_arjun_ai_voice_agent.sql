@@ -72,6 +72,8 @@ create table if not exists public.ai_voice_lead_captures (
     lead_id uuid references public.sales_leads(id) on delete set null,
     capture_status text not null default 'processing'
         check (capture_status in ('processing', 'completed')),
+    caller_consented boolean not null default false check (caller_consented = true),
+    consented_at timestamptz not null,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now(),
     constraint ai_voice_lead_capture_interaction_nonempty check (length(trim(interaction_id)) between 4 and 200),
