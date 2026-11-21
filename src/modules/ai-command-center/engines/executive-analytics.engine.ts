@@ -18,8 +18,9 @@ export function buildRevenueSummary(input: {
 }
 
 export function computeOverallScore(scores: number[]): number {
-    if (!scores.length) return 0;
-    return clampScore(scores.reduce((s, n) => s + n, 0) / scores.length);
+    const reported = scores.filter((score) => score > 0);
+    if (!reported.length) return 0;
+    return clampScore(reported.reduce((s, n) => s + n, 0) / reported.length);
 }
 
 export function formatExecutiveBrief(input: {
