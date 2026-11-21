@@ -29,13 +29,13 @@ function statusFromScore(score: number): ReadinessStatus {
 
 function buildPillars(scores: Record<string, number>): PillarScore[] {
     return [
-        { key: "observability", label: "Observability", score: scores.observability, status: statusFromScore(scores.observability), summary: "Central logging, tracing, health dashboard" },
-        { key: "resilience", label: "Resilience", score: scores.resilience, status: statusFromScore(scores.resilience), summary: "Retry, timeout, circuit breaker, queue handling" },
-        { key: "backup", label: "Backup & Recovery", score: scores.backup, status: statusFromScore(scores.backup), summary: "Automated backups, DR plan, integrity validation" },
-        { key: "security", label: "Security Hardening", score: scores.security, status: statusFromScore(scores.security), summary: "Auth, RBAC, rate limiting, security headers" },
-        { key: "scalability", label: "Scalability", score: scores.scalability, status: statusFromScore(scores.scalability), summary: "Horizontal scaling, caching, DB optimization" },
-        { key: "operations", label: "Operations Playbook", score: scores.operations, status: statusFromScore(scores.operations), summary: "Deployment, rollback, incident, emergency procedures" },
-        { key: "quality", label: "Production Quality", score: scores.quality, status: statusFromScore(scores.quality), summary: "Performance, accessibility, SEO, reliability gates" },
+        { key: "observability", label: "Observability", score: scores.observability, status: statusFromScore(scores.observability), summary: "Observability coverage has not been fully verified." },
+        { key: "resilience", label: "Resilience", score: scores.resilience, status: statusFromScore(scores.resilience), summary: "Based on visible runtime resilience state; load and failure testing remain pending." },
+        { key: "backup", label: "Backup & Recovery", score: scores.backup, status: statusFromScore(scores.backup), summary: "Backup verification records are checked; disaster-recovery failover remains unverified." },
+        { key: "security", label: "Security Hardening", score: scores.security, status: statusFromScore(scores.security), summary: "Live authentication, authorization, and security verification remains pending." },
+        { key: "scalability", label: "Scalability", score: scores.scalability, status: statusFromScore(scores.scalability), summary: "Load testing, caching effectiveness, and database optimization are not verified." },
+        { key: "operations", label: "Operations Playbook", score: scores.operations, status: statusFromScore(scores.operations), summary: "Deployment and recovery runbooks have not been verified by drills." },
+        { key: "quality", label: "Production Quality", score: scores.quality, status: statusFromScore(scores.quality), summary: "Production quality checks are pending recorded verification." },
     ];
 }
 
