@@ -11,7 +11,7 @@ import { HERO_CONTENT } from "@/src/modules/company-launch-kit/data/home-content
  * advertised something the site no longer said. Sourcing both from one place
  * makes that class of drift impossible.
  */
-export const alt = "Arjun Automation — AI automation for business operations";
+export const alt = "Arjun Automation Enterprises — WhatsApp and school software";
 
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
