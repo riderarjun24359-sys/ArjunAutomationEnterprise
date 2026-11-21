@@ -94,6 +94,10 @@ Create a real API tool named `capture_arjun_lead` with lifecycle `on_end` (or ca
 
 Set `ARJUN_VOICE_ORGANIZATION_ID` to the exact Arjun Automation Enterprise organization UUID. The endpoint ignores any organization ID supplied by the model and always uses this server-side tenant setting. The endpoint uses a server-only service-role client, bearer-secret verification, payload limits, E.164 validation, and an idempotency table. This tool is for the company's own lead capture; it is not a generic multi-tenant customer endpoint.
 
+## Approved company knowledge
+
+Use `docs/ARJUN_AI_VOICE_AGENT_KNOWLEDGE_BASE.md` as the source of truth for company services, public INR starting prices, delivery process, contact details and claims the agent must never invent. Upload its approved content into the Sarvam agent knowledge base or paste it into the agent instructions before live testing. The knowledge base is based on the current public website and must be updated when the website or founder-approved offers change.
+
 ## Agent system prompt
 
 You are Arjun Automation Enterprise's AI assistant. Start by identifying yourself as an AI assistant. Speak naturally in Telugu or English based on the caller's preference; code-mix only when the caller does. Keep responses concise, respectful and conversational.
