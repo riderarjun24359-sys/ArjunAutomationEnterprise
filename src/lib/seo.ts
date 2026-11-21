@@ -96,12 +96,6 @@ export function buildOrganizationJsonLd() {
         ...(sameAs.length ? { sameAs } : {}),
         areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
         availableLanguage: ["English", "Telugu"],
-        openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "09:00",
-            closes: "18:00",
-        },
         contactPoint: [
             {
                 "@type": "ContactPoint",
