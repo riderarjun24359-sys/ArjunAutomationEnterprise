@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, MessageCircle, Phone } from "lucide-react";
+import { MessageCircle, Phone } from "lucide-react";
 import { LeadForm } from "@/src/modules/company-launch-kit/components/LeadForm";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import {
     COMPANY_PROFILE,
-    formatAddress,
     HAS_PHONE,
     WHATSAPP_DEFAULT_MESSAGE,
     whatsappLink,
@@ -44,7 +43,6 @@ const QUALIFICATION_STEPS = [
 const WHATSAPP_URL = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
 
 /** Single-line registered address, omitting any part not yet configured. */
-const addressLine = formatAddress();
 
 export default function ContactPage() {
     return (
@@ -89,39 +87,7 @@ export default function ContactPage() {
 
                          </div>
 
-                            <dl className="mt-8 space-y-4">
-                                {addressLine ? (
-                                    <div>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                            Registered office
-                                        </dt>
-                                        <dd className="mt-1 flex items-start gap-2 text-[var(--premium-fg-muted)]">
-                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                                            <span>{addressLine}</span>
-                                        </dd>
-                                    </div>
-                                ) : null}
-
-                                {COMPANY_PROFILE.gstin ? (
-                                    <div>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                            GSTIN
-                                        </dt>
-                                        <dd className="mt-1 text-[var(--premium-fg-muted)]">
-                                            {COMPANY_PROFILE.gstin}
-                                        </dd>
-                                    </div>
-                                ) : null}
-
-                                <div>
-                                    <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                        Office hours
-                                    </dt>
-                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">
-                                        {COMPANY_PROFILE.officeHours}
-                                    </dd>
-                                </div>
-                            </dl>
+                            <p className="mt-8 text-sm text-[var(--premium-fg-muted)]">Serving Andhra Pradesh and Telangana.</p>
                         </section>
 
                         <section aria-labelledby="booking-heading">
