@@ -70,7 +70,7 @@ export async function createPriyaOutboundCall(
 
     if (provider === "vapi") {
         const result = await postJson<{ id?: string }>(
-            "https://api.vapi.ai/call/phone",
+            "https://api.vapi.ai/call",
             requiredEnv("VAPI_PRIVATE_KEY"),
             {
                 assistantId: requiredEnv("VAPI_PRIYA_ASSISTANT_ID"),
