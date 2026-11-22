@@ -80,3 +80,16 @@
 @media (prefers-reduced-motion: reduce) {
   .premium-theme *, .premium-theme *::before, .premium-theme *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+.premium-theme :is(h1,h2,h3,h4,h5,h6) { font-family: var(--font-manrope), var(--font-inter), sans-serif; }
+.premium-theme h1 { font-size: 56px; line-height: 60px; font-weight: 800; letter-spacing: -.02em; }
+.premium-theme h2 { font-size: 40px; line-height: 46px; font-weight: 800; letter-spacing: -.02em; }
+.premium-theme h3 { font-size: 24px; line-height: 32px; font-weight: 700; }
+.premium-theme p, .premium-theme li { font-size: 18px; line-height: 30px; }
+.premium-theme small, .premium-theme .text-sm { font-size: 14px; line-height: 22px; }
+.premium-theme :lang(te) { font-family: var(--font-noto-telugu), sans-serif; line-height: 1.8; letter-spacing: normal; }
+@media (max-width: 767px) {
+  .premium-theme h1 { font-size: 36px; line-height: 42px; }
+  .premium-theme h2 { font-size: 28px; line-height: 34px; }
+  .premium-theme p, .premium-theme li { font-size: 16px; line-height: 26px; }
+}
