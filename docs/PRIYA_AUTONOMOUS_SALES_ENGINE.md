@@ -36,8 +36,10 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 |---|---|---|
 | `POST /api/ai-sales/consents` | Admin-recorded consent evidence | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/record-consent` | Record explicit verbal consent during a call | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/capture-lead` | Capture a verified caller and structured qualification profile | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
 | `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
+| `POST /api/ai-sales/followups` | Schedule a consent-verified future callback/follow-up | Arjun OS session + automationManage |
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
@@ -81,6 +83,40 @@ Use a Vapi phone assistant with the Priya sales prompt and dynamic variables. Th
 - `assistantOverrides.variableValues` containing lead name, company name, requirement, call purpose, preferred language and the internal `call_event_id`; it also attaches the same ID in call metadata for webhook correlation
 
 Create the following server tool definitions in the Vapi dashboard. Set the server URL to the corresponding Arjun OS route and configure Bearer authentication with `PRIYA_SALES_TOOL_SECRET`.
+
+### capture_qualified_lead
+
+Parameters:
+
+\`\`\`json
+{
+  "type": "object",
+  "properties": {
+    "interactionId": { "type": "string" },
+    "leadName": { "type": "string" },
+    "companyName": { "type": "string" },
+    "email": { "type": "string" },
+    "phoneNumber": { "type": "string" },
+    "city": { "type": "string" },
+    "industry": { "type": "string" },
+    "painPoint": { "type": "string" },
+    "serviceInterest": { "type": "string" },
+    "decisionMaker": { "type": "string" },
+    "budgetRange": { "type": "string" },
+    "buyingTimeline": { "type": "string" },
+    "nextAction": { "type": "string" },
+    "callSummary": { "type": "string" },
+    "direction": { "type": "string", "enum": ["inbound", "outbound"] },
+    "durationSeconds": { "type": "number" },
+    "consentToStore": { "type": "boolean", "const": true },
+    "followUpRequested": { "type": "boolean" }
+  },
+  "required": ["interactionId", "leadName", "phoneNumber", "consentToStore"],
+  "additionalProperties": false
+}
+\`\`\`
+
+Endpoint: \`POST /api/ai-sales/tools/capture-lead\`. The server verifies the provider call ID and caller number against a tracked call event, stores a structured qualification profile, and computes a deterministic lead score.
 
 ### record_caller_consent
 
@@ -202,7 +238,7 @@ Do not store full call transcripts in the consent ledger. Apply the platform's p
 
 ## Follow-up engine
 
-`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. The SQL claim function uses `FOR UPDATE SKIP LOCKED`, checks the consent age/revocation and suppression ledger, and only claims work during the configured IST calling window. The authenticated dispatcher rechecks consent and suppression immediately before each provider call. The n8n Schedule Trigger should call `POST /api/ai-sales/dispatch-followups` every minute with the dispatcher Bearer secret. The outbound API rechecks:
+`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. The founder/admin follow-up API creates pending queue rows only after verifying the lead, matching consent, consent age/revocation and suppression ledger. The SQL claim function uses `FOR UPDATE SKIP LOCKED`, rechecks consent and suppression, and only claims work during the configured IST calling window. The authenticated dispatcher rechecks consent and suppression immediately before each provider call. The n8n Schedule Trigger should call `POST /api/ai-sales/dispatch-followups` every minute with the dispatcher Bearer secret. The outbound API rechecks:
 - Organization match
 - Consent ID, phone number and purpose match
 - Consent has not been revoked and is no older than 30 days
@@ -230,7 +266,7 @@ Explain only relevant services from the approved company knowledge base. Do not 
 
 For outbound calls, state your identity and the exact reason for the call. If the person says they did not request the call, asks you to stop, or says not to call again, apologise, invoke register_do_not_call, and end the call. Never argue or attempt another pitch after an opt-out.
 
-Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. The tool verifies the phone number and provider interaction against a tracked inbound call event. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
+Before saving a lead, ask permission to save the caller's contact details and requirement. Only an unambiguous yes permits capture_qualified_lead. Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. The tool verifies the phone number and provider interaction against a tracked inbound call event. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
 
 For pricing, use calculate_approved_quote only after a CRM lead ID and approved service code are available. Never calculate a discount yourself. You may negotiate only within the tool's returned approved price and discount limit. If the customer requests a lower price, use the tool's counter-offer and explain that any further reduction needs founder approval. Never promise an unapproved discount, custom payment term, scope change or contract.
 
