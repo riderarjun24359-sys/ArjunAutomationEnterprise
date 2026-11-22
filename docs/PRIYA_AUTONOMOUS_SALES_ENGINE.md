@@ -37,6 +37,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `POST /api/ai-sales/consents` | Admin-recorded consent evidence | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/record-consent` | Record explicit verbal consent during a call | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/schedule-followup` | Schedule a requested callback after matching consent is recorded | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/book-demo` | Check Google Calendar and book a 20-minute Meet demo | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/capture-lead` | Capture a verified caller and structured qualification profile | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
 | `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
@@ -68,6 +69,8 @@ Sales engine:
 - `VAPI_PRIYA_WEBHOOK_SECRET` — Vapi Server URL secret; Vapi sends it in `x-vapi-secret`
 - `RETELL_WEBHOOK_API_KEY` — Retell API key marked as the webhook key in Retell settings; used to verify `x-retell-signature`
 - `PRIYA_SALES_DISPATCH_SECRET` — high-entropy secret for the n8n scheduled follow-up dispatcher
+- `N8N_DEMO_BOOKING_WEBHOOK_URL` — HTTPS URL for imported workflow 04
+- `N8N_DEMO_BOOKING_WEBHOOK_SECRET` — bearer secret configured as n8n Header Auth for workflow 04
 - `PRIYA_JARVIS_DISPATCH_SECRET` — high-entropy secret for scheduled/triggered Jarvis calls
 - `ARJUN_PERSONAL_PHONE_NUMBER` — owner's personal +91 E.164 number, server-only
 - `ARJUN_JARVIS_OWNER_USER_ID` — Arjun OS user UUID allowed to trigger manual Jarvis calls
@@ -151,6 +154,30 @@ Parameters:
 }
 ```
 Endpoint: `POST /api/ai-sales/tools/record-consent`.
+
+### book_demo_slot
+
+Parameters:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "leadId": { "type": "string" },
+    "startAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Requested start time with an explicit +05:30 offset for Asia/Kolkata"
+    },
+    "attendeeName": { "type": "string" },
+    "attendeeEmail": { "type": "string" }
+  },
+  "required": ["leadId", "startAt"],
+  "additionalProperties": false
+}
+```
+
+Endpoint: `POST /api/ai-sales/tools/book-demo`. The server asks n8n to check Google Calendar, create a 20-minute event with a Google Meet link, and return two verified alternatives if the requested slot is busy. It then records the meeting and advances the CRM deal to demo_booked.
 
 ### schedule_customer_followup
 
@@ -327,7 +354,7 @@ Explain only relevant services from the approved company knowledge base. Do not 
 
 For outbound calls, state your identity and the exact reason for the call. If the person says they did not request the call, asks you to stop, or says not to call again, apologise, invoke register_do_not_call, and end the call. Never argue or attempt another pitch after an opt-out.
 
-Before saving a lead, ask permission to save the caller's contact details and requirement. Only an unambiguous yes permits capture_qualified_lead. Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. The tool verifies the phone number and provider interaction against a tracked inbound call event. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
+Use book_demo_slot only after the prospect agrees to a specific 20-minute demo time. Interpret and speak all times in Asia/Kolkata. If the calendar reports the slot busy, offer only the alternatives returned by the tool. Before saving a lead, ask permission to save the caller's contact details and requirement. Only an unambiguous yes permits capture_qualified_lead. Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. The tool verifies the phone number and provider interaction against a tracked inbound call event. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
 
 For pricing, use calculate_approved_quote only after a CRM lead ID and approved service code are available. Never calculate a discount yourself. You may negotiate only within the tool's returned approved price and discount limit. If the customer requests a lower price, use the tool's counter-offer and explain that any further reduction needs founder approval. Never promise an unapproved discount, custom payment term, scope change or contract.
 
