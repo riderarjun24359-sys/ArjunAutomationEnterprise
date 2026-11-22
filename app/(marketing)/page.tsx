@@ -41,7 +41,7 @@ export default function HomePage() {
                 <div className="premium-container grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
                     <div>
                         <p className="text-sm font-semibold uppercase tracking-wider text-[var(--primary)]">Software · AI Automation · Business Systems</p>
-                        <h1 className="mt-5 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-[56px]">Software that runs your business, so you can grow it.</h1>
+                        <h1 className="mt-5 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-[56px]">Software that runs your business, so you can <em className="fluid-accent">grow</em> it.</h1>
                         <p className="mt-6 max-w-2xl text-lg leading-8">We design and build custom software, AI automation and business systems for schools, retailers, clinics and growing companies.</p>
                         <div className="mt-8 flex flex-wrap gap-3">
                             <Link href="/contact" className="inline-flex min-h-14 items-center justify-center rounded-xl bg-[var(--primary)] px-6 py-3 font-semibold text-white hover:bg-[var(--primary-hover)]">Book a consultation</Link>
