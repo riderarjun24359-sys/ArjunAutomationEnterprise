@@ -158,6 +158,7 @@ export async function POST(request: Request) {
         phone_number: phoneNumber,
         purpose,
         status: "queued",
+        extracted_variables: { followup_id: queued.id, idempotency_key: idempotencyKey },
         created_by: secured.context.user.id,
     });
 
