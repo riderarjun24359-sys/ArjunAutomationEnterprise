@@ -23,16 +23,16 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
             <div className="grid gap-6 xl:grid-cols-2">
                 <Section title="System Health">
                     <p className="text-3xl font-bold">{dash.systemHealth}%</p>
-                    <p className="text-sm text-[var(--dos-text-secondary)]">Overall command score {dash.overallScore}%</p>
+                    <p className="text-sm text-[var(--dos-text-secondary)]">Overall command score {dash.overallScore > 0 ? `${dash.overallScore}%` : "Not reported"}</p>
                     <div className="grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-tertiary)]">
-                        <span>Client health {dash.clientHealth}%</span>
+                        <span>Client health {dash.clientHealth > 0 ? `${dash.clientHealth}%` : "Not reported"}</span>
                         <span>Agent health {Math.round(dash.agents.reduce((s, a) => s + a.healthScore, 0) / Math.max(1, dash.agents.length))}%</span>
                     </div>
                 </Section>
 
                 <Section title="Revenue Summary">
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">${Math.round(dash.revenue.mrr).toLocaleString()}</p></div>
+                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">{dash.revenue.mrr > 0 ? `₹${Math.round(dash.revenue.mrr).toLocaleString("en-IN")}` : "Not reported"}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Active clients</p><p className="text-xl font-bold">{dash.revenue.activeClients}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Open invoices</p><p className="text-xl font-bold">{dash.revenue.openInvoices}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Renewals due</p><p className="text-xl font-bold">{dash.revenue.renewalsDue}</p></div>
@@ -59,7 +59,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                 </Section>
             </div>
 
-            <Section title="AI Agent Status">
+            <Section title="AI subsystem indicators (heuristic, not live autonomous agents)">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {dash.agents.map((agent) => (
                         <div key={agent.key} className="rounded-lg border border-[var(--dos-border)] p-3">
@@ -67,7 +67,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                                 <p className="text-sm font-medium">{agent.label}</p>
                                 <Badge variant={agent.status === "degraded" ? "error" : agent.status === "processing" ? "warning" : "info"}>{agent.status}</Badge>
                             </div>
-                            <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">{agent.healthScore}% health</p>
+                            <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">{agent.healthScore}% heuristic score</p>
                         </div>
                     ))}
                 </div>

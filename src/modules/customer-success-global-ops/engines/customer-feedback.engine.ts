@@ -5,7 +5,7 @@ function uid(prefix: string): string {
 }
 
 export function buildDefaultFeedback(avgSatisfaction: number): FeedbackEntry[] {
-    const csat = avgSatisfaction > 0 ? avgSatisfaction : 4.2;
+    const csat = avgSatisfaction;
     return [
         { id: uid("fb"), type: "csat", score: csat, comment: "Onboarding experience was smooth.", status: "reviewed", createdAt: new Date().toISOString() },
         { id: uid("fb"), type: "nps", score: 8, comment: "Would recommend with stronger reporting.", status: "open", createdAt: new Date().toISOString() },
@@ -30,10 +30,5 @@ export function computeNpsScore(feedback: FeedbackEntry[]): number {
 }
 
 export function buildSatisfactionTrend(csat: number, nps: number) {
-    return [
-        { period: "W-3", csat: Math.max(1, csat - 0.3), nps: Math.max(-100, nps - 10) },
-        { period: "W-2", csat: Math.max(1, csat - 0.1), nps: Math.max(-100, nps - 5) },
-        { period: "W-1", csat, nps },
-        { period: "Current", csat, nps },
-    ];
+    return [{ period: "Current", csat, nps }];
 }

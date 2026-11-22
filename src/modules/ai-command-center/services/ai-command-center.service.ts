@@ -42,7 +42,7 @@ export class AiCommandCenterService {
             fetchProductionSnapshot(ctx),
         ]);
 
-        const deliveryHealth = globalOps.deliveryHealth || delivery.qualityPassRate;
+        const deliveryHealth = globalOps.deliveryHealth ?? delivery.qualityPassRate;
         const systemHealth = computeSystemHealth({
             productionScore: production.overallScore,
             platformHealth: production.platformHealth,
@@ -71,7 +71,7 @@ export class AiCommandCenterService {
             openInvoices: business.openInvoices,
             renewalsDue: globalOps.renewalsDue,
             pipelineLeads: business.leads,
-            mrrEstimate: globalOps.mrr || undefined,
+            mrrEstimate: globalOps.mrr,
         });
 
         const decisions = proposeDecisions({

@@ -9,7 +9,7 @@ export function buildRevenueSummary(input: {
     mrrEstimate?: number;
 }): RevenueSummary {
     return {
-        mrr: input.mrrEstimate ?? Math.max(0, input.activeClients * 2500),
+        mrr: input.mrrEstimate ?? 0,
         openInvoices: input.openInvoices,
         renewalsDue: input.renewalsDue,
         activeClients: input.activeClients,
@@ -18,8 +18,9 @@ export function buildRevenueSummary(input: {
 }
 
 export function computeOverallScore(scores: number[]): number {
-    if (!scores.length) return 0;
-    return clampScore(scores.reduce((s, n) => s + n, 0) / scores.length);
+    const reported = scores.filter((score) => score > 0);
+    if (!reported.length) return 0;
+    return clampScore(reported.reduce((s, n) => s + n, 0) / reported.length);
 }
 
 export function formatExecutiveBrief(input: {

@@ -29,13 +29,13 @@ function statusFromScore(score: number): ReadinessStatus {
 
 function buildPillars(scores: Record<string, number>): PillarScore[] {
     return [
-        { key: "observability", label: "Observability", score: scores.observability, status: statusFromScore(scores.observability), summary: "Central logging, tracing, health dashboard" },
-        { key: "resilience", label: "Resilience", score: scores.resilience, status: statusFromScore(scores.resilience), summary: "Retry, timeout, circuit breaker, queue handling" },
-        { key: "backup", label: "Backup & Recovery", score: scores.backup, status: statusFromScore(scores.backup), summary: "Automated backups, DR plan, integrity validation" },
-        { key: "security", label: "Security Hardening", score: scores.security, status: statusFromScore(scores.security), summary: "Auth, RBAC, rate limiting, security headers" },
-        { key: "scalability", label: "Scalability", score: scores.scalability, status: statusFromScore(scores.scalability), summary: "Horizontal scaling, caching, DB optimization" },
-        { key: "operations", label: "Operations Playbook", score: scores.operations, status: statusFromScore(scores.operations), summary: "Deployment, rollback, incident, emergency procedures" },
-        { key: "quality", label: "Production Quality", score: scores.quality, status: statusFromScore(scores.quality), summary: "Performance, accessibility, SEO, reliability gates" },
+        { key: "observability", label: "Observability", score: scores.observability, status: statusFromScore(scores.observability), summary: "Observability coverage has not been fully verified." },
+        { key: "resilience", label: "Resilience", score: scores.resilience, status: statusFromScore(scores.resilience), summary: "Based on visible runtime resilience state; load and failure testing remain pending." },
+        { key: "backup", label: "Backup & Recovery", score: scores.backup, status: statusFromScore(scores.backup), summary: "Backup verification records are checked; disaster-recovery failover remains unverified." },
+        { key: "security", label: "Security Hardening", score: scores.security, status: statusFromScore(scores.security), summary: "Live authentication, authorization, and security verification remains pending." },
+        { key: "scalability", label: "Scalability", score: scores.scalability, status: statusFromScore(scores.scalability), summary: "Load testing, caching effectiveness, and database optimization are not verified." },
+        { key: "operations", label: "Operations Playbook", score: scores.operations, status: statusFromScore(scores.operations), summary: "Deployment and recovery runbooks have not been verified by drills." },
+        { key: "quality", label: "Production Quality", score: scores.quality, status: statusFromScore(scores.quality), summary: "Production quality checks are pending recorded verification." },
     ];
 }
 
@@ -83,13 +83,13 @@ export class ProductionReadinessService {
         });
 
         const pillarScores = {
-            observability: Math.min(98, 80 + observability.logs.length / 5),
+            observability: 0,
             resilience: reliabilityScore,
-            backup: backupVerified ? 92 : 65,
+            backup: backupVerified ? 100 : 0,
             security: security.score,
-            scalability: 78,
-            operations: 90,
-            quality: 85,
+            scalability: 0,
+            operations: 0,
+            quality: 0,
         };
 
         const overallScore = Math.round(Object.values(pillarScores).reduce((a, b) => a + b, 0) / Object.values(pillarScores).length);
@@ -100,8 +100,8 @@ export class ProductionReadinessService {
             status: healthReport.status,
             platformHealth: health.score,
             securityStatus: security.score,
-            performanceStatus: Math.min(98, Math.round(100 - (stats.avgResponseTimeMs ?? 200) / 50)),
-            databaseHealth: 90,
+            performanceStatus: stats.avgResponseTimeMs != null ? Math.max(0, Math.min(100, Math.round(100 - stats.avgResponseTimeMs / 50))) : 0,
+            databaseHealth: 0,
             aiHealth,
             deliveryHealth,
             systemAlerts: buildSystemAlerts({ openErrors: resilience.errors.length, riskScore, backupVerified }),
@@ -129,35 +129,35 @@ export class ProductionReadinessService {
             backupRecovery: {
                 backups: backup.backups.map((b) => ({ id: b.id, type: b.type, status: b.status, verified: b.status === "verified" || Boolean(b.verifiedAt), createdAt: b.createdAt })),
                 lastVerified: backup.backups.find((b) => b.verifiedAt)?.verifiedAt ?? null,
-                drPlanStatus: backup.drPlan[0]?.status ?? "configured",
+                drPlanStatus: backup.drPlan[0]?.status ?? "not_verified",
                 integrityChecks: [
                     { name: "Backup checksum", passed: backupVerified },
                     { name: "Restore simulation", passed: backup.backups.some((b) => b.restoreSimulated || b.status === "verified") },
-                    { name: "DR failover validation", passed: true },
+                    { name: "DR failover validation", passed: false },
                 ],
             },
             security,
             scalability: {
-                concurrentUsersCapacity: 5000,
-                databaseOptimization: "Org-scoped indexes on all tenant tables; RLS enforced",
-                cachingStrategy: "Next.js static generation + optimizePackageImports; server-first data fetching",
-                horizontalScaling: "Stateless Next.js deployment; Supabase connection pooling ready",
+                concurrentUsersCapacity: 0,
+                databaseOptimization: "Database indexes and tenant RLS require live verification before production use.",
+                cachingStrategy: "Caching effectiveness has not been measured.",
+                horizontalScaling: "Horizontal scaling capacity has not been load-tested.",
                 recommendations: ["Enable Redis cache layer for hot read paths", "Add read replicas at 10k+ concurrent users"],
             },
             productionQuality: {
-                dimensions: QUALITY_GATE_DIMENSIONS.map((name, i) => ({
+                dimensions: QUALITY_GATE_DIMENSIONS.map((name) => ({
                     name,
-                    score: 80 + (i % 5) * 3,
-                    passed: i !== 6,
+                    score: 0,
+                    passed: false,
                 })),
                 verifyScripts: [
-                    { name: "production-remediation", status: "pass" },
-                    { name: "platform-operations", status: "pass" },
-                    { name: "security-center", status: "pass" },
-                    { name: "launch-readiness", status: "pass" },
-                    { name: "delivery-engine", status: "pass" },
+                    { name: "production-remediation", status: "pending" },
+                    { name: "platform-operations", status: "pending" },
+                    { name: "security-center", status: "pending" },
+                    { name: "launch-readiness", status: "pending" },
+                    { name: "delivery-engine", status: "pending" },
                 ],
-                overallPassed: overallScore >= 80,
+                overallPassed: false,
             },
         };
     }

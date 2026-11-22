@@ -24,11 +24,22 @@ export function AiCommandCenterPage() {
                 <Button size="sm" variant="secondary" onClick={() => void data.refresh()}>Refresh</Button>
             </div>
 
+            {data.error && (
+                <Card>
+                    <div className="space-y-2">
+                        <p className="font-semibold text-[var(--dos-text-primary)]">AI Command Center data unavailable</p>
+                        <p className="text-sm text-[var(--dos-text-secondary)]">{data.error}</p>
+                        <p className="text-xs text-[var(--dos-text-tertiary)]">Health scores are hidden until the connected data sources respond successfully.</p>
+                        <Button size="sm" variant="secondary" onClick={() => void data.refresh()}>Try again</Button>
+                    </div>
+                </Card>
+            )}
+
             <StaggerReveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">System health</p><p className="mt-1 text-2xl font-bold">{dash?.systemHealth ?? "—"}%</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Client health</p><p className="mt-1 text-2xl font-bold">{dash?.clientHealth ?? "—"}%</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Support SLA</p><p className="mt-1 text-2xl font-bold">{dash?.supportSla.slaCompliance ?? "—"}%</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Delivery health</p><p className="mt-1 text-2xl font-bold">{dash?.deliveryStatus.deliveryHealth ?? "—"}%</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">System health</p><p className="mt-1 text-2xl font-bold">{dash?.systemHealth ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Client health</p><p className="mt-1 text-2xl font-bold">{dash && dash.clientHealth > 0 ? `${dash.clientHealth}%` : "Not reported"}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Support SLA</p><p className="mt-1 text-2xl font-bold">{dash?.supportSla.slaCompliance ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Delivery health</p><p className="mt-1 text-2xl font-bold">{dash?.deliveryStatus.deliveryHealth ?? "—"}{dash ? "%" : ""}</p></Card></StaggerRevealItem>
             </StaggerReveal>
 
             <Card>

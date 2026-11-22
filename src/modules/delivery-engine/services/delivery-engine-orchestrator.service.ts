@@ -70,7 +70,7 @@ export class DeliveryEngineService {
     async getDashboard(ctx: DeliveryEngineContext): Promise<DeliveryEngineDashboard> {
         const orgId = await this.getOrgId(ctx);
         if (!orgId) {
-            return buildDashboardMetrics(10, 0, [], 100, 100, 0, 0);
+            throw new Error("No organization is linked to this account. Finish workspace setup before loading delivery metrics.");
         }
 
         const [blueprints, components, engagements, pipelines, quality, knowledge, aiRecs] = await Promise.all([
@@ -83,8 +83,8 @@ export class DeliveryEngineService {
             deliveryEngineRepository.listAiRecommendations(orgId),
         ]);
 
-        const pipelinePassRate = pipelines.length ? Math.round((pipelines.filter((p) => p.status === "passed").length / pipelines.length) * 100) : 100;
-        const qualityPassRate = quality.length ? Math.round((quality.filter((q) => q.passed).length / quality.length) * 100) : 100;
+        const pipelinePassRate = pipelines.length ? Math.round((pipelines.filter((p) => p.status === "passed").length / pipelines.length) * 100) : 0;
+        const qualityPassRate = quality.length ? Math.round((quality.filter((q) => q.passed).length / quality.length) * 100) : 0;
 
         return buildDashboardMetrics(
             blueprints.length,

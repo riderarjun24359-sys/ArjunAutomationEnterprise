@@ -1,17 +1,13 @@
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { productionLog } from "@/src/lib/production-logger";
 import { csgRepository } from "../customer-success-global-ops-repository";
-import { buildOnboardingSessions } from "../engines/client-onboarding.engine";
 import { generateAiRecommendations, generateImprovementBacklog } from "../engines/continuous-improvement.engine";
-import { buildDefaultFeedback, buildSatisfactionTrend, computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
+import { buildSatisfactionTrend, computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
 import {
-    buildDefaultSuccessPlans,
-    buildEscalations,
-    buildRenewals,
     computeHealthScores,
 } from "../engines/customer-success-os.engine";
 import { classifyLiveQueue, computeSupportHealth } from "../engines/global-support-center.engine";
-import { buildDeliveryMilestones, computeDeliveryHealth } from "../engines/service-delivery-control.engine";
+import { computeDeliveryHealth } from "../engines/service-delivery-control.engine";
 import { publishGlobalOpsEvent } from "../integrations/mission-core-bridge";
 import {
     fetchBusinessPlatformSnapshot,
@@ -60,18 +56,18 @@ export class CustomerSuccessGlobalOpsService {
             ])
             : [[], [], [], [], [], [], []];
 
-        const successPlans = storedPlans.length ? storedPlans : buildDefaultSuccessPlans(business.activeClients);
+        const successPlans = storedPlans;
         const healthScores = computeHealthScores(successPlans, support.openTickets);
         const customerHealth = healthScores.length
             ? Math.round(healthScores.reduce((s, h) => s + h.score, 0) / healthScores.length)
-            : 75;
-        const renewals = storedRenewals.length ? storedRenewals : buildRenewals(business.activeClients);
-        const escalations = storedEscalations.length ? storedEscalations : buildEscalations(support.incidents);
-        const onboardingSessions = buildOnboardingSessions(business.activeClients, storedOnboarding);
-        const deliveryMilestones = buildDeliveryMilestones(delivery.activeEngagements, storedMilestones);
+            : 0;
+        const renewals = storedRenewals;
+        const escalations = storedEscalations;
+        const onboardingSessions = storedOnboarding;
+        const deliveryMilestones = storedMilestones;
         const deliveryHealth = computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones);
-        const feedback = storedFeedback.length ? storedFeedback : buildDefaultFeedback(support.avgSatisfaction);
-        const csatAverage = computeCsatAverage(feedback) || support.avgSatisfaction || 4.2;
+        const feedback = storedFeedback;
+        const csatAverage = computeCsatAverage(feedback);
         const npsScore = computeNpsScore(feedback);
         const supportHealth = computeSupportHealth(support);
         const queue = classifyLiveQueue(tickets);
@@ -94,9 +90,12 @@ export class CustomerSuccessGlobalOpsService {
             deliveryHealth,
             customerHealth,
             revenueOverview: {
-                mrr: renewals.reduce((s, r) => s + r.amount / 12, 0),
+                // Only persisted renewal records represent contracted revenue.
+                // Generated placeholder renewals remain useful for UI scaffolding,
+                // but must never be presented as real MRR or upcoming renewals.
+                mrr: storedRenewals.reduce((s, renewal) => s + renewal.amount / 12, 0),
                 openInvoices: business.openInvoices,
-                renewalsDue: renewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
+                renewalsDue: storedRenewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
             },
             supportHealth,
             aiRecommendations: [],
@@ -121,9 +120,6 @@ export class CustomerSuccessGlobalOpsService {
 
         if (orgId) {
             void csgRepository.logAudit(orgId, "dashboard_load", "Global operations dashboard loaded");
-            if (!storedPlans.length && successPlans[0]) {
-                void csgRepository.upsertSuccessPlan(orgId, successPlans[0]);
-            }
             if (!storedImprovements.length) {
                 for (const item of improvementBacklog.slice(0, 3)) {
                     void csgRepository.insertImprovementItem(orgId, item);

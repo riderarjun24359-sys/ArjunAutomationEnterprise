@@ -1,6 +1,5 @@
 import { HEALTH_COMPONENTS } from "../constants";
 import type { HealthComponent, HealthScore } from "../types";
-import { mapUptimeToStatus } from "../lib/reliability-policies";
 import { getPlatformHealth } from "../integrations/mission-core-bridge";
 
 const COMPONENT_LABELS: Record<string, string> = {
@@ -19,15 +18,15 @@ export function monitorComponents(): HealthComponent[] {
     const platformHealth = getPlatformHealth();
     return HEALTH_COMPONENTS.map((id, index) => {
         const cap = platformHealth.capabilities[index];
-        const uptime = cap?.uptime ?? 99 + Math.random();
+        const uptime = cap?.uptime ?? 0;
         return {
             id,
             name: COMPONENT_LABELS[id] ?? id,
-            status: cap?.status ?? mapUptimeToStatus(uptime),
+            status: cap?.status ?? "offline",
             uptime,
-            latencyMs: Math.round(10 + Math.random() * 50),
+            latencyMs: 0,
             lastCheck: new Date().toISOString(),
-            message: cap?.message,
+            message: cap?.message ?? "No live health signal is available for this component.",
         };
     });
 }

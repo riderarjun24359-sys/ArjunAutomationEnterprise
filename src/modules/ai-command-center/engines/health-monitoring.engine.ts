@@ -7,7 +7,7 @@ export function computeClientHealth(input: {
     activeClients: number;
     openEscalations?: number;
 }): number {
-    const base = input.globalOpsCustomerHealth ?? (input.activeClients > 0 ? 80 : 70);
+    const base = input.globalOpsCustomerHealth ?? 0;
     return clampScore(base - (input.openEscalations ?? 0) * 5);
 }
 
@@ -51,7 +51,7 @@ export function buildAgentStatuses(input: {
             health < 70 ? "degraded" : (input.pendingApprovals ?? 0) > 0 && key === "orchestrator" ? "processing" : health >= 85 ? "active" : "idle";
         return {
             key,
-            label: key === "orchestrator" ? "AI Orchestrator" : `${key.toUpperCase()} AI`,
+            label: key === "orchestrator" ? "Orchestrator indicator" : `${key.toUpperCase()} subsystem`,
             status,
             healthScore: health,
             lastActivity: now,
