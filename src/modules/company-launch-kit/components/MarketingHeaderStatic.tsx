@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Menu, Phone } from "lucide-react";
-import { COMPANY_PROFILE, HAS_PHONE, WHATSAPP_DEFAULT_MESSAGE, whatsappLink } from "@/src/config/company-profile";
+import { COMPANY_PROFILE } from "@/src/config/company-profile";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 
 const NAV_ITEMS = [
@@ -12,7 +12,6 @@ const NAV_ITEMS = [
 ] as const;
 
 const phoneHref = COMPANY_PROFILE.phoneE164 ? `tel:${COMPANY_PROFILE.phoneE164}` : undefined;
-const whatsappHref = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
 
 export function MarketingHeaderStatic() {
     return (
