@@ -36,7 +36,7 @@ export function WhatsAppFloat() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Chat with ${COMPANY_PROFILE.tradingName} on WhatsApp`}
-            className="group fixed bottom-5 right-5 z-40 flex items-center gap-3 rounded-full bg-[#25D366] px-4 py-3 text-[#0b3d1f] shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition-transform duration-200 hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg, #0a0a0b)] sm:bottom-7 sm:right-7"
+            className="group fixed z-40 flex min-h-11 items-center gap-3 rounded-full bg-[#25D366] px-4 py-3 text-[#0b3d1f] shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition-transform duration-200 hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg, #0a0a0b)]" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)", right: "calc(env(safe-area-inset-right, 0px) + 1rem)" }}
         >
             <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
             <span className="hidden text-sm font-semibold sm:inline">Chat on WhatsApp</span>

@@ -8,6 +8,8 @@ const publicMarketingRoutes = [
     MARKETING_ROUTES.about,
     MARKETING_ROUTES.features,
     MARKETING_ROUTES.services,
+    MARKETING_ROUTES.schoolErp,
+    MARKETING_ROUTES.demos,
     MARKETING_ROUTES.industries,
     MARKETING_ROUTES.solutions,
     MARKETING_ROUTES.portfolio,
@@ -142,7 +144,9 @@ export async function authMiddleware(request: NextRequest) {
     const isPublicMarketingRoute =
         publicMarketingRoutes.some((route) => pathname === route || (route !== "/" && pathname.startsWith(`${route}/`))) ||
         pathname.startsWith("/portfolio/") ||
-        pathname.startsWith("/blog/");
+        pathname.startsWith("/blog/") ||
+        pathname === "/te" ||
+        pathname.startsWith("/te/");
 
     if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute) {
         return NextResponse.next();

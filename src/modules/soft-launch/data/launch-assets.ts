@@ -147,8 +147,8 @@ export const HELP_CENTER_TOPICS = [
 ] as const;
 
 export const SOFT_LAUNCH_BRANDING = {
-    productName: "Arjun Automation",
-    tagline: "Enterprise operating system for modern operations",
+    productName: "Arjun Automation Enterprises",
+    tagline: "School software, WhatsApp automation and websites for local businesses.",
     primaryColor: "#4338ca",
     faviconPath: "/brand/logos/arjun-symbol.svg",
     logoPath: "/brand/logos/arjun-symbol.svg",
@@ -168,8 +168,8 @@ export const SOFT_LAUNCH_BRANDING = {
      * SVG this path used to serve (blank share cards on every link).
      */
     ogImagePath: "/launch-kit/og-default.svg",
-    supportEmail: "support@arjunautomations.com",
-    salesEmail: "sales@arjunautomations.com",
+    supportEmail: "",
+    salesEmail: "",
 } as const;
 
 export const DOMAIN_READINESS = {

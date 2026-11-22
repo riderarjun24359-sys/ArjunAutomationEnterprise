@@ -3,7 +3,7 @@ import { buildMetadata } from "@/src/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
     title: "Cookie Policy",
-    description: "Arjun Automation cookie policy — how we use cookies and similar technologies on our website.",
+    description: "Arjun Automation Enterprises cookie policy — how we use cookies and similar technologies on our website.",
     path: "/cookies",
 });
 
@@ -32,7 +32,7 @@ export default function CookiesPage() {
                 </div>
                 <div>
                     <h2 className="text-xl font-semibold text-[var(--premium-fg)]">Contact</h2>
-                    <p className="mt-2 leading-relaxed">Questions about cookies: sales@arjunautomations.com</p>
+                    <p className="mt-2 leading-relaxed">Questions about cookies: +91 73370 28357</p>
                 </div>
             </section>
         </article>

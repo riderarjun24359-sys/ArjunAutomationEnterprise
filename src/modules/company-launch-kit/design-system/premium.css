@@ -38,7 +38,7 @@
     --premium-border-subtle: rgba(148, 163, 184, 0.08);
     --premium-glass: rgba(15, 23, 42, 0.55);
     --premium-glass-border: rgba(148, 163, 184, 0.14);
-    --premium-accent: #3b82f6;
+    --premium-accent: #2563eb;
     --premium-accent-hover: #60a5fa;
     --premium-accent-soft: rgba(59, 130, 246, 0.14);
     --premium-accent-line: rgba(139, 92, 246, 0.4);
@@ -48,7 +48,7 @@
     --premium-aurora-1: rgba(59, 130, 246, 0.16);
     --premium-aurora-2: rgba(139, 92, 246, 0.14);
     --premium-aurora-3: rgba(99, 102, 241, 0.12);
-    --premium-mesh-1: #3b82f6;
+    --premium-mesh-1: #2563eb;
     --premium-mesh-2: #8b5cf6;
     --premium-mesh-3: #6366f1;
 
@@ -478,4 +478,39 @@
         transition: none !important;
         transform: none !important;
     }
+}
+
+
+/* Public marketing copy stays comfortably readable on phones. */
+.premium-theme p,
+.premium-theme li {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+
+/* Keyboard focus remains visible across all public marketing controls. */
+.premium-theme a:focus-visible,
+.premium-theme button:focus-visible,
+.premium-theme summary:focus-visible,
+.premium-theme input:focus-visible,
+.premium-theme select:focus-visible,
+.premium-theme textarea:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 3px;
+}
+
+
+/* Keep legacy white utility surfaces readable on the dark public theme. */
+.premium-theme .bg-white {
+    background-color: var(--premium-bg-elevated) !important;
+    color: var(--premium-fg);
+}
+.premium-theme .bg-white :is(h1, h2, h3, h4, p, li, label, span, strong, small) {
+    color: inherit;
+}
+.premium-theme .bg-white :is(input, textarea, select) {
+    background-color: var(--premium-bg-secondary);
+    color: var(--premium-fg);
+    border-color: var(--premium-border);
 }

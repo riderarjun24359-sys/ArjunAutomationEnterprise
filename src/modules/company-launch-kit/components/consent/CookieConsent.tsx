@@ -86,8 +86,7 @@ export function CookieConsent() {
                                 id="cookie-consent-body"
                                 className="mt-1.5 max-w-2xl text-sm leading-relaxed text-[var(--premium-fg-muted)]"
                             >
-                                We use analytics cookies to understand which pages are useful. Nothing is loaded and
-                                nothing is tracked until you choose. Read our{" "}
+                                Optional analytics cookies help us understand how visitors use this site. They stay off until you choose. Read our{" "}
                                 <Link
                                     href={MARKETING_ROUTES.cookies}
                                     className="underline transition-colors hover:text-[var(--premium-accent)]"
@@ -109,14 +108,14 @@ export function CookieConsent() {
                             <button
                                 type="button"
                                 onClick={() => decide("reject")}
-                                className="rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold text-[var(--premium-fg)] transition-colors hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg-secondary)]"
+                                className="min-h-11 min-w-28 rounded-full border-2 border-[var(--dos-brand-primary)] px-5 py-3 text-sm font-semibold text-[var(--premium-fg)] transition-colors hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg-secondary)]"
                             >
                                 Reject
                             </button>
                             <button
                                 type="button"
                                 onClick={() => decide("accept")}
-                                className="rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white shadow-[var(--premium-accent-glow)] transition-colors hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg-secondary)]"
+                                className="min-h-11 min-w-28 rounded-full bg-[var(--dos-brand-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[var(--premium-accent-glow)] transition-colors hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg-secondary)]"
                             >
                                 Accept
                             </button>

@@ -29,6 +29,16 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
         ? input.title
         : `${input.title} | ${LAUNCH_KIT_SEO.siteName}`;
     const description = clampDescription(input.description);
+    const routePath = input.path ?? "/";
+    const isTeluguRoute = routePath === "/te" || routePath.startsWith("/te/");
+    const englishPath = isTeluguRoute ? (routePath.replace(/^\/te(?=\/|$)/, "") || "/") : routePath;
+    const translatedPaths = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"]);
+    const languageAlternates = translatedPaths.has(englishPath)
+        ? {
+              "en-IN": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
+              "te-IN": `${LAUNCH_KIT_SEO.siteUrl}/te${englishPath === "/" ? "" : englishPath}`,
+          }
+        : undefined;
 
     // No `images` key is emitted here on purpose. Route-level `opengraph-image`
     // files (src/modules/company-launch-kit/components/og/og-image.tsx) take
@@ -38,8 +48,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
     return {
         title,
         description,
-        keywords: input.keywords ?? [...LAUNCH_KIT_SEO.defaultKeywords],
-        alternates: { canonical: url },
+        alternates: { canonical: url, ...(languageAlternates ? { languages: languageAlternates } : {}) },
         robots: input.noIndex ? { index: false, follow: false } : { index: true, follow: true },
         openGraph: {
             type: "website",
@@ -80,33 +89,26 @@ export function buildOrganizationJsonLd() {
         logo: `${LAUNCH_KIT_SEO.siteUrl}/brand/logos/horizontal-blue.svg`,
         description: LAUNCH_KIT_SEO.defaultDescription,
         slogan: COMPANY_PROFILE.tagline,
-        email: COMPANY_PROFILE.emails.sales,
+        ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
         ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
         ...(address ? { address } : {}),
         ...(COMPANY_PROFILE.gstin ? { taxID: COMPANY_PROFILE.gstin } : {}),
         ...(sameAs.length ? { sameAs } : {}),
-        areaServed: "IN",
-        availableLanguage: ["English", "Hindi"],
-        openingHoursSpecification: {
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-            opens: "09:00",
-            closes: "18:00",
-        },
+        areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
+        availableLanguage: ["English", "Telugu"],
         contactPoint: [
             {
                 "@type": "ContactPoint",
                 contactType: "sales",
-                email: COMPANY_PROFILE.emails.sales,
+                ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
                 ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
-                availableLanguage: ["English", "Hindi"],
-                areaServed: "IN",
+                availableLanguage: ["English", "Telugu"],
+                areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
             },
             {
                 "@type": "ContactPoint",
                 contactType: "customer support",
-                email: COMPANY_PROFILE.emails.support,
-                availableLanguage: ["English"],
+                availableLanguage: ["English", "Telugu"],
             },
         ],
     };

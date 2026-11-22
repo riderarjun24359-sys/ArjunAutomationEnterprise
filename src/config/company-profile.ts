@@ -54,7 +54,7 @@ export interface CompanyAddress {
  * version control so they ship with the code. Environment variables still win
  * if you need to override them per-environment.
  */
-const DEFAULT_PHONE = "+91 73370 27357";
+const DEFAULT_PHONE = "+91 73370 28357";
 
 const rawPhone =
     envString("NEXT_PUBLIC_COMPANY_PHONE") ?? envString("NEXT_PUBLIC_CONTACT_PHONE") ?? DEFAULT_PHONE;
@@ -68,16 +68,16 @@ export const COMPANY_PROFILE = {
      * "Arjun Automation" because that is the spaced form used in headings and
      * logo lockups; the two are intentionally different.
      */
-    legalName: envString("NEXT_PUBLIC_COMPANY_LEGAL_NAME") ?? "ArjunAutomations",
+    legalName: "Arjun Automation Enterprises",
     /** Short trading name used in headings and logo lockups. */
-    tradingName: "Arjun Automation",
-    tagline: "Enterprise automation, delivered as a working system.",
+    tradingName: "Arjun Automation Enterprises",
+    tagline: "School software, WhatsApp automation and websites for local businesses.",
 
     emails: {
-        sales: "sales@arjunautomations.com",
-        success: "success@arjunautomations.com",
-        support: "support@arjunautomations.com",
-        careers: "careers@arjunautomations.com",
+        sales: envString("NEXT_PUBLIC_COMPANY_EMAIL") ?? "",
+        success: "",
+        support: "",
+        careers: "",
     },
 
     /** Human-readable phone, exactly as it should be printed on the page. */
@@ -100,12 +100,12 @@ export const COMPANY_PROFILE = {
      * NEXT_PUBLIC_COMPANY_ADDRESS_STREET and friends.
      */
     address: {
-        street: envString("NEXT_PUBLIC_COMPANY_ADDRESS_STREET") ?? "Balanagar",
-        city: envString("NEXT_PUBLIC_COMPANY_CITY") ?? "Secunderabad",
-        region: envString("NEXT_PUBLIC_COMPANY_REGION") ?? "Telangana",
-        postalCode: envString("NEXT_PUBLIC_COMPANY_POSTAL_CODE") ?? "500042",
-        country: envString("NEXT_PUBLIC_COMPANY_COUNTRY") ?? "India",
-        countryCode: envString("NEXT_PUBLIC_COMPANY_COUNTRY_CODE") ?? "IN",
+        street: "",
+        city: "",
+        region: "",
+        postalCode: "",
+        country: "India",
+        countryCode: "IN",
     } as CompanyAddress,
 
     /**
@@ -122,8 +122,8 @@ export const COMPANY_PROFILE = {
     gstin: envString("NEXT_PUBLIC_COMPANY_GSTIN"),
     cin: envString("NEXT_PUBLIC_COMPANY_CIN"),
 
-    officeHours: "Monday – Friday, 9:00 AM – 6:00 PM IST",
-    responseSla: "We aim to respond to qualified enquiries within one business day.",
+    officeHours: "",
+    responseSla: "We reply within 24 hours on working days.",
 
     /** External profiles. Used for footer links and Organization `sameAs`. */
     social: {
@@ -146,15 +146,13 @@ export const HAS_PHONE = Boolean(COMPANY_PROFILE.phoneE164);
  * can legitimately publish that much; only the street line and PIN are held
  * back until they are real.
  */
-export const HAS_ADDRESS = Boolean(COMPANY_PROFILE.address.city || COMPANY_PROFILE.address.street);
+export const HAS_ADDRESS = false;
 
 /**
  * True once the FULL postal address exists (street + city + PIN). Used where
  * a complete registered office is legally required.
  */
-export const HAS_FULL_ADDRESS = Boolean(
-    COMPANY_PROFILE.address.street && COMPANY_PROFILE.address.city && COMPANY_PROFILE.address.postalCode,
-);
+export const HAS_FULL_ADDRESS = false;
 
 /**
  * Postal address as a single display string, omitting any part we do not have.
@@ -203,4 +201,4 @@ export function whatsappLink(message: string): string | null {
 }
 
 export const WHATSAPP_DEFAULT_MESSAGE =
-    "Hi, I found Arjun Automation online. I'd like to discuss automating operations for my business.";
+    "Hi, I found Arjun Automation Enterprises online. I'd like to know more about your services.";

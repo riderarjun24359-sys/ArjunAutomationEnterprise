@@ -90,70 +90,28 @@ const nextConfig: NextConfig = {
     },
     async redirects() {
         return [
-            {
-                source: "/login",
-                destination: "/auth/sign-in",
-                permanent: true,
-            },
+            { source: "/login", destination: "/auth/sign-in", permanent: true },
             {
                 source: "/:path*",
-                has: [
-                    {
-                        type: "host",
-                        value: "arjunautomations.com",
-                    },
-                ],
+                has: [{ type: "host", value: "arjunautomations.com" }],
                 destination: "https://www.arjunautomations.com/:path*",
                 permanent: true,
             },
-
-            /**
-             * Portfolio → Case Studies consolidation.
-             *
-             * A content-similarity audit found the six portfolio detail pages
-             * and their six case-study counterparts were 75–84% identical (same
-             * slugs, same industries, same challenge/solution prose, same stats).
-             * Two pages targeting the same query splits ranking authority and
-             * means Google indexes neither.
-             *
-             * `/case-studies/[slug]` is the richer page — it carries the
-             * challenge, solution, implementation detail and outcomes — so each
-             * portfolio URL permanently redirects to its case-study equivalent
-             * and all link equity consolidates onto one canonical page.
-             *
-             * `/portfolio/integrations` has no case-study twin and stays live.
-             * The `/portfolio` index remains as a hub that links into both.
-             */
-            {
-                source: "/portfolio/ai-automation",
-                destination: "/case-studies/ai-automation",
-                permanent: true,
-            },
-            {
-                source: "/portfolio/ai-agents",
-                destination: "/case-studies/ai-agents",
-                permanent: true,
-            },
-            {
-                source: "/portfolio/business-automation",
-                destination: "/case-studies/business-automation",
-                permanent: true,
-            },
-            {
-                source: "/portfolio/crm",
-                destination: "/case-studies/crm",
-                permanent: true,
-            },
-            {
-                source: "/portfolio/erp",
-                destination: "/case-studies/erp",
-                permanent: true,
-            },
-            {
-                source: "/portfolio/school-management",
-                destination: "/case-studies/school-management",
-                permanent: true,
-            },
+            { source: "/industries", destination: "/services", statusCode: 301 },
+            { source: "/case-studies/:path*", destination: "/demos", statusCode: 301 },
+            { source: "/case-studies", destination: "/demos", statusCode: 301 },
+            { source: "/portfolio/:path*", destination: "/demos", statusCode: 301 },
+            { source: "/portfolio", destination: "/demos", statusCode: 301 },
+            { source: "/resources/:path*", destination: "/", statusCode: 301 },
+            { source: "/resources", destination: "/", statusCode: 301 },
+            { source: "/blog/:path*", destination: "/", statusCode: 301 },
+            { source: "/blog", destination: "/", statusCode: 301 },
+            { source: "/help", destination: "/contact", statusCode: 301 },
+            { source: "/careers", destination: "/about", statusCode: 301 },
+            { source: "/features", destination: "/services", statusCode: 301 },
+            { source: "/solutions", destination: "/services", statusCode: 301 },
+            { source: "/faq", destination: "/#faq", statusCode: 301 },
+            { source: "/sitemap", destination: "/", statusCode: 301 },
         ];
     },
     async headers() {

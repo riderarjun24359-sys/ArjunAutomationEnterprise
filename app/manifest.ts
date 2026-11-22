@@ -5,13 +5,13 @@ import { SOFT_LAUNCH_BRANDING } from "@/src/modules/soft-launch/data/launch-asse
 export default function manifest(): MetadataRoute.Manifest {
     return {
         name: SOFT_LAUNCH_BRANDING.productName,
-        short_name: "Arjun OS",
+        short_name: "Arjun Automation Enterprises",
         description: SOFT_LAUNCH_BRANDING.tagline,
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
         theme_color: SOFT_LAUNCH_BRANDING.primaryColor,
-        lang: "en",
+        lang: "en-IN",
         // PWA install prompts require raster icons at declared sizes — an SVG
         // entry is rejected by the installability check in Chrome and Edge.
         icons: [
