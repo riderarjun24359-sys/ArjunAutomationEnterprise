@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-const TRANSLATED_PATHS = ["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"];
+const TRANSLATED_PATHS = ["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact", "/privacy", "/terms", "/thank-you"];
 
 export function LanguageToggle() {
     const pathname = usePathname() || "/";
