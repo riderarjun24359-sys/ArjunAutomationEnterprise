@@ -120,5 +120,22 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Could not save provider call event" }, { status: 500 });
     }
 
+    const followupId = existing?.extracted_variables &&
+        typeof existing.extracted_variables === "object" &&
+        typeof (existing.extracted_variables as Record<string, unknown>).followup_id === "string"
+        ? (existing.extracted_variables as Record<string, unknown>).followup_id as string
+        : "";
+    if (followupId && status === "completed") {
+        await client.from("ai_sales_followups")
+            .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+            .eq("id", followupId)
+            .eq("organization_id", organizationId);
+    } else if (followupId && ["no_answer", "busy", "failed"].includes(status)) {
+        await client.from("ai_sales_followups")
+            .update({ status: "failed", last_error: `Voice call ended with status: ${status}`, updated_at: new Date().toISOString() })
+            .eq("id", followupId)
+            .eq("organization_id", organizationId);
+    }
+
     return NextResponse.json({ success: true, duplicate: Boolean(existing), callEvent: write.data });
 }
