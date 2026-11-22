@@ -40,7 +40,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
-| `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |\n| `POST /api/ai-sales/tools/call-event` | Ingest normalized call events after n8n verifies the provider signature | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
 
 All organization-scoped database operations use the server-only Supabase service-role client after authentication or tool-secret validation. Do not call these routes from unauthenticated browser code.
 
@@ -55,6 +55,7 @@ Sales engine:
 - `ARJUN_AI_SALES_OUTBOUND_ENABLED=false` — keep false until release gates pass
 - `ARJUN_VOICE_PROVIDER=vapi` — `vapi` or `retell`
 - `PRIYA_SALES_TOOL_SECRET` — high-entropy secret shared only with voice-platform tool authentication
+- `PRIYA_SALES_WEBHOOK_SECRET` — separate high-entropy secret used only by n8n after provider webhook signature verification
 
 Vapi:
 - `VAPI_PRIVATE_KEY`
@@ -226,7 +227,7 @@ Explain only relevant services from the approved company knowledge base. Do not 
 
 For outbound calls, state your identity and the exact reason for the call. If the person says they did not request the call, asks you to stop, or says not to call again, apologise, invoke register_do_not_call, and end the call. Never argue or attempt another pitch after an opt-out.
 
-Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
+Before recording a callback or sales-follow-up permission, clearly ask whether the person wants ArjunAutomations to call them again about the stated requirement. Only an unambiguous yes permits record_caller_consent. The tool verifies the phone number and provider interaction against a tracked inbound call event. Do not infer consent from continuing the conversation, sharing a phone number, or asking for information.
 
 For pricing, use calculate_approved_quote only after a CRM lead ID and approved service code are available. Never calculate a discount yourself. You may negotiate only within the tool's returned approved price and discount limit. If the customer requests a lower price, use the tool's counter-offer and explain that any further reduction needs founder approval. Never promise an unapproved discount, custom payment term, scope change or contract.
 
@@ -255,7 +256,7 @@ MRR must come from active recurring billing/subscription records, not from one-t
 n8n may orchestrate:
 1. CRM lead created → check consent → queue a requested follow-up.
 2. Schedule Trigger → call an authenticated internal dispatcher for due follow-ups.
-3. Vapi/Retell call-ended webhook → verify provider signature → update call event, lead stage and activity.
+3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` dynamic variable for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
 4. Verified Razorpay payment webhook → update billing/revenue → notify Jarvis.
 5. Hot lead or high-value deal → notify founder through approved WhatsApp template.
 6. Daily 09:00 Asia/Kolkata → aggregate persisted metrics → initiate Jarvis briefing.
