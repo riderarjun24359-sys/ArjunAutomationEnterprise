@@ -1,48 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
-import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { buildMetadata } from "@/src/lib/seo";
+import { whatsappLink } from "@/src/config/company-profile";
 
 export const metadata: Metadata = buildMetadata({
     title: "Thank You",
-    description: "Thank you for contacting Arjun Automation. Our team aims to respond within one business day.",
+    description: "Your enquiry has been sent to Arjun Automation Enterprises.",
     path: "/thank-you",
     noIndex: true,
 });
 
-export default function ThankYouPage() {
-    return (
-        <PremiumPageShell
-            title="Thank you for reaching out"
-            description="We have received your message. A member of the Arjun Automation team aims to respond within one business day."
-        >
-            <div className="space-y-12">
-                <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--premium-accent-soft)]">
-                        <CheckCircle2 className="h-5 w-5 text-[var(--premium-accent)]" aria-hidden="true" />
-                    </div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">
-                        Your message has been sent
-                    </h2>
-                </div>
+const whatsapp = whatsappLink("Hi, I have sent an enquiry through your website.");
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                    <Link
-                        href={MARKETING_ROUTES.home}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--dos-brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
-                    >
-                        Back to Home
-                    </Link>
-                    <Link
-                        href={MARKETING_ROUTES.solutions}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--dos-border-strong)] bg-transparent px-6 py-3 text-sm font-semibold text-[var(--premium-fg)] transition hover:border-[var(--premium-accent)] hover:text-[var(--premium-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
-                    >
-                        Explore Solutions
-                    </Link>
-                </div>
-            </div>
-        </PremiumPageShell>
-    );
+export default function ThankYouPage() {
+    return <div className="premium-container mx-auto max-w-2xl py-20 text-center sm:py-28">
+        <CheckCircle2 className="mx-auto h-12 w-12 text-[var(--success)]"/>
+        <h1 className="mt-6 text-4xl font-extrabold">Thank you. Your enquiry has been sent.</h1>
+        <p className="mt-4 text-lg leading-8">We have received your details. You can also contact us directly if you need to add anything.</p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3"><Link href="/" className="inline-flex min-h-12 items-center rounded-xl bg-[var(--primary)] px-6 py-3 font-semibold text-white">Back to home</Link>{whatsapp ? <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--wa)] px-6 py-3 font-semibold text-white"><MessageCircle className="h-5 w-5"/>WhatsApp</a> : null}</div>
+    </div>;
 }
