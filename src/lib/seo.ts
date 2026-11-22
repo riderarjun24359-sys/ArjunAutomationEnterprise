@@ -24,7 +24,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
     const description = clampDescription(input.description);
     const isTelugu = routePath === "/te" || routePath.startsWith("/te/");
     const englishPath = isTelugu ? (routePath.replace(/^\/te(?=\/|$)/, "") || "/") : routePath;
-    const translated = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"]);
+    const translated = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact", "/privacy", "/terms", "/thank-you"]);
     const languages = translated.has(englishPath) ? {
         "en-IN": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
         "te-IN": `${LAUNCH_KIT_SEO.siteUrl}/te${englishPath === "/" ? "" : englishPath}`,
