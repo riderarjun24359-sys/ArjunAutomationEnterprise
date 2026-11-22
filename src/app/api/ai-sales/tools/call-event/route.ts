@@ -130,16 +130,48 @@ export async function POST(request: Request) {
         typeof (existing.extracted_variables as Record<string, unknown>).followup_id === "string"
         ? (existing.extracted_variables as Record<string, unknown>).followup_id as string
         : "";
-    if (followupId && status === "completed") {
-        await client.from("ai_sales_followups")
-            .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-            .eq("id", followupId)
-            .eq("organization_id", organizationId);
-    } else if (followupId && ["no_answer", "busy", "failed"].includes(status)) {
-        await client.from("ai_sales_followups")
-            .update({ status: "failed", last_error: `Voice call ended with status: ${status}`, updated_at: new Date().toISOString() })
-            .eq("id", followupId)
-            .eq("organization_id", organizationId);
+    if (followupId) {
+        const completed = status === "completed";
+        const failed = ["no_answer", "busy", "failed"].includes(status);
+        if (completed) {
+            await client.from("ai_sales_followups")
+                .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+                .eq("id", followupId)
+                .eq("organization_id", organizationId);
+        } else if (failed) {
+            await client.from("ai_sales_followups")
+                .update({ status: "failed", last_error: `Voice call ended with status: ${status}`, updated_at: new Date().toISOString() })
+                .eq("id", followupId)
+                .eq("organization_id", organizationId);
+        }
+
+        if (completed || failed) {
+            const { data: followup } = await client.from("ai_sales_followups")
+                .select("lead_id")
+                .eq("id", followupId)
+                .eq("organization_id", organizationId)
+                .maybeSingle();
+            if (followup?.lead_id) {
+                await client.from("sales_call_logs").insert({
+                    organization_id: organizationId,
+                    lead_id: followup.lead_id,
+                    direction: "outbound",
+                    phone_number: phoneNumber,
+                    duration_seconds: duration ?? 0,
+                    outcome: status,
+                    notes: summary || `Customer-requested follow-up call ended with status: ${status}`,
+                    called_at: new Date().toISOString(),
+                });
+                await client.from("ai_sales_activity").insert({
+                    organization_id: organizationId,
+                    lead_id: followup.lead_id,
+                    actor: "priya",
+                    event_type: completed ? "followup_call_completed" : "followup_call_not_connected",
+                    summary: completed ? "Priya completed a scheduled customer follow-up call" : `Priya follow-up call ended with status: ${status}`,
+                    metadata: { followup_id: followupId, call_event_id: write.data.id, duration_seconds: duration ?? 0 },
+                });
+            }
+        }
     }
 
     return NextResponse.json({ success: true, duplicate: Boolean(existing), callEvent: write.data });
