@@ -74,7 +74,7 @@ export async function POST(request: Request) {
             evidence_type: "inbound_call",
             evidence_reference: interactionId,
             granted_at: new Date().toISOString(),
-            recorded_by: "00000000-0000-0000-0000-000000000000",
+            recorded_by: null,
         })
         .select("id, phone_number, purpose, granted_at")
         .single();
