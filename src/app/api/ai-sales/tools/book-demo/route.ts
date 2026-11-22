@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     if (!organizationId || !/^[0-9a-f-]{36}$/i.test(organizationId)) {
         return NextResponse.json({ error: "Sales organization is not configured" }, { status: 503 });
     }
-    if (!bookingUrl || !bookingSecret) {
-        return NextResponse.json({ error: "Google Calendar demo booking is not configured" }, { status: 503 });
+    if (!bookingUrl || !bookingSecret || !bookingUrl.startsWith("https://")) {
+        return NextResponse.json({ error: "Google Calendar demo booking requires an HTTPS n8n webhook and server secret" }, { status: 503 });
     }
 
     let body: Record<string, unknown>;
@@ -112,8 +112,16 @@ export async function POST(request: Request) {
             cache: "no-store",
             signal: AbortSignal.timeout(10_000),
         });
-        if (!response.ok) return NextResponse.json({ error: "Calendar booking service is temporarily unavailable" }, { status: 502 });
         calendarResult = await response.json() as Record<string, unknown>;
+        if (response.status === 409 || calendarResult.status === "busy" || calendarResult.available === false) {
+            return NextResponse.json({
+                success: false,
+                available: false,
+                alternatives: Array.isArray(calendarResult.alternatives) ? calendarResult.alternatives : [],
+                message: "The requested Google Calendar slot is busy.",
+            }, { status: 409 });
+        }
+        if (!response.ok) return NextResponse.json({ error: "Calendar booking service is temporarily unavailable" }, { status: 502 });
     } catch {
         return NextResponse.json({ error: "Calendar booking service timed out" }, { status: 504 });
     }
