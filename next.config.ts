@@ -96,6 +96,41 @@ const nextConfig: NextConfig = {
                 permanent: true,
             },
             {
+                source: "/case-studies",
+                destination: "/blueprints",
+                permanent: true,
+            },
+            {
+                source: "/solutions",
+                destination: "/services",
+                permanent: true,
+            },
+            {
+                source: "/features",
+                destination: "/services",
+                permanent: true,
+            },
+            {
+                source: "/faq",
+                destination: "/#faq",
+                permanent: true,
+            },
+            {
+                source: "/resources",
+                destination: "/blueprints",
+                permanent: true,
+            },
+            {
+                source: "/help",
+                destination: "/contact",
+                permanent: true,
+            },
+            {
+                source: "/careers",
+                destination: "/about",
+                permanent: true,
+            },
+            {
                 source: "/login",
                 destination: "/auth/sign-in",
                 permanent: true,
