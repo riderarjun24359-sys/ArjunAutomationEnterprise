@@ -101,6 +101,7 @@ export async function createPriyaOutboundCall(
             from_number: requiredEnv("RETELL_FROM_NUMBER"),
             to_number: input.phoneNumber,
             override_agent_id: requiredEnv("RETELL_PRIYA_AGENT_ID"),
+            metadata: { call_event_id: input.variables.call_event_id ?? "" },
             retell_llm_dynamic_variables: {
                 lead_name: input.variables.lead_name,
                 company_name: input.variables.company_name,
