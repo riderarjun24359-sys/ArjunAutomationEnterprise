@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { MessageCircle, Send } from "lucide-react";
 
 type Props = { whatsappNumber: string; telugu?: boolean };
@@ -9,19 +8,18 @@ type Props = { whatsappNumber: string; telugu?: boolean };
 const businessTypes = ["School", "College", "Shop or Supermarket", "Clinic", "Other"];
 
 export function LocalContactForm({ whatsappNumber, telugu = false }: Props) {
-    const searchParams = useSearchParams();
     const [businessType, setBusinessType] = useState("");
     const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
     const [error, setError] = useState("");
     const [whatsappUrl, setWhatsappUrl] = useState("");
 
     useEffect(() => {
-        const type = searchParams.get("type")?.toLowerCase();
+        const type = new URLSearchParams(window.location.search).get("type")?.toLowerCase();
         if (type === "school") setBusinessType("School");
         else if (type === "college") setBusinessType("College");
         else if (type === "shop") setBusinessType("Shop or Supermarket");
         else if (type === "clinic") setBusinessType("Clinic");
-    }, [searchParams]);
+    }, []);
 
     const fieldClass = "mt-2 min-h-12 w-full rounded-[10px] border-[1.5px] border-[var(--border-strong)] bg-white px-4 py-3 text-base text-[var(--ink)] outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(67,56,202,.18)]";
     const labelClass = "block text-sm font-semibold text-[var(--ink)]";
