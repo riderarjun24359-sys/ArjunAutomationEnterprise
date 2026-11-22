@@ -1,85 +1,25 @@
 import type { Metadata } from "next";
-import { COMPANY_PROFILE, formatAddress } from "@/src/config/company-profile";
 import { buildMetadata } from "@/src/lib/seo";
 
-const addressLine = formatAddress();
-
 export const metadata: Metadata = buildMetadata({
-    title: "Terms of Service",
-    description: "Arjun Automation Enterprises terms of service governing use of our website and platform services.",
+    title: "Terms",
+    description: "Terms for using the Arjun Automation Enterprises website and requesting custom software services.",
     path: "/terms",
 });
 
 export default function TermsPage() {
-    return (
-        <article className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
-            <h1 className="text-3xl font-semibold text-[var(--premium-fg)]">Terms of Service</h1>
-            <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">Last updated: March 1, 2026</p>
-
-            {/* Contracting party. Terms signed by an unidentifiable entity are
-                unenforceable, and this is the first section a customer's
-                counsel reads. Renders only configured fields. */}
-            <section className="mt-6 rounded-lg border border-[var(--premium-border)] bg-[var(--premium-bg-secondary)] p-5 text-sm text-[var(--premium-fg-muted)]">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--premium-fg-muted)]">Contracting party</h2>
-                <dl className="mt-3 space-y-1.5">
-                    <div className="flex flex-wrap gap-x-2">
-                        <dt className="font-medium">Entity:</dt>
-                        <dd>{COMPANY_PROFILE.legalName}</dd>
-                    </div>
-                    {addressLine ? (
-                        <div className="flex flex-wrap gap-x-2">
-                            <dt className="font-medium">Registered office:</dt>
-                            <dd>{addressLine}</dd>
-                        </div>
-                    ) : null}
-                    {COMPANY_PROFILE.cin ? (
-                        <div className="flex flex-wrap gap-x-2">
-                            <dt className="font-medium">CIN:</dt>
-                            <dd>{COMPANY_PROFILE.cin}</dd>
-                        </div>
-                    ) : null}
-                    {COMPANY_PROFILE.gstin ? (
-                        <div className="flex flex-wrap gap-x-2">
-                            <dt className="font-medium">GSTIN:</dt>
-                            <dd>{COMPANY_PROFILE.gstin}</dd>
-                        </div>
-                    ) : null}
-                </dl>
-            </section>
-
-            <section className="mt-8 space-y-6 text-[var(--premium-fg-muted)]">
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">1. Agreement</h2>
-                    <p className="mt-2 leading-relaxed">
-                        By accessing the {COMPANY_PROFILE.legalName} website or using our services, you agree to these
-                        Terms of Service. If you do not agree, do not use our services.
-                    </p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">2. Services</h2>
-                    <p className="mt-2 leading-relaxed">Arjun Automation Enterprises provides enterprise automation platform implementation, consulting, and managed support services. Specific scope, timelines, and pricing are defined in individual client agreements.</p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">3. Intellectual Property</h2>
-                    <p className="mt-2 leading-relaxed">Arjun Automation Enterprises OS, its modules, AI workers, industry packs, documentation, and branding are proprietary to Arjun Automation Enterprises. Client-specific configurations and data remain the property of the client.</p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">4. Acceptable Use</h2>
-                    <p className="mt-2 leading-relaxed">You may not use our platform or services for unlawful purposes, to transmit malware, to attempt unauthorized access, or to interfere with platform operations.</p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">5. Limitation of Liability</h2>
-                    <p className="mt-2 leading-relaxed">To the maximum extent permitted by law, Arjun Automation Enterprises shall not be liable for indirect, incidental, or consequential damages. Our total liability is limited to fees paid in the twelve months preceding the claim.</p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">6. Governing Law</h2>
-                    <p className="mt-2 leading-relaxed">These terms are governed by the laws of India. Disputes shall be resolved through good-faith negotiation, followed by binding arbitration if necessary.</p>
-                </div>
-                <div>
-                    <h2 className="text-xl font-semibold text-[var(--premium-fg)]">7. Contact</h2>
-                    <p className="mt-2 leading-relaxed">Questions about these terms: +91 73370 28357</p>
-                </div>
-            </section>
-        </article>
-    );
+    return <article className="premium-container max-w-3xl py-16 sm:py-20">
+        <h1 className="text-4xl font-extrabold">Terms</h1>
+        <p className="mt-3 text-sm text-[var(--muted)]">Last updated: 22 November 2026</p>
+        <section className="mt-8 space-y-4 leading-7">
+            <h2 className="text-2xl font-bold">Website information</h2>
+            <p>This website describes custom software, AI automation and business systems offered by Arjun Automation Enterprises. Information on the site is general and is not a project proposal.</p>
+            <h2 className="text-2xl font-bold">Project scope and payment</h2>
+            <p>Before work begins, the project features, price, payment stages, delivery plan and any ongoing service costs must be agreed in writing. A discussion or demo does not by itself create a project agreement.</p>
+            <h2 className="text-2xl font-bold">Your materials</h2>
+            <p>You are responsible for having permission to share the text, images, records and other materials you provide for a project.</p>
+            <h2 className="text-2xl font-bold">Contact</h2>
+            <p>For questions about these terms, email sales@arjunautomations.com or call +91 73370 27357.</p>
+        </section>
+    </article>;
 }
