@@ -55,6 +55,22 @@ export async function POST(request: Request) {
     const client = getServiceRoleClient();
     if (!client) return NextResponse.json({ error: "Sales storage is not configured" }, { status: 503 });
 
+    // A worker may crash after the voice provider accepts a call but before CRM state is updated.
+    // Never auto-retry stale processing rows: provider outcome may be unknown and a retry could call twice.
+    const staleProcessingBefore = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const { error: recoveryError } = await client.from("ai_sales_followups")
+        .update({
+            status: "failed",
+            last_error: "Provider outcome unknown after dispatcher interruption; manual review required; do not auto-retry",
+            updated_at: new Date().toISOString(),
+        })
+        .eq("organization_id", organizationId)
+        .eq("status", "processing")
+        .lt("updated_at", staleProcessingBefore);
+    if (recoveryError) {
+        return NextResponse.json({ error: "Could not recover stale follow-ups safely" }, { status: 500 });
+    }
+
     const { data, error } = await client.rpc("claim_due_ai_sales_followups", {
         p_organization_id: organizationId,
         p_limit: 10,
