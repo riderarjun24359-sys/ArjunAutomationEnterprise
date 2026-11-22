@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
@@ -101,7 +102,7 @@ function SectionTitle({ eyebrow, title, description }: { eyebrow: string; title:
     );
 }
 
-function ContactLink({ children = "Discuss your project" }: { children?: React.ReactNode }) {
+function ContactLink({ children = "Discuss your project" }: { children?: ReactNode }) {
     return (
         <Link
             href={MARKETING_ROUTES.contact}
@@ -146,7 +147,7 @@ export default function ServicesPage() {
                 </section>
 
                 <section className="mx-auto max-w-6xl space-y-10 px-5 py-14 sm:px-8 sm:py-20">
-                    {services.map((service, index) => (
+                    {services.map((service) => (
                         <article
                             id={service.id}
                             key={service.id}
