@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, feat/arjun-ai-voice-agent-foundation]
   push:
-    branches: [main]
+    branches: [main, feat/priya-autonomous-sales-engine]
   workflow_dispatch:
 
 permissions:
