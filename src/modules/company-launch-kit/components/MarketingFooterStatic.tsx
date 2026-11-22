@@ -20,7 +20,7 @@ export function MarketingFooterStatic() {
     const address = formatAddress() ?? "Balanagar, Secunderabad, Telangana 500042, India";
 
     return (
-        <footer className="border-t border-slate-800 bg-slate-950 text-slate-300">
+        <footer className="border-t border-slate-800 bg-slate-950 pb-16 text-slate-300 sm:pb-0">
             <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-14 sm:px-8 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] lg:gap-16 lg:py-16">
                 <div>
                     <Link href="/" className="inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
