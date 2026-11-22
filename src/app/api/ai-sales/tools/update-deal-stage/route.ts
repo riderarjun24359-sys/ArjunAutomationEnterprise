@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     }
 
     const { data: existing, error: dealError } = await client.from("ai_sales_deals")
-        .select("id, stage")
+        .select("id, stage, final_price_inr")
         .eq("organization_id", organizationId)
         .eq("lead_id", leadId)
         .not("stage", "in", "(won,lost)")
@@ -96,6 +96,11 @@ export async function POST(request: Request) {
         .maybeSingle();
 
     if (dealError) return NextResponse.json({ error: "Could not load active sales deal" }, { status: 500 });
+
+    if (["proposal_sent", "negotiation"].includes(requestedStage) &&
+        (!existing || existing.final_price_inr === null || Number(existing.final_price_inr) <= 0)) {
+        return NextResponse.json({ error: "A founder-policy-approved quote must exist before sending a proposal or entering price negotiation" }, { status: 409 });
+    }
 
     const currentStage = existing?.stage ?? "new";
     const allowed = TRANSITIONS[currentStage] ?? [];
