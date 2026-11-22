@@ -432,7 +432,9 @@ Three starter exports are committed under `n8n/workflows/`:
 Import each JSON in n8n using **Workflows → Import from File**. Before activating:
 - Replace `[ARJUN_OS_HOST]` with the HTTPS Arjun OS host (host only; no trailing slash).
 - Replace each bearer placeholder with the matching server secret from n8n credentials or the node header.
-- In workflow 03, create an n8n Header Auth credential named for the Jarvis event webhook and replace its placeholder credential ID.
+- In workflows 03 and 04, create n8n Header Auth credentials for the Jarvis event ingress and Priya demo-booking webhook, then replace each placeholder credential ID.
+- In workflow 04, create a Google OAuth2 credential with Google Calendar event read/write scopes and replace the Google credential placeholder in both HTTP Request nodes.
+- Workflow 03 callers must send a stable `idempotencyKey` (or `eventId`) so webhook retries cannot place duplicate Jarvis calls.
 - Activate the workflows only after the server environment flags and provider configuration are ready.
 
 The Vapi and Retell provider event webhooks are handled directly by the verified Arjun OS routes documented above; n8n should not receive unsigned raw provider events. For Razorpay, use a separate Razorpay webhook workflow that verifies the Razorpay signature and successful payment status before posting a `triggerReason=razorpay_payment` event to workflow 03. For hot leads, only post after the CRM has persisted the lead and qualification score.
