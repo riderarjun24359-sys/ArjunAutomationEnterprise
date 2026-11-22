@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/src/modules/company-launch-kit/design-system/premium.css";
+import "@/src/modules/company-launch-kit/design-system/marketing-light.css";
 import { Inter } from "next/font/google";
 import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
 import { env } from "@/src/lib/env";
@@ -8,16 +9,15 @@ import { buildMetadata } from "@/src/lib/seo";
 const inter = Inter({
     subsets: ["latin"],
     variable: "--font-inter",
-    display: "optional",
+    display: "swap",
     preload: true,
     adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {
     ...buildMetadata({
-        title: "Arjun Automation Enterprises | WhatsApp and School Management Software | Andhra Pradesh",
-        description:
-            "WhatsApp fee reminders, attendance alerts, online orders and school management software for schools, shops and clinics in Prakasam and Hyderabad.",
+        title: "Arjun Automation Enterprises | Custom Software and AI Automation | Andhra Pradesh",
+        description: "Custom software, AI automation and business systems for schools, colleges, retailers, clinics and growing businesses in Andhra Pradesh and Telangana.",
         path: "/",
     }),
     ...(env.NEXT_PUBLIC_GSC_VERIFICATION
