@@ -43,7 +43,7 @@ export function JarvisExecutiveHud() {
 
     useEffect(() => {
         let cancelled = false;
-        let timer: ReturnType<typeof setInterval> | undefined;
+
 
         const refresh = async () => {
             try {
@@ -67,7 +67,7 @@ export function JarvisExecutiveHud() {
         };
 
         void refresh();
-        timer = setInterval(() => void refresh(), 60_000);
+        const timer = setInterval(() => void refresh(), 60_000);
         return () => {
             cancelled = true;
             if (timer) clearInterval(timer);
