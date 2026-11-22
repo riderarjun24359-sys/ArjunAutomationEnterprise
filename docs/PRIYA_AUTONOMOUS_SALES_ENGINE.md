@@ -40,6 +40,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
 | `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
 | `POST /api/ai-sales/followups` | Schedule a consent-verified future callback/follow-up | Arjun OS session + automationManage |
+| `POST /api/ai-sales/jarvis/call` | Trigger an owner-only or scheduled Jarvis briefing call | Owner session or Bearer `PRIYA_JARVIS_DISPATCH_SECRET` |
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
@@ -61,16 +62,22 @@ Sales engine:
 - `PRIYA_SALES_TOOL_SECRET` — high-entropy secret shared only with voice-platform tool authentication
 - `PRIYA_SALES_WEBHOOK_SECRET` — separate high-entropy secret used only by n8n after provider webhook signature verification
 - `PRIYA_SALES_DISPATCH_SECRET` — high-entropy secret for the n8n scheduled follow-up dispatcher
+- `PRIYA_JARVIS_DISPATCH_SECRET` — high-entropy secret for scheduled/triggered Jarvis calls
+- `ARJUN_PERSONAL_PHONE_NUMBER` — owner's personal +91 E.164 number, server-only
+- `ARJUN_JARVIS_OWNER_USER_ID` — Arjun OS user UUID allowed to trigger manual Jarvis calls
+- `ARJUN_JARVIS_CALLS_ENABLED=false` — keep disabled until provider and owner configuration are complete
 
 Vapi:
 - `VAPI_PRIVATE_KEY`
 - `VAPI_PRIYA_ASSISTANT_ID`
 - `VAPI_PHONE_NUMBER_ID`
+- `VAPI_JARVIS_ASSISTANT_ID`
 
 Retell:
 - `RETELL_API_KEY`
 - `RETELL_PRIYA_AGENT_ID`
 - `RETELL_FROM_NUMBER`
+- `RETELL_JARVIS_AGENT_ID`
 
 Never commit these values. Configure them in the hosting provider's encrypted server environment.
 
@@ -274,6 +281,36 @@ Offer a demo when it helps the customer decide. A demo is not booked until the c
 
 Capture a concise, factual call summary and agreed next action. Do not collect OTPs, passwords, card numbers or unnecessary sensitive data. Escalate legal, security, contractual, refund, complaint and exceptional pricing requests to the founder.
 
+## Jarvis voice assistant setup
+
+The owner-only call endpoint is \`POST /api/ai-sales/jarvis/call\`. It uses the personal number configured on the server; the browser or n8n payload cannot choose a destination number. Manual calls require the configured owner session. Scheduled and event-driven calls require \`PRIYA_JARVIS_DISPATCH_SECRET\`.
+
+Set up a separate Jarvis assistant in Vapi or Retell with a calm British executive voice and the following system prompt:
+
+You are Jarvis, Arjun's private executive briefing assistant for Arjun Automation Enterprise. You are speaking directly to Arjun. Address him as "Sir". Sound calm, precise, loyal, warm and lightly witty; never theatrical or excessively verbose.
+
+You are an AI assistant. Give a concise briefing of about 45 seconds. Use only the dynamic values supplied by the server:
+- MRR: {{mrr_inr}}
+- New leads today: {{new_leads_today}}
+- Demos booked today: {{demos_booked_today}}
+- Urgent highlight: {{urgent_highlight}}
+- Trigger reason: {{trigger_reason}}
+
+If a metric says "Not reported", say it is not connected or not verified. Never invent revenue, MRR, payments, clients, deal values or completed work.
+
+Open with: "Good morning, Sir. Jarvis here with your Arjun Automation briefing." Adapt the greeting to the local time when appropriate.
+
+Brief in this order:
+1. State the verified MRR status.
+2. Report today's new leads and demos.
+3. State the urgent highlight.
+4. Recommend the single most useful next action. If a hot lead needs attention, recommend a prompt callback while respecting the prospect's agreed contact time. If a customer win is verified, suggest capturing a short case-study or demo clip only after customer permission.
+5. Ask whether Arjun wants the detailed briefing sent by WhatsApp. Do not claim it was sent unless a messaging tool confirms success.
+
+Do not place customer sales calls, offer discounts, change pricing, make payments, or disclose private customer data during this personal briefing. If Arjun says he is busy, offer to send a concise WhatsApp summary through a separately configured, approved messaging workflow.
+
+For the scheduled briefing, be concise. For a hot-lead or verified-payment trigger, lead with the event and its verified details, then provide the same short KPI context.
+
 ## Jarvis reporting
 
 Jarvis should report only persisted and verified data. Recommended daily briefing:
@@ -298,7 +335,8 @@ n8n may orchestrate:
 3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` from the call metadata (and dynamic variables where available) for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
 4. Verified Razorpay payment webhook → update billing/revenue → notify Jarvis.
 5. Hot lead or high-value deal → notify founder through approved WhatsApp template.
-6. Daily 09:00 Asia/Kolkata → aggregate persisted metrics → initiate Jarvis briefing.
+6. Daily 09:00 Asia/Kolkata → call `POST /api/ai-sales/jarvis/call` with `PRIYA_JARVIS_DISPATCH_SECRET` and `triggerReason=daily_briefing`.
+7. Verified hot-lead or Razorpay payment webhook → call the same endpoint with `triggerReason=hot_lead` or `triggerReason=razorpay_payment`; only trigger payment alerts after Razorpay signature and payment status verification.
 
 The application APIs and database remain the source of truth. n8n must not bypass consent, discount policy, organization isolation or do-not-contact checks. Use provider-specific signature verification; do not accept unsigned public webhooks.
 
