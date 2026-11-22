@@ -3,6 +3,7 @@ export const MARKETING_ROUTES = {
     about: "/about",
     features: "/features",
     services: "/services",
+    blueprints: "/blueprints",
     serviceItem: (slug: string) => `/services/${slug}`,
     industries: "/industries",
     schoolErp: "/school-erp",
