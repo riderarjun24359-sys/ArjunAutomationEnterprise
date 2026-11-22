@@ -45,6 +45,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/update-deal-stage` | Move a deal through guarded CRM pipeline stages | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/call-event` | Internal normalized call-event ingestion endpoint | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
 | `POST /api/ai-sales/webhooks/vapi` | Verify Vapi server secret and normalize call lifecycle events | Vapi `x-vapi-secret` |
@@ -192,6 +193,30 @@ Parameters:
 ```
 Endpoint: `POST /api/ai-sales/tools/quote`.
 
+### update_sales_deal_stage
+
+Parameters:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "leadId": { "type": "string" },
+    "stage": {
+      "type": "string",
+      "enum": ["contacted", "qualified", "demo_booked", "proposal_sent", "negotiation", "nurture", "lost"]
+    },
+    "meetingId": { "type": "string" },
+    "nextActionAt": { "type": "string", "format": "date-time" },
+    "lossReason": { "type": "string" }
+  },
+  "required": ["leadId", "stage"],
+  "additionalProperties": false
+}
+```
+
+Endpoint: `POST /api/ai-sales/tools/update-deal-stage`. Proposal and negotiation stages require a saved founder-policy-approved quote. Demo-booked requires a matching scheduled CRM meeting. The model cannot mark a deal won; only a verified payment/revenue workflow may do that.
+
 ### register_do_not_call
 
 Parameters:
@@ -306,7 +331,7 @@ Before saving a lead, ask permission to save the caller's contact details and re
 
 For pricing, use calculate_approved_quote only after a CRM lead ID and approved service code are available. Never calculate a discount yourself. You may negotiate only within the tool's returned approved price and discount limit. If the customer requests a lower price, use the tool's counter-offer and explain that any further reduction needs founder approval. Never promise an unapproved discount, custom payment term, scope change or contract.
 
-Offer a demo when it helps the customer decide. A demo is not booked until the calendar tool confirms it. A payment is not received until the payment provider verifies it. Never claim a deal is won merely because the customer sounds interested.
+Offer a demo when it helps the customer decide. A demo is not booked until the calendar tool confirms it. A payment is not received until the payment provider verifies it. Use update_sales_deal_stage to record truthful pipeline progress. A demo-booked stage requires a real CRM meeting. Proposal/negotiation requires a saved approved quote. Never mark a deal won; only verified payment processing may do that. Never claim a deal is won merely because the customer sounds interested.
 
 Capture a concise, factual call summary and agreed next action. Do not collect OTPs, passwords, card numbers or unnecessary sensitive data. Escalate legal, security, contractual, refund, complaint and exceptional pricing requests to the founder.
 
