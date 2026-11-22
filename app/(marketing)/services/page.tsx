@@ -232,7 +232,7 @@ export default function ServicesPage() {
                             Tell us what takes too much time, where enquiries get missed or which process your team wants to improve.
                             We will discuss the scope before recommending a build.
                         </p>
-                        <div className="mt-7"><ContactLink>Book a free 20-minute call</ContactLink></div>
+                        <div className="mt-7"><ContactLink>Request a free 20-minute call</ContactLink></div>
                     </div>
                 </section>
             </main>
