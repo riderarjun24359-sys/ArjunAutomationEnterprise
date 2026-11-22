@@ -16,6 +16,12 @@ export default function manifest(): MetadataRoute.Manifest {
         // entry is rejected by the installability check in Chrome and Edge.
         icons: [
             {
+                src: "/brand/logos/arjun-symbol.svg",
+                sizes: "any",
+                type: "image/svg+xml",
+                purpose: "any",
+            },
+            {
                 src: SOFT_LAUNCH_BRANDING.icon192Path,
                 sizes: "192x192",
                 type: "image/png",
