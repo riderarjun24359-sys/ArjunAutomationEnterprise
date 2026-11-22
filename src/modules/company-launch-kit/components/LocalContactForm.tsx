@@ -66,7 +66,7 @@ export function LocalContactForm({ whatsappNumber, telugu = false }: Props) {
             });
             const result = await response.json() as { success?: boolean };
             if (!response.ok || !result.success) throw new Error("send_failed");
-            window.location.assign("/thank-you");
+            window.location.assign(telugu ? "/te/thank-you" : "/thank-you");
         } catch {
             const text = [
                 t("Hi, I could not send the enquiry form. Here are my details:", "నమస్కారం, ఫారం ద్వారా పంపలేకపోయాను. నా వివరాలు ఇవి:"),
