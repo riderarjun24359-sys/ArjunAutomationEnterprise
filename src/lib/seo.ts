@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
 import { LAUNCH_KIT_SEO } from "@/src/modules/company-launch-kit/config/seo-defaults";
-import { COMPANY_PROFILE, schemaAddress, schemaSameAs } from "@/src/config/company-profile";
+import { COMPANY_PROFILE } from "@/src/config/company-profile";
 
 export interface PageMetadataInput {
     title: string;
     description: string;
     path?: string;
-    keywords?: string[];
     noIndex?: boolean;
     image?: string;
 }
 
-/**
- * Search engines truncate snippets past roughly 155–160 characters. Clipping
- * here keeps every page inside the limit without editing content by hand, and
- * trims at a word boundary so we never cut mid-word.
- */
-function clampDescription(description: string, limit = 158): string {
+function clampDescription(description: string, limit = 155): string {
     if (description.length <= limit) return description;
     const clipped = description.slice(0, limit);
     const lastSpace = clipped.lastIndexOf(" ");
@@ -24,154 +18,37 @@ function clampDescription(description: string, limit = 158): string {
 }
 
 export function buildMetadata(input: PageMetadataInput): Metadata {
-    const url = input.path ? `${LAUNCH_KIT_SEO.siteUrl}${input.path}` : LAUNCH_KIT_SEO.siteUrl;
-    const title = input.title.includes(LAUNCH_KIT_SEO.siteName)
-        ? input.title
-        : `${input.title} | ${LAUNCH_KIT_SEO.siteName}`;
-    const description = clampDescription(input.description);
     const routePath = input.path ?? "/";
-    const isTeluguRoute = routePath === "/te" || routePath.startsWith("/te/");
-    const englishPath = isTeluguRoute ? (routePath.replace(/^\/te(?=\/|$)/, "") || "/") : routePath;
-    const translatedPaths = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"]);
-    const languageAlternates = translatedPaths.has(englishPath)
-        ? {
-              "en-IN": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
-              "te-IN": `${LAUNCH_KIT_SEO.siteUrl}/te${englishPath === "/" ? "" : englishPath}`,
-          }
-        : undefined;
+    const url = `${LAUNCH_KIT_SEO.siteUrl}${routePath}`;
+    const title = input.title.includes(LAUNCH_KIT_SEO.siteName) ? input.title : `${input.title} | ${LAUNCH_KIT_SEO.siteName}`;
+    const description = clampDescription(input.description);
+    const isTelugu = routePath === "/te" || routePath.startsWith("/te/");
+    const englishPath = isTelugu ? (routePath.replace(/^\/te(?=\/|$)/, "") || "/") : routePath;
+    const translated = new Set(["/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact"]);
+    const languages = translated.has(englishPath) ? {
+        "en-IN": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
+        "te-IN": `${LAUNCH_KIT_SEO.siteUrl}/te${englishPath === "/" ? "" : englishPath}`,
+        "x-default": `${LAUNCH_KIT_SEO.siteUrl}${englishPath}`,
+    } : undefined;
 
-    // No `images` key is emitted here on purpose. Route-level `opengraph-image`
-    // files (src/modules/company-launch-kit/components/og/og-image.tsx) take
-    // precedence and serve real PNGs — X, LinkedIn, Facebook and WhatsApp all
-    // refuse to render the SVG this used to point at, which produced blank
-    // share cards for every link on the site.
     return {
         title,
         description,
-        alternates: { canonical: url, ...(languageAlternates ? { languages: languageAlternates } : {}) },
+        alternates: { canonical: url, ...(languages ? { languages } : {}) },
         robots: input.noIndex ? { index: false, follow: false } : { index: true, follow: true },
-        openGraph: {
-            type: "website",
-            locale: LAUNCH_KIT_SEO.locale,
-            url,
-            siteName: LAUNCH_KIT_SEO.siteName,
-            title,
-            description,
-        },
-        twitter: {
-            card: "summary_large_image",
-            site: LAUNCH_KIT_SEO.twitterHandle,
-            title,
-            description,
-        },
+        openGraph: { type: "website", locale: "en_IN", url, siteName: LAUNCH_KIT_SEO.siteName, title, description },
+        twitter: { card: "summary_large_image", title, description },
     };
 }
 
-/**
- * Organization schema for every marketing page.
- *
- * `ProfessionalService` is used rather than the generic `Organization` type so
- * Google can surface the business in local/service results. Contact details are
- * only emitted once they are genuinely configured in `company-profile` — an
- * invented GSTIN or phone number is a legal and commercial problem, so those
- * fields stay absent rather than being guessed at.
- */
 export function buildOrganizationJsonLd() {
-    const address = schemaAddress();
-    const sameAs = schemaSameAs();
-
     return {
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
-        name: LAUNCH_KIT_SEO.siteName,
-        legalName: COMPANY_PROFILE.legalName,
+        name: "Arjun Automation Enterprises",
         url: LAUNCH_KIT_SEO.siteUrl,
-        logo: `${LAUNCH_KIT_SEO.siteUrl}/brand/logos/horizontal-blue.svg`,
-        description: LAUNCH_KIT_SEO.defaultDescription,
-        slogan: COMPANY_PROFILE.tagline,
-        ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
-        ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
-        ...(address ? { address } : {}),
-        ...(COMPANY_PROFILE.gstin ? { taxID: COMPANY_PROFILE.gstin } : {}),
-        ...(sameAs.length ? { sameAs } : {}),
-        areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
-        availableLanguage: ["English", "Telugu"],
-        contactPoint: [
-            {
-                "@type": "ContactPoint",
-                contactType: "sales",
-                ...(COMPANY_PROFILE.emails.sales ? { email: COMPANY_PROFILE.emails.sales } : {}),
-                ...(COMPANY_PROFILE.phoneE164 ? { telephone: COMPANY_PROFILE.phoneE164 } : {}),
-                availableLanguage: ["English", "Telugu"],
-                areaServed: ["Giddalur", "Markapuram", "Cumbum", "Prakasam district", "Hyderabad"],
-            },
-            {
-                "@type": "ContactPoint",
-                contactType: "customer support",
-                availableLanguage: ["English", "Telugu"],
-            },
-        ],
+        telephone: COMPANY_PROFILE.phoneE164,
+        email: "sales@arjunautomations.com",
+        areaServed: ["Andhra Pradesh", "Telangana"],
     };
 }
-
-export function buildWebPageJsonLd(input: { title: string; description: string; path: string }) {
-    return {
-        "@context": "https://schema.org",
-        "@type": "WebPage",
-        name: input.title,
-        description: input.description,
-        url: `${LAUNCH_KIT_SEO.siteUrl}${input.path}`,
-        isPartOf: { "@type": "WebSite", name: LAUNCH_KIT_SEO.siteName, url: LAUNCH_KIT_SEO.siteUrl },
-    };
-}
-
-export interface BreadcrumbItem {
-    name: string;
-    path: string;
-}
-
-export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
-    return {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: items.map((item, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
-            name: item.name,
-            item: `${LAUNCH_KIT_SEO.siteUrl}${item.path}`,
-        })),
-    };
-}
-
-export function buildFaqJsonLd(items: { question: string; answer: string }[]) {
-    return {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: items.map((item) => ({
-            "@type": "Question",
-            name: item.question,
-            acceptedAnswer: { "@type": "Answer", text: item.answer },
-        })),
-    };
-}
-
-export function buildServiceJsonLd(input: {
-    name: string;
-    description: string;
-    path: string;
-    provider?: string;
-}) {
-    return {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        name: input.name,
-        description: input.description,
-        url: `${LAUNCH_KIT_SEO.siteUrl}${input.path}`,
-        provider: {
-            "@type": "Organization",
-            name: input.provider ?? LAUNCH_KIT_SEO.siteName,
-            url: LAUNCH_KIT_SEO.siteUrl,
-        },
-    };
-}
-
