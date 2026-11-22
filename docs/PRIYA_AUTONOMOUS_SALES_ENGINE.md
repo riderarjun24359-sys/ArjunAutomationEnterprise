@@ -74,11 +74,11 @@ Never commit these values. Configure them in the hosting provider's encrypted se
 
 ## Vapi outbound configuration
 
-Use a Vapi phone assistant with the Priya sales prompt and dynamic variables. The server adapter calls `POST https://api.vapi.ai/call/phone` with:
+Use a Vapi phone assistant with the Priya sales prompt and dynamic variables. The server adapter calls the current Vapi create-call endpoint `POST https://api.vapi.ai/call` with:
 - `assistantId`
 - `phoneNumberId`
 - `customer.number` in E.164 format
-- `assistantOverrides.variableValues` containing lead name, company name, requirement, call purpose and preferred language
+- `assistantOverrides.variableValues` containing lead name, company name, requirement, call purpose, preferred language and the internal `call_event_id`; it also attaches the same ID in call metadata for webhook correlation
 
 Create the following server tool definitions in the Vapi dashboard. Set the server URL to the corresponding Arjun OS route and configure Bearer authentication with `PRIYA_SALES_TOOL_SECRET`.
 
@@ -259,7 +259,7 @@ MRR must come from active recurring billing/subscription records, not from one-t
 n8n may orchestrate:
 1. CRM lead created → check consent → queue a requested follow-up.
 2. Schedule Trigger (every minute) → `POST /api/ai-sales/dispatch-followups` with `PRIYA_SALES_DISPATCH_SECRET`; the database claims due rows atomically and the application performs the final consent check before dialing.
-3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` dynamic variable for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
+3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` from the call metadata (and dynamic variables where available) for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
 4. Verified Razorpay payment webhook → update billing/revenue → notify Jarvis.
 5. Hot lead or high-value deal → notify founder through approved WhatsApp template.
 6. Daily 09:00 Asia/Kolkata → aggregate persisted metrics → initiate Jarvis briefing.
