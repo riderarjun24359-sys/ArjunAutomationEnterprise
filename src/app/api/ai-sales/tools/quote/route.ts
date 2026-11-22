@@ -99,7 +99,7 @@ export async function POST(request: Request) {
         list_price_inr: listPrice,
         discount_percent: appliedDiscount,
         final_price_inr: finalPrice,
-        discount_approved: true,
+        discount_approved: !approvalRequired,
         approval_required: approvalRequired,
         updated_at: new Date().toISOString(),
     };
