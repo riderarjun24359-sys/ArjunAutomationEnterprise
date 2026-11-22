@@ -11,7 +11,7 @@ export const metadata: Metadata = buildMetadata({
 
 const sections = [
     {
-        id: "automation", icon: MessageCircle, title: "AI and Workflow Automation",
+        id: "automation", icon: MessageCircle, title: "AI and Task Automation",
         audience: "Schools, shops, clinics and service businesses that repeat the same admin work every day.",
         builds: ["Appointment and fee reminders","Approval requests and updates","Regular reports from business records","Repeated data entry between tools","Customer enquiry follow-ups","WhatsApp messages where they help"],
         needs: ["A few examples of the work you repeat","The tools and records you already use","Who checks or approves each step"],
