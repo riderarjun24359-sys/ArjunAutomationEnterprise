@@ -125,3 +125,65 @@ export const ENTERPRISE_ENGAGEMENT = {
     ],
     cta: { label: "Book Enterprise Consultation", href: MARKETING_ROUTES.contact },
 };
+
+
+/**
+ * Public project pricing — single source of truth for the rebuilt homepage
+ * and the new /pricing page. All amounts are INR starting prices.
+ */
+export const PROJECT_PRICING = [
+    {
+        id: "starter-website",
+        name: "Starter Website",
+        price: "₹35,000",
+        numericPrice: 35000,
+        qualifier: "Starts from",
+        summary: "A focused, custom website built to explain your offer and capture enquiries.",
+        features: ["5–7 custom pages", "Mobile-responsive layouts", "SEO foundations and page metadata", "WhatsApp and enquiry capture"],
+    },
+    {
+        id: "automation-sprint",
+        name: "Automation Sprint",
+        price: "₹45,000",
+        numericPrice: 45000,
+        qualifier: "Starts from",
+        summary: "Automate one or two repetitive workflows using the tools you already have.",
+        features: ["1–2 agreed core workflows", "Lead intake and routing", "WhatsApp or email follow-ups", "Team alerts and basic reporting"],
+    },
+    {
+        id: "growth-platform",
+        name: "Growth Platform",
+        price: "₹1,25,000",
+        numericPrice: 125000,
+        qualifier: "Starts from",
+        summary: "A connected website, workflow automation and a tailored customer or team portal.",
+        features: ["Custom website", "Multi-step workflow automation", "AI integrations where appropriate", "Custom CRM or client portal"],
+        highlighted: true,
+    },
+    {
+        id: "custom-erp",
+        name: "Enterprise / Custom ERP",
+        price: "₹2,50,000+",
+        numericPrice: 250000,
+        qualifier: "Starts from",
+        summary: "A scoped business system for complex operations and role-based teams.",
+        features: ["Custom ERP or CRM modules", "Role-based access design", "Agreed data migration", "Integration and go-live planning"],
+    },
+] as const;
+
+export const MANAGED_SUPPORT_PRICING = [
+    {
+        id: "care",
+        name: "Care Plan",
+        price: "₹10,000",
+        period: "/ month",
+        features: ["Hosting management", "Uptime monitoring", "Security updates", "Minor text and bug fixes"],
+    },
+    {
+        id: "growth-support",
+        name: "Growth Support",
+        price: "₹25,000",
+        period: "/ month",
+        features: ["Active workflow and AI monitoring", "API maintenance", "Up to 8 hours of enhancements per month", "1-business-day response SLA"],
+    },
+] as const;

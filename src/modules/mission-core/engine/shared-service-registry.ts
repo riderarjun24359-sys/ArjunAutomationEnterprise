@@ -7,7 +7,12 @@ import { AuditRepository } from "@/src/modules/database/repositories/audit-repos
 import type { AiSdkExecuteInput } from "@/src/modules/ai-orchestration/types";
 
 const services = new Map<string, SharedService>();
-const securityClient = createSecurityCenterClient();
+let securityClient: ReturnType<typeof createSecurityCenterClient> | undefined;
+
+function getSecurityClient() {
+    if (!securityClient) securityClient = createSecurityCenterClient();
+    return securityClient;
+}
 const gciClient = createGciClient();
 const auditRepo = new AuditRepository();
 
@@ -15,13 +20,13 @@ const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unk
     auth: {
         validateSession: (token?: unknown) => {
             if (!token) return { valid: false, reason: "token_required" };
-            const result = securityClient.validateToken(String(token));
+            const result = getSecurityClient().validateToken(String(token));
             return { valid: result.valid, keyId: result.keyId, role: result.role };
         },
-        getPermissions: () => ({ roles: securityClient.getRoles() }),
+        getPermissions: () => ({ roles: getSecurityClient().getRoles() }),
         checkPermission: (role: unknown, permission: unknown) =>
-            securityClient.hasPermission(role as import("@/src/modules/security-center/types").SecurityRole, permission as import("@/src/modules/security-center/types").Permission),
-        validateToken: (token: unknown) => securityClient.validateToken(String(token)),
+            getSecurityClient().hasPermission(role as import("@/src/modules/security-center/types").SecurityRole, permission as import("@/src/modules/security-center/types").Permission),
+        validateToken: (token: unknown) => getSecurityClient().validateToken(String(token)),
     },
     notifications: {
         send: async (...args: unknown[]) => {

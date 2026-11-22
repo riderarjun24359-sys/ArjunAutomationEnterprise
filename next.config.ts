@@ -91,6 +91,46 @@ const nextConfig: NextConfig = {
     async redirects() {
         return [
             {
+                source: "/portfolio",
+                destination: "/blueprints",
+                permanent: true,
+            },
+            {
+                source: "/case-studies",
+                destination: "/blueprints",
+                permanent: true,
+            },
+            {
+                source: "/solutions",
+                destination: "/services",
+                permanent: true,
+            },
+            {
+                source: "/features",
+                destination: "/services",
+                permanent: true,
+            },
+            {
+                source: "/faq",
+                destination: "/#faq",
+                permanent: true,
+            },
+            {
+                source: "/resources",
+                destination: "/blueprints",
+                permanent: true,
+            },
+            {
+                source: "/help",
+                destination: "/contact",
+                permanent: true,
+            },
+            {
+                source: "/careers",
+                destination: "/about",
+                permanent: true,
+            },
+            {
                 source: "/login",
                 destination: "/auth/sign-in",
                 permanent: true,
@@ -122,7 +162,7 @@ const nextConfig: NextConfig = {
              * and all link equity consolidates onto one canonical page.
              *
              * `/portfolio/integrations` has no case-study twin and stays live.
-             * The `/portfolio` index remains as a hub that links into both.
+             * The `/portfolio` index itself now redirects to `/blueprints`.
              */
             {
                 source: "/portfolio/ai-automation",

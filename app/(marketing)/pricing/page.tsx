@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
 import { MarketingBreadcrumbs } from "@/src/modules/company-launch-kit/components/MarketingBreadcrumbs";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { PremiumPageShell } from "@/src/modules/company-launch-kit/components/premium/PremiumPageShell";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import {
-    ENTERPRISE_ENGAGEMENT,
-    IMPLEMENTATION_TIERS,
-    MANAGED_SUPPORT_TIERS,
-    PILOT_PROGRAMME,
-    PRICING_PHILOSOPHY,
+    MANAGED_SUPPORT_PRICING,
+    PROJECT_PRICING,
 } from "@/src/modules/company-launch-kit/data/pricing";
-import { SOFT_LAUNCH_PLANS } from "@/src/modules/soft-launch/data/launch-assets";
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
     title: "Pricing",
     description:
-        "Platform plans (Free Trial, Starter, Professional, Enterprise) plus transparent implementation and managed support pricing.",
+        "Clear starting prices for custom websites, workflow automation, business portals and ongoing support from Arjun Automation in Hyderabad.",
     path: MARKETING_ROUTES.pricing,
 };
 
@@ -42,275 +37,146 @@ export default function PricingPage() {
                 path={PAGE.path}
                 breadcrumbs={breadcrumbs}
             />
-            <PremiumPageShell title={PAGE.title} description={PRICING_PHILOSOPHY.title}>
+            <PremiumPageShell
+                title="Straightforward pricing. A clearly agreed scope."
+                description="Starting prices for common project types. Your written quotation will confirm the exact features, timeline, deliverables and payment milestones before work begins."
+            >
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
                 <div className="space-y-16">
-                    {/* Pilot programme sits FIRST. For an early-stage business the
-                        realistic entry point is a reduced-fee pilot, not a
-                        five-figure tier — and burying it below the standard
-                        pricing would mean most visitors never scroll to it. */}
-                    <section
-                        aria-labelledby="pilot-heading"
-                        className="rounded-3xl border border-[color-mix(in_oklab,var(--dos-brand-primary)_35%,transparent)] bg-[color-mix(in_oklab,var(--dos-brand-primary)_12%,transparent)] p-6 sm:p-8"
-                    >
-                        <div className="flex flex-wrap items-start justify-between gap-4">
-                            <div className="max-w-2xl">
-                                <h2 id="pilot-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                                    {PILOT_PROGRAMME.title}
-                                </h2>
-                                <p className="mt-3 text-[var(--premium-fg-muted)]">{PILOT_PROGRAMME.subtitle}</p>
-                            </div>
-                            <p className="shrink-0 rounded-full border border-[color-mix(in_oklab,var(--dos-brand-primary)_50%,transparent)] px-4 py-2 text-sm font-medium text-[var(--dos-brand-primary)]">
-                                {PILOT_PROGRAMME.slots} {PILOT_PROGRAMME.slotsLabel}
+                    <section aria-labelledby="project-pricing-heading">
+                        <div className="max-w-2xl">
+                            <h2 id="project-pricing-heading" className="text-2xl font-semibold text-slate-900">
+                                One-time project pricing
+                            </h2>
+                            <p className="mt-3 text-slate-600">
+                                These are starting prices, not fixed quotes for every requirement. Final cost depends on the agreed scope, integrations, content and complexity.
                             </p>
                         </div>
 
-                        <div className="mt-8 grid gap-8 lg:grid-cols-3">
-                            <div>
-                                <p className="text-4xl font-bold text-[var(--dos-brand-primary)]">
-                                    {PILOT_PROGRAMME.setupFee}
-                                </p>
-                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                    {PILOT_PROGRAMME.setupFeeNote}
-                                </p>
-                                <Link
-                                    href={MARKETING_ROUTES.contact}
-                                    className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
-                                >
-                                    {PILOT_PROGRAMME.ctaLabel}
-                                </Link>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
-                                    What you get
-                                </h3>
-                                <ul className="mt-4 space-y-2 text-sm">
-                                    {PILOT_PROGRAMME.includes.map((item) => (
-                                        <li key={item} className="flex items-start gap-3">
-                                            <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
-                                                aria-hidden="true"
-                                            />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--premium-fg-muted)]">
-                                    What we ask
-                                </h3>
-                                <ul className="mt-4 space-y-2 text-sm">
-                                    {PILOT_PROGRAMME.expectations.map((item) => (
-                                        <li key={item} className="flex items-start gap-3">
-                                            <span
-                                                className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary-hover)]"
-                                                aria-hidden="true"
-                                            />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-
-                        <p className="mt-8 border-t border-[var(--premium-border)] pt-6 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                            {PILOT_PROGRAMME.honest}
-                        </p>
-                    </section>
-
-                    <section aria-labelledby="saas-plans-heading">
-                        <div className="flex flex-wrap items-end justify-between gap-4">
-                            <div>
-                                <h2 id="saas-plans-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                                    Platform plans
-                                </h2>
-                                <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                    Free Trial, Starter, Professional, and Enterprise with clear usage limits.
-                                </p>
-                            </div>
-                            <Link
-                                href={MARKETING_ROUTES.upgrade}
-                                className="text-sm font-semibold text-[var(--dos-brand-primary)] underline hover:text-[var(--dos-brand-primary-hover)]"
-                            >
-                                Open upgrade flow
-                            </Link>
-                        </div>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-4">
-                            {SOFT_LAUNCH_PLANS.map((plan) => (
+                        <div className="mt-8 grid gap-6 md:grid-cols-2">
+                            {PROJECT_PRICING.map((item) => (
                                 <article
-                                    key={plan.id}
-                                    className={`rounded-3xl border p-6 ${
-                                        plan.highlighted
-                                            ? "border-[var(--dos-brand-primary)] ring-2 ring-[color-mix(in_oklab,var(--dos-brand-primary)_30%,transparent)]"
-                                            : "border-[var(--premium-border)]"
-                                    }`}
+                                    key={item.id}
+                                    className={`flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-8 ${("highlighted" in item && item.highlighted) ? "border-blue-600 ring-1 ring-blue-600" : "border-slate-200"}`}
                                 >
-                                    <h3 className="text-lg font-semibold text-[var(--premium-fg)]">
-                                        {plan.name}
-                                    </h3>
-                                    <p className="mt-2 text-3xl font-bold text-[var(--premium-fg)]">
-                                        {plan.priceLabel}
-                                    </p>
-                                    <p className="mt-1 text-xs text-[var(--premium-fg-muted)]">
-                                        {plan.billingNote}
-                                    </p>
-                                    <p className="mt-4 text-sm text-[var(--premium-fg-muted)]">
-                                        {plan.description}
-                                    </p>
-                                    <ul className="mt-4 space-y-1 text-xs text-[var(--premium-fg-muted)]">
-                                        <li>Users: {plan.limits.users}</li>
-                                        <li>Projects: {plan.limits.projects}</li>
-                                        <li>Storage: {plan.limits.storage}</li>
-                                        <li>API calls: {plan.limits.apiCalls}</li>
-                                    </ul>
-                                    <ul className="mt-4 space-y-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {plan.features.map((feature) => (
-                                            <li key={feature}>• {feature}</li>
+                                    {("highlighted" in item && item.highlighted) ? (
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                                            For connected business systems
+                                        </p>
+                                    ) : null}
+                                    <h3 className="mt-2 text-xl font-semibold text-slate-900">{item.name}</h3>
+                                    <p className="mt-4 text-sm text-slate-600">{item.summary}</p>
+                                    <p className="mt-6 text-sm text-slate-500">{item.qualifier}</p>
+                                    <p className="text-3xl font-bold tracking-tight text-slate-900">{item.price}</p>
+                                    <ul className="mt-6 flex-1 space-y-3 text-sm text-slate-700">
+                                        {item.features.map((feature) => (
+                                            <li key={feature} className="flex gap-3">
+                                                <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                                                <span>{feature}</span>
+                                            </li>
                                         ))}
                                     </ul>
                                     <Link
-                                        href={plan.cta.href}
-                                        className="mt-6 inline-flex rounded-full bg-[var(--dos-brand-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)]"
+                                        href={MARKETING_ROUTES.contact}
+                                        className="mt-8 inline-flex w-fit items-center justify-center rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                                     >
-                                        {plan.cta.label}
+                                        Discuss this project
                                     </Link>
                                 </article>
                             ))}
                         </div>
                     </section>
 
-                    <section aria-labelledby="philosophy-heading">
-                        <h2 id="philosophy-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Our pricing philosophy
-                        </h2>
-                        <ul className="mt-6 space-y-3">
-                            {PRICING_PHILOSOPHY.principles.map((principle) => (
-                                <li key={principle} className="flex items-start gap-3 text-[var(--premium-fg-muted)]">
-                                    <span
-                                        className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
-                                        aria-hidden="true"
-                                    />
-                                    {principle}
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
-
-                    <section aria-labelledby="implementation-heading">
-                        <h2 id="implementation-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Implementation packages
-                        </h2>
-                        <p className="mt-3 text-[var(--premium-fg-muted)]">
-                            Milestone billing: 40% at signing, 30% at UAT start, 30% at go-live. Platform subscription quoted separately.
-                        </p>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-                            {IMPLEMENTATION_TIERS.map((tier) => (
-                                <article
-                                    key={tier.name}
-                                    className={`premium-glass rounded-2xl p-8 ${
-                                        tier.highlighted ? "ring-2 ring-[var(--dos-brand-primary)]" : ""
-                                    }`}
-                                >
-                                    {tier.highlighted && (
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--dos-brand-primary)]">
-                                            Most Popular
-                                        </span>
-                                    )}
-                                    <h3 className="mt-2 text-xl font-semibold text-[var(--premium-fg)]">
-                                        {tier.name}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {tier.description}
+                    <section aria-labelledby="support-pricing-heading" className="border-t border-slate-200 pt-12">
+                        <div className="max-w-2xl">
+                            <h2 id="support-pricing-heading" className="text-2xl font-semibold text-slate-900">
+                                Optional monthly support
+                            </h2>
+                            <p className="mt-3 text-slate-600">
+                                Support is optional and starts after handover. Choose it when you want ongoing maintenance or help improving the system.
+                            </p>
+                        </div>
+                        <div className="mt-8 grid gap-6 md:grid-cols-2">
+                            {MANAGED_SUPPORT_PRICING.map((plan) => (
+                                <article key={plan.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+                                    <h3 className="text-xl font-semibold text-slate-900">{plan.name}</h3>
+                                    <p className="mt-4 flex items-baseline gap-1">
+                                        <span className="text-3xl font-bold text-slate-900">{plan.price}</span>
+                                        <span className="text-sm text-slate-500">{plan.period}</span>
                                     </p>
-                                    <p className="mt-4 text-lg font-semibold text-[var(--dos-brand-primary)]">
-                                        {tier.indicativeRange}
-                                    </p>
-                                    <ul className="mt-6 space-y-2">
-                                        {tier.scope.map((item) => (
-                                            <li key={item} className="flex items-start gap-2 text-sm text-[var(--premium-fg-muted)]">
-                                                <span
-                                                    className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--dos-brand-primary)]"
-                                                    aria-hidden="true"
-                                                />
-                                                {item}
+                                    <ul className="mt-6 space-y-3 text-sm text-slate-700">
+                                        {plan.features.map((feature) => (
+                                            <li key={feature} className="flex gap-3">
+                                                <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-600" />
+                                                <span>{feature}</span>
                                             </li>
                                         ))}
                                     </ul>
                                 </article>
                             ))}
                         </div>
-                    </section>
-
-                    <section aria-labelledby="support-heading">
-                        <h2 id="support-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            Managed support
-                        </h2>
-                        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-                            {MANAGED_SUPPORT_TIERS.map((tier) => (
-                                <article key={tier.name} className="premium-glass rounded-2xl p-8">
-                                    <h3 className="text-xl font-semibold text-[var(--premium-fg)]">
-                                        {tier.name}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                                        {tier.description}
-                                    </p>
-                                    <p className="mt-4 font-semibold text-[var(--dos-brand-primary)]">
-                                        {tier.indicativeRange}
-                                    </p>
-                                    <ul className="mt-6 space-y-2">
-                                        {tier.scope.map((item) => (
-                                            <li key={item} className="text-sm text-[var(--premium-fg-muted)]">
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </article>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section aria-labelledby="enterprise-heading" className="premium-glass rounded-2xl p-8">
-                        <h2 id="enterprise-heading" className="text-2xl font-semibold text-[var(--premium-fg)]">
-                            {ENTERPRISE_ENGAGEMENT.title}
-                        </h2>
-                        <p className="mt-4 text-[var(--premium-fg-muted)] leading-relaxed">
-                            {ENTERPRISE_ENGAGEMENT.description}
+                        <p className="mt-5 text-sm leading-6 text-slate-500">
+                            Support covers the items listed for the selected plan. New features, major changes, large content updates and work outside the agreed scope are estimated separately. Any response target or service commitment will be written into the support agreement.
                         </p>
-                        <ol className="mt-8 space-y-4">
-                            {ENTERPRISE_ENGAGEMENT.steps.map((step, index) => (
-                                <li key={step.title} className="flex gap-4">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-sm font-semibold text-white">
-                                        {index + 1}
-                                    </span>
-                                    <div>
-                                        <h3 className="font-semibold text-[var(--premium-fg)]">
-                                            {step.title}
-                                        </h3>
-                                        <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">
-                                            {step.description}
-                                        </p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ol>
+                    </section>
+
+                    <section aria-labelledby="included-heading" className="grid gap-8 rounded-2xl bg-slate-50 p-6 sm:p-8 lg:grid-cols-2">
+                        <div>
+                            <h2 id="included-heading" className="text-xl font-semibold text-slate-900">
+                                What is included in a project
+                            </h2>
+                            <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+                                <li>Agreed features and deliverables documented before development</li>
+                                <li>Responsive implementation for the agreed screens and devices</li>
+                                <li>Review on a staging version before handover</li>
+                                <li>Deployment and handover steps included in the agreed scope</li>
+                                <li>30-day bug-fix warranty for delivered, in-scope functionality</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-semibold text-slate-900">
+                                Costs quoted separately when applicable
+                            </h2>
+                            <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
+                                <li>Domain registration, hosting, cloud infrastructure and backups</li>
+                                <li>WhatsApp Business provider, SMS, email and messaging charges</li>
+                                <li>AI model/API usage, storage and other usage-based services</li>
+                                <li>Payment gateway charges, paid software licences and third-party subscriptions</li>
+                                <li>Large data migration, new integrations and changes beyond the agreed scope</li>
+                            </ul>
+                        </div>
+                        <p className="text-sm leading-6 text-slate-600 lg:col-span-2">
+                            These charges depend on the provider, account and actual usage. Where possible, third-party services are set up in your organisation's own accounts so you retain control. We will identify expected recurring costs in the proposal; they are not silently included in the project fee.
+                        </p>
+                    </section>
+
+                    <section aria-labelledby="payment-heading" className="border-t border-slate-200 pt-12">
+                        <h2 id="payment-heading" className="text-2xl font-semibold text-slate-900">
+                            How project payments work
+                        </h2>
+                        <p className="mt-3 max-w-3xl text-slate-600">
+                            A typical project can be billed in milestones: 40% to schedule and start the work, 40% after the agreed staging review, and 20% at final handover. The exact schedule is confirmed in your quotation before the project starts.
+                        </p>
+                        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500">
+                            If the scope changes, we will explain the cost and timeline impact and get approval before doing the additional work.
+                        </p>
+                    </section>
+
+                    <section className="rounded-2xl bg-slate-900 p-7 text-white sm:p-10">
+                        <h2 className="text-2xl font-semibold">Not sure which option fits?</h2>
+                        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+                            Tell us what takes time in your business today. We can review the workflow, suggest a practical starting scope and provide a written INR quotation. There is no obligation to proceed.
+                        </p>
                         <Link
-                            href={ENTERPRISE_ENGAGEMENT.cta.href}
-                            className="mt-8 inline-flex rounded-xl bg-[var(--dos-brand-primary)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
+                            href={MARKETING_ROUTES.contact}
+                            className="mt-7 inline-flex rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
                         >
-                            {ENTERPRISE_ENGAGEMENT.cta.label}
+                            Discuss your requirements
                         </Link>
                     </section>
                 </div>
             </PremiumPageShell>
-            <CtaSection
-                title="Need a custom quote?"
-                description="Every organization is different. Book a consultation and we will scope a proposal aligned to your outcomes."
-                primaryLabel="Book Consultation"
-            />
         </>
     );
 }
