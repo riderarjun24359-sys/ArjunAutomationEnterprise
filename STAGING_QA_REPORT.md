@@ -145,3 +145,43 @@ Do not promote until the latest branch has a successful staging deployment and e
 3. Open the new staging URL and complete the browser, form, link, responsive and Lighthouse checks.
 4. In GitHub, create a pull request from `staging/premium-rebuild-2026-11` into `main`; review the complete diff and checks.
 5. Only after explicit owner approval, merge that pull request. The production project `arjunautomationos-enterprise` should then build from its production branch and serve the production domain. Do not promote a deployment from the separate staging project as if it belonged to the production project.
+
+
+---
+
+## Fluid dark-and-light visual redesign — 2026-11-22
+
+### Source changes committed to staging
+
+Design work was committed only to `staging/premium-rebuild-2026-11`. The visual redesign source checkpoint before this report update is `4b3c23ae7f90fdbf100549c022129a9b69b57ed3`.
+
+Files changed in this design pass:
+- `src/modules/company-launch-kit/design-system/marketing-light.css` — dark/light token palette, text scopes, glass-card styling, hero and CTA glow treatments, reduced-motion and mobile blur fallbacks.
+- `src/modules/company-launch-kit/components/MarketingHeader.tsx` — scroll-aware glass header, section-aware foreground tone, dark mobile navigation drawer.
+- `app/(marketing)/layout.tsx` — Manrope, Inter, Instrument Serif italic and Noto Sans Telugu font loading.
+- `app/(marketing)/page.tsx` — English homepage dark hero, illustrative five-node workflow panel, dark service/industry/process sections, dark CTA and serif “grow” accent.
+- `app/(marketing)/te/page.tsx` — Telugu homepage dark hero, dark service/industry/process sections and dark CTA; Telugu heading text remains non-italic.
+
+### Visual QA status
+
+| Check | Status | Evidence |
+|---|---|---|
+| Source changes restricted to staging branch | PASS | GitHub commits target `staging/premium-rebuild-2026-11`; no merge or production deploy was requested or performed. |
+| Existing routes, contact form logic and i18n preserved | NOT VERIFIED | No route/form regression run is available yet. |
+| 360px / 768px / 1280px screenshots, English and Telugu | BLOCKED | Latest source is not deployed, so no honest after screenshots can be captured. |
+| Before screenshots | NOT CAPTURED | No baseline browser screenshots were saved before the CSS changes. |
+| Contrast audit on every rendered text/background pair | NOT RUN | Requires rendered-page inspection. |
+| Horizontal overflow, wave seams, header contrast, floating WhatsApp overlap | NOT RUN | Requires browser checks at the requested widths. |
+| Lighthouse performance/accessibility/best-practices/SEO | NOT RUN | No scores are claimed. |
+| Reduced-motion browser test | NOT RUN | CSS includes reduced-motion overrides, but runtime verification remains. |
+| Full forbidden phrase, fake-content and phone scan across every rendered route | NOT RUN | Earlier source-only scan remains partial; a complete rendered-route scan is outstanding. |
+
+### Latest deployment attempt
+
+Vercel's staging project currently reports a build deployment `dpl_Dn3kvgmk26AgrFhL4AwFQtCzA8vN` for older commit `5ede1b3cc00f048a4f23bddf0163db4ce5733925`, not the completed visual redesign checkpoint. The build log reached “Creating an optimized production build”; its state remained BUILDING when checked.
+
+A direct staging preview deployment request for the latest source was rejected with HTTP 402, resource `api-deployments-free-per-day`, retry period 86400 seconds (100 deployments/day). No production deployment was attempted. Existing earlier preview URLs must not be treated as containing these latest visual changes.
+
+### Promotion boundary
+
+Do not merge this branch to `main` and do not promote any deployment. After a successful staging deployment, browser QA and approval, the owner can open a pull request from `staging/premium-rebuild-2026-11` to `main`, review and merge it, then use the production project's normal deployment flow. Alternatively, only after approval, use Vercel's Promote to Production action on the verified production-project deployment. This work has not performed either action.
