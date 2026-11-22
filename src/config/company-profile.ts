@@ -20,7 +20,6 @@ export const COMPANY_PROFILE = {
         sales: envString("NEXT_PUBLIC_COMPANY_EMAIL") ?? "sales@arjunautomations.com",
         success: "",
         support: "",
-        careers: "",
     },
     phoneDisplay: "+91 73370 27357",
     phoneE164: "+917337027357",
@@ -36,7 +35,6 @@ export const COMPANY_PROFILE = {
     gstin: null,
     cin: null,
     officeHours: "",
-    responseSla: "",
     social: {
         linkedin: envString("NEXT_PUBLIC_SOCIAL_LINKEDIN"),
         github: envString("NEXT_PUBLIC_SOCIAL_GITHUB"),
@@ -49,21 +47,13 @@ export const HAS_PHONE = true;
 export const HAS_ADDRESS = false;
 export const HAS_FULL_ADDRESS = false;
 
-export function formatAddress(): string | null {
-    return null;
-}
-
-export function schemaAddress(): Record<string, string> | null {
-    return null;
-}
-
+export function formatAddress(): string | null { return null; }
+export function schemaAddress(): Record<string, string> | null { return null; }
 export function schemaSameAs(): string[] {
     return Object.values(COMPANY_PROFILE.social).filter((value): value is string => Boolean(value));
 }
-
 export function whatsappLink(message: string): string {
     return `https://wa.me/917337027357?text=${encodeURIComponent(message)}`;
 }
-
 export const WHATSAPP_DEFAULT_MESSAGE =
     "Hi, I found Arjun Automation Enterprises online. I would like to know more about your services.";
