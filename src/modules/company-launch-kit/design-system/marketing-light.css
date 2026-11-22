@@ -163,9 +163,6 @@
 .premium-theme .fluid-dark-section article :is(svg) { color: #AFC0FF; }
 .premium-theme .fluid-dark-section article span { background: rgba(79,107,255,.18); }
 .premium-theme .fluid-dark-section a { color: #AFC0FF; }
-.premium-theme .fluid-dark-section .text-\\[var\\(--primary\\)\\] { color: #AFC0FF; }
-.premium-theme .fluid-dark-section a.bg-\\[var\\(--primary\\)] { background: linear-gradient(110deg,var(--primary),var(--primary-deep)); color: white; }
-.premium-theme .fluid-dark-section a.bg-\\[var\\(--wa\\)] { background: var(--wa); color: white; }
 
 /* Soft organic section edges, with no added image assets. */
 .premium-theme main > section:not(:first-of-type) { position: relative; }
