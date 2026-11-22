@@ -2,26 +2,29 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
     ArrowRight,
+    ArrowUpRight,
+    BellRing,
     Building2,
-    CheckCircle2,
+    Check,
     Factory,
-    Globe,
     GraduationCap,
     HeartPulse,
-    ShoppingBag,
+    MessageCircle,
+    Phone,
+    ShoppingBasket,
     Workflow,
+    Globe2,
+    PanelsTopLeft,
+    Sparkles,
 } from "lucide-react";
-import { CtaSection } from "@/src/modules/company-launch-kit/components/CtaSection";
-import { FaqAccordionStatic } from "@/src/modules/company-launch-kit/components/FaqAccordionStatic";
-import { HeroSection } from "@/src/modules/company-launch-kit/components/premium/sections/HeroSection";
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
-import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
-import { buildMetadata } from "@/src/lib/seo";
+import { buildFaqJsonLd, buildMetadata } from "@/src/lib/seo";
+import { PROJECT_PRICING } from "@/src/modules/company-launch-kit/data/pricing";
 
 const PAGE = {
-    title: "Arjun Automations — Smart Automations & Custom Software",
+    title: "AI Workflow Automation & Custom Software Studio in Hyderabad",
     description:
-        "Scale your business with smart automations and custom software. Eliminate manual work, accelerate revenue, and run your operations on one secure, intelligent platform.",
+        "Arjun Automation builds custom business websites, AI workflow automations and internal portals for businesses in Hyderabad and across India.",
     path: "/",
 };
 
@@ -29,103 +32,195 @@ export const metadata: Metadata = buildMetadata({
     title: PAGE.title,
     description: PAGE.description,
     path: PAGE.path,
+    keywords: [
+        "AI automation Hyderabad",
+        "workflow automation Secunderabad",
+        "custom software development Hyderabad",
+        "business website development Telangana",
+        "CRM and ERP development India",
+    ],
 });
 
-const services = [
+const FAQS = [
     {
+        question: "How long does a project take?",
+        answer:
+            "A Starter Website usually takes 1–2 weeks. An Automation Sprint usually takes 1–2 weeks. A Growth Platform usually takes 4–6 weeks. A custom ERP is scheduled after discovery because its timeline depends on the modules, integrations and data migration involved.",
+    },
+    {
+        question: "Why do you include a working prototype?",
+        answer:
+            "A prototype lets you test the proposed approach with a representative workflow before committing to the full build. The production quote covers the remaining work such as complete integrations, data migration, security hardening, testing, training and go-live. The prototype scope and any limits are agreed before work starts.",
+    },
+    {
+        question: "Can you integrate with tools we already use, such as WhatsApp, Tally, Zoho or Google Workspace?",
+        answer:
+            "Yes, where the required product plan and access permissions provide a supported integration path. We typically use REST APIs, webhooks and custom connectors. We check API availability, provider charges and technical limits during discovery before confirming the scope.",
+    },
+    {
+        question: "How is our business data kept secure?",
+        answer:
+            "The security design is agreed for each project and may include encryption in transit and at rest, role-based access control and tenant or database separation where required. We document what is implemented for your project rather than making blanket security claims.",
+    },
+    {
+        question: "Do you provide support after launch?",
+        answer:
+            "Yes. A 30-day bug-fix warranty for issues within the agreed project scope is included after go-live. Ongoing hosting, monitoring, API maintenance and enhancements are available through optional monthly Managed Support plans.",
+    },
+];
+
+const SERVICES = [
+    {
+        id: "websites",
+        icon: Globe2,
+        title: "Custom Business Websites",
+        description:
+            "Fast, mobile-first, SEO-ready websites engineered to explain your services and turn visits into qualified enquiries.",
+        href: "/services#websites",
+        link: "Explore website development",
+    },
+    {
+        id: "automations",
         icon: Workflow,
         title: "AI & Workflow Automations",
-        body: "Eliminate manual work and connect the tools you already run. Triggers, approvals, and AI agents move work forward — so nothing stalls in someone's inbox.",
-        href: MARKETING_ROUTES.services,
+        description:
+            "Connect WhatsApp, email, forms, spreadsheets and billing tools so follow-ups, approvals and routine reporting happen without repeated manual effort.",
+        href: "/services#automations",
+        link: "Explore workflow automation",
     },
     {
-        icon: Globe,
-        title: "Custom Enterprise Websites",
-        body: "Fast, secure, and built to convert. Marketing sites and web apps engineered around your brand, your funnels, and your customers.",
-        href: MARKETING_ROUTES.services,
-    },
-    {
-        icon: Building2,
-        title: "Business Portals & CRM",
-        body: "One home for customers, projects, and billing. Give your team and your clients a single, secure source of truth — no more scattered spreadsheets.",
-        href: MARKETING_ROUTES.services,
+        id: "portals",
+        icon: PanelsTopLeft,
+        title: "Custom Portals & Internal Tools",
+        description:
+            "Replace scattered spreadsheets with a secure web app for customers, projects, attendance, billing or day-to-day team operations.",
+        href: "/services#portals",
+        link: "Explore portals and business tools",
     },
 ];
 
-const processSteps = [
+const INDUSTRIES = [
     {
-        step: "01",
-        title: "Discover & Plan",
-        body: "We map your biggest bottlenecks and manual work, then agree on the outcomes that matter before a line of code is written.",
+        icon: Factory,
+        title: "Manufacturing",
+        example: "B2B enquiry-to-quotation tracking and dispatch status alerts.",
     },
     {
-        step: "02",
-        title: "Build & Automate",
-        body: "We deploy tailored tech solutions — automations, portals, and custom software — configured around how your business actually runs.",
+        icon: HeartPulse,
+        title: "Healthcare Clinics",
+        example: "WhatsApp appointment reminders and patient follow-up scheduling.",
     },
     {
-        step: "03",
-        title: "Launch & Scale",
-        body: "We handle go-live and stay on as your partner, with ongoing support and new capabilities as you grow.",
-    },
-];
-
-const industries = [
-    { icon: Factory, name: "Manufacturing" },
-    { icon: HeartPulse, name: "Healthcare" },
-    { icon: ShoppingBag, name: "Retail" },
-    { icon: GraduationCap, name: "Education" },
-];
-
-const pricingTiers = [
-    {
-        name: "Starter",
-        price: "Starts from ₹25,000",
-        tagline: "Basic web presence",
-        features: ["Custom marketing website", "Mobile-responsive design", "SEO foundations", "Contact & lead capture"],
-        cta: "Request a Quote",
-        highlighted: false,
+        icon: ShoppingBasket,
+        title: "Retail",
+        example: "Daily sales and inventory updates across multiple branches.",
     },
     {
-        name: "Growth",
-        price: "Starts from ₹45,000",
-        tagline: "AI & automations",
-        features: [
-            "Everything in Starter",
-            "Workflow automations",
-            "AI agents & integrations",
-            "CRM & customer portal",
-        ],
-        cta: "Request a Quote",
-        highlighted: true,
-    },
-    {
-        name: "Enterprise",
-        price: "Custom quote",
-        tagline: "Full ERP/CRM & dedicated support",
-        features: [
-            "Full ERP/CRM platform",
-            "Dedicated delivery team",
-            "Advanced security & governance",
-            "Priority support & SLAs",
-        ],
-        cta: "Talk to Sales",
-        highlighted: false,
+        icon: GraduationCap,
+        title: "Schools & Trusts",
+        example: "Fee reminders, attendance records and parent updates.",
     },
 ];
 
-const primaryButton =
-    "inline-flex w-full items-center justify-center gap-2 rounded-lg px-7 py-3.5 text-sm font-semibold text-white shadow-[var(--premium-accent-glow)] transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg)] sm:w-auto bg-gradient-to-r from-[#2563eb] via-[#3b82f6] to-[#8b5cf6]";
+const STEPS = [
+    {
+        number: "01",
+        title: "Free Discovery Call",
+        duration: "20–30 minutes",
+        description:
+            "We map your manual bottlenecks and check whether automation is worth building. If a simpler process change is better, we will say so.",
+    },
+    {
+        number: "02",
+        title: "Working Prototype First",
+        duration: "Test the approach",
+        description:
+            "We agree a small proof-of-concept so you can see the proposed workflow using representative data before deciding on the full production scope.",
+    },
+    {
+        number: "03",
+        title: "Production Go-Live & Support",
+        duration: "Scoped delivery",
+        description:
+            "Once approved, we complete the agreed integrations, testing, security work, team handover and launch. Optional monthly support is available.",
+    },
+];
 
-/**
- * Enterprise SaaS & agency homepage.
- *
- * Every CTA points at a real public destination, the process and services
- * describe work that genuinely exists in this codebase, and no metrics,
- * client logos, or outcomes are published that cannot be verified. The
- * pricing tiers carry the indicative "starts from" ranges supplied by the
- * business owner; final quotes are always custom.
- */
+const WHATSAPP_URL =
+    "https://wa.me/917337027357?text=Hi%2C%20I%20found%20Arjun%20Automation%20online.%20I'd%20like%20to%20discuss%20automating%20operations%20for%20my%20business.";
+
+function SectionHeading({
+    eyebrow,
+    title,
+    description,
+}: {
+    eyebrow: string;
+    title: string;
+    description?: string;
+}) {
+    return (
+        <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-blue-700">{eyebrow}</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{title}</h2>
+            {description ? <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">{description}</p> : null}
+        </div>
+    );
+}
+
+function WorkflowDiagram() {
+    const stages = [
+        { number: "01", title: "Website / WhatsApp", subtitle: "Enquiry arrives", icon: MessageCircle },
+        { number: "02", title: "AI qualification", subtitle: "Sort and route", icon: Sparkles },
+        { number: "03", title: "CRM / Google Sheets", subtitle: "Record is updated", icon: PanelsTopLeft },
+        { number: "04", title: "Team alert + follow-up", subtitle: "Next action is clear", icon: BellRing },
+    ];
+
+    return (
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.35)] sm:p-7">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Example workflow</p>
+                    <h2 className="mt-1 text-lg font-bold text-slate-950">From incoming enquiry to team action</h2>
+                </div>
+                <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                    Illustrative process
+                </span>
+            </div>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center">
+                {stages.map((stage, index) => (
+                    <div key={stage.number} className="contents">
+                        <div className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold tabular-nums text-slate-400">{stage.number}</span>
+                                <stage.icon aria-hidden="true" className="h-5 w-5 text-blue-700" />
+                            </div>
+                            <p className="mt-4 text-sm font-semibold leading-snug text-slate-900">{stage.title}</p>
+                            <p className="mt-1 text-xs text-slate-500">{stage.subtitle}</p>
+                        </div>
+                        {index < stages.length - 1 ? (
+                            <ArrowRight aria-hidden="true" className="mx-auto hidden h-5 w-5 text-blue-600 md:block" />
+                        ) : null}
+                        {index < stages.length - 1 ? (
+                            <div className="flex justify-center md:hidden">
+                                <ArrowRight aria-hidden="true" className="h-4 w-4 rotate-90 text-blue-600" />
+                            </div>
+                        ) : null}
+                    </div>
+                ))}
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4 text-xs text-slate-500">
+                <span className="font-semibold text-slate-700">Possible connections:</span>
+                <span>Website forms</span><span aria-hidden="true">·</span>
+                <span>WhatsApp Business API</span><span aria-hidden="true">·</span>
+                <span>CRM</span><span aria-hidden="true">·</span>
+                <span>Google Sheets</span>
+            </div>
+        </div>
+    );
+}
+
 export default function HomePage() {
     return (
         <>
@@ -134,224 +229,194 @@ export default function HomePage() {
                 description={PAGE.description}
                 path={PAGE.path}
                 breadcrumbs={[{ name: "Home", path: PAGE.path }]}
+                extra={[buildFaqJsonLd(FAQS)]}
             />
 
-            {/* Layout already renders <main id="main-content"> — keep this a plain container. */}
-            <div>
-                {/* Hero — server-rendered with honest interface concept visual */}
-                <HeroSection />
-
-                {/* Services — 3 focused cards */}
-                <section
-                    className="premium-section border-b border-[var(--premium-border)]"
-                    aria-labelledby="services-heading"
-                >
-                    <div className="premium-container">
-                        <p className="premium-eyebrow">What we build</p>
-                        <h2
-                            id="services-heading"
-                            className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl"
-                        >
-                            Three ways we move your business forward
-                        </h2>
-                        <p className="mt-4 max-w-2xl text-lg text-[var(--premium-fg-muted)]">
-                            Focused, production-grade delivery — not a bloated service menu. Pick the outcome you
-                            need and we build around it.
+            {/* 1. Hero */}
+            <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.08),transparent_48%)]" />
+                <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:py-24">
+                    <div>
+                        <p className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800 sm:text-sm">
+                            Hyderabad &amp; Secunderabad · AI Automation &amp; Custom Software Studio
                         </p>
-
-                        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {services.map((item) => (
-                                <Link
-                                    key={item.title}
-                                    href={item.href}
-                                    className="premium-card group block p-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
-                                >
-                                    <span className="premium-card-icon" aria-hidden="true">
-                                        <item.icon className="h-5 w-5" />
-                                    </span>
-                                    <h3 className="mt-5 text-lg font-semibold">{item.title}</h3>
-                                    <p className="mt-2 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                                        {item.body}
-                                    </p>
-                                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--premium-accent)]">
-                                        Learn more
-                                        <ArrowRight
-                                            className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Process — 3-step timeline */}
-                <section
-                    className="premium-section border-b border-[var(--premium-border)] bg-[var(--premium-bg-secondary)]"
-                    aria-labelledby="process-heading"
-                >
-                    <div className="premium-container">
-                        <p className="premium-eyebrow">How we work</p>
-                        <h2
-                            id="process-heading"
-                            className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl"
-                        >
-                            From first call to launch in three steps
-                        </h2>
-
-                        <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {processSteps.map((item) => (
-                                <li key={item.step} className="premium-card relative p-8">
-                                    <span
-                                        className="premium-gradient-text font-display text-4xl font-bold tracking-tight"
-                                        aria-hidden="true"
-                                    >
-                                        {item.step}
-                                    </span>
-                                    <h3 className="mt-4 text-lg font-semibold">{item.title}</h3>
-                                    <p className="mt-2 text-sm leading-relaxed text-[var(--premium-fg-muted)]">
-                                        {item.body}
-                                    </p>
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                </section>
-
-                {/* Industries */}
-                <section
-                    className="premium-section border-b border-[var(--premium-border)]"
-                    aria-labelledby="industries-heading"
-                >
-                    <div className="premium-container">
-                        <p className="premium-eyebrow">Built for modern industries</p>
-                        <h2
-                            id="industries-heading"
-                            className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl"
-                        >
-                            Trusted across the sectors that keep the world running
-                        </h2>
-
-                        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                            {industries.map((item) => (
-                                <Link
-                                    key={item.name}
-                                    href={MARKETING_ROUTES.industries}
-                                    className="premium-card group flex flex-col items-start gap-4 p-8 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)]"
-                                >
-                                    <span className="premium-card-icon" aria-hidden="true">
-                                        <item.icon className="h-5 w-5" />
-                                    </span>
-                                    <h3 className="text-base font-semibold group-hover:text-[var(--premium-accent)]">
-                                        {item.name}
-                                    </h3>
-                                </Link>
-                            ))}
-                        </div>
-
-                        <p className="mt-8 text-sm text-[var(--premium-fg-muted)]">
-                            Running a school or trust?{" "}
-                            <Link href={MARKETING_ROUTES.schoolErp} className="font-medium text-[var(--premium-accent)] hover:underline">
-                                See the School ERP pack
-                            </Link>{" "}
-                            for attendance, fees, and parent communication.
+                        <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.65rem]">
+                            Stop losing work in the gaps between your tools.
+                        </h1>
+                        <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+                            Missed enquiries, retyped data, and tasks nobody chases. We build custom websites, AI workflow automations, and internal portals that connect the tools you already use — with a working prototype included before you commit.
                         </p>
-                    </div>
-                </section>
-
-                {/* Pricing — 3 tiers */}
-                <section
-                    className="premium-section border-b border-[var(--premium-border)] bg-[var(--premium-bg-secondary)]"
-                    aria-labelledby="pricing-heading"
-                >
-                    <div className="premium-container">
-                        <p className="premium-eyebrow">Pricing</p>
-                        <h2
-                            id="pricing-heading"
-                            className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight sm:text-4xl"
-                        >
-                            Simple, transparent starting points
-                        </h2>
-                        <p className="mt-4 max-w-2xl text-lg text-[var(--premium-fg-muted)]">
-                            Every engagement is scoped to your goals, so final quotes are always custom. These
-                            ranges help you know where you&rsquo;d start.
-                        </p>
-
-                        <div className="mt-12 grid gap-6 lg:grid-cols-3">
-                            {pricingTiers.map((tier) => (
-                                <div
-                                    key={tier.name}
-                                    className={`premium-card flex flex-col p-8 ${
-                                        tier.highlighted ? "ring-1 ring-[var(--premium-accent)]" : ""
-                                    }`}
-                                >
-                                    {tier.highlighted ? (
-                                        <span className="mb-3 inline-flex w-fit rounded-full bg-[var(--premium-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--premium-accent)]">
-                                            Most popular
-                                        </span>
-                                    ) : null}
-                                    <h3 className="text-lg font-semibold">{tier.name}</h3>
-                                    <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">{tier.tagline}</p>
-                                    <p className="mt-5 font-display text-2xl font-bold tracking-tight">
-                                        {tier.price}
-                                    </p>
-
-                                    <ul className="mt-6 flex-1 space-y-3">
-                                        {tier.features.map((feature) => (
-                                            <li key={feature} className="flex items-start gap-2.5 text-sm">
-                                                <CheckCircle2
-                                                    className="mt-0.5 h-4 w-4 shrink-0 text-[var(--premium-accent)]"
-                                                    aria-hidden="true"
-                                                />
-                                                <span className="text-[var(--premium-fg-muted)]">{feature}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-
-                                    <Link
-                                        href={MARKETING_ROUTES.contact}
-                                        className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-border-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg)] ${
-                                            tier.highlighted
-                                                ? "bg-gradient-to-r from-[#2563eb] via-[#3b82f6] to-[#8b5cf6] text-white shadow-[var(--premium-accent-glow)] hover:-translate-y-0.5"
-                                                : "border border-[var(--dos-border-strong)] text-[var(--premium-fg)] hover:border-[var(--premium-accent)] hover:text-[var(--premium-accent)]"
-                                        }`}
-                                    >
-                                        {tier.cta}
-                                    </Link>
-                                </div>
-                            ))}
-                        </div>
-
-                        <p className="mt-8 text-center text-sm text-[var(--premium-fg-muted)]">
-                            Prices are indicative starting points and vary with scope.{" "}
-                            <Link href={MARKETING_ROUTES.pricing} className="font-medium text-[var(--premium-accent)] hover:underline">
-                                See full pricing details
+                        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                            <Link href="/contact" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+                                Book a Free 20-Min Call <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                             </Link>
+                            <Link href="/pricing" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+                                See Pricing
+                            </Link>
+                        </div>
+                        <div className="mt-9 flex flex-wrap gap-x-5 gap-y-3 border-t border-slate-200 pt-6">
+                            {["Working Prototype Included", "Fixed-Scope INR Pricing", "Direct Founder Engineering", "Based in Secunderabad"].map((item) => (
+                                <span key={item} className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
+                                    <Check aria-hidden="true" className="h-4 w-4 text-blue-700" />{item}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                    <WorkflowDiagram />
+                </div>
+            </section>
+
+            {/* 2. What We Build */}
+            <section className="bg-slate-50 py-16 sm:py-20">
+                <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+                    <SectionHeading
+                        eyebrow="What we build"
+                        title="Practical software for the work your business does every day."
+                        description="Choose a focused service or combine them into one connected solution. We scope the work around your actual process."
+                    />
+                    <div className="mt-10 grid gap-5 md:grid-cols-3">
+                        {SERVICES.map((service) => (
+                            <article key={service.id} className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-md sm:p-7">
+                                <span className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-700">
+                                    <service.icon aria-hidden="true" className="h-5 w-5" />
+                                </span>
+                                <h3 className="mt-5 text-xl font-bold tracking-tight text-slate-950">{service.title}</h3>
+                                <p className="mt-3 flex-1 text-sm leading-7 text-slate-600">{service.description}</p>
+                                <Link href={service.href} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-800">
+                                    {service.link}<ArrowRight aria-hidden="true" className="h-4 w-4" />
+                                </Link>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* 3. How We Work */}
+            <section className="bg-white py-16 sm:py-20">
+                <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+                    <SectionHeading
+                        eyebrow="How we work"
+                        title="Understand the process before you invest in the build."
+                        description="A straightforward path from the first conversation to a supported production release."
+                    />
+                    <ol className="mt-10 grid gap-5 md:grid-cols-3">
+                        {STEPS.map((step) => (
+                            <li key={step.number} className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-3xl font-bold tracking-tight text-blue-700">{step.number}</span>
+                                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">{step.duration}</span>
+                                </div>
+                                <h3 className="mt-6 text-lg font-bold text-slate-950">{step.title}</h3>
+                                <p className="mt-3 text-sm leading-7 text-slate-600">{step.description}</p>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </section>
+
+            {/* 4. Industries We Serve */}
+            <section className="bg-slate-50 py-16 sm:py-20">
+                <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+                    <SectionHeading
+                        eyebrow="Industries we serve"
+                        title="Built for operations-heavy Indian businesses."
+                        description="Examples of everyday workflows that can be improved with the right integrations and a clearly defined process."
+                    />
+                    <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                        {INDUSTRIES.map((industry) => (
+                            <article key={industry.title} className="rounded-2xl border border-slate-200 bg-white p-6">
+                                <industry.icon aria-hidden="true" className="h-6 w-6 text-blue-700" />
+                                <h3 className="mt-4 text-base font-bold text-slate-950">{industry.title}</h3>
+                                <p className="mt-2 text-sm leading-6 text-slate-600">{industry.example}</p>
+                            </article>
+                        ))}
+                    </div>
+                    <p className="mt-7 text-sm text-slate-600">
+                        Looking for a school management system?{" "}
+                        <Link href="/services#portals" className="font-semibold text-blue-700 underline-offset-4 hover:underline">
+                            Explore custom portals and School ERP
+                        </Link>.
+                    </p>
+                </div>
+            </section>
+
+            {/* 5. Pricing Preview */}
+            <section className="bg-white py-16 sm:py-20">
+                <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+                    <SectionHeading
+                        eyebrow="Straightforward starting prices"
+                        title="Know the starting point before the first meeting."
+                        description="These are starting prices in Indian rupees. Final scope, integrations, data migration and third-party provider charges are confirmed in a written proposal."
+                    />
+                    <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                        {PROJECT_PRICING.map((tier) => (
+                            <article key={tier.id} className={`relative flex h-full flex-col rounded-2xl border p-6 ${tier.highlighted ? "border-blue-600 bg-blue-50/50 shadow-md" : "border-slate-200 bg-white"}`}>
+                                {tier.highlighted ? <span className="mb-4 inline-flex w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Most Popular</span> : <span className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">{tier.qualifier}</span>}
+                                <h3 className="text-lg font-bold text-slate-950">{tier.name}</h3>
+                                <p className="mt-3 text-2xl font-bold tracking-tight text-slate-950">{tier.price}</p>
+                                <p className="mt-3 min-h-[4.5rem] text-sm leading-6 text-slate-600">{tier.summary}</p>
+                                <ul className="mt-5 flex-1 space-y-3">
+                                    {tier.features.map((feature) => (
+                                        <li key={feature} className="flex items-start gap-2 text-sm text-slate-700">
+                                            <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-blue-700" />{feature}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Link href="/contact" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 px-4 text-sm font-semibold text-slate-800 transition hover:border-blue-500 hover:text-blue-700">
+                                    Discuss this scope
+                                </Link>
+                            </article>
+                        ))}
+                    </div>
+                    <div className="mt-8 text-center">
+                        <Link href="/pricing" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-800">
+                            See full scope, retainers &amp; Founding Partner offer <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* 6. FAQs */}
+            <section id="faq" className="scroll-mt-28 bg-slate-50 py-16 sm:py-20">
+                <div className="mx-auto w-full max-w-4xl px-5 sm:px-8">
+                    <SectionHeading
+                        eyebrow="Frequently asked questions"
+                        title="Clear answers before you get started."
+                    />
+                    <div className="mt-9 divide-y divide-slate-200 border-y border-slate-200">
+                        {FAQS.map((item, index) => (
+                            <details key={item.question} className="group py-5" open={index === 0}>
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-left text-base font-semibold text-slate-950 marker:hidden [&::-webkit-details-marker]:hidden">
+                                    {item.question}
+                                    <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-slate-300 text-lg font-normal text-slate-600 transition group-open:rotate-45">+</span>
+                                </summary>
+                                <p className="max-w-3xl pt-4 pr-10 text-sm leading-7 text-slate-600">{item.answer}</p>
+                            </details>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* 7. Final CTA */}
+            <section className="bg-slate-950 py-16 text-white sm:py-20">
+                <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="max-w-2xl">
+                        <p className="text-sm font-semibold uppercase tracking-[0.14em] text-blue-300">Start with a conversation</p>
+                        <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Ready to eliminate the manual work?</h2>
+                        <p className="mt-4 text-base leading-7 text-slate-300">
+                            Book a free 20-minute consultation and we will map your biggest bottlenecks together — no slideware, just a clear plan.
                         </p>
                     </div>
-                </section>
-
-                {/* FAQ */}
-                <section
-                    className="premium-section border-b border-[var(--premium-border)]"
-                    aria-label="Frequently asked questions"
-                >
-                    <div className="premium-container max-w-3xl">
-                        <FaqAccordionStatic />
+                    <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+                        <Link href="/contact" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                            Book a Free Consultation<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                        </Link>
+                        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-600 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/5">
+                            <MessageCircle aria-hidden="true" className="h-4 w-4" />Chat on WhatsApp
+                        </a>
                     </div>
-                </section>
-
-                {/* Final CTA */}
-                <CtaSection
-                    title="Ready to eliminate the manual work?"
-                    description="Book a free consultation and we will map your biggest bottlenecks together — no slideware, just a clear plan."
-                    primaryLabel="Book a Free Consultation"
-                    primaryHref={MARKETING_ROUTES.contact}
-                    secondaryLabel="Explore Services"
-                    secondaryHref={MARKETING_ROUTES.services}
-                />
-            </div>
+                </div>
+            </section>
         </>
     );
 }
