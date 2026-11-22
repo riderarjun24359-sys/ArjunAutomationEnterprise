@@ -33,9 +33,11 @@ export async function POST(request: Request) {
     const interactionId = typeof body.interactionId === "string" ? body.interactionId.trim().slice(0, 200) : "";
     const purpose = body.purpose === "requested_sales_followup"
         ? "requested_sales_followup"
-        : body.purpose === "requested_callback"
-            ? "requested_callback"
-            : "";
+        : body.purpose === "requested_whatsapp_message"
+            ? "requested_whatsapp_message"
+            : body.purpose === "requested_callback"
+                ? "requested_callback"
+                : "";
     if (!isValidIndianE164(phoneNumber) || interactionId.length < 4 || !purpose || body.explicitConsent !== true) {
         return NextResponse.json({
             error: "A valid +91 number, interaction ID, purpose and explicit caller consent are required",
