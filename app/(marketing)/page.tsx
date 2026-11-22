@@ -77,7 +77,7 @@ export default function HomePage() {
                 <SectionHeading eyebrow="What we build" title="Three things we do well" />
                 <div className="mt-9 grid gap-5 md:grid-cols-3">
                     {[
-                        ["AI and Workflow Automation","Automate repeat work such as reminders, approvals, reports and data entry across the tools you already use.","/services#automation",MessageCircle],
+                        ["AI and Task Automation","Automate repeat work such as reminders, approvals, reports and data entry across the tools you already use.","/services#automation",MessageCircle],
                         ["Custom Software and Web Apps","Websites, portals and applications designed around your process, not a template.","/services#software",FileText],
                         ["Business Systems","School and college management, customer records, billing and portals in one organised system.","/services#systems",School],
                     ].map(([name,body,href,Icon])=><Link key={String(name)} href={String(href)} className="rounded-2xl border border-[var(--border)] bg-white p-6 transition hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(15,18,38,.06)]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-5 text-xl font-bold">{String(name)}</h3><p className="mt-3 leading-7">{String(body)}</p><span className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--primary)]">Learn more <ArrowRight className="h-4 w-4"/></span></Link>)}
