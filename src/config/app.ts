@@ -2,15 +2,14 @@ import { env } from "@/src/lib/env";
 
 export const appConfig = {
     name: env.NEXT_PUBLIC_APP_NAME,
-    description: "Enterprise AI Business Operating System",
+    description: "Custom software, AI automation and business systems for schools and growing businesses.",
     url: env.NEXT_PUBLIC_APP_URL,
     defaultLocale: "en",
-    supportedLocales: ["en"],
+    supportedLocales: ["en", "te"],
 } as const;
 
 export const appFeatures = [
-    "Secure authentication",
-    "Reusable enterprise components",
-    "Modular workflow orchestration",
-    "Operational analytics",
+    "Custom software",
+    "AI automation",
+    "Business systems",
 ] as const;
