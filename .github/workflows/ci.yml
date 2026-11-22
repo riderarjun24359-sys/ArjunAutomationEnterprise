@@ -2,7 +2,7 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/arjun-ai-voice-agent-foundation]
   push:
     branches: [main]
   workflow_dispatch:
@@ -39,6 +39,9 @@ jobs:
 
       - name: TypeScript
         run: npx tsc --noEmit
+
+      - name: Priya and Jarvis static release checks
+        run: npm run priya-sales-engine:verify
 
       - name: Unit tests
         run: npm run test:unit
