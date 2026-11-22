@@ -8,6 +8,7 @@ export interface PriyaCallVariables {
     requirement: string;
     call_purpose: "requested_callback" | "requested_sales_followup";
     preferred_language?: "te" | "en" | "hi" | "auto";
+    call_event_id?: string;
 }
 
 export interface OutboundVoiceCallInput {
@@ -82,6 +83,8 @@ export async function createPriyaOutboundCall(
                         requirement: input.variables.requirement,
                         call_purpose: input.variables.call_purpose,
                         preferred_language: input.variables.preferred_language ?? "auto",
+                call_event_id: input.variables.call_event_id ?? "",
+                        call_event_id: input.variables.call_event_id ?? "",
                     },
                 },
             },
