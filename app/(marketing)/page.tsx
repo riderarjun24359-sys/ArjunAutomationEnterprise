@@ -46,9 +46,9 @@ const FAQS = [
             "A Starter Website usually takes 1–2 weeks. An Automation Sprint usually takes 1–2 weeks. A Growth Platform usually takes 4–6 weeks. A custom ERP is scheduled after discovery because its timeline depends on the modules, integrations and data migration involved.",
     },
     {
-        question: "Why do you include a working prototype?",
+        question: "Can we validate the approach before the full build?",
         answer:
-            "A prototype lets you test the proposed approach with a representative workflow before committing to the full build. The production quote covers the remaining work such as complete integrations, data migration, security hardening, testing, training and go-live. The prototype scope and any limits are agreed before work starts.",
+            "Where it helps reduce uncertainty, we can scope a small prototype using representative data. Its deliverables, price and limits are agreed in writing; it is not automatically included in every project. The production proposal separately defines integrations, data migration, security work, testing, training and go-live.",
     },
     {
         question: "Can you integrate with tools we already use, such as WhatsApp, Tally, Zoho or Google Workspace?",
@@ -130,8 +130,8 @@ const STEPS = [
     },
     {
         number: "02",
-        title: "Working Prototype First",
-        duration: "Test the approach",
+        title: "Validate the Approach",
+        duration: "Prototype if useful",
         description:
             "We agree a small proof-of-concept so you can see the proposed workflow using representative data before deciding on the full production scope.",
     },
@@ -242,18 +242,18 @@ export default function HomePage() {
                             Stop losing work in the gaps between your tools.
                         </h1>
                         <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                            Missed enquiries, retyped data, and tasks nobody chases. We build custom websites, AI workflow automations, and internal portals that connect the tools you already use — with a working prototype included before you commit.
+                            Missed enquiries, retyped data, and tasks nobody chases. We build custom websites, AI workflow automations, and internal portals that connect the tools you already use. Where useful, we can scope a small prototype before the production build.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                             <Link href="/contact" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
-                                Book a Free 20-Min Call <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                                Request a Free 20-Min Call <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                             </Link>
                             <Link href="/pricing" className="inline-flex min-h-12 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
                                 See Pricing
                             </Link>
                         </div>
                         <div className="mt-9 flex flex-wrap gap-x-5 gap-y-3 border-t border-slate-200 pt-6">
-                            {["Working Prototype Included", "Fixed-Scope INR Pricing", "Direct Founder Engineering", "Based in Secunderabad"].map((item) => (
+                            {["Prototype Scope Agreed Up Front", "Fixed-Scope INR Pricing", "Direct Founder Engineering", "Based in Secunderabad"].map((item) => (
                                 <span key={item} className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
                                     <Check aria-hidden="true" className="h-4 w-4 text-blue-700" />{item}
                                 </span>
@@ -402,12 +402,12 @@ export default function HomePage() {
                         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-blue-300">Start with a conversation</p>
                         <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Ready to eliminate the manual work?</h2>
                         <p className="mt-4 text-base leading-7 text-slate-300">
-                            Book a free 20-minute consultation and we will map your biggest bottlenecks together — no slideware, just a clear plan.
+                            Request a free consultation and we will discuss your biggest operational bottlenecks and possible next steps.
                         </p>
                     </div>
                     <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
                         <Link href="/contact" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
-                            Book a Free Consultation<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+                            Request a Free Consultation<ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                         </Link>
                         <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-600 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/5">
                             <MessageCircle aria-hidden="true" className="h-4 w-4" />Chat on WhatsApp
