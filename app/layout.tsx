@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { appConfig } from "@/src/config/app";
 import { LAUNCH_KIT_SEO } from "@/src/modules/company-launch-kit/config/seo-defaults";
 import { SOFT_LAUNCH_BRANDING } from "@/src/modules/soft-launch/data/launch-assets";
@@ -16,31 +16,21 @@ export const metadata: Metadata = {
     creator: LAUNCH_KIT_SEO.siteName,
     openGraph: {
         type: "website",
-        locale: LAUNCH_KIT_SEO.locale,
+        locale: "en_IN",
         url: LAUNCH_KIT_SEO.siteUrl,
         siteName: LAUNCH_KIT_SEO.siteName,
         title: LAUNCH_KIT_SEO.defaultTitle,
         description: LAUNCH_KIT_SEO.defaultDescription,
-        // `images` is intentionally omitted. Marketing routes supply their own
-        // `opengraph-image.tsx` (a real PNG); the app-shell routes are behind
-        // auth and are never shared publicly.
     },
     twitter: {
         card: "summary_large_image",
-        site: LAUNCH_KIT_SEO.twitterHandle,
         title: LAUNCH_KIT_SEO.defaultTitle,
         description: LAUNCH_KIT_SEO.defaultDescription,
     },
     icons: {
-        // SVG for modern browsers, PNG fallbacks for older clients and crawlers.
-        icon: [
-            { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
-        ],
-        shortcut: [
-            { url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" },
-        ],
-        // Must be a PNG — iOS does not render an SVG apple-touch-icon.
-        apple: [{ url: SOFT_LAUNCH_BRANDING.faviconPath, sizes: "180x180", type: "image/svg+xml" }],
+        icon: [{ url: SOFT_LAUNCH_BRANDING.faviconPath, type: "image/svg+xml" }],
+        shortcut: [{ url: SOFT_LAUNCH_BRANDING.favicon32Path, sizes: "32x32", type: "image/png" }],
+        apple: [{ url: SOFT_LAUNCH_BRANDING.appleTouchIconPath, sizes: "180x180", type: "image/png" }],
     },
     manifest: "/manifest.webmanifest",
 };
@@ -48,15 +38,11 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
     themeColor: SOFT_LAUNCH_BRANDING.primaryColor,
 };
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en-IN" suppressHydrationWarning className="h-full antialiased">
-            <body className="min-h-screen bg-background text-foreground">{children}</body>
+            <body className="min-h-screen bg-white text-slate-900">{children}</body>
         </html>
     );
 }
-
