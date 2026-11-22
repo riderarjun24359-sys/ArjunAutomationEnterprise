@@ -70,7 +70,7 @@ export async function POST(request: Request) {
             .eq("organization_id", organizationId)
             .maybeSingle()
         : await client.from("ai_voice_call_events")
-            .select("id, direction, phone_number, interaction_id, extracted_variables")
+            .select("id, direction, phone_number, interaction_id, status, extracted_variables")
             .eq("provider_attempt_id", providerCallId)
             .eq("organization_id", organizationId)
             .maybeSingle();
