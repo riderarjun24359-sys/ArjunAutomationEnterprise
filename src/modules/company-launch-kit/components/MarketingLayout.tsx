@@ -7,7 +7,7 @@ import { MobileBottomBar } from "@/src/modules/company-launch-kit/components/Mob
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
     return (
-        <div className="min-h-screen bg-white text-slate-900">
+        <div className="premium-theme min-h-screen bg-white text-slate-900">
             <a
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"
