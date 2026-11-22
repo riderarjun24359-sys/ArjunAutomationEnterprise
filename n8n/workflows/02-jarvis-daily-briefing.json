@@ -1,0 +1,77 @@
+{
+  "name": "Jarvis - Daily 09:00 IST Executive Briefing",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-6"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "id": "4c9b65c5-0a4b-4b2b-8ca2-000000000001",
+      "name": "Daily 09:00 IST"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://[ARJUN_OS_HOST]/api/ai-sales/jarvis/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [PRIYA_JARVIS_DISPATCH_SECRET]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"triggerReason\":\"daily_briefing\"}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        300
+      ],
+      "id": "4c9b65c5-0a4b-4b2b-8ca2-000000000002",
+      "name": "Start Jarvis Briefing Call"
+    }
+  ],
+  "connections": {
+    "Daily 09:00 IST": {
+      "main": [
+        [
+          {
+            "node": "Start Jarvis Briefing Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "versionId": "4c9b65c5-0a4b-4b2b-8ca2-000000000003",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
