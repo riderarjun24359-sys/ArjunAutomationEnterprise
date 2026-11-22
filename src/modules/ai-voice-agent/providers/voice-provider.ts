@@ -35,7 +35,7 @@ export function getVoiceProviderName(): VoiceProviderName {
 }
 
 export function isValidIndianE164(phoneNumber: string): boolean {
-    return /^\\+91[6-9]\\d{9}$/.test(phoneNumber);
+    return /^\+91[6-9]\d{9}$/.test(phoneNumber);
 }
 
 async function postJson<T>(url: string, token: string, body: Record<string, unknown>): Promise<T> {
