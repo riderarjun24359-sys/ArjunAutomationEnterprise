@@ -142,6 +142,19 @@ Parameters:
 
 Endpoint: `POST /api/ai-sales/tools/capture-lead`. The server verifies the provider call ID and caller number against a tracked call event, stores a structured qualification profile, and computes a deterministic lead score.
 
+### Initial Meta templates to create
+
+Create these in WhatsApp Manager, submit them for review, and wait for APPROVED status before using them. The backend checks the live template status and language before each send.
+
+| Template name | Category | Language | Body |
+|---|---|---|---|
+| `priya_brochure_requested_en` | MARKETING | en | Hi {{1}}, as requested, here is the Arjun Automation brochure: {{2}}. Reply STOP to opt out. |
+| `priya_brochure_requested_te` | MARKETING | te | నమస్కారం {{1}}, మీరు కోరినట్లుగా Arjun Automation బ్రోచర్ ఇక్కడ ఉంది: {{2}}. ఇకపై సందేశాలు వద్దనుకుంటే STOP అని reply చేయండి. |
+| `priya_demo_confirmed_en` | UTILITY | en | Hi {{1}}, your 20-minute Arjun Automation demo is booked for {{2}}. Google Meet: {{3}}. Reply here if you need to reschedule. |
+| `priya_demo_confirmed_te` | UTILITY | te | నమస్కారం {{1}}, మీ Arjun Automation 20 నిమిషాల డెమో {{2}} కి బుక్ అయింది. Google Meet: {{3}}. సమయం మార్చాలంటే ఇక్కడ reply చేయండి. |
+
+Use the exact language code shown by WhatsApp Manager. Provide realistic examples for each placeholder during template submission. The brochure URL must be a public, HTTPS link that the prospect is authorised to receive. The backend currently sends body text parameters only; add and test a separate media-header implementation before submitting templates that require a document/image header.
+
 ### send_approved_whatsapp_template
 
 Parameters:
