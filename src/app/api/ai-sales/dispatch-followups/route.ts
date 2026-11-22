@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
+import { randomUUID, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 import { createPriyaOutboundCall, isValidIndianE164 } from "@/src/modules/ai-voice-agent/providers/voice-provider";
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
             continue;
         }
 
-        const callEventId = crypto.randomUUID();
+        const callEventId = randomUUID();
         const { error: eventError } = await client.from("ai_voice_call_events").insert({
             id: callEventId,
             organization_id: organizationId,
