@@ -26,7 +26,7 @@ const SERVICE_METHODS: Record<string, Record<string, (...args: unknown[]) => unk
         getPermissions: () => ({ roles: getSecurityClient().getRoles() }),
         checkPermission: (role: unknown, permission: unknown) =>
             getSecurityClient().hasPermission(role as import("@/src/modules/security-center/types").SecurityRole, permission as import("@/src/modules/security-center/types").Permission),
-        validateToken: (token: unknown) => securityClient.validateToken(String(token)),
+        validateToken: (token: unknown) => getSecurityClient().validateToken(String(token)),
     },
     notifications: {
         send: async (...args: unknown[]) => {
