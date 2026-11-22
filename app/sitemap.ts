@@ -3,7 +3,7 @@ import { LAUNCH_KIT_SEO } from "@/src/modules/company-launch-kit/config/seo-defa
 
 const LIVE_PUBLIC_ROUTES = [
     "/", "/services", "/school-erp", "/demos", "/pricing", "/about", "/contact", "/privacy", "/terms",
-    "/te", "/te/services", "/te/school-erp", "/te/demos", "/te/pricing", "/te/about", "/te/contact",
+    "/te", "/te/services", "/te/school-erp", "/te/demos", "/te/pricing", "/te/about", "/te/contact", "/te/privacy", "/te/terms", "/te/thank-you",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
