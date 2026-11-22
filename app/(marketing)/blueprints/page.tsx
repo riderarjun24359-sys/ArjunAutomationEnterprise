@@ -9,7 +9,7 @@ const PAGE = {
     title: "Project Blueprints",
     description:
         "Explore illustrative project blueprints from Arjun Automation: business websites, WhatsApp lead workflows, school portals and clinic follow-up systems. These are example concepts, not claimed customer deployments.",
-    path: "/blueprints",
+    path: MARKETING_ROUTES.blueprints,
 };
 
 export const metadata: Metadata = buildMetadata({
