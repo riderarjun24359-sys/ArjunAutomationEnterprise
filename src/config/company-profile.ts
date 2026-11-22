@@ -3,12 +3,6 @@ function envString(key: string): string | null {
     return raw ? raw : null;
 }
 
-function toE164(input: string | null): string | null {
-    if (!input) return null;
-    const digits = input.replace(/[^\d+]/g, "");
-    return /^\+\d{8,15}$/.test(digits) ? digits : null;
-}
-
 export interface CompanyAddress {
     street: string;
     city: string;
@@ -17,10 +11,6 @@ export interface CompanyAddress {
     country: string;
     countryCode: string;
 }
-
-const DEFAULT_PHONE = "+91 73370 27357";
-const rawPhone = envString("NEXT_PUBLIC_COMPANY_PHONE") ?? DEFAULT_PHONE;
-const phoneE164 = toE164(rawPhone);
 
 export const COMPANY_PROFILE = {
     legalName: "Arjun Automation Enterprises",
