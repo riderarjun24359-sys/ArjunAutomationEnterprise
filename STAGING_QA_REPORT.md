@@ -9,6 +9,10 @@
 - No production deployment was performed.
 - No merge to the production branch was performed.
 
+## Branch safety note
+
+No merge or production deployment was performed. A file-creation call briefly placed three Telugu page files on `main` instead of the staging branch; those three files were immediately deleted. The content is present on the staging branch. The main branch file tree is restored, but the three cleanup commits remain in its history. This was an execution mistake and is recorded here rather than hidden.
+
 ## Deployment status
 
 The latest successful branch preview deployment available in Vercel is:
