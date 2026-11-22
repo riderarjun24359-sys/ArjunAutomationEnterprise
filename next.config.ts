@@ -162,7 +162,7 @@ const nextConfig: NextConfig = {
              * and all link equity consolidates onto one canonical page.
              *
              * `/portfolio/integrations` has no case-study twin and stays live.
-             * The `/portfolio` index remains as a hub that links into both.
+             * The `/portfolio` index itself now redirects to `/blueprints`.
              */
             {
                 source: "/portfolio/ai-automation",
