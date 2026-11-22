@@ -58,9 +58,9 @@ export default function PricingPage() {
                             {PROJECT_PRICING.map((item) => (
                                 <article
                                     key={item.id}
-                                    className={`flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-8 ${item.highlighted ? "border-blue-600 ring-1 ring-blue-600" : "border-slate-200"}`}
+                                    className={`flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-8 ${("highlighted" in item && item.highlighted) ? "border-blue-600 ring-1 ring-blue-600" : "border-slate-200"}`}
                                 >
-                                    {item.highlighted ? (
+                                    {("highlighted" in item && item.highlighted) ? (
                                         <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
                                             For connected business systems
                                         </p>
