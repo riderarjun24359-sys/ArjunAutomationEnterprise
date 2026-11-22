@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@/src/modules/company-launch-kit/design-system/premium.css";
 import "@/src/modules/company-launch-kit/design-system/marketing-light.css";
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Manrope, Instrument_Serif, Noto_Sans_Telugu } from "next/font/google";
 import { MarketingLayout } from "@/src/modules/company-launch-kit/components/MarketingLayout";
 import { env } from "@/src/lib/env";
 import { buildMetadata } from "@/src/lib/seo";
@@ -14,6 +14,8 @@ const inter = Inter({
     preload: true,
     adjustFontFallback: true,
 });
+const instrumentSerif = Instrument_Serif({ subsets: ["latin"], weight: ["400"], style: ["italic"], variable: "--font-instrument-serif", display: "swap" });
+const notoTelugu = Noto_Sans_Telugu({ subsets: ["telugu"], weight: ["400", "500", "700"], variable: "--font-noto-telugu", display: "swap" });
 const manrope = Manrope({
     subsets: ["latin"],
     weight: ["700", "800"],
@@ -33,5 +35,5 @@ export const metadata: Metadata = {
 };
 
 export default function MarketingRootLayout({ children }: { children: React.ReactNode }) {
-    return <div className={`${inter.variable} ${manrope.variable} font-[family-name:var(--font-inter)] antialiased`}><MarketingLayout>{children}</MarketingLayout></div>;
+    return <div className={`${inter.variable} ${manrope.variable} ${instrumentSerif.variable} ${notoTelugu.variable} font-[family-name:var(--font-inter)] antialiased`}><MarketingLayout>{children}</MarketingLayout></div>;
 }
