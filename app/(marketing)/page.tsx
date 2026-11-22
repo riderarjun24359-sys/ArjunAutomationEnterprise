@@ -348,8 +348,8 @@ export default function HomePage() {
                     />
                     <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                         {PROJECT_PRICING.map((tier) => (
-                            <article key={tier.id} className={`relative flex h-full flex-col rounded-2xl border p-6 ${tier.highlighted ? "border-blue-600 bg-blue-50/50 shadow-md" : "border-slate-200 bg-white"}`}>
-                                {tier.highlighted ? <span className="mb-4 inline-flex w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Most Popular</span> : <span className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">{tier.qualifier}</span>}
+                            <article key={tier.id} className={`relative flex h-full flex-col rounded-2xl border p-6 ${"highlighted" in tier && tier.highlighted ? "border-blue-600 bg-blue-50/50 shadow-md" : "border-slate-200 bg-white"}`}>
+                                {"highlighted" in tier && tier.highlighted ? <span className="mb-4 inline-flex w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">Most Popular</span> : <span className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">{tier.qualifier}</span>}
                                 <h3 className="text-lg font-bold text-slate-950">{tier.name}</h3>
                                 <p className="mt-3 text-2xl font-bold tracking-tight text-slate-950">{tier.price}</p>
                                 <p className="mt-3 min-h-[4.5rem] text-sm leading-6 text-slate-600">{tier.summary}</p>
