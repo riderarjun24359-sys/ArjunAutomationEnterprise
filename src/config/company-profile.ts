@@ -54,7 +54,7 @@ export interface CompanyAddress {
  * version control so they ship with the code. Environment variables still win
  * if you need to override them per-environment.
  */
-const DEFAULT_PHONE = "+91 73370 27357";
+const DEFAULT_PHONE = "+91 73370 28357";
 
 const rawPhone =
     envString("NEXT_PUBLIC_COMPANY_PHONE") ?? envString("NEXT_PUBLIC_CONTACT_PHONE") ?? DEFAULT_PHONE;
