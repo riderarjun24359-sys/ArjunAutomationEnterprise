@@ -100,6 +100,18 @@ export async function POST(request: Request) {
         .select("id, phone_number, purpose, granted_at")
         .single();
 
+    if (error?.code === "23505") {
+        const { data: duplicate, error: duplicateError } = await client
+            .from("ai_voice_contact_consents")
+            .select("id")
+            .eq("organization_id", organizationId)
+            .eq("phone_number", phoneNumber)
+            .eq("purpose", purpose)
+            .eq("evidence_reference", interactionId)
+            .maybeSingle();
+        if (duplicateError) return NextResponse.json({ error: "Could not verify existing caller consent" }, { status: 500 });
+        if (duplicate) return NextResponse.json({ success: true, duplicate: true, consentId: duplicate.id, purpose });
+    }
     if (error || !data) return NextResponse.json({ error: "Could not record caller consent" }, { status: 500 });
     return NextResponse.json({ success: true, consentId: data.id, purpose }, { status: 201 });
 }
