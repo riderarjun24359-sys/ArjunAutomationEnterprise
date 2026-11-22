@@ -88,7 +88,7 @@ Create the following server tool definitions in the Vapi dashboard. Set the serv
 
 Parameters:
 
-\`\`\`json
+```json
 {
   "type": "object",
   "properties": {
@@ -114,9 +114,9 @@ Parameters:
   "required": ["interactionId", "leadName", "phoneNumber", "consentToStore"],
   "additionalProperties": false
 }
-\`\`\`
+```
 
-Endpoint: \`POST /api/ai-sales/tools/capture-lead\`. The server verifies the provider call ID and caller number against a tracked call event, stores a structured qualification profile, and computes a deterministic lead score.
+Endpoint: `POST /api/ai-sales/tools/capture-lead`. The server verifies the provider call ID and caller number against a tracked call event, stores a structured qualification profile, and computes a deterministic lead score.
 
 ### record_caller_consent
 
