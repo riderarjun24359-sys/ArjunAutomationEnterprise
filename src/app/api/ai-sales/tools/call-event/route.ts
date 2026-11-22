@@ -126,10 +126,21 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Could not save provider call event" }, { status: 500 });
     }
 
-    const followupId = existing?.extracted_variables &&
-        typeof existing.extracted_variables === "object" &&
-        typeof (existing.extracted_variables as Record<string, unknown>).followup_id === "string"
-        ? (existing.extracted_variables as Record<string, unknown>).followup_id as string
+    const existingVariables = existing?.extracted_variables && typeof existing.extracted_variables === "object"
+        ? existing.extracted_variables as Record<string, unknown>
+        : {};
+    if (existingVariables.agent === "jarvis" && terminalStatuses.has(status) && !alreadyTerminal) {
+        await client.from("ai_sales_activity").insert({
+            organization_id: organizationId,
+            actor: "jarvis",
+            event_type: status === "completed" ? "briefing_call_completed" : "briefing_call_failed",
+            summary: status === "completed" ? "Jarvis completed an executive briefing call" : `Jarvis briefing call ended with status: ${status}`,
+            metadata: { call_event_id: write.data.id, provider, duration_seconds: duration ?? 0 },
+        });
+    }
+
+    const followupId = typeof existingVariables.followup_id === "string"
+        ? existingVariables.followup_id
         : "";
     if (followupId && terminalStatuses.has(status)) {
         if (!alreadyTerminal) {
