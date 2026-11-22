@@ -178,6 +178,7 @@ export async function POST(request: Request) {
                 requirement,
                 call_purpose: purpose,
                 preferred_language: preferredLanguage,
+                call_event_id: callEventId,
             },
         });
 
