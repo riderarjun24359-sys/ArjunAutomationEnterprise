@@ -36,7 +36,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 |---|---|---|
 | `POST /api/ai-sales/consents` | Admin-recorded consent evidence | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/record-consent` | Record explicit verbal consent during a call | Bearer `PRIYA_SALES_TOOL_SECRET` |
-| `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
+| `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |\n| `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
@@ -56,6 +56,7 @@ Sales engine:
 - `ARJUN_VOICE_PROVIDER=vapi` — `vapi` or `retell`
 - `PRIYA_SALES_TOOL_SECRET` — high-entropy secret shared only with voice-platform tool authentication
 - `PRIYA_SALES_WEBHOOK_SECRET` — separate high-entropy secret used only by n8n after provider webhook signature verification
+- `PRIYA_SALES_DISPATCH_SECRET` — high-entropy secret for the n8n scheduled follow-up dispatcher
 
 Vapi:
 - `VAPI_PRIVATE_KEY`
@@ -199,7 +200,7 @@ Do not store full call transcripts in the consent ledger. Apply the platform's p
 
 ## Follow-up engine
 
-`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. The outbound API rechecks:
+`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. The SQL claim function uses `FOR UPDATE SKIP LOCKED`, checks the consent age/revocation and suppression ledger, and only claims work during the configured IST calling window. The authenticated dispatcher rechecks consent and suppression immediately before each provider call. The n8n Schedule Trigger should call `POST /api/ai-sales/dispatch-followups` every minute with the dispatcher Bearer secret. The outbound API rechecks:
 - Organization match
 - Consent ID, phone number and purpose match
 - Consent has not been revoked and is no older than 30 days
@@ -255,7 +256,7 @@ MRR must come from active recurring billing/subscription records, not from one-t
 
 n8n may orchestrate:
 1. CRM lead created → check consent → queue a requested follow-up.
-2. Schedule Trigger → call an authenticated internal dispatcher for due follow-ups.
+2. Schedule Trigger (every minute) → `POST /api/ai-sales/dispatch-followups` with `PRIYA_SALES_DISPATCH_SECRET`; the database claims due rows atomically and the application performs the final consent check before dialing.
 3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` dynamic variable for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
 4. Verified Razorpay payment webhook → update billing/revenue → notify Jarvis.
 5. Hot lead or high-value deal → notify founder through approved WhatsApp template.
