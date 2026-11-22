@@ -65,7 +65,7 @@ export async function POST(request: Request) {
 
     const lookup = callEventId
         ? await client.from("ai_voice_call_events")
-            .select("id, direction, phone_number, interaction_id, extracted_variables")
+            .select("id, direction, phone_number, interaction_id, status, extracted_variables")
             .eq("id", callEventId)
             .eq("organization_id", organizationId)
             .maybeSingle()
@@ -84,6 +84,11 @@ export async function POST(request: Request) {
         (existing.interaction_id && existing.interaction_id !== interactionId)
     )) {
         return NextResponse.json({ error: "Call event identity does not match the stored record" }, { status: 409 });
+    }
+
+    const terminalStatuses = new Set(["completed", "no_answer", "busy", "failed"]);
+    if (existing && terminalStatuses.has(existing.status)) {
+        return NextResponse.json({ success: true, duplicate: true, ignoredOutOfOrderEvent: true, callEventId: existing.id });
     }
 
     const eventPayload = {
