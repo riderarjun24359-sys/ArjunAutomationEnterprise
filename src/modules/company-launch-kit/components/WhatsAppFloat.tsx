@@ -1,45 +1,28 @@
-import { MessageCircle } from "lucide-react";
-import {
-    COMPANY_PROFILE,
-    WHATSAPP_DEFAULT_MESSAGE,
-    whatsappLink,
-} from "@/src/config/company-profile";
+"use client";
 
-/**
- * Floating WhatsApp enquiry button.
- *
- * WHY
- * ---
- * The target market for this business — Indian SMEs, coaching centres, clinics,
- * distributors — lives on WhatsApp, not email. An audit of all 46 marketing
- * pages found zero `wa.me` / `api.whatsapp` links, while the contact page asked
- * people to fill in a form and wait for an email reply.
- *
- * SAFETY
- * ------
- * The button renders nothing at all until a real phone number is configured in
- * `src/config/company-profile.ts` (via `NEXT_PUBLIC_COMPANY_PHONE`). We never
- * ship a placeholder number — a dead WhatsApp link is worse than no link,
- * because it silently loses the enquiry.
- *
- * Accessibility: the label is explicit, the target meets touch-size guidance,
- * and the control is keyboard reachable with a visible focus ring.
- */
+import { useEffect, useState } from "react";
+import { MessageCircle } from "lucide-react";
+import { whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from "@/src/config/company-profile";
+
 export function WhatsAppFloat() {
+    const [footerVisible, setFooterVisible] = useState(false);
     const href = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
 
-    if (!href) return null;
+    useEffect(() => {
+        const footer = document.getElementById("site-footer");
+        if (!footer) return;
+        const observer = new IntersectionObserver(([entry]) => setFooterVisible(entry.isIntersecting), { threshold: 0.05 });
+        observer.observe(footer);
+        return () => observer.disconnect();
+    }, []);
+
+    if (!href || footerVisible) return null;
 
     return (
-        <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Chat with ${COMPANY_PROFILE.tradingName} on WhatsApp`}
-            className="group fixed z-40 flex min-h-11 items-center gap-3 rounded-full bg-[#25D366] px-4 py-3 text-[#0b3d1f] shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition-transform duration-200 hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--premium-bg, #0a0a0b)]" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)", right: "calc(env(safe-area-inset-right, 0px) + 1rem)" }}
-        >
-            <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
-            <span className="hidden text-sm font-semibold sm:inline">Chat on WhatsApp</span>
+        <a href={href} target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"
+            className="fixed z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--wa)] text-white shadow-lg focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
+            style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)", right: "calc(env(safe-area-inset-right, 0px) + 1rem)" }}>
+            <MessageCircle className="h-6 w-6" aria-hidden="true"/>
         </a>
     );
 }
