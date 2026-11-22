@@ -54,6 +54,27 @@ export async function POST(request: Request) {
     if (suppressionError) return NextResponse.json({ error: "Could not verify do-not-contact status" }, { status: 500 });
     if (suppression) return NextResponse.json({ error: "This number is on the do-not-contact list" }, { status: 409 });
 
+    // Bind consent to the verified active inbound call record. The model
+    // cannot grant outbound permission for an arbitrary third-party number.
+    const { data: activeCall, error: activeCallError } = await client
+        .from("ai_voice_call_events")
+        .select("id, phone_number, direction, status")
+        .eq("organization_id", organizationId)
+        .eq("interaction_id", interactionId)
+        .eq("phone_number", phoneNumber)
+        .eq("direction", "inbound")
+        .in("status", ["connected", "completed"])
+        .maybeSingle();
+
+    if (activeCallError) {
+        return NextResponse.json({ error: "Could not verify the current inbound call" }, { status: 500 });
+    }
+    if (!activeCall) {
+        return NextResponse.json({
+            error: "Consent can only be recorded for the verified caller on a tracked inbound call",
+        }, { status: 403 });
+    }
+
     const { data: existing, error: existingError } = await client
         .from("ai_voice_contact_consents")
         .select("id")
