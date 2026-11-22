@@ -36,11 +36,13 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 |---|---|---|
 | `POST /api/ai-sales/consents` | Admin-recorded consent evidence | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/record-consent` | Record explicit verbal consent during a call | Bearer `PRIYA_SALES_TOOL_SECRET` |
-| `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |\n| `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
+| `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
+| `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
 | `GET /api/ai-sales/pricing` | Read organization pricing policy | Arjun OS session + automationManage |
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
-| `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |\n| `POST /api/ai-sales/tools/call-event` | Ingest normalized call events after n8n verifies the provider signature | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
+| `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/call-event` | Ingest normalized call events after n8n verifies the provider signature | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
 
 All organization-scoped database operations use the server-only Supabase service-role client after authentication or tool-secret validation. Do not call these routes from unauthenticated browser code.
 
