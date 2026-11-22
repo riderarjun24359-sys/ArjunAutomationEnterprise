@@ -64,10 +64,10 @@ export default function HomePage() {
                     <SectionHeading title="Where business time quietly disappears" />
                     <div className="mt-9 grid gap-5 md:grid-cols-3">
                         {[
-                            [Clock3,"Manual work repeated every day"],
-                            [ClipboardList,"Information scattered across notebooks, chats and tools"],
-                            [MessageCircle,"Follow-ups and enquiries that slip through"],
-                        ].map(([Icon,label]) => <article key={String(label)} className="rounded-2xl border border-[var(--border)] bg-white p-6"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6" /></span><h3 className="mt-5 text-xl font-bold">{String(label)}</h3></article>)}
+                            { icon: Clock3, label: "Manual work repeated every day" },
+                            { icon: ClipboardList, label: "Information scattered across notebooks, chats and tools" },
+                            { icon: MessageCircle, label: "Follow-ups and enquiries that slip through" },
+                        ].map(({icon: Icon,label}) => <article key={String(label)} className="rounded-2xl border border-[var(--border)] bg-white p-6"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6" /></span><h3 className="mt-5 text-xl font-bold">{String(label)}</h3></article>)}
                     </div>
                     <p className="mt-8 text-lg font-semibold">We replace this with systems that do the repeat work for you.</p>
                 </div>
@@ -77,10 +77,10 @@ export default function HomePage() {
                 <SectionHeading eyebrow="What we build" title="Three things we do well" />
                 <div className="mt-9 grid gap-5 md:grid-cols-3">
                     {[
-                        ["AI and Task Automation","Automate repeat work such as reminders, approvals, reports and data entry across the tools you already use.","/services#automation",MessageCircle],
-                        ["Custom Software and Web Apps","Websites, portals and applications designed around your process, not a template.","/services#software",FileText],
-                        ["Business Systems","School and college management, customer records, billing and portals in one organised system.","/services#systems",School],
-                    ].map(([name,body,href,Icon])=><Link key={String(name)} href={String(href)} className="rounded-2xl border border-[var(--border)] bg-white p-6 transition hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(15,18,38,.06)]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-5 text-xl font-bold">{String(name)}</h3><p className="mt-3 leading-7">{String(body)}</p><span className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--primary)]">Learn more <ArrowRight className="h-4 w-4"/></span></Link>)}
+                        { title: "AI and Task Automation", body: "Automate repeat work such as reminders, approvals, reports and data entry across the tools you already use.", href: "/services#automation", icon: MessageCircle },
+                        { title: "Custom Software and Web Apps", body: "Websites, portals and applications designed around your process, not a template.", href: "/services#software", icon: FileText },
+                        { title: "Business Systems", body: "School and college management, customer records, billing and portals in one organised system.", href: "/services#systems", icon: School },
+                    ].map(({title:name,body,href,icon:Icon})=><Link key={String(name)} href={String(href)} className="rounded-2xl border border-[var(--border)] bg-white p-6 transition hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(15,18,38,.06)]"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-5 text-xl font-bold">{String(name)}</h3><p className="mt-3 leading-7">{String(body)}</p><span className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--primary)]">Learn more <ArrowRight className="h-4 w-4"/></span></Link>)}
                 </div>
             </section>
 
@@ -101,7 +101,7 @@ export default function HomePage() {
             <section className="premium-container py-16 sm:py-20">
                 <SectionHeading title="Built for organisations like yours" />
                 <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {[[School,"Schools and colleges","Keep student, fee, attendance and parent updates together."],[ShoppingBag,"Retail and supermarkets","Keep customer orders, records and billing organised."],[Stethoscope,"Clinics and healthcare practices","Manage patient enquiries, appointments and follow-ups."],[FileText,"Growing service businesses","Keep customer details, approvals and repeat tasks in one place."]].map(([Icon,name,body])=><article key={String(name)} className="rounded-2xl border border-[var(--border)] p-6"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-4 text-lg font-bold">{String(name)}</h3><p className="mt-2 text-sm leading-6">{String(body)}</p></article>)}
+                    {[{icon:School,title:"Schools and colleges",body:"Keep student, fee, attendance and parent updates together."},{icon:ShoppingBag,title:"Retail and supermarkets",body:"Keep customer orders, records and billing organised."},{icon:Stethoscope,title:"Clinics and healthcare practices",body:"Manage patient enquiries, appointments and follow-ups."},{icon:FileText,title:"Growing service businesses",body:"Keep customer details, approvals and repeat tasks in one place."}].map(({icon:Icon,title:name,body})=><article key={String(name)} className="rounded-2xl border border-[var(--border)] p-6"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-4 text-lg font-bold">{String(name)}</h3><p className="mt-2 text-sm leading-6">{String(body)}</p></article>)}
                 </div>
             </section>
 
