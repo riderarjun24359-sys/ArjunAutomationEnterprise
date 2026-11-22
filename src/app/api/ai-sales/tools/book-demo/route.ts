@@ -1,7 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
-import { isValidIndianE164 } from "@/src/modules/ai-voice-agent/providers/voice-provider";
 
 export const runtime = "nodejs";
 
@@ -72,7 +71,7 @@ export async function POST(request: Request) {
         .select("id, scheduled_at, duration_minutes")
         .eq("organization_id", organizationId)
         .eq("status", "scheduled")
-        .gte("scheduled_at", new Date(startAt.getTime() - 60 * 60_000).toISOString())
+        .gte("scheduled_at", new Date(startAt.getTime() - 24 * 60 * 60_000).toISOString())
         .lte("scheduled_at", new Date(startAt.getTime() + 20 * 60_000).toISOString());
 
     if (meetingsError) return NextResponse.json({ error: "Could not verify existing CRM meetings" }, { status: 500 });
@@ -86,11 +85,8 @@ export async function POST(request: Request) {
         return NextResponse.json({
             success: false,
             available: false,
-            alternatives: [
-                new Date(startAt.getTime() + 30 * 60_000).toISOString(),
-                new Date(startAt.getTime() + 60 * 60_000).toISOString(),
-            ],
-            message: "That slot conflicts with an existing Arjun Automation meeting.",
+            alternatives: [],
+            message: "That slot conflicts with an existing Arjun Automation meeting. Ask the caller for another time; do not claim an alternative is free until the calendar service checks it.",
         }, { status: 409 });
     }
 
