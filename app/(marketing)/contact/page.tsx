@@ -16,9 +16,9 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
-    title: "Contact",
+    title: "Contact Arjun Automation",
     description:
-        "Talk to Arjun Automation about automating your operations. Call, WhatsApp or send us the details — we respond within one business day.",
+        "Discuss a business website, workflow automation or custom portal with Arjun Automation in Hyderabad. Call, WhatsApp or send an enquiry.",
     path: MARKETING_ROUTES.contact,
 };
 
@@ -33,161 +33,178 @@ const breadcrumbs = [
     { name: "Contact", path: PAGE.path },
 ];
 
-const CHANNELS = [
-    { label: "Sales & Partnerships", value: "sales@arjunautomations.com", href: "mailto:sales@arjunautomations.com" },
-    { label: "Customer Success", value: "success@arjunautomations.com", href: "mailto:success@arjunautomations.com" },
-    { label: "Support (Managed Clients)", value: "support@arjunautomations.com", href: "mailto:support@arjunautomations.com" },
+const CONTACT_CHANNELS = [
+    {
+        label: "Project enquiries",
+        value: COMPANY_PROFILE.emails.sales,
+        href: `mailto:${COMPANY_PROFILE.emails.sales}`,
+        description: "New websites, automation projects and business portals",
+    },
+    {
+        label: "Existing projects",
+        value: COMPANY_PROFILE.emails.success,
+        href: `mailto:${COMPANY_PROFILE.emails.success}`,
+        description: "Project coordination and handover questions",
+    },
+    {
+        label: "Managed support",
+        value: COMPANY_PROFILE.emails.support,
+        href: `mailto:${COMPANY_PROFILE.emails.support}`,
+        description: "Support enquiries from existing managed clients",
+    },
 ];
 
-const QUALIFICATION_STEPS = [
-    "Tell us what is going wrong today — the manual work, the missed enquiries, the chasing",
-    "We reply within one business day, usually with questions and an honest view on fit",
-    "A 30-minute call to see whether automation is genuinely the right fix",
-    "A scoped recommendation with a fixed price — or an honest 'this is not what you need'",
+const NEXT_STEPS = [
+    "Share a short description of your business and the process you want to improve.",
+    "We review your enquiry and aim to respond within one business day.",
+    "If the requirement is a good fit, we can arrange a conversation to understand the workflow.",
+    "You receive a clear scope and price before any project work begins.",
 ];
 
-/** wa.me deep link for the contact page, or null when no number is configured. */
 const WHATSAPP_URL = whatsappLink(WHATSAPP_DEFAULT_MESSAGE);
-
-/** Single-line registered address, omitting any part not yet configured. */
 const addressLine = formatAddress();
 
 export default function ContactPage() {
     return (
         <>
-            <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
+            <MarketingStructuredData
+                title={PAGE.title}
+                description={PAGE.description}
+                path={PAGE.path}
+                breadcrumbs={breadcrumbs}
+            />
             <PremiumPageShell
-                title="Contact Us"
-                description="Tell us what is going wrong in your operations. We reply within one business day — and we will tell you honestly if automation is not the fix."
+                title="Let’s talk about the work you want to improve."
+                description="Tell us what takes too much time, where enquiries get missed, or what your team is managing manually. We’ll discuss whether a website, workflow automation or a custom portal is the right fit."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
-                <div className="grid gap-12 lg:grid-cols-2">
-                    <div className="space-y-10">
-                        <section aria-labelledby="channels-heading">
-                            <h2 id="channels-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
-                                Talk to us
-                            </h2>
 
-                            {/* Fastest routes first. Call and WhatsApp appear only
-                                once a real number is configured. */}
-                            <div className="mt-6 flex flex-wrap gap-3">
+                <div className="grid items-start gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
+                    <div className="space-y-9">
+                        <section aria-labelledby="contact-direct-heading">
+                            <h2 id="contact-direct-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
+                                Contact directly
+                            </h2>
+                            <div className="mt-5 flex flex-wrap gap-3">
                                 {HAS_PHONE && COMPANY_PROFILE.phoneDisplay ? (
                                     <a
                                         href={`tel:${COMPANY_PROFILE.phoneE164}`}
-                                        className="inline-flex items-center gap-2 rounded-full bg-[var(--dos-brand-primary)] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
+                                        className="inline-flex items-center gap-2 rounded-full bg-[var(--dos-brand-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--dos-brand-primary-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                                     >
                                         <Phone className="h-4 w-4" aria-hidden="true" />
-                                        {COMPANY_PROFILE.phoneDisplay}
+                                        Call {COMPANY_PROFILE.phoneDisplay}
                                     </a>
                                 ) : null}
-
                                 {WHATSAPP_URL ? (
                                     <a
                                         href={WHATSAPP_URL}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-2 rounded-full border border-[#25D366] px-5 py-2.5 text-sm font-semibold text-[#25D366] transition hover:bg-[#25D366]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366]"
+                                        className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-3 text-sm font-semibold text-[var(--premium-fg)] transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary)]/50"
                                     >
                                         <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                                        WhatsApp us
+                                        WhatsApp
                                     </a>
                                 ) : null}
-
-                                <a
-                                    href={`mailto:${COMPANY_PROFILE.emails.sales}`}
-                                    className="inline-flex items-center gap-2 rounded-full border border-[var(--premium-border)] px-5 py-2.5 text-sm font-semibold transition hover:bg-[var(--premium-bg)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dos-brand-primary-hover)]"
-                                >
-                                    <Mail className="h-4 w-4" aria-hidden="true" />
-                                    Email sales
-                                </a>
                             </div>
+                        </section>
 
-                            <dl className="mt-8 space-y-4">
-                                {CHANNELS.map((channel) => (
-                                    <div key={channel.label}>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
+                        <section aria-labelledby="email-heading">
+                            <h2 id="email-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
+                                Email
+                            </h2>
+                            <dl className="mt-4 divide-y divide-[var(--premium-border)]">
+                                {CONTACT_CHANNELS.map((channel) => (
+                                    <div key={channel.label} className="py-4 first:pt-0">
+                                        <dt className="text-sm font-semibold text-[var(--premium-fg)]">
                                             {channel.label}
                                         </dt>
                                         <dd className="mt-1">
-                                            <a href={channel.href} className="text-[var(--premium-fg-muted)] hover:text-[var(--dos-brand-primary-hover)]">
+                                            <a
+                                                href={channel.href}
+                                                className="inline-flex items-center gap-2 text-sm font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]"
+                                            >
+                                                <Mail className="h-4 w-4" aria-hidden="true" />
                                                 {channel.value}
                                             </a>
+                                            <p className="mt-1 text-sm text-[var(--premium-fg-muted)]">
+                                                {channel.description}
+                                            </p>
                                         </dd>
                                     </div>
                                 ))}
-
-                                {addressLine ? (
-                                    <div>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                            Registered office
-                                        </dt>
-                                        <dd className="mt-1 flex items-start gap-2 text-[var(--premium-fg-muted)]">
-                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                                            <span>{addressLine}</span>
-                                        </dd>
-                                    </div>
-                                ) : null}
-
-                                {COMPANY_PROFILE.gstin ? (
-                                    <div>
-                                        <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                            GSTIN
-                                        </dt>
-                                        <dd className="mt-1 text-[var(--premium-fg-muted)]">
-                                            {COMPANY_PROFILE.gstin}
-                                        </dd>
-                                    </div>
-                                ) : null}
-
-                                <div>
-                                    <dt className="text-sm font-medium text-[var(--dos-brand-primary)]">
-                                        Office hours
-                                    </dt>
-                                    <dd className="mt-1 text-[var(--premium-fg-muted)]">
-                                        {COMPANY_PROFILE.officeHours}
-                                    </dd>
-                                </div>
                             </dl>
                         </section>
 
-                        <section aria-labelledby="booking-heading">
-                            <h2 id="booking-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
-                                What happens next
+                        {(addressLine || COMPANY_PROFILE.officeHours) ? (
+                            <section aria-labelledby="location-heading">
+                                <h2 id="location-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
+                                    Location and hours
+                                </h2>
+                                <div className="mt-4 space-y-4 text-sm text-[var(--premium-fg-muted)]">
+                                    {addressLine ? (
+                                        <p className="flex items-start gap-3">
+                                            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--dos-brand-primary)]" aria-hidden="true" />
+                                            <span>{addressLine}</span>
+                                        </p>
+                                    ) : null}
+                                    {COMPANY_PROFILE.officeHours ? (
+                                        <p>
+                                            <span className="font-semibold text-[var(--premium-fg)]">Office hours: </span>
+                                            {COMPANY_PROFILE.officeHours}
+                                        </p>
+                                    ) : null}
+                                </div>
+                            </section>
+                        ) : null}
+
+                        <section aria-labelledby="next-steps-heading">
+                            <h2 id="next-steps-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
+                                What happens after you enquire?
                             </h2>
-                            <ol className="mt-4 space-y-3">
-                                {QUALIFICATION_STEPS.map((step, index) => (
-                                    <li key={step} className="flex gap-3 text-sm text-[var(--premium-fg-muted)]">
-                                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--dos-brand-primary)] text-xs font-semibold text-white">
+                            <ol className="mt-5 space-y-4">
+                                {NEXT_STEPS.map((step, index) => (
+                                    <li key={step} className="flex gap-3 text-sm leading-6 text-[var(--premium-fg-muted)]">
+                                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--premium-bg)] text-xs font-semibold text-[var(--dos-brand-primary)]">
                                             {index + 1}
                                         </span>
-                                        {step}
+                                        <span>{step}</span>
                                     </li>
                                 ))}
                             </ol>
                         </section>
 
-                        <p className="text-sm text-[var(--premium-fg-muted)]">
-                            Review{" "}
-                            <Link href={MARKETING_ROUTES.pricing} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
-                                pricing
-                            </Link>{" "}
-                            and{" "}
-                            <Link href={MARKETING_ROUTES.faq} className="font-medium text-[var(--dos-brand-primary)] hover:text-[var(--dos-brand-primary-hover)]">
-                                FAQ
-                            </Link>{" "}
-                            before your call.
+                        <p className="text-sm leading-6 text-[var(--premium-fg-muted)]">
+                            Want to understand the likely investment first? See our{" "}
+                            <Link href={MARKETING_ROUTES.pricing} className="font-semibold text-[var(--dos-brand-primary)] hover:underline">
+                                project pricing
+                            </Link>
+                            . You can also review the{" "}
+                            <Link href={MARKETING_ROUTES.faq} className="font-semibold text-[var(--dos-brand-primary)] hover:underline">
+                                frequently asked questions
+                            </Link>
+                            .
                         </p>
                     </div>
 
-                    <div className="premium-glass rounded-2xl p-8">
-                        <h2 className="text-lg font-semibold text-[var(--premium-fg)]">Send us the details</h2>
-                        <p className="mt-2 text-sm text-[var(--premium-fg-muted)]">
-                            Complete the form for lead qualification. Required fields help us route your inquiry to the right team.
+                    <section
+                        aria-labelledby="enquiry-form-heading"
+                        className="rounded-2xl border border-[var(--premium-border)] bg-white p-6 shadow-sm sm:p-8"
+                    >
+                        <h2 id="enquiry-form-heading" className="text-xl font-semibold text-[var(--premium-fg)]">
+                            Send a project enquiry
+                        </h2>
+                        <p className="mt-2 text-sm leading-6 text-[var(--premium-fg-muted)]">
+                            A few details are enough to start. We’ll follow up using the contact information you provide.
                         </p>
-                        <div className="mt-6">
-                            <LeadForm source="contact-page" />
+                        <div className="mt-7">
+                            <LeadForm source="contact-page" submitLabel="Send enquiry" />
                         </div>
-                    </div>
+                        <p className="mt-5 text-xs leading-5 text-[var(--premium-fg-muted)]">
+                            Please do not include passwords, payment details or private patient/medical records in this initial enquiry.
+                            Your details are used to respond to your request as explained in our privacy notice.
+                        </p>
+                    </section>
                 </div>
             </PremiumPageShell>
         </>
