@@ -45,7 +45,9 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `PUT /api/ai-sales/pricing` | Configure founder-approved prices and discount caps | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |
-| `POST /api/ai-sales/tools/call-event` | Ingest normalized call events after n8n verifies the provider signature | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
+| `POST /api/ai-sales/tools/call-event` | Internal normalized call-event ingestion endpoint | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
+| `POST /api/ai-sales/webhooks/vapi` | Verify Vapi server secret and normalize call lifecycle events | Vapi `x-vapi-secret` |
+| `POST /api/ai-sales/webhooks/retell` | Verify Retell HMAC signature and normalize call lifecycle events | Retell `x-retell-signature`
 
 All organization-scoped database operations use the server-only Supabase service-role client after authentication or tool-secret validation. Do not call these routes from unauthenticated browser code.
 
@@ -60,7 +62,9 @@ Sales engine:
 - `ARJUN_AI_SALES_OUTBOUND_ENABLED=false` — keep false until release gates pass
 - `ARJUN_VOICE_PROVIDER=vapi` — `vapi` or `retell`
 - `PRIYA_SALES_TOOL_SECRET` — high-entropy secret shared only with voice-platform tool authentication
-- `PRIYA_SALES_WEBHOOK_SECRET` — separate high-entropy secret used only by n8n after provider webhook signature verification
+- `PRIYA_SALES_WEBHOOK_SECRET` — separate high-entropy internal secret used by verified provider webhook handlers when forwarding normalized events
+- `VAPI_PRIYA_WEBHOOK_SECRET` — Vapi Server URL secret; Vapi sends it in `x-vapi-secret`
+- `RETELL_WEBHOOK_API_KEY` — Retell API key marked as the webhook key in Retell settings; used to verify `x-retell-signature`
 - `PRIYA_SALES_DISPATCH_SECRET` — high-entropy secret for the n8n scheduled follow-up dispatcher
 - `PRIYA_JARVIS_DISPATCH_SECRET` — high-entropy secret for scheduled/triggered Jarvis calls
 - `ARJUN_PERSONAL_PHONE_NUMBER` — owner's personal +91 E.164 number, server-only
@@ -89,7 +93,7 @@ Use a Vapi phone assistant with the Priya sales prompt and dynamic variables. Th
 - `customer.number` in E.164 format
 - `assistantOverrides.variableValues` containing lead name, company name, requirement, call purpose, preferred language and the internal `call_event_id`; it also attaches the same ID in call metadata for webhook correlation
 
-Create the following server tool definitions in the Vapi dashboard. Set the server URL to the corresponding Arjun OS route and configure Bearer authentication with `PRIYA_SALES_TOOL_SECRET`.
+Set the Vapi phone number or assistant Server URL to `POST /api/ai-sales/webhooks/vapi` and configure Server URL Secret as `VAPI_PRIYA_WEBHOOK_SECRET`. Vapi lifecycle events are verified there and correlated to the CRM call event using call metadata. Create the following function tools separately; set each tool's server URL to the corresponding Arjun OS route and configure Bearer authentication with `PRIYA_SALES_TOOL_SECRET`.
 
 ### capture_qualified_lead
 
@@ -183,7 +187,7 @@ For Vapi, configure each function's server URL and Bearer auth in the tool's ser
 
 ## Retell configuration
 
-Create equivalent Retell Custom Functions:
+Set the Retell agent/workspace webhook URL to `POST /api/ai-sales/webhooks/retell`. In Retell Settings → API Keys, mark the verification key as the webhook key and store it as `RETELL_WEBHOOK_API_KEY`. The endpoint validates the `x-retell-signature` HMAC and a five-minute timestamp window before normalizing events. Create equivalent Retell Custom Functions:
 - `record_caller_consent` → `POST /api/ai-sales/tools/record-consent`
 - `calculate_approved_quote` → `POST /api/ai-sales/tools/quote`
 - `register_do_not_call` → `POST /api/ai-sales/tools/opt-out`
@@ -332,7 +336,7 @@ MRR must come from active recurring billing/subscription records, not from one-t
 n8n may orchestrate:
 1. CRM lead created → check consent → queue a requested follow-up.
 2. Schedule Trigger (every minute) → `POST /api/ai-sales/dispatch-followups` with `PRIYA_SALES_DISPATCH_SECRET`; the database claims due rows atomically and the application performs the final consent check before dialing.
-3. Vapi/Retell call lifecycle webhook → verify provider signature in n8n → normalize the event → call the authenticated `/api/ai-sales/tools/call-event` endpoint. Pass the internal `call_event_id` from the call metadata (and dynamic variables where available) for outbound calls so the event updates the pre-created CRM call row. For inbound calls, insert the provider call ID as `interactionId`; only then can the verbal-consent tool bind to that verified caller record.
+3. Vapi/Retell call lifecycle webhook → provider-specific Arjun OS webhook route verifies the Vapi secret or Retell HMAC signature → normalize and persist the event. For outbound calls, pass the internal `call_event_id` in call metadata so the event updates the pre-created CRM call row. For inbound calls, the provider call ID is stored as `interactionId`; only then can the verbal-consent and lead-capture tools bind to the verified caller record.
 4. Verified Razorpay payment webhook → update billing/revenue → notify Jarvis.
 5. Hot lead or high-value deal → notify founder through approved WhatsApp template.
 6. Daily 09:00 Asia/Kolkata → call `POST /api/ai-sales/jarvis/call` with `PRIYA_JARVIS_DISPATCH_SECRET` and `triggerReason=daily_briefing`.
