@@ -39,7 +39,7 @@ const SECTION_LAST_MODIFIED: Record<string, string> = {
     "/solutions": "2026-10-18",
     "/portfolio": "2026-10-18",
     "/case-studies": "2026-10-18",
-    "/pricing": "2026-10-18",
+    "/pricing": "2026-11-22",
     "/faq": "2026-10-18",
     "/resources": "2026-10-18",
     "/blog": "2026-10-18",
