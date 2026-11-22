@@ -21,6 +21,15 @@ export interface OutboundVoiceCallResult {
     providerCallId: string;
 }
 
+export interface JarvisBriefingVariables {
+    mrr_inr: string;
+    new_leads_today: number;
+    demos_booked_today: number;
+    urgent_highlight: string;
+    trigger_reason: string;
+    call_event_id: string;
+}
+
 function requiredEnv(name: string): string {
     const value = process.env[name]?.trim();
     if (!value) throw new Error(`Missing server configuration: ${name}`);
@@ -67,6 +76,7 @@ export async function createPriyaOutboundCall(
     }
 
     const provider = getVoiceProviderName();
+    const callEventId = input.variables.call_event_id ?? "";
 
     if (provider === "vapi") {
         const result = await postJson<{ id?: string }>(
@@ -76,6 +86,7 @@ export async function createPriyaOutboundCall(
                 assistantId: requiredEnv("VAPI_PRIYA_ASSISTANT_ID"),
                 phoneNumberId: requiredEnv("VAPI_PHONE_NUMBER_ID"),
                 customer: { number: input.phoneNumber },
+                metadata: { call_event_id: callEventId, agent: "priya" },
                 assistantOverrides: {
                     variableValues: {
                         lead_name: input.variables.lead_name,
@@ -83,8 +94,7 @@ export async function createPriyaOutboundCall(
                         requirement: input.variables.requirement,
                         call_purpose: input.variables.call_purpose,
                         preferred_language: input.variables.preferred_language ?? "auto",
-                call_event_id: input.variables.call_event_id ?? "",
-                        call_event_id: input.variables.call_event_id ?? "",
+                        call_event_id: callEventId,
                     },
                 },
             },
@@ -101,29 +111,20 @@ export async function createPriyaOutboundCall(
             from_number: requiredEnv("RETELL_FROM_NUMBER"),
             to_number: input.phoneNumber,
             override_agent_id: requiredEnv("RETELL_PRIYA_AGENT_ID"),
-            metadata: { call_event_id: input.variables.call_event_id ?? "" },
+            metadata: { call_event_id: callEventId, agent: "priya" },
             retell_llm_dynamic_variables: {
                 lead_name: input.variables.lead_name,
                 company_name: input.variables.company_name,
                 requirement: input.variables.requirement,
                 call_purpose: input.variables.call_purpose,
                 preferred_language: input.variables.preferred_language ?? "auto",
+                call_event_id: callEventId,
             },
         },
     );
 
     if (!result.call_id) throw new Error("Retell did not return a call ID");
     return { provider, providerCallId: result.call_id };
-}
-
-
-export interface JarvisBriefingVariables {
-    mrr_inr: string;
-    new_leads_today: number;
-    demos_booked_today: number;
-    urgent_highlight: string;
-    trigger_reason: string;
-    call_event_id: string;
 }
 
 export async function createJarvisOutboundCall(input: {
