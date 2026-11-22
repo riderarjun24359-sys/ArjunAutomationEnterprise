@@ -36,7 +36,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"triggerReason\":\"daily_briefing\"}",
+        "jsonBody": "={{ { triggerReason: 'daily_briefing', idempotencyKey: 'daily-briefing-' + $now.setZone('Asia/Kolkata').toFormat('yyyy-LL-dd') } }}",
         "options": {
           "timeout": 30000
         }
