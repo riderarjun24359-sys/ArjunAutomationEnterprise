@@ -27,7 +27,7 @@ function withinJarvisCallingWindow(now = new Date()): boolean {
     }).formatToParts(now);
     const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
     const hour = Number(values.hour);
-    return values.weekday !== "Sun" && hour >= 8 && hour < 21;
+    return hour >= 8 && hour < 21;
 }
 
 function istDayBounds(now = new Date()) {
