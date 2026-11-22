@@ -7,7 +7,7 @@ create table if not exists public.ai_sales_suppressions (
     source text not null,
     created_at timestamptz not null default now(),
     created_by uuid,
-    constraint ai_sales_suppression_phone_e164 check (phone_number ~ '^\\+91[6-9][0-9]{9}$'),
+    constraint ai_sales_suppression_phone_e164 check (phone_number ~ '^\+91[6-9][0-9]{9}$'),
     constraint ai_sales_suppression_org_phone_unique unique (organization_id, phone_number)
 );
 
