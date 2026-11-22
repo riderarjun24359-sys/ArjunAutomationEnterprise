@@ -48,6 +48,8 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 | `POST /api/ai-sales/tools/quote` | Calculate and record a quote within the approved INR floor/cap | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/update-deal-stage` | Move a deal through guarded CRM pipeline stages | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/opt-out` | Suppress a number and revoke all recorded consents | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/send-whatsapp` | Send an approved Meta template after explicit WhatsApp-specific consent | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `GET/POST /api/ai-sales/webhooks/whatsapp` | Verify Meta webhook subscription and record sent/delivered/read/failed statuses | Meta verify token + app-secret HMAC |
 | `POST /api/ai-sales/tools/call-event` | Internal normalized call-event ingestion endpoint | Bearer `PRIYA_SALES_WEBHOOK_SECRET` |
 | `POST /api/ai-sales/webhooks/vapi` | Verify Vapi server secret and normalize call lifecycle events | Vapi `x-vapi-secret` |
 | `POST /api/ai-sales/webhooks/retell` | Verify Retell HMAC signature and normalize call lifecycle events | Retell `x-retell-signature`
@@ -75,6 +77,12 @@ Sales engine:
 - `ARJUN_PERSONAL_PHONE_NUMBER` — owner's personal +91 E.164 number, server-only
 - `ARJUN_JARVIS_OWNER_USER_ID` — Arjun OS user UUID allowed to trigger manual Jarvis calls
 - `ARJUN_JARVIS_CALLS_ENABLED=false` — keep disabled until provider and owner configuration are complete
+- `WHATSAPP_GRAPH_API_VERSION=v27.0` — Graph API version, update only after testing a supported version
+- `WHATSAPP_CLOUD_API_ACCESS_TOKEN` — server-side permanent/system-user access token with `whatsapp_business_messaging` and template-read permission
+- `WHATSAPP_PHONE_NUMBER_ID` — Cloud API sender phone-number ID
+- `WHATSAPP_BUSINESS_ACCOUNT_ID` — WhatsApp Business Account ID used to verify approved templates
+- `WHATSAPP_APP_SECRET` — Meta app secret for `X-Hub-Signature-256` webhook verification
+- `WHATSAPP_WEBHOOK_VERIFY_TOKEN` — random webhook subscription verification token
 
 Vapi:
 - `VAPI_PRIVATE_KEY`
@@ -134,6 +142,32 @@ Parameters:
 
 Endpoint: `POST /api/ai-sales/tools/capture-lead`. The server verifies the provider call ID and caller number against a tracked call event, stores a structured qualification profile, and computes a deterministic lead score.
 
+### send_approved_whatsapp_template
+
+Parameters:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "leadId": { "type": "string" },
+    "phoneNumber": { "type": "string", "description": "Verified +91 CRM lead number" },
+    "templateName": { "type": "string" },
+    "languageCode": { "type": "string", "description": "For example en or en_US, exactly matching approved Meta template" },
+    "bodyParameters": { "type": "array", "items": { "type": "string" }, "maxItems": 10 },
+    "idempotencyKey": { "type": "string", "minLength": 8 }
+  },
+  "required": ["leadId", "phoneNumber", "templateName", "languageCode", "idempotencyKey"],
+  "additionalProperties": false
+}
+```
+
+Endpoint: `POST /api/ai-sales/tools/send-whatsapp`. Before sending, the server checks the lead/phone match, do-not-contact suppression, a recent active `requested_whatsapp_message` consent, and the live Meta template status/language. Only approved UTILITY or MARKETING templates are sent. Message text is never accepted from the model; the model can only select an approved template and supply bounded text parameters. Use a specific idempotency key per intended send.
+
+Priya must ask a separate, explicit question before sending WhatsApp messages, for example: “Would you like me to send the Arjun Automation brochure and demo details to this WhatsApp number?” Only after an unambiguous yes may it call `record_caller_consent` with purpose `requested_whatsapp_message`. A yes to a callback or phone call is not WhatsApp consent.
+
+Configure the Meta webhook callback URL as `/api/ai-sales/webhooks/whatsapp`, subscribe to `messages`, and configure the verification token and app secret. The receiver verifies `X-Hub-Signature-256` over the raw request body and updates message delivery status. A successful send API response means accepted by Meta, not delivered; wait for the status webhook before claiming delivery.
+
 ### record_caller_consent
 
 Parameters:
@@ -145,7 +179,7 @@ Parameters:
     "interactionId": { "type": "string", "description": "Provider call or interaction ID" },
     "purpose": {
       "type": "string",
-      "enum": ["requested_callback", "requested_sales_followup"]
+      "enum": ["requested_callback", "requested_sales_followup", "requested_whatsapp_message"]
     },
     "explicitConsent": { "type": "boolean", "const": true }
   },
