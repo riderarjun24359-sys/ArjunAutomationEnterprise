@@ -37,7 +37,7 @@ export default function HomePage() {
     return (
         <>
             <MarketingStructuredData title={title} description={description} path="/" breadcrumbs={[{ name: "Home", path: "/" }]} />
-            <section className="bg-white">
+            <section className="fluid-hero">
                 <div className="premium-container grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:py-24">
                     <div>
                         <p className="text-sm font-semibold uppercase tracking-wider text-[var(--primary)]">Software · AI Automation · Business Systems</p>
@@ -73,7 +73,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section id="what-we-build" className="premium-container py-16 sm:py-20">
+            <section id="what-we-build" className="fluid-dark-section py-16 sm:py-20">
                 <SectionHeading eyebrow="What we build" title="Three things we do well" />
                 <div className="mt-9 grid gap-5 md:grid-cols-3">
                     {[
@@ -98,14 +98,14 @@ export default function HomePage() {
                 </div>
             </section>
 
-            <section className="premium-container py-16 sm:py-20">
-                <SectionHeading title="Built for organisations like yours" />
+            <section className="fluid-dark-section py-16 sm:py-20">
+                <div className="premium-container"><SectionHeading title="Built for organisations like yours" />
                 <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                     {[{icon:School,title:"Schools and colleges",body:"Keep student, fee, attendance and parent updates together."},{icon:ShoppingBag,title:"Retail and supermarkets",body:"Keep customer orders, records and billing organised."},{icon:Stethoscope,title:"Clinics and healthcare practices",body:"Manage patient enquiries, appointments and follow-ups."},{icon:FileText,title:"Growing service businesses",body:"Keep customer details, approvals and repeat tasks in one place."}].map(({icon:Icon,title:name,body})=><article key={String(name)} className="rounded-2xl border border-[var(--border)] p-6"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--tint)] text-[var(--primary)]"><Icon className="h-6 w-6"/></span><h3 className="mt-4 text-lg font-bold">{String(name)}</h3><p className="mt-2 text-sm leading-6">{String(body)}</p></article>)}
-                </div>
+                </div></div>
             </section>
 
-            <section className="bg-[var(--surface-alt)] py-16 sm:py-20">
+            <section className="fluid-dark-section py-16 sm:py-20">
                 <div className="premium-container">
                     <SectionHeading title="A clear process, no surprises" />
                     <ol className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -123,7 +123,7 @@ export default function HomePage() {
                 <div className="mt-8 max-w-3xl divide-y divide-[var(--border)] border-y border-[var(--border)]">{faqs.map(([q,a])=><details key={q} className="py-5"><summary className="cursor-pointer text-lg font-semibold">{q}</summary><p className="mt-3 leading-7">{a}</p></details>)}</div>
             </section>
 
-            <section className="bg-[var(--dark)] py-16 text-white sm:py-20" style={{borderTop:"4px solid var(--gold)"}}>
+            <section className="premium-cta-panel py-16 text-white sm:py-20">
                 <div className="premium-container">
                     <h2 className="max-w-2xl text-3xl font-extrabold text-white sm:text-4xl">Tell us what takes most of your time.</h2>
                     <p className="mt-4 text-lg text-white">We will suggest where to start.</p>
