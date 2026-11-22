@@ -30,7 +30,7 @@ import { BLOG_POSTS } from "@/src/modules/company-launch-kit/data/blog";
 /** Last content edit, per top-level section. Update when that section changes. */
 const SECTION_LAST_MODIFIED: Record<string, string> = {
     "/": "2026-10-29",
-    "/about": "2026-10-18",
+    "/about": "2026-11-22",
     "/features": "2026-10-18",
     "/services": "2026-11-22",
     "/blueprints": "2026-11-22",
