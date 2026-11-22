@@ -36,6 +36,7 @@ The existing Sarvam adapter remains available for the earlier foundation. Set `A
 |---|---|---|
 | `POST /api/ai-sales/consents` | Admin-recorded consent evidence | Arjun OS session + automationManage |
 | `POST /api/ai-sales/tools/record-consent` | Record explicit verbal consent during a call | Bearer `PRIYA_SALES_TOOL_SECRET` |
+| `POST /api/ai-sales/tools/schedule-followup` | Schedule a requested callback after matching consent is recorded | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/tools/capture-lead` | Capture a verified caller and structured qualification profile | Bearer `PRIYA_SALES_TOOL_SECRET` |
 | `POST /api/ai-sales/outbound` | Start a consented Priya outbound call | Arjun OS session + automationManage |
 | `POST /api/ai-sales/dispatch-followups` | Claim and dispatch due consented follow-ups | Bearer `PRIYA_SALES_DISPATCH_SECRET` |
@@ -150,6 +151,30 @@ Parameters:
 ```
 Endpoint: `POST /api/ai-sales/tools/record-consent`.
 
+### schedule_customer_followup
+
+Parameters:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "leadId": { "type": "string" },
+    "consentId": { "type": "string" },
+    "purpose": {
+      "type": "string",
+      "enum": ["requested_callback", "requested_sales_followup"]
+    },
+    "dueAt": { "type": "string", "format": "date-time" },
+    "idempotencyKey": { "type": "string", "minLength": 8 }
+  },
+  "required": ["leadId", "consentId", "purpose", "idempotencyKey"],
+  "additionalProperties": false
+}
+```
+
+Endpoint: `POST /api/ai-sales/tools/schedule-followup`. It rejects expired/revoked/mismatched consent and suppressed numbers. The follow-up is not dialed immediately; the scheduled dispatcher revalidates consent and the IST calling window.
+
 ### calculate_approved_quote
 
 Parameters:
@@ -249,7 +274,7 @@ Do not store full call transcripts in the consent ledger. Apply the platform's p
 
 ## Follow-up engine
 
-`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. The founder/admin follow-up API creates pending queue rows only after verifying the lead, matching consent, consent age/revocation and suppression ledger. The SQL claim function uses `FOR UPDATE SKIP LOCKED`, rechecks consent and suppression, and only claims work during the configured IST calling window. The authenticated dispatcher rechecks consent and suppression immediately before each provider call. The n8n Schedule Trigger should call `POST /api/ai-sales/dispatch-followups` every minute with the dispatcher Bearer secret. The outbound API rechecks:
+`ai_sales_followups` is a durable, idempotent queue. Every voice follow-up references a consent row and CRM lead. Priya may call the schedule_customer_followup tool only after the prospect explicitly asks for a callback and record_caller_consent returns a consent ID. The founder/admin follow-up API creates pending queue rows only after verifying the lead, matching consent, consent age/revocation and suppression ledger. The SQL claim function uses `FOR UPDATE SKIP LOCKED`, rechecks consent and suppression, and only claims work during the configured IST calling window. The authenticated dispatcher rechecks consent and suppression immediately before each provider call. The n8n Schedule Trigger should call `POST /api/ai-sales/dispatch-followups` every minute with the dispatcher Bearer secret. The outbound API rechecks:
 - Organization match
 - Consent ID, phone number and purpose match
 - Consent has not been revoked and is no older than 30 days
