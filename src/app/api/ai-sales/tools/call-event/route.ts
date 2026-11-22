@@ -39,6 +39,7 @@ export async function POST(request: Request) {
 
     const provider = body.provider === "retell" ? "retell" : body.provider === "vapi" ? "vapi" : "";
     const providerCallId = clean(body.providerCallId, 200);
+    const callEventId = clean(body.callEventId, 80);
     const phoneNumber = clean(body.phoneNumber, 16);
     const direction = body.direction === "outbound" ? "outbound" : body.direction === "inbound" ? "inbound" : "";
     const status = clean(body.status, 30);
@@ -62,11 +63,18 @@ export async function POST(request: Request) {
     const client = getServiceRoleClient();
     if (!client) return NextResponse.json({ error: "Voice event storage is not configured" }, { status: 503 });
 
-    const { data: existing, error: lookupError } = await client
-        .from("ai_voice_call_events")
-        .select("id, direction, phone_number, interaction_id, extracted_variables")
-        .eq("provider_attempt_id", providerCallId)
-        .maybeSingle();
+    const lookup = callEventId
+        ? await client.from("ai_voice_call_events")
+            .select("id, direction, phone_number, interaction_id, extracted_variables")
+            .eq("id", callEventId)
+            .eq("organization_id", organizationId)
+            .maybeSingle()
+        : await client.from("ai_voice_call_events")
+            .select("id, direction, phone_number, interaction_id, extracted_variables")
+            .eq("provider_attempt_id", providerCallId)
+            .eq("organization_id", organizationId)
+            .maybeSingle();
+    const { data: existing, error: lookupError } = lookup;
 
     if (lookupError) return NextResponse.json({ error: "Could not load previous call event" }, { status: 500 });
 
