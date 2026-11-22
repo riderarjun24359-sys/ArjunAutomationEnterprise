@@ -11,7 +11,7 @@ import {
     MessageCircle,
     ShoppingBasket,
     Workflow,
-    Globe2,
+    Globe,
     PanelsTopLeft,
     Sparkles,
 } from "lucide-react";
@@ -70,7 +70,7 @@ const FAQS = [
 const SERVICES = [
     {
         id: "websites",
-        icon: Globe2,
+        icon: Globe,
         title: "Custom Business Websites",
         description:
             "Fast, mobile-first, SEO-ready websites engineered to explain your services and turn visits into qualified enquiries.",
