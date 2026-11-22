@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Activity, CalendarCheck, Clock3, PhoneCall, Users } from "lucide-react";
+import { Activity, CalendarCheck, Clock3, PhoneCall, Users, type LucideIcon } from "lucide-react";
 import { Card } from "@/src/design-os/components/Card";
 
 type Briefing = {
@@ -23,7 +23,7 @@ type Briefing = {
 function Metric({ label, value, icon: Icon }: {
     label: string;
     value: string | number;
-    icon: typeof Activity;
+    icon: LucideIcon;
 }) {
     return (
         <div className="rounded-2xl border border-[var(--dos-border)] bg-[var(--dos-surface)]/70 p-3">
