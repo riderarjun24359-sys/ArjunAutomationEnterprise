@@ -5,5 +5,4 @@ alter table public.sales_call_logs
     references public.ai_voice_call_events(id) on delete set null;
 
 create unique index if not exists sales_call_logs_voice_call_event_unique
-    on public.sales_call_logs (voice_call_event_id)
-    where voice_call_event_id is not null;
+    on public.sales_call_logs (voice_call_event_id);
