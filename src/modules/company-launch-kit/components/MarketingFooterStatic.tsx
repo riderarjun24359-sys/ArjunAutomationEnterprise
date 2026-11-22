@@ -5,7 +5,7 @@ const whatsapp = whatsappLink("Hi, I would like to know more about your services
 
 export function MarketingFooterStatic() {
     return (
-        <footer className="bg-[var(--dark)] text-white">
+        <footer id="site-footer" className="bg-[var(--dark)] text-white">
             <div className="premium-container grid gap-10 py-12 md:grid-cols-4">
                 <div>
                     <Link href="/" className="flex items-center gap-3" aria-label="Arjun Automation Enterprises home">
