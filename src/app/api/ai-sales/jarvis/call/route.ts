@@ -95,6 +95,11 @@ export async function POST(request: Request) {
     const triggerReason = typeof body.triggerReason === "string"
         ? body.triggerReason.trim().slice(0, 120)
         : "manual_briefing";
+    const suppliedIdempotencyKey = typeof body.idempotencyKey === "string" ? body.idempotencyKey.trim().slice(0, 160) : "";
+    if (internal && suppliedIdempotencyKey.length < 8) {
+        return NextResponse.json({ error: "An idempotencyKey is required for scheduled and event-triggered Jarvis calls" }, { status: 400 });
+    }
+    const idempotencyKey = suppliedIdempotencyKey || randomUUID();
 
     const client = getServiceRoleClient();
     if (!client) return NextResponse.json({ error: "Jarvis reporting storage is not configured" }, { status: 503 });
@@ -120,6 +125,22 @@ export async function POST(request: Request) {
         ? `${overdueCount} overdue customer-requested follow-up(s) need review`
         : "No overdue customer-requested follow-ups are currently reported";
 
+    const { data: previousRequest, error: previousRequestError } = await client.from("ai_voice_call_events")
+        .select("id, status, provider_attempt_id")
+        .eq("organization_id", organizationId)
+        .eq("idempotency_key", idempotencyKey)
+        .maybeSingle();
+    if (previousRequestError) return NextResponse.json({ error: "Could not check previous Jarvis call request" }, { status: 500 });
+    if (previousRequest) {
+        return NextResponse.json({
+            success: true,
+            duplicate: true,
+            callEventId: previousRequest.id,
+            providerCallId: previousRequest.provider_attempt_id,
+            status: previousRequest.status,
+        }, { status: 202 });
+    }
+
     const callEventId = randomUUID();
     const { error: eventError } = await client.from("ai_voice_call_events").insert({
         id: callEventId,
@@ -128,6 +149,7 @@ export async function POST(request: Request) {
         phone_number: phoneNumber,
         purpose: "jarvis_briefing",
         status: "queued",
+        idempotency_key: idempotencyKey,
         created_by: actorId,
         extracted_variables: {
             agent: "jarvis",
@@ -138,6 +160,14 @@ export async function POST(request: Request) {
         },
     });
 
+    if (eventError?.code === "23505") {
+        const { data: duplicate } = await client.from("ai_voice_call_events")
+            .select("id, status, provider_attempt_id")
+            .eq("organization_id", organizationId)
+            .eq("idempotency_key", idempotencyKey)
+            .maybeSingle();
+        if (duplicate) return NextResponse.json({ success: true, duplicate: true, callEventId: duplicate.id, providerCallId: duplicate.provider_attempt_id, status: duplicate.status }, { status: 202 });
+    }
     if (eventError) return NextResponse.json({ error: "Could not create Jarvis call record" }, { status: 500 });
 
     try {
