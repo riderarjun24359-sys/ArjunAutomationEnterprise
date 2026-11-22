@@ -26,138 +26,67 @@
    ================================================================== */
 
 :root {
-    /* Brand tokens — the marketing surface is dark by design. */
-    --premium-bg: #05070d;
-    --premium-bg-secondary: #0a0e1a;
-    --premium-bg-tertiary: #0f1526;
-    --premium-bg-elevated: #0c1120;
-    --premium-surface: #0a0e1a;
-    --premium-fg: #eef2f8;
-    --premium-fg-muted: #94a3b8;
-    --premium-border: rgba(148, 163, 184, 0.14);
-    --premium-border-subtle: rgba(148, 163, 184, 0.08);
-    --premium-glass: rgba(15, 23, 42, 0.55);
-    --premium-glass-border: rgba(148, 163, 184, 0.14);
-    --premium-accent: #3b82f6;
-    --premium-accent-hover: #60a5fa;
-    --premium-accent-soft: rgba(59, 130, 246, 0.14);
-    --premium-accent-line: rgba(139, 92, 246, 0.4);
-    --premium-accent-glow: 0 0 0 1px rgba(59, 130, 246, 0.22), 0 24px 56px -20px rgba(139, 92, 246, 0.35);
-
-    /* Aurora / mesh — electric blue → violet. */
-    --premium-aurora-1: rgba(59, 130, 246, 0.16);
-    --premium-aurora-2: rgba(139, 92, 246, 0.14);
-    --premium-aurora-3: rgba(99, 102, 241, 0.12);
-    --premium-mesh-1: #3b82f6;
-    --premium-mesh-2: #8b5cf6;
-    --premium-mesh-3: #6366f1;
-
+    --premium-bg: #ffffff;
+    --premium-bg-secondary: #f8fafc;
+    --premium-bg-tertiary: #f1f5f9;
+    --premium-bg-elevated: #ffffff;
+    --premium-surface: #ffffff;
+    --premium-fg: #0f172a;
+    --premium-fg-muted: #475569;
+    --premium-border: #e2e8f0;
+    --premium-border-subtle: #f1f5f9;
+    --premium-glass: rgba(255, 255, 255, 0.92);
+    --premium-glass-border: #e2e8f0;
+    --premium-accent: #2563eb;
+    --premium-accent-hover: #1d4ed8;
+    --premium-accent-soft: #eff6ff;
+    --premium-accent-line: rgba(37, 99, 235, 0.24);
+    --premium-accent-glow: 0 8px 24px -16px rgba(37, 99, 235, 0.28);
+    --premium-aurora-1: rgba(37, 99, 235, 0.06);
+    --premium-aurora-2: rgba(37, 99, 235, 0.04);
+    --premium-aurora-3: rgba(15, 23, 42, 0.02);
+    --premium-mesh-1: #2563eb;
+    --premium-mesh-2: #1d4ed8;
+    --premium-mesh-3: #0f172a;
     --premium-shadow: var(--dos-elevation-2);
     --premium-radius: var(--dos-radius-2xl);
     --font-display: var(--dos-font-display);
 }
 
-/* Kept for the theme contract; the marketing surface is dark-only. */
 .dark {
-    --premium-bg: #05070d;
-    --premium-bg-secondary: #0a0e1a;
-    --premium-fg: #eef2f8;
-    --premium-fg-muted: #94a3b8;
-    --premium-border: rgba(148, 163, 184, 0.14);
-    --premium-glass: rgba(15, 23, 42, 0.55);
-    --premium-glass-border: rgba(148, 163, 184, 0.14);
-    --premium-accent: #3b82f6;
-    --premium-accent-glow: 0 0 0 1px rgba(59, 130, 246, 0.22), 0 24px 56px -20px rgba(139, 92, 246, 0.3);
+    --premium-bg: #ffffff;
+    --premium-bg-secondary: #f8fafc;
+    --premium-fg: #0f172a;
+    --premium-fg-muted: #475569;
+    --premium-border: #e2e8f0;
+    --premium-glass: rgba(255, 255, 255, 0.92);
+    --premium-glass-border: #e2e8f0;
+    --premium-accent: #2563eb;
+    --premium-accent-glow: 0 8px 24px -16px rgba(37, 99, 235, 0.28);
 }
 
-/* ==================================================================
-   Scoped brand + palette remap
-   ------------------------------------------------------------------
-   Layer 1 — repoint the design-OS tokens for the marketing tree.
-   Layer 2 — remap the Tailwind palette variables so every legacy
-   call site re-skins to the dark surface at once (see the contract
-   note at the top of this file).
-   ================================================================== */
 .premium-theme {
-    background-color: var(--premium-bg);
-    color: var(--premium-fg);
+    background-color: #ffffff;
+    color: #0f172a;
 
-    /* --- design-OS tokens --- */
-    --dos-surface: #0a0e1a;
-    --dos-surface-secondary: #0f1526;
-    --dos-surface-tertiary: #141b2e;
-    --dos-surface-elevated: #0c1120;
-    --dos-surface-overlay: rgba(2, 6, 15, 0.7);
-
-    --dos-text-primary: #eef2f8;
-    --dos-text-secondary: #94a3b8;
+    --dos-surface: #ffffff;
+    --dos-surface-secondary: #f8fafc;
+    --dos-surface-tertiary: #f1f5f9;
+    --dos-surface-elevated: #ffffff;
+    --dos-surface-overlay: rgba(15, 23, 42, 0.48);
+    --dos-text-primary: #0f172a;
+    --dos-text-secondary: #475569;
     --dos-text-tertiary: #64748b;
-
-    --dos-border: rgba(148, 163, 184, 0.14);
-    --dos-border-subtle: rgba(148, 163, 184, 0.08);
-    --dos-border-strong: rgba(148, 163, 184, 0.28);
-    --dos-border-focus: #60a5fa;
-
+    --dos-border: #e2e8f0;
+    --dos-border-subtle: #f1f5f9;
+    --dos-border-strong: #cbd5e1;
+    --dos-border-focus: #2563eb;
     --dos-brand-primary: #2563eb;
-    --dos-brand-primary-hover: #3b82f6;
-    --dos-brand-secondary: #8b5cf6;
-
-    --dos-glass-bg: rgba(15, 23, 42, 0.55);
-    --dos-glass-border: rgba(148, 163, 184, 0.14);
-
+    --dos-brand-primary-hover: #1d4ed8;
+    --dos-brand-secondary: #1e40af;
+    --dos-glass-bg: rgba(255, 255, 255, 0.92);
+    --dos-glass-border: #e2e8f0;
     --dos-shadow-glow: var(--premium-accent-glow);
-
-    /* --- Tailwind palette remap: brand accent ladder (electric blue) --- */
-    /* LOW steps = dark surfaces/tints. MID = bright accents. HIGH = light text. */
-    --color-orange-50: #0b1730;
-    --color-orange-100: #10203f;
-    --color-orange-200: #16294f;
-    --color-orange-300: #93c5fd;
-    --color-orange-400: #60a5fa;
-    --color-orange-500: #3b82f6;
-    --color-orange-600: #60a5fa;
-    --color-orange-700: #bfdbfe;
-    --color-orange-800: #dbeafe;
-    --color-orange-900: #eff6ff;
-    --color-orange-950: #eef2f8;
-
-    --color-indigo-50: #0b1730;
-    --color-indigo-100: #10203f;
-    --color-indigo-200: #16294f;
-    --color-indigo-300: #93c5fd;
-    --color-indigo-400: #60a5fa;
-    --color-indigo-500: #3b82f6;
-    --color-indigo-600: #60a5fa;
-    --color-indigo-700: #bfdbfe;
-    --color-indigo-800: #dbeafe;
-    --color-indigo-900: #eff6ff;
-    --color-indigo-950: #eef2f8;
-
-    --color-cyan-300: #93c5fd;
-    --color-cyan-400: #60a5fa;
-    --color-cyan-500: #3b82f6;
-    --color-cyan-700: #bfdbfe;
-    --color-cyan-950: #eef2f8;
-
-    --color-violet-300: #c4b5fd;
-    --color-violet-400: #a78bfa;
-    --color-violet-500: #8b5cf6;
-    --color-violet-700: #ddd6fe;
-
-    --color-blue-400: #60a5fa;
-
-    /* --- Tailwind palette remap: slate (surfaces dark, text light) --- */
-    --color-slate-50: #070b14;
-    --color-slate-100: #0a0e1a;
-    --color-slate-200: #111827;
-    --color-slate-300: #1f2937;
-    --color-slate-400: #64748b;
-    --color-slate-500: #94a3b8;
-    --color-slate-600: #a8b6c8;
-    --color-slate-700: #c8d2e0;
-    --color-slate-800: #e2e8f0;
-    --color-slate-900: #eef2f8;
-    --color-slate-950: #f8fafc;
 }
 
 .premium-glass {
