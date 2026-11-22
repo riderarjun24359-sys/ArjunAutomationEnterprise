@@ -167,7 +167,7 @@ export async function POST(request: Request) {
     }
 
     const { data: activeDeal } = await client.from("ai_sales_deals")
-        .select("id")
+        .select("id, stage")
         .eq("organization_id", organizationId)
         .eq("lead_id", leadId)
         .not("stage", "in", "(won,lost)")
@@ -175,9 +175,12 @@ export async function POST(request: Request) {
         .limit(1)
         .maybeSingle();
 
+    const resultingDealStage = activeDeal && ["proposal_sent", "negotiation"].includes(activeDeal.stage)
+        ? activeDeal.stage
+        : "demo_booked";
     if (activeDeal) {
         await client.from("ai_sales_deals").update({
-            stage: "demo_booked",
+            stage: resultingDealStage,
             next_action_at: startIso,
             updated_at: new Date().toISOString(),
         }).eq("id", activeDeal.id).eq("organization_id", organizationId);
@@ -190,7 +193,7 @@ export async function POST(request: Request) {
         });
     }
 
-    await client.from("sales_leads").update({ status: "demo_booked", updated_at: new Date().toISOString() })
+    await client.from("sales_leads").update({ status: resultingDealStage, updated_at: new Date().toISOString() })
         .eq("id", leadId)
         .eq("organization_id", organizationId);
 
