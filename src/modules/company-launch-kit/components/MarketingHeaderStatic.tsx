@@ -38,7 +38,7 @@ export function MarketingHeaderStatic() {
                         </a>
                     ) : null}
                     <Link href={MARKETING_ROUTES.contact} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
-                        Book a Free Call
+                        Request a Free Call
                         <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                     </Link>
                 </div>
@@ -58,7 +58,7 @@ export function MarketingHeaderStatic() {
                         </div>
                         <div className="mt-3 border-t border-slate-100 pt-3">
                             {phoneHref ? <a href={phoneHref} className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-slate-700"><Phone className="h-4 w-4" />{COMPANY_PROFILE.phoneDisplay}</a> : null}
-                            <Link href={MARKETING_ROUTES.contact} className="mt-1 flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700">Book a Free Call</Link>
+                            <Link href={MARKETING_ROUTES.contact} className="mt-1 flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700">Request a Free Call</Link>
                         </div>
                     </nav>
                 </details>
