@@ -115,3 +115,70 @@ export async function createPriyaOutboundCall(
     if (!result.call_id) throw new Error("Retell did not return a call ID");
     return { provider, providerCallId: result.call_id };
 }
+
+
+export interface JarvisBriefingVariables {
+    mrr_inr: string;
+    new_leads_today: number;
+    demos_booked_today: number;
+    urgent_highlight: string;
+    trigger_reason: string;
+    call_event_id: string;
+}
+
+export async function createJarvisOutboundCall(input: {
+    phoneNumber: string;
+    variables: JarvisBriefingVariables;
+}): Promise<OutboundVoiceCallResult> {
+    if (!isValidIndianE164(input.phoneNumber)) {
+        throw new Error("A valid Indian E.164 number is required for Jarvis");
+    }
+
+    const provider = getVoiceProviderName();
+
+    if (provider === "vapi") {
+        const result = await postJson<{ id?: string }>(
+            "https://api.vapi.ai/call",
+            requiredEnv("VAPI_PRIVATE_KEY"),
+            {
+                assistantId: requiredEnv("VAPI_JARVIS_ASSISTANT_ID"),
+                phoneNumberId: requiredEnv("VAPI_PHONE_NUMBER_ID"),
+                customer: { number: input.phoneNumber },
+                metadata: { call_event_id: input.variables.call_event_id, agent: "jarvis" },
+                assistantOverrides: {
+                    variableValues: {
+                        mrr_inr: input.variables.mrr_inr,
+                        new_leads_today: String(input.variables.new_leads_today),
+                        demos_booked_today: String(input.variables.demos_booked_today),
+                        urgent_highlight: input.variables.urgent_highlight,
+                        trigger_reason: input.variables.trigger_reason,
+                        call_event_id: input.variables.call_event_id,
+                    },
+                },
+            },
+        );
+        if (!result.id) throw new Error("Vapi did not return a Jarvis call ID");
+        return { provider, providerCallId: result.id };
+    }
+
+    const result = await postJson<{ call_id?: string }>(
+        "https://api.retellai.com/v2/create-phone-call",
+        requiredEnv("RETELL_API_KEY"),
+        {
+            from_number: requiredEnv("RETELL_FROM_NUMBER"),
+            to_number: input.phoneNumber,
+            override_agent_id: requiredEnv("RETELL_JARVIS_AGENT_ID"),
+            metadata: { call_event_id: input.variables.call_event_id, agent: "jarvis" },
+            retell_llm_dynamic_variables: {
+                mrr_inr: input.variables.mrr_inr,
+                new_leads_today: String(input.variables.new_leads_today),
+                demos_booked_today: String(input.variables.demos_booked_today),
+                urgent_highlight: input.variables.urgent_highlight,
+                trigger_reason: input.variables.trigger_reason,
+                call_event_id: input.variables.call_event_id,
+            },
+        },
+    );
+    if (!result.call_id) throw new Error("Retell did not return a Jarvis call ID");
+    return { provider, providerCallId: result.call_id };
+}
