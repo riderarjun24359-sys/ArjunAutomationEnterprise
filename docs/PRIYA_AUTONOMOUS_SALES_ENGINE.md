@@ -287,7 +287,7 @@ Capture a concise, factual call summary and agreed next action. Do not collect O
 
 ## Jarvis voice assistant setup
 
-The owner-only call endpoint is \`POST /api/ai-sales/jarvis/call\`. It uses the personal number configured on the server; the browser or n8n payload cannot choose a destination number. Manual calls require the configured owner session. Scheduled and event-driven calls require \`PRIYA_JARVIS_DISPATCH_SECRET\`.
+The owner-only call endpoint is `POST /api/ai-sales/jarvis/call`. It uses the personal number configured on the server; the browser or n8n payload cannot choose a destination number. Manual calls require the configured owner session. Scheduled and event-driven calls require `PRIYA_JARVIS_DISPATCH_SECRET`.
 
 Set up a separate Jarvis assistant in Vapi or Retell with a calm British executive voice and the following system prompt:
 
@@ -346,19 +346,19 @@ The application APIs and database remain the source of truth. n8n must not bypas
 
 ## Importable n8n workflows
 
-Three starter exports are committed under \`n8n/workflows/\`:
+Three starter exports are committed under `n8n/workflows/`:
 
-1. \`01-priya-followup-dispatcher.json\` — runs every minute and calls the consent-aware application dispatcher.
-2. \`02-jarvis-daily-briefing.json\` — calls Jarvis every day at 09:00 Asia/Kolkata.
-3. \`03-jarvis-verified-event-alert.json\` — authenticated event ingress for already-verified hot-lead or payment events; it then asks Jarvis to call the owner.
+1. `01-priya-followup-dispatcher.json` — runs every minute and calls the consent-aware application dispatcher.
+2. `02-jarvis-daily-briefing.json` — calls Jarvis every day at 09:00 Asia/Kolkata.
+3. `03-jarvis-verified-event-alert.json` — authenticated event ingress for already-verified hot-lead or payment events; it then asks Jarvis to call the owner.
 
 Import each JSON in n8n using **Workflows → Import from File**. Before activating:
-- Replace \`[ARJUN_OS_HOST]\` with the HTTPS Arjun OS host (host only; no trailing slash).
+- Replace `[ARJUN_OS_HOST]` with the HTTPS Arjun OS host (host only; no trailing slash).
 - Replace each bearer placeholder with the matching server secret from n8n credentials or the node header.
 - In workflow 03, create an n8n Header Auth credential named for the Jarvis event webhook and replace its placeholder credential ID.
 - Activate the workflows only after the server environment flags and provider configuration are ready.
 
-The Vapi and Retell provider event webhooks are handled directly by the verified Arjun OS routes documented above; n8n should not receive unsigned raw provider events. For Razorpay, use a separate Razorpay webhook workflow that verifies the Razorpay signature and successful payment status before posting a \`triggerReason=razorpay_payment\` event to workflow 03. For hot leads, only post after the CRM has persisted the lead and qualification score.
+The Vapi and Retell provider event webhooks are handled directly by the verified Arjun OS routes documented above; n8n should not receive unsigned raw provider events. For Razorpay, use a separate Razorpay webhook workflow that verifies the Razorpay signature and successful payment status before posting a `triggerReason=razorpay_payment` event to workflow 03. For hot leads, only post after the CRM has persisted the lead and qualification score.
 
 ## Production release checklist
 
