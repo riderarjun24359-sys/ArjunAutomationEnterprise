@@ -87,8 +87,9 @@ export async function POST(request: Request) {
     }
 
     const terminalStatuses = new Set(["completed", "no_answer", "busy", "failed"]);
-    if (existing && terminalStatuses.has(existing.status)) {
-        return NextResponse.json({ success: true, duplicate: true, ignoredOutOfOrderEvent: true, callEventId: existing.id });
+    const alreadyTerminal = Boolean(existing && terminalStatuses.has(existing.status));
+    if (alreadyTerminal && (!terminalStatuses.has(status) || status !== existing?.status)) {
+        return NextResponse.json({ success: true, duplicate: true, ignoredOutOfOrderEvent: true, callEventId: existing?.id });
     }
 
     const eventPayload = {
@@ -130,44 +131,41 @@ export async function POST(request: Request) {
         typeof (existing.extracted_variables as Record<string, unknown>).followup_id === "string"
         ? (existing.extracted_variables as Record<string, unknown>).followup_id as string
         : "";
-    if (followupId) {
-        const completed = status === "completed";
-        const failed = ["no_answer", "busy", "failed"].includes(status);
-        if (completed) {
+    if (followupId && terminalStatuses.has(status)) {
+        if (!alreadyTerminal) {
             await client.from("ai_sales_followups")
-                .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-                .eq("id", followupId)
-                .eq("organization_id", organizationId);
-        } else if (failed) {
-            await client.from("ai_sales_followups")
-                .update({ status: "failed", last_error: `Voice call ended with status: ${status}`, updated_at: new Date().toISOString() })
+                .update(status === "completed"
+                    ? { status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+                    : { status: "failed", last_error: `Voice call ended with status: ${status}`, updated_at: new Date().toISOString() })
                 .eq("id", followupId)
                 .eq("organization_id", organizationId);
         }
 
-        if (completed || failed) {
-            const { data: followup } = await client.from("ai_sales_followups")
-                .select("lead_id")
-                .eq("id", followupId)
-                .eq("organization_id", organizationId)
-                .maybeSingle();
-            if (followup?.lead_id) {
-                await client.from("sales_call_logs").insert({
-                    organization_id: organizationId,
-                    lead_id: followup.lead_id,
-                    direction: "outbound",
-                    phone_number: phoneNumber,
-                    duration_seconds: duration ?? 0,
-                    outcome: status,
-                    notes: summary || `Customer-requested follow-up call ended with status: ${status}`,
-                    called_at: new Date().toISOString(),
-                });
+        const { data: followup } = await client.from("ai_sales_followups")
+            .select("lead_id")
+            .eq("id", followupId)
+            .eq("organization_id", organizationId)
+            .maybeSingle();
+        if (followup?.lead_id) {
+            await client.from("sales_call_logs").upsert({
+                organization_id: organizationId,
+                lead_id: followup.lead_id,
+                voice_call_event_id: write.data.id,
+                direction: "outbound",
+                phone_number: phoneNumber,
+                duration_seconds: duration ?? 0,
+                outcome: status,
+                notes: summary || `Customer-requested follow-up call ended with status: ${status}`,
+                called_at: new Date().toISOString(),
+            }, { onConflict: "voice_call_event_id" });
+
+            if (!alreadyTerminal) {
                 await client.from("ai_sales_activity").insert({
                     organization_id: organizationId,
                     lead_id: followup.lead_id,
                     actor: "priya",
-                    event_type: completed ? "followup_call_completed" : "followup_call_not_connected",
-                    summary: completed ? "Priya completed a scheduled customer follow-up call" : `Priya follow-up call ended with status: ${status}`,
+                    event_type: status === "completed" ? "followup_call_completed" : "followup_call_not_connected",
+                    summary: status === "completed" ? "Priya completed a scheduled customer follow-up call" : `Priya follow-up call ended with status: ${status}`,
                     metadata: { followup_id: followupId, call_event_id: write.data.id, duration_seconds: duration ?? 0 },
                 });
             }
