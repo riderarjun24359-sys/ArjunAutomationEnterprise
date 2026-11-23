@@ -24,6 +24,16 @@ export function CustomerSuccessGlobalOpsPage() {
                 <Button size="sm" variant="secondary" onClick={() => void refresh()}>Refresh</Button>
             </div>
 
+            {dash?.integrationIssues.length ? (
+                <Card>
+                    <p className="font-semibold text-amber-700">Integrations needing attention</p>
+                    <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">Health values that depend on unavailable data are shown as unavailable, not as healthy defaults.</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                        {dash.integrationIssues.map((item) => <Badge key={item} variant="warning">{item} unavailable</Badge>)}
+                    </div>
+                </Card>
+            ) : null}
+
             <StaggerReveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Active clients</p><p className="mt-1 text-2xl font-bold">{dash?.activeClients ?? "—"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Projects</p><p className="mt-1 text-2xl font-bold">{dash?.activeProjects ?? "—"}</p></Card></StaggerRevealItem>
