@@ -70,3 +70,7 @@ Do not onboard sensitive customer data until the remaining Auth setting is enabl
 ## Additional database grant hardening — pending migration
 
 A subsequent privilege audit found that `webhook_idempotency` still had inherited table privileges for `anon` and `authenticated`, despite its deny-all RLS policy. Current RLS prevents row access, but the grants are unnecessary and weaken defense in depth. Migration `202611230120_webhook_idempotency_server_only.sql` now revokes all browser/public privileges and grants access only to `service_role`. This migration has been committed to `main` but has **not** been applied to production; it must be included in the next approved database migration window.
+
+## Migration replay correction
+
+The GitHub Actions migration-chain validator exposed that `202611230010_priya_followup_crash_recovery.sql` referenced `ai_sales_followups` before any migration creates that table. The repository has no migrations defining the complete `ai_sales_followups`, `ai_voice_contact_consents`, and `ai_sales_suppressions` schema. The migration is now guarded and skips creation until all prerequisite tables exist; this preserves a replayable schema chain without inventing a partial consent/calling system. This is another confirmation that autonomous voice follow-up is not implemented or production-ready.
