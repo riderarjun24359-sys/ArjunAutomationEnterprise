@@ -45,6 +45,39 @@ import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
  *   (matched candidate vs discrepancy). A match is input for human
  *   confirmation, never settlement proof.
  */
+const MAX_WEBHOOK_BODY_BYTES = 256 * 1024;
+
+async function readBoundedWebhookBody(request: Request): Promise<string | null> {
+    const reader = request.body?.getReader();
+    if (!reader) return null;
+    const chunks: Uint8Array[] = [];
+    let total = 0;
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (!value) continue;
+            total += value.byteLength;
+            if (total > MAX_WEBHOOK_BODY_BYTES) {
+                await reader.cancel().catch(() => undefined);
+                return null;
+            }
+            chunks.push(value);
+        }
+        const bytes = new Uint8Array(total);
+        let offset = 0;
+        for (const chunk of chunks) {
+            bytes.set(chunk, offset);
+            offset += chunk.byteLength;
+        }
+        return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    } catch {
+        return null;
+    } finally {
+        reader.releaseLock();
+    }
+}
+
 export async function POST(request: Request) {
     const ip = getClientIp(request);
     const rate = await checkRateLimit(`payments-webhook:${ip}`, 120, 60_000);
@@ -52,7 +85,10 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
-    const payload = await request.text();
+    const payload = await readBoundedWebhookBody(request);
+    if (payload === null) {
+        return NextResponse.json({ error: "Webhook payload is invalid or exceeds the 256 KiB limit" }, { status: 413 });
+    }
     const stripeSignature = request.headers.get("stripe-signature");
     const razorpaySignature = request.headers.get("x-razorpay-signature");
     const stripeSecret = process.env.STRIPE_WEBHOOK_SECRET?.trim() ?? "";
