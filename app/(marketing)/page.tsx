@@ -20,9 +20,9 @@ import { buildFaqJsonLd, buildMetadata } from "@/src/lib/seo";
 import { PROJECT_PRICING } from "@/src/modules/company-launch-kit/data/pricing";
 
 const PAGE = {
-    title: "AI Workflow Automation & Custom Software Studio in Hyderabad",
+    title: "Affordable Websites, Automation & Business Software Across India",
     description:
-        "Arjun Automation builds custom business websites, AI workflow automations and internal portals for businesses in Hyderabad and across India.",
+        "Arjun Automations builds affordable websites, WhatsApp automations and simple business software for shops, traders, clinics, schools, workshops and growing businesses across India.",
     path: "/",
 };
 
@@ -31,6 +31,10 @@ export const metadata: Metadata = buildMetadata({
     description: PAGE.description,
     path: PAGE.path,
     keywords: [
+        "affordable website development India",
+        "small business automation India",
+        "village business website development",
+        "WhatsApp automation for small business",
         "AI automation Hyderabad",
         "workflow automation Secunderabad",
         "custom software development Hyderabad",
@@ -43,7 +47,7 @@ const FAQS = [
     {
         question: "How long does a project take?",
         answer:
-            "A Starter Website usually takes 1–2 weeks. An Automation Sprint usually takes 1–2 weeks. A Growth Platform usually takes 4–6 weeks. A custom ERP is scheduled after discovery because its timeline depends on the modules, integrations and data migration involved.",
+            "A small business website usually takes 1–2 weeks. A focused automation usually takes 1–2 weeks. A business management system usually takes 3–6 weeks depending on the agreed features.",
     },
     {
         question: "Can we validate the approach before the full build?",
@@ -242,7 +246,7 @@ export default function HomePage() {
                             Stop losing work in the gaps between your tools.
                         </h1>
                         <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                            Missed enquiries, retyped data, and tasks nobody chases. We build custom websites, AI workflow automations, and internal portals that connect the tools you already use. Where useful, we can scope a small prototype before the production build.
+                            Whether you run a shop in a village, a trading business in a town, a clinic, a school or a growing company, we make practical technology affordable. Get a professional website, WhatsApp follow-ups or simple software to manage everyday work — with clear pricing in Indian rupees.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                             <Link href="/contact" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
@@ -253,7 +257,7 @@ export default function HomePage() {
                             </Link>
                         </div>
                         <div className="mt-9 flex flex-wrap gap-x-5 gap-y-3 border-t border-slate-200 pt-6">
-                            {["Prototype Scope Agreed Up Front", "Fixed-Scope INR Pricing", "Direct Founder Engineering", "Based in Secunderabad"].map((item) => (
+                            {["Small-business friendly pricing", "Clear INR quotations", "Direct founder support", "Serving businesses across India"].map((item) => (
                                 <span key={item} className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
                                     <Check aria-hidden="true" className="h-4 w-4 text-blue-700" />{item}
                                 </span>
@@ -318,7 +322,7 @@ export default function HomePage() {
                     <SectionHeading
                         eyebrow="Industries we serve"
                         title="Built for operations-heavy Indian businesses."
-                        description="Examples of everyday workflows that can be improved with the right integrations and a clearly defined process."
+                        description="From a neighbourhood shop to a growing local company, we start with the problem you need solved — not expensive software you do not need."
                     />
                     <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                         {INDUSTRIES.map((industry) => (
@@ -330,7 +334,7 @@ export default function HomePage() {
                         ))}
                     </div>
                     <p className="mt-7 text-sm text-slate-600">
-                        Looking for a school management system?{" "}
+                        Need a school management system?{" "}
                         <Link href="/services#portals" className="font-semibold text-blue-700 underline-offset-4 hover:underline">
                             Explore custom portals and School ERP
                         </Link>.
@@ -368,7 +372,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-8 text-center">
                         <Link href="/pricing" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-800">
-                            See full scope, retainers &amp; Founding Partner offer <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                            See packages, monthly support &amp; what is included <ArrowRight aria-hidden="true" className="h-4 w-4" />
                         </Link>
                     </div>
                 </div>
