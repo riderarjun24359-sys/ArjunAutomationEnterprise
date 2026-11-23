@@ -1197,6 +1197,26 @@ if (migrationFiles.length === 0) {
     process.exit(1);
 }
 
+const migrationVersions = new Map();
+for (const file of migrationFiles) {
+    const match = file.match(/^(\\d{8,14})[_-]/);
+    if (!match) {
+        console.error(`FAIL: Migration filename must start with a sortable 8–14 digit version: ${file}`);
+        process.exit(1);
+    }
+    const version = match[1];
+    const existing = migrationVersions.get(version) ?? [];
+    existing.push(file);
+    migrationVersions.set(version, existing);
+}
+const duplicateVersions = [...migrationVersions.entries()].filter(([, files]) => files.length > 1);
+if (duplicateVersions.length > 0) {
+    for (const [version, files] of duplicateVersions) {
+        console.error(`FAIL: Duplicate migration version ${version}: ${files.join(", ")}`);
+    }
+    process.exit(1);
+}
+
 const combinedSql = migrationFiles.map((file) => readFileSync(join(migrationsDir, file), "utf8")).join("\n");
 const missingTables = requiredTables.filter((table) => !combinedSql.includes(`public.${table}`) && !combinedSql.includes(` ${table} (`));
 
