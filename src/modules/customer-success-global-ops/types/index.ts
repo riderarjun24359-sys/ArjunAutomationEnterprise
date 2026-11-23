@@ -121,4 +121,5 @@ export interface GlobalOperationsDashboard {
     npsScore: number;
     improvementBacklog: ImprovementItem[];
     satisfactionTrend: Array<{ period: string; csat: number; nps: number }>;
+    integrationIssues: string[];
 }
