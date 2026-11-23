@@ -283,7 +283,7 @@ export function buildCustomerIntelligence(data: FounderAnalyticsRawData, executi
         .map((e) => ({
             id: e.id,
             name: e.name,
-            estimatedValueUsd: money(e.estimated_value_usd),
+            estimatedValueUsd: 0,
             type: e.opportunity_type,
             status: e.status,
         }))
@@ -305,26 +305,7 @@ export function buildCustomerIntelligence(data: FounderAnalyticsRawData, executi
     const fromHealth = healthOverview.filter((h) => h.healthScore < 50);
     const churnWatchlist = [...fromChurn, ...fromHealth].slice(0, 15);
 
-    const mrrByAccount = new Map<string, number>();
-    for (const sub of data.subscriptions) {
-        const account = data.billingAccounts.find((a) => a.id === sub.billing_account_id);
-        const name = account?.account_name || sub.plan_name || "Subscription";
-        mrrByAccount.set(name, money((mrrByAccount.get(name) ?? 0) + sub.mrr_usd));
-    }
-    const topFromBilling = [...mrrByAccount.entries()]
-        .map(([name, mrrUsd]) => ({ name, mrrUsd, outstandingUsd: 0 }))
-        .sort((a, b) => b.mrrUsd - a.mrrUsd)
-        .slice(0, 8);
-
-    const topFromClients = data.clients
-        .map((c) => ({
-            name: c.name,
-            mrrUsd: 0,
-            outstandingUsd: 0,
-        }))
-        .slice(0, 0);
-
-    const topCustomers = topFromBilling.length ? topFromBilling : topFromClients;
+    const topCustomers: FounderCustomerIntelligence["topCustomers"] = [];
 
     const inactiveCutoff = daysAgo(60);
     const inactiveCustomers = data.clients
@@ -383,7 +364,7 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
             category: "payment",
             severity: "critical",
             title: "Failed payment",
-            detail: `₹${money(p.amount_usd).toLocaleString()} — ${p.failure_reason || p.payment_status}`,
+            detail: `Payment attempt failed; settlement amount not verified — ${p.failure_reason || p.payment_status}`,
             detectedAt: p.attempted_at || now,
         });
     }
@@ -457,8 +438,7 @@ export function buildAdvisorBriefing(
 
     const growthOpportunities: string[] = [];
     if (customers.expansionOpportunities.length) {
-        const value = customers.expansionOpportunities.reduce((s, e) => s + e.estimatedValueUsd, 0);
-        growthOpportunities.push(`₹${value.toLocaleString()} expansion pipeline across ${customers.expansionOpportunities.length} opportunities.`);
+        growthOpportunities.push(`Expansion pipeline value not verified across ${customers.expansionOpportunities.length} opportunities.`);
     }
     if (growth.referralLeads > 0) growthOpportunities.push(`Referral channel delivering ${growth.referralLeads} leads — amplify referral program.`);
     if (growth.organicLeads > growth.paidLeads) growthOpportunities.push("Organic acquisition outpaces paid — double down on SEO/content.");
@@ -475,14 +455,14 @@ export function buildAdvisorBriefing(
     if (!revenueRecommendations.length) revenueRecommendations.push("Maintain current pricing discipline and expand top healthy accounts.");
 
     const dailyBriefing = [
-        `MRR ₹${executive.mrrUsd.toLocaleString()} (${executive.mrrTrend}) · ARR ₹${executive.arrUsd.toLocaleString()}.`,
+        "MRR and ARR not verified — INR settlement reconciliation pending.",
         `Active orgs ${executive.activeOrganizations} · new (30d) ${executive.newOrganizations}.`,
         `Retention ${executive.retentionPercent}% · churn ${executive.churnRatePercent}%.`,
         critical ? `${critical} priority alerts open.` : "No critical founder alerts.",
     ].join(" ");
 
     const weeklyExecutiveSummary = [
-        `Weekly snapshot: forecast ARR ₹${executive.revenueForecastUsd.toLocaleString()}.`,
+        "Weekly revenue forecast not verified — INR settlement reconciliation pending.",
         `Growth score ${growth.growthScore ?? "n/a"} · landing conversion ${growth.landingConversionRatePercent}%.`,
         `Avg customer health ${customers.averageHealthScore}.`,
         `NPS ${executive.npsScore ?? "n/a"} · CSAT ${executive.customerSatisfactionAvg ?? "n/a"}.`,
@@ -508,10 +488,10 @@ export function buildBoardRoom(
 ): BoardRoomSnapshot {
     const generatedAt = new Date().toISOString();
     const investorKpis = [
-        { label: "MRR", value: `₹${executive.mrrUsd.toLocaleString()}`, note: `Trend ${executive.mrrTrend}` },
-        { label: "ARR", value: `₹${executive.arrUsd.toLocaleString()}` },
-        { label: "ARR Forecast", value: `₹${executive.revenueForecastUsd.toLocaleString()}` },
-        { label: "Net cash position signal", value: `₹${executive.cashFlowUsd.toLocaleString()}`, note: "Collected − outstanding" },
+        { label: "MRR", value: "Not verified" },
+        { label: "ARR", value: "Not verified" },
+        { label: "ARR Forecast", value: "Not verified" },
+        { label: "Net cash position signal", value: "Not verified" },
         { label: "Active organizations", value: String(executive.activeOrganizations) },
         { label: "Logo retention", value: `${executive.retentionPercent}%` },
     ];
@@ -519,7 +499,7 @@ export function buildBoardRoom(
     const saasMetrics = [
         { label: "Trial → Paid", value: `${executive.trialToPaidConversionPercent}%` },
         { label: "Churn", value: `${executive.churnRatePercent}%` },
-        { label: "LTV", value: growth.ltvUsd != null ? `₹${growth.ltvUsd.toLocaleString()}` : "n/a" },
+        { label: "LTV", value: "Not verified" },
         { label: "CAC", value: growth.cacUsd != null ? `₹${growth.cacUsd.toLocaleString()}` : "n/a (no spend rows)" },
         { label: "LTV:CAC", value: growth.ltvToCac != null ? String(growth.ltvToCac) : "n/a" },
         { label: "NPS", value: executive.npsScore != null ? String(executive.npsScore) : "n/a" },
@@ -536,7 +516,7 @@ export function buildBoardRoom(
 
     const monthlyBusinessSnapshot = [
         `Arjun Automation monthly snapshot @ ${generatedAt.slice(0, 10)}.`,
-        `ARR ₹${executive.arrUsd.toLocaleString()} · MRR ₹${executive.mrrUsd.toLocaleString()} · Forecast ₹${executive.revenueForecastUsd.toLocaleString()}.`,
+        "ARR, MRR and revenue forecast not verified — INR settlement reconciliation pending.",
         `Customers: active orgs ${executive.activeOrganizations}, new ${executive.newOrganizations}, health ${customers.averageHealthScore}.`,
         `Growth: organic ${growth.organicLeads} / paid ${growth.paidLeads} / referral ${growth.referralLeads}.`,
         advisor.weeklyExecutiveSummary,
