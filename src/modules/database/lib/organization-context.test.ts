@@ -55,6 +55,20 @@ describe("organization context bootstrap", () => {
         expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
     });
 
+    it("rechecks tenant status on the next request instead of reusing stale authorization", async () => {
+        mocks.profilesGetByAuthUser.mockResolvedValue(profile("pc"));
+        mocks.membershipsGetByUser.mockResolvedValue([membership("org-1", "pc")]);
+        mocks.organizationsGetById.mockResolvedValue({ id: "org-1", status: "active" });
+
+        const first = await resolveOrganizationContext("auth-pc", "cache@test.dev");
+        expect(first).toEqual({ profileId: "pc", organizationId: "org-1" });
+
+        mocks.organizationsGetById.mockResolvedValue({ id: "org-1", status: "suspended" });
+        const second = await resolveOrganizationContext("auth-pc", "cache@test.dev");
+        expect(second).toBeNull();
+        expect(mocks.organizationsGetById).toHaveBeenCalledTimes(2);
+    });
+
     it("fails closed when the member's organization is suspended", async () => {
         mocks.profilesGetByAuthUser.mockResolvedValue(profile("ps"));
         mocks.membershipsGetByUser.mockResolvedValue([membership("org-suspended", "ps")]);
