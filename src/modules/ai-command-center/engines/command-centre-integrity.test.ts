@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { buildAgentStatuses, computeClientHealth } from "./health-monitoring.engine";
+import { proposeDecisions } from "./ai-decision.engine";
+import { buildAutomations } from "./automation.engine";
+import { buildSystemAlerts } from "./system-monitor.engine";
 import { buildRevenueSummary } from "./executive-analytics.engine";
 import { buildRecommendations } from "./recommendation.engine";
 import { withinJarvisCallingWindow } from "@/src/modules/ai-sales-lead-engine/services/jarvis-calling-window";
@@ -26,6 +29,44 @@ describe("Command Centre trust guarantees", () => {
         });
         expect(revenue.mrr).toBe(0);
         expect(revenue.mrrVerified).toBe(false);
+    });
+
+    it("does not generate decisions or recommendations from unavailable health sources", () => {
+        const decisions = proposeDecisions({
+            clientHealth: null,
+            supportSla: null,
+            deliveryHealth: null,
+            openInvoices: null,
+            renewalsDue: null,
+        });
+        expect(decisions).toEqual([]);
+        expect(buildRecommendations({
+            decisions,
+            systemHealth: null,
+            clientHealth: null,
+            supportHealth: null,
+            deliveryHealth: null,
+            pendingAi: null,
+        })).toEqual([]);
+    });
+
+    it("does not create health alerts from unavailable source metrics", () => {
+        expect(buildSystemAlerts({
+            systemHealth: null,
+            openTickets: null,
+            deliveryHealth: null,
+            productionAlerts: null,
+        })).toEqual([]);
+    });
+
+    it("marks automation execution as unknown when its source is unavailable", () => {
+        const automations = buildAutomations({
+            openTickets: null,
+            renewalsDue: null,
+            deliveryHealth: null,
+            pendingAi: null,
+        });
+        expect(automations.every((automation) => automation.status === "unknown")).toBe(true);
     });
 
     it("uses stable UUIDs for repeat recommendations", () => {
