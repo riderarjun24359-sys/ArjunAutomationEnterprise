@@ -16,7 +16,7 @@ export function buildSystemAlerts(input: {
     systemHealth: number | null;
     openTickets: number | null;
     deliveryHealth: number | null;
-    productionAlerts?: number;
+    productionAlerts?: number | null;
 }): AccAlert[] {
     const alerts: AccAlert[] = [];
     const now = new Date().toISOString();
@@ -31,7 +31,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if ((input.productionAlerts ?? 0) > 0) {
+    if (input.productionAlerts !== null && input.productionAlerts !== undefined && input.productionAlerts > 0) {
         alerts.push({
             id: uid("alert"),
             severity: "high",
