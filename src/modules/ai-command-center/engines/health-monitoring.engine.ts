@@ -1,4 +1,3 @@
-import { ACC_AGENT_KEYS } from "../constants";
 import type { AccAgentStatus, DeliveryStatusSummary, SupportSlaSummary } from "../types";
 import { clampScore } from "./engine-utils";
 
@@ -39,24 +38,13 @@ export function buildDeliveryStatusSummary(input: {
     };
 }
 
-export function buildAgentStatuses(input: {
+/** No agent telemetry adapter is connected; never infer live agents from platform health. */
+export function buildAgentStatuses(_input: {
     executiveAgentCount?: number;
     pendingApprovals?: number;
     systemHealth: number;
 }): AccAgentStatus[] {
-    const now = new Date().toISOString();
-    return ACC_AGENT_KEYS.map((key, i) => {
-        const health = clampScore(input.systemHealth - i * 2 + (input.pendingApprovals ? -3 : 0));
-        const status: AccAgentStatus["status"] =
-            health < 70 ? "degraded" : (input.pendingApprovals ?? 0) > 0 && key === "orchestrator" ? "processing" : health >= 85 ? "active" : "idle";
-        return {
-            key,
-            label: key === "orchestrator" ? "AI Orchestrator" : `${key.toUpperCase()} AI`,
-            status,
-            healthScore: health,
-            lastActivity: now,
-        };
-    });
+    return [];
 }
 
 export function computeAgentHealth(agents: AccAgentStatus[]): number {
