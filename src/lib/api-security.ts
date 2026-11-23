@@ -104,13 +104,19 @@ export async function resolveServerIdentity(
             role_name?: string;
         }>;
         const requestedId = requestedOrganizationId?.trim() || null;
+
+        // A supplied tenant is accepted only when it belongs to the caller.
+        // Without an explicit tenant header, a multi-tenant identity is
+        // ambiguous: fail closed rather than silently selecting another
+        // customer's organization.
+        if (!requestedId && rows.length > 1) {
+            return { role: "member", organizationId: null };
+        }
+
         const selected = requestedId
             ? rows.find((membership) => membership.organization_id === requestedId)
             : rows[0] ?? null;
 
-        // A supplied tenant is accepted only when it belongs to the caller.
-        // When no tenant is selected, preserve the existing first-membership
-        // default for backwards compatibility until the UI exposes a selector.
         if (!selected?.organization_id) {
             return { role: "member", organizationId: null };
         }
