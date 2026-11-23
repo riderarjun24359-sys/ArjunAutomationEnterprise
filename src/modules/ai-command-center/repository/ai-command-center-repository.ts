@@ -73,7 +73,7 @@ export class AiCommandCenterRepository {
             priority: rec.priority,
             status: rec.status,
             updated_at: new Date().toISOString(),
-        });
+        }, { onConflict: "id", ignoreDuplicates: true });
         mapRepositoryError(error, "persistRecommendation");
     }
 
