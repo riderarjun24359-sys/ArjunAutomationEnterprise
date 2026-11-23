@@ -87,7 +87,9 @@ export class AiCommandCenterService {
             openInvoices: business.openInvoices,
             renewalsDue: globalOps.renewalsDue,
         });
+        const orgId = await this.getOrgId(ctx);
         const recommendations = buildRecommendations({
+            organizationId: orgId,
             decisions,
             systemHealth,
             clientHealth,
@@ -121,7 +123,6 @@ export class AiCommandCenterService {
             agentHealth,
         ]);
 
-        const orgId = await this.getOrgId(ctx);
         if (orgId) {
             void aiCommandCenterRepository.logAudit(orgId, "dashboard_load", "AI Command Center dashboard loaded");
             void aiCommandCenterRepository.persistHealthSnapshot(orgId, {
