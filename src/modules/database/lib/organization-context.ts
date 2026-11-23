@@ -46,8 +46,8 @@ async function resolveOrganizationContextUncached(
 
     // A browser selection is only a hint, never authority: accept it only
     // when it exactly matches one of the caller's currently active memberships.
-    // Server API routes independently validate x-organization-id against the
-    // authenticated user's membership before granting tenant access.
+    // Server API routes independently validate the selected organization header
+    // or cookie against the authenticated user's membership before access.
     const selectedOrganizationId =
         typeof window !== "undefined"
             ? window.localStorage.getItem("aae:selected-organization")
