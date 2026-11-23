@@ -14,6 +14,15 @@ export function FinanceExecutiveWidgetsPanel({ widgets }: { widgets: FinanceExec
         );
     }
 
+    if (!widgets.revenueVerified) {
+        return (
+            <section className="space-y-4">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--dos-text-secondary)]">Finance Executive Widgets</h2>
+                <EmptyState title="Revenue not verified" description="MRR, ARR and collections remain unavailable until Razorpay settlements are reconciled to exact INR invoices and deals." />
+            </section>
+        );
+    }
+
     return (
         <section className="space-y-4">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--dos-text-secondary)]">
