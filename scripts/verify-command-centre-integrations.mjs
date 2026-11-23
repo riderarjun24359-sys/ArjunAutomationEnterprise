@@ -18,6 +18,11 @@ check("production failure is not reported as 90% health", !bridges.includes("ove
 
 const agentEngine = read("src/modules/ai-command-center/engines/health-monitoring.engine.ts");
 check("agent availability requires a real heartbeat", agentEngine.includes('status: "unknown"') && !agentEngine.includes("input.systemHealth - i * 2"));
+check("Command Centre flags missing agent heartbeats as an integration issue", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("Agent heartbeats (not connected)"));
+check("Command Centre automation state supports unknown", read("src/modules/ai-command-center/types/index.ts").includes('AutomationStatus = "unknown"'));
+check("Command Centre decisions do not synthesize maintain-cadence when no metrics exist", !read("src/modules/ai-command-center/engines/ai-decision.engine.ts").includes("Maintain current operating cadence"));
+check("Command Centre alerts and automations accept missing source metrics", read("src/modules/ai-command-center/engines/system-monitor.engine.ts").includes("systemHealth: number | null") && read("src/modules/ai-command-center/engines/automation.engine.ts").includes('status: input.deliveryHealth === null ? "unknown"'));
+
 check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
 check("Command Centre renders unavailable KPI values as unavailable", read("src/modules/ai-command-center/components/AiCommandCenterPage.tsx").includes("Not available") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Partial data"));
 check("Global Operations renders unavailable health and business metrics as unavailable", read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Not available"));
