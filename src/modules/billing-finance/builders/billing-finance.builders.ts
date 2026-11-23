@@ -148,74 +148,25 @@ export function buildRevenueDashboard(
     invoices: InvoiceCenterItem[],
     payments: PaymentCenterItem[],
 ): RevenueDashboardMetrics {
-    const activeSubscriptions = subscriptions.filter((s) => s.status.toLowerCase() === "active").length;
-    const mrrFromSubs = money(subscriptions.filter((s) => s.status.toLowerCase() === "active").reduce((sum, s) => sum + s.mrrUsd, 0));
-    const latestMrr = data.mrrSnapshots[0];
-    const previousMrr = data.mrrSnapshots[1];
-    const mrrUsd = money(Number(latestMrr?.mrr_usd ?? mrrFromSubs));
-    const arrFromSnap = money(Number(data.arrSnapshots[0]?.arr_usd ?? mrrUsd * 12));
-    const outstandingFromBrv = money(data.outstandingBalances.reduce((s, b) => s + Number(b.total_outstanding_usd ?? 0), 0));
-    const outstandingFromInvoices = money(invoices.reduce((s, i) => s + i.amountDueUsd, 0));
-    const outstandingUsd = outstandingFromBrv > 0 ? outstandingFromBrv : outstandingFromInvoices;
-    const collectedUsd = money(payments.filter((p) => isPaidPayment(p.status)).reduce((s, p) => s + p.amountUsd, 0));
+    // Legacy BRV USD snapshots/amounts and unlinked finance records are not verified INR settlements.
+    // Keep operational counts, but fail closed for all revenue values until exact invoice/deal reconciliation exists.
     const failedPaymentCount = payments.filter((p) => isFailedPayment(p.status)).length;
     const collectionCasesOpen = data.collectionCases.filter((c) => !["closed", "resolved", "won"].includes(c.status.toLowerCase())).length;
 
-    const months = new Map<string, { collectedUsd: number; invoicedUsd: number }>();
-    for (const inv of invoices) {
-        const key = monthKey(inv.invoiceDate);
-        const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
-        row.invoicedUsd += inv.totalUsd;
-        row.collectedUsd += inv.amountPaidUsd;
-        months.set(key, row);
-    }
-    for (const pay of payments.filter((p) => isPaidPayment(p.status))) {
-        const key = monthKey(pay.attemptedAt);
-        const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
-        row.collectedUsd += pay.amountUsd;
-        months.set(key, row);
-    }
-
-    const revenueByMonth = [...months.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .slice(-6)
-        .map(([month, values]) => ({
-            month,
-            collectedUsd: money(values.collectedUsd),
-            invoicedUsd: money(values.invoicedUsd),
-        }));
-
-    const outstandingByAccount = new Map<string, number>();
-    for (const inv of invoices) {
-        outstandingByAccount.set(inv.accountOrClient, money((outstandingByAccount.get(inv.accountOrClient) ?? 0) + inv.amountDueUsd));
-    }
-    const mrrByAccount = new Map<string, number>();
-    for (const sub of subscriptions) {
-        mrrByAccount.set(sub.accountName, money((mrrByAccount.get(sub.accountName) ?? 0) + sub.mrrUsd));
-    }
-    const names = new Set([...mrrByAccount.keys(), ...outstandingByAccount.keys()]);
-    const topAccounts = [...names]
-        .map((name) => ({
-            name,
-            mrrUsd: mrrByAccount.get(name) ?? 0,
-            outstandingUsd: outstandingByAccount.get(name) ?? 0,
-        }))
-        .sort((a, b) => b.mrrUsd + b.outstandingUsd - (a.mrrUsd + a.outstandingUsd))
-        .slice(0, 8);
-
     return {
-        mrrUsd,
-        arrUsd: arrFromSnap,
-        collectedUsd: money(collectedUsd),
-        outstandingUsd,
+        revenueVerified: false,
+        mrrUsd: 0,
+        arrUsd: 0,
+        collectedUsd: 0,
+        outstandingUsd: 0,
         invoiceCount: invoices.length,
-        paidInvoiceCount: invoices.filter((i) => i.amountDueUsd <= 0 || i.paymentStatus.toLowerCase() === "paid").length,
+        paidInvoiceCount: 0,
         failedPaymentCount,
-        activeSubscriptions,
+        activeSubscriptions: subscriptions.filter((s) => s.status.toLowerCase() === "active").length,
         collectionCasesOpen,
-        mrrTrend: trendFromValues(mrrUsd, Number(previousMrr?.mrr_usd ?? mrrUsd)),
-        revenueByMonth,
-        topAccounts,
+        mrrTrend: "flat",
+        revenueByMonth: [],
+        topAccounts: [],
     };
 }
 
