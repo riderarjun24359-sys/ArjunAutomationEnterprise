@@ -225,6 +225,7 @@ export function createEmptyBillingFinanceSnapshot(): BillingFinanceSnapshot {
         estimates: [],
         expenses: [],
         revenue: {
+            revenueVerified: false,
             mrrUsd: 0,
             arrUsd: 0,
             collectedUsd: 0,
@@ -239,10 +240,11 @@ export function createEmptyBillingFinanceSnapshot(): BillingFinanceSnapshot {
             topAccounts: [],
         },
         executiveWidgets: {
+            revenueVerified: false,
             mrrUsd: 0,
             arrUsd: 0,
             outstandingUsd: 0,
-            collectionRate: 100,
+            collectionRate: 0,
             renewalsNext30Days: 0,
             failedPayments: [],
             revenueTrend: [],
