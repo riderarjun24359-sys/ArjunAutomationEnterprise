@@ -65,6 +65,7 @@ const ROLE_ALIASES: Record<string, UserRole> = {
  */
 export async function resolveServerIdentity(
     userId: string,
+    requestedOrganizationId?: string | null,
 ): Promise<{ role: UserRole; organizationId: string | null }> {
     try {
         const client = getServiceRoleClient();
@@ -78,24 +79,47 @@ export async function resolveServerIdentity(
             .eq("auth_user_id", userId)
             .maybeSingle();
         const profileId = (profile.data as { id?: string } | null)?.id;
-        if (!profileId) {
+        if (!profileId || profile.error) {
             return { role: "member", organizationId: null };
         }
 
+        // Never silently choose the first tenant when a user belongs to more
+        // than one organization. A requested tenant is accepted only after
+        // it is found in this authenticated user's active memberships.
         const memberships = await client
             .from("organization_members")
             .select("organization_id,role_name")
             .eq("user_id", profileId)
             .eq("is_active", true)
             .order("created_at", { ascending: true })
-            .limit(1);
-        const first = (memberships.data ?? [])[0] as
-            | { organization_id?: string; role_name?: string }
-            | undefined;
+            .limit(100);
+        if (memberships.error) {
+            return { role: "member", organizationId: null };
+        }
 
-        const role = first?.role_name ? (ROLE_ALIASES[first.role_name] ?? "member") : "member";
+        const rows = (memberships.data ?? []) as Array<{
+            organization_id?: string;
+            role_name?: string;
+        }>;
+        const requestedId = requestedOrganizationId?.trim() || null;
+        const selected = requestedId
+            ? rows.find((membership) => membership.organization_id === requestedId)
+            : rows.length === 1
+              ? rows[0]
+              : null;
 
-        return { role, organizationId: first?.organization_id ?? null };
+        // No membership, an invalid requested tenant, or an ambiguous
+        // multi-tenant session all fail closed until the caller selects a
+        // tenant they actively belong to.
+        if (!selected?.organization_id) {
+            return { role: "member", organizationId: null };
+        }
+
+        const role = selected.role_name
+            ? (ROLE_ALIASES[selected.role_name] ?? "member")
+            : "member";
+
+        return { role, organizationId: selected.organization_id };
     } catch {
         return { role: "member", organizationId: null };
     }
@@ -252,7 +276,7 @@ export async function secureApiRoute(
         }
 
         const user = validated.user;
-        const { role, organizationId } = await resolveServerIdentity(user.id);
+        const { role, organizationId } = await resolveServerIdentity(user.id, request.headers.get("x-organization-id"));
         const authUser = { ...user, role };
 
         if (options.permission && !hasPermission(role, options.permission)) {
@@ -286,7 +310,7 @@ export async function secureApiRoute(
         };
     }
 
-    const { role, organizationId } = await resolveServerIdentity(user.id);
+    const { role, organizationId } = await resolveServerIdentity(user.id, request.headers.get("x-organization-id"));
     const authUser = { ...user, role };
 
     if (options.permission && !hasPermission(role, options.permission)) {
