@@ -1,4 +1,4 @@
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 export interface DbIntegrationWebhook {
@@ -31,7 +31,7 @@ export interface DbIntegrationDelivery {
 abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<T[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
         const normalized = this.buildQuery(query);
         const { data, error } = await client
             .from(this.table)
@@ -48,7 +48,7 @@ abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
         if (!client) return null;
         const { data, error } = await client
             .from(this.table)
-            .insert({ organization_id: organizationId, ...input })
+            .insert({ ...input, organization_id: organizationId })
             .select()
             .single();
         mapRepositoryError(error, `Failed to create ${this.table}`);
@@ -60,7 +60,7 @@ abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
         if (!client) return null;
         const { data, error } = await client
             .from(this.table)
-            .update({ ...patch, updated_at: new Date().toISOString() })
+            .update({ ...patch, organization_id: organizationId, updated_at: new Date().toISOString() })
             .eq("id", id)
             .eq("organization_id", organizationId)
             .select()
