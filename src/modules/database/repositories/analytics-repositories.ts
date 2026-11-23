@@ -4,13 +4,13 @@ import type {
     DbAnalyticsReport,
     DbAnalyticsWidget,
 } from "@/src/modules/database/types/platform";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 abstract class OrgAnalyticsRepository<T> extends BaseRepository<T> {
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<T[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
 
         const normalized = this.buildQuery(query);
         const { data, error } = await client
