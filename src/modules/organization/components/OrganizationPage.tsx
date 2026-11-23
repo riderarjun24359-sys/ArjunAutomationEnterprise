@@ -19,7 +19,7 @@ const tabs = [
 ];
 
 export function OrganizationPage() {
-    const { organizations, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError } = useOrganization();
+    const { organizations, memberships, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError } = useOrganization();
     const [activeTab, setActiveTab] = useState<(typeof ORGANIZATION_TABS)[keyof typeof ORGANIZATION_TABS]>(ORGANIZATION_TABS.overview);
 
     if (loading) {
@@ -54,7 +54,30 @@ export function OrganizationPage() {
                 </div>
 
                 {!organization ? (
-                    <EmptyState title="No organization yet" description="Create your first organization to unlock workspace governance." />
+                    memberships.length > 0 ? (
+                        <Card>
+                            <SectionHeader
+                                title="Your organization memberships"
+                                description="Your account belongs to the organizations below. Tenant data remains protected until an organization is explicitly selected."
+                            />
+                            <div className="mt-5 space-y-3">
+                                {memberships.map((membership) => (
+                                    <div key={membership.organizationId} className="flex flex-col gap-2 rounded-2xl border border-slate-200 p-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+                                        <div>
+                                            <p className="font-semibold">{membership.name}</p>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">@{membership.slug} · {membership.roleName}</p>
+                                        </div>
+                                        <span className="w-fit rounded-full border border-slate-200 px-3 py-1 text-sm dark:border-slate-700">{membership.status}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <p role="status" className="mt-4 text-sm text-amber-700 dark:text-amber-300">
+                                Organization switching is not enabled yet. No organization has been chosen automatically, to prevent access to the wrong tenant.
+                            </p>
+                        </Card>
+                    ) : (
+                        <EmptyState title="No organization membership found" description="Your account is not currently linked to an active organization. Ask an organization administrator for an invitation or complete the approved setup flow." />
+                    )
                 ) : (
                     <>
                         <section className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
