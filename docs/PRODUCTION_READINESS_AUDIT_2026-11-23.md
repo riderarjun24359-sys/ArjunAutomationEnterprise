@@ -63,3 +63,10 @@ The shared repositories updated include automation, billing revenue, integration
 4. Implement currency-aware billing before accepting or reporting INR financial totals.
 5. Deploy durable queue/worker infrastructure and provider-backed AI/voice workflows before describing them as autonomous.
 6. Complete backup-restore and observability evidence before production sign-off.
+
+## Follow-up remediation — mixed-currency reporting guard (2026-11-23)
+
+- Commit `6b9ad33f4175bbc4f9607f85dccc6dc76f2b3697` changes Billing & Finance USD-denominated aggregates to include only rows explicitly marked USD.
+- INR and currency-unverified finance invoices/payments remain visible in their source-currency transaction lists, but are excluded from USD collected, outstanding, monthly revenue, account ranking, and collection-rate calculations.
+- USD totals are not converted or combined with INR. No FX rate is inferred.
+- This is a source-level correction only. No tests/builds were run and no production database/deployment changes were made.
