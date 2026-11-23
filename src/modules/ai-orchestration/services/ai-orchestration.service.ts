@@ -386,40 +386,11 @@ export class AiOrchestrationService {
         return shellNavigation.some((item) => item.href === moduleHref);
     }
 
-    async interpretIntent(authUserId: string, email: string, input: { rawInput: string }, fullName?: string | null) {
-        const capabilities = shellNavigation.map(i => ({ 
-            label: i.label, 
-            href: i.href, 
-            description: i.description 
-        }));
-
-        const systemPrompt = `You are an enterprise intent interpreter. Interpret the user request into a JSON Intent.
-        Rules:
-        1. Interpret ONLY. Do not execute.
-        2. Select ONLY from supplied capabilities.
-        3. Never invent routes.
-        4. Source must be 'AI_FALLBACK'.
-        5. Output format must be JSON.
-        
-        Capabilities: ${JSON.stringify(capabilities)}
-        
-        User request: ${input.rawInput}`;
-
-        try {
-            // Using existing orchestration bridge to execute the task
-            const result = await this.executeTask(authUserId, email, {
-                taskType: "intent-interpretation",
-                moduleSource: "command-palette",
-                inputPayload: { prompt: systemPrompt, rawInput: input.rawInput },
-            }, fullName);
-
-            // In a real production environment, we would fetch the task result here.
-            // As a stub for Phase C, return null as we cannot fully integrate 
-            // the async task result polling mechanism in this scope.
-            return null;
-        } catch (e) {
-            return null;
-        }
+    async interpretIntent(_authUserId: string, _email: string, _input: { rawInput: string }, _fullName?: string | null) {
+        // The async task-result polling contract is not implemented. Do not enqueue
+        // a background task that can never return a result; the command palette
+        // intentionally falls back to its local, deterministic search instead.
+        return null;
     }
 }
 
