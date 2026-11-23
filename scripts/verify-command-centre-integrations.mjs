@@ -78,6 +78,14 @@ for (const file of migrationFiles) {
 check("migration timestamps are unique", duplicates.length === 0);
 check("final identity RLS migration is ordered after Priya migrations", existsSync(join(migrationDir, "202611230011_rls_identity_grants_and_admin_lookup.sql")) && !existsSync(join(migrationDir, "202611230001_rls_identity_grants_and_admin_lookup.sql")));
 check("Command Centre integrity unit tests exist", existsSync(join(root, "src/modules/ai-command-center/engines/command-centre-integrity.test.ts")));
+const executiveService = read("src/modules/executive-command-center/services/executive-command-center.service.ts");
+const executiveRevenue = read("src/modules/executive-command-center/services/live-operations-stats.service.ts");
+const executiveCharts = read("src/modules/executive-command-center/services/executive-charts.service.ts");
+check("Executive Command Centre never reports nominal when operational data is unavailable", executiveService.includes("Live operational data is unavailable") && !executiveService.includes("All systems nominal"));
+check("Executive Command Centre hides legacy USD finance widgets", executiveService.includes("finance: null"));
+check("Executive Command Centre collected revenue is unverified until Razorpay reconciliation", executiveRevenue.includes('label: "Not verified"') && executiveRevenue.includes("verified: false") && !executiveRevenue.includes("clientRevenueHint"));
+check("Executive Command Centre revenue trend excludes unverified payments and invoices", executiveCharts.includes("return [];") && executiveCharts.includes("not a signed settlement ledger"));
+check("Executive Command Centre integrity unit tests exist", existsSync(join(root, "src/modules/executive-command-center/services/live-operations-stats.service.test.ts")));
 
 const failures = checks.filter((item) => !item.ok);
 for (const item of checks) console.log(`${item.ok ? "PASS" : "FAIL"} ${item.name}`);
