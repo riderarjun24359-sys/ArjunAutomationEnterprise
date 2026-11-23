@@ -374,7 +374,7 @@ export class AutomationService {
             url: row.url,
             allowedHosts: row.allowed_hosts,
             isActive: row.is_active,
-            hasSecret: row.secret.length > 0,
+            hasSecret: typeof row.secret === "string" && row.secret.length > 0,
             createdAt: row.created_at,
         }));
     }
