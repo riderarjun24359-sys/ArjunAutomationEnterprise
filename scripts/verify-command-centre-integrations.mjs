@@ -42,6 +42,23 @@ const jarvis = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-wi
 check("Jarvis excludes Sunday and enforces 08:00-21:00 IST", jarvis.includes('values.weekday !== "Sun"') && jarvis.includes("hour >= 8 && hour < 21"));
 check("Jarvis route uses shared calling-window policy", read("src/app/api/ai-sales/jarvis/call/route.ts").includes("withinJarvisCallingWindow"));
 check("deal Won remains blocked until verified payment mapping", read("src/app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
+check("authenticated recommendation route has unit tests", existsSync(join(root, "src/app/api/ai-command-center/recommendations/route.test.ts")));
+check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
+const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
+check("Jarvis weekly revenue requires signed captured Razorpay event and INR invoice", jarvisBriefing.includes("payment.captured:") && jarvisBriefing.includes('invoice?.currency === "INR"') && jarvisBriefing.includes('mrr_inr: null'));
+const workflowFiles = [
+    "n8n/workflows/01-priya-followup-dispatcher.json",
+    "n8n/workflows/02-jarvis-daily-briefing.json",
+    "n8n/workflows/03-jarvis-verified-event-alert.json",
+    "n8n/workflows/04-priya-google-meet-demo-booking.json",
+];
+for (const file of workflowFiles) {
+    let parsed = null;
+    try { parsed = JSON.parse(read(file)); } catch { /* reported below */ }
+    check("n8n workflow JSON valid: " + file, Boolean(parsed && Array.isArray(parsed.nodes) && parsed.nodes.length > 0));
+    check("n8n workflow remains inactive: " + file, parsed?.active === false);
+}
+
 
 const migrationDir = join(root, "supabase", "migrations");
 const migrationFiles = readdirSync(migrationDir).filter((file) => file.endsWith(".sql")).sort();
