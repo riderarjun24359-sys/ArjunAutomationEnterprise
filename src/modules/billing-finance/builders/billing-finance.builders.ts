@@ -7,7 +7,7 @@ import type {
     RevenueDashboardMetrics,
     SubscriptionManagementItem,
 } from "../types/os";
-import { clampScore, daysOverdue, daysUntil, money, monthKey, trendFromValues } from "../utils/formatters";
+import { clampScore, daysOverdue, daysUntil, money } from "../utils/formatters";
 
 function accountName(data: BillingFinanceRawData, accountId?: string | null): string {
     if (!accountId) return "Unknown account";
@@ -32,114 +32,6 @@ function isOpenInvoiceStatus(status: string): boolean {
 function isFailedPayment(status: string): boolean {
     const s = status.toLowerCase();
     return ["failed", "declined", "error", "cancelled", "canceled"].includes(s);
-}
-
-function isPaidPayment(status: string): boolean {
-    const s = status.toLowerCase();
-    return ["paid", "succeeded", "success", "completed", "captured"].includes(s);
-}
-
-export function buildSubscriptions(data: BillingFinanceRawData): SubscriptionManagementItem[] {
-    return data.subscriptions
-        .map((sub) => ({
-            id: sub.id,
-            billingAccountId: sub.billing_account_id,
-            accountName: accountName(data, sub.billing_account_id),
-            planName: sub.plan_name,
-            billingCycle: sub.billing_cycle,
-            amountUsd: money(Number(sub.amount_usd ?? 0)),
-            mrrUsd: money(Number(sub.mrr_usd ?? 0)),
-            arrUsd: money(Number(sub.arr_usd ?? 0)),
-            quantity: Number(sub.quantity ?? 1),
-            status: sub.status,
-            paymentStatus: sub.payment_status,
-            startsAt: sub.starts_at,
-            renewsAt: sub.renews_at ?? null,
-            daysToRenewal: daysUntil(sub.renews_at),
-        }))
-        .sort((a, b) => (a.daysToRenewal ?? 9999) - (b.daysToRenewal ?? 9999));
-}
-
-export function buildInvoiceCenter(data: BillingFinanceRawData): InvoiceCenterItem[] {
-    const fromBrv: InvoiceCenterItem[] = data.brvInvoices.map((inv) => {
-        const total = money(Number(inv.total_usd ?? 0));
-        const due = money(Number(inv.amount_due_usd ?? 0));
-        return {
-            id: inv.id,
-            source: "brv",
-            number: inv.invoice_number || inv.invoice_key,
-            accountOrClient: accountName(data, inv.billing_account_id),
-            clientId: null,
-            totalUsd: total,
-            amountDueUsd: due,
-            amountPaidUsd: money(total - due),
-            status: inv.status,
-            paymentStatus: inv.payment_status,
-            invoiceDate: inv.invoice_date,
-            dueDate: inv.due_date ?? null,
-            daysOverdue: daysOverdue(inv.due_date),
-            projectId: null,
-            projectName: null,
-        };
-    });
-
-    const fromFinance: InvoiceCenterItem[] = data.financeInvoices.map((inv) => {
-        const total = money(Number(inv.total ?? 0));
-        const paid = money(Number(inv.amount_paid ?? 0));
-        return {
-            id: inv.id,
-            source: "finance",
-            number: inv.number,
-            accountOrClient: clientName(data, inv.client_id),
-            clientId: inv.client_id ?? null,
-            totalUsd: total,
-            amountDueUsd: money(Math.max(0, total - paid)),
-            amountPaidUsd: paid,
-            status: inv.status,
-            paymentStatus: paid >= total && total > 0 ? "paid" : paid > 0 ? "partial" : "unpaid",
-            invoiceDate: inv.issue_date,
-            dueDate: inv.due_date ?? null,
-            daysOverdue: daysOverdue(inv.due_date),
-            projectId: inv.project_id ?? null,
-            projectName: projectName(data, inv.project_id),
-        };
-    });
-
-    return [...fromBrv, ...fromFinance].sort(
-        (a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime(),
-    );
-}
-
-export function buildPaymentCenter(data: BillingFinanceRawData): PaymentCenterItem[] {
-    const fromBrv: PaymentCenterItem[] = data.paymentAttempts.map((p) => ({
-        id: p.id,
-        source: "brv",
-        accountOrClient: accountName(data, p.billing_account_id),
-        amountUsd: money(Number(p.amount_usd ?? 0)),
-        currency: p.currency_code || "INR",
-        status: p.payment_status || p.status,
-        method: "gateway",
-        reference: p.gateway_reference || p.attempt_key,
-        attemptedAt: p.attempted_at || p.created_at,
-        failureReason: p.failure_reason ? p.failure_reason : null,
-    }));
-
-    const fromFinance: PaymentCenterItem[] = data.financePayments.map((p) => ({
-        id: p.id,
-        source: "finance",
-        accountOrClient: clientName(data, p.client_id),
-        amountUsd: money(Number(p.amount ?? 0)),
-        currency: "INR",
-        status: p.status,
-        method: p.method || "unknown",
-        reference: p.reference || p.id.slice(0, 8),
-        attemptedAt: p.payment_date || p.created_at,
-        failureReason: isFailedPayment(p.status) ? p.status : null,
-    }));
-
-    return [...fromBrv, ...fromFinance].sort(
-        (a, b) => new Date(b.attemptedAt).getTime() - new Date(a.attemptedAt).getTime(),
-    );
 }
 
 export function buildRevenueDashboard(
