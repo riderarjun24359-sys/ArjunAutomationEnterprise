@@ -98,3 +98,45 @@ export function validateSignedUrlRequest(input: {
     }
     return { ok: true, bucket, path, expiresIn };
 }
+
+
+/**
+ * Verify that uploaded bytes match the declared media type before storage.
+ * Browser-provided File.type is user-controlled and is not a content check.
+ */
+export function validateFileContent(mime: string, bytes: Uint8Array): boolean {
+    if (bytes.byteLength === 0) return false;
+    const startsWith = (...signature: number[]) =>
+        signature.every((value, index) => bytes[index] === value);
+    const asciiAt = (offset: number, value: string) =>
+        Array.from(value).every((character, index) => bytes[offset + index] === character.charCodeAt(0));
+
+    switch (mime.toLowerCase()) {
+        case "image/png":
+            return startsWith(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a);
+        case "image/jpeg":
+            return startsWith(0xff, 0xd8, 0xff);
+        case "image/gif":
+            return asciiAt(0, "GIF87a") || asciiAt(0, "GIF89a");
+        case "image/webp":
+            return asciiAt(0, "RIFF") && asciiAt(8, "WEBP");
+        case "application/pdf":
+            return asciiAt(0, "%PDF-");
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            // Office Open XML documents are ZIP containers.
+            return startsWith(0x50, 0x4b, 0x03, 0x04) ||
+                startsWith(0x50, 0x4b, 0x05, 0x06) ||
+                startsWith(0x50, 0x4b, 0x07, 0x08);
+        case "text/plain":
+        case "text/csv":
+            try {
+                const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+                return !text.includes("\\u0000");
+            } catch {
+                return false;
+            }
+        default:
+            return false;
+    }
+}
