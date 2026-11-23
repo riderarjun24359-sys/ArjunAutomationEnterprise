@@ -24,9 +24,9 @@ export function RevenueDashboardPanel({ revenue }: { revenue: RevenueDashboardMe
                             <li key={row.month} className="flex justify-between items-center text-sm border-b border-[var(--dos-border-subtle)] pb-2 last:border-0 last:pb-0">
                                 <span className="font-medium text-[var(--dos-text-secondary)]">{row.month}</span>
                                 <span className="text-[var(--dos-text-primary)] tabular-nums">
-                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Inv:</span> ${row.invoicedUsd.toLocaleString()} 
+                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Invoiced:</span> Currency unverified 
                                     <span className="mx-2 text-[var(--dos-border)]">|</span>
-                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Coll:</span> ${row.collectedUsd.toLocaleString()}
+                                    <span className="text-[var(--dos-text-tertiary)] text-xs">Collected:</span> Currency unverified
                                 </span>
                             </li>
                         ))}
@@ -38,7 +38,7 @@ export function RevenueDashboardPanel({ revenue }: { revenue: RevenueDashboardMe
                         {revenue.topAccounts.slice(0, 8).map((a) => (
                             <li key={a.name} className="flex justify-between items-center border-b border-[var(--dos-border-subtle)] pb-2 last:border-0 last:pb-0">
                                 <span className="truncate text-sm text-[var(--dos-text-secondary)]">{a.name}</span>
-                                <span className="font-semibold text-[var(--dos-text-primary)] tabular-nums">${Math.round(a.mrrUsd).toLocaleString()}</span>
+                                <span className="font-semibold text-[var(--dos-text-tertiary)] tabular-nums">Currency unverified</span>
                             </li>
                         ))}
                     </ul>
