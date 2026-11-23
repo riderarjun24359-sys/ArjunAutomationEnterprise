@@ -11,10 +11,6 @@ import type {
     FounderGrowthCenter,
 } from "../types";
 
-function money(n: number): number {
-    return Math.round((Number.isFinite(n) ? n : 0) * 100) / 100;
-}
-
 function pct(n: number): number {
     return Math.round((Number.isFinite(n) ? n : 0) * 10) / 10;
 }
@@ -41,11 +37,6 @@ function isChurnedStatus(status: string): boolean {
 function isFailedPayment(status: string): boolean {
     const s = status.toLowerCase();
     return s.includes("fail") || s.includes("declin") || s.includes("error");
-}
-
-function isPaidPayment(status: string): boolean {
-    const s = status.toLowerCase();
-    return s.includes("paid") || s.includes("success") || s.includes("succeeded") || s.includes("complete");
 }
 
 function classifyLeadSource(source: string): "paid" | "referral" | "organic" | "other" {
@@ -346,17 +337,6 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
     const alerts: FounderAlert[] = [];
     const now = new Date().toISOString();
 
-    if (executive.mrrTrend === "down") {
-        alerts.push({
-            id: "revenue-drop",
-            category: "revenue",
-            severity: "high",
-            title: "Revenue drop detected",
-            detail: `MRR trend is down at ₹${executive.mrrUsd.toLocaleString()} vs prior snapshot.`,
-            detectedAt: now,
-        });
-    }
-
     const failed = data.paymentAttempts.filter((p) => isFailedPayment(p.payment_status) || isFailedPayment(p.status));
     for (const p of failed.slice(0, 5)) {
         alerts.push({
@@ -434,7 +414,7 @@ export function buildAdvisorBriefing(
     if (executive.churnRatePercent >= 5) businessRisks.push(`Churn at ${executive.churnRatePercent}% — prioritize retention plays.`);
     if (customers.churnWatchlist.length) businessRisks.push(`${customers.churnWatchlist.length} accounts on churn watchlist.`);
     if (critical) businessRisks.push(`${critical} high/critical founder alerts require attention.`);
-    if (executive.mrrTrend === "down") businessRisks.push("MRR trend is declining versus prior snapshot.");
+    
 
     const growthOpportunities: string[] = [];
     if (customers.expansionOpportunities.length) {
@@ -451,8 +431,8 @@ export function buildAdvisorBriefing(
         revenueRecommendations.push("Improve trial→paid conversion with onboarding nudges and upgrade CTAs.");
     }
     if (executive.cashFlowUsd < 0) revenueRecommendations.push("Cash flow negative vs outstanding — accelerate collections.");
-    if (growth.ltvUsd) revenueRecommendations.push(`Blended LTV ≈ ₹${growth.ltvUsd.toLocaleString()} — protect retention to compound ARR.`);
-    if (!revenueRecommendations.length) revenueRecommendations.push("Maintain current pricing discipline and expand top healthy accounts.");
+    
+    if (!revenueRecommendations.length) revenueRecommendations.push("Revenue recommendations are limited until INR settlement data is verified.");
 
     const dailyBriefing = [
         "MRR and ARR not verified — INR settlement reconciliation pending.",
@@ -500,7 +480,7 @@ export function buildBoardRoom(
         { label: "Trial → Paid", value: `${executive.trialToPaidConversionPercent}%` },
         { label: "Churn", value: `${executive.churnRatePercent}%` },
         { label: "LTV", value: "Not verified" },
-        { label: "CAC", value: growth.cacUsd != null ? `₹${growth.cacUsd.toLocaleString()}` : "n/a (no spend rows)" },
+        { label: "CAC", value: "Not verified" },
         { label: "LTV:CAC", value: growth.ltvToCac != null ? String(growth.ltvToCac) : "n/a" },
         { label: "NPS", value: executive.npsScore != null ? String(executive.npsScore) : "n/a" },
         { label: "CSAT", value: executive.customerSatisfactionAvg != null ? String(executive.customerSatisfactionAvg) : "n/a" },
