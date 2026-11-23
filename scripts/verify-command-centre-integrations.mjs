@@ -31,6 +31,7 @@ const globalOpsEngine = read("src/modules/customer-success-global-ops/engines/co
 check("Global Operations does not synthesize onboarding sessions", !globalOpsService.includes("buildOnboardingSessions("));
 check("Global Operations does not synthesize satisfaction history", globalOpsService.includes("satisfactionTrend: []") && !globalOpsService.includes("buildSatisfactionTrend("));
 check("Global Operations does not claim nominal without real health data", !globalOpsEngine.includes("Operations nominal"));
+check("Global Operations does not show delivery health without active engagements", globalOpsService.includes("delivery.available && delivery.activeEngagements > 0"));
 check("Global Operations does not create generic empty-evidence improvement items", !globalOpsEngine.includes("Auto-generated continuous improvement item"));
 check("Global Operations trust regression tests exist", existsSync(join(root, "src/modules/customer-success-global-ops/engines/trust-integrity.test.ts")));
 
