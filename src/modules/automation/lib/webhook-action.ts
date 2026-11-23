@@ -9,10 +9,9 @@
  *     allowlist (exact host or parent domain). An empty allowlist denies.
  *   - Literal loopback / private / link-local / multicast / reserved IPs,
  *     `localhost` names, and well-known cloud metadata endpoints are rejected
- *     even when allowlisted (SSRF guard). Hostnames that are not allowlisted
- *     are rejected before any DNS-dependent step, so rebinding cannot widen
- *     access beyond the allowlist — though operators should still prefer
- *     stable, non-DNS-rebinding endpoints for sensitive targets.
+ *     even when allowlisted. The Node server route additionally resolves every
+ *     DNS answer, rejects any non-public address, and pins the HTTPS socket to
+ *     a vetted IP while preserving TLS hostname verification (DNS-rebinding SSRF guard).
  *   - Every delivery carries an `Idempotency-Key` (`executionId:stepOrder`) and
  *     an HMAC-SHA256 `t=…,v1=…` signature over `timestamp.body` (same wire
  *     shape as the inbound Stripe webhook path, so receivers reuse one
