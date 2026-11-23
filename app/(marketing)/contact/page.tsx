@@ -16,9 +16,9 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
-    title: "Contact Arjun Automation",
+    title: "Contact Arjun Automations",
     description:
-        "Discuss a business website, workflow automation or custom portal with Arjun Automation in Hyderabad. Call, WhatsApp or send an enquiry.",
+        "Discuss an affordable business website, WhatsApp automation or custom software with Arjun Automations. We work with businesses across India, including towns and villages.",
     path: MARKETING_ROUTES.contact,
 };
 
@@ -75,7 +75,7 @@ export default function ContactPage() {
             />
             <PremiumPageShell
                 title="Let’s talk about the work you want to improve."
-                description="Tell us what takes too much time, where enquiries get missed, or what your team is managing manually. We’ll discuss whether a website, workflow automation or a custom portal is the right fit."
+                description="Tell us about your business and what you want to improve. Whether you run a village shop, trading business, clinic, school or service team, we will suggest a practical solution that fits your budget."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
