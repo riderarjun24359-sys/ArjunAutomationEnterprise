@@ -44,15 +44,23 @@ async function resolveOrganizationContextUncached(
 
     const memberships = await databaseService.memberships.getByUser(profile.id);
 
-    // There is no trusted tenant-selection signal in this resolver. Never
-    // silently choose the first of multiple active memberships: doing so can
-    // route a request into the wrong customer's data. A future explicit
-    // organization selector can pass a verified tenant into this boundary.
-    if (memberships.length > 1) {
+    // A browser selection is only a hint, never authority: accept it only
+    // when it exactly matches one of the caller's currently active memberships.
+    // Server API routes independently validate x-organization-id against the
+    // authenticated user's membership before granting tenant access.
+    const selectedOrganizationId =
+        typeof window !== "undefined"
+            ? window.localStorage.getItem("aae:selected-organization")
+            : null;
+    const selectedMembership = selectedOrganizationId
+        ? memberships.find((membership) => membership.organization_id === selectedOrganizationId)
+        : null;
+
+    if (memberships.length > 1 && !selectedMembership) {
         return null;
     }
 
-    let organizationId = memberships[0]?.organization_id ?? null;
+    let organizationId = selectedMembership?.organization_id ?? memberships[0]?.organization_id ?? null;
 
     if (!organizationId) {
         // Secure bootstrap: a user with no membership is attached ONLY to an
