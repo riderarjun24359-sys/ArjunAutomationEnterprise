@@ -29,7 +29,8 @@ The shared repositories updated include automation, billing revenue, integration
 
 - Legacy billing columns are named `amount_usd`, `mrr_usd`, `arr_usd`, etc. The billing-account table has a `currency_code`, but the current transaction/statistics mapping does not consistently carry that currency into every amount.
 - There is no verified FX rate source or safe historical conversion basis. Existing values must not be relabelled as INR or multiplied by a guessed rate.
-- Customer-facing finance panels already suppress unverified totals and show currency-unverified states. This is safer than displaying false INR figures.
+- Customer-facing finance panels already suppress unverified totals and show currency-unverified states. Payment Center no longer displays a USD-named amount beside an unverified currency label.
+- Billing creation paths validate that a referenced billing account belongs to the selected tenant before writing. This is a tenant-integrity guard, not a currency conversion.
 - **INR accounting is not complete.** It requires a currency-aware schema and write/read path, explicit INR transaction amounts, decimal/minor-unit rules, GST/tax treatment, and a controlled reconciliation/backfill plan. No such migration was applied.
 
 ## Integrations
