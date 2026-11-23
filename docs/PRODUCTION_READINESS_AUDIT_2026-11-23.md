@@ -73,3 +73,21 @@ The shared repositories updated include automation, billing revenue, integration
 
 - Commit `303851a8610e96ca3d7d7f5a53ee574d50b4e4da` adds streaming byte-limit enforcement to the server-side webhook delivery endpoint. The request is capped at 64 KiB while reading, including chunked requests that omit or misstate Content-Length.
 - The webhook destination still needs a dedicated DNS-pinning egress proxy to fully close DNS-rebinding risk; this remains an explicit production limitation.
+
+
+## Live Supabase production snapshot — 2026-11-23
+
+Read-only inspection of the connected production project `arjun-enterprise-production` confirmed:
+- The applied migration history currently ends at `20261105161010`; the newer repository migrations dated `20261123` are not applied.
+- `audit_logs` exists with RLS enabled and four policies; `intg_api_keys` exists with RLS enabled and four policies; `webhook_idempotency` exists with RLS enabled and one deny-all policy.
+- `integration_webhooks` and `integration_deliveries` do not exist in the live production schema. Therefore the newly implemented outbound webhook delivery endpoint is not production-operational until its schema migration and column-privilege hardening are reviewed and applied. Do not enable this feature or represent it as live before that gate.
+- Supabase Security Advisor reports 32 RLS-enabled tables with no policies (deny-by-default, not a public data leak by itself); these need classification as intentionally internal/deprecated versus accidentally inaccessible before any policy is added.
+- Security Advisor flags authenticated execution of `auth_profile_id()` and `is_organization_member(uuid)` SECURITY DEFINER helpers. These may be intentionally used by RLS policies; review function bodies, grants, and policy dependencies before changing EXECUTE privileges.
+- Leaked-password protection is disabled in Supabase Auth and requires an Auth configuration change by an authorized project administrator.
+- Health Advisor returned no findings in the inspected snapshot. Performance Advisor reported unused indexes; no indexes were removed because usage evidence is not sufficient to justify destructive cleanup.
+
+## CI follow-up
+
+- GitHub Actions run `45234535625` failed at ESLint before TypeScript, unit tests, migration validation, tenant-isolation tests, or production build could run. The sole ESLint error was `prefer-const` in `src/modules/database/repositories/audit-repository.ts`.
+- Commit `c8b35920c1e8234676856f14683f3d143d3f5a96` corrects that lint error. The subsequent CI run `45236244245` was still in progress at the time of this record; no pass is claimed.
+- The separate Cloudflare deployment workflow remains blocked because `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are not configured. Vercel deployment remains intentionally paused pending the user's token recharge.
