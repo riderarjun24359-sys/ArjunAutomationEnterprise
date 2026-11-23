@@ -17,6 +17,8 @@ export function useOrganization() {
     const [members, setMembers] = useState<OrganizationMemberSummary[]>([]);
     const [invitations, setInvitations] = useState<OrganizationInvitationSummary[]>([]);
     const [loading, setLoading] = useState(true);
+    const [revokingInvitationId, setRevokingInvitationId] = useState<string | null>(null);
+    const [invitationActionError, setInvitationActionError] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -72,5 +74,30 @@ export function useOrganization() {
         };
     }, [user]);
 
-    return { organizations, workspaces, members, invitations, loading };
+    const revokeInvitation = async (invitationId: string): Promise<boolean> => {
+        setInvitationActionError(null);
+        setRevokingInvitationId(invitationId);
+        try {
+            const response = await fetch("/api/organization/invitations", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ invitationId }),
+                cache: "no-store",
+            });
+            const payload = await response.json().catch(() => ({})) as { error?: string };
+            if (!response.ok) {
+                setInvitationActionError(payload.error ?? "Invitation could not be revoked.");
+                return false;
+            }
+            setInvitations((current) => current.map((invite) => invite.id === invitationId ? { ...invite, status: "revoked" } : invite));
+            return true;
+        } catch {
+            setInvitationActionError("Network error. Invitation status was not changed.");
+            return false;
+        } finally {
+            setRevokingInvitationId(null);
+        }
+    };
+
+    return { organizations, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError };
 }
