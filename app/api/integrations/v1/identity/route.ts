@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { validateIntegrationApiKey } from "@/src/lib/integration-api-keys";
+import { getClientIp } from "@/src/lib/api-security";
 import { checkRateLimit } from "@/src/modules/security-center/engine/api-security-engine";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
+    const ipRate = await checkRateLimit(`integration-api-ip:${getClientIp(request)}`, 30, 60_000);
+    if (!ipRate.allowed) {
+        return NextResponse.json(
+            { error: "Too many integration API authentication attempts", resetAt: ipRate.resetAt },
+            { status: 429, headers: { "Retry-After": String(Math.max(1, Math.ceil((Date.parse(ipRate.resetAt) - Date.now()) / 1000))) } },
+        );
+    }
+
     const authorization = request.headers.get("authorization") ?? "";
     const match = /^Bearer\s+(.+)$/i.exec(authorization);
     if (!match?.[1]) {
