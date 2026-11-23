@@ -392,10 +392,9 @@ await expectError(
     `insert into public.integration_webhooks (organization_id, name, url, secret) values ('${ORG2}', 'evil', 'https://evil.example.net/x', 'x')`,
     "webhooks: cross-org INSERT blocked",
 );
-await expectRows(
+await expectError(
     `update public.integration_webhooks set name = 'Hacked' where organization_id = '${ORG2}' returning id`,
-    0,
-    "webhooks: cross-org UPDATE affects 0 rows",
+    "webhooks: browser UPDATE denied by server-only table grants",
 );
 await expectRows(`select id from public.integration_deliveries where organization_id = '${ORG1}'`, 1, "deliveries: same-tenant read");
 await expectRows(`select id from public.integration_deliveries where organization_id = '${ORG2}'`, 0, "deliveries: cross-org read denied");
