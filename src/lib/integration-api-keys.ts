@@ -14,7 +14,7 @@ export interface ValidatedIntegrationApiKey {
  * tokens; a matching key must also be active and not expired.
  */
 export async function validateIntegrationApiKey(token: string): Promise<ValidatedIntegrationApiKey | null> {
-    const match = /^((?:aae_live)_[a-f0-9]{8})_([A-Za-z0-9_-]{43})$/.exec(token.trim());
+    const match = /^((?:aae_live)_[a-f0-9]{16})_([A-Za-z0-9_-]{43})$/.exec(token.trim());
     if (!match) return null;
 
     const serviceClient = getServiceRoleClient();
