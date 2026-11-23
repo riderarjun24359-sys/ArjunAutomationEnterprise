@@ -65,7 +65,18 @@ describe("automation webhooks", () => {
         mocks.actionsList.mockResolvedValue([]);
         mocks.webhooksList.mockResolvedValue([]);
         mocks.webhookUpdate.mockResolvedValue(null);
-        vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ ok: true, attempts: 1, responseStatus: 204 }) })));
+        vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+            if (url === "/api/automation/webhooks" && init?.method === "GET") {
+                return { ok: true, status: 200, json: async () => ({ webhooks: [{ id: "wh1", name: "crm", url: hookRow.url, allowedHosts: hookRow.allowed_hosts, isActive: true, hasSecret: true, createdAt: "" }] }) };
+            }
+            if (url === "/api/automation/webhooks" && init?.method === "POST") {
+                return { ok: true, status: 201, json: async () => ({ webhook: { id: "wh1", name: "crm" } }) };
+            }
+            if (url === "/api/automation/webhooks" && init?.method === "PATCH") {
+                return { ok: true, status: 200, json: async () => ({ webhook: { id: "wh1", name: "crm", is_active: false } }) };
+            }
+            return { ok: true, status: 200, json: async () => ({ ok: true, attempts: 1, responseStatus: 204 }) };
+        }));
     });
 
     afterEach(() => {
@@ -79,11 +90,14 @@ describe("automation webhooks", () => {
 
         const created = await automationService.createWebhook("u", "e", { name: "crm", url: "https://hooks.example.com/events", secret: "super-secret-16-chars!!" });
         expect(created).toMatchObject({ id: "wh1", name: "crm" });
-        expect(mocks.webhookCreate).toHaveBeenCalledWith("org-1", expect.objectContaining({ allowed_hosts: ["hooks.example.com"] }));
+        const fetchMock = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
+        const [url, init] = fetchMock.mock.calls.find((call) => call[0] === "/api/automation/webhooks") as unknown as [string, RequestInit];
+        expect(url).toBe("/api/automation/webhooks");
+        expect(init.method).toBe("POST");
+        expect(JSON.parse(String(init.body))).toMatchObject({ name: "crm", allowedHosts: ["hooks.example.com"] });
     });
 
     it("getWebhooks never exposes the signing secret", async () => {
-        mocks.webhooksList.mockResolvedValue([hookRow]);
         const rows = await automationService.getWebhooks("u", "e");
         expect(rows).toHaveLength(1);
         expect(rows[0]).not.toHaveProperty("secret");
@@ -91,6 +105,7 @@ describe("automation webhooks", () => {
     });
 
     it("setWebhookActive fails closed for other organizations", async () => {
+        vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 404, json: async () => ({ error: "Webhook not found in your organization" }) })));
         await expect(automationService.setWebhookActive("u", "e", "wh-x", false)).rejects.toThrow(/not found in your organization/);
     });
 
