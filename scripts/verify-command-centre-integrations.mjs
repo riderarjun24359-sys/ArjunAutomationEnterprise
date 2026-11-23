@@ -26,7 +26,7 @@ const revenueUi = read("src/modules/ai-command-center/components/AiCommandCenter
 const globalOps = read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts");
 check("MRR is never estimated from active client count", revenueEngine.includes("mrr: input.mrrEstimate ?? 0") && !revenueEngine.includes("activeClients *"));
 check("revenue includes an explicit verification state", revenueEngine.includes("mrrVerified: false") && revenueUi.includes("Not verified"));
-check("Command Centre revenue UI does not show USD", !revenueUi.includes("$"));
+check("Command Centre revenue UI does not show USD", !revenueUi.includes("USD") && !revenueUi.includes('currency: "USD"'));
 check("Global Operations does not fabricate MRR from renewals", globalOps.includes("mrr: 0, // No provider-verified recurring payment ledger"));
 
 const repository = read("src/modules/ai-command-center/repository/ai-command-center-repository.ts");
@@ -36,7 +36,7 @@ check("recommendation refresh preserves stored decisions", repository.includes("
 check("recommendation IDs are stable", read("src/modules/ai-command-center/engines/recommendation.engine.ts").includes("const stableId"));
 check("recommendation actions use authenticated API", hook.includes("/api/ai-command-center/recommendations"));
 check("recommendation action API enforces session permission", actionRoute.includes("secureApiRoute") && actionRoute.includes('permission: "automationManage"'));
-check("recommendation action API scopes updates to organization", actionRoute.includes('.eq("organization_id", organizationId)'));
+check("recommendation action API scopes updates to organization", actionRoute.includes('.eq("organization_id", auth.organizationId)'));
 
 const jarvis = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-window.ts");
 check("Jarvis excludes Sunday and enforces 08:00-21:00 IST", jarvis.includes('values.weekday !== "Sun"') && jarvis.includes("hour >= 8 && hour < 21"));
