@@ -24,6 +24,10 @@ function projectName(data: BillingFinanceRawData, projectId?: string | null): st
     return data.projects.find((p) => p.id === projectId)?.name ?? null;
 }
 
+function isUsdCurrency(currency: string | null | undefined): boolean {
+    return currency?.trim().toUpperCase() === "USD";
+}
+
 function isOpenInvoiceStatus(status: string): boolean {
     const s = status.toLowerCase();
     return !["paid", "void", "cancelled", "canceled", "written_off"].includes(s);
@@ -157,13 +161,17 @@ export function buildRevenueDashboard(
     const mrrUsd = money(Number(latestMrr?.mrr_usd ?? mrrFromSubs));
     const arrFromSnap = money(Number(data.arrSnapshots[0]?.arr_usd ?? mrrUsd * 12));
     const outstandingFromBrv = money(data.outstandingBalances.reduce((s, b) => s + Number(b.total_outstanding_usd ?? 0), 0));
-    const outstandingFromInvoices = money(invoices.reduce((s, i) => s + i.amountDueUsd, 0));
+    // Revenue metrics are explicitly USD-denominated. Never add INR or
+    // currency-unverified finance invoices into USD totals without an FX ledger.
+    const usdInvoices = invoices.filter((invoice) => isUsdCurrency(invoice.currency));
+    const outstandingFromInvoices = money(usdInvoices.reduce((s, i) => s + i.amountDueUsd, 0));
     const outstandingUsd = outstandingFromBrv > 0 ? outstandingFromBrv : outstandingFromInvoices;
     // Payments and invoice amount_paid represent the same cash collection
     // from two different views. Prefer settled payment records when present;
     // use invoice paid totals only as a fallback, never add both together.
-    const settledPayments = payments.filter((p) => isPaidPayment(p.status));
-    const invoiceCollections = invoices.reduce((sum, invoice) => sum + invoice.amountPaidUsd, 0);
+    const usdPayments = payments.filter((payment) => isUsdCurrency(payment.currency));
+    const settledPayments = usdPayments.filter((p) => isPaidPayment(p.status));
+    const invoiceCollections = usdInvoices.reduce((sum, invoice) => sum + invoice.amountPaidUsd, 0);
     const collectedUsd = money(
         settledPayments.length > 0
             ? settledPayments.reduce((sum, payment) => sum + payment.amountUsd, 0)
@@ -173,7 +181,7 @@ export function buildRevenueDashboard(
     const collectionCasesOpen = data.collectionCases.filter((c) => !["closed", "resolved", "won"].includes(c.status.toLowerCase())).length;
 
     const months = new Map<string, { collectedUsd: number; invoicedUsd: number }>();
-    for (const inv of invoices) {
+    for (const inv of usdInvoices) {
         const key = monthKey(inv.invoiceDate);
         const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
         row.invoicedUsd += inv.totalUsd;
@@ -199,7 +207,7 @@ export function buildRevenueDashboard(
         }));
 
     const outstandingByAccount = new Map<string, number>();
-    for (const inv of invoices) {
+    for (const inv of usdInvoices) {
         outstandingByAccount.set(inv.accountOrClient, money((outstandingByAccount.get(inv.accountOrClient) ?? 0) + inv.amountDueUsd));
     }
     const mrrByAccount = new Map<string, number>();
@@ -238,8 +246,9 @@ export function buildFinanceExecutiveWidgets(input: {
     payments: PaymentCenterItem[];
     revenue: RevenueDashboardMetrics;
 }): FinanceExecutiveWidgets {
-    const billed = input.invoices.reduce((s, i) => s + i.totalUsd, 0);
-    const paid = input.invoices.reduce((s, i) => s + i.amountPaidUsd, 0);
+    const usdInvoices = input.invoices.filter((invoice) => isUsdCurrency(invoice.currency));
+    const billed = usdInvoices.reduce((s, i) => s + i.totalUsd, 0);
+    const paid = usdInvoices.reduce((s, i) => s + i.amountPaidUsd, 0);
     const collectionRate = billed <= 0 ? 100 : clampScore((paid / billed) * 100);
 
     return {
@@ -251,7 +260,7 @@ export function buildFinanceExecutiveWidgets(input: {
             (s) => s.daysToRenewal !== null && s.daysToRenewal >= 0 && s.daysToRenewal <= 30,
         ).length,
         failedPayments: input.payments
-            .filter((p) => isFailedPayment(p.status))
+            .filter((p) => isFailedPayment(p.status) && isUsdCurrency(p.currency))
             .slice(0, 8)
             .map((p) => ({
                 account: p.accountOrClient,
