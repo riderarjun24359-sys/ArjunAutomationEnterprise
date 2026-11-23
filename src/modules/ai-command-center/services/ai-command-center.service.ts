@@ -21,7 +21,7 @@ import {
     fetchSupportSnapshot,
 } from "../integrations/platform-bridges";
 import { aiCommandCenterRepository } from "../repository/ai-command-center-repository";
-import type { AccContext, AccRecommendation, AiCommandCenterDashboard } from "../types";
+import type { AccContext, AiCommandCenterDashboard } from "../types";
 
 export class AiCommandCenterService {
     private async getOrgId(ctx: AccContext): Promise<string | null> {
@@ -160,16 +160,7 @@ export class AiCommandCenterService {
         };
     }
 
-    acceptRecommendation(recommendations: AccRecommendation[], id: string): AccRecommendation[] {
-        productionLog("info", `Recommendation accepted: ${id}`, "ai-command-center");
-        publishAiCommandCenterEvent("AiRecommendationAccepted", { recommendationId: id });
-        return recommendations.map((r) => (r.id === id ? { ...r, status: "accepted" as const } : r));
-    }
 
-    dismissRecommendation(recommendations: AccRecommendation[], id: string): AccRecommendation[] {
-        publishAiCommandCenterEvent("AiRecommendationDismissed", { recommendationId: id });
-        return recommendations.map((r) => (r.id === id ? { ...r, status: "dismissed" as const } : r));
-    }
 }
 
 export const aiCommandCenterService = new AiCommandCenterService();
