@@ -29,9 +29,9 @@ export function InvoiceCenterPanel({ items }: { items: InvoiceCenterItem[] }) {
                         </Badge>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-secondary)]">
-                        <span>Total ${item.totalUsd.toLocaleString()}</span>
-                        <span>Due ${item.amountDueUsd.toLocaleString()}</span>
-                        <span>Paid ${item.amountPaidUsd.toLocaleString()}</span>
+                        <span>Total not verified</span>
+                        <span>Due not verified</span>
+                        <span>Paid not verified</span>
                         <span>Source {item.source}</span>
                         <span>Status {item.status}</span>
                         <span>
