@@ -13,7 +13,7 @@ export class AuditRepository extends BaseRepository<AuditLog> {
         }
 
         const normalized = this.buildQuery(query);
-        let request = client
+        const request = client
             .from(this.table)
             .select("*")
             .eq("organization_id", organizationId)
