@@ -5,14 +5,6 @@ import { loadOrganizationOperationsData } from "./organization-operations-data.s
 
 export { createEmptyLiveOperationsStats } from "./build-live-operations-kpis";
 
-function formatInr(amount: number): string {
-    return new Intl.NumberFormat("en-IN", {
-        style: "currency",
-        currency: "INR",
-        maximumFractionDigits: 0,
-    }).format(amount);
-}
-
 function isActiveProject(status: string): boolean {
     const s = status.toLowerCase();
     return !["completed", "cancelled", "archived", "done", "closed"].includes(s);
