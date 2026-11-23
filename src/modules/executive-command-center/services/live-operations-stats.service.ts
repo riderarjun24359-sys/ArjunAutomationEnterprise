@@ -81,7 +81,7 @@ export function buildLiveOperationsStatsFromData(data: OrganizationOperationsDat
         currency: "INR",
         verified: false,
         label: "Not verified",
-        detail: `Razorpay settlement verification is not connected · ${openInvoices.length} open · ${formatInr(outstanding)} outstanding`,
+        detail: `Razorpay settlement verification is not connected · ${openInvoices.length} open invoice(s) · balance amount not verified`,
     };
 
     const notifications = [
