@@ -1199,7 +1199,7 @@ if (migrationFiles.length === 0) {
 
 const migrationVersions = new Map();
 for (const file of migrationFiles) {
-    const match = file.match(/^(\\d{8,14})[_-]/);
+    const match = file.match(/^(\d{8,14})[_-]/);
     if (!match) {
         console.error(`FAIL: Migration filename must start with a sortable 8–14 digit version: ${file}`);
         process.exit(1);
