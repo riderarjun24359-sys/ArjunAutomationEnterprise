@@ -34,6 +34,7 @@ check("MRR is never estimated from active client count", revenueEngine.includes(
 check("revenue includes an explicit verification state", revenueEngine.includes("mrrVerified: false") && revenueUi.includes("Not verified"));
 check("Command Centre revenue UI does not show USD", !revenueUi.includes("USD") && !revenueUi.includes('currency: "USD"'));
 check("Global Operations does not fabricate MRR from renewals", globalOps.includes("mrr: 0, // No provider-verified recurring payment ledger"));
+check("Global Operations does not display unverified renewal amounts as currency", !read("src/modules/customer-success-global-ops/components/GlobalOperationsPanels.tsx").includes("r.amount.toLocaleString"));
 
 const repository = read("src/modules/ai-command-center/repository/ai-command-center-repository.ts");
 const hook = read("src/modules/ai-command-center/hooks/useAiCommandCenter.ts");
