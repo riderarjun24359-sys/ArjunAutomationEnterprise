@@ -56,6 +56,16 @@ async function resolveOrganizationContextUncached(
         ? memberships.find((membership) => membership.organization_id === selectedOrganizationId)
         : null;
 
+    if (typeof window !== "undefined") {
+        if (selectedMembership) {
+            window.localStorage.setItem("aae:selected-organization", selectedMembership.organization_id);
+        } else if (memberships.length === 1) {
+            window.localStorage.setItem("aae:selected-organization", memberships[0].organization_id);
+        } else if (selectedOrganizationId) {
+            window.localStorage.removeItem("aae:selected-organization");
+        }
+    }
+
     if (memberships.length > 1 && !selectedMembership) {
         return null;
     }
