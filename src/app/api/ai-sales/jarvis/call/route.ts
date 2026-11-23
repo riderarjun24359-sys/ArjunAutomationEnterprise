@@ -2,6 +2,7 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { secureApiRoute } from "@/src/lib/api-security";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import { withinJarvisCallingWindow } from "@/src/modules/ai-sales-lead-engine/services/jarvis-calling-window";
 import {
     createJarvisOutboundCall,
     isValidIndianE164,
@@ -18,18 +19,6 @@ function internalAuthorized(request: Request): boolean {
     return supplied.length === expected.length && timingSafeEqual(supplied, expected);
 }
 
-function withinJarvisCallingWindow(now = new Date()): boolean {
-    const parts = new Intl.DateTimeFormat("en-GB", {
-        timeZone: "Asia/Kolkata",
-        weekday: "short",
-        hour: "2-digit",
-        hourCycle: "h23",
-    }).formatToParts(now);
-    const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-    const hour = Number(values.hour);
-    const weekday = values.weekday;
-    return weekday !== "Sun" && hour >= 8 && hour < 21;
-}
 
 function istDayBounds(now = new Date()) {
     const parts = new Intl.DateTimeFormat("en-GB", {
