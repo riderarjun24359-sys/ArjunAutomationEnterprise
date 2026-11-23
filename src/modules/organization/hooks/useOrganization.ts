@@ -5,6 +5,7 @@ import { useAuthStore } from "@/src/store/auth.store";
 import { organizationService } from "@/src/modules/organization/services/organization.service";
 import type {
     OrganizationInvitationSummary,
+    OrganizationMembershipSummary,
     OrganizationMemberSummary,
     OrganizationSummary,
     WorkspaceSummary,
@@ -13,6 +14,7 @@ import type {
 export function useOrganization() {
     const user = useAuthStore((s) => s.user);
     const [organizations, setOrganizations] = useState<OrganizationSummary[]>([]);
+    const [memberships, setMemberships] = useState<OrganizationMembershipSummary[]>([]);
     const [workspaces, setWorkspaces] = useState<WorkspaceSummary[]>([]);
     const [members, setMembers] = useState<OrganizationMemberSummary[]>([]);
     const [invitations, setInvitations] = useState<OrganizationInvitationSummary[]>([]);
@@ -27,6 +29,7 @@ export function useOrganization() {
             if (!user) {
                 if (!cancelled) {
                     setOrganizations([]);
+                    setMemberships([]);
                     setWorkspaces([]);
                     setMembers([]);
                     setInvitations([]);
@@ -38,6 +41,18 @@ export function useOrganization() {
             if (!cancelled) setLoading(true);
 
             try {
+                // This identity-only endpoint deliberately works even when the
+                // caller has multiple memberships and no tenant is selected.
+                const membershipResponse = await fetch("/api/organization/memberships", { cache: "no-store" });
+                if (!membershipResponse.ok) {
+                    throw new Error("Unable to load organization memberships");
+                }
+                const membershipPayload = await membershipResponse.json() as {
+                    memberships?: OrganizationMembershipSummary[];
+                };
+                const availableMemberships = membershipPayload.memberships ?? [];
+                if (!cancelled) setMemberships(availableMemberships);
+
                 const orgs = await organizationService.getOrganizations(user.id, user.email, user.fullName);
                 const orgId = orgs[0]?.id;
                 const [ws, membersList, invites] = await Promise.all([
@@ -55,6 +70,7 @@ export function useOrganization() {
             } catch {
                 if (!cancelled) {
                     setOrganizations([]);
+                    setMemberships([]);
                     setWorkspaces([]);
                     setMembers([]);
                     setInvitations([]);
@@ -99,5 +115,5 @@ export function useOrganization() {
         }
     };
 
-    return { organizations, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError };
+    return { organizations, memberships, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError };
 }
