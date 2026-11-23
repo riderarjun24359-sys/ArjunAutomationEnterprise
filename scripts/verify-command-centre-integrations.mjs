@@ -25,6 +25,10 @@ check("Command Centre decisions do not synthesize maintain-cadence when no metri
 check("Command Centre alerts and automations accept missing source metrics", read("src/modules/ai-command-center/engines/system-monitor.engine.ts").includes("systemHealth: number | null") && read("src/modules/ai-command-center/engines/automation.engine.ts").includes('status: input.deliveryHealth === null ? "unknown"'));
 
 check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
+check("Command Centre business and delivery bridges require tenant context", read("src/modules/ai-command-center/integrations/platform-bridges.ts").includes("Organization context unavailable"));
+check("Global Operations business and delivery bridges require tenant context", read("src/modules/customer-success-global-ops/integrations/platform-bridges.ts").includes("Organization context unavailable"));
+check("Business Platform does not seed fictional AI recommendations", !read("src/modules/business-platform/services/business-platform.service.ts").includes("seedAiRecommendations"));
+
 check("Command Centre renders unavailable KPI values as unavailable", read("src/modules/ai-command-center/components/AiCommandCenterPage.tsx").includes("Not available") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Partial data"));
 check("Global Operations renders unavailable health and business metrics as unavailable", read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Not available"));
 check("Global Operations panels do not render unavailable health as zero percent", read("src/modules/customer-success-global-ops/components/GlobalOperationsPanels.tsx").includes('hasIssue("support health") ? "Not available"'));
