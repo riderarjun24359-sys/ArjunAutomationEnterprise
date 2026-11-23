@@ -19,7 +19,7 @@ import {
     fetchSupportSnapshot,
 } from "../integrations/platform-bridges";
 import { aiCommandCenterRepository } from "../repository/ai-command-center-repository";
-import type { AccContext, AccRecommendation, AiCommandCenterDashboard } from "../types";
+import type { AccAgentStatus, AccContext, AccRecommendation, AiCommandCenterDashboard } from "../types";
 
 export class AiCommandCenterService {
     private async getOrgId(ctx: AccContext): Promise<string | null> {
@@ -105,7 +105,7 @@ export class AiCommandCenterService {
         });
         // No live agent telemetry source is connected yet. Do not fabricate
         // agents, activity timestamps, or health scores from overall platform health.
-        const agents = [];
+        const agents: AccAgentStatus[] = [];
         const agentHealth = 0;
         const alerts = buildSystemAlerts({
             systemHealth,
