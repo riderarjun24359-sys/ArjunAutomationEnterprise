@@ -1197,7 +1197,7 @@ const migrationFiles = readdirSync(migrationsDir)
 const migrationVersions = new Map();
 const duplicateVersions = [];
 for (const file of migrationFiles) {
-    const match = /^(\\d{8,14})_/.exec(file);
+    const match = /^(\d{8,14})_/.exec(file);
     if (!match) {
         console.error(`FAIL: Migration filename has no valid timestamp prefix: ${file}`);
         process.exit(1);
