@@ -129,14 +129,21 @@ export function JarvisExecutiveHud() {
                     <p className="text-xs text-[var(--dos-text-tertiary)]">Verified Razorpay revenue · 7 days</p>
                     <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--dos-text-primary)]">
                         {data?.weekly_revenue_inr === null || data?.weekly_revenue_inr === undefined
-                            ? "Not connected"
+                            ? "Not verified"
                             : "₹" + data.weekly_revenue_inr.toLocaleString("en-IN")}
                     </p>
                     <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">Verified MRR</p>
                     <p className="mt-1 text-sm font-semibold tabular-nums text-[var(--dos-text-primary)]">
                         {data?.mrr_inr === null || data?.mrr_inr === undefined
-                            ? "Not available"
+                            ? "Not verified"
                             : "₹" + data.mrr_inr.toLocaleString("en-IN")}
+                    </p>
+                    <p className="mt-1 text-[11px] text-[var(--dos-text-tertiary)]">
+                        {data?.revenue_status?.includes("payment_to_invoice_mapping_required")
+                            ? "Awaiting signed payment-to-invoice reconciliation"
+                            : data?.revenue_status?.includes("webhook_not_configured")
+                                ? "Razorpay webhook not configured"
+                                : "Revenue requires verified settlement data"}
                     </p>
                     <p className="mt-1 text-[11px] text-[var(--dos-text-tertiary)]">Updated {lastUpdated}</p>
                 </div>
