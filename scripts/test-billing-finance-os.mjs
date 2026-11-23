@@ -67,6 +67,9 @@ const financeWidgets = readFileSync(join(root, "src/modules/executive-command-ce
 const brvStats = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenueStats.tsx"), "utf8");
 const brvPanels = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenuePanels.tsx"), "utf8");
 const analyticsRevenue = readFileSync(join(root, "src/modules/analytics/components/RevenueAnalyticsPanel.tsx"), "utf8");
+const analyticsCharts = readFileSync(join(root, "src/modules/analytics/components/AnalyticsChartsPanel.tsx"), "utf8");
+const financeMappers = readFileSync(join(root, "src/modules/database/lib/finance-mappers.ts"), "utf8");
+const analyticsMappers = readFileSync(join(root, "src/modules/database/lib/analytics-mappers.ts"), "utf8");
 pass("revenue:explicit-verification-gate", buildersSrc.includes("revenueVerified: false") && buildersSrc.includes("Razorpay settlements"));
 pass("revenue:legacy-usd-not-calculated", !buildersSrc.includes("mrrFromSubs") && !buildersSrc.includes("latestMrr?.mrr_usd") && !buildersSrc.includes("total_outstanding_usd"));
 pass("revenue:dashboard-gated", revenuePanel.includes("Revenue not verified") && !revenuePanel.includes("$"));
@@ -79,6 +82,9 @@ pass("revenue:brv-mrr-arr-hidden", brvStats.includes('value: "Not verified"') &&
 pass("revenue:brv-overview-hidden", brvPanels.includes("MRR not verified") && brvPanels.includes("ARR not verified"));
 pass("revenue:brv-money-inputs-disabled", brvPanels.includes("disabled — legacy currency mapping requires INR migration"));
 pass("revenue:analytics-hidden", analyticsRevenue.includes("Revenue not verified") && !analyticsRevenue.includes("$"));
+pass("revenue:analytics-charts-hidden", analyticsCharts.includes("Revenue not verified") && analyticsCharts.includes("Finance totals not verified"));
+pass("revenue:manual-finance-unverified", financeMappers.includes('paidRevenue: "Not verified"') && financeMappers.includes('totalCollected: "Not verified"') && financeMappers.includes('grossMargin: "Not verified"'));
+pass("revenue:analytics-builder-unverified", analyticsMappers.includes("Manual invoice/payment records are not settlement-verified") && analyticsMappers.includes('totalRevenue: "Not verified"') && analyticsMappers.includes("monthlyTrend: []"));
 
 pass("builder:snapshot", buildersSrc.includes("export function buildBillingFinanceSnapshot"));
 
