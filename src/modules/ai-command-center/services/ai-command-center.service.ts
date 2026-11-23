@@ -71,7 +71,6 @@ export class AiCommandCenterService {
             openInvoices: business.openInvoices,
             renewalsDue: globalOps.renewalsDue,
             pipelineLeads: business.leads,
-            mrrEstimate: globalOps.mrr || undefined,
         });
 
         const decisions = proposeDecisions({
