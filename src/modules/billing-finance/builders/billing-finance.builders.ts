@@ -181,6 +181,7 @@ export function buildFinanceExecutiveWidgets(input: {
     const collectionRate = billed <= 0 ? 100 : clampScore((paid / billed) * 100);
 
     return {
+        revenueVerified: input.revenue.revenueVerified,
         mrrUsd: input.revenue.mrrUsd,
         arrUsd: input.revenue.arrUsd,
         outstandingUsd: input.revenue.outstandingUsd,
