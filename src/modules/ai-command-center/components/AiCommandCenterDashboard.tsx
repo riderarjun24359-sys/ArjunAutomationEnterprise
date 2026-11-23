@@ -145,7 +145,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                                 <p className="font-medium">{a.title}</p>
                                 <p className="text-xs text-[var(--dos-text-tertiary)]">{a.resultSummary}</p>
                             </div>
-                            <Badge variant={a.status === "failed" ? "error" : a.status === "running" ? "warning" : "success"}>{a.status}</Badge>
+                            <Badge variant={a.status === "failed" ? "error" : a.status === "running" ? "warning" : a.status === "unknown" ? "default" : "success"}>{a.status}</Badge>
                         </div>
                     ))}
                 </Section>
