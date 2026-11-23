@@ -63,12 +63,15 @@ export class CustomerSuccessGlobalOpsService {
             business.available ? null : "Business Platform",
             support.available ? null : "Support",
             delivery.available ? null : "Delivery Engine",
+            successPlans.length ? null : "Customer health (no success plans)",
+            support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? null : "Support health (no measurable tickets or satisfaction data)",
+            delivery.available && delivery.activeEngagements > 0 ? null : "Delivery health (no active engagements)",
         ].filter((item): item is string => Boolean(item));
         const renewals = storedRenewals;
         const escalations = storedEscalations;
         const onboardingSessions = storedOnboarding;
         const deliveryMilestones = storedMilestones;
-        const deliveryHealth = delivery.available
+        const deliveryHealth = delivery.available && delivery.activeEngagements > 0
             ? (deliveryMilestones.length
                 ? computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones)
                 : delivery.qualityPassRate)
