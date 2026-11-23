@@ -49,19 +49,19 @@ export function BillingFinanceOsPage() {
                 <div className="grid gap-4 sm:grid-cols-4">
                     <Card variant="base">
                         <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">MRR</p>
-                        <p className="mt-1 text-2xl font-bold">${Math.round(snapshot.stats.mrrUsd).toLocaleString()}</p>
+                        <p className="mt-1 text-2xl font-bold">Currency unverified</p>
                     </Card>
                     <Card variant="base">
                         <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">ARR</p>
-                        <p className="mt-1 text-2xl font-bold">${Math.round(snapshot.stats.arrUsd).toLocaleString()}</p>
+                        <p className="mt-1 text-2xl font-bold">Currency unverified</p>
                     </Card>
                     <Card variant="base">
                         <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Collected</p>
-                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-success)]">${Math.round(snapshot.stats.collectedUsd).toLocaleString()}</p>
+                        <p className="mt-1 text-2xl font-bold text-[var(--dos-tint-success)]">Currency unverified</p>
                     </Card>
                     <Card variant="insight">
                         <p className="text-xs uppercase tracking-wider text-[var(--dos-text-tertiary)]">Outstanding</p>
-                        <p className="mt-1 text-2xl font-bold text-[var(--dos-brand-primary)]">${Math.round(snapshot.stats.outstandingUsd).toLocaleString()}</p>
+                        <p className="mt-1 text-2xl font-bold text-[var(--dos-brand-primary)]">Currency unverified</p>
                     </Card>
                 </div>
             </section>
@@ -89,7 +89,7 @@ export function BillingFinanceOsPage() {
                             {snapshot.revenue.topAccounts.slice(0, 5).map((acc) => (
                                 <li key={acc.name} className="flex justify-between text-sm">
                                     <span className="truncate text-[var(--dos-text-secondary)]">{acc.name}</span>
-                                    <span className="font-semibold">${Math.round(acc.mrrUsd).toLocaleString()}</span>
+                                    <span className="font-semibold">Currency unverified</span>
                                 </li>
                             ))}
                         </ul>
