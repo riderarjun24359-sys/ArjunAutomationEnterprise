@@ -1,5 +1,5 @@
 import type { AuditLog } from "@/src/modules/database/types/core";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 export class AuditRepository extends BaseRepository<AuditLog> {
