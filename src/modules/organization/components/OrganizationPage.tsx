@@ -105,7 +105,7 @@ export function OrganizationPage() {
                                     {[
                                         { label: "Active workspaces", value: workspaces.length.toString() },
                                         { label: "Pending invitations", value: invitations.filter((invite) => invite.status === "pending").length.toString() },
-                                        { label: "Team roles", value: "4 configured" },
+                                        { label: "Roles in use", value: new Set(members.map((member) => member.roleName)).size.toString() },
                                     ].map((item) => (
                                         <div key={item.label} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
                                             <span className="text-sm text-slate-500 dark:text-slate-400">{item.label}</span>
