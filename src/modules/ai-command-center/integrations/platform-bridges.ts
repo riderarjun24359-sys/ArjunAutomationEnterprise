@@ -61,10 +61,11 @@ export async function fetchGlobalOpsSnapshot(ctx: AccContext) {
             renewalsDue: dash.revenueOverview.renewalsDue,
             mrr: dash.revenueOverview.mrr,
             escalations: dash.escalations.length,
-            available: true,
+            available: dash.integrationIssues.length === 0,
+            integrationIssues: dash.integrationIssues,
         };
     } catch {
-        return { customerHealth: 0, deliveryHealth: 0, supportHealth: 0, renewalsDue: 0, mrr: 0, escalations: 0, available: false };
+        return { customerHealth: 0, deliveryHealth: 0, supportHealth: 0, renewalsDue: 0, mrr: 0, escalations: 0, available: false, integrationIssues: ["Customer Success Global Operations"] };
     }
 }
 
