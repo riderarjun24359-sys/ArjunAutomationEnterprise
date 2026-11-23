@@ -74,3 +74,12 @@ A subsequent privilege audit found that `webhook_idempotency` still had inherite
 ## Migration replay correction
 
 The GitHub Actions migration-chain validator exposed that `202611230010_priya_followup_crash_recovery.sql` referenced `ai_sales_followups` before any migration creates that table. The repository has no migrations defining the complete `ai_sales_followups`, `ai_voice_contact_consents`, and `ai_sales_suppressions` schema. The migration is now guarded and skips creation until all prerequisite tables exist; this preserves a replayable schema chain without inventing a partial consent/calling system. This is another confirmation that autonomous voice follow-up is not implemented or production-ready.
+
+## Production database re-check (2026-11-23, after approved migration rollout)
+
+A fresh read-only production snapshot confirms:
+- 1,240 public tables have RLS enabled; 0 RLS-enabled public tables are missing policies.
+- The RLS helper functions now live in the `private` schema with `search_path=pg_catalog`; public compatibility wrappers are non-`SECURITY DEFINER`.
+- Supabase Security Advisor now reports one security warning: leaked-password protection is disabled in Supabase Auth. This requires an authorized Auth configuration change and is not changed by a SQL migration.
+- Performance Advisor reports 631 foreign keys without covering indexes. The live snapshot's leading candidates have zero estimated rows and mostly 32–64 kB table sizes; do not bulk-create hundreds of indexes on an empty/low-usage database. Reassess after real workload statistics accumulate.
+- The webhook delivery server-only grant migration and internal table deny migration are present in the applied migration history.
