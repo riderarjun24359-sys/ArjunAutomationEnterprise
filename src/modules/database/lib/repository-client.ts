@@ -1,6 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseBrowser } from "@/src/lib/supabase-browser";
 
+/**
+ * Client-side tenant selector. This value is only a query-scope hint; Supabase
+ * RLS and server-side membership validation remain the authorization boundary.
+ */
+export const getSelectedOrganizationId = (): string | null => {
+    if (typeof window === "undefined") return null;
+    const value = window.localStorage.getItem("aae:selected-organization")?.trim();
+    return value || null;
+};
+
 export const getRepositoryClient = (): SupabaseClient | null => {
     if (typeof window !== "undefined") {
         return supabaseBrowser();
