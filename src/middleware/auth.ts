@@ -145,7 +145,8 @@ export async function authMiddleware(request: NextRequest) {
         pathname.startsWith("/blog/");
 
     if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute) {
-        return NextResponse.next();
+        // Forward proxy-injected nonce/CSP request headers to the Next.js renderer.
+        return NextResponse.next({ request: { headers: request.headers } });
     }
 
     const supabaseContext = createSupabaseMiddlewareClient(request);
@@ -158,7 +159,7 @@ export async function authMiddleware(request: NextRequest) {
             return NextResponse.redirect(signInUrl);
         }
 
-        return NextResponse.next();
+        return NextResponse.next({ request: { headers: request.headers } });
     }
 
     const { supabase, response } = supabaseContext;
