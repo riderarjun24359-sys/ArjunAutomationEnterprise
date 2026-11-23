@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, Menu, Phone } from "lucide-react";
 import { COMPANY_PROFILE } from "@/src/config/company-profile";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 
 const NAV_ITEMS = [
     { label: "Services", href: MARKETING_ROUTES.services },
@@ -18,7 +19,7 @@ export function MarketingHeaderStatic() {
         <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
             <div className="mx-auto flex min-h-[76px] w-full max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
                 <Link href="/" aria-label="Arjun Automation home" className="flex shrink-0 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-                    <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl bg-slate-900 text-sm font-bold tracking-tight text-white">AA</span>
+                    <BrandLogo variant="horizontal" priority className="max-h-9 w-auto" />
                     <span className="text-base font-bold tracking-tight text-slate-950 sm:text-lg">Arjun Automation</span>
                 </Link>
 
