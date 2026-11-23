@@ -27,6 +27,10 @@ export async function POST(request: Request) {
     if (error || !context) return error ?? NextResponse.json({ error: "Authentication required" }, { status: 401 });
     if (!context.organizationId) return NextResponse.json({ error: "Organization context required" }, { status: 403 });
 
+    const declaredLength = Number(request.headers.get("content-length") ?? 0);
+    if (declaredLength > 64 * 1024) {
+        return NextResponse.json({ error: "Webhook payload exceeds 64 KB" }, { status: 413 });
+    }
     let body: unknown;
     try {
         body = await request.json();
@@ -48,6 +52,11 @@ export async function POST(request: Request) {
     const client = getServiceRoleClient();
     if (!client) return NextResponse.json({ error: "Webhook delivery service unavailable" }, { status: 503 });
 
+    const serializedPayload = JSON.stringify(input.payload);
+    if (new TextEncoder().encode(serializedPayload).byteLength > 48 * 1024) {
+        return NextResponse.json({ error: "Webhook payload exceeds 48 KB" }, { status: 413 });
+    }
+
     const lookup = await client
         .from("integration_webhooks")
         .select("id,name,url,secret,allowed_hosts,is_active")
@@ -61,6 +70,21 @@ export async function POST(request: Request) {
     if (!hook) return NextResponse.json({ error: "Unknown or inactive webhook" }, { status: 404 });
     if (typeof hook.secret !== "string" || hook.secret.length < 16) {
         return NextResponse.json({ error: "Webhook signing secret is unavailable" }, { status: 503 });
+    }
+
+    const priorDelivery = await client
+        .from("integration_deliveries")
+        .select("id,status,response_status")
+        .eq("organization_id", context.organizationId)
+        .eq("webhook_id", hook.id)
+        .eq("idempotency_key", input.idempotencyKey)
+        .maybeSingle();
+    if (priorDelivery.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
+    if (priorDelivery.data?.status === "delivered") {
+        return NextResponse.json(
+            { ok: true, attempts: 0, responseStatus: priorDelivery.data.response_status, deduplicated: true },
+            { status: 200, headers: { "Cache-Control": "no-store, private" } },
+        );
     }
 
     const allowedHosts = Array.isArray(hook.allowed_hosts) ? hook.allowed_hosts : [];
@@ -79,7 +103,7 @@ export async function POST(request: Request) {
         },
         sign: async (raw) => createHmac("sha256", hook.secret).update(raw).digest("hex"),
         fetchFn: async (url, init) => {
-            const response = await fetch(url, { method: init.method, headers: init.headers, body: init.body, signal: init.signal });
+            const response = await fetch(url, { method: init.method, headers: init.headers, body: init.body, signal: init.signal, redirect: "manual", cache: "no-store" });
             return { status: response.status };
         },
         delaysMs: [500, 2000],
