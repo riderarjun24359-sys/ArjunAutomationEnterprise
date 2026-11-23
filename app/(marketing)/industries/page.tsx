@@ -10,7 +10,7 @@ import { buildMetadata } from "@/src/lib/seo";
 const PAGE = {
     title: "Industries",
     description:
-        "Arjun Automation serves restaurants, healthcare, education, retail, professional services, technology, and manufacturing with industry-specific OS packs.",
+        "Arjun Automations helps shops, traders, restaurants, clinics, schools, service providers, workshops and manufacturers improve everyday business work with affordable websites and simple automation.",
     path: MARKETING_ROUTES.industries,
 };
 
@@ -29,10 +29,10 @@ const industries = [
     { name: "Restaurants & Hospitality", useCases: "Multi-location ops, kitchen workflows, POS integration", pack: "Restaurant OS" },
     { name: "Healthcare", useCases: "Patient flow, clinical ops, pharmacy, lab integration", pack: "Hospital OS" },
     { name: "Education", useCases: "Student lifecycle, academics, parent portals, finance", pack: "School OS" },
-    { name: "Retail", useCases: "Inventory, POS, customer loyalty, multi-store analytics", pack: "Retail OS" },
+    { name: "Local Shops & Traders", useCases: "Product enquiries, WhatsApp orders, stock lists and customer follow-ups", pack: "Simple website & order workflow" },
     { name: "Professional Services", useCases: "CRM, projects, billing, client portals", pack: "Core Platform" },
     { name: "Technology & SaaS", useCases: "Internal ops, customer success, launch readiness", pack: "Core Platform" },
-    { name: "Manufacturing & Distribution", useCases: "Inventory, procurement, workflow automation", pack: "Core Platform + ERP Integration" },
+    { name: "Workshops & Small Manufacturers", useCases: "Job tracking, quotation follow-ups, stock and dispatch updates", pack: "Business workflow tools" },
 ];
 
 export default function IndustriesPage() {
@@ -41,7 +41,7 @@ export default function IndustriesPage() {
             <MarketingStructuredData title={PAGE.title} description={PAGE.description} path={PAGE.path} breadcrumbs={breadcrumbs} />
             <PremiumPageShell
                 title="Industries We Serve"
-                description="Pre-built industry OS packs start from proven workflow templates instead of a greenfield configuration."
+                description="Practical examples for businesses of different sizes. Start with one useful improvement and add more only when your business is ready."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
                 <div className="overflow-x-auto">
