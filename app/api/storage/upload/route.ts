@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { secureApiRoute, apiError, apiSuccess, logApiAudit } from "@/src/lib/api-security";
+import { getClientIp, secureApiRoute, apiError, apiSuccess, logApiAudit } from "@/src/lib/api-security";
 import { supabaseServer } from "@/src/lib/supabase-server";
 import {
     DEFAULT_STORAGE_BUCKET,
@@ -10,7 +10,11 @@ import {
 import { measureAsync, opsLog, enqueueAlert } from "@/src/lib/ops-monitoring";
 
 export async function POST(request: Request) {
-    const { context, error } = await secureApiRoute(request, { rateLimit: 20, rateLimitKey: "storage-upload" });
+    const ip = getClientIp(request);
+    const { context, error } = await secureApiRoute(request, {
+        rateLimit: 20,
+        rateLimitKey: `storage-upload:${ip}`,
+    });
     if (error) return error;
     if (!context?.organizationId) {
         return apiError("Organization context required", 403);
