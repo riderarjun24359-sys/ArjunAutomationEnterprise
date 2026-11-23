@@ -51,6 +51,10 @@ export class AiCommandCenterService {
             ...(globalOps.integrationIssues ?? []).map((item) => `Global Operations: ${item}`),
             production.available ? null : "Production Readiness",
         ].filter((item): item is string => Boolean(item));
+        const customerHealthAvailable = !integrationIssues.some((item) => item.toLowerCase().includes("customer health"));
+        const supportHealthAvailable = support.available && !integrationIssues.some((item) => item.toLowerCase().includes("support health"));
+        const deliveryHealthAvailable = delivery.available && delivery.activeEngagements > 0 &&
+            !integrationIssues.some((item) => item.toLowerCase().includes("delivery health"));
         const systemHealth = computeSystemHealth({
             productionScore: production.overallScore,
             platformHealth: production.platformHealth,
@@ -82,27 +86,27 @@ export class AiCommandCenterService {
         });
 
         const decisions = proposeDecisions({
-            clientHealth,
-            supportSla: support.slaCompliance,
-            deliveryHealth,
-            openInvoices: business.openInvoices,
-            renewalsDue: globalOps.renewalsDue,
+            clientHealth: customerHealthAvailable ? clientHealth : null,
+            supportSla: supportHealthAvailable ? support.slaCompliance : null,
+            deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
+            openInvoices: business.available ? business.openInvoices : null,
+            renewalsDue: globalOps.available ? globalOps.renewalsDue : null,
         });
         const orgId = await this.getOrgId(ctx);
         const recommendations = buildRecommendations({
             organizationId: orgId,
             decisions,
-            systemHealth,
-            clientHealth,
-            supportHealth: supportSla.supportHealth,
-            deliveryHealth,
-            pendingAi: deliveryStatus.pendingAi,
+            systemHealth: production.available ? systemHealth : null,
+            clientHealth: customerHealthAvailable ? clientHealth : null,
+            supportHealth: supportHealthAvailable ? supportSla.supportHealth : null,
+            deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
+            pendingAi: business.available || delivery.available ? deliveryStatus.pendingAi : 0,
         });
         const automations = buildAutomations({
-            openTickets: support.openTickets,
-            renewalsDue: globalOps.renewalsDue,
-            deliveryHealth,
-            pendingAi: deliveryStatus.pendingAi,
+            openTickets: support.available ? support.openTickets : null,
+            renewalsDue: globalOps.available ? globalOps.renewalsDue : null,
+            deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
+            pendingAi: business.available || delivery.available ? deliveryStatus.pendingAi : null,
         });
         const agents = buildAgentStatuses({
             systemHealth,
@@ -110,30 +114,31 @@ export class AiCommandCenterService {
         });
         const agentHealth = computeAgentHealth(agents);
         const alerts = buildSystemAlerts({
-            systemHealth,
-            openTickets: support.openTickets,
-            deliveryHealth,
-            productionAlerts: production.alerts,
+            systemHealth: production.available ? systemHealth : null,
+            openTickets: support.available ? support.openTickets : null,
+            deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
+            productionAlerts: production.available ? production.alerts : null,
         });
 
         const overallScore = computeOverallScore([
-            systemHealth,
-            clientHealth,
-            supportSla.supportHealth,
-            deliveryHealth,
-            agentHealth,
-        ]);
+            production.available ? systemHealth : null,
+            customerHealthAvailable ? clientHealth : null,
+            supportHealthAvailable ? supportSla.supportHealth : null,
+            deliveryHealthAvailable ? deliveryHealth : null,
+        ].filter((score): score is number => score !== null));
 
         if (orgId) {
             void aiCommandCenterRepository.logAudit(orgId, "dashboard_load", "AI Command Center dashboard loaded");
-            void aiCommandCenterRepository.persistHealthSnapshot(orgId, {
-                systemHealth,
-                clientHealth,
-                supportSla: support.slaCompliance,
-                deliveryHealth,
-                agentHealth,
-                metadata: { overallScore },
-            });
+            if (integrationIssues.length === 0) {
+                void aiCommandCenterRepository.persistHealthSnapshot(orgId, {
+                    systemHealth,
+                    clientHealth,
+                    supportSla: support.slaCompliance,
+                    deliveryHealth,
+                    agentHealth,
+                    metadata: { overallScore },
+                });
+            }
             for (const alert of alerts.slice(0, 3)) {
                 void aiCommandCenterRepository.persistAlert(orgId, alert);
             }
