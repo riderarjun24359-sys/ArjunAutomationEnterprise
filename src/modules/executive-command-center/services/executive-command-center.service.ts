@@ -16,7 +16,6 @@ import { buildIntelligenceModules } from "./module-snapshots";
 import { loadOrganizationOperationsData } from "./organization-operations-data.service";
 import { buildExecutiveDashboardWidgets } from "./executive-widgets.service";
 import { customerSuccessOsService } from "@/src/modules/customer-success/services/customer-success-os.service";
-import { billingFinanceOsService } from "@/src/modules/billing-finance/services/billing-finance-os.service";
 import { hrmsWorkforceOsService } from "@/src/modules/hrms-workforce/services/hrms-workforce-os.service";
 import { integrationHubOsService } from "@/src/modules/integration-hub/services/integration-hub-os.service";
 import { securityCenterOsService } from "@/src/modules/security-center/services/security-center-os.service";
@@ -102,7 +101,6 @@ export class ExecutiveCommandCenterService {
             business,
             operationsResult,
             csSnapshot,
-            financeSnapshot,
             hrmsSnapshot,
             integrationSnapshot,
             securitySnapshot,
@@ -113,7 +111,6 @@ export class ExecutiveCommandCenterService {
             fetchBusinessPlatformDashboard(authUserId, email, fullName).catch(() => null),
             operationsPromise,
             customerSuccessOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
-            billingFinanceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             hrmsWorkforceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             integrationHubOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             securityCenterOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
@@ -144,7 +141,7 @@ export class ExecutiveCommandCenterService {
             liveStats,
             unifiedScore,
             customerSuccess: csSnapshot?.executiveWidgets ?? null,
-            finance: financeSnapshot?.executiveWidgets ?? null,
+            finance: null,
             hrms: hrmsSnapshot?.executiveWidgets ?? null,
             integrations: integrationSnapshot?.executiveWidgets ?? null,
             security: securitySnapshot?.executiveWidgets ?? null,
