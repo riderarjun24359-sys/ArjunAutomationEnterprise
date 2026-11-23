@@ -243,7 +243,6 @@ export interface ApiKeySummary {
 export interface CreateApiKeyInput {
     integrationHubId: string;
     keyName?: string;
-    keyPrefix?: string;
     apiVersion?: string;
 }
 
