@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
     membershipsEnsure: vi.fn(),
     membershipsUpdateRole: vi.fn(),
     organizationsList: vi.fn(),
+    organizationsGetById: vi.fn(),
 }));
 
 vi.mock("@/src/modules/database/services/database-service", () => ({
@@ -21,7 +22,7 @@ vi.mock("@/src/modules/database/services/database-service", () => ({
             ensureMembership: mocks.membershipsEnsure,
             updateRole: mocks.membershipsUpdateRole,
         },
-        organizations: { list: mocks.organizationsList },
+        organizations: { list: mocks.organizationsList, getById: mocks.organizationsGetById },
     },
 }));
 
@@ -43,6 +44,7 @@ const membership = (org: string, user: string, active = true) => ({
 describe("organization context bootstrap", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        mocks.organizationsGetById.mockResolvedValue({ id: "org-1", status: "active" });
     });
 
     it("reuses an existing membership without attaching anything", async () => {
@@ -51,6 +53,18 @@ describe("organization context bootstrap", () => {
         const ctx = await resolveOrganizationContext("auth-p1", "member-one@test.dev");
         expect(ctx).toEqual({ profileId: "p1", organizationId: "org-1" });
         expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
+    });
+
+    it("fails closed when the member's organization is suspended", async () => {
+        mocks.profilesGetByAuthUser.mockResolvedValue(profile("ps"));
+        mocks.membershipsGetByUser.mockResolvedValue([membership("org-suspended", "ps")]);
+        mocks.organizationsGetById.mockResolvedValue({ id: "org-suspended", status: "suspended" });
+
+        const ctx = await resolveOrganizationContext("auth-ps", "suspended@test.dev");
+
+        expect(ctx).toBeNull();
+        expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
+        expect(mocks.membershipsUpdateRole).not.toHaveBeenCalled();
     });
 
     it("fails closed when a user has multiple active organization memberships", async () => {
