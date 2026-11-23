@@ -5,6 +5,7 @@ import {
     DEFAULT_STORAGE_BUCKET,
     STORAGE_MAX_BYTES,
     buildObjectPath,
+    validateFileContent,
     validateUploadInput,
 } from "@/src/lib/storage-security";
 import { measureAsync, opsLog, enqueueAlert } from "@/src/lib/ops-monitoring";
@@ -42,11 +43,15 @@ export async function POST(request: Request) {
         return apiError("Storage unavailable", 503);
     }
 
+    const buffer = Buffer.from(await file.arrayBuffer());
+    if (!validateFileContent(validation.mime ?? file.type, buffer)) {
+        return apiError("File content does not match the declared file type", 400);
+    }
+
     const objectPath = buildObjectPath(context.organizationId, context.user.id, validation.normalizedName ?? file.name);
     const bucket = DEFAULT_STORAGE_BUCKET;
 
     try {
-        const buffer = Buffer.from(await file.arrayBuffer());
         const uploaded = await measureAsync("storage.upload", async () => {
             return client.storage.from(bucket).upload(objectPath, buffer, {
                 contentType: validation.mime,
