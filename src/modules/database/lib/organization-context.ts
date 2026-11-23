@@ -77,6 +77,14 @@ async function resolveOrganizationContextUncached(
         return null;
     }
 
+    // Browser/service repository access must enforce the same tenant lifecycle
+    // rule as server API identity resolution. An active membership in a
+    // suspended organization is not sufficient to open tenant data.
+    const organization = await databaseService.organizations.getById(organizationId);
+    if (!organization || organization.status !== "active") {
+        return null;
+    }
+
     if (!memberships.some((membership) => membership.organization_id === organizationId)) {
         const seedRole = isPlatformFounderEmail(email) ? "founder" : undefined;
         await databaseService.memberships.ensureMembership(organizationId, profile.id, seedRole);
