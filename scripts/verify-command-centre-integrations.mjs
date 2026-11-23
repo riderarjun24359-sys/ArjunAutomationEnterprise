@@ -63,6 +63,7 @@ check("authenticated recommendation route has unit tests", existsSync(join(root,
 check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
 check("Vapi webhook authentication and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/vapi/route.test.ts")));
 check("Retell webhook HMAC and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/retell/route.test.ts")));
+check("WhatsApp Meta HMAC and delivery-status webhook tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
 
 const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
 check("Jarvis weekly revenue requires signed captured Razorpay event and INR invoice", jarvisBriefing.includes("payment.captured:") && jarvisBriefing.includes('invoice?.currency === "INR"') && jarvisBriefing.includes('mrr_inr: null'));
