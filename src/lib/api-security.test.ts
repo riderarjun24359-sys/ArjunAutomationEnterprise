@@ -148,6 +148,23 @@ describe("api-security server-side identity resolution", () => {
         expect(identity).toEqual({ role: "member", organizationId: null });
     });
 
+    it("resolves a cookie-selected tenant only from the caller's active memberships", async () => {
+        authenticatedAs("auth-cookie");
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-cookie" }, [
+            { organization_id: "org-a", role_name: "admin" },
+            { organization_id: "org-b", role_name: "member" },
+        ]));
+        const cookieRequest = new Request("https://example.test/api/example", {
+            headers: { cookie: "aae_selected_organization=org-b" },
+        });
+
+        const { context, error } = await secureApiRoute(cookieRequest);
+
+        expect(error).toBeNull();
+        expect(context?.organizationId).toBe("org-b");
+        expect(context?.user.role).toBe("member");
+    });
+
     it("fails closed when the service-role client is unavailable", async () => {
         authenticatedAs("auth-3");
         mocks.getServiceRoleClient.mockReturnValue(null);
