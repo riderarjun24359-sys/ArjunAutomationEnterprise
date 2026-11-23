@@ -342,7 +342,7 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 }
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":"v1"} });
+    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","apiVersion":"v1"} });
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
             <Card hover>
@@ -375,7 +375,7 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
             </Card>
             <Card hover>
                 <SectionHeader title="Create API key" description="Issue a new organization-scoped integration credential" />
-                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
+                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v: apiKeysFormValues) => data.createApiKey(v))}>
                     <IntegrationHubSelect required data={data} {...form.register("integrationHubId")} />
                     <input required minLength={2} maxLength={64} {...form.register("keyName")} placeholder="Key name (e.g. production-sync)" className={inputClass} />
                     <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
