@@ -28,7 +28,6 @@ import {
     mapExportMappingSummary,
     buildAccountingExportPayload,
     mapAccountingExportSummary,
-    buildApiKeyPayload,
     mapApiKeySummary,
     buildApiScopePayload,
     mapApiScopeSummary,
