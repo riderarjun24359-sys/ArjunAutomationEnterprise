@@ -64,6 +64,9 @@ const invoicePanel = readFileSync(join(mod, "components/os/InvoiceCenterPanel.ts
 const subscriptionPanel = readFileSync(join(mod, "components/os/SubscriptionManagementPanel.tsx"), "utf8");
 const financePage = readFileSync(join(mod, "pages/BillingFinanceOsPage.tsx"), "utf8");
 const financeWidgets = readFileSync(join(root, "src/modules/executive-command-center/components/FinanceExecutiveWidgetsPanel.tsx"), "utf8");
+const brvStats = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenueStats.tsx"), "utf8");
+const brvPanels = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenuePanels.tsx"), "utf8");
+const analyticsRevenue = readFileSync(join(root, "src/modules/analytics/components/RevenueAnalyticsPanel.tsx"), "utf8");
 pass("revenue:explicit-verification-gate", buildersSrc.includes("revenueVerified: false") && buildersSrc.includes("Razorpay settlements"));
 pass("revenue:legacy-usd-not-calculated", !buildersSrc.includes("mrrFromSubs") && !buildersSrc.includes("latestMrr?.mrr_usd") && !buildersSrc.includes("total_outstanding_usd"));
 pass("revenue:dashboard-gated", revenuePanel.includes("Revenue not verified") && !revenuePanel.includes("$"));
@@ -72,6 +75,10 @@ pass("revenue:no-dollar-symbols-in-panels", !/\$(?!\\{)/.test([revenuePanel, pay
 pass("revenue:payment-amount-hidden", paymentPanel.includes("Amount not verified"));
 pass("revenue:invoice-amount-hidden", invoicePanel.includes("Total not verified") && invoicePanel.includes("Due not verified"));
 pass("revenue:subscription-mrr-hidden", subscriptionPanel.includes("MRR not verified") && subscriptionPanel.includes("ARR not verified"));
+pass("revenue:brv-mrr-arr-hidden", brvStats.includes('value: "Not verified"') && brvStats.includes("Outstanding amount not verified"));
+pass("revenue:brv-overview-hidden", brvPanels.includes("MRR not verified") && brvPanels.includes("ARR not verified"));
+pass("revenue:brv-money-inputs-disabled", brvPanels.includes("disabled — legacy currency mapping requires INR migration"));
+pass("revenue:analytics-hidden", analyticsRevenue.includes("Revenue not verified") && !analyticsRevenue.includes("$"));
 
 pass("builder:snapshot", buildersSrc.includes("export function buildBillingFinanceSnapshot"));
 
