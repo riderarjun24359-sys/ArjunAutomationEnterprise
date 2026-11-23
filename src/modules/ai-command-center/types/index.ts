@@ -11,7 +11,7 @@ export type AlertSeverity = "low" | "medium" | "high" | "critical";
 export type AlertStatus = "open" | "acknowledged" | "resolved";
 export type RecommendationStatus = "pending" | "accepted" | "dismissed" | "executed";
 export type DecisionStatus = "proposed" | "approved" | "rejected" | "executed";
-export type AutomationStatus = "idle" | "running" | "succeeded" | "failed";
+export type AutomationStatus = "unknown" | "idle" | "running" | "succeeded" | "failed";
 export type AgentStatus = "unknown" | "idle" | "active" | "processing" | "degraded";
 
 export interface AccAlert {
