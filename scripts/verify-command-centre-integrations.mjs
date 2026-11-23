@@ -66,7 +66,7 @@ check("Retell webhook HMAC and event normalization tests exist", existsSync(join
 check("WhatsApp Meta HMAC and delivery-status webhook tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
 
 const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
-check("Jarvis weekly revenue requires signed captured Razorpay event and INR invoice", jarvisBriefing.includes("payment.captured:") && jarvisBriefing.includes('invoice?.currency === "INR"') && jarvisBriefing.includes('mrr_inr: null'));
+check("Jarvis hides collected revenue until verified Razorpay payment-to-invoice mapping exists", jarvisBriefing.includes("weekly_revenue_inr: null") && jarvisBriefing.includes("payment_to_invoice_mapping_required") && jarvisBriefing.includes("mrr_inr: null"));
 check("Jarvis revenue remains hidden until Razorpay webhook is configured", jarvisBriefing.includes("RAZORPAY_WEBHOOK_SECRET") && jarvisBriefing.includes("razorpay_webhook_not_configured_mrr_not_available"));
 const workflowFiles = [
     "n8n/workflows/01-priya-followup-dispatcher.json",
