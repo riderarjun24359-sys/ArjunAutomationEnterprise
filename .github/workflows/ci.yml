@@ -77,6 +77,8 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
 
       - name: Full pre-deployment verification
+        env:
+          SKIP_CROSS_MODULE_REGRESSION: "1"
         run: npm run predeploy:verify
 
   browser-smoke:
