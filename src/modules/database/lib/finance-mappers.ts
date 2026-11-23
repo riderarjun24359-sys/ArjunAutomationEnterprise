@@ -179,10 +179,6 @@ export const buildFinanceDashboardStats = (input: {
     estimates: Estimate[];
     recurringInvoices: RecurringInvoice[];
 }): FinanceDashboardStats => {
-    const paidRevenue = input.invoices.filter((invoice) => invoice.status === "paid").reduce((sum, invoice) => sum + invoice.total, 0);
-    const outstanding = input.invoices
-        .filter((invoice) => invoice.status === "sent" || invoice.status === "overdue")
-        .reduce((sum, invoice) => sum + invoice.balanceDue, 0);
     const overdueCount = input.invoices.filter((invoice) => invoice.status === "overdue" || (invoice.status === "sent" && invoice.dueDate && new Date(invoice.dueDate) < new Date())).length;
     const expenseTotal = input.expenses.reduce((sum, expense) => sum + expense.amount, 0);
     const approvedExpenses = input.expenses.filter((expense) => expense.status === "approved" || expense.status === "reimbursed").reduce((sum, expense) => sum + expense.amount, 0);
@@ -205,18 +201,11 @@ export const buildFinanceReportSummary = (input: {
     payments: Payment[];
     expenses: Expense[];
 }): FinanceReportSummary => {
-    const revenueByClient = input.invoices.reduce<Record<string, number>>((map, invoice) => {
-        map[invoice.clientName] = (map[invoice.clientName] ?? 0) + invoice.total;
-        return map;
-    }, {});
-
     const expensesByCategory = input.expenses.reduce<Record<string, number>>((map, expense) => {
         map[expense.category] = (map[expense.category] ?? 0) + expense.amount;
         return map;
     }, {});
 
-    const totalRevenue = input.invoices.reduce((sum, invoice) => sum + invoice.total, 0);
-    const totalCollected = input.payments.reduce((sum, payment) => sum + payment.amount, 0);
     const totalExpenses = input.expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
     return {
