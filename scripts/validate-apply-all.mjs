@@ -32,7 +32,7 @@ const databaseUrl = process.env.SUPABASE_DB_URL ?? process.env.DATABASE_URL;
 const authStubSql = `
 create schema if not exists auth;
 
--- Hosted Supabase always provides anon/authenticated; create them for PGlite.
+-- Hosted Supabase provides these roles; create equivalent roles for PGlite.
 do $$
 begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then
@@ -40,6 +40,9 @@ begin
   end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then
     create role authenticated;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role bypassrls;
   end if;
 end
 $$;
@@ -191,7 +194,7 @@ function extractFkReferences(sql) {
     ];
 
     for (const column of columns) {
-        const pattern = new RegExp(`${column}\\s*,\\s*'([0-9a-f-]{36})'`, "gi");
+        const pattern = new RegExp(`${column}\\\\s*,\\\\s*'([0-9a-f-]{36})'`, "gi");
         let match;
         while ((match = pattern.exec(sql)) !== null) {
             refs.push({ column, id: match[1].toLowerCase() });
