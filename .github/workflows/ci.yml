@@ -43,6 +43,9 @@ jobs:
       - name: Priya and Jarvis static release checks
         run: npm run priya-sales-engine:verify
 
+      - name: Command Centre integration guardrails
+        run: npm run command-centre-integrations:verify
+
       - name: Unit tests
         run: npm run test:unit
 
