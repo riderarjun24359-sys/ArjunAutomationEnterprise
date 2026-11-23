@@ -54,6 +54,7 @@ as $$
   );
 $$;
 
+revoke all on function public.organization_is_memberless(uuid) from public, anon;
 grant execute on function public.organization_is_memberless(uuid) to authenticated;
 
 do $$
