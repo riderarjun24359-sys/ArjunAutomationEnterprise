@@ -21,7 +21,7 @@ export function buildAiExecutiveInsights(input: {
     const { revenue, totalClients, activeProjects, openTasks, crmLeads } = liveStats;
     const { taskCompletion, revenueTrend, clientGrowth } = charts;
 
-    if (revenue.outstanding > 0 && revenue.outstanding >= revenue.collected * 0.25) {
+    if (revenue.verified && revenue.outstanding > 0 && revenue.outstanding >= revenue.collected * 0.25) {
         insights.push({
             id: "insight-collections-risk",
             kind: "risk",
