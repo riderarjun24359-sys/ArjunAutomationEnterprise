@@ -51,11 +51,11 @@ const AUTH5 = "00000000-0000-4000-8000-0000000000c5";
 // Supabase-compatible auth stub: uid()/role() read the request JWT claims.
 const authStub = `
 create schema if not exists auth;
-do $$ begin
+do $roles$ begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon; end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
   if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role; end if;
-end $;
+end $roles$;
 create or replace function auth.uid() returns uuid language sql stable as $fn$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
 $fn$;
