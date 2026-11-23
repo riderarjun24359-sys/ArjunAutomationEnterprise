@@ -51,12 +51,6 @@ function classifyLeadSource(source: string): "paid" | "referral" | "organic" | "
     return "other";
 }
 
-function trendFromValues(current: number, previous: number): "up" | "down" | "flat" {
-    if (current > previous * 1.02) return "up";
-    if (current < previous * 0.98) return "down";
-    return "flat";
-}
-
 export function createEmptyFounderAnalyticsSnapshot(accessGranted: boolean, reason?: string): FounderAnalyticsSnapshot {
     const now = new Date().toISOString();
     return {
