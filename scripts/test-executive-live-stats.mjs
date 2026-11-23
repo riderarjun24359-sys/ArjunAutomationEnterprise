@@ -74,11 +74,11 @@ const filled = buildLiveOperationsKpis({
   activeProjects: 4,
   openTasks: 9,
   crmLeads: 7,
-  revenue: { ...empty.revenue, collected: 50000, label: "$50,000", detail: "2 open · $1,000 outstanding", invoiceCount: 3 },
+  revenue: { ...empty.revenue, collected: 0, verified: false, currency: "INR", label: "Not verified", detail: "Razorpay settlement verification is not connected", invoiceCount: 0 },
   source: "supabase",
 });
 if (filled[0].value !== "12") throw new Error("client count wrong");
-if (filled[4].value !== "$50,000") throw new Error("revenue label wrong");
+if (filled[4].value !== "Not verified") throw new Error("unverified revenue must remain hidden");
 console.log("RUNTIME_OK");
 `,
 );
