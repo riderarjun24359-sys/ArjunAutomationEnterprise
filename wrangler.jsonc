@@ -23,6 +23,8 @@
     "enabled": true
   },
   "previews": {
-    "images": {}
+    "images": {
+      "binding": "IMAGES"
+    }
   }
 }
