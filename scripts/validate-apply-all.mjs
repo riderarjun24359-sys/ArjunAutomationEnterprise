@@ -194,7 +194,7 @@ function extractFkReferences(sql) {
     ];
 
     for (const column of columns) {
-        const pattern = new RegExp(`${column}\\\\s*,\\\\s*'([0-9a-f-]{36})'`, "gi");
+        const pattern = new RegExp(`${column}\\s*,\\s*'([0-9a-f-]{36})'`, "gi");
         let match;
         while ((match = pattern.exec(sql)) !== null) {
             refs.push({ column, id: match[1].toLowerCase() });
