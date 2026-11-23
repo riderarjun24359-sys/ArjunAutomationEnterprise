@@ -8,10 +8,10 @@ export default function Navbar() {
           <Image src="/brand/logos/arjun-enterprise.svg" alt="Arjun Automation Enterprises" width={900} height={240} priority unoptimized className="h-12 w-auto" />
         </Link>
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/services" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Services</a>
-          <Link href="/case-studies" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Case Studies</a>
-          <Link href="/pricing" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Pricing</a>
-          <Link href="/contact" className="px-5 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/20">Get Started</a>
+          <Link href="/services" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Services</Link>
+          <Link href="/case-studies" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Case Studies</Link>
+          <Link href="/pricing" className="text-slate-300 hover:text-cyan-400 font-medium text-sm transition-colors">Pricing</Link>
+          <Link href="/contact" className="px-5 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-bold text-sm hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-500/20">Get Started</Link>
         </div>
       </div>
     </header>
