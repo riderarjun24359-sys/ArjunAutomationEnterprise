@@ -57,15 +57,6 @@ export function generateImprovementBacklog(input: {
         });
     }
 
-    items.push({
-        id: uid("imp"),
-        sourceModule: "continuousImprovementEngine",
-        title: "Capture lessons learned from latest delivery cycle",
-        detail: "Auto-generated continuous improvement item",
-        priority: "medium",
-        status: "backlog",
-    });
-
     return items;
 }
 
@@ -85,9 +76,6 @@ export function generateAiRecommendations(dash: Pick<GlobalOperationsDashboard, 
     }
     if (dash.escalations.length > 0) {
         recs.push({ id: uid("ai"), module: "globalSupportCenter", title: "Close open escalations within SLA", detail: `${dash.escalations.length} escalations require executive visibility.`, confidence: 0.91 });
-    }
-    if (recs.length === 0) {
-        recs.push({ id: uid("ai"), module: "globalOperationsDashboard", title: "Operations nominal", detail: "Maintain current cadence; continue weekly health reviews.", confidence: 0.8 });
     }
     return recs;
 }
