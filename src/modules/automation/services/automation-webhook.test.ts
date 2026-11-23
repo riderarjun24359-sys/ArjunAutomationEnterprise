@@ -65,7 +65,7 @@ describe("automation webhooks", () => {
         mocks.actionsList.mockResolvedValue([]);
         mocks.webhooksList.mockResolvedValue([]);
         mocks.webhookUpdate.mockResolvedValue(null);
-        vi.stubGlobal("fetch", vi.fn(async () => ({ status: 200, json: async () => ({ ok: true, attempts: 1, responseStatus: 204 }) })));
+        vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ ok: true, attempts: 1, responseStatus: 204 }) })));
     });
 
     afterEach(() => {
