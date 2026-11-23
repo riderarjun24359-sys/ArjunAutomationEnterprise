@@ -334,131 +334,18 @@ export function buildSubscriptionBilling(data: AiFinanceBillingEngineRawData): S
     };
 }
 
-export function buildExecutiveFinanceDashboard(data: AiFinanceBillingEngineRawData): ExecutiveFinanceDashboard {
-    const latestMetric = data.brvFinanceMetrics[0];
-    const latestMrr = data.brvMrrSnapshots[0];
-    const latestArr = data.brvArrSnapshots[0];
-    const latestAnalytics = data.brvAnalytics[0];
-
-    const invoiceRevenue = money(
-        buildInvoiceCenter(data)
-            .rows.filter((r) => r.status === "paid")
-            .reduce((s, r) => s + r.total, 0),
-    );
-    const expenseTotal = money(data.expenses.reduce((s, e) => s + e.amount, 0));
-    const cashIn = money(data.brvCashFlow.reduce((s, c) => s + c.inflow_usd, 0) || data.payments.reduce((s, p) => s + p.amount, 0));
-    const cashOut = money(data.brvCashFlow.reduce((s, c) => s + c.outflow_usd, 0) || expenseTotal);
-    const cashFlow = money(
-        data.brvCashFlow.length
-            ? data.brvCashFlow.reduce((s, c) => s + c.net_cash_usd, 0)
-            : cashIn - cashOut,
-    );
-
-    const mrr = money(
-        latestMetric?.total_mrr_usd
-            ?? latestMrr?.mrr_usd
-            ?? latestAnalytics?.mrr_usd
-            ?? data.brvSubscriptions.reduce((s, x) => s + x.mrr_usd, 0),
-    );
-    const arr = money(
-        latestMetric?.total_arr_usd
-            ?? latestArr?.arr_usd
-            ?? latestAnalytics?.arr_usd
-            ?? mrr * 12,
-    );
-    const revenue = money(latestMetric?.total_revenue_usd ?? latestAnalytics?.total_revenue_usd ?? invoiceRevenue);
-    const profit = money(revenue - expenseTotal);
-
-    const recentOutflows = data.brvCashFlow.slice(0, 3).map((c) => c.outflow_usd);
-    const burnRate = money(
-        recentOutflows.length
-            ? recentOutflows.reduce((a, b) => a + b, 0) / recentOutflows.length
-            : expenseTotal / Math.max(1, new Set(data.expenses.map((e) => e.expense_date.slice(0, 7))).size),
-    );
-    const cashPosition = money(cashIn - cashOut + data.brvOutstanding.reduce((s, o) => s + o.current_usd, 0));
-    const runwayMonths = burnRate > 0 ? Math.round((Math.max(cashPosition, 0) / burnRate) * 10) / 10 : null;
-
+export function buildExecutiveFinanceDashboard(_data: AiFinanceBillingEngineRawData): ExecutiveFinanceDashboard {
+    // Legacy BRV snapshots and unlinked billing records are not verified INR settlements.
     return {
-        kpis: { arr, mrr, revenue, profit, expenses: expenseTotal, cashFlow, burnRate, runwayMonths },
-        mrrTrend: data.brvMrrSnapshots
-            .slice()
-            .reverse()
-            .slice(-12)
-            .map((s) => ({ date: s.snapshot_date, mrr: money(s.mrr_usd) })),
-        cashFlowTrend: data.brvCashFlow
-            .slice()
-            .reverse()
-            .slice(-12)
-            .map((c) => ({ date: c.record_date, net: money(c.net_cash_usd) })),
+        kpis: { arr: 0, mrr: 0, revenue: 0, profit: 0, expenses: 0, cashFlow: 0, burnRate: 0, runwayMonths: null },
+        mrrTrend: [],
+        cashFlowTrend: [],
     };
 }
-
-export function buildRevenueAnalytics(data: AiFinanceBillingEngineRawData): RevenueAnalytics {
-    const invoices = buildInvoiceCenter(data).rows.filter((r) => r.status === "paid" || r.status === "sent");
-    const byClientMap = new Map<string, number>();
-    for (const inv of invoices) {
-        byClientMap.set(inv.clientLabel, money((byClientMap.get(inv.clientLabel) ?? 0) + inv.total));
-    }
-    for (const sub of data.brvSubscriptions) {
-        const name = accountName(data, sub.billing_account_id);
-        byClientMap.set(name, money((byClientMap.get(name) ?? 0) + sub.amount_usd));
-    }
-
-    const byServiceMap = new Map<string, number>();
-    for (const sub of data.brvSubscriptions) {
-        byServiceMap.set(sub.plan_name, money((byServiceMap.get(sub.plan_name) ?? 0) + sub.amount_usd));
-    }
-    if (!byServiceMap.size) {
-        for (const inv of invoices) {
-            byServiceMap.set("Services", money((byServiceMap.get("Services") ?? 0) + inv.total));
-        }
-    }
-
-    const monthMap = new Map<string, number>();
-    for (const inv of invoices) {
-        const m = (inv.issueDate || "").slice(0, 7) || "unknown";
-        monthMap.set(m, money((monthMap.get(m) ?? 0) + inv.total));
-    }
-    for (const a of data.brvAnalytics) {
-        const m = a.snapshot_date.slice(0, 7);
-        monthMap.set(m, money(Math.max(monthMap.get(m) ?? 0, a.total_revenue_usd)));
-    }
-
-    const monthlySeries = [...monthMap.entries()]
-        .sort(([a], [b]) => a.localeCompare(b))
-        .slice(-12)
-        .map(([month, revenue]) => ({ month, revenue }));
-
-    const monthlyRevenue = money(monthlySeries.at(-1)?.revenue ?? data.brvFinanceMetrics[0]?.total_mrr_usd ?? 0);
-    const annualRevenue = money(
-        data.brvFinanceMetrics[0]?.total_revenue_usd
-            ?? data.brvAnalytics[0]?.arr_usd
-            ?? monthlySeries.reduce((s, m) => s + m.revenue, 0),
-    );
-    const growth = data.brvGrowth[0]?.growth_rate_percent ?? null;
-    const forecast = money(
-        data.brvProjections[0]?.projected_revenue_usd
-            ?? data.brvRenewalForecasts.reduce((s, f) => s + f.renewal_amount_usd * (f.renewal_probability || 1), 0)
-            ?? annualRevenue * 1.1,
-    );
-
-    return {
-        monthlyRevenue,
-        annualRevenue,
-        byClient: [...byClientMap.entries()]
-            .map(([client, revenue]) => ({ client, revenue }))
-            .sort((a, b) => b.revenue - a.revenue)
-            .slice(0, 20),
-        byService: [...byServiceMap.entries()]
-            .map(([service, revenue]) => ({ service, revenue }))
-            .sort((a, b) => b.revenue - a.revenue)
-            .slice(0, 20),
-        forecast,
-        growthPercent: growth,
-        monthlySeries,
-    };
+export function buildRevenueAnalytics(_data: AiFinanceBillingEngineRawData): RevenueAnalytics {
+    // Revenue analytics stay unavailable until exact INR invoice/deal settlement reconciliation is implemented.
+    return { monthlyRevenue: 0, annualRevenue: 0, byClient: [], byService: [], forecast: 0, growthPercent: null, monthlySeries: [] };
 }
-
 export function buildTaxGstDashboard(data: AiFinanceBillingEngineRawData): TaxGstDashboard {
     const invoices = buildInvoiceCenter(data).rows;
     const invoiceTaxTotal = money(invoices.reduce((s, i) => s + i.taxAmount, 0));
@@ -476,102 +363,32 @@ export function buildTaxGstDashboard(data: AiFinanceBillingEngineRawData): TaxGs
             ratePercent: t.rate_percent,
             isDefault: t.is_default,
         })),
-        invoiceTaxTotal,
+        invoiceTaxTotal: 0,
         taxableInvoices: invoices.filter((i) => i.taxAmount > 0).length,
         filingReady: data.brvTaxConfigs.length > 0 || data.taxRates.length > 0,
         exportRows: [
             { label: "Taxable invoices", value: String(invoices.filter((i) => i.taxAmount > 0).length) },
-            { label: "Invoice tax total", value: String(invoiceTaxTotal) },
+            { label: "Invoice tax total", value: "Not verified" },
             { label: "GST configs", value: String(data.brvTaxConfigs.length) },
             { label: "Tax rates", value: String(data.taxRates.length) },
         ],
     };
 }
 
-export function buildAiFinancialInsights(data: AiFinanceBillingEngineRawData): AiFinancialInsights {
-    const dash = buildExecutiveFinanceDashboard(data);
-    const outstanding = money(data.brvOutstanding.reduce((s, o) => s + o.total_outstanding_usd, 0));
-    const overdueInv = buildInvoiceCenter(data).overdueCount;
-    const insights = [];
-
-    if (outstanding > 0 || overdueInv > 0) {
-        insights.push({
-            id: "revenue-risk",
-            category: "revenue_risk" as const,
-            title: "Revenue risk from outstanding balances",
-            detail: `${overdueInv} overdue invoices; outstanding ${outstanding}.`,
-            severity: outstanding > dash.kpis.revenue * 0.2 || overdueInv > 3 ? ("high" as const) : ("medium" as const),
-        });
-    }
-
-    const topCategory = buildExpenseManager(data).categories.sort((a, b) => b.amount - a.amount)[0];
-    if (topCategory) {
-        insights.push({
-            id: "spending",
-            category: "spending" as const,
-            title: "Spending concentration",
-            detail: `${topCategory.category} is ${topCategory.amount} across ${topCategory.count} expenses.`,
-            severity: topCategory.amount > dash.kpis.expenses * 0.4 ? ("high" as const) : ("medium" as const),
-        });
-    }
-
-    if (dash.kpis.burnRate > 0) {
-        insights.push({
-            id: "cost-opt",
-            category: "cost_optimization" as const,
-            title: "Cost optimization opportunity",
-            detail: `Burn rate ${dash.kpis.burnRate}/period. Review recurring expenses and unused subscriptions.`,
-            severity: dash.kpis.runwayMonths !== null && dash.kpis.runwayMonths < 6 ? ("high" as const) : ("low" as const),
-        });
-    }
-
-    insights.push({
-        id: "cash-pred",
-        category: "cash_flow" as const,
-        title: "Cash flow prediction",
-        detail: `Projected net cash position trend: ${dash.kpis.cashFlow}. Forecast horizon uses live cash flow + renewals.`,
-        severity: dash.kpis.cashFlow < 0 ? ("high" as const) : ("low" as const),
-    });
-
-    insights.push({
-        id: "profit",
-        category: "profit" as const,
-        title: "Profit suggestion",
-        detail:
-            dash.kpis.profit >= 0
-                ? `Profit ${dash.kpis.profit}. Protect margin by accelerating collections and right-sizing spend.`
-                : `Loss ${dash.kpis.profit}. Prioritize paid invoices and reduce non-critical burn.`,
-        severity: dash.kpis.profit < 0 ? ("high" as const) : ("medium" as const),
-    });
-
+export function buildAiFinancialInsights(_data: AiFinanceBillingEngineRawData): AiFinancialInsights {
+    // Do not generate financial-risk recommendations from unverified USD snapshots or unlinked payment attempts.
+    return { insights: [], highSeverity: 0 };
+}
+export function buildFinancialReports(_data: AiFinanceBillingEngineRawData): FinancialReports {
     return {
-        insights,
-        highSeverity: insights.filter((i) => i.severity === "high").length,
+        profitAndLoss: { revenue: 0, expenses: 0, profit: 0 },
+        balanceSheet: { assets: 0, liabilities: 0, equity: 0 },
+        cashFlowStatement: { inflow: 0, outflow: 0, net: 0 },
+        revenueReportTotal: 0,
+        expenseReportTotal: 0,
+        executiveSummary: "Financial report totals are not verified. Razorpay settlement-to-INR invoice/deal reconciliation is required.",
     };
 }
-
-export function buildFinancialReports(data: AiFinanceBillingEngineRawData): FinancialReports {
-    const dash = buildExecutiveFinanceDashboard(data);
-    const revenue = dash.kpis.revenue;
-    const expenses = dash.kpis.expenses;
-    const profit = dash.kpis.profit;
-    const inflow = money(data.brvCashFlow.reduce((s, c) => s + c.inflow_usd, 0) || data.payments.reduce((s, p) => s + p.amount, 0));
-    const outflow = money(data.brvCashFlow.reduce((s, c) => s + c.outflow_usd, 0) || expenses);
-    const outstanding = money(data.brvOutstanding.reduce((s, o) => s + o.total_outstanding_usd, 0));
-    const assets = money(inflow + outstanding);
-    const liabilities = money(outflow * 0.2);
-    const equity = money(assets - liabilities);
-
-    return {
-        profitAndLoss: { revenue, expenses, profit },
-        balanceSheet: { assets, liabilities, equity },
-        cashFlowStatement: { inflow, outflow, net: money(inflow - outflow) },
-        revenueReportTotal: revenue,
-        expenseReportTotal: expenses,
-        executiveSummary: `Revenue ${revenue}, expenses ${expenses}, profit ${profit}. Cash net ${money(inflow - outflow)}. Outstanding ${outstanding}.`,
-    };
-}
-
 export function buildFinanceAutomationCenter(data: AiFinanceBillingEngineRawData): FinanceAutomationCenter {
     const rules = [
         ...data.recurringInvoices.map((r) => ({
@@ -610,33 +427,13 @@ export function buildFinanceAutomationCenter(data: AiFinanceBillingEngineRawData
     };
 }
 
-export function buildExecutiveIntelligence(data: AiFinanceBillingEngineRawData): ExecutiveIntelligenceBoard {
-    const dash = buildExecutiveFinanceDashboard(data);
-    const revenue = buildRevenueAnalytics(data);
-    const health = data.brvFinancialHealth[0];
-    const outstanding = money(data.brvOutstanding.reduce((s, o) => s + o.total_outstanding_usd, 0));
-    const healthScore = health?.overall_score ?? null;
-    const businessHealth =
-        healthScore
-        ?? avg([
-            Math.min(100, Math.max(0, 50 + dash.kpis.profit / Math.max(1, dash.kpis.revenue) * 50)),
-            Math.min(100, Math.max(0, 100 - outstanding / Math.max(1, dash.kpis.revenue) * 100)),
-            Math.min(100, Math.max(0, (dash.kpis.runwayMonths ?? 12) * 8)),
-        ]);
-
+export function buildExecutiveIntelligence(_data: AiFinanceBillingEngineRawData): ExecutiveIntelligenceBoard {
     return {
-        financialHealthScore: healthScore,
-        cashPosition: dash.kpis.cashFlow,
-        revenueGrowthPercent: revenue.growthPercent,
-        burnRate: dash.kpis.burnRate,
-        topCustomers: revenue.byClient.slice(0, 5).map((c) => ({ name: c.client, revenue: c.revenue })),
-        outstandingPayments: outstanding,
-        forecast: revenue.forecast,
-        businessHealthScore: businessHealth,
-        summary: health?.summary || `Business health ${businessHealth ?? "—"}. ARR ${dash.kpis.arr}, MRR ${dash.kpis.mrr}.`,
+        financialHealthScore: null, cashPosition: 0, revenueGrowthPercent: null, burnRate: 0,
+        topCustomers: [], outstandingPayments: 0, forecast: 0, businessHealthScore: null,
+        summary: "Financial intelligence is unavailable until revenue, collections and cash flow are reconciled to verified INR settlements.",
     };
 }
-
 export function createEmptyAiFinanceBillingEngineSnapshot(
     accessGranted: boolean,
     reason?: string,
