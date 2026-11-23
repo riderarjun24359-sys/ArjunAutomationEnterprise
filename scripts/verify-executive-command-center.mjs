@@ -135,5 +135,8 @@ for (const r of results) {
 
 if (failed.length > 0) process.exit(1);
 
-const chain = spawnVerify(root, "scripts/verify-business-platform.mjs");
-if (chain.status !== 0) process.exit(chain.status ?? 1);
+// Cross-module business-platform regression is run separately; keep this verifier focused.
+if (process.env.SKIP_CROSS_MODULE_REGRESSION !== "1") {
+    const chain = spawnVerify(root, "scripts/verify-business-platform.mjs");
+    if (chain.status !== 0) process.exit(chain.status ?? 1);
+}
