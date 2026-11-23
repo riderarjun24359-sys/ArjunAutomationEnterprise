@@ -61,6 +61,21 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Invitation has expired" }, { status: 400 });
     }
 
+    // Do not let a stale invitation attach a user to a suspended or
+    // deactivated tenant. The invitation row alone is not proof the tenant
+    // is currently eligible to accept members.
+    const organization = await serviceClient
+        .from("organizations")
+        .select("id,status")
+        .eq("id", invite.organization_id)
+        .maybeSingle();
+    if (organization.error) {
+        return NextResponse.json({ error: "Unable to verify organization status" }, { status: 503 });
+    }
+    if (!organization.data || organization.data.status !== "active") {
+        return NextResponse.json({ error: "This organization is not accepting invitations" }, { status: 409 });
+    }
+
     // Identity: the acceptor's profile, created if this is their first touch.
     let profile = await findProfile(serviceClient, context.user.id);
     if (!profile) {
