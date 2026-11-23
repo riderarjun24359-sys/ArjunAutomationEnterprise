@@ -80,7 +80,7 @@ pass("revenue:invoice-amount-hidden", invoicePanel.includes("Total not verified"
 pass("revenue:subscription-mrr-hidden", subscriptionPanel.includes("MRR not verified") && subscriptionPanel.includes("ARR not verified"));
 pass("revenue:brv-mrr-arr-hidden", brvStats.includes('value: "Not verified"') && brvStats.includes("Outstanding amount not verified"));
 pass("revenue:brv-overview-hidden", brvPanels.includes("MRR not verified") && brvPanels.includes("ARR not verified"));
-pass("revenue:brv-money-inputs-disabled", brvPanels.includes("disabled — legacy currency mapping requires INR migration"));
+pass("revenue:brv-money-inputs-disabled", (brvPanels.match(/placeholder="Disabled — legacy currency mapping requires INR migration" disabled/g) ?? []).length >= 15);
 pass("revenue:analytics-hidden", analyticsRevenue.includes("Revenue not verified") && !analyticsRevenue.includes("$"));
 pass("revenue:analytics-charts-hidden", analyticsCharts.includes("Revenue not verified") && analyticsCharts.includes("Finance totals not verified"));
 pass("revenue:manual-finance-unverified", financeMappers.includes('paidRevenue: "Not verified"') && financeMappers.includes('totalCollected: "Not verified"') && financeMappers.includes('grossMargin: "Not verified"'));
