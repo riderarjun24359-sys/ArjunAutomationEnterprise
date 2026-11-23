@@ -1,4 +1,4 @@
-import { type NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import { authMiddleware } from "@/src/middleware/auth";
 import { buildContentSecurityPolicy } from "@/src/lib/security/content-security-policy";
 
