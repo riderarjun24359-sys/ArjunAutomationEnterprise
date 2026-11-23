@@ -7,7 +7,7 @@ export function computeClientHealth(input: {
     activeClients: number;
     openEscalations?: number;
 }): number {
-    const base = input.globalOpsCustomerHealth ?? (input.activeClients > 0 ? 80 : 70);
+    const base = input.globalOpsCustomerHealth ?? 0;
     return clampScore(base - (input.openEscalations ?? 0) * 5);
 }
 
