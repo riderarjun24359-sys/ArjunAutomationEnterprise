@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getClientIp, secureApiRoute } from "@/src/lib/api-security";
+import { getClientIp, secureApiRoute, logApiAudit } from "@/src/lib/api-security";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 import { opsLog } from "@/src/lib/ops-monitoring";
 import { invitationInputSchema, canGrantInvite } from "@/src/lib/organization-provisioning";
@@ -114,6 +114,16 @@ export async function DELETE(request: Request) {
         .maybeSingle();
     if (revoked.error) return NextResponse.json({ error: "Invitation revocation failed" }, { status: 503 });
     if (!revoked.data) return NextResponse.json({ error: "Invitation is no longer pending" }, { status: 409 });
+
+    await logApiAudit({
+        action: "update",
+        userId: context.user.id,
+        organizationId: context.organizationId,
+        metadata: { invitationId, invitationStatus: "revoked" },
+    });
+    opsLog("info", "Organization invitation revoked", "api/organization/invitations", {
+        organizationId: context.organizationId,
+    });
 
     return NextResponse.json(
         { invitation: { id: revoked.data.id, status: revoked.data.status } },
