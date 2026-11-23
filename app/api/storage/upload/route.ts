@@ -76,7 +76,8 @@ export async function POST(request: Request) {
         });
     } catch (err) {
         const message = err instanceof Error ? err.message : "Upload failed";
-        return apiError(message, 500);
+        opsLog("error", "Storage upload exception", "api/storage/upload", { message });
+        return apiError("Storage upload failed", 500);
     }
 }
 
