@@ -77,7 +77,6 @@ import {
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { createAiOrchestrationClient } from "@/src/modules/ai-orchestration/sdk";
-import { createKnowledgeClient } from "@/src/modules/knowledge/sdk";
 import type {
     IntegrationHubSummary,
     CreateIntegrationHubInput,
@@ -405,13 +404,12 @@ export class IntegrationPlatformService {
     }
 
     async createApiKey(_authUserId: string, _email: string, _input: CreateApiKeyInput, _fullName?: string | null): Promise<ApiKeySummary> {
-        // The current repository client is browser-only and this flow does not
-        // generate or persist a one-time secret digest. Creating an "active"
-        // row with an empty hash would falsely imply a usable credential.
-        // Keep issuance disabled until a server-authenticated, tenant-scoped
-        // endpoint can generate, hash, store, and reveal a secret exactly once.
+        // Credential issuance must go through the authenticated server route,
+        // which enforces the current session, organization membership, admin
+        // permission, one-time secret reveal, and server-side digest storage.
+        // This legacy browser repository method must never create key rows.
         throw new Error(
-            "API key issuance is temporarily unavailable: secure server-side credential issuance is not configured."
+            "Use the authenticated Integration Platform dashboard to issue API keys securely."
         );
     }
 
@@ -736,11 +734,13 @@ export class IntegrationPlatformService {
         return { serviceId: created.id, serviceKey: created.serviceKey, connectorStatus: created.connectorStatus };
     }
 
-    async sdkIssueApiKey(authUserId: string, email: string, input: IntgSdkIssueApiKeyInput, fullName?: string | null): Promise<IntgSdkIssueApiKeyResult> {
-        const knowledge = createKnowledgeClient(authUserId, email, fullName);
-        await knowledge.search({ query: input.keyName, limit: 3 });
-        const created = await this.createApiKey(authUserId, email, { integrationHubId: input.integrationHubId, keyName: input.keyName, apiVersion: input.apiVersion }, fullName);
-        return { apiKeyId: created.id, keyName: created.keyName, status: created.status };
+    async sdkIssueApiKey(_authUserId: string, _email: string, _input: IntgSdkIssueApiKeyInput, _fullName?: string | null): Promise<IntgSdkIssueApiKeyResult> {
+        // The legacy SDK accepts caller-supplied identity values and cannot
+        // establish a validated browser/server session. Fail closed rather
+        // than invoking unrelated AI/knowledge work or issuing a credential.
+        throw new Error(
+            "SDK API-key issuance is disabled. Use the authenticated Integration Platform dashboard."
+        );
     }
 
     async sdkRegisterWebhook(authUserId: string, email: string, input: IntgSdkRegisterWebhookInput, fullName?: string | null): Promise<IntgSdkRegisterWebhookResult> {
