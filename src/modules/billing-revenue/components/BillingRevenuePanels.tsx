@@ -89,8 +89,8 @@ export function BillingRevenueOverviewPanel({ data }: { data: BillingRevenueData
     return (
         <div className="grid gap-6 xl:grid-cols-2">
             <Card hover><SectionHeader title="Billing & Revenue summary" description="Subscription billing, payments, revenue management, invoices, collections, analytics, and forecasting" /><div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <ListCard title="Billing Accounts" subtitle={`${data.stats?.totalBillingAccounts ?? 0} total`} meta={`${data.stats?.activeBillingAccounts ?? 0} active • MRR ₹${(data.stats?.mrrUsd ?? 0).toFixed(0)}`} />
-                <ListCard title="Revenue" subtitle={`ARR ₹${(data.stats?.arrUsd ?? 0).toFixed(0)}`} meta={`Outstanding ₹${(data.stats?.outstandingBalanceUsd ?? 0).toFixed(0)} • ${data.stats?.openInvoiceCount ?? 0} open invoices`} />
+                <ListCard title="Billing Accounts" subtitle={`${data.stats?.totalBillingAccounts ?? 0} total`} meta={`${data.stats?.activeBillingAccounts ?? 0} active • MRR not verified`} />
+                <ListCard title="Revenue" subtitle="ARR not verified" meta={`Outstanding amount not verified • ${data.stats?.openInvoiceCount ?? 0} open invoices`} />
                 <ListCard title="Payments & Collections" subtitle={`${data.stats?.failedPaymentCount ?? 0} failed payments`} meta={`${data.stats?.collectionCaseCount ?? 0} collection cases`} />
                 <ListCard title="Audit Trail" subtitle={`${data.stats?.auditCount ?? 0} audit entries`} meta="Security-first financial operations" />
             </div></Card>
@@ -153,7 +153,7 @@ export function SubscriptionBillingsPanel({ data }: { data: BillingRevenueData }
             <Card hover><SectionHeader title="Create subscription billing" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createSubscriptionBilling(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("billingKey")} placeholder="Billing key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <select {...form.register("billingCycle")} className={inputClass}>{BILLING_CYCLE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
@@ -269,7 +269,7 @@ export function MrrSnapshotsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create mrr snapshot" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createMrrSnapshot(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("snapshotKey")} placeholder="Snapshot key" className={inputClass} />
-                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="MRR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -288,7 +288,7 @@ export function ArrSnapshotsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create arr snapshot" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createArrSnapshot(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("snapshotKey")} placeholder="Snapshot key" className={inputClass} />
-                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="ARR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -587,7 +587,7 @@ export function MrrForecastsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create mrr forecast" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createMrrForecast(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("forecastKey")} placeholder="Forecast key" className={inputClass} />
-                <input type="number" step="any" {...form.register("projectedMrrUsd", { valueAsNumber: true })} placeholder="Projected MRR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("projectedMrrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -606,7 +606,7 @@ export function ArrForecastsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create arr forecast" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createArrForecast(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("forecastKey")} placeholder="Forecast key" className={inputClass} />
-                <input type="number" step="any" {...form.register("projectedArrUsd", { valueAsNumber: true })} placeholder="Projected ARR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("projectedArrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
