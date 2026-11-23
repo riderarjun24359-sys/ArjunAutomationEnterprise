@@ -15,7 +15,7 @@ The browser repository client now exposes a single selected-organization query-s
 
 The shared repositories updated include automation, billing revenue, integration platform, AI orchestration, AI organization foundation, analytics, autonomous company, business analyst/process, commercial SaaS, communication hub, company foundation, customer success, customer-operated platform, customer success delivery, development factory, DevOps deployment, document engine, documents, enterprise governance/identity/intelligence, executive intelligence, finance, form engine, founder OS, growth operations/engine, hospital, HR, industry framework, inventory, knowledge, launch foundation/readiness, operations center, QA engineer, restaurant, retail, sales, school, settings, solution architect, support, tenant lifecycle operations, and workflow engine.
 
-**Important boundary:** localStorage/cookie selection is a tenant-selection hint, not authorization. The server still validates requested tenant membership, and database RLS must remain the authoritative enforcement layer. The source changes do not prove that production RLS is enabled or correctly applied.
+**Important boundary:** localStorage/cookie selection is a tenant-selection hint, not authorization. The server still validates requested tenant membership, and database RLS must remain the authoritative enforcement layer. The source changes do not prove that production RLS is enabled or correctly applied. This is targeted hardening of the shared organization-scoped repository families listed below; bespoke repositories, direct Supabase calls, and service-role data paths still require an individual table-by-table review before claiming the entire repository surface is cleared.
 
 ## RLS findings
 
@@ -35,7 +35,7 @@ The shared repositories updated include automation, billing revenue, integration
 ## Integrations
 
 - API keys use high-entropy bearer tokens with SHA-256 digests, one-time secret reveal, expiry/status checks, tenant/hub ownership validation, and rate limits.
-- Webhook delivery uses HTTPS/allowlist validation, blocked private/metadata address checks, HMAC signing, bounded retries/timeouts, and idempotency keys.
+- Webhook delivery uses HTTPS/allowlist validation, literal private/metadata address checks, HMAC signing, bounded retries/timeouts, and idempotency keys. DNS resolution is not pinned/validated by this client path, so DNS rebinding and unsafe allowlisted destinations still require a server-side egress proxy with DNS/IP enforcement before sensitive production use.
 - External providers, webhook endpoints, DNS behavior, and live delivery were not exercised. Provider credentials/configuration health is not verified from source alone.
 
 ## AI and automation reliability
