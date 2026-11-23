@@ -45,6 +45,7 @@ export function useOrganization() {
                     setOrganizations([]);
                     setMemberships([]);
                     setSelectedOrganizationId(null);
+                    persistOrganizationSelection(null);
                     setWorkspaces([]);
                     setMembers([]);
                     setInvitations([]);
