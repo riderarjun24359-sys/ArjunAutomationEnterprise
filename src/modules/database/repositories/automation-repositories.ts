@@ -9,13 +9,13 @@ import type {
     DbWorkflowTemplate,
     DbWorkflowTrigger,
 } from "@/src/modules/database/types/platform";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 abstract class OrgAutomationRepository<T> extends BaseRepository<T> {
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<T[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
 
         const normalized = this.buildQuery(query);
         const { data, error } = await client
@@ -31,17 +31,24 @@ abstract class OrgAutomationRepository<T> extends BaseRepository<T> {
 
     async getById(id: string): Promise<T | null> {
         const client = getRepositoryClient();
-        if (!client) return null;
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) return null;
 
-        const { data, error } = await client.from(this.table).select("*").eq("id", id).maybeSingle();
+        const { data, error } = await client.from(this.table).select("*").eq("id", id).eq("organization_id", organizationId).maybeSingle();
         mapRepositoryError(error, `Failed to get ${this.table}`);
         return (data as T | null) ?? null;
     }
 
     async create(input: Record<string, unknown>): Promise<T | null> {
         const client = getRepositoryClient();
-        if (!client) return null;
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || input.organization_id !== organizationId) return null;
 
+        const organizationId = getSelectedOrganizationId();
+        const workflowId = typeof input.workflow_id === "string" ? input.workflow_id : null;
+        if (!organizationId || !workflowId) return null;
+        const parent = await client.from("workflows").select("id").eq("id", workflowId).eq("organization_id", organizationId).maybeSingle();
+        if (parent.error || !parent.data) return null;
         const { data, error } = await client.from(this.table).insert(input).select("*").maybeSingle();
         mapRepositoryError(error, `Failed to create ${this.table}`);
         return (data as T | null) ?? null;
@@ -49,18 +56,20 @@ abstract class OrgAutomationRepository<T> extends BaseRepository<T> {
 
     async update(id: string, input: Record<string, unknown>): Promise<T | null> {
         const client = getRepositoryClient();
-        if (!client) return null;
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || (input.organization_id !== undefined && input.organization_id !== organizationId)) return null;
 
-        const { data, error } = await client.from(this.table).update(input).eq("id", id).select("*").maybeSingle();
+        const { data, error } = await client.from(this.table).update({ ...input, organization_id: organizationId }).eq("id", id).eq("organization_id", organizationId).select("*").maybeSingle();
         mapRepositoryError(error, `Failed to update ${this.table}`);
         return (data as T | null) ?? null;
     }
 
     async delete(id: string): Promise<boolean> {
         const client = getRepositoryClient();
-        if (!client) return false;
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) return false;
 
-        const { error } = await client.from(this.table).delete().eq("id", id);
+        const { error } = await client.from(this.table).delete().eq("id", id).eq("organization_id", organizationId);
         mapRepositoryError(error, `Failed to delete ${this.table}`);
         return !error;
     }
@@ -71,6 +80,10 @@ abstract class WorkflowChildRepository<T> extends BaseRepository<T> {
         const client = getRepositoryClient();
         if (!client) return [];
 
+        const organizationId = getSelectedOrganizationId();
+        if (!organizationId) return [];
+        const parent = await client.from("workflows").select("id").eq("id", workflowId).eq("organization_id", organizationId).maybeSingle();
+        if (parent.error || !parent.data) return [];
         const { data, error } = await client.from(this.table).select("*").eq("workflow_id", workflowId).order(this.orderColumn);
         mapRepositoryError(error, `Failed to list ${this.table}`);
         return (data ?? []) as T[];
@@ -89,6 +102,10 @@ abstract class WorkflowChildRepository<T> extends BaseRepository<T> {
         const client = getRepositoryClient();
         if (!client) return;
 
+        const organizationId = getSelectedOrganizationId();
+        if (!organizationId) return;
+        const parent = await client.from("workflows").select("id").eq("id", workflowId).eq("organization_id", organizationId).maybeSingle();
+        if (parent.error || !parent.data) return;
         const { error } = await client.from(this.table).delete().eq("workflow_id", workflowId);
         mapRepositoryError(error, `Failed to delete ${this.table}`);
     }
