@@ -142,6 +142,23 @@ export async function resolveServerIdentity(
     }
 }
 
+function getRequestedOrganizationId(request: Request): string | null {
+    const headerValue = request.headers.get("x-organization-id")?.trim();
+    if (headerValue) return headerValue;
+
+    // Cookie is a selection hint only. resolveServerIdentity still verifies
+    // that the authenticated caller has an active membership in this tenant.
+    const cookieHeader = request.headers.get("cookie") ?? "";
+    const entry = cookieHeader.split(";").map((part) => part.trim()).find((part) => part.startsWith("aae_selected_organization="));
+    if (!entry) return null;
+    const value = entry.slice("aae_selected_organization=".length);
+    try {
+        return decodeURIComponent(value).trim() || null;
+    } catch {
+        return null;
+    }
+}
+
 export function getClientIp(request: Request): string {
     // Prefer the single-client address written by the trusted edge proxy.
     // x-forwarded-for is a client-influenced chain on some origin setups and
@@ -311,7 +328,7 @@ export async function secureApiRoute(
         }
 
         const user = validated.user;
-        const { role, organizationId } = await resolveServerIdentity(user.id, request.headers.get("x-organization-id"));
+        const { role, organizationId } = await resolveServerIdentity(user.id, getRequestedOrganizationId(request));
         const authUser = { ...user, role };
 
         if (options.permission && !hasPermission(role, options.permission)) {
