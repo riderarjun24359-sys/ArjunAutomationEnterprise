@@ -49,7 +49,7 @@ async function fetchPinnedWebhook(
 ): Promise<{ status: number }> {
     const target = new URL(rawUrl);
     if (target.protocol !== "https:") throw new Error("Webhook target must use HTTPS");
-    const hostname = target.hostname.replace(/^\\[(.*)\\]$/, "$1");
+    const hostname = target.hostname.replace(/^\[(.*)\]$/, "$1");
     const literalFamily = isIP(hostname);
     const resolve = literalFamily
         ? Promise.resolve([{ address: hostname, family: literalFamily }])
