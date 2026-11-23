@@ -10,6 +10,7 @@ export function buildRevenueSummary(input: {
 }): RevenueSummary {
     return {
         mrr: input.mrrEstimate ?? 0,
+        mrrVerified: false,
         openInvoices: input.openInvoices,
         renewalsDue: input.renewalsDue,
         activeClients: input.activeClients,
