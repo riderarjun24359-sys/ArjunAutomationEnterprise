@@ -15,6 +15,7 @@ export function useOrganization() {
     const user = useAuthStore((s) => s.user);
     const [organizations, setOrganizations] = useState<OrganizationSummary[]>([]);
     const [memberships, setMemberships] = useState<OrganizationMembershipSummary[]>([]);
+    const [selectedOrganizationId, setSelectedOrganizationId] = useState<string | null>(null);
     const [workspaces, setWorkspaces] = useState<WorkspaceSummary[]>([]);
     const [members, setMembers] = useState<OrganizationMemberSummary[]>([]);
     const [invitations, setInvitations] = useState<OrganizationInvitationSummary[]>([]);
@@ -30,6 +31,7 @@ export function useOrganization() {
                 if (!cancelled) {
                     setOrganizations([]);
                     setMemberships([]);
+                    setSelectedOrganizationId(null);
                     setWorkspaces([]);
                     setMembers([]);
                     setInvitations([]);
@@ -51,7 +53,20 @@ export function useOrganization() {
                     memberships?: OrganizationMembershipSummary[];
                 };
                 const availableMemberships = membershipPayload.memberships ?? [];
-                if (!cancelled) setMemberships(availableMemberships);
+                const savedSelection = window.localStorage.getItem("aae:selected-organization");
+                const validSavedSelection = savedSelection && availableMemberships.some(
+                    (membership) => membership.organizationId === savedSelection && membership.status === "active",
+                ) ? savedSelection : null;
+                const nextSelection = validSavedSelection ??
+                    (availableMemberships.length === 1 && availableMemberships[0].status === "active"
+                        ? availableMemberships[0].organizationId
+                        : null);
+                if (nextSelection) window.localStorage.setItem("aae:selected-organization", nextSelection);
+                else window.localStorage.removeItem("aae:selected-organization");
+                if (!cancelled) {
+                    setMemberships(availableMemberships);
+                    setSelectedOrganizationId(nextSelection);
+                }
 
                 const orgs = await organizationService.getOrganizations(user.id, user.email, user.fullName);
                 const orgId = orgs[0]?.id;
@@ -88,15 +103,15 @@ export function useOrganization() {
             cancelled = true;
             window.clearTimeout(timer);
         };
-    }, [user]);
+    }, [user, selectedOrganizationId]);
 
-    const revokeInvitation = async (invitationId: string): Promise<boolean> => {
+    const selectOrganization = (organizationId: string) => {\n        const allowed = memberships.some((membership) => membership.organizationId === organizationId && membership.status === "active");\n        if (!allowed) return;\n        window.localStorage.setItem("aae:selected-organization", organizationId);\n        setSelectedOrganizationId(organizationId);\n    };\n\n    const revokeInvitation = async (invitationId: string): Promise<boolean> => {
         setInvitationActionError(null);
         setRevokingInvitationId(invitationId);
         try {
             const response = await fetch("/api/organization/invitations", {
                 method: "DELETE",
-                headers: { "Content-Type": "application/json" },
+                headers: {\n                    "Content-Type": "application/json",\n                    ...(selectedOrganizationId ? { "x-organization-id": selectedOrganizationId } : {}),\n                },
                 body: JSON.stringify({ invitationId }),
                 cache: "no-store",
             });
@@ -115,5 +130,5 @@ export function useOrganization() {
         }
     };
 
-    return { organizations, memberships, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError };
+    return { organizations, memberships, workspaces, members, invitations, loading, selectedOrganizationId, selectOrganization, revokeInvitation, revokingInvitationId, invitationActionError };
 }
