@@ -15,6 +15,7 @@ check("support failure is not reported as 90% health", !bridges.includes("suppor
 check("delivery failure is not reported as 100% quality", !bridges.includes("qualityPassRate: 100"));
 check("global operations failure is not reported healthy", !bridges.includes("customerHealth: 75") && !bridges.includes("deliveryHealth: 85"));
 check("production failure is not reported as 90% health", !bridges.includes("overallScore: 90"));
+check("Command Centre does not trust simulated in-memory production health or backups", bridges.includes("simulated, not externally verified") && bridges.includes("available: false"));
 check("system health has no default 90 percent fallback", !read("src/modules/ai-command-center/engines/system-monitor.engine.ts").includes("platformHealth ?? 90"));
 
 const agentEngine = read("src/modules/ai-command-center/engines/health-monitoring.engine.ts");
