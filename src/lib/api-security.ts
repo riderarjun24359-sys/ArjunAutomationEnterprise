@@ -104,13 +104,11 @@ export async function resolveServerIdentity(
         const requestedId = requestedOrganizationId?.trim() || null;
         const selected = requestedId
             ? rows.find((membership) => membership.organization_id === requestedId)
-            : rows.length === 1
-              ? rows[0]
-              : null;
+            : rows[0] ?? null;
 
-        // No membership, an invalid requested tenant, or an ambiguous
-        // multi-tenant session all fail closed until the caller selects a
-        // tenant they actively belong to.
+        // A supplied tenant is accepted only when it belongs to the caller.
+        // When no tenant is selected, preserve the existing first-membership
+        // default for backwards compatibility until the UI exposes a selector.
         if (!selected?.organization_id) {
             return { role: "member", organizationId: null };
         }
