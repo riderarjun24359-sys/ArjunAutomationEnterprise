@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         if (uploaded.error) {
             opsLog("error", "Storage upload failed", "api/storage/upload", { message: uploaded.error.message });
             enqueueAlert("warning", "Storage upload failed", uploaded.error.message, "storage");
-            return apiError(uploaded.error.message, 502);
+            return apiError("Storage upload failed", 502);
         }
 
         await logApiAudit({
