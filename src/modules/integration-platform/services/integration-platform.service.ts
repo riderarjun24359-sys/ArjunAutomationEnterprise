@@ -168,6 +168,17 @@ export class IntegrationPlatformService {
         }
     }
 
+    private requireOwnedLinkedRecord(
+        record: { organization_id: string; hub_id: string } | null,
+        organizationId: string,
+        hubId: string,
+        label: string,
+    ): void {
+        if (!record || record.organization_id !== organizationId || record.hub_id !== hubId) {
+            throw new Error(`${label} not found in this organization and integration hub`);
+        }
+    }
+
     private async getMaps(organizationId: string) {
         const integrationHubs = await databaseService.intgIntegrationHubs.listByOrganization(organizationId);
         return buildIntegrationHubLookupMaps(integrationHubs);
@@ -250,6 +261,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectedServiceId) this.requireOwnedLinkedRecord(await databaseService.intgConnectedServices.getById(input.connectedServiceId), context.organizationId, input.integrationHubId, "Connected service");
         const created = await databaseService.intgConnectorConfigs.create(buildConnectorConfigPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create connectorConfigs");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "connector_configs", "create", `ConnectorConfig created`, created.id));
@@ -268,6 +280,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectedServiceId) this.requireOwnedLinkedRecord(await databaseService.intgConnectedServices.getById(input.connectedServiceId), context.organizationId, input.integrationHubId, "Connected service");
         const created = await databaseService.intgConnectorHealth.create(buildConnectorHealthPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create connectorHealth");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "connector_health", "create", `ConnectorHealth created`, created.id));
@@ -304,6 +317,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgPaymentConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Payment connector");
         const created = await databaseService.intgPaymentConnectorHealth.create(buildPaymentConnectorHealthPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentConnectorHealth");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "payment_connector_health", "create", `PaymentConnectorHealth created`, created.id));
@@ -322,6 +336,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgPaymentConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Payment connector");
         const created = await databaseService.intgPaymentRetryQueue.create(buildPaymentRetryQueuePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentRetryQueue");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "payment_retry_queue", "create", `PaymentRetryQueue created`, created.id));
@@ -340,6 +355,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgPaymentConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Payment connector");
         const created = await databaseService.intgPaymentTransactions.create(buildPaymentTransactionPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentTransactions");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "payment_transactions", "create", `PaymentTransaction created`, created.id));
@@ -376,6 +392,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgAccountingConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Accounting connector");
         const created = await databaseService.intgAccountingSyncStatus.create(buildAccountingSyncStatusPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create accountingSyncStatus");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "accounting_sync_status", "create", `AccountingSyncStatus created`, created.id));
@@ -394,6 +411,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgAccountingConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Accounting connector");
         const created = await databaseService.intgExportMappings.create(buildExportMappingPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create exportMappings");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "export_mappings", "create", `ExportMapping created`, created.id));
@@ -412,6 +430,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.connectorId) this.requireOwnedLinkedRecord(await databaseService.intgAccountingConnectors.getById(input.connectorId), context.organizationId, input.integrationHubId, "Accounting connector");
         const created = await databaseService.intgAccountingExports.create(buildAccountingExportPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create accountingExports");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "accounting_exports", "create", `AccountingExport created`, created.id));
@@ -447,6 +466,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.apiKeyId) this.requireOwnedLinkedRecord(await databaseService.intgApiKeys.getById(input.apiKeyId), context.organizationId, input.integrationHubId, "API key");
         const created = await databaseService.intgApiScopes.create(buildApiScopePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create apiScopes");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_scopes", "create", `ApiScope created`, created.id));
@@ -465,6 +485,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.apiKeyId) this.requireOwnedLinkedRecord(await databaseService.intgApiKeys.getById(input.apiKeyId), context.organizationId, input.integrationHubId, "API key");
         const created = await databaseService.intgRateLimits.create(buildRateLimitPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create rateLimits");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "rate_limits", "create", `RateLimit created`, created.id));
@@ -483,6 +504,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.apiKeyId) this.requireOwnedLinkedRecord(await databaseService.intgApiKeys.getById(input.apiKeyId), context.organizationId, input.integrationHubId, "API key");
         const created = await databaseService.intgApiUsage.create(buildApiUsagePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create apiUsage");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_usage", "create", `ApiUsage created`, created.id));
@@ -537,6 +559,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.outgoingWebhookId) this.requireOwnedLinkedRecord(await databaseService.intgOutgoingWebhooks.getById(input.outgoingWebhookId), context.organizationId, input.integrationHubId, "Outgoing webhook");
         const created = await databaseService.intgWebhookDeadLetter.create(buildWebhookDeadLetterPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create webhookDeadLetter");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "webhook_dead_letter", "create", `WebhookDeadLetter created`, created.id));
@@ -555,6 +578,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.outgoingWebhookId) this.requireOwnedLinkedRecord(await databaseService.intgOutgoingWebhooks.getById(input.outgoingWebhookId), context.organizationId, input.integrationHubId, "Outgoing webhook");
         const created = await databaseService.intgWebhookDeliveryLogs.create(buildWebhookDeliveryLogPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create webhookDeliveryLogs");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "webhook_delivery_logs", "create", `WebhookDeliveryLog created`, created.id));
@@ -591,6 +615,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.marketplaceConnectorId) this.requireOwnedLinkedRecord(await databaseService.intgMarketplaceConnectors.getById(input.marketplaceConnectorId), context.organizationId, input.integrationHubId, "Marketplace connector");
         const created = await databaseService.intgMarketplaceInstallations.create(buildMarketplaceInstallationPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create marketplaceInstallations");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "marketplace_installations", "create", `MarketplaceInstallation created`, created.id));
@@ -609,6 +634,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.marketplaceConnectorId) this.requireOwnedLinkedRecord(await databaseService.intgMarketplaceConnectors.getById(input.marketplaceConnectorId), context.organizationId, input.integrationHubId, "Marketplace connector");
         const created = await databaseService.intgMarketplaceCompatibility.create(buildMarketplaceCompatibilityPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create marketplaceCompatibility");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "marketplace_compatibility", "create", `MarketplaceCompatibility created`, created.id));
@@ -627,6 +653,7 @@ export class IntegrationPlatformService {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
         await this.requireOwnedHub(context.organizationId, input.integrationHubId);
+        if (input.marketplaceConnectorId) this.requireOwnedLinkedRecord(await databaseService.intgMarketplaceConnectors.getById(input.marketplaceConnectorId), context.organizationId, input.integrationHubId, "Marketplace connector");
         const created = await databaseService.intgMarketplaceVersions.create(buildMarketplaceVersionPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create marketplaceVersions");
         await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "marketplace_versions", "create", `MarketplaceVersion created`, created.id));
