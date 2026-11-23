@@ -27,7 +27,7 @@ for (const [network, prefix] of [
 
 const blockedIpv6 = new BlockList();
 for (const [network, prefix] of [
-    ["2001::", 23], ["2002::", 16], ["3fff::", 20], ["64:ff9b::", 96],
+    ["2001::", 23], ["2001:db8::", 32], ["2002::", 16], ["3fff::", 20], ["64:ff9b::", 96],
     ["64:ff9b:1::", 48], ["100::", 64],
 ] as const) blockedIpv6.addSubnet(network, prefix, "ipv6");
 
