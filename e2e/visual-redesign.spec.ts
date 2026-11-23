@@ -159,10 +159,11 @@ test.describe("Runtime health", () => {
         const errors: string[] = [];
         page.on("pageerror", (error) => errors.push(String(error)));
 
-        for (const path of ["/", "/services", "/pricing", "/contact"]) {
+        for (const path of ["/", "/services", "/blueprints", "/pricing", "/contact"]) {
             await page.goto(path, { waitUntil: "networkidle" });
             await expect(page.locator("body")).toBeVisible();
             await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+            await expect(page.locator("main")).toHaveCount(1);
         }
 
         expect(errors, `uncaught page errors: ${errors.join(" | ")}`).toEqual([]);
