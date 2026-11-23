@@ -30,6 +30,11 @@ function money(n: number): number {
     return Math.round((Number.isFinite(n) ? n : 0) * 100) / 100;
 }
 
+function avg(nums: number[]): number | null {
+    if (!nums.length) return null;
+    return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 10) / 10;
+}
+
 export function normalizeInvoiceStatus(status: string, dueDate?: string | null, amountPaid = 0, total = 0): AfbeInvoiceStatus {
     const s = status.toLowerCase().trim();
     if (s.includes("cancel") || s.includes("void")) return "cancelled";
