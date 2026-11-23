@@ -161,15 +161,17 @@ pass("marketing:imports_premium_css", marketingLayoutSource.includes("premium.cs
 pass("marketing:display_font", marketingLayoutSource.includes("Inter") || marketingLayoutSource.includes("--font-display"));
 
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
-// Enterprise AI-automation homepage hero (headline text is line-wrapped in JSX, so match stable fragments)
-pass(
-    "page:hero_ai_automation_headline",
-    pageSource.includes("<h1") &&
-        pageSource.includes("AI Automation Platform") &&
-        pageSource.includes("Automate the work"),
-);
-pass("page:hero_primary_cta_demo", pageSource.includes("Book a Demo") && pageSource.includes('href={MARKETING_ROUTES.contact}'));
-pass("page:hero_secondary_cta_solutions", pageSource.includes("Explore Solutions") && pageSource.includes('href={MARKETING_ROUTES.solutions}'));
+const heroComponentSource = readSafe(join(premiumRoot, "sections", "HeroSection.tsx"));
+const homeContentSource = readSafe(join(moduleRoot, "data", "home-content.ts"));
+const routesSource = readSafe(join(root, "src", "modules", "company-launch-kit", "config", "routes.ts"));
+// The homepage hero is rendered by HeroSection from HERO_CONTENT. Keep this
+// contract aligned with that single source of truth instead of searching the
+// page entrypoint for stale, previously hard-coded marketing copy.
+pass("page:hero_component_wired", pageSource.includes("<HeroSection />"));
+pass("page:hero_h1_from_content", heroComponentSource.includes("<h1") && heroComponentSource.includes("HERO_CONTENT.headline"));
+pass("page:hero_current_headline", homeContentSource.includes('headline: "Stop losing work in the gaps between your tools."'));
+pass("page:hero_primary_cta_demo", homeContentSource.includes('label: "Book a Demo"') && homeContentSource.includes("href: MARKETING_ROUTES.contact") && routesSource.includes('contact: "/contact"'));
+pass("page:hero_secondary_cta_solutions", homeContentSource.includes('label: "Explore Solutions"') && homeContentSource.includes("href: MARKETING_ROUTES.solutions") && routesSource.includes('solutions: "/solutions"'));
 // The school-specific positioning moved to its own route (the h1 is rendered
 // by PremiumPageShell, so match the page's title source instead of the tag).
 const schoolPageSource = readSafe(join(root, "app", "(marketing)", "school-erp", "page.tsx"));
