@@ -37,13 +37,15 @@ export function useAiCommandCenter() {
         if (!dashboard) return;
         const updated = aiCommandCenterService.acceptRecommendation(dashboard.recommendations, id);
         setDashboard({ ...dashboard, recommendations: updated });
-    }, [dashboard]);
+        if (ctx) void aiCommandCenterService.persistRecommendationStatus(ctx, id, "accepted").catch(() => undefined);
+    }, [dashboard, ctx]);
 
     const dismissRecommendation = useCallback((id: string) => {
         if (!dashboard) return;
         const updated = aiCommandCenterService.dismissRecommendation(dashboard.recommendations, id);
         setDashboard({ ...dashboard, recommendations: updated });
-    }, [dashboard]);
+        if (ctx) void aiCommandCenterService.persistRecommendationStatus(ctx, id, "dismissed").catch(() => undefined);
+    }, [dashboard, ctx]);
 
     return { loading, dashboard, refresh, acceptRecommendation, dismissRecommendation };
 }
