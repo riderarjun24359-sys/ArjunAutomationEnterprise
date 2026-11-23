@@ -3,7 +3,6 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { deliveryEngineService } from "@/src/modules/delivery-engine/services/delivery-engine-orchestrator.service";
 import { supportService } from "@/src/modules/support/services/support.service";
 import { customerSuccessGlobalOpsService } from "@/src/modules/customer-success-global-ops/services/customer-success-global-ops.service";
-import { productionReadinessService } from "@/src/modules/production-readiness/services/production-readiness.service";
 import type { AccContext } from "../types";
 
 export async function fetchBusinessSnapshot(ctx: AccContext) {
@@ -74,16 +73,16 @@ export async function fetchGlobalOpsSnapshot(ctx: AccContext) {
     }
 }
 
-export async function fetchProductionSnapshot(ctx: AccContext) {
-    try {
-        const snapshot = await productionReadinessService.getSnapshot(ctx);
-        return {
-            overallScore: snapshot.ctoAudit.overallScore,
-            alerts: snapshot.ctoAudit.systemAlerts.length,
-            platformHealth: snapshot.ctoAudit.platformHealth,
-            available: true,
-        };
-    } catch {
-        return { overallScore: 0, alerts: 1, platformHealth: 0, available: false };
-    }
+export async function fetchProductionSnapshot(_ctx: AccContext) {
+    // Platform Operations currently uses in-memory seeded backups, random latency
+    // and simulated health components. It is not an authoritative production monitor.
+    // Keep Command Centre health unknown until a real provider/backup verification
+    // integration supplies timestamped evidence.
+    return {
+        overallScore: 0,
+        alerts: 0,
+        platformHealth: 0,
+        available: false,
+        reason: "Production health and backup evidence is simulated, not externally verified",
+    };
 }
