@@ -24,6 +24,7 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { buildProductionHealthReport } from "@/src/lib/production-health";
 import { EXECUTABLE_ACTIONS, runLocalWorkflow } from "../lib/local-worker";
+import { validateWebhookTarget } from "../lib/webhook-action";
 import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
 import { taskService } from "@/src/modules/tasks/services/task.service";
 import type {
@@ -37,6 +38,15 @@ import type {
     WorkflowExecution,
     WorkflowTemplate,
 } from "@/src/modules/automation/types";
+
+function hostOf(rawUrl: string): string {
+    try {
+        return new URL(rawUrl).hostname.toLowerCase().replace(/\\.$/, "");
+    } catch {
+        return "";
+    }
+}
+
 
 export class AutomationService {
     private async getContext(authUserId: string, email: string, fullName?: string | null) {
@@ -337,11 +347,18 @@ export class AutomationService {
     ) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const name = input.name.trim();
+        const url = input.url.trim();
+        if (!name) throw new Error("Webhook name is required");
+        if (input.secret.length < 16) throw new Error("Webhook secret must be at least 16 characters");
+        const hosts = (input.allowedHosts ?? []).map((host) => host.trim().toLowerCase()).filter(Boolean);
+        const checked = validateWebhookTarget(url, hosts.length ? hosts : [hostOf(url)]);
+        if (!checked.ok) throw new Error(checked.error ?? "Invalid webhook target");
         const response = await fetch("/api/automation/webhooks", {
             method: "POST",
             credentials: "same-origin",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify(input),
+            body: JSON.stringify({ ...input, name, url, allowedHosts: hosts.length ? hosts : [checked.host as string] }),
         });
         const result = await response.json().catch(() => null) as { error?: string; webhook?: { id: string; name: string } } | null;
         if (!response.ok || !result?.webhook) {
