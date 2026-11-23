@@ -3,10 +3,18 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/src/store/auth.store";
 import { organizationService } from "@/src/modules/organization/services/organization.service";
+import type {
+    OrganizationInvitationSummary,
+    OrganizationMembershipSummary,
+    OrganizationMemberSummary,
+    OrganizationSummary,
+    WorkspaceSummary,
+} from "@/src/modules/organization/types";
+
 function persistOrganizationSelection(organizationId: string | null): void {
     if (typeof window === "undefined") return;
     if (organizationId) {
-        persistOrganizationSelection(organizationId);
+        window.localStorage.setItem("aae:selected-organization", organizationId);
         const secure = window.location.protocol === "https:" ? "; Secure" : "";
         document.cookie = `aae_selected_organization=${encodeURIComponent(organizationId)}; Path=/; SameSite=Lax; Max-Age=31536000${secure}`;
     } else {
@@ -15,13 +23,6 @@ function persistOrganizationSelection(organizationId: string | null): void {
     }
 }
 
-import type {
-    OrganizationInvitationSummary,
-    OrganizationMembershipSummary,
-    OrganizationMemberSummary,
-    OrganizationSummary,
-    WorkspaceSummary,
-} from "@/src/modules/organization/types";
 
 export function useOrganization() {
     const user = useAuthStore((s) => s.user);
