@@ -24,8 +24,8 @@ export function InvoiceCenterPanel({ items }: { items: InvoiceCenterItem[] }) {
                             <p className="font-semibold text-[var(--dos-text-primary)]">{item.number}</p>
                             <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">{item.accountOrClient}</p>
                         </div>
-                        <Badge variant={item.amountDueUsd <= 0 ? "success" : (item.daysOverdue ?? 0) > 0 ? "error" : "warning"}>
-                            {item.paymentStatus}
+                        <Badge variant={(item.daysOverdue ?? 0) > 0 ? "error" : "warning"}>
+                            {item.paymentStatus} · not reconciled
                         </Badge>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-secondary)]">
