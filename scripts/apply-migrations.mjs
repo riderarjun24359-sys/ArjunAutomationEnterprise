@@ -54,17 +54,20 @@ try {
     await client.query("SELECT pg_advisory_lock(741920261)");
     lockAcquired = true;
 
+    await client.query("CREATE SCHEMA IF NOT EXISTS arjun_internal");
+    await client.query("REVOKE ALL ON SCHEMA arjun_internal FROM PUBLIC");
     await client.query(`
-        CREATE TABLE IF NOT EXISTS public.arjun_schema_migrations (
+        CREATE TABLE IF NOT EXISTS arjun_internal.schema_migrations (
             version text PRIMARY KEY,
             filename text NOT NULL,
             checksum text NOT NULL,
             applied_at timestamptz NOT NULL DEFAULT now()
         )
     `);
+    await client.query("REVOKE ALL ON TABLE arjun_internal.schema_migrations FROM PUBLIC");
 
     const { rows } = await client.query(
-        "SELECT version, filename, checksum FROM public.arjun_schema_migrations",
+        "SELECT version, filename, checksum FROM arjun_internal.schema_migrations",
     );
     const applied = new Map(rows.map((row) => [row.version, row]));
 
@@ -87,7 +90,7 @@ try {
         // (for example CREATE INDEX CONCURRENTLY) are not transaction-safe.
         await client.query(migration.sql);
         await client.query(
-            "INSERT INTO public.arjun_schema_migrations (version, filename, checksum) VALUES ($1, $2, $3)",
+            "INSERT INTO arjun_internal.schema_migrations (version, filename, checksum) VALUES ($1, $2, $3)",
             [version, migration.file, migration.checksum],
         );
         console.log(`APPLIED: ${migration.file}`);
