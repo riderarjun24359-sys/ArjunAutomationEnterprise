@@ -75,6 +75,7 @@ export interface RevenueSummaryLive {
     openInvoiceCount: number;
     invoiceCount: number;
     currency: string;
+    verified: boolean;
     label: string;
     detail: string;
 }
@@ -89,6 +90,7 @@ export interface LiveOperationsStats {
     source: "supabase" | "fallback";
     fetchedAt: string;
     organizationId: string | null;
+    integrationIssues: string[];
 }
 
 export type ActivityModuleFilter = "crm" | "projects" | "tasks" | "finance" | "system";
