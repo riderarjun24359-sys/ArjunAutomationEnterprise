@@ -342,21 +342,47 @@ export function AccountingExportsPanel({ data }: { data: IntegrationPlatformData
 }
 
 export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
-    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":""} });
+    const form = useForm<apiKeysFormValues>({ resolver: zodResolver(apiKeysFormSchema), defaultValues: {"integrationHubId":"","keyName":"","keyPrefix":"","apiVersion":"v1"} });
     return (
         <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-            <Card hover><SectionHeader title="Api Keys" description="Enterprise integration platform api keys" /><div className="mt-6 space-y-3">
-                {data.apiKeys.length === 0 ? <EmptyState title="No api keys" description="Create the first api keys record." /> : data.apiKeys.map((item) => (
-                    <ListCard key={item.id} title={String(item.keyName)} subtitle={`${item.hubName ? item.hubName + " • " : ""}${item.apiVersion}`} meta={`${item.status}`} />
-                ))}
-            </div></Card>
-            <Card hover><SectionHeader title="Create api keys" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
-                <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
-                <input {...form.register("keyName")} placeholder="keyName" className={inputClass} />
-                <input {...form.register("keyPrefix")} placeholder="keyPrefix" className={inputClass} />
-                <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
-                <SaveButton loading={form.formState.isSubmitting} label="Create" />
-            </form></Card>
+            <Card hover>
+                <SectionHeader title="API keys" description="Credentials are stored as one-way SHA-256 digests. Full secrets are never listed." />
+                <div className="mt-6 space-y-3">
+                    {data.apiKeys.length === 0 ? <EmptyState title="No API keys" description="Create the first integration credential." /> : data.apiKeys.map((item) => (
+                        <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                            <div>
+                                <p className="font-medium">{item.keyName}</p>
+                                <p className="text-sm text-slate-500">{item.hubName ? item.hubName + " • " : ""}{item.apiVersion}</p>
+                                <p className="mt-1 text-xs text-slate-500">{item.status}</p>
+                            </div>
+                            {item.status === "active" ? (
+                                <button type="button" onClick={() => data.revokeApiKey(item.id)} className="rounded-full border border-red-300 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-300 dark:hover:bg-red-950">Revoke</button>
+                            ) : null}
+                        </div>
+                    ))}
+                </div>
+                {data.newlyIssuedApiKey ? (
+                    <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+                        <p className="font-semibold text-amber-950 dark:text-amber-100">Copy this API key now</p>
+                        <p className="mt-1 text-xs text-amber-900 dark:text-amber-200">This secret is shown only once. Close this panel only after saving it securely.</p>
+                        <code className="mt-3 block break-all rounded-xl bg-white p-3 text-xs text-slate-900 dark:bg-slate-950 dark:text-slate-100">{data.newlyIssuedApiKey}</code>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                            <button type="button" onClick={() => navigator.clipboard.writeText(data.newlyIssuedApiKey ?? "")} className="rounded-full bg-slate-900 px-4 py-2 text-xs font-medium text-white dark:bg-white dark:text-slate-900">Copy key</button>
+                            <button type="button" onClick={data.clearNewlyIssuedApiKey} className="rounded-full border border-amber-400 px-4 py-2 text-xs font-medium text-amber-950 dark:text-amber-100">Hide secret</button>
+                        </div>
+                    </div>
+                ) : null}
+            </Card>
+            <Card hover>
+                <SectionHeader title="Create API key" description="Issue a new organization-scoped integration credential" />
+                <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
+                    <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
+                    <input {...form.register("keyName")} placeholder="Key name (e.g. production-sync)" className={inputClass} />
+                    <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
+                    <p className="text-xs text-slate-500">Only organization admins can issue or revoke keys. Save the secret immediately; it cannot be recovered later.</p>
+                    <SaveButton loading={form.formState.isSubmitting} label="Issue API key" />
+                </form>
+            </Card>
         </div>
     );
 }
