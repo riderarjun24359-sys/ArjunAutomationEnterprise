@@ -1,4 +1,5 @@
 import { businessPlatformService } from "@/src/modules/business-platform/services/business-platform.service";
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { deliveryEngineService } from "@/src/modules/delivery-engine/services/delivery-engine-orchestrator.service";
 import { supportService } from "@/src/modules/support/services/support.service";
 import { customerSuccessGlobalOpsService } from "@/src/modules/customer-success-global-ops/services/customer-success-global-ops.service";
@@ -7,7 +8,9 @@ import type { AccContext } from "../types";
 
 export async function fetchBusinessSnapshot(ctx: AccContext) {
     try {
-        const dash = await businessPlatformService.getDashboard(ctx);
+        const organizationId = ctx.organizationId ?? (await resolveOrganizationContext(ctx.authUserId, ctx.email, ctx.fullName))?.organizationId;
+        if (!organizationId) throw new Error("Organization context unavailable");
+        const dash = await businessPlatformService.getDashboard({ ...ctx, organizationId });
         return {
             activeClients: dash.activeClients,
             activeProjects: dash.activeProjects,
@@ -39,7 +42,9 @@ export async function fetchSupportSnapshot(ctx: AccContext) {
 
 export async function fetchDeliverySnapshot(ctx: AccContext) {
     try {
-        const dash = await deliveryEngineService.getDashboard(ctx);
+        const organizationId = ctx.organizationId ?? (await resolveOrganizationContext(ctx.authUserId, ctx.email, ctx.fullName))?.organizationId;
+        if (!organizationId) throw new Error("Organization context unavailable");
+        const dash = await deliveryEngineService.getDashboard({ ...ctx, organizationId });
         return {
             activeEngagements: dash.activeEngagements,
             qualityPassRate: dash.activeEngagements > 0 ? dash.qualityPassRate : 0,
