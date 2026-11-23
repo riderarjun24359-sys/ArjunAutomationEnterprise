@@ -1,10 +1,10 @@
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import type { AccAlert, AccAutomation, AccDecision, AccRecommendation } from "../types";
 
 export class AiCommandCenterRepository {
     async listAlerts(orgId: string): Promise<AccAlert[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
         const { data, error } = await client
             .from("acc_alerts")
             .select("*")
