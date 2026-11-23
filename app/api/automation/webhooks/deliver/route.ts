@@ -18,6 +18,42 @@ function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+async function readBoundedJson(
+    request: Request,
+    maxBytes: number,
+): Promise<{ ok: true; value: unknown } | { ok: false; tooLarge: boolean }> {
+    const reader = request.body?.getReader();
+    if (!reader) return { ok: false, tooLarge: false };
+
+    const chunks: Uint8Array[] = [];
+    let totalBytes = 0;
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (!value) continue;
+            totalBytes += value.byteLength;
+            if (totalBytes > maxBytes) {
+                await reader.cancel().catch(() => undefined);
+                return { ok: false, tooLarge: true };
+            }
+            chunks.push(value);
+        }
+
+        const bytes = new Uint8Array(totalBytes);
+        let offset = 0;
+        for (const chunk of chunks) {
+            bytes.set(chunk, offset);
+            offset += chunk.byteLength;
+        }
+        return { ok: true, value: JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)) as unknown };
+    } catch {
+        return { ok: false, tooLarge: false };
+    } finally {
+        reader.releaseLock();
+    }
+}
+
 export async function POST(request: Request) {
     const { context, error } = await secureApiRoute(request, {
         permission: "integrationManage",
@@ -28,15 +64,19 @@ export async function POST(request: Request) {
     if (!context.organizationId) return NextResponse.json({ error: "Organization context required" }, { status: 403 });
 
     const declaredLength = Number(request.headers.get("content-length") ?? 0);
-    if (declaredLength > 64 * 1024) {
+    if (Number.isFinite(declaredLength) && declaredLength > 64 * 1024) {
         return NextResponse.json({ error: "Webhook payload exceeds 64 KB" }, { status: 413 });
     }
-    let body: unknown;
-    try {
-        body = await request.json();
-    } catch {
-        return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    // Enforce the byte cap while reading, not only from Content-Length: chunked
+    // or dishonest requests must not be able to allocate an unbounded JSON body.
+    const parsedBody = await readBoundedJson(request, 64 * 1024);
+    if (!parsedBody.ok) {
+        return NextResponse.json(
+            { error: parsedBody.tooLarge ? "Webhook payload exceeds 64 KB" : "Invalid JSON body" },
+            { status: parsedBody.tooLarge ? 413 : 400 },
+        );
     }
+    const body = parsedBody.value;
     if (!isRecord(body)) return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
 
     const input = body as unknown as DeliveryInput;
