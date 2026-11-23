@@ -19,7 +19,7 @@ const tabs = [
 ];
 
 export function OrganizationPage() {
-    const { organizations, memberships, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError } = useOrganization();
+    const { organizations, memberships, workspaces, members, invitations, loading, selectedOrganizationId, selectOrganization, revokeInvitation, revokingInvitationId, invitationActionError } = useOrganization();
     const [activeTab, setActiveTab] = useState<(typeof ORGANIZATION_TABS)[keyof typeof ORGANIZATION_TABS]>(ORGANIZATION_TABS.overview);
 
     if (loading) {
@@ -40,6 +40,28 @@ export function OrganizationPage() {
                         <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300">Enterprise-ready governance</div>
                     </div>
                 </motion.header>
+
+                {memberships.length > 1 ? (
+                    <section className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm font-semibold">Active organization</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Switching is limited to active memberships assigned to your account.</p>
+                        </div>
+                        <select
+                            aria-label="Select active organization"
+                            value={selectedOrganizationId ?? ""}
+                            onChange={(event) => selectOrganization(event.target.value)}
+                            className="min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+                        >
+                            <option value="" disabled>Select an organization</option>
+                            {memberships.map((membership) => (
+                                <option key={membership.organizationId} value={membership.organizationId} disabled={membership.status !== "active"}>
+                                    {membership.name} · {membership.status}
+                                </option>
+                            ))}
+                        </select>
+                    </section>
+                ) : null}
 
                 <div className="flex flex-wrap gap-2">
                     {tabs.map((tab) => (
@@ -72,7 +94,7 @@ export function OrganizationPage() {
                                 ))}
                             </div>
                             <p role="status" className="mt-4 text-sm text-amber-700 dark:text-amber-300">
-                                Organization switching is not enabled yet. No organization has been chosen automatically, to prevent access to the wrong tenant.
+                                Select an active organization above to open its workspace. Suspended organizations remain unavailable.
                             </p>
                         </Card>
                     ) : (
