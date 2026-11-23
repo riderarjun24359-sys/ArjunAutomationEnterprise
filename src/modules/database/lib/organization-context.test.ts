@@ -53,6 +53,18 @@ describe("organization context bootstrap", () => {
         expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
     });
 
+    it("fails closed when a user has multiple active organization memberships", async () => {
+        mocks.profilesGetByAuthUser.mockResolvedValue(profile("pm"));
+        mocks.membershipsGetByUser.mockResolvedValue([
+            membership("org-a", "pm"),
+            membership("org-b", "pm"),
+        ]);
+        const ctx = await resolveOrganizationContext("auth-pm", "multi@test.dev");
+        expect(ctx).toBeNull();
+        expect(mocks.organizationsList).not.toHaveBeenCalled();
+        expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
+    });
+
     it("bootstraps a first-run user into an empty organization", async () => {
         mocks.profilesGetByAuthUser.mockResolvedValue(profile("p9"));
         mocks.membershipsGetByUser.mockResolvedValue([]);
