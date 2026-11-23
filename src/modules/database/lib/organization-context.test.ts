@@ -44,6 +44,7 @@ const membership = (org: string, user: string, active = true) => ({
 describe("organization context bootstrap", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        if (typeof window !== "undefined") window.localStorage.removeItem("aae:selected-organization");
         mocks.organizationsGetById.mockResolvedValue({ id: "org-1", status: "active" });
     });
 
@@ -91,6 +92,39 @@ describe("organization context bootstrap", () => {
         expect(ctx).toBeNull();
         expect(mocks.organizationsList).not.toHaveBeenCalled();
         expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
+    });
+
+    it("uses a browser-selected tenant only when it matches an active membership", async () => {
+        mocks.profilesGetByAuthUser.mockResolvedValue(profile("p-selected"));
+        mocks.membershipsGetByUser.mockResolvedValue([
+            membership("org-a", "p-selected"),
+            membership("org-b", "p-selected"),
+        ]);
+        if (typeof window !== "undefined") {
+            window.localStorage.setItem("aae:selected-organization", "org-b");
+        }
+
+        const ctx = await resolveOrganizationContext("auth-p-selected", "selected@test.dev");
+
+        expect(ctx).toEqual({ profileId: "p-selected", organizationId: "org-b" });
+        expect(mocks.organizationsGetById).toHaveBeenCalledWith("org-b");
+        expect(mocks.membershipsEnsure).not.toHaveBeenCalled();
+    });
+
+    it("rejects a saved tenant selection that is not in the active membership list", async () => {
+        mocks.profilesGetByAuthUser.mockResolvedValue(profile("p-forged"));
+        mocks.membershipsGetByUser.mockResolvedValue([
+            membership("org-a", "p-forged"),
+            membership("org-b", "p-forged"),
+        ]);
+        if (typeof window !== "undefined") {
+            window.localStorage.setItem("aae:selected-organization", "org-outsider");
+        }
+
+        const ctx = await resolveOrganizationContext("auth-p-forged", "forged@test.dev");
+
+        expect(ctx).toBeNull();
+        expect(mocks.organizationsGetById).not.toHaveBeenCalled();
     });
 
     it("bootstraps a first-run user into an empty organization", async () => {
