@@ -31,7 +31,7 @@ export async function fetchSupportSnapshot(ctx: AccContext) {
             knowledgeArticles: stats.knowledgeArticles,
         };
     } catch {
-        return { openTickets: 0, slaCompliance: 100, supportHealth: 90, incidents: 0, knowledgeArticles: 0 };
+        return { openTickets: 0, slaCompliance: 0, supportHealth: 0, incidents: 0, knowledgeArticles: 0 };
     }
 }
 
@@ -44,7 +44,7 @@ export async function fetchDeliverySnapshot(ctx: AccContext) {
             pendingAi: dash.pendingAiRecommendations,
         };
     } catch {
-        return { activeEngagements: 0, qualityPassRate: 100, pendingAi: 0 };
+        return { activeEngagements: 0, qualityPassRate: 0, pendingAi: 0 };
     }
 }
 
@@ -60,7 +60,7 @@ export async function fetchGlobalOpsSnapshot(ctx: AccContext) {
             escalations: dash.escalations.length,
         };
     } catch {
-        return { customerHealth: 75, deliveryHealth: 85, supportHealth: 85, renewalsDue: 0, mrr: 0, escalations: 0 };
+        return { customerHealth: 0, deliveryHealth: 0, supportHealth: 0, renewalsDue: 0, mrr: 0, escalations: 0 };
     }
 }
 
@@ -73,6 +73,6 @@ export async function fetchProductionSnapshot(ctx: AccContext) {
             platformHealth: snapshot.ctoAudit.platformHealth,
         };
     } catch {
-        return { overallScore: 90, alerts: 0, platformHealth: 90 };
+        return { overallScore: 0, alerts: 1, platformHealth: 0 };
     }
 }
