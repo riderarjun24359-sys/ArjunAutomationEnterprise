@@ -39,24 +39,20 @@ export function buildDeliveryStatusSummary(input: {
     };
 }
 
-export function buildAgentStatuses(input: {
+export function buildAgentStatuses(_input: {
     executiveAgentCount?: number;
     pendingApprovals?: number;
     systemHealth: number;
 }): AccAgentStatus[] {
-    const now = new Date().toISOString();
-    return ACC_AGENT_KEYS.map((key, i) => {
-        const health = clampScore(input.systemHealth - i * 2 + (input.pendingApprovals ? -3 : 0));
-        const status: AccAgentStatus["status"] =
-            health < 70 ? "degraded" : (input.pendingApprovals ?? 0) > 0 && key === "orchestrator" ? "processing" : health >= 85 ? "active" : "idle";
-        return {
-            key,
-            label: key === "orchestrator" ? "AI Orchestrator" : `${key.toUpperCase()} AI`,
-            status,
-            healthScore: health,
-            lastActivity: now,
-        };
-    });
+    // System health is not proof that an individual agent or provider is online.
+    // Until each agent reports a heartbeat, expose an explicit unknown state.
+    return ACC_AGENT_KEYS.map((key) => ({
+        key,
+        label: key === "orchestrator" ? "AI Orchestrator" : `${key.toUpperCase()} AI`,
+        status: "unknown",
+        healthScore: 0,
+        lastActivity: "",
+    }));
 }
 
 export function computeAgentHealth(agents: AccAgentStatus[]): number {
