@@ -39,6 +39,7 @@ check("recommendation action API scopes updates to organization", actionRoute.in
 const jarvis = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-window.ts");
 check("Jarvis excludes Sunday and enforces 08:00-21:00 IST", jarvis.includes('values.weekday !== "Sun"') && jarvis.includes("hour >= 8 && hour < 21"));
 check("Jarvis route uses shared calling-window policy", read("src/app/api/ai-sales/jarvis/call/route.ts").includes("withinJarvisCallingWindow"));
+check("deal Won remains blocked until verified payment mapping", read("src/app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
 
 const migrationDir = join(root, "supabase", "migrations");
 const migrationFiles = readdirSync(migrationDir).filter((file) => file.endsWith(".sql")).sort();
