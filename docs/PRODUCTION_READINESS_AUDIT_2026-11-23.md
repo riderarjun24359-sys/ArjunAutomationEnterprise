@@ -66,3 +66,7 @@ Live catalog checks confirmed:
 ## Production sign-off gate
 
 Do not onboard sensitive customer data until the remaining Auth setting is enabled, the latest CI run passes, two-tenant/memberless/suspended-tenant negative tests pass against the live project, and backup/restore plus monitoring evidence is available. INR accounting and durable automation/voice capabilities must be completed before those features are represented as production-ready.
+
+## Additional database grant hardening — pending migration
+
+A subsequent privilege audit found that `webhook_idempotency` still had inherited table privileges for `anon` and `authenticated`, despite its deny-all RLS policy. Current RLS prevents row access, but the grants are unnecessary and weaken defense in depth. Migration `202611230120_webhook_idempotency_server_only.sql` now revokes all browser/public privileges and grants access only to `service_role`. This migration has been committed to `main` but has **not** been applied to production; it must be included in the next approved database migration window.
