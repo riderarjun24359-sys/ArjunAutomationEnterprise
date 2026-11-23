@@ -7,7 +7,7 @@ export class ActivityLogRepository extends BaseRepository<DbActivityLog> {
 
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbActivityLog[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        if (!client || getSelectedOrganizationId() !== organizationId) {
             return [];
         }
 
@@ -48,7 +48,8 @@ export class ActivityLogRepository extends BaseRepository<DbActivityLog> {
 
     async create(input: Record<string, unknown>): Promise<DbActivityLog | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || input.organization_id !== organizationId) {
             return null;
         }
 
