@@ -7,10 +7,11 @@ export function buildRecommendations(input: {
     supportHealth: number;
     deliveryHealth: number;
     pendingAi: number;
+    organizationId?: string | null;
 }): AccRecommendation[] {
     const now = new Date().toISOString();
     const stableId = (engineKey: string, title: string) => {
-        const source = `${engineKey}:${title}`;
+        const source = `${input.organizationId ?? "unresolved"}:${engineKey}:${title}`;
         const hash = (seed: number) => {
             let value = seed >>> 0;
             for (let i = 0; i < source.length; i += 1) {
