@@ -1,3 +1,11 @@
+export interface OrganizationMembershipSummary {
+    organizationId: string;
+    name: string;
+    slug: string;
+    status: "active" | "inactive" | "suspended";
+    roleName: string;
+}
+
 export interface OrganizationSummary {
     id: string;
     name: string;
