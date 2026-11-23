@@ -42,7 +42,7 @@ export async function fetchDeliverySnapshot(ctx: AccContext) {
         const dash = await deliveryEngineService.getDashboard(ctx);
         return {
             activeEngagements: dash.activeEngagements,
-            qualityPassRate: dash.qualityPassRate,
+            qualityPassRate: dash.activeEngagements > 0 ? dash.qualityPassRate : 0,
             pendingAi: dash.pendingAiRecommendations,
             available: true,
         };
