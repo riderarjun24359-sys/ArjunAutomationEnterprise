@@ -253,7 +253,7 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
             ) : (
                 <Card>
                     <Table
-                        headers={["Deal", "Number", "Stage", "Amount", "Weighted", "Prob", "Status", "Close"]}
+                        headers={["Deal", "Number", "Stage", "Amount (INR est.)", "Weighted (INR est.)", "Prob", "Status", "Close"]}
                         rows={pipeline.listDeals.map((d) => [
                             d.name,
                             d.opportunityNumber,
@@ -273,7 +273,7 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">AI Opportunity Detection</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Opportunity", "Amount", "Prob", "Signal", "Stage", "Status"]}
+                        headers={["Opportunity", "Amount (INR est.)", "Prob", "Signal", "Stage", "Status"]}
                         rows={pipeline.opportunities.map((o) => [
                             o.name,
                             formatInrEstimate(o.amount),
@@ -310,7 +310,7 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Proposal Generator</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Title", "Ref", "Status", "Value"]}
+                        headers={["Title", "Ref", "Status", "Value (INR)"]}
                         rows={documents.proposals.map((d) => [d.title, d.ref, d.status, formatInrEstimate(d.value)])}
                         empty="No proposals"
                     />
@@ -320,7 +320,7 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Quotation Generator</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Title", "Number", "Status", "Value", "Valid until"]}
+                        headers={["Title", "Number", "Status", "Value (INR)", "Valid until"]}
                         rows={documents.quotations.map((d) => [
                             d.title,
                             d.ref,
@@ -479,7 +479,7 @@ export function AnalyticsPanel({ analytics }: { analytics: SalesAnalytics }) {
                 </div>
                 <div className="mt-3">
                     <Table
-                        headers={["Outcome", "Reason", "Competitor", "Amount", "Recorded"]}
+                        headers={["Outcome", "Reason", "Competitor", "Amount (INR)", "Recorded"]}
                         rows={analytics.winLoss.map((w) => [
                             w.outcome,
                             w.reason,
