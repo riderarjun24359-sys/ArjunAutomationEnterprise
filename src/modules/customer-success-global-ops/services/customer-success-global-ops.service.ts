@@ -85,7 +85,7 @@ export class CustomerSuccessGlobalOpsService {
             ? storedImprovements
             : generateImprovementBacklog({
                 feedback,
-                deliveryHealth: delivery.available ? deliveryHealth : null,
+                deliveryHealth: delivery.available && delivery.activeEngagements > 0 ? deliveryHealth : null,
                 supportHealth: support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? supportHealth : null,
                 customerHealth: successPlans.length ? customerHealth : null,
                 openTickets: support.available ? support.openTickets : 0,
