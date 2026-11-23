@@ -36,12 +36,12 @@ export function CustomerSuccessGlobalOpsPage() {
             ) : null}
 
             <StaggerReveal className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Active clients</p><p className="mt-1 text-2xl font-bold">{dash?.activeClients ?? "—"}</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Projects</p><p className="mt-1 text-2xl font-bold">{dash?.activeProjects ?? "—"}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Active clients</p><p className="mt-1 text-2xl font-bold">{hasIssue("business platform") ? "Not available" : dash?.activeClients ?? "—"}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Projects</p><p className="mt-1 text-2xl font-bold">{hasIssue("business platform") ? "Not available" : dash?.activeProjects ?? "—"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Support health</p><p className="mt-1 text-2xl font-bold">{hasIssue("support health") ? "Not available" : dash?.supportHealth != null ? `${dash.supportHealth}%` : "—"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Delivery health</p><p className="mt-1 text-2xl font-bold">{hasIssue("delivery health") ? "Not available" : dash?.deliveryHealth != null ? `${dash.deliveryHealth}%` : "—"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Customer health</p><p className="mt-1 text-2xl font-bold">{hasIssue("customer health") ? "Not available" : dash?.customerHealth != null ? `${dash.customerHealth}%` : "—"}</p></Card></StaggerRevealItem>
-                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Open invoices</p><p className="mt-1 text-2xl font-bold">{dash?.revenueOverview.openInvoices ?? "—"}</p></Card></StaggerRevealItem>
+                <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Open invoices</p><p className="mt-1 text-2xl font-bold">{hasIssue("business platform") ? "Not available" : dash?.revenueOverview.openInvoices ?? "—"}</p></Card></StaggerRevealItem>
                 <StaggerRevealItem><Card hover><p className="text-sm text-[var(--dos-text-secondary)]">Renewals due</p><p className="mt-1 text-2xl font-bold">{dash?.revenueOverview.renewalsDue ?? "—"}</p></Card></StaggerRevealItem>
             </StaggerReveal>
 
