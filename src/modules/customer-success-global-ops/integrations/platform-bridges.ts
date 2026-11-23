@@ -1,11 +1,14 @@
 import { businessPlatformService } from "@/src/modules/business-platform/services/business-platform.service";
+import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { deliveryEngineService } from "@/src/modules/delivery-engine/services/delivery-engine-orchestrator.service";
 import { supportService } from "@/src/modules/support/services/support.service";
 import type { CsgContext, SupportTicketSummary } from "../types";
 
 export async function fetchBusinessPlatformSnapshot(ctx: CsgContext) {
     try {
-        const dash = await businessPlatformService.getDashboard(ctx);
+        const organizationId = ctx.organizationId ?? (await resolveOrganizationContext(ctx.authUserId, ctx.email, ctx.fullName))?.organizationId;
+        if (!organizationId) throw new Error("Organization context unavailable");
+        const dash = await businessPlatformService.getDashboard({ ...ctx, organizationId });
         return {
             activeClients: dash.activeClients,
             activeProjects: dash.activeProjects,
@@ -38,7 +41,9 @@ export async function fetchSupportSnapshot(ctx: CsgContext) {
 
 export async function fetchDeliverySnapshot(ctx: CsgContext) {
     try {
-        const dash = await deliveryEngineService.getDashboard(ctx);
+        const organizationId = ctx.organizationId ?? (await resolveOrganizationContext(ctx.authUserId, ctx.email, ctx.fullName))?.organizationId;
+        if (!organizationId) throw new Error("Organization context unavailable");
+        const dash = await deliveryEngineService.getDashboard({ ...ctx, organizationId });
         return {
             activeEngagements: dash.activeEngagements,
             qualityPassRate: dash.qualityPassRate,
