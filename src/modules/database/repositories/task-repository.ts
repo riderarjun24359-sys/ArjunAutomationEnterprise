@@ -46,6 +46,11 @@ export class TaskRepository extends BaseRepository<DbTask> {
         if (!client || !organizationId || input.organization_id !== organizationId) {
             return null;
         }
+        const projectId = typeof input.project_id === "string" ? input.project_id : null;
+        if (projectId) {
+            const project = await client.from("projects").select("id").eq("id", projectId).eq("organization_id", organizationId).maybeSingle();
+            if (project.error || !project.data) return null;
+        }
 
         const { data, error } = await client.from(this.table).insert(input).select("*").maybeSingle();
         mapRepositoryError(error, "Failed to create task");
