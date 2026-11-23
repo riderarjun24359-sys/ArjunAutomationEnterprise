@@ -97,5 +97,6 @@ export interface AiCommandCenterDashboard {
     decisions: AccDecision[];
     automations: AccAutomation[];
     overallScore: number;
+    integrationIssues: string[];
     fetchedAt: string;
 }
