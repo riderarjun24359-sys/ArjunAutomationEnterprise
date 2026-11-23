@@ -132,14 +132,10 @@ export function createEmptyFounderAnalyticsSnapshot(accessGranted: boolean, reas
 }
 
 export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderExecutiveDashboard {
-    const latestMrr = data.mrrSnapshots[0];
-    const mrrFromSubs = data.subscriptions.filter((s) => isActiveStatus(s.status)).reduce((sum, s) => sum + s.mrr_usd, 0);
-    const mrrUsd = money(Number(latestMrr?.mrr_usd ?? mrrFromSubs));
-    const arrUsd = money(Number(data.arrSnapshots[0]?.arr_usd ?? mrrUsd * 12));
-
-    const collected = data.payments.filter((p) => isPaidPayment(p.status)).reduce((s, p) => s + p.amount, 0);
-    const outstanding = data.invoices.reduce((s, i) => s + i.amount_due, 0);
-    const cashFlowUsd = money(collected - outstanding);
+    // BRV fields are legacy USD snapshots; manual payments are not verified INR settlements.
+    const mrrUsd = 0;
+    const arrUsd = 0;
+    const cashFlowUsd = 0;
 
     const cutoff30 = daysAgo(30);
     const newOrganizations = data.organizations.filter((o) => Date.parse(o.created_at) >= cutoff30).length
@@ -156,7 +152,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
     const conversionBase = trialSubscriptions + paidSubscriptions;
     const trialToPaidConversionPercent = conversionBase > 0 ? pct((paidSubscriptions / conversionBase) * 100) : 0;
     const denom = activeSubscriptions + churned;
-    const churnRatePercent = denom > 0 ? pct((churned / denom) * 100) : pct(Number(latestMrr?.churn_mrr_usd ?? 0) > 0 && mrrUsd > 0 ? (Number(latestMrr?.churn_mrr_usd) / mrrUsd) * 100 : 0);
+    const churnRatePercent = denom > 0 ? pct((churned / denom) * 100) : 0;
     const retentionPercent = pct(Math.max(0, 100 - churnRatePercent));
 
     const sat = data.satisfaction;
@@ -174,8 +170,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
               )
             : null;
 
-    const forecast = data.mrrForecasts[0];
-    const revenueForecastUsd = money(Number(forecast?.projected_mrr_usd ?? mrrUsd) * 12);
+    const revenueForecastUsd = 0;
 
     return {
         mrrUsd,
@@ -189,7 +184,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
         npsScore,
         customerSatisfactionAvg,
         revenueForecastUsd,
-        mrrTrend: trendFromValues(mrrUsd, Number(latestMrr?.previous_mrr_usd ?? mrrUsd)),
+        mrrTrend: "flat",
         activeSubscriptions,
         trialSubscriptions,
         paidSubscriptions,
@@ -248,17 +243,10 @@ export function buildGrowthCenter(data: FounderAnalyticsRawData): FounderGrowthC
         };
     });
 
-    const mrr = data.subscriptions.filter((s) => isActiveStatus(s.status)).reduce((s, x) => s + x.mrr_usd, 0);
-    const paidSubs = data.subscriptions.filter((s) => isActiveStatus(s.status) && !isTrialStatus(s.status)).length;
-    const arpu = paidSubs > 0 ? mrr / paidSubs : mrr;
-    const latestMrr = data.mrrSnapshots[0];
-    const churnRate =
-        mrr > 0 && latestMrr ? Number(latestMrr.churn_mrr_usd ?? 0) / mrr : 0;
-    const ltvUsd = churnRate > 0 ? money(arpu / churnRate) : arpu > 0 ? money(arpu * 12) : null;
-
-    // CAC requires spend data — only compute when campaign metrics imply cost proxies are unavailable → null (no invented spend)
+    // Legacy subscription values are USD-denominated; LTV/CAC remain unavailable until an INR ledger is verified.
+    const ltvUsd: number | null = null;
     const cacUsd: number | null = null;
-    const ltvToCac = cacUsd && ltvUsd ? money(ltvUsd / cacUsd) : null;
+    const ltvToCac: number | null = null;
 
     return {
         acquisitionChannels,
