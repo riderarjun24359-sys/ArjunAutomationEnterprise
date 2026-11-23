@@ -25,7 +25,7 @@ vi.mock("@/src/modules/security-center/engine/api-security-engine", () => ({
 
 vi.mock("@/src/lib/api-audit", () => ({ logApiAudit: mocks.logApiAudit }));
 
-import { secureApiRoute, resolveServerIdentity } from "./api-security";
+import { secureApiRoute, resolveServerIdentity, getClientIp } from "./api-security";
 
 /** Minimal chainable/thenable stand-in for the Supabase query builder. */
 function fakeClient(
@@ -186,5 +186,36 @@ describe("api-security server-side identity resolution", () => {
         const identity = await resolveServerIdentity("auth-6");
         expect(identity.role).toBe("admin");
         expect(identity.organizationId).toBe("org-6");
+    });
+});
+
+
+describe("getClientIp — trusted proxy precedence", () => {
+    it("prefers the Cloudflare client IP over forwarded headers", () => {
+        const request = new Request("https://example.test", {
+            headers: {
+                "cf-connecting-ip": "203.0.113.10",
+                "x-real-ip": "198.51.100.20",
+                "x-forwarded-for": "192.0.2.30, 192.0.2.40",
+            },
+        });
+        expect(getClientIp(request)).toBe("203.0.113.10");
+    });
+
+    it("uses the platform real-IP header before the forwarded chain", () => {
+        const request = new Request("https://example.test", {
+            headers: {
+                "x-real-ip": "198.51.100.20",
+                "x-forwarded-for": "192.0.2.30",
+            },
+        });
+        expect(getClientIp(request)).toBe("198.51.100.20");
+    });
+
+    it("uses the first non-empty forwarded address only as a last fallback", () => {
+        const request = new Request("https://example.test", {
+            headers: { "x-forwarded-for": ", 192.0.2.30, 192.0.2.40" },
+        });
+        expect(getClientIp(request)).toBe("192.0.2.30");
     });
 });
