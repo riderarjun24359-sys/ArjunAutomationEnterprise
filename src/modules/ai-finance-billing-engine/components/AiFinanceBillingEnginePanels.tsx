@@ -60,8 +60,8 @@ function Table({ headers, rows, empty }: { headers: string[]; rows: string[][]; 
     );
 }
 
-function moneyLabel(n: number, currency = "INR") {
-    return `${currency} ${n.toLocaleString()}`;
+function moneyLabel(_n: number, _currency = "INR") {
+    return "Not verified";
 }
 
 export function ExecutiveFinanceDashboardPanel({ dashboard }: { dashboard: ExecutiveFinanceDashboard }) {
