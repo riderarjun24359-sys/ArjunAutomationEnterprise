@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildAgentStatuses, computeClientHealth } from "./health-monitoring.engine";
 import { proposeDecisions } from "./ai-decision.engine";
 import { buildAutomations } from "./automation.engine";
-import { buildSystemAlerts } from "./system-monitor.engine";
+import { buildSystemAlerts, computeSystemHealth } from "./system-monitor.engine";
 import { buildRevenueSummary } from "./executive-analytics.engine";
 import { buildRecommendations } from "./recommendation.engine";
 import { withinJarvisCallingWindow } from "@/src/modules/ai-sales-lead-engine/services/jarvis-calling-window";
@@ -29,6 +29,10 @@ describe("Command Centre trust guarantees", () => {
         });
         expect(revenue.mrr).toBe(0);
         expect(revenue.mrrVerified).toBe(false);
+    });
+
+    it("does not default missing production readiness data to 90 percent", () => {
+        expect(computeSystemHealth({})).toBe(0);
     });
 
     it("does not generate decisions or recommendations from unavailable health sources", () => {
