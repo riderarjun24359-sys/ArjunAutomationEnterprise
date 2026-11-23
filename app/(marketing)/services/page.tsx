@@ -8,9 +8,9 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
-    title: "Custom Websites, AI Automation & Business Portals in Hyderabad",
+    title: "Affordable Websites, WhatsApp Automation & Business Software Across India",
     description:
-        "Arjun Automation builds custom business websites, practical AI and workflow automations, internal portals and managed support for businesses in Hyderabad and Secunderabad.",
+        "Arjun Automations builds affordable websites, WhatsApp and workflow automations, and practical business software for shops, traders, clinics, schools and service businesses across India.",
     path: MARKETING_ROUTES.services,
 };
 
@@ -19,9 +19,10 @@ export const metadata: Metadata = buildMetadata({
     description: PAGE.description,
     path: PAGE.path,
     keywords: [
-        "website development Hyderabad",
-        "business automation Hyderabad",
-        "AI workflow automation Secunderabad",
+        "affordable website development India",
+        "small business website for village shops",
+        "small business automation India",
+        "WhatsApp automation for local business",
         "custom CRM and portals",
         "school ERP development",
     ],
@@ -50,7 +51,7 @@ const services = [
         technology: "The stack is selected for the project. Where appropriate, we use Next.js, React, TypeScript and a content system that your team can maintain.",
         timeline: "Typically 1–2 weeks after content, assets and scope are approved.",
         price: PROJECT_PRICING[0].price,
-        note: "Starting price for a focused 5–7 page website. Extra pages, copywriting, booking systems, advanced integrations and paid third-party services are scoped separately.",
+        note: "Starting price for a focused 1–3 page website. Extra pages, copywriting, booking systems, advanced integrations and paid third-party services are scoped separately.",
     },
     {
         id: "automations",
