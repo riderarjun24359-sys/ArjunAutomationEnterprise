@@ -20,6 +20,29 @@ const migrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();
 
+// Fail closed before opening a database connection or applying any SQL.
+const migrationVersions = new Map();
+const migrationVersionErrors = [];
+for (const file of migrationFiles) {
+    const match = /^(\\d{8,14})_/.exec(file);
+    if (!match) {
+        migrationVersionErrors.push(`Invalid migration timestamp prefix: ${file}`);
+        continue;
+    }
+    const previous = migrationVersions.get(match[1]);
+    if (previous) {
+        migrationVersionErrors.push(`Duplicate migration version ${match[1]}: ${previous} and ${file}`);
+    } else {
+        migrationVersions.set(match[1], file);
+    }
+}
+if (migrationVersionErrors.length > 0) {
+    console.error("FAIL: Migration preflight rejected the migration chain:");
+    for (const error of migrationVersionErrors) console.error(`  - ${error}`);
+    process.exit(1);
+}
+console.log(`PASS: Migration preflight validated ${migrationFiles.length} unique migration versions.`);
+
 const seedFiles = readdirSync(seedsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();

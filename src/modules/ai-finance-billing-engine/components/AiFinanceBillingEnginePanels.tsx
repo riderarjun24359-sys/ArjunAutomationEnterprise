@@ -60,8 +60,8 @@ function Table({ headers, rows, empty }: { headers: string[]; rows: string[][]; 
     );
 }
 
-function moneyLabel(n: number, currency = "INR") {
-    return `${currency} ${n.toLocaleString()}`;
+function moneyLabel(_n: number, _currency = "INR") {
+    return "Not verified";
 }
 
 export function ExecutiveFinanceDashboardPanel({ dashboard }: { dashboard: ExecutiveFinanceDashboard }) {
@@ -227,7 +227,7 @@ export function InvoiceCenterPanel({
                         rows={filtered.map((r) => [
                             r.number,
                             r.clientLabel,
-                            r.status,
+                            `${r.status} · not reconciled`,
                             moneyLabel(r.total, r.currency),
                             r.dueDate || "—",
                             "Preview",
@@ -240,7 +240,7 @@ export function InvoiceCenterPanel({
                             <div className="mt-3 space-y-2 rounded-[var(--dos-radius-md)] border border-[var(--dos-border)] bg-[var(--dos-surface-tertiary)] p-4 text-sm text-[var(--dos-text-secondary)]">
                                 <p className="text-base font-semibold text-[var(--dos-text-primary)]">Invoice {preview.number}</p>
                                 <p>Client: {preview.clientLabel}</p>
-                                <p>Status: {preview.status}</p>
+                                <p>Status: {preview.status} · settlement not verified</p>
                                 <p>Issue: {preview.issueDate}</p>
                                 <p>Due: {preview.dueDate || "—"}</p>
                                 <p>Tax: {moneyLabel(preview.taxAmount, preview.currency)}</p>
@@ -297,7 +297,7 @@ export function PaymentCenterPanel({ payments }: { payments: PaymentCenter }) {
                             r.kind,
                             r.method,
                             moneyLabel(r.amount),
-                            r.status,
+                            `${r.status} · settlement not verified`,
                             r.reference || r.failureReason || "—",
                         ])}
                         empty="No payment timeline"

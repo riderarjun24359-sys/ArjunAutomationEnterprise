@@ -1,17 +1,11 @@
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { productionLog } from "@/src/lib/production-logger";
 import { csgRepository } from "../customer-success-global-ops-repository";
-import { buildOnboardingSessions } from "../engines/client-onboarding.engine";
 import { generateAiRecommendations, generateImprovementBacklog } from "../engines/continuous-improvement.engine";
-import { buildDefaultFeedback, buildSatisfactionTrend, computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
-import {
-    buildDefaultSuccessPlans,
-    buildEscalations,
-    buildRenewals,
-    computeHealthScores,
-} from "../engines/customer-success-os.engine";
+import { computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
+import { computeHealthScores } from "../engines/customer-success-os.engine";
 import { classifyLiveQueue, computeSupportHealth } from "../engines/global-support-center.engine";
-import { buildDeliveryMilestones, computeDeliveryHealth } from "../engines/service-delivery-control.engine";
+import { computeDeliveryHealth } from "../engines/service-delivery-control.engine";
 import { publishGlobalOpsEvent } from "../integrations/mission-core-bridge";
 import {
     fetchBusinessPlatformSnapshot,
@@ -60,30 +54,44 @@ export class CustomerSuccessGlobalOpsService {
             ])
             : [[], [], [], [], [], [], []];
 
-        const successPlans = storedPlans.length ? storedPlans : buildDefaultSuccessPlans(business.activeClients);
+        const successPlans = storedPlans;
         const healthScores = computeHealthScores(successPlans, support.openTickets);
         const customerHealth = healthScores.length
             ? Math.round(healthScores.reduce((s, h) => s + h.score, 0) / healthScores.length)
-            : 75;
-        const renewals = storedRenewals.length ? storedRenewals : buildRenewals(business.activeClients);
-        const escalations = storedEscalations.length ? storedEscalations : buildEscalations(support.incidents);
-        const onboardingSessions = buildOnboardingSessions(business.activeClients, storedOnboarding);
-        const deliveryMilestones = buildDeliveryMilestones(delivery.activeEngagements, storedMilestones);
-        const deliveryHealth = computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones);
-        const feedback = storedFeedback.length ? storedFeedback : buildDefaultFeedback(support.avgSatisfaction);
-        const csatAverage = computeCsatAverage(feedback) || support.avgSatisfaction || 4.2;
+            : 0;
+        const integrationIssues = [
+            business.available ? null : "Business Platform",
+            support.available ? null : "Support",
+            delivery.available ? null : "Delivery Engine",
+            successPlans.length ? null : "Customer health (no success plans)",
+            support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? null : "Support health (no measurable tickets or satisfaction data)",
+            delivery.available && delivery.activeEngagements > 0 ? null : "Delivery health (no active engagements)",
+        ].filter((item): item is string => Boolean(item));
+        const renewals = storedRenewals;
+        const escalations = storedEscalations;
+        const onboardingSessions = storedOnboarding;
+        const deliveryMilestones = storedMilestones;
+        const deliveryHealth = delivery.available && delivery.activeEngagements > 0
+            ? (deliveryMilestones.length
+                ? computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones)
+                : delivery.qualityPassRate)
+            : 0;
+        const feedback = storedFeedback;
+        const csatAverage = computeCsatAverage(feedback);
         const npsScore = computeNpsScore(feedback);
-        const supportHealth = computeSupportHealth(support);
+        const supportHealth = support.available && (support.openTickets > 0 || support.avgSatisfaction > 0)
+            ? computeSupportHealth(support)
+            : 0;
         const queue = classifyLiveQueue(tickets);
 
         const improvementBacklog = storedImprovements.length
             ? storedImprovements
             : generateImprovementBacklog({
                 feedback,
-                deliveryHealth,
-                supportHealth,
-                customerHealth,
-                openTickets: support.openTickets,
+                deliveryHealth: delivery.available && delivery.activeEngagements > 0 ? deliveryHealth : null,
+                supportHealth: support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? supportHealth : null,
+                customerHealth: successPlans.length ? customerHealth : null,
+                openTickets: support.available ? support.openTickets : 0,
             });
 
         const dashboard: GlobalOperationsDashboard = {
@@ -94,7 +102,7 @@ export class CustomerSuccessGlobalOpsService {
             deliveryHealth,
             customerHealth,
             revenueOverview: {
-                mrr: renewals.reduce((s, r) => s + r.amount / 12, 0),
+                mrr: 0, // No provider-verified recurring payment ledger is connected yet.
                 openInvoices: business.openInvoices,
                 renewalsDue: renewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
             },
@@ -114,10 +122,18 @@ export class CustomerSuccessGlobalOpsService {
             csatAverage,
             npsScore,
             improvementBacklog,
-            satisfactionTrend: buildSatisfactionTrend(csatAverage, npsScore),
+            satisfactionTrend: [], // No historical satisfaction ledger is available; never synthesize a trend.
+            integrationIssues,
         };
 
-        dashboard.aiRecommendations = generateAiRecommendations(dashboard);
+        dashboard.aiRecommendations = generateAiRecommendations({
+            customerHealth: successPlans.length ? customerHealth : null,
+            supportHealth: support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? supportHealth : null,
+            deliveryHealth: delivery.available && delivery.activeEngagements > 0 ? deliveryHealth : null,
+            openTickets: support.available ? support.openTickets : 0,
+            renewals,
+            escalations,
+        });
 
         if (orgId) {
             void csgRepository.logAudit(orgId, "dashboard_load", "Global operations dashboard loaded");

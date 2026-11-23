@@ -56,6 +56,8 @@ export interface PaymentCenterItem {
 }
 
 export interface RevenueDashboardMetrics {
+    /** True only after Razorpay settlements are reconciled to exact INR invoices/deals. */
+    revenueVerified: boolean;
     mrrUsd: number;
     arrUsd: number;
     collectedUsd: number;
@@ -71,6 +73,8 @@ export interface RevenueDashboardMetrics {
 }
 
 export interface FinanceExecutiveWidgets {
+    /** True only after Razorpay settlements are reconciled to exact INR invoices/deals. */
+    revenueVerified: boolean;
     mrrUsd: number;
     arrUsd: number;
     outstandingUsd: number;

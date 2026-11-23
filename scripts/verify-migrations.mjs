@@ -1192,6 +1192,32 @@ const migrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();
 
+// Supabase migration history keys migrations by their leading timestamp.
+// Two files with the same timestamp are ambiguous even when their names differ.
+const migrationVersions = new Map();
+const duplicateVersions = [];
+for (const file of migrationFiles) {
+    const match = /^(\d{8,14})_/.exec(file);
+    if (!match) {
+        console.error(`FAIL: Migration filename has no valid timestamp prefix: ${file}`);
+        process.exit(1);
+    }
+    const version = match[1];
+    const previous = migrationVersions.get(version);
+    if (previous) {
+        duplicateVersions.push({ version, files: [previous, file] });
+    } else {
+        migrationVersions.set(version, file);
+    }
+}
+if (duplicateVersions.length > 0) {
+    console.error("FAIL: Duplicate Supabase migration versions detected:");
+    for (const duplicate of duplicateVersions) {
+        console.error(`  - ${duplicate.version}: ${duplicate.files.join(", ")}`);
+    }
+    process.exit(1);
+}
+
 if (migrationFiles.length === 0) {
     console.error("FAIL: No migration files found.");
     process.exit(1);
@@ -1212,6 +1238,24 @@ for (const file of migrationFiles) {
         process.exit(1);
     }
 }
+
+const applyScript = readFileSync(join(root, "scripts", "apply-migrations.mjs"), "utf8");
+const applyPreflight = applyScript.indexOf("const migrationVersionErrors");
+const databaseConnect = applyScript.indexOf("await client.connect()");
+const firstApply = applyScript.indexOf("await client.query(sql)");
+if (
+    applyPreflight < 0 ||
+    databaseConnect < 0 ||
+    firstApply < 0 ||
+    applyPreflight > databaseConnect ||
+    applyPreflight > firstApply ||
+    !applyScript.includes("Duplicate migration version") ||
+    !applyScript.includes("Invalid migration timestamp prefix")
+) {
+    console.error("FAIL: Direct migration apply must reject invalid or duplicate versions before database connection or SQL execution.");
+    process.exit(1);
+}
+console.log("PASS: Direct migration apply rejects invalid and duplicate versions before database access.");
 
 console.log(`PASS: ${migrationFiles.length} migration files validated.`);
 console.log(`PASS: All ${requiredTables.length} required tables are present.`);

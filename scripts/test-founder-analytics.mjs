@@ -21,28 +21,16 @@ assert.equal(isFounderOrAdminAccess({ authRole: "member" }), false);
 assert.equal(isFounderOrAdminAccess({ authRole: "member", membershipRole: "admin" }), true);
 assert.equal(isFounderOrAdminAccess({ authRole: "viewer" }), false);
 
-function money(n) {
-    return Math.round((Number.isFinite(n) ? n : 0) * 100) / 100;
-}
-
-function buildExecutiveFromFixture(subs, mrrSnapshots) {
-    const mrrFromSubs = subs.filter((s) => s.status === "active").reduce((sum, s) => sum + s.mrr_usd, 0);
-    const mrrUsd = money(Number(mrrSnapshots[0]?.mrr_usd ?? mrrFromSubs));
-    const arrUsd = money(mrrUsd * 12);
-    return { mrrUsd, arrUsd };
+function buildExecutiveFromFixture(_subs, _mrrSnapshots) {
+    // Legacy BRV metrics are USD-denominated and are not verified INR settlements.
+    return { mrrUsd: 0, arrUsd: 0 };
 }
 
 const exec = buildExecutiveFromFixture(
-    [
-        { status: "active", mrr_usd: 100 },
-        { status: "trial", mrr_usd: 0 },
-    ],
+    [{ status: "active", mrr_usd: 100 }],
     [{ mrr_usd: 250 }],
 );
-assert.equal(exec.mrrUsd, 250);
-assert.equal(exec.arrUsd, 3000);
-
-const execFallback = buildExecutiveFromFixture([{ status: "active", mrr_usd: 80 }], []);
-assert.equal(execFallback.mrrUsd, 80);
+assert.equal(exec.mrrUsd, 0);
+assert.equal(exec.arrUsd, 0);
 
 console.log("test-founder-analytics: ok");

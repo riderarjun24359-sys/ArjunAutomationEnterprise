@@ -1,0 +1,74 @@
+{
+  "name": "Priya - Consent-Aware Follow-up Dispatcher",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "id": "3b8a54b4-9f3a-4a1a-9b91-000000000001",
+      "name": "Every Minute"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://[ARJUN_OS_HOST]/api/ai-sales/dispatch-followups",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [PRIYA_SALES_DISPATCH_SECRET]"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        300
+      ],
+      "id": "3b8a54b4-9f3a-4a1a-9b91-000000000002",
+      "name": "Dispatch Due Follow-ups"
+    }
+  ],
+  "connections": {
+    "Every Minute": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Due Follow-ups",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "versionId": "3b8a54b4-9f3a-4a1a-9b91-000000000003",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

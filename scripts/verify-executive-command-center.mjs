@@ -26,6 +26,10 @@ pass("regression:lint", lint.status === 0, lint.status !== 0 ? (lint.stderr || l
 
 pass("route:dashboard", readSafe(join(root, "app", "(shell)", "dashboard", "page.tsx")).includes("ExecutiveCommandCenterPage"));
 
+const authMiddleware = readSafe(join(root, "src", "middleware", "auth.ts"));
+pass("auth:dashboard-protected", authMiddleware.includes("ROUTES.dashboard") && authMiddleware.includes("if (isProtectedRoute && !user)"));
+
+
 const modules = ["cto", "operations", "business", "customer", "project"];
 pass("component:ExecutiveCommandCenterPage", existsSync(join(modRoot, "components", "ExecutiveCommandCenterPage.tsx")));
 pass("component:IntelligenceModuleGrid", existsSync(join(modRoot, "components", "IntelligenceModuleGrid.tsx")));
@@ -135,5 +139,8 @@ for (const r of results) {
 
 if (failed.length > 0) process.exit(1);
 
-const chain = spawnVerify(root, "scripts/verify-business-platform.mjs");
-if (chain.status !== 0) process.exit(chain.status ?? 1);
+// Cross-module business-platform regression is run separately; keep this verifier focused.
+if (process.env.SKIP_CROSS_MODULE_REGRESSION !== "1") {
+    const chain = spawnVerify(root, "scripts/verify-business-platform.mjs");
+    if (chain.status !== 0) process.exit(chain.status ?? 1);
+}

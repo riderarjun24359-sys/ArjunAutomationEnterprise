@@ -103,7 +103,7 @@ export default function BlueprintsPage() {
                 path={PAGE.path}
                 breadcrumbs={breadcrumbs}
             />
-            <main className="bg-white text-slate-900">
+            <div className="bg-white text-slate-900">
                 <section className="border-b border-slate-200 bg-slate-50">
                     <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
                         <MarketingBreadcrumbs items={breadcrumbs} />
@@ -174,7 +174,7 @@ export default function BlueprintsPage() {
                         </div>
                     </div>
                 </section>
-            </main>
+            </div>
         </>
     );
 }

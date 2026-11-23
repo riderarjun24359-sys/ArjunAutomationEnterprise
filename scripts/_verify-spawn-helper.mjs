@@ -25,10 +25,26 @@ export function runLint(root) {
 }
 
 export function spawnVerify(root, scriptRel) {
-    return spawnSync(process.execPath, [join(root, scriptRel)], {
+    const result = spawnSync(process.execPath, [join(root, scriptRel)], {
         cwd: root,
         encoding: "utf8",
         timeout: 600_000,
         env: process.env,
     });
+
+    // Preserve nested verifier diagnostics. Previously callers reported only
+    // "failed", hiding the exact assertion that caused CI to stop.
+    if (result.error) {
+        process.stderr.write(`\\n[verify] ${scriptRel} could not complete: ${result.error.message}\\n`);
+    }
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    if (result.signal) {
+        process.stderr.write(`\\n[verify] ${scriptRel} terminated by signal ${result.signal}\\n`);
+    }
+    if (result.status === null && !result.error) {
+        process.stderr.write(`\\n[verify] ${scriptRel} returned no exit status\\n`);
+    }
+
+    return result;
 }

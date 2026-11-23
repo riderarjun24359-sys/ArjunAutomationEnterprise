@@ -6,9 +6,9 @@ function uid(prefix: string): string {
 
 export function generateImprovementBacklog(input: {
     feedback: FeedbackEntry[];
-    deliveryHealth: number;
-    supportHealth: number;
-    customerHealth: number;
+    deliveryHealth: number | null;
+    supportHealth: number | null;
+    customerHealth: number | null;
     openTickets: number;
 }): ImprovementItem[] {
     const items: ImprovementItem[] = [];
@@ -24,7 +24,7 @@ export function generateImprovementBacklog(input: {
         });
     }
 
-    if (input.deliveryHealth < 85) {
+    if (input.deliveryHealth !== null && input.deliveryHealth < 85) {
         items.push({
             id: uid("imp"),
             sourceModule: "serviceDeliveryControl",
@@ -35,7 +35,7 @@ export function generateImprovementBacklog(input: {
         });
     }
 
-    if (input.supportHealth < 85 || input.openTickets > 8) {
+    if (input.supportHealth !== null && (input.supportHealth < 85 || input.openTickets > 8)) {
         items.push({
             id: uid("imp"),
             sourceModule: "globalSupportCenter",
@@ -46,7 +46,7 @@ export function generateImprovementBacklog(input: {
         });
     }
 
-    if (input.customerHealth < 75) {
+    if (input.customerHealth !== null && input.customerHealth < 75) {
         items.push({
             id: uid("imp"),
             sourceModule: "customerSuccessOs",
@@ -57,27 +57,22 @@ export function generateImprovementBacklog(input: {
         });
     }
 
-    items.push({
-        id: uid("imp"),
-        sourceModule: "continuousImprovementEngine",
-        title: "Capture lessons learned from latest delivery cycle",
-        detail: "Auto-generated continuous improvement item",
-        priority: "medium",
-        status: "backlog",
-    });
-
     return items;
 }
 
-export function generateAiRecommendations(dash: Pick<GlobalOperationsDashboard, "customerHealth" | "supportHealth" | "deliveryHealth" | "openTickets" | "renewals" | "escalations">): AiOpsRecommendation[] {
+export function generateAiRecommendations(dash: Omit<Pick<GlobalOperationsDashboard, "customerHealth" | "supportHealth" | "deliveryHealth" | "openTickets" | "renewals" | "escalations">, "customerHealth" | "supportHealth" | "deliveryHealth"> & {
+    customerHealth: number | null;
+    supportHealth: number | null;
+    deliveryHealth: number | null;
+}): AiOpsRecommendation[] {
     const recs: AiOpsRecommendation[] = [];
-    if (dash.customerHealth < 80) {
+    if (dash.customerHealth !== null && dash.customerHealth < 80) {
         recs.push({ id: uid("ai"), module: "customerSuccessOs", title: "Prioritize at-risk health accounts", detail: "Schedule success plan reviews for clients below 75 health.", confidence: 0.88 });
     }
-    if (dash.openTickets > 5) {
+    if (dash.supportHealth !== null && dash.openTickets > 5) {
         recs.push({ id: uid("ai"), module: "globalSupportCenter", title: "Rebalance support queue", detail: "Assign senior agents to breached or aging tickets.", confidence: 0.86 });
     }
-    if (dash.deliveryHealth < 90) {
+    if (dash.deliveryHealth !== null && dash.deliveryHealth < 90) {
         recs.push({ id: uid("ai"), module: "serviceDeliveryControl", title: "Add quality gate before deploy", detail: "Block go-live until quality pass rate recovers.", confidence: 0.9 });
     }
     if (dash.renewals.some((r) => r.status === "in_negotiation")) {
@@ -85,9 +80,6 @@ export function generateAiRecommendations(dash: Pick<GlobalOperationsDashboard, 
     }
     if (dash.escalations.length > 0) {
         recs.push({ id: uid("ai"), module: "globalSupportCenter", title: "Close open escalations within SLA", detail: `${dash.escalations.length} escalations require executive visibility.`, confidence: 0.91 });
-    }
-    if (recs.length === 0) {
-        recs.push({ id: uid("ai"), module: "globalOperationsDashboard", title: "Operations nominal", detail: "Maintain current cadence; continue weekly health reviews.", confidence: 0.8 });
     }
     return recs;
 }

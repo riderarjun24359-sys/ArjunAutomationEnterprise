@@ -14,13 +14,17 @@ export function createEmptyLiveOperationsStats(
             openInvoiceCount: 0,
             invoiceCount: 0,
             currency: "INR",
-            label: "₹0",
-            detail: reason === "no_organization" ? "Sign in to load revenue" : "Unable to load revenue",
+            verified: false,
+            label: "Not verified",
+            detail: reason === "no_organization"
+                ? "Sign in to load revenue"
+                : "Live data unavailable · Razorpay settlement verification is not connected",
         },
         notifications: [],
         source: "fallback",
         fetchedAt: new Date().toISOString(),
         organizationId: null,
+        integrationIssues: [reason === "no_organization" ? "Organization context" : "Database connection"],
     };
 }
 
@@ -58,7 +62,7 @@ export function buildLiveOperationsKpis(liveStats: LiveOperationsStats): Executi
         {
             title: "Revenue Summary",
             value: liveStats.revenue.label,
-            detail: liveStats.revenue.detail || emptyHint,
+            detail: liveStats.revenue.verified ? liveStats.revenue.detail : `Not payment-verified · ${liveStats.revenue.detail || emptyHint}`,
             tone: liveStats.revenue.collected > 0 ? "success" : "neutral",
             trend: liveStats.revenue.collected > 0 ? "up" : "flat",
         },

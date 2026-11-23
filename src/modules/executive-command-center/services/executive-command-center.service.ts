@@ -16,7 +16,6 @@ import { buildIntelligenceModules } from "./module-snapshots";
 import { loadOrganizationOperationsData } from "./organization-operations-data.service";
 import { buildExecutiveDashboardWidgets } from "./executive-widgets.service";
 import { customerSuccessOsService } from "@/src/modules/customer-success/services/customer-success-os.service";
-import { billingFinanceOsService } from "@/src/modules/billing-finance/services/billing-finance-os.service";
 import { hrmsWorkforceOsService } from "@/src/modules/hrms-workforce/services/hrms-workforce-os.service";
 import { integrationHubOsService } from "@/src/modules/integration-hub/services/integration-hub-os.service";
 import { securityCenterOsService } from "@/src/modules/security-center/services/security-center-os.service";
@@ -39,12 +38,14 @@ function buildBrief(
     const opsLine =
         stats.source === "supabase"
             ? ` Ops pulse: ${stats.totalClients} clients, ${stats.activeProjects} active projects, ${stats.openTasks} open tasks.`
-            : "";
+            : ` Operational data unavailable: ${stats.integrationIssues.join(", ") || "check organization database access"}.`;
     return {
         title: `Executive brief — ${org}`,
         summary: top.length
-            ? `Today requires attention on ${top.length} priority area${top.length === 1 ? "" : "s"}: ${top.map((t) => t.title).join("; ")}.${opsLine}`
-            : `All systems nominal. Monitor growth opportunities and client lifecycle signals.${opsLine}`,
+            ? `Today requires attention on ${top.length} priority area${top.length === 1 ? "" : "s"}: ${top.map((t) => t.title).join("; ")}.${stats.source === "fallback" ? " Operational data is incomplete." : ""}${opsLine}`
+            : stats.source === "fallback"
+                ? `Live operational data is unavailable. Do not interpret fallback metrics as healthy status.${opsLine}`
+                : `No high-priority alerts were found in the loaded operational records. This is not a provider heartbeat check.${opsLine}`,
         generatedAt: new Date().toISOString(),
         priorities: top.map((t) => t.title),
     };
@@ -90,14 +91,16 @@ export class ExecutiveCommandCenterService {
     }
 
     private async buildSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
+        const operationsPromise = loadOrganizationOperationsData(authUserId, email, fullName)
+            .then((data) => ({ data, error: false }))
+            .catch(() => ({ data: null, error: true }));
         const [
             overview,
             eip,
             aix,
             business,
-            opsData,
+            operationsResult,
             csSnapshot,
-            financeSnapshot,
             hrmsSnapshot,
             integrationSnapshot,
             securitySnapshot,
@@ -106,17 +109,17 @@ export class ExecutiveCommandCenterService {
             fetchEipStats(authUserId, email, fullName),
             fetchAixStats(authUserId, email, fullName),
             fetchBusinessPlatformDashboard(authUserId, email, fullName).catch(() => null),
-            loadOrganizationOperationsData(authUserId, email, fullName).catch(() => null),
+            operationsPromise,
             customerSuccessOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
-            billingFinanceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             hrmsWorkforceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             integrationHubOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             securityCenterOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
         ]);
 
+        const opsData = operationsResult.data;
         const liveStats = opsData
             ? buildLiveOperationsStatsFromData(opsData)
-            : createEmptyLiveOperationsStats(opsData === null ? "no_organization" : "error");
+            : createEmptyLiveOperationsStats(operationsResult.error ? "error" : "no_organization");
 
         const signals: ExecutiveRawSignals = { overview, eip, aix, business, liveStats };
         const attentionToday = runPriorityEngine(signals);
@@ -130,15 +133,15 @@ export class ExecutiveCommandCenterService {
         }));
         const notifications = mergeNotifications(liveStats.notifications, attentionNotifications);
         const modules = buildIntelligenceModules(signals);
-        const unifiedScore = Math.round(
-            (eip.overallIntelligenceScore + aix.avgAiConfidenceScore + aix.businessScore + eip.businessHealthScore) / 4,
-        );
+        const unifiedScore = liveStats.source === "supabase"
+            ? Math.round((eip.overallIntelligenceScore + aix.avgAiConfidenceScore + aix.businessScore + eip.businessHealthScore) / 4)
+            : 0;
         const widgets = buildExecutiveDashboardWidgets({
-            data: opsData,
+            data: liveStats.source === "supabase" ? opsData : null,
             liveStats,
             unifiedScore,
             customerSuccess: csSnapshot?.executiveWidgets ?? null,
-            finance: financeSnapshot?.executiveWidgets ?? null,
+            finance: null,
             hrms: hrmsSnapshot?.executiveWidgets ?? null,
             integrations: integrationSnapshot?.executiveWidgets ?? null,
             security: securitySnapshot?.executiveWidgets ?? null,
@@ -146,7 +149,7 @@ export class ExecutiveCommandCenterService {
 
         return {
             organizationName: overview.organization?.name ?? "Enterprise workspace",
-            source: liveStats.source === "supabase" || overview.source === "supabase" ? "supabase" : overview.source,
+            source: liveStats.source,
             unifiedScore,
             attentionToday,
             risks,

@@ -62,6 +62,8 @@ pass("metrics:nps", builders.includes("npsScore"));
 pass("metrics:cac", builders.includes("cacUsd"));
 pass("metrics:ltv", builders.includes("ltvUsd"));
 pass("no_mock_random", !builders.includes("Math.random"));
+pass("revenue:legacy-usd-suppressed", builders.includes("const mrrUsd = 0;") && builders.includes("const arrUsd = 0;") && builders.includes("const cashFlowUsd = 0;"));
+pass("revenue:cash-collection-not-inferred", builders.includes("manual payments are not verified INR settlements"));
 
 const repo = readSafe(join(root, "src/modules/founder-analytics/repository/founder-analytics.repository.ts"));
 pass("live:databaseService", repo.includes("databaseService"));
@@ -75,6 +77,8 @@ pass("live:security", repo.includes("idpSecurityAlerts"));
 const page = readSafe(join(root, "src/modules/founder-analytics/components/FounderAnalyticsPage.tsx"));
 pass("ui:access_denied", page.includes("Founder / Admin access required"));
 pass("ui:tabs", page.includes("FOUNDER_ANALYTICS_TAB_LIST"));
+const panels = readSafe(join(root, "src/modules/founder-analytics/components/FounderAnalyticsPanels.tsx"));
+pass("ui:revenue-not-verified", panels.includes('value="Not verified"') && panels.includes("Not verified · MRR"));
 
 const pdf = readSafe(join(root, "src/modules/founder-analytics/lib/board-pdf.ts"));
 pass("board:pdf_export", pdf.includes("jsPDF") && pdf.includes("exportBoardRoomPdf"));

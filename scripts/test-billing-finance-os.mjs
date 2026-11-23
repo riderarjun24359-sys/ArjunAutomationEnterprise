@@ -58,10 +58,39 @@ pass("builder:invoices", buildersSrc.includes("export function buildInvoiceCente
 pass("builder:payments", buildersSrc.includes("export function buildPaymentCenter"));
 pass("builder:revenue", buildersSrc.includes("export function buildRevenueDashboard"));
 pass("builder:widgets", buildersSrc.includes("export function buildFinanceExecutiveWidgets"));
+const revenuePanel = readFileSync(join(mod, "components/os/RevenueDashboardPanel.tsx"), "utf8");
+const paymentPanel = readFileSync(join(mod, "components/os/PaymentCenterPanel.tsx"), "utf8");
+const invoicePanel = readFileSync(join(mod, "components/os/InvoiceCenterPanel.tsx"), "utf8");
+const subscriptionPanel = readFileSync(join(mod, "components/os/SubscriptionManagementPanel.tsx"), "utf8");
+const financePage = readFileSync(join(mod, "pages/BillingFinanceOsPage.tsx"), "utf8");
+const financeWidgets = readFileSync(join(root, "src/modules/executive-command-center/components/FinanceExecutiveWidgetsPanel.tsx"), "utf8");
+const brvStats = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenueStats.tsx"), "utf8");
+const brvPanels = readFileSync(join(root, "src/modules/billing-revenue/components/BillingRevenuePanels.tsx"), "utf8");
+const analyticsRevenue = readFileSync(join(root, "src/modules/analytics/components/RevenueAnalyticsPanel.tsx"), "utf8");
+const analyticsCharts = readFileSync(join(root, "src/modules/analytics/components/AnalyticsChartsPanel.tsx"), "utf8");
+const financeMappers = readFileSync(join(root, "src/modules/database/lib/finance-mappers.ts"), "utf8");
+const analyticsMappers = readFileSync(join(root, "src/modules/database/lib/analytics-mappers.ts"), "utf8");
+pass("revenue:explicit-verification-gate", buildersSrc.includes("revenueVerified: false") && buildersSrc.includes("Razorpay settlements"));
+pass("revenue:legacy-usd-not-calculated", !buildersSrc.includes("mrrFromSubs") && !buildersSrc.includes("latestMrr?.mrr_usd") && !buildersSrc.includes("total_outstanding_usd"));
+pass("revenue:dashboard-gated", revenuePanel.includes("Revenue not verified") && !revenuePanel.includes("$"));
+pass("revenue:ecc-widgets-gated", financeWidgets.includes("Revenue not verified") && !financeWidgets.includes("$"));
+pass("revenue:no-dollar-symbols-in-panels", !/\$\s*\d/.test([revenuePanel, paymentPanel, invoicePanel, subscriptionPanel, financePage, financeWidgets].join("\n")));
+pass("revenue:payment-amount-hidden", paymentPanel.includes("Amount not verified"));
+pass("revenue:invoice-amount-hidden", invoicePanel.includes("Total not verified") && invoicePanel.includes("Due not verified"));
+pass("revenue:subscription-mrr-hidden", subscriptionPanel.includes("MRR not verified") && subscriptionPanel.includes("ARR not verified"));
+pass("revenue:brv-mrr-arr-hidden", brvStats.includes('value: "Not verified"') && brvStats.includes("Outstanding amount not verified"));
+pass("revenue:brv-overview-hidden", brvPanels.includes("MRR not verified") && brvPanels.includes("ARR not verified"));
+pass("revenue:brv-money-inputs-disabled", (brvPanels.match(/placeholder="Disabled — legacy currency mapping requires INR migration" disabled/g) ?? []).length >= 15);
+pass("revenue:analytics-hidden", analyticsRevenue.includes("Revenue not verified") && !analyticsRevenue.includes("$"));
+pass("revenue:analytics-charts-hidden", analyticsCharts.includes("Revenue not verified") && analyticsCharts.includes("Finance totals not verified"));
+pass("revenue:manual-finance-unverified", financeMappers.includes('paidRevenue: "Not verified"') && financeMappers.includes('totalCollected: "Not verified"') && financeMappers.includes('grossMargin: "Not verified"'));
+pass("revenue:analytics-builder-unverified", analyticsMappers.includes("Manual invoice/payment records are not settlement-verified") && analyticsMappers.includes('totalRevenue: "Not verified"') && analyticsMappers.includes("monthlyTrend: []"));
+
 pass("builder:snapshot", buildersSrc.includes("export function buildBillingFinanceSnapshot"));
 
 const aiSrc = readFileSync(join(mod, "ai/ai-finance-assistant.ts"), "utf8");
 pass("ai:daily-summary", aiSrc.includes("dailySummary"));
+pass("ai:unverified-revenue-disclosed", aiSrc.includes("MRR not verified") && aiSrc.includes("amount not verified"));
 pass("ai:executive-summary", aiSrc.includes("executiveSummary"));
 
 function money(n) {

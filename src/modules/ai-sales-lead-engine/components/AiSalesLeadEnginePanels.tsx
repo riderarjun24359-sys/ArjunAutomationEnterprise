@@ -14,6 +14,10 @@ import type {
     WorkspaceTools,
 } from "../types";
 
+function formatInrEstimate(value: number): string {
+    return "₹" + Math.round(Number.isFinite(value) ? value : 0).toLocaleString("en-IN");
+}
+
 function Metric({ label, value }: { label: string; value: string | number }) {
     return (
         <Card>
@@ -176,8 +180,8 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
         <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric label="Open deals" value={pipeline.openDealCount} />
-                <Metric label="Pipeline value" value={pipeline.pipelineValue} />
-                <Metric label="Weighted" value={pipeline.weightedPipeline} />
+                <Metric label="Pipeline estimate (INR)" value={formatInrEstimate(pipeline.pipelineValue)} />
+                <Metric label="Weighted estimate (INR)" value={formatInrEstimate(pipeline.weightedPipeline)} />
                 <Metric label="Opportunity signals" value={pipeline.opportunities.length} />
             </div>
             <Card>
@@ -224,7 +228,7 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
                                 <Badge variant="info">{stage.deals.length}</Badge>
                             </div>
                             <p className="mt-1 text-xs text-[var(--dos-text-tertiary)]">
-                                {stage.probability}% · {stage.totalAmount}
+                                {stage.probability}% · {formatInrEstimate(stage.totalAmount)}
                             </p>
                             <div className="mt-3 space-y-2">
                                 {stage.deals.length === 0 ? (
@@ -237,7 +241,7 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
                                         >
                                             <p className="text-sm font-medium text-[var(--dos-text-primary)]">{d.name}</p>
                                             <p className="text-xs text-[var(--dos-text-secondary)]">
-                                                {d.opportunityNumber} · {d.amount} · {d.probability}%
+                                                {d.opportunityNumber} · {formatInrEstimate(d.amount)} · {d.probability}%
                                             </p>
                                         </div>
                                     ))
@@ -249,13 +253,13 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
             ) : (
                 <Card>
                     <Table
-                        headers={["Deal", "Number", "Stage", "Amount", "Weighted", "Prob", "Status", "Close"]}
+                        headers={["Deal", "Number", "Stage", "Amount (INR est.)", "Weighted (INR est.)", "Prob", "Status", "Close"]}
                         rows={pipeline.listDeals.map((d) => [
                             d.name,
                             d.opportunityNumber,
                             d.stageName,
-                            String(d.amount),
-                            String(d.weightedAmount),
+                            formatInrEstimate(d.amount),
+                            formatInrEstimate(d.weightedAmount),
                             String(d.probability),
                             d.status,
                             d.expectedCloseDate || "—",
@@ -269,10 +273,10 @@ export function PipelineDealsPanel({ pipeline }: { pipeline: SalesPipelineBoard 
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">AI Opportunity Detection</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Opportunity", "Amount", "Prob", "Signal", "Stage", "Status"]}
+                        headers={["Opportunity", "Amount (INR est.)", "Prob", "Signal", "Stage", "Status"]}
                         rows={pipeline.opportunities.map((o) => [
                             o.name,
-                            String(o.amount),
+                            formatInrEstimate(o.amount),
                             String(o.probability),
                             o.signal,
                             o.stageName,
@@ -299,15 +303,15 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Document generators</h3>
                 <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">
                     Proposal, quotation, and contract generators fed by live CMP/BA/sales quote and estimate records.
-                    Total document value: {documents.totalValue}
+                    Total quoted/document value (INR, not collected revenue): {formatInrEstimate(documents.totalValue)}
                 </p>
             </Card>
             <Card>
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Proposal Generator</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Title", "Ref", "Status", "Value"]}
-                        rows={documents.proposals.map((d) => [d.title, d.ref, d.status, String(d.value)])}
+                        headers={["Title", "Ref", "Status", "Value (INR)"]}
+                        rows={documents.proposals.map((d) => [d.title, d.ref, d.status, formatInrEstimate(d.value)])}
                         empty="No proposals"
                     />
                 </div>
@@ -316,12 +320,12 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Quotation Generator</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Title", "Number", "Status", "Value", "Valid until"]}
+                        headers={["Title", "Number", "Status", "Value (INR)", "Valid until"]}
                         rows={documents.quotations.map((d) => [
                             d.title,
                             d.ref,
                             d.status,
-                            String(d.value),
+                            formatInrEstimate(d.value),
                             d.validUntil || "—",
                         ])}
                         empty="No quotations"
@@ -333,7 +337,7 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                 <div className="mt-3">
                     <Table
                         headers={["Title", "Ref", "Status", "Value"]}
-                        rows={documents.contracts.map((d) => [d.title, d.ref, d.status, String(d.value)])}
+                        rows={documents.contracts.map((d) => [d.title, d.ref, d.status, formatInrEstimate(d.value)])}
                         empty="No contracts"
                     />
                 </div>
@@ -347,7 +351,7 @@ export function DocumentsPanel({ documents }: { documents: DocumentGenerators })
                             d.title,
                             d.ref,
                             d.status,
-                            String(d.value),
+                            formatInrEstimate(d.value),
                             d.validUntil || "—",
                         ])}
                         empty="No estimates"
@@ -429,10 +433,10 @@ export function AnalyticsPanel({ analytics }: { analytics: SalesAnalytics }) {
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <Metric label="Leads" value={analytics.kpis.totalLeads} />
                 <Metric label="Open opps" value={analytics.kpis.openOpportunities} />
-                <Metric label="Pipeline" value={analytics.kpis.pipelineValue} />
+                <Metric label="Pipeline estimate (INR)" value={formatInrEstimate(analytics.kpis.pipelineValue)} />
                 <Metric label="Win rate %" value={analytics.kpis.winRate} />
-                <Metric label="Weighted" value={analytics.kpis.weightedPipeline} />
-                <Metric label="Closed won" value={analytics.kpis.closedWonValue} />
+                <Metric label="Weighted estimate (INR)" value={formatInrEstimate(analytics.kpis.weightedPipeline)} />
+                <Metric label="CRM won value (INR, unverified)" value={formatInrEstimate(analytics.kpis.closedWonValue)} />
                 <Metric label="Active quotes" value={analytics.kpis.activeQuotes} />
                 <Metric label="Target %" value={analytics.kpis.targetAchievement} />
             </div>
@@ -454,13 +458,13 @@ export function AnalyticsPanel({ analytics }: { analytics: SalesAnalytics }) {
                 <h3 className="text-lg font-semibold text-[var(--dos-text-primary)]">Revenue Forecasting</h3>
                 <div className="mt-3">
                     <Table
-                        headers={["Period", "Date", "Pipeline", "Weighted", "Closed", "Notes"]}
+                        headers={["Period", "Date", "Pipeline estimate (INR)", "Weighted estimate (INR)", "CRM closed estimate (INR, unverified)", "Notes"]}
                         rows={analytics.forecasts.map((f) => [
                             f.period,
                             f.forecastDate,
-                            String(f.pipelineValue),
-                            String(f.weightedValue),
-                            String(f.closedValue),
+                            formatInrEstimate(f.pipelineValue),
+                            formatInrEstimate(f.weightedValue),
+                            formatInrEstimate(f.closedValue),
                             f.notes,
                         ])}
                         empty="No forecasts"
@@ -475,12 +479,12 @@ export function AnalyticsPanel({ analytics }: { analytics: SalesAnalytics }) {
                 </div>
                 <div className="mt-3">
                     <Table
-                        headers={["Outcome", "Reason", "Competitor", "Amount", "Recorded"]}
+                        headers={["Outcome", "Reason", "Competitor", "Amount (INR)", "Recorded"]}
                         rows={analytics.winLoss.map((w) => [
                             w.outcome,
                             w.reason,
                             w.competitor,
-                            String(w.amount),
+                            formatInrEstimate(w.amount),
                             w.recordedAt,
                         ])}
                         empty="No win/loss records"

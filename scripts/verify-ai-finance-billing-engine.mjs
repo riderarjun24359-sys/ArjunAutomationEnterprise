@@ -65,6 +65,11 @@ pass("feature:subscription_buckets", builders.includes("trial") && builders.incl
 pass("feature:kpi_runway", builders.includes("runwayMonths") && builders.includes("burnRate"));
 pass("feature:arr_mrr", builders.includes("arr") && builders.includes("mrr"));
 pass("no_mock_random", !builders.includes("Math.random"));
+pass("revenue:dashboard-locked-until-INR-reconciliation", builders.includes("Legacy BRV snapshots and unlinked billing records are not verified INR settlements") && builders.includes("kpis: { arr: 0, mrr: 0, revenue: 0"));
+pass("revenue:analytics-locked", builders.includes("Revenue analytics stay unavailable until exact INR invoice/deal settlement reconciliation is implemented"));
+pass("revenue:insights-suppressed", builders.includes("Do not generate financial-risk recommendations from unverified USD snapshots") && builders.includes("return { insights: [], highSeverity: 0 }"));
+pass("revenue:reports-marked-unverified", builders.includes("Financial report totals are not verified"));
+pass("revenue:executive-intelligence-locked", builders.includes("Financial intelligence is unavailable until revenue"));
 
 const repo = readSafe(join(root, "src/modules/ai-finance-billing-engine/repository/ai-finance-billing-engine.repository.ts"));
 pass("live:databaseService", repo.includes("databaseService"));
@@ -91,8 +96,10 @@ pass("live:create_invoice", repo.includes("createInvoice") && repo.includes("inv
 const page = readSafe(join(root, "src/modules/ai-finance-billing-engine/components/AiFinanceBillingEnginePage.tsx"));
 pass("ui:access_denied", page.includes("Founder / Admin access required"));
 pass("ui:tabs", page.includes("AFBE_TAB_LIST"));
+pass("revenue:header-not-verified", page.includes("MRR not verified"));
 
 const panels = readSafe(join(root, "src/modules/ai-finance-billing-engine/components/AiFinanceBillingEnginePanels.tsx"));
+pass("revenue:money-label-hidden", panels.includes("return \"Not verified\""));
 pass("ui:dashboard", panels.includes("ExecutiveFinanceDashboardPanel") && panels.includes("Runway"));
 pass("ui:invoices", panels.includes("Invoice Center") && panels.includes("Create Invoice") && panels.includes("PDF Preview") && panels.includes("Search invoices"));
 pass("ui:payments", panels.includes("Payment Center") && panels.includes("Stripe") && panels.includes("Razorpay") && panels.includes("Payment Timeline"));

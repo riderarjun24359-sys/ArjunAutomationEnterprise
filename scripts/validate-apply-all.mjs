@@ -29,10 +29,28 @@ loadEnvFile(".env");
 
 const databaseUrl = process.env.SUPABASE_DB_URL ?? process.env.DATABASE_URL;
 
+function validateMigrationVersions() {
+    const dir = join(root, "supabase", "migrations");
+    const files = readdirSync(dir).filter((file) => file.endsWith(".sql")).sort();
+    const versions = new Map();
+    const violations = [];
+    for (const file of files) {
+        const match = /^(\d{8,14})_/.exec(file);
+        if (!match) {
+            violations.push(`Invalid migration timestamp prefix: ${file}`);
+            continue;
+        }
+        const previous = versions.get(match[1]);
+        if (previous) violations.push(`Duplicate migration version ${match[1]}: ${previous} and ${file}`);
+        else versions.set(match[1], file);
+    }
+    return { pass: violations.length === 0, violations };
+}
+
 const authStubSql = `
 create schema if not exists auth;
 
--- Hosted Supabase always provides anon/authenticated; create them for PGlite.
+-- Hosted Supabase provides these roles; create equivalent roles for PGlite.
 do $$
 begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then
@@ -40,6 +58,9 @@ begin
   end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then
     create role authenticated;
+  end if;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+    create role service_role bypassrls;
   end if;
 end
 $$;
@@ -117,6 +138,15 @@ async function validateAgainstPglite() {
 }
 
 async function validateAgainstDatabase() {
+    const versionCheck = validateMigrationVersions();
+    if (!versionCheck.pass) {
+        return {
+            skipped: false,
+            pass: false,
+            engine: "migration-version",
+            error: versionCheck.violations.join("; "),
+        };
+    }
     if (!databaseUrl) {
         return validateAgainstPglite();
     }

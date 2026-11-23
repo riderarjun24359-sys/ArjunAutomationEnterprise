@@ -26,6 +26,7 @@ export interface OrganizationOperationsData {
     audits: AuditLog[];
     activities: DbActivityLog[];
     fetchedAt: string;
+    integrationIssues: string[];
 }
 
 export async function loadOrganizationOperationsData(
@@ -39,29 +40,42 @@ export async function loadOrganizationOperationsData(
     const orgId = context.organizationId;
     const listQuery = { limit: LIST_LIMIT, orderBy: "created_at" as const, orderDirection: "desc" as const };
 
-    const [clients, projects, tasks, salesLeads, invoices, payments, audits, activities] = await Promise.all([
-        databaseService.clients.listByOrganization(orgId, listQuery).catch(() => [] as DbClient[]),
-        databaseService.projects.listByOrganization(orgId, listQuery).catch(() => [] as DbProject[]),
-        databaseService.tasks.listByOrganization(orgId, listQuery).catch(() => [] as DbTask[]),
-        databaseService.salesLeads.listByOrganization(orgId, listQuery).catch(() => [] as DbSalesLead[]),
-        databaseService.invoices.listByOrganization(orgId, listQuery).catch(() => [] as DbInvoice[]),
-        databaseService.payments.listByOrganization(orgId, listQuery).catch(() => [] as DbPayment[]),
-        databaseService.audits
-            .list({
-                limit: 40,
-                orderBy: "created_at",
-                orderDirection: "desc",
-                filters: { organization_id: orgId },
-            })
-            .catch(() => [] as AuditLog[]),
-        databaseService.activityLogs
-            .listByOrganization(orgId, {
-                orderBy: "created_at",
-                orderDirection: "desc",
-                limit: 40,
-            })
-            .catch(() => [] as DbActivityLog[]),
-    ]);
+    const loadRecords = async <T,>(label: string, load: () => Promise<T[]>): Promise<{ data: T[]; error?: string }> => {
+        try {
+            return { data: await load() };
+        } catch {
+            return { data: [], error: label };
+        }
+    };
+    const results = await Promise.all([
+        loadRecords("Clients", () => databaseService.clients.listByOrganization(orgId, listQuery)),
+        loadRecords("Projects", () => databaseService.projects.listByOrganization(orgId, listQuery)),
+        loadRecords("Tasks", () => databaseService.tasks.listByOrganization(orgId, listQuery)),
+        loadRecords("Sales leads", () => databaseService.salesLeads.listByOrganization(orgId, listQuery)),
+        loadRecords("Invoices", () => databaseService.invoices.listByOrganization(orgId, listQuery)),
+        loadRecords("Payments", () => databaseService.payments.listByOrganization(orgId, listQuery)),
+        loadRecords("Audit logs", () => databaseService.audits.list({
+            limit: 40,
+            orderBy: "created_at",
+            orderDirection: "desc",
+            filters: { organization_id: orgId },
+        })),
+        loadRecords("Activity logs", () => databaseService.activityLogs.listByOrganization(orgId, {
+            orderBy: "created_at",
+            orderDirection: "desc",
+            limit: 40,
+        })),
+    ] as const);
+    const [clientsResult, projectsResult, tasksResult, leadsResult, invoicesResult, paymentsResult, auditsResult, activitiesResult] = results;
+    const clients = clientsResult.data;
+    const projects = projectsResult.data;
+    const tasks = tasksResult.data;
+    const salesLeads = leadsResult.data;
+    const invoices = invoicesResult.data;
+    const payments = paymentsResult.data;
+    const audits = auditsResult.data;
+    const activities = activitiesResult.data;
+    const integrationIssues = results.flatMap((result) => result.error ? [result.error] : []);
 
     const activeClients = clients.filter((c) => c.lifecycle_stage === "client");
     const crmLeads = clients.filter((c) => c.lifecycle_stage !== "client");
@@ -79,5 +93,6 @@ export async function loadOrganizationOperationsData(
         audits,
         activities,
         fetchedAt: new Date().toISOString(),
+        integrationIssues,
     };
 }

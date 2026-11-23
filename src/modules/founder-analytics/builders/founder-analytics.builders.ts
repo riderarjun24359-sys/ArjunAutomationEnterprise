@@ -11,10 +11,6 @@ import type {
     FounderGrowthCenter,
 } from "../types";
 
-function money(n: number): number {
-    return Math.round((Number.isFinite(n) ? n : 0) * 100) / 100;
-}
-
 function pct(n: number): number {
     return Math.round((Number.isFinite(n) ? n : 0) * 10) / 10;
 }
@@ -43,11 +39,6 @@ function isFailedPayment(status: string): boolean {
     return s.includes("fail") || s.includes("declin") || s.includes("error");
 }
 
-function isPaidPayment(status: string): boolean {
-    const s = status.toLowerCase();
-    return s.includes("paid") || s.includes("success") || s.includes("succeeded") || s.includes("complete");
-}
-
 function classifyLeadSource(source: string): "paid" | "referral" | "organic" | "other" {
     const s = source.toLowerCase();
     if (s.includes("refer")) return "referral";
@@ -58,12 +49,6 @@ function classifyLeadSource(source: string): "paid" | "referral" | "organic" | "
         return "organic";
     }
     return "other";
-}
-
-function trendFromValues(current: number, previous: number): "up" | "down" | "flat" {
-    if (current > previous * 1.02) return "up";
-    if (current < previous * 0.98) return "down";
-    return "flat";
 }
 
 export function createEmptyFounderAnalyticsSnapshot(accessGranted: boolean, reason?: string): FounderAnalyticsSnapshot {
@@ -132,14 +117,10 @@ export function createEmptyFounderAnalyticsSnapshot(accessGranted: boolean, reas
 }
 
 export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderExecutiveDashboard {
-    const latestMrr = data.mrrSnapshots[0];
-    const mrrFromSubs = data.subscriptions.filter((s) => isActiveStatus(s.status)).reduce((sum, s) => sum + s.mrr_usd, 0);
-    const mrrUsd = money(Number(latestMrr?.mrr_usd ?? mrrFromSubs));
-    const arrUsd = money(Number(data.arrSnapshots[0]?.arr_usd ?? mrrUsd * 12));
-
-    const collected = data.payments.filter((p) => isPaidPayment(p.status)).reduce((s, p) => s + p.amount, 0);
-    const outstanding = data.invoices.reduce((s, i) => s + i.amount_due, 0);
-    const cashFlowUsd = money(collected - outstanding);
+    // BRV fields are legacy USD snapshots; manual payments are not verified INR settlements.
+    const mrrUsd = 0;
+    const arrUsd = 0;
+    const cashFlowUsd = 0;
 
     const cutoff30 = daysAgo(30);
     const newOrganizations = data.organizations.filter((o) => Date.parse(o.created_at) >= cutoff30).length
@@ -156,7 +137,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
     const conversionBase = trialSubscriptions + paidSubscriptions;
     const trialToPaidConversionPercent = conversionBase > 0 ? pct((paidSubscriptions / conversionBase) * 100) : 0;
     const denom = activeSubscriptions + churned;
-    const churnRatePercent = denom > 0 ? pct((churned / denom) * 100) : pct(Number(latestMrr?.churn_mrr_usd ?? 0) > 0 && mrrUsd > 0 ? (Number(latestMrr?.churn_mrr_usd) / mrrUsd) * 100 : 0);
+    const churnRatePercent = denom > 0 ? pct((churned / denom) * 100) : 0;
     const retentionPercent = pct(Math.max(0, 100 - churnRatePercent));
 
     const sat = data.satisfaction;
@@ -174,8 +155,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
               )
             : null;
 
-    const forecast = data.mrrForecasts[0];
-    const revenueForecastUsd = money(Number(forecast?.projected_mrr_usd ?? mrrUsd) * 12);
+    const revenueForecastUsd = 0;
 
     return {
         mrrUsd,
@@ -189,7 +169,7 @@ export function buildExecutiveDashboard(data: FounderAnalyticsRawData): FounderE
         npsScore,
         customerSatisfactionAvg,
         revenueForecastUsd,
-        mrrTrend: trendFromValues(mrrUsd, Number(latestMrr?.previous_mrr_usd ?? mrrUsd)),
+        mrrTrend: "flat",
         activeSubscriptions,
         trialSubscriptions,
         paidSubscriptions,
@@ -248,17 +228,10 @@ export function buildGrowthCenter(data: FounderAnalyticsRawData): FounderGrowthC
         };
     });
 
-    const mrr = data.subscriptions.filter((s) => isActiveStatus(s.status)).reduce((s, x) => s + x.mrr_usd, 0);
-    const paidSubs = data.subscriptions.filter((s) => isActiveStatus(s.status) && !isTrialStatus(s.status)).length;
-    const arpu = paidSubs > 0 ? mrr / paidSubs : mrr;
-    const latestMrr = data.mrrSnapshots[0];
-    const churnRate =
-        mrr > 0 && latestMrr ? Number(latestMrr.churn_mrr_usd ?? 0) / mrr : 0;
-    const ltvUsd = churnRate > 0 ? money(arpu / churnRate) : arpu > 0 ? money(arpu * 12) : null;
-
-    // CAC requires spend data — only compute when campaign metrics imply cost proxies are unavailable → null (no invented spend)
+    // Legacy subscription values are USD-denominated; LTV/CAC remain unavailable until an INR ledger is verified.
+    const ltvUsd: number | null = null;
     const cacUsd: number | null = null;
-    const ltvToCac = cacUsd && ltvUsd ? money(ltvUsd / cacUsd) : null;
+    const ltvToCac: number | null = null;
 
     return {
         acquisitionChannels,
@@ -295,7 +268,7 @@ export function buildCustomerIntelligence(data: FounderAnalyticsRawData, executi
         .map((e) => ({
             id: e.id,
             name: e.name,
-            estimatedValueUsd: money(e.estimated_value_usd),
+            estimatedValueUsd: 0,
             type: e.opportunity_type,
             status: e.status,
         }))
@@ -317,26 +290,7 @@ export function buildCustomerIntelligence(data: FounderAnalyticsRawData, executi
     const fromHealth = healthOverview.filter((h) => h.healthScore < 50);
     const churnWatchlist = [...fromChurn, ...fromHealth].slice(0, 15);
 
-    const mrrByAccount = new Map<string, number>();
-    for (const sub of data.subscriptions) {
-        const account = data.billingAccounts.find((a) => a.id === sub.billing_account_id);
-        const name = account?.account_name || sub.plan_name || "Subscription";
-        mrrByAccount.set(name, money((mrrByAccount.get(name) ?? 0) + sub.mrr_usd));
-    }
-    const topFromBilling = [...mrrByAccount.entries()]
-        .map(([name, mrrUsd]) => ({ name, mrrUsd, outstandingUsd: 0 }))
-        .sort((a, b) => b.mrrUsd - a.mrrUsd)
-        .slice(0, 8);
-
-    const topFromClients = data.clients
-        .map((c) => ({
-            name: c.name,
-            mrrUsd: 0,
-            outstandingUsd: 0,
-        }))
-        .slice(0, 0);
-
-    const topCustomers = topFromBilling.length ? topFromBilling : topFromClients;
+    const topCustomers: FounderCustomerIntelligence["topCustomers"] = [];
 
     const inactiveCutoff = daysAgo(60);
     const inactiveCustomers = data.clients
@@ -377,17 +331,6 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
     const alerts: FounderAlert[] = [];
     const now = new Date().toISOString();
 
-    if (executive.mrrTrend === "down") {
-        alerts.push({
-            id: "revenue-drop",
-            category: "revenue",
-            severity: "high",
-            title: "Revenue drop detected",
-            detail: `MRR trend is down at ₹${executive.mrrUsd.toLocaleString()} vs prior snapshot.`,
-            detectedAt: now,
-        });
-    }
-
     const failed = data.paymentAttempts.filter((p) => isFailedPayment(p.payment_status) || isFailedPayment(p.status));
     for (const p of failed.slice(0, 5)) {
         alerts.push({
@@ -395,7 +338,7 @@ export function buildFounderAlerts(data: FounderAnalyticsRawData, executive: Fou
             category: "payment",
             severity: "critical",
             title: "Failed payment",
-            detail: `₹${money(p.amount_usd).toLocaleString()} — ${p.failure_reason || p.payment_status}`,
+            detail: `Payment attempt failed; settlement amount not verified — ${p.failure_reason || p.payment_status}`,
             detectedAt: p.attempted_at || now,
         });
     }
@@ -465,12 +408,11 @@ export function buildAdvisorBriefing(
     if (executive.churnRatePercent >= 5) businessRisks.push(`Churn at ${executive.churnRatePercent}% — prioritize retention plays.`);
     if (customers.churnWatchlist.length) businessRisks.push(`${customers.churnWatchlist.length} accounts on churn watchlist.`);
     if (critical) businessRisks.push(`${critical} high/critical founder alerts require attention.`);
-    if (executive.mrrTrend === "down") businessRisks.push("MRR trend is declining versus prior snapshot.");
+    
 
     const growthOpportunities: string[] = [];
     if (customers.expansionOpportunities.length) {
-        const value = customers.expansionOpportunities.reduce((s, e) => s + e.estimatedValueUsd, 0);
-        growthOpportunities.push(`₹${value.toLocaleString()} expansion pipeline across ${customers.expansionOpportunities.length} opportunities.`);
+        growthOpportunities.push(`Expansion pipeline value not verified across ${customers.expansionOpportunities.length} opportunities.`);
     }
     if (growth.referralLeads > 0) growthOpportunities.push(`Referral channel delivering ${growth.referralLeads} leads — amplify referral program.`);
     if (growth.organicLeads > growth.paidLeads) growthOpportunities.push("Organic acquisition outpaces paid — double down on SEO/content.");
@@ -483,18 +425,18 @@ export function buildAdvisorBriefing(
         revenueRecommendations.push("Improve trial→paid conversion with onboarding nudges and upgrade CTAs.");
     }
     if (executive.cashFlowUsd < 0) revenueRecommendations.push("Cash flow negative vs outstanding — accelerate collections.");
-    if (growth.ltvUsd) revenueRecommendations.push(`Blended LTV ≈ ₹${growth.ltvUsd.toLocaleString()} — protect retention to compound ARR.`);
-    if (!revenueRecommendations.length) revenueRecommendations.push("Maintain current pricing discipline and expand top healthy accounts.");
+    
+    if (!revenueRecommendations.length) revenueRecommendations.push("Revenue recommendations are limited until INR settlement data is verified.");
 
     const dailyBriefing = [
-        `MRR ₹${executive.mrrUsd.toLocaleString()} (${executive.mrrTrend}) · ARR ₹${executive.arrUsd.toLocaleString()}.`,
+        "MRR and ARR not verified — INR settlement reconciliation pending.",
         `Active orgs ${executive.activeOrganizations} · new (30d) ${executive.newOrganizations}.`,
         `Retention ${executive.retentionPercent}% · churn ${executive.churnRatePercent}%.`,
         critical ? `${critical} priority alerts open.` : "No critical founder alerts.",
     ].join(" ");
 
     const weeklyExecutiveSummary = [
-        `Weekly snapshot: forecast ARR ₹${executive.revenueForecastUsd.toLocaleString()}.`,
+        "Weekly revenue forecast not verified — INR settlement reconciliation pending.",
         `Growth score ${growth.growthScore ?? "n/a"} · landing conversion ${growth.landingConversionRatePercent}%.`,
         `Avg customer health ${customers.averageHealthScore}.`,
         `NPS ${executive.npsScore ?? "n/a"} · CSAT ${executive.customerSatisfactionAvg ?? "n/a"}.`,
@@ -520,10 +462,10 @@ export function buildBoardRoom(
 ): BoardRoomSnapshot {
     const generatedAt = new Date().toISOString();
     const investorKpis = [
-        { label: "MRR", value: `₹${executive.mrrUsd.toLocaleString()}`, note: `Trend ${executive.mrrTrend}` },
-        { label: "ARR", value: `₹${executive.arrUsd.toLocaleString()}` },
-        { label: "ARR Forecast", value: `₹${executive.revenueForecastUsd.toLocaleString()}` },
-        { label: "Net cash position signal", value: `₹${executive.cashFlowUsd.toLocaleString()}`, note: "Collected − outstanding" },
+        { label: "MRR", value: "Not verified" },
+        { label: "ARR", value: "Not verified" },
+        { label: "ARR Forecast", value: "Not verified" },
+        { label: "Net cash position signal", value: "Not verified" },
         { label: "Active organizations", value: String(executive.activeOrganizations) },
         { label: "Logo retention", value: `${executive.retentionPercent}%` },
     ];
@@ -531,8 +473,8 @@ export function buildBoardRoom(
     const saasMetrics = [
         { label: "Trial → Paid", value: `${executive.trialToPaidConversionPercent}%` },
         { label: "Churn", value: `${executive.churnRatePercent}%` },
-        { label: "LTV", value: growth.ltvUsd != null ? `₹${growth.ltvUsd.toLocaleString()}` : "n/a" },
-        { label: "CAC", value: growth.cacUsd != null ? `₹${growth.cacUsd.toLocaleString()}` : "n/a (no spend rows)" },
+        { label: "LTV", value: "Not verified" },
+        { label: "CAC", value: "Not verified" },
         { label: "LTV:CAC", value: growth.ltvToCac != null ? String(growth.ltvToCac) : "n/a" },
         { label: "NPS", value: executive.npsScore != null ? String(executive.npsScore) : "n/a" },
         { label: "CSAT", value: executive.customerSatisfactionAvg != null ? String(executive.customerSatisfactionAvg) : "n/a" },
@@ -548,7 +490,7 @@ export function buildBoardRoom(
 
     const monthlyBusinessSnapshot = [
         `Arjun Automation monthly snapshot @ ${generatedAt.slice(0, 10)}.`,
-        `ARR ₹${executive.arrUsd.toLocaleString()} · MRR ₹${executive.mrrUsd.toLocaleString()} · Forecast ₹${executive.revenueForecastUsd.toLocaleString()}.`,
+        "ARR, MRR and revenue forecast not verified — INR settlement reconciliation pending.",
         `Customers: active orgs ${executive.activeOrganizations}, new ${executive.newOrganizations}, health ${customers.averageHealthScore}.`,
         `Growth: organic ${growth.organicLeads} / paid ${growth.paidLeads} / referral ${growth.referralLeads}.`,
         advisor.weeklyExecutiveSummary,

@@ -33,27 +33,12 @@ function isCompletedTask(status: string): boolean {
     return ["done", "completed", "closed"].includes(s);
 }
 
-export function buildRevenueTrend(data: OrganizationOperationsData, now = new Date()): ExecutiveChartPoint[] {
-    const keys = lastNMonthKeys(MONTH_COUNT, now);
-    const totals = new Map(keys.map((k) => [k, 0]));
-
-    for (const payment of data.payments) {
-        const key = monthKey(new Date(payment.payment_date || payment.created_at));
-        if (totals.has(key)) totals.set(key, (totals.get(key) ?? 0) + Number(payment.amount ?? 0));
-    }
-
-    if ([...totals.values()].every((v) => v === 0)) {
-        for (const inv of data.invoices) {
-            const key = monthKey(new Date(inv.paid_at || inv.issue_date || inv.created_at));
-            if (totals.has(key)) totals.set(key, (totals.get(key) ?? 0) + Number(inv.amount_paid ?? 0));
-        }
-    }
-
-    return keys.map((key) => ({
-        key,
-        label: monthLabel(key),
-        value: Math.round(totals.get(key) ?? 0),
-    }));
+export function buildRevenueTrend(_data: OrganizationOperationsData, _now = new Date()): ExecutiveChartPoint[] {
+    void _data;
+    void _now;
+    // Payments/invoice balances are not a signed settlement ledger. Do not chart
+    // them as collected revenue until the Razorpay event-to-invoice mapping exists.
+    return [];
 }
 
 export function buildClientGrowth(data: OrganizationOperationsData, now = new Date()): ExecutiveChartPoint[] {

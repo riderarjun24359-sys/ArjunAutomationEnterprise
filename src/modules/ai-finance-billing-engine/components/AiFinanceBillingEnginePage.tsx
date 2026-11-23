@@ -80,7 +80,7 @@ export function AiFinanceBillingEnginePage() {
                 <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="success">Live Supabase</Badge>
                     <Badge variant="info">{snapshot.invoices.rows.length} invoices</Badge>
-                    <Badge variant="info">MRR {snapshot.dashboard.kpis.mrr}</Badge>
+                    <Badge variant="warning">MRR not verified</Badge>
                     <span className="text-xs text-[var(--dos-text-tertiary)]">Fetched {snapshot.fetchedAt}</span>
                 </div>
             </div>

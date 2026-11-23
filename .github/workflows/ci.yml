@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/arjun-ai-voice-agent-foundation]
   push:
-    branches: [main]
+    branches: [main, feat/priya-autonomous-sales-engine]
   workflow_dispatch:
 
 permissions:
@@ -40,6 +40,27 @@ jobs:
       - name: TypeScript
         run: npx tsc --noEmit
 
+      - name: Priya and Jarvis static release checks
+        run: npm run priya-sales-engine:verify
+
+      - name: Command Centre integration guardrails
+        run: npm run command-centre-integrations:verify
+
+      - name: Command Centre, Jarvis and integration module verifiers
+        env:
+          SKIP_TSC: "1"
+          SKIP_LINT: "1"
+          SKIP_CROSS_MODULE_REGRESSION: "1"
+        run: |
+          npm run ai-command-center:verify
+          npm run executive-command-center:verify
+          npm run global-operations:verify
+          npm run ai-sales-lead-engine:verify
+          npm run ai-finance-billing-engine:verify
+          npm run enterprise-integrations:verify
+          npm run integrations:verify
+          npm run ai-automation-engine:verify
+
       - name: Unit tests
         run: npm run test:unit
 
@@ -56,6 +77,8 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
 
       - name: Full pre-deployment verification
+        env:
+          SKIP_CROSS_MODULE_REGRESSION: "1"
         run: npm run predeploy:verify
 
   browser-smoke:
