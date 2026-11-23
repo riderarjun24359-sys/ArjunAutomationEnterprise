@@ -85,10 +85,10 @@ export class CustomerSuccessGlobalOpsService {
             ? storedImprovements
             : generateImprovementBacklog({
                 feedback,
-                deliveryHealth,
-                supportHealth,
-                customerHealth,
-                openTickets: support.openTickets,
+                deliveryHealth: delivery.available ? deliveryHealth : null,
+                supportHealth: support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? supportHealth : null,
+                customerHealth: successPlans.length ? customerHealth : null,
+                openTickets: support.available ? support.openTickets : 0,
             });
 
         const dashboard: GlobalOperationsDashboard = {
@@ -123,7 +123,14 @@ export class CustomerSuccessGlobalOpsService {
             integrationIssues,
         };
 
-        dashboard.aiRecommendations = generateAiRecommendations(dashboard);
+        dashboard.aiRecommendations = generateAiRecommendations({
+            customerHealth: successPlans.length ? customerHealth : null,
+            supportHealth: support.available && (support.openTickets > 0 || support.avgSatisfaction > 0) ? supportHealth : null,
+            deliveryHealth: delivery.available && delivery.activeEngagements > 0 ? deliveryHealth : null,
+            openTickets: support.available ? support.openTickets : 0,
+            renewals,
+            escalations,
+        });
 
         if (orgId) {
             void csgRepository.logAudit(orgId, "dashboard_load", "Global operations dashboard loaded");
