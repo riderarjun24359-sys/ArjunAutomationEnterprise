@@ -16,7 +16,7 @@ vi.mock("@/src/lib/supabase-service-role", () => ({
     getServiceRoleClient: () => serviceState.client,
 }));
 
-import { GET, POST } from "./route";
+import { DELETE, GET, POST } from "./route";
 
 function memberOf(org: string, email = "owner@test.dev", id = "auth-owner") {
     authState.current = {
@@ -131,6 +131,37 @@ describe("invitations routes", () => {
             if (previous.from === undefined) delete process.env.RESEND_FROM;
             else process.env.RESEND_FROM = previous.from;
         }
+    });
+
+    it("revokes only pending invitations in the caller's organization", async () => {
+        asRole("founder");
+        db.seed("organization_invitations", [
+            { id: "11111111-1111-4111-8111-111111111111", organization_id: "org-a", email: "a@test.dev", role_name: "member", status: "pending" },
+            { id: "22222222-2222-4222-8222-222222222222", organization_id: "org-b", email: "b@test.dev", role_name: "member", status: "pending" },
+        ]);
+
+        const res = await DELETE(new Request("http://localhost/api/organization/invitations", {
+            method: "DELETE",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ invitationId: "11111111-1111-4111-8111-111111111111" }),
+        }));
+        expect(res.status).toBe(200);
+        expect(db.rows("organization_invitations").find((row) => row.id === "11111111-1111-4111-8111-111111111111")?.status).toBe("revoked");
+        expect(db.rows("organization_invitations").find((row) => row.id === "22222222-2222-4222-8222-222222222222")?.status).toBe("pending");
+    });
+
+    it("prevents lower-privilege members from revoking admin invitations", async () => {
+        asRole("member");
+        db.seed("organization_invitations", [
+            { id: "11111111-1111-4111-8111-111111111111", organization_id: "org-a", email: "a@test.dev", role_name: "admin", status: "pending" },
+        ]);
+        const res = await DELETE(new Request("http://localhost/api/organization/invitations", {
+            method: "DELETE",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ invitationId: "11111111-1111-4111-8111-111111111111" }),
+        }));
+        expect(res.status).toBe(403);
+        expect(db.rows("organization_invitations")[0].status).toBe("pending");
     });
 
     it("scopes invitation reads to the caller's organization", async () => {
