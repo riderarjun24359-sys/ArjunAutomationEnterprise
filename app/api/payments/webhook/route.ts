@@ -162,6 +162,20 @@ export async function POST(request: Request) {
         opsLog("warn", "Payment webhook deduped in memory only; secure storage unconfigured", "api/payments/webhook", { eventId: event.eventId });
     }
 
+    // Never acknowledge a payment event when durable idempotency is unavailable.
+    // A 503 asks the provider to retry; the in-memory fallback is not durable
+    // across restarts/instances and must not be treated as successful receipt.
+    if (dedupeOutcome.degraded || !serviceClient) {
+        return NextResponse.json(
+            {
+                error: "Durable webhook receipt is temporarily unavailable",
+                code: "durable_idempotency_unavailable",
+                retryable: true,
+            },
+            { status: 503, headers: { "Retry-After": "60", "Cache-Control": "no-store" } },
+        );
+    }
+
     if (dedupeOutcome.decision === "duplicate") {
         opsLog("info", "Payment webhook skipped (duplicate)", "api/payments/webhook", { eventId: event.eventId, type: event.eventType, dedupe });
         return NextResponse.json({ received: true, provider, status: "duplicate", dedupe, fulfillment: "manual-reconciliation" }, { status: 200 });
