@@ -274,7 +274,10 @@ export class AutomationService {
                         const match = rows.find((r) => r.name === hookInput.webhookName && r.is_active);
                         if (!match) throw new Error(`Unknown or inactive webhook '${hookInput.webhookName}'`);
                         url = match.url;
-                        secret = match.secret;
+                        secret = typeof match.secret === "string" ? match.secret : "";
+                        if (!secret) {
+                            throw new Error("Webhook signing secret is unavailable in this client context; delivery was blocked safely");
+                        }
                         allowedHosts = match.allowed_hosts?.length ? match.allowed_hosts : [hostOf(match.url)];
                         webhookId = match.id;
                     } else if (url) {
