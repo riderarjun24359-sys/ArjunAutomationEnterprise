@@ -92,6 +92,7 @@ export function useIntegrationPlatform() {
     const [exportMappings, setExportMappings] = useState<ExportMappingSummary[]>([]);
     const [accountingExports, setAccountingExports] = useState<AccountingExportSummary[]>([]);
     const [apiKeys, setApiKeys] = useState<ApiKeySummary[]>([]);
+    const [newlyIssuedApiKey, setNewlyIssuedApiKey] = useState<string | null>(null);
     const [apiScopes, setApiScopes] = useState<ApiScopeSummary[]>([]);
     const [rateLimits, setRateLimits] = useState<RateLimitSummary[]>([]);
     const [apiUsage, setApiUsages] = useState<ApiUsageSummary[]>([]);
@@ -287,7 +288,33 @@ integrationHubsList,
     const createAccountingSyncStatus = useCallback(async (input: CreateAccountingSyncStatusInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingSyncStatus(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createExportMapping = useCallback(async (input: CreateExportMappingInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createExportMapping(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createAccountingExport = useCallback(async (input: CreateAccountingExportInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createAccountingExport(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
-    const createApiKey = useCallback(async (input: CreateApiKeyInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiKey(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
+    const createApiKey = useCallback(async (input: CreateApiKeyInput) => {
+        if (!user) throw new Error("Authentication required");
+        const response = await fetch("/api/integrations/api-keys", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify(input),
+        });
+        const result = await response.json().catch(() => null) as { error?: string; secret?: string } | null;
+        if (!response.ok || !result?.secret) {
+            throw new Error(result?.error ?? "Unable to issue API credential");
+        }
+        setNewlyIssuedApiKey(result.secret);
+        await refresh();
+    }, [user, refresh]);
+    const revokeApiKey = useCallback(async (keyId: string) => {
+        if (!user) throw new Error("Authentication required");
+        const response = await fetch("/api/integrations/api-keys", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ keyId }),
+        });
+        const result = await response.json().catch(() => null) as { error?: string } | null;
+        if (!response.ok) throw new Error(result?.error ?? "Unable to revoke API credential");
+        await refresh();
+    }, [user, refresh]);
     const createApiScope = useCallback(async (input: CreateApiScopeInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiScope(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createRateLimit = useCallback(async (input: CreateRateLimitInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createRateLimit(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
     const createApiUsage = useCallback(async (input: CreateApiUsageInput) => { if (!user) throw new Error("Authentication required"); await integrationPlatformService.createApiUsage(user.id, user.email, input, user.fullName); await refresh(); }, [user, refresh]);
@@ -337,6 +364,9 @@ integrationHubsList,
         createAccountingExport,
         apiKeys,
         createApiKey,
+        revokeApiKey,
+        newlyIssuedApiKey,
+        clearNewlyIssuedApiKey: () => setNewlyIssuedApiKey(null),
         apiScopes,
         createApiScope,
         rateLimits,
