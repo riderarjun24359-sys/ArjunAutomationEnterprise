@@ -135,9 +135,6 @@ export class AiCommandCenterService {
             for (const alert of alerts.slice(0, 3)) {
                 void aiCommandCenterRepository.persistAlert(orgId, alert);
             }
-            for (const rec of recommendations.slice(0, 5)) {
-                void aiCommandCenterRepository.persistRecommendation(orgId, rec);
-            }
             for (const decision of decisions.slice(0, 3)) {
                 void aiCommandCenterRepository.persistDecision(orgId, decision);
             }
