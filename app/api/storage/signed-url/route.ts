@@ -40,7 +40,7 @@ export async function POST(request: Request) {
             opsLog("warn", "Signed URL creation failed", "api/storage/signed-url", {
                 message: result.error?.message,
             });
-            return apiError(result.error?.message ?? "Unable to create signed URL", 502);
+            return apiError("Unable to create signed URL", 502);
         }
 
         await logApiAudit({
