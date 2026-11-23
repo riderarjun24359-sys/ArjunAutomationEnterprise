@@ -68,7 +68,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                         <Badge variant="info">{dash.deliveryStatus.activeEngagements} engagements</Badge>
                         <Badge variant="success">Quality {dash.deliveryStatus.qualityPassRate}%</Badge>
                         <Badge variant={dash.deliveryStatus.deliveryHealth >= 85 ? "success" : "warning"}>Health {dash.deliveryStatus.deliveryHealth}%</Badge>
-                        <Badge variant="default">{dash.deliveryStatus.pendingAi} AI pending</Badge>
+                        <Badge variant="default">{hasIssue("business platform") || hasIssue("delivery") ? "AI pending unavailable" : `${dash.deliveryStatus.pendingAi} AI pending`}</Badge>
                     </div>
                 </Section>
             </div>
