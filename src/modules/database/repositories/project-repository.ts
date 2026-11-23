@@ -46,6 +46,10 @@ export class ProjectRepository extends BaseRepository<DbProject> {
         const client = getRepositoryClient();
         const organizationId = getSelectedOrganizationId();
         if (!client || !organizationId || payload.organization_id !== organizationId) return null;
+        if (typeof payload.client_id === "string") {
+            const owner = await client.from("clients").select("id").eq("id", payload.client_id).eq("organization_id", organizationId).maybeSingle();
+            if (owner.error || !owner.data) return null;
+        }
         const { data, error } = await client.from(this.table).insert(payload).select("*").maybeSingle();
         mapRepositoryError(error, "Failed to create project");
         return (data as DbProject | null) ?? null;
