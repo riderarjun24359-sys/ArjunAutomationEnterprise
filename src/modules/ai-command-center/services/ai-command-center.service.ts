@@ -42,7 +42,14 @@ export class AiCommandCenterService {
             fetchProductionSnapshot(ctx),
         ]);
 
-        const deliveryHealth = globalOps.deliveryHealth ?? delivery.qualityPassRate;
+        const deliveryHealth = globalOps.available ? globalOps.deliveryHealth : delivery.qualityPassRate;
+        const integrationIssues = [
+            business.available ? null : "Business Platform",
+            support.available ? null : "Support",
+            delivery.available ? null : "Delivery Engine",
+            globalOps.available ? null : "Customer Success Global Operations",
+            production.available ? null : "Production Readiness",
+        ].filter((item): item is string => Boolean(item));
         const systemHealth = computeSystemHealth({
             productionScore: production.overallScore,
             platformHealth: production.platformHealth,
@@ -148,6 +155,7 @@ export class AiCommandCenterService {
             decisions,
             automations,
             overallScore,
+            integrationIssues,
             fetchedAt: new Date().toISOString(),
         };
     }
