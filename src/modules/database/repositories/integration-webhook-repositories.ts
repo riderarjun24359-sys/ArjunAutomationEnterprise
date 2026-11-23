@@ -20,7 +20,7 @@ export interface DbIntegrationDelivery {
     webhook_id: string | null;
     event: string;
     target_host: string;
-    status: "delivered" | "failed";
+    status: "pending" | "delivered" | "failed";
     attempts: number;
     response_status: number | null;
     error: string;
