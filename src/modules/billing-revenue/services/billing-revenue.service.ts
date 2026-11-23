@@ -156,6 +156,13 @@ export class BillingRevenueService {
         return resolveOrganizationContext(authUserId, email, fullName);
     }
 
+    private async assertBillingAccountOwned(organizationId: string, billingAccountId: string): Promise<void> {
+        const account = await databaseService.brvBillingAccounts.getById(billingAccountId);
+        if (!account || account.organization_id !== organizationId) {
+            throw new Error("Billing account was not found in the selected organization");
+        }
+    }
+
     private async getMaps(organizationId: string) {
         const billingAccounts = await databaseService.brvBillingAccounts.listByOrganization(organizationId);
         return buildBillingAccountLookupMaps(billingAccounts);
@@ -227,6 +234,10 @@ export class BillingRevenueService {
     async createBillingAccount(authUserId: string, email: string, input: CreateBillingAccountInput, fullName?: string | null): Promise<BillingAccountSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvBillingAccounts.create(buildBillingAccountPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create billingAccounts");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "billing_account", "create", `BillingAccount created`, created.id));
@@ -243,6 +254,10 @@ export class BillingRevenueService {
     async createBillingCycle(authUserId: string, email: string, input: CreateBillingCycleInput, fullName?: string | null): Promise<BillingCycleSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvBillingCycles.create(buildBillingCyclePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create billingCycles");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "billing_cycle", "create", `BillingCycle created`, created.id));
@@ -260,6 +275,10 @@ export class BillingRevenueService {
     async createSubscriptionBilling(authUserId: string, email: string, input: CreateSubscriptionBillingInput, fullName?: string | null): Promise<SubscriptionBillingSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvSubscriptionBillings.create(buildSubscriptionBillingPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create subscriptionBillings");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "subscription_billing", "create", `SubscriptionBilling created`, created.id));
@@ -277,6 +296,10 @@ export class BillingRevenueService {
     async createProrationRecord(authUserId: string, email: string, input: CreateProrationRecordInput, fullName?: string | null): Promise<ProrationRecordSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvProrationRecords.create(buildProrationRecordPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create prorationRecords");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "proration_record", "create", `ProrationRecord created`, created.id));
@@ -294,6 +317,10 @@ export class BillingRevenueService {
     async createPaymentMethod(authUserId: string, email: string, input: CreatePaymentMethodInput, fullName?: string | null): Promise<PaymentMethodSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvPaymentMethods.create(buildPaymentMethodPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentMethods");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "payment_method", "create", `PaymentMethod created`, created.id));
@@ -311,6 +338,10 @@ export class BillingRevenueService {
     async createPaymentAttempt(authUserId: string, email: string, input: CreatePaymentAttemptInput, fullName?: string | null): Promise<PaymentAttemptSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvPaymentAttempts.create(buildPaymentAttemptPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentAttempts");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "payment_attempt", "create", `PaymentAttempt created`, created.id));
@@ -328,6 +359,10 @@ export class BillingRevenueService {
     async createRefund(authUserId: string, email: string, input: CreateRefundInput, fullName?: string | null): Promise<RefundSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvRefunds.create(buildRefundPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create refunds");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "refund", "create", `Refund created`, created.id));
@@ -345,6 +380,10 @@ export class BillingRevenueService {
     async createWalletBalance(authUserId: string, email: string, input: CreateWalletBalanceInput, fullName?: string | null): Promise<WalletBalanceSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvWalletBalances.create(buildWalletBalancePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create walletBalances");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "wallet_balance", "create", `WalletBalance created`, created.id));
@@ -362,6 +401,10 @@ export class BillingRevenueService {
     async createMrrSnapshot(authUserId: string, email: string, input: CreateMrrSnapshotInput, fullName?: string | null): Promise<MrrSnapshotSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvMrrSnapshots.create(buildMrrSnapshotPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create mrrSnapshots");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "mrr_snapshot", "create", `MrrSnapshot created`, created.id));
@@ -379,6 +422,10 @@ export class BillingRevenueService {
     async createArrSnapshot(authUserId: string, email: string, input: CreateArrSnapshotInput, fullName?: string | null): Promise<ArrSnapshotSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvArrSnapshots.create(buildArrSnapshotPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create arrSnapshots");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "arr_snapshot", "create", `ArrSnapshot created`, created.id));
@@ -396,6 +443,10 @@ export class BillingRevenueService {
     async createDeferredRevenue(authUserId: string, email: string, input: CreateDeferredRevenueInput, fullName?: string | null): Promise<DeferredRevenueSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvDeferredRevenue.create(buildDeferredRevenuePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create deferredRevenue");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "deferred_revenue", "create", `DeferredRevenue created`, created.id));
@@ -413,6 +464,10 @@ export class BillingRevenueService {
     async createRevenueRecognition(authUserId: string, email: string, input: CreateRevenueRecognitionInput, fullName?: string | null): Promise<RevenueRecognitionSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvRevenueRecognition.create(buildRevenueRecognitionPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create revenueRecognition");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "revenue_recognition", "create", `RevenueRecognition created`, created.id));
@@ -430,6 +485,10 @@ export class BillingRevenueService {
     async createInvoice(authUserId: string, email: string, input: CreateInvoiceInput, fullName?: string | null): Promise<InvoiceSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvInvoices.create(buildInvoicePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create invoices");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "invoice", "create", `Invoice created`, created.id));
@@ -447,6 +506,10 @@ export class BillingRevenueService {
     async createCreditNote(authUserId: string, email: string, input: CreateCreditNoteInput, fullName?: string | null): Promise<CreditNoteSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvCreditNotes.create(buildCreditNotePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create creditNotes");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "credit_note", "create", `CreditNote created`, created.id));
@@ -464,6 +527,10 @@ export class BillingRevenueService {
     async createDebitNote(authUserId: string, email: string, input: CreateDebitNoteInput, fullName?: string | null): Promise<DebitNoteSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvDebitNotes.create(buildDebitNotePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create debitNotes");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "debit_note", "create", `DebitNote created`, created.id));
@@ -481,6 +548,10 @@ export class BillingRevenueService {
     async createTaxConfig(authUserId: string, email: string, input: CreateTaxConfigInput, fullName?: string | null): Promise<TaxConfigSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvTaxConfigs.create(buildTaxConfigPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create taxConfigs");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "tax_config", "create", `TaxConfig created`, created.id));
@@ -498,6 +569,10 @@ export class BillingRevenueService {
     async createOutstandingBalance(authUserId: string, email: string, input: CreateOutstandingBalanceInput, fullName?: string | null): Promise<OutstandingBalanceSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvOutstandingBalances.create(buildOutstandingBalancePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create outstandingBalances");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "outstanding_balance", "create", `OutstandingBalance created`, created.id));
@@ -515,6 +590,10 @@ export class BillingRevenueService {
     async createPaymentReminder(authUserId: string, email: string, input: CreatePaymentReminderInput, fullName?: string | null): Promise<PaymentReminderSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvPaymentReminders.create(buildPaymentReminderPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create paymentReminders");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "payment_reminder", "create", `PaymentReminder created`, created.id));
@@ -532,6 +611,10 @@ export class BillingRevenueService {
     async createCollectionCase(authUserId: string, email: string, input: CreateCollectionCaseInput, fullName?: string | null): Promise<CollectionCaseSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvCollectionCases.create(buildCollectionCasePayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create collectionCases");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "collection_case", "create", `CollectionCase created`, created.id));
@@ -549,6 +632,10 @@ export class BillingRevenueService {
     async createWriteOff(authUserId: string, email: string, input: CreateWriteOffInput, fullName?: string | null): Promise<WriteOffSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvWriteOffs.create(buildWriteOffPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create writeOffs");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "write_off", "create", `WriteOff created`, created.id));
@@ -566,6 +653,10 @@ export class BillingRevenueService {
     async createAnalyticsSnapshot(authUserId: string, email: string, input: CreateAnalyticsSnapshotInput, fullName?: string | null): Promise<AnalyticsSnapshotSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvAnalyticsSnapshots.create(buildAnalyticsSnapshotPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create analyticsSnapshots");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "analytics_snapshot", "create", `AnalyticsSnapshot created`, created.id));
@@ -583,6 +674,10 @@ export class BillingRevenueService {
     async createRevenueGrowthMetric(authUserId: string, email: string, input: CreateRevenueGrowthMetricInput, fullName?: string | null): Promise<RevenueGrowthMetricSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvRevenueGrowthMetrics.create(buildRevenueGrowthMetricPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create revenueGrowthMetrics");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "revenue_growth_metric", "create", `RevenueGrowthMetric created`, created.id));
@@ -600,6 +695,10 @@ export class BillingRevenueService {
     async createCashFlowRecord(authUserId: string, email: string, input: CreateCashFlowRecordInput, fullName?: string | null): Promise<CashFlowRecordSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvCashFlowRecords.create(buildCashFlowRecordPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create cashFlowRecords");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "cash_flow_record", "create", `CashFlowRecord created`, created.id));
@@ -617,6 +716,10 @@ export class BillingRevenueService {
     async createSubscriptionTrend(authUserId: string, email: string, input: CreateSubscriptionTrendInput, fullName?: string | null): Promise<SubscriptionTrendSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvSubscriptionTrends.create(buildSubscriptionTrendPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create subscriptionTrends");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "subscription_trend", "create", `SubscriptionTrend created`, created.id));
@@ -634,6 +737,10 @@ export class BillingRevenueService {
     async createRenewalForecast(authUserId: string, email: string, input: CreateRenewalForecastInput, fullName?: string | null): Promise<RenewalForecastSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvRenewalForecasts.create(buildRenewalForecastPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create renewalForecasts");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "renewal_forecast", "create", `RenewalForecast created`, created.id));
@@ -651,6 +758,10 @@ export class BillingRevenueService {
     async createMrrForecast(authUserId: string, email: string, input: CreateMrrForecastInput, fullName?: string | null): Promise<MrrForecastSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvMrrForecasts.create(buildMrrForecastPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create mrrForecasts");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "mrr_forecast", "create", `MrrForecast created`, created.id));
@@ -668,6 +779,10 @@ export class BillingRevenueService {
     async createArrForecast(authUserId: string, email: string, input: CreateArrForecastInput, fullName?: string | null): Promise<ArrForecastSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvArrForecasts.create(buildArrForecastPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create arrForecasts");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "arr_forecast", "create", `ArrForecast created`, created.id));
@@ -685,6 +800,10 @@ export class BillingRevenueService {
     async createRevenueProjection(authUserId: string, email: string, input: CreateRevenueProjectionInput, fullName?: string | null): Promise<RevenueProjectionSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvRevenueProjections.create(buildRevenueProjectionPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create revenueProjections");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "revenue_projection", "create", `RevenueProjection created`, created.id));
@@ -701,6 +820,10 @@ export class BillingRevenueService {
     async createFinanceMetric(authUserId: string, email: string, input: CreateFinanceMetricInput, fullName?: string | null): Promise<FinanceMetricSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvFinanceMetrics.create(buildFinanceMetricPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create financeMetrics");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "finance_metric", "create", `FinanceMetric created`, created.id));
@@ -716,6 +839,10 @@ export class BillingRevenueService {
     async createFinancialHealth(authUserId: string, email: string, input: CreateFinancialHealthInput, fullName?: string | null): Promise<FinancialHealthSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvFinancialHealth.create(buildFinancialHealthPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create financialHealth");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "financial_health", "create", `FinancialHealth created`, created.id));
@@ -732,6 +859,10 @@ export class BillingRevenueService {
     async createExpansionContraction(authUserId: string, email: string, input: CreateExpansionContractionInput, fullName?: string | null): Promise<ExpansionContractionSummary> {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
+        const billingAccountId = (input as { billingAccountId?: unknown }).billingAccountId;
+        if (typeof billingAccountId === "string" && billingAccountId.trim()) {
+            await this.assertBillingAccountOwned(context.organizationId, billingAccountId);
+        }
         const created = await databaseService.brvExpansionContraction.create(buildExpansionContractionPayload(context.organizationId, input));
         if (!created) throw new Error("Failed to create expansionContraction");
         await databaseService.brvAuditLogs.create(buildBrvAuditPayload(context.organizationId, "expansion_contraction", "create", `ExpansionContraction created`, created.id));
