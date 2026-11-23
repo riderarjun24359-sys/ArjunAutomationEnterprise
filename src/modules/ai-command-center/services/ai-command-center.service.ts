@@ -4,10 +4,8 @@ import { proposeDecisions } from "../engines/ai-decision.engine";
 import { buildAutomations } from "../engines/automation.engine";
 import { buildRevenueSummary, computeOverallScore } from "../engines/executive-analytics.engine";
 import {
-    buildAgentStatuses,
     buildDeliveryStatusSummary,
     buildSupportSlaSummary,
-    computeAgentHealth,
     computeClientHealth,
 } from "../engines/health-monitoring.engine";
 import { buildRecommendations } from "../engines/recommendation.engine";
@@ -95,11 +93,10 @@ export class AiCommandCenterService {
             deliveryHealth,
             pendingAi: deliveryStatus.pendingAi,
         });
-        const agents = buildAgentStatuses({
-            systemHealth,
-            pendingApprovals: recommendations.filter((r) => r.priority === "high" || r.priority === "critical").length,
-        });
-        const agentHealth = computeAgentHealth(agents);
+        // No live agent telemetry source is connected yet. Do not fabricate
+        // agents, activity timestamps, or health scores from overall platform health.
+        const agents = [];
+        const agentHealth = 0;
         const alerts = buildSystemAlerts({
             systemHealth,
             openTickets: support.openTickets,
@@ -112,7 +109,6 @@ export class AiCommandCenterService {
             clientHealth,
             supportSla.supportHealth,
             deliveryHealth,
-            agentHealth,
         ]);
 
         const orgId = await this.getOrgId(ctx);
