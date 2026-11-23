@@ -157,7 +157,16 @@ export function buildRevenueDashboard(
     const outstandingFromBrv = money(data.outstandingBalances.reduce((s, b) => s + Number(b.total_outstanding_usd ?? 0), 0));
     const outstandingFromInvoices = money(invoices.reduce((s, i) => s + i.amountDueUsd, 0));
     const outstandingUsd = outstandingFromBrv > 0 ? outstandingFromBrv : outstandingFromInvoices;
-    const collectedUsd = money(payments.filter((p) => isPaidPayment(p.status)).reduce((s, p) => s + p.amountUsd, 0));
+    // Payments and invoice amount_paid represent the same cash collection
+    // from two different views. Prefer settled payment records when present;
+    // use invoice paid totals only as a fallback, never add both together.
+    const settledPayments = payments.filter((p) => isPaidPayment(p.status));
+    const invoiceCollections = invoices.reduce((sum, invoice) => sum + invoice.amountPaidUsd, 0);
+    const collectedUsd = money(
+        settledPayments.length > 0
+            ? settledPayments.reduce((sum, payment) => sum + payment.amountUsd, 0)
+            : invoiceCollections,
+    );
     const failedPaymentCount = payments.filter((p) => isFailedPayment(p.status)).length;
     const collectionCasesOpen = data.collectionCases.filter((c) => !["closed", "resolved", "won"].includes(c.status.toLowerCase())).length;
 
@@ -166,14 +175,16 @@ export function buildRevenueDashboard(
         const key = monthKey(inv.invoiceDate);
         const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
         row.invoicedUsd += inv.totalUsd;
-        row.collectedUsd += inv.amountPaidUsd;
+        if (settledPayments.length === 0) row.collectedUsd += inv.amountPaidUsd;
         months.set(key, row);
     }
-    for (const pay of payments.filter((p) => isPaidPayment(p.status))) {
-        const key = monthKey(pay.attemptedAt);
-        const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
-        row.collectedUsd += pay.amountUsd;
-        months.set(key, row);
+    if (settledPayments.length > 0) {
+        for (const pay of settledPayments) {
+            const key = monthKey(pay.attemptedAt);
+            const row = months.get(key) ?? { collectedUsd: 0, invoicedUsd: 0 };
+            row.collectedUsd += pay.amountUsd;
+            months.set(key, row);
+        }
     }
 
     const revenueByMonth = [...months.entries()]
