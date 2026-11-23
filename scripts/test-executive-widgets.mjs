@@ -111,8 +111,7 @@ if (filterActivityTimeline(timeline, "finance").length < 1) throw new Error("fin
 if (filterActivityTimeline(timeline, "projects").length < 1) throw new Error("projects filter");
 
 const charts = buildExecutiveCharts(data, now);
-if (charts.revenueTrend.length !== 6) throw new Error("revenue months");
-if (!charts.revenueTrend.some((p) => p.value === 1200)) throw new Error("revenue value");
+if (charts.revenueTrend.length !== 0) throw new Error("unverified revenue trend must be hidden");
 if (charts.projectStatus.length < 2) throw new Error("project status");
 if (charts.taskCompletion.rate !== 50) throw new Error("task rate");
 
@@ -122,8 +121,9 @@ const liveStats = {
   activeProjects: 1,
   openTasks: 20,
   crmLeads: 5,
-  revenue: { collected: 1000, outstanding: 500, openInvoiceCount: 2, invoiceCount: 3, currency: "USD", label: "$1,000", detail: "x" },
+  revenue: { collected: 0, outstanding: 0, openInvoiceCount: 0, invoiceCount: 0, currency: "INR", verified: false, label: "Not verified", detail: "Razorpay settlement verification is not connected" },
   source: "supabase",
+  integrationIssues: [],
 };
 const insights = buildAiExecutiveInsights({ liveStats, charts, unifiedScore: 70 });
 if (insights.length === 0) throw new Error("insights empty");
