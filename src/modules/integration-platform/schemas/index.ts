@@ -108,7 +108,7 @@ export type accountingExportsFormValues = z.infer<typeof accountingExportsFormSc
 
 export const apiKeysFormSchema = z.object({
     integrationHubId: z.string().min(1),
-    keyName: z.string().min(2).max(64).optional(),
+    keyName: z.string().min(2).max(64),
     apiVersion: z.string().min(1).optional(),
 });
 
