@@ -52,7 +52,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Integration hub not found or inactive in this organization" }, { status: 404 });
     }
 
-    const prefix = `aae_live_${randomBytes(4).toString("hex")}`;
+    const prefix = `aae_live_${randomBytes(8).toString("hex")}`;
     const secret = randomBytes(32).toString("base64url");
     const token = `${prefix}_${secret}`;
     const keyHash = createHash("sha256").update(token, "utf8").digest("hex");
