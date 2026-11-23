@@ -7,7 +7,7 @@ export class ContactRepository extends BaseRepository<DbContact> {
 
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbContact[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
         const normalized = this.buildQuery(query);
         const { data, error } = await client.from(this.table).select("*").eq("organization_id", organizationId).order(normalized.orderBy, { ascending: normalized.orderDirection === "asc" }).range(normalized.offset, normalized.offset + normalized.limit - 1);
         mapRepositoryError(error, "Failed to list contacts");
@@ -16,22 +16,24 @@ export class ContactRepository extends BaseRepository<DbContact> {
 
     async listByCompanyId(companyId: string): Promise<DbContact[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return [];
         }
 
-        const { data, error } = await client.from(this.table).select("*").eq("company_id", companyId).order("first_name");
+        const { data, error } = await client.from(this.table).select("*").eq("company_id", companyId).eq("organization_id", organizationId).order("first_name");
         mapRepositoryError(error, "Failed to list contacts");
         return (data ?? []) as DbContact[];
     }
 
     async getById(id: string): Promise<DbContact | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return null;
         }
 
-        const { data, error } = await client.from(this.table).select("*").eq("id", id).maybeSingle();
+        const { data, error } = await client.from(this.table).select("*").eq("id", id).eq("organization_id", organizationId).maybeSingle();
         mapRepositoryError(error, "Failed to get contact");
         return (data as DbContact | null) ?? null;
     }
