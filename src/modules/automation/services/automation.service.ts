@@ -332,7 +332,18 @@ export class AutomationService {
             credentials: "same-origin",
             cache: "no-store",
         });
-        const result = await response.json().catch(() => null) as { error?: string; webhooks?: Array<Record<string, unknown>> } | null;
+        const result = await response.json().catch(() => null) as {
+            error?: string;
+            webhooks?: Array<{
+                id: string;
+                name: string;
+                url: string;
+                allowedHosts: string[];
+                isActive: boolean;
+                hasSecret: boolean;
+                createdAt: string;
+            }>;
+        } | null;
         if (!response.ok || !Array.isArray(result?.webhooks)) {
             throw new Error(result?.error ?? "Unable to load organization webhooks");
         }
