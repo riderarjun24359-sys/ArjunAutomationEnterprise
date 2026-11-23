@@ -30,7 +30,7 @@ export class ActivityLogRepository extends BaseRepository<DbActivityLog> {
 
     async listByEntity(organizationId: string, entityType: string, entityId: string): Promise<DbActivityLog[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        if (!client || getSelectedOrganizationId() !== organizationId) {
             return [];
         }
 
