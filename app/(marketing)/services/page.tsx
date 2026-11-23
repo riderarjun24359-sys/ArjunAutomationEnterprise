@@ -122,7 +122,7 @@ export default function ServicesPage() {
                 path={PAGE.path}
                 breadcrumbs={breadcrumbs}
             />
-            <main className="bg-white text-slate-900">
+            <div className="bg-white text-slate-900">
                 <section className="border-b border-slate-200 bg-slate-50">
                     <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
                         <MarketingBreadcrumbs items={breadcrumbs} />
@@ -235,7 +235,7 @@ export default function ServicesPage() {
                         <div className="mt-7"><ContactLink>Request a free 20-minute call</ContactLink></div>
                     </div>
                 </section>
-            </main>
+            </div>
         </>
     );
 }
