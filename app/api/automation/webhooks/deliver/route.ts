@@ -112,24 +112,50 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Webhook signing secret is unavailable" }, { status: 503 });
     }
 
-    const priorDelivery = await client
-        .from("integration_deliveries")
-        .select("id,status,response_status")
-        .eq("organization_id", context.organizationId)
-        .eq("webhook_id", hook.id)
-        .eq("idempotency_key", input.idempotencyKey)
-        .maybeSingle();
-    if (priorDelivery.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
-    if (priorDelivery.data?.status === "delivered") {
-        return NextResponse.json(
-            { ok: true, attempts: 0, responseStatus: priorDelivery.data.response_status, deduplicated: true },
-            { status: 200, headers: { "Cache-Control": "no-store, private" } },
-        );
-    }
-
     const allowedHosts = Array.isArray(hook.allowed_hosts) ? hook.allowed_hosts : [];
     const validation = validateWebhookTarget(hook.url, allowedHosts);
     if (!validation.ok) return NextResponse.json({ error: validation.error ?? "Webhook target rejected" }, { status: 400 });
+
+    // Claim the idempotency key before any network side effect. The database's
+    // unique index makes this atomic across concurrent requests.
+    const claim = await client
+        .from("integration_deliveries")
+        .insert({
+            organization_id: context.organizationId,
+            webhook_id: hook.id,
+            event: input.event.trim(),
+            target_host: validation.host ?? "",
+            status: "pending",
+            attempts: 0,
+            error: "",
+            idempotency_key: input.idempotencyKey,
+        })
+        .select("id")
+        .single();
+
+    if (claim.error) {
+        if (claim.error.code === "23505") {
+            const existing = await client
+                .from("integration_deliveries")
+                .select("status,response_status")
+                .eq("organization_id", context.organizationId)
+                .eq("webhook_id", hook.id)
+                .eq("idempotency_key", input.idempotencyKey)
+                .maybeSingle();
+            if (existing.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
+            if (existing.data?.status === "delivered") {
+                return NextResponse.json(
+                    { ok: true, attempts: 0, responseStatus: existing.data.response_status, deduplicated: true },
+                    { status: 200, headers: { "Cache-Control": "no-store, private" } },
+                );
+            }
+            return NextResponse.json(
+                { error: existing.data?.status === "pending" ? "Webhook delivery is already in progress" : "Idempotency key was already used; provide a new key" },
+                { status: 409, headers: { "Cache-Control": "no-store, private" } },
+            );
+        }
+        return NextResponse.json({ error: "Unable to claim webhook delivery" }, { status: 503 });
+    }
 
     const timeoutMs = Number.isFinite(input.timeoutMs) ? Math.min(15000, Math.max(1000, Number(input.timeoutMs))) : 8000;
     const result = await executeWebhookStep({
@@ -149,21 +175,24 @@ export async function POST(request: Request) {
         delaysMs: [500, 2000],
     });
 
-    if (result.attempts.length > 0) {
-        const audit = await client.from("integration_deliveries").insert({
-            organization_id: context.organizationId,
-            webhook_id: hook.id,
-            event: input.event.trim(),
-            target_host: validation.host ?? "",
+    const audit = await client
+        .from("integration_deliveries")
+        .update({
             status: result.ok ? "delivered" : "failed",
             attempts: result.attempts.length,
             response_status: result.responseStatus,
             error: result.error ?? "",
-            idempotency_key: input.idempotencyKey,
-        });
-        if (audit.error) {
-            return NextResponse.json({ error: "Delivery completed but audit persistence failed", delivered: result.ok }, { status: 503, headers: { "Cache-Control": "no-store" } });
-        }
+        })
+        .eq("id", claim.data.id)
+        .eq("organization_id", context.organizationId)
+        .select("id")
+        .single();
+
+    if (audit.error) {
+        return NextResponse.json(
+            { error: "Delivery completed but audit persistence failed", delivered: result.ok },
+            { status: 503, headers: { "Cache-Control": "no-store, private" } },
+        );
     }
 
     return NextResponse.json(
