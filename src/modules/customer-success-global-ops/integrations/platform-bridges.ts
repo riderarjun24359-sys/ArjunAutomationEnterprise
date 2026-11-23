@@ -12,9 +12,10 @@ export async function fetchBusinessPlatformSnapshot(ctx: CsgContext) {
             openInvoices: dash.openInvoices,
             pendingAi: dash.pendingAiRecommendations,
             leads: dash.leadsCount,
+            available: true,
         };
     } catch {
-        return { activeClients: 0, activeProjects: 0, openInvoices: 0, pendingAi: 0, leads: 0 };
+        return { activeClients: 0, activeProjects: 0, openInvoices: 0, pendingAi: 0, leads: 0, available: false };
     }
 }
 
@@ -28,9 +29,10 @@ export async function fetchSupportSnapshot(ctx: CsgContext) {
             knowledgeArticles: stats.knowledgeArticles,
             incidents: stats.openEscalations,
             avgSatisfaction: stats.avgSatisfaction,
+            available: true,
         };
     } catch {
-        return { openTickets: 0, slaCompliance: 100, queueDepth: 0, knowledgeArticles: 0, incidents: 0, avgSatisfaction: 0 };
+        return { openTickets: 0, slaCompliance: 0, queueDepth: 0, knowledgeArticles: 0, incidents: 0, avgSatisfaction: 0, available: false };
     }
 }
 
@@ -41,9 +43,10 @@ export async function fetchDeliverySnapshot(ctx: CsgContext) {
             activeEngagements: dash.activeEngagements,
             qualityPassRate: dash.qualityPassRate,
             pendingAi: dash.pendingAiRecommendations,
+            available: true,
         };
     } catch {
-        return { activeEngagements: 0, qualityPassRate: 100, pendingAi: 0 };
+        return { activeEngagements: 0, qualityPassRate: 0, pendingAi: 0, available: false };
     }
 }
 
