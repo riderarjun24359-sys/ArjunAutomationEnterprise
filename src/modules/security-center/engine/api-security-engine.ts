@@ -27,13 +27,14 @@ export async function checkRateLimit(keyId: string, limit = 100, windowMs = 60_0
 }
 
 /**
- * This legacy helper is not a cryptographic signature implementation.
- * Keep the existing shape for compatibility, but do not treat its output as
- * authentication or integrity proof. Callers must migrate to HMAC-SHA-256
- * with a server-held secret before relying on request signatures.
+ * Request signing is intentionally disabled until a server-only HMAC-SHA-256
+ * implementation and key-management contract are available. A deterministic
+ * payload prefix is not a signature and must never be returned as one.
  */
-export function signRequest(payload: string, secretRef: string): string {
-    return `sig-${secretRef}-${Buffer.from(payload).toString("base64url").slice(0, 16)}`;
+export function signRequest(_payload: string, _secretRef: string): never {
+    throw new Error(
+        "Request signing is unavailable: use a server-held HMAC-SHA-256 key managed by the integration credential service."
+    );
 }
 
 export function rotateApiKey(_keyId: string): ApiKey | null {
