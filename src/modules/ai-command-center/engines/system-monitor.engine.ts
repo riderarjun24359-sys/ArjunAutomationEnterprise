@@ -7,7 +7,7 @@ export function computeSystemHealth(input: {
     openErrors?: number;
     openAlerts?: number;
 }): number {
-    const base = input.productionScore ?? input.platformHealth ?? 90;
+    const base = input.productionScore ?? input.platformHealth ?? 0;
     const penalty = (input.openErrors ?? 0) * 3 + (input.openAlerts ?? 0) * 4;
     return clampScore(base - penalty);
 }
