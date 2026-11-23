@@ -46,6 +46,7 @@ check("authenticated recommendation route has unit tests", existsSync(join(root,
 check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
 const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
 check("Jarvis weekly revenue requires signed captured Razorpay event and INR invoice", jarvisBriefing.includes("payment.captured:") && jarvisBriefing.includes('invoice?.currency === "INR"') && jarvisBriefing.includes('mrr_inr: null'));
+check("Jarvis revenue remains hidden until Razorpay webhook is configured", jarvisBriefing.includes("RAZORPAY_WEBHOOK_SECRET") && jarvisBriefing.includes("razorpay_webhook_not_configured_mrr_not_available"));
 const workflowFiles = [
     "n8n/workflows/01-priya-followup-dispatcher.json",
     "n8n/workflows/02-jarvis-daily-briefing.json",
