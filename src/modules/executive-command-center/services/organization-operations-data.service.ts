@@ -65,7 +65,7 @@ export async function loadOrganizationOperationsData(
             orderDirection: "desc",
             limit: 40,
         })),
-    ]);
+    ] as const);
     const [clientsResult, projectsResult, tasksResult, leadsResult, invoicesResult, paymentsResult, auditsResult, activitiesResult] = results;
     const clients = clientsResult.data;
     const projects = projectsResult.data;
