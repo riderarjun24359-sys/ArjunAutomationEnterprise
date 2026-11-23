@@ -3,13 +3,13 @@ import { readFileSync } from "node:fs";
 
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
-const sendWhatsApp = read("src/app/api/ai-sales/tools/send-whatsapp/route.ts");
-const whatsappWebhook = read("src/app/api/ai-sales/webhooks/whatsapp/route.ts");
-const consentRoute = read("src/app/api/ai-sales/tools/record-consent/route.ts");
+const sendWhatsApp = read("app/api/ai-sales/tools/send-whatsapp/route.ts");
+const whatsappWebhook = read("app/api/ai-sales/webhooks/whatsapp/route.ts");
+const consentRoute = read("app/api/ai-sales/tools/record-consent/route.ts");
 const migration = read("supabase/migrations/202611230009_priya_whatsapp_messaging.sql");
-const dispatcher = read("src/app/api/ai-sales/dispatch-followups/route.ts");
+const dispatcher = read("app/api/ai-sales/dispatch-followups/route.ts");
 const hud = read("src/modules/ai-sales-lead-engine/components/JarvisExecutiveHud.tsx");
-const booking = read("src/app/api/ai-sales/tools/book-demo/route.ts");
+const booking = read("app/api/ai-sales/tools/book-demo/route.ts");
 const provider = read("src/modules/ai-voice-agent/providers/voice-provider.ts");
 
 assert.match(sendWhatsApp, /requested_whatsapp_message/);
