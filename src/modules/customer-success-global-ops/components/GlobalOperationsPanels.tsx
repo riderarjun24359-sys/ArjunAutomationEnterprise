@@ -44,7 +44,7 @@ export function GlobalOperationsPanels({ dash }: { dash: GlobalOperationsDashboa
                                 <span className="font-medium">{r.clientName}</span>
                                 <Badge variant="warning">{r.status}</Badge>
                             </div>
-                            <p className="mt-1 text-xs text-[var(--dos-text-tertiary)]">Due {r.renewalDate} · ${r.amount.toLocaleString()} · {r.probability}% probability</p>
+                            <p className="mt-1 text-xs text-[var(--dos-text-tertiary)]">Due {r.renewalDate} · Amount not verified · {r.probability}% probability</p>
                         </div>
                     ))}
                 </Section>
