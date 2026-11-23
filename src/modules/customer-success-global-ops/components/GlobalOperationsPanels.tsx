@@ -14,12 +14,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export function GlobalOperationsPanels({ dash }: { dash: GlobalOperationsDashboard }) {
+    const hasIssue = (term: string) => dash.integrationIssues.some((issue) => issue.toLowerCase().includes(term));
     return (
         <div className="space-y-8">
             <div className="grid gap-6 xl:grid-cols-2">
                 <Section title="Customer Success OS">
                     <div className="flex flex-wrap gap-3 text-xs text-[var(--dos-text-secondary)]">
-                        <span>Health {dash.customerHealth}%</span>
+                        <span>Health {hasIssue("customer health") ? "Not available" : `${dash.customerHealth}%`}</span>
                         <span>·</span>
                         <span>{dash.successPlans.length} success plans</span>
                         <span>·</span>
@@ -53,7 +54,7 @@ export function GlobalOperationsPanels({ dash }: { dash: GlobalOperationsDashboa
                     <div className="flex flex-wrap gap-3 text-xs text-[var(--dos-text-secondary)]">
                         <span>{dash.openTickets} open tickets</span>
                         <span>·</span>
-                        <span>SLA {dash.slaCompliance}%</span>
+                        <span>SLA {hasIssue("support health") ? "Not available" : `${dash.slaCompliance}%`}</span>
                         <span>·</span>
                         <span>Queue {dash.queueDepth}</span>
                         <span>·</span>
@@ -100,7 +101,7 @@ export function GlobalOperationsPanels({ dash }: { dash: GlobalOperationsDashboa
                 </Section>
 
                 <Section title="Service Delivery Control">
-                    <p className="text-xs text-[var(--dos-text-secondary)]">Delivery health {dash.deliveryHealth}%</p>
+                    <p className="text-xs text-[var(--dos-text-secondary)]">Delivery health {hasIssue("delivery health") ? "Not available" : `${dash.deliveryHealth}%`}</p>
                     {dash.deliveryMilestones.map((m) => (
                         <div key={m.id} className="flex items-center justify-between border-b border-[var(--dos-border)] pb-2 text-sm">
                             <div>
