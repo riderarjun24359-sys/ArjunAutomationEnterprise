@@ -100,13 +100,13 @@ export class AiCommandCenterService {
             clientHealth: customerHealthAvailable ? clientHealth : null,
             supportHealth: supportHealthAvailable ? supportSla.supportHealth : null,
             deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
-            pendingAi: business.available || delivery.available ? deliveryStatus.pendingAi : 0,
+            pendingAi: business.available && delivery.available ? deliveryStatus.pendingAi : null,
         });
         const automations = buildAutomations({
             openTickets: support.available ? support.openTickets : null,
             renewalsDue: globalOps.available ? globalOps.renewalsDue : null,
             deliveryHealth: deliveryHealthAvailable ? deliveryHealth : null,
-            pendingAi: business.available || delivery.available ? deliveryStatus.pendingAi : null,
+            pendingAi: business.available && delivery.available ? deliveryStatus.pendingAi : null,
         });
         const agents = buildAgentStatuses({
             systemHealth,
@@ -129,7 +129,7 @@ export class AiCommandCenterService {
 
         if (orgId) {
             void aiCommandCenterRepository.logAudit(orgId, "dashboard_load", "AI Command Center dashboard loaded");
-            if (integrationIssues.length === 0) {
+            if (integrationIssues.length === 0 && agents.some((agent) => agent.status !== "unknown")) {
                 void aiCommandCenterRepository.persistHealthSnapshot(orgId, {
                     systemHealth,
                     clientHealth,
