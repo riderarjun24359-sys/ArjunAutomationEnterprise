@@ -77,6 +77,12 @@ describe("storage signed-url tenant guard", () => {
         expect((await POST(req({}))).status).toBe(400);
     });
 
+    it("rejects requests for unrelated storage buckets", async () => {
+        memberOf("org-a");
+        const res = await POST(req({ bucket: "private-backups", path: "org-a/secret.pdf" }));
+        expect(res.status).toBe(400);
+    });
+
     it("signs same-organization paths", async () => {
         memberOf("org-a");
         const res = await POST(req({ path: "org-a/u1/stamp-f.pdf" }));
