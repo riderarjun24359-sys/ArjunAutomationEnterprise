@@ -35,6 +35,7 @@ export async function GET(request: Request) {
     const organizationId = secured.context.organizationId;
     const { start, end } = istDayBounds();
     const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60_000).toISOString().slice(0, 10);
+    const razorpayConfigured = Boolean(process.env.RAZORPAY_WEBHOOK_SECRET?.trim());
 
     const [
         newLeads,
@@ -111,8 +112,10 @@ export async function GET(request: Request) {
         timezone: "Asia/Kolkata",
         as_of: new Date().toISOString(),
         mrr_inr: null,
-        weekly_revenue_inr: Math.round(weeklyRevenueInr * 100) / 100,
-        revenue_status: "verified_razorpay_captured_payments_only_mrr_not_available",
+        weekly_revenue_inr: razorpayConfigured ? Math.round(weeklyRevenueInr * 100) / 100 : null,
+        revenue_status: razorpayConfigured
+            ? "verified_razorpay_captured_payments_only_mrr_not_available"
+            : "razorpay_webhook_not_configured_mrr_not_available",
         new_leads_today: newLeads.count ?? 0,
         calls_attempted_today: callsAttempted.count ?? 0,
         calls_connected_today: callsConnected.count ?? 0,
