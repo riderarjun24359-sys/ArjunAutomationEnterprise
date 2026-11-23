@@ -405,14 +405,15 @@ export class IntegrationPlatformService {
         return (await databaseService.intgApiKeys.listByOrganization(context.organizationId)).map((r) => mapApiKeySummary(r, maps));
     }
 
-    async createApiKey(authUserId: string, email: string, input: CreateApiKeyInput, fullName?: string | null): Promise<ApiKeySummary> {
-        const context = await this.getContext(authUserId, email, fullName);
-        if (!context) throw new Error("Unable to resolve organization context");
-        const created = await databaseService.intgApiKeys.create(buildApiKeyPayload(context.organizationId, input));
-        if (!created) throw new Error("Failed to create apiKeys");
-        await databaseService.intgAuditLogs.create(buildIntgAuditPayload(context.organizationId, "api_keys", "create", `ApiKey created`, created.id));
-        const maps = await this.getMaps(context.organizationId);
-        return mapApiKeySummary(created, maps);
+    async createApiKey(_authUserId: string, _email: string, _input: CreateApiKeyInput, _fullName?: string | null): Promise<ApiKeySummary> {
+        // The current repository client is browser-only and this flow does not
+        // generate or persist a one-time secret digest. Creating an "active"
+        // row with an empty hash would falsely imply a usable credential.
+        // Keep issuance disabled until a server-authenticated, tenant-scoped
+        // endpoint can generate, hash, store, and reveal a secret exactly once.
+        throw new Error(
+            "API key issuance is temporarily unavailable: secure server-side credential issuance is not configured."
+        );
     }
 
     async getApiScopes(authUserId: string, email: string, fullName?: string | null): Promise<ApiScopeSummary[]> {
