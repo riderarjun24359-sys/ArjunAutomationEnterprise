@@ -4,7 +4,7 @@ import type { AccAlert, AccAutomation, AccDecision, AccRecommendation } from "..
 export class AiCommandCenterRepository {
     async listAlerts(orgId: string): Promise<AccAlert[]> {
         const client = getRepositoryClient();
-        if (!client || getSelectedOrganizationId() !== organizationId) return [];
+        if (!client || getSelectedOrganizationId() !== orgId) return [];
         const { data, error } = await client
             .from("acc_alerts")
             .select("*")
@@ -25,7 +25,7 @@ export class AiCommandCenterRepository {
 
     async persistAlert(orgId: string, alert: AccAlert): Promise<void> {
         const client = getRepositoryClient();
-        if (!client) return;
+        if (!client || getSelectedOrganizationId() !== orgId) return;
         const { error } = await client.from("acc_alerts").upsert({
             id: alert.id,
             organization_id: orgId,
@@ -40,7 +40,7 @@ export class AiCommandCenterRepository {
 
     async listRecommendations(orgId: string): Promise<AccRecommendation[]> {
         const client = getRepositoryClient();
-        if (!client) return [];
+        if (!client || getSelectedOrganizationId() !== orgId) return [];
         const { data, error } = await client
             .from("acc_recommendations")
             .select("*")
@@ -66,7 +66,7 @@ export class AiCommandCenterRepository {
         status: AccRecommendation["status"],
     ): Promise<void> {
         const client = getRepositoryClient();
-        if (!client) throw new Error("Recommendation storage is unavailable");
+        if (!client || getSelectedOrganizationId() !== orgId) throw new Error("Organization context mismatch or recommendation storage unavailable");
         const { data, error } = await client
             .from("acc_recommendations")
             .update({ status, updated_at: new Date().toISOString() })
