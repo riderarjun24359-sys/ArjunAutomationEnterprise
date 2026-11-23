@@ -199,45 +199,100 @@ export async function POST(request: Request) {
     const validation = validateWebhookTarget(hook.url, allowedHosts);
     if (!validation.ok) return NextResponse.json({ error: validation.error ?? "Webhook target rejected" }, { status: 400 });
 
-    // Claim the idempotency key before any network side effect. The database's
-    // unique index makes this atomic across concurrent requests.
-    const claim = await client
+    // Claim the idempotency key before any network side effect. A unique
+    // database index serializes new claims; stale pending claims are reclaimable
+    // after ten minutes because each delivery attempt is bounded to seconds.
+    const staleBefore = new Date(Date.now() - 10 * 60_000).toISOString();
+    const prior = await client
         .from("integration_deliveries")
-        .insert({
-            organization_id: context.organizationId,
-            webhook_id: hook.id,
-            event: input.event.trim(),
-            target_host: validation.host ?? "",
-            status: "pending",
-            attempts: 0,
-            error: "",
-            idempotency_key: input.idempotencyKey,
-        })
-        .select("id")
-        .single();
+        .select("id,event,status,response_status,created_at")
+        .eq("organization_id", context.organizationId)
+        .eq("webhook_id", hook.id)
+        .eq("idempotency_key", input.idempotencyKey)
+        .maybeSingle();
+    if (prior.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
 
-    if (claim.error) {
-        if (claim.error.code === "23505") {
-            const existing = await client
-                .from("integration_deliveries")
-                .select("status,response_status")
-                .eq("organization_id", context.organizationId)
-                .eq("webhook_id", hook.id)
-                .eq("idempotency_key", input.idempotencyKey)
-                .maybeSingle();
-            if (existing.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
-            if (existing.data?.status === "delivered") {
-                return NextResponse.json(
-                    { ok: true, attempts: 0, responseStatus: existing.data.response_status, deduplicated: true },
-                    { status: 200, headers: { "Cache-Control": "no-store, private" } },
-                );
-            }
+    let claimId: string;
+    if (prior.data) {
+        if (prior.data.event !== input.event.trim()) {
+            return NextResponse.json({ error: "Idempotency key was already used for a different event" }, { status: 409 });
+        }
+        if (prior.data.status === "delivered") {
             return NextResponse.json(
-                { error: existing.data?.status === "pending" ? "Webhook delivery is already in progress" : "Idempotency key was already used; provide a new key" },
+                { ok: true, attempts: 0, responseStatus: prior.data.response_status, deduplicated: true },
+                { status: 200, headers: { "Cache-Control": "no-store, private" } },
+            );
+        }
+        if (prior.data.status !== "pending") {
+            return NextResponse.json(
+                { error: "Idempotency key was already used; provide a new key" },
                 { status: 409, headers: { "Cache-Control": "no-store, private" } },
             );
         }
-        return NextResponse.json({ error: "Unable to claim webhook delivery" }, { status: 503 });
+
+        const reclaimed = await client
+            .from("integration_deliveries")
+            .update({
+                created_at: new Date().toISOString(),
+                attempts: 0,
+                response_status: null,
+                error: "Recovered expired pending delivery claim",
+            })
+            .eq("id", prior.data.id)
+            .eq("organization_id", context.organizationId)
+            .eq("status", "pending")
+            .lt("created_at", staleBefore)
+            .select("id")
+            .maybeSingle();
+        if (reclaimed.error) return NextResponse.json({ error: "Unable to recover webhook delivery claim" }, { status: 503 });
+        if (!reclaimed.data) {
+            return NextResponse.json(
+                { error: "Webhook delivery is already in progress" },
+                { status: 409, headers: { "Cache-Control": "no-store, private" } },
+            );
+        }
+        claimId = reclaimed.data.id;
+    } else {
+        const inserted = await client
+            .from("integration_deliveries")
+            .insert({
+                organization_id: context.organizationId,
+                webhook_id: hook.id,
+                event: input.event.trim(),
+                target_host: validation.host ?? "",
+                status: "pending",
+                attempts: 0,
+                error: "",
+                idempotency_key: input.idempotencyKey,
+            })
+            .select("id")
+            .maybeSingle();
+
+        if (inserted.error) {
+            if (inserted.error.code === "23505") {
+                const raced = await client
+                    .from("integration_deliveries")
+                    .select("event,status,response_status")
+                    .eq("organization_id", context.organizationId)
+                    .eq("webhook_id", hook.id)
+                    .eq("idempotency_key", input.idempotencyKey)
+                    .maybeSingle();
+                if (raced.error) return NextResponse.json({ error: "Unable to verify webhook idempotency" }, { status: 503 });
+                if (raced.data?.status === "delivered" && raced.data.event === input.event.trim()) {
+                    return NextResponse.json(
+                        { ok: true, attempts: 0, responseStatus: raced.data.response_status, deduplicated: true },
+                        { status: 200, headers: { "Cache-Control": "no-store, private" } },
+                    );
+                }
+                return NextResponse.json(
+                    { error: "Webhook delivery is already in progress or this idempotency key was already used" },
+                    { status: 409, headers: { "Cache-Control": "no-store, private" } },
+                );
+            }
+            return NextResponse.json({ error: "Unable to claim webhook delivery" }, { status: 503 });
+        }
+        if (!inserted.data) return NextResponse.json({ error: "Unable to claim webhook delivery" }, { status: 503 });
+        claimId = inserted.data.id;
     }
 
     const timeoutMs = Number.isFinite(input.timeoutMs) ? Math.min(15000, Math.max(1000, Number(input.timeoutMs))) : 8000;
@@ -263,7 +318,7 @@ export async function POST(request: Request) {
             response_status: result.responseStatus,
             error: result.error ?? "",
         })
-        .eq("id", claim.data.id)
+        .eq("id", claimId)
         .eq("organization_id", context.organizationId)
         .select("id")
         .single();
