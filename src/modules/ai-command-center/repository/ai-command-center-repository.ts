@@ -60,6 +60,24 @@ export class AiCommandCenterRepository {
         }));
     }
 
+    async updateRecommendationStatus(
+        orgId: string,
+        recommendationId: string,
+        status: AccRecommendation["status"],
+    ): Promise<void> {
+        const client = getRepositoryClient();
+        if (!client) throw new Error("Recommendation storage is unavailable");
+        const { data, error } = await client
+            .from("acc_recommendations")
+            .update({ status, updated_at: new Date().toISOString() })
+            .eq("organization_id", orgId)
+            .eq("id", recommendationId)
+            .select("id")
+            .maybeSingle();
+        mapRepositoryError(error, "updateRecommendationStatus");
+        if (!data) throw new Error("Recommendation not found in this organization");
+    }
+
     async persistRecommendation(orgId: string, rec: AccRecommendation): Promise<void> {
         const client = getRepositoryClient();
         if (!client) return;
