@@ -16,9 +16,10 @@ export class AiSalesLeadEngineRepository {
 
         const orgId = context.organizationId;
         const membershipsForUser = await databaseService.memberships.getByUser(context.profileId).catch(() => []);
+        // Authorization must use the role attached to this exact tenant.
+        // A role from another membership must never grant access here.
         const membershipRole =
             membershipsForUser.find((m) => m.organization_id === orgId)?.role_name ??
-            membershipsForUser[0]?.role_name ??
             null;
 
         const [
