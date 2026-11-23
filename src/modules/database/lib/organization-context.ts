@@ -41,6 +41,15 @@ async function resolveOrganizationContextUncached(
     }
 
     const memberships = await databaseService.memberships.getByUser(profile.id);
+
+    // There is no trusted tenant-selection signal in this resolver. Never
+    // silently choose the first of multiple active memberships: doing so can
+    // route a request into the wrong customer's data. A future explicit
+    // organization selector can pass a verified tenant into this boundary.
+    if (memberships.length > 1) {
+        return null;
+    }
+
     let organizationId = memberships[0]?.organization_id ?? null;
 
     if (!organizationId) {
