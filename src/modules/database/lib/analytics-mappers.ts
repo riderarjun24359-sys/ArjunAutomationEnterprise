@@ -105,43 +105,19 @@ const parseCurrency = (value: string | number | null | undefined): number => {
     return Number.isFinite(parsed) ? parsed : 0;
 };
 
-export const buildRevenueAnalytics = (input: {
+export const buildRevenueAnalytics = (_input: {
     invoices: DbInvoice[];
     payments: DbPayment[];
     expenses: DbExpense[];
-}): RevenueAnalytics => {
-    const paidTotal = input.invoices
-        .filter((invoice) => invoice.status === "paid")
-        .reduce((sum, invoice) => sum + Number(invoice.total ?? 0), 0);
-    const outstanding = input.invoices
-        .filter((invoice) => invoice.status === "sent" || invoice.status === "overdue")
-        .reduce((sum, invoice) => sum + Number(invoice.total ?? 0), 0);
-    const expenseTotal = input.expenses.reduce((sum, expense) => sum + Number(expense.amount ?? 0), 0);
-    const paymentTotal = input.payments.reduce((sum, payment) => sum + Number(payment.amount ?? 0), 0);
-
-    const revenueTrend: AnalyticsChartPoint[] = input.invoices.map((invoice) => ({
-        label: invoice.number,
-        value: Number(invoice.total ?? 0),
-        category: invoice.status,
-    }));
-
-    const expenseBreakdown: AnalyticsChartPoint[] = Object.entries(
-        input.expenses.reduce<Record<string, number>>((acc, expense) => {
-            acc[expense.category] = (acc[expense.category] ?? 0) + Number(expense.amount ?? 0);
-            return acc;
-        }, {}),
-    ).map(([label, value]) => ({ label, value }));
-
-    return {
-        paidTotal,
-        outstanding,
-        expenseTotal,
-        paymentTotal,
-        revenueTrend,
-        expenseBreakdown,
-    };
-};
-
+}): RevenueAnalytics => ({
+    // Manual invoice/payment records are not settlement-verified. Do not infer revenue from status or amount_paid.
+    paidTotal: 0,
+    outstanding: 0,
+    expenseTotal: 0,
+    paymentTotal: 0,
+    revenueTrend: [],
+    expenseBreakdown: [],
+});
 export const buildDeliveryAnalytics = (input: {
     projects: DbProject[];
     tasks: DbTask[];
@@ -255,8 +231,8 @@ export const buildAnalyticsDashboardStats = (input: {
     clients: ClientAnalytics;
     automation: AutomationInsights;
 }): AnalyticsDashboardStats => ({
-    totalRevenue: `₹${input.revenue.paidTotal.toLocaleString()}`,
-    outstandingInvoices: `₹${input.revenue.outstanding.toLocaleString()}`,
+    totalRevenue: "Not verified",
+    outstandingInvoices: "Not verified",
     activeClients: String(input.clients.activeClients),
     activeProjects: String(input.delivery.activeProjects),
     openTasks: String(input.delivery.openTasks),
@@ -270,12 +246,12 @@ export const buildAnalyticsSummary = (input: {
     clients: ClientAnalytics;
     automation: AutomationInsights;
 }): AnalyticsSummary => ({
-    revenuePaid: input.revenue.paidTotal,
-    revenueOutstanding: input.revenue.outstanding,
+    revenuePaid: 0,
+    revenueOutstanding: 0,
     expenseTotal: input.revenue.expenseTotal,
     activeClients: input.clients.activeClients,
     activeProjects: input.delivery.activeProjects,
     openTasks: input.delivery.openTasks,
     workflowSuccessRate: input.automation.successRate,
-    monthlyTrend: input.revenue.revenueTrend,
+    monthlyTrend: [],
 });
