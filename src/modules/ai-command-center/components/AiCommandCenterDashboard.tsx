@@ -20,6 +20,15 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
 
     return (
         <div className="space-y-8">
+            {dash.integrationIssues.length > 0 ? (
+                <Section title="Integrations needing attention">
+                    <p className="text-sm text-[var(--dos-text-secondary)]">Live data could not be loaded from these systems. Their fallback values are not healthy-state signals.</p>
+                    <div className="flex flex-wrap gap-2">
+                        {dash.integrationIssues.map((item) => <Badge key={item} variant="warning">{item} unavailable</Badge>)}
+                    </div>
+                </Section>
+            ) : null}
+
             <div className="grid gap-6 xl:grid-cols-2">
                 <Section title="System Health">
                     <p className="text-3xl font-bold">{dash.systemHealth}%</p>
