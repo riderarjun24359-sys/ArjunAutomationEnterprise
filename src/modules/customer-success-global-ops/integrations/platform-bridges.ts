@@ -51,17 +51,13 @@ export async function fetchDeliverySnapshot(ctx: CsgContext) {
 }
 
 export async function fetchSupportTickets(ctx: CsgContext): Promise<SupportTicketSummary[]> {
-    try {
-        const tickets = await supportService.getTickets(ctx.authUserId, ctx.email, ctx.fullName);
-        return tickets.slice(0, 12).map((t) => ({
-            id: t.id,
-            subject: t.subject,
-            status: t.status,
-            priority: t.priorityName ?? "normal",
-            slaStatus: t.dueAt && new Date(t.dueAt) < new Date() && t.status !== "resolved" ? "breached" : "on-track",
-            clientName: t.clientName ?? "Client",
-        }));
-    } catch {
-        return [];
-    }
+    const tickets = await supportService.getTickets(ctx.authUserId, ctx.email, ctx.fullName);
+    return tickets.slice(0, 12).map((t) => ({
+        id: t.id,
+        subject: t.subject,
+        status: t.status,
+        priority: t.priorityName ?? "normal",
+        slaStatus: t.dueAt && new Date(t.dueAt) < new Date() && t.status !== "resolved" ? "breached" : "on-track",
+        clientName: t.clientName ?? "Client",
+    }));
 }
