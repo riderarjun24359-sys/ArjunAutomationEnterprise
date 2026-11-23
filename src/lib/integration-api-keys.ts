@@ -44,6 +44,15 @@ export async function validateIntegrationApiKey(token: string): Promise<Validate
             if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) return null;
         }
 
+        const hub = await serviceClient
+            .from("intg_integration_hubs")
+            .select("id")
+            .eq("id", row.hub_id)
+            .eq("organization_id", row.organization_id)
+            .eq("status", "active")
+            .maybeSingle();
+        if (hub.error || !hub.data) return null;
+
         await serviceClient
             .from("intg_api_keys")
             .update({ last_used_at: new Date().toISOString() })
