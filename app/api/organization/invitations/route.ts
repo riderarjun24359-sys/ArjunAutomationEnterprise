@@ -45,6 +45,82 @@ export async function GET(request: Request) {
     );
 }
 
+/**
+ * Revoke a pending invitation. The caller must be an active member of the
+ * same organization and hold enough privilege to grant the invited role.
+ * Organization and pending-state predicates are repeated on the UPDATE to
+ * prevent cross-tenant changes and stale double-revocation races.
+ */
+export async function DELETE(request: Request) {
+    const ip = getClientIp(request);
+    const { context, error } = await secureApiRoute(request, { rateLimitKey: `org-invites-revoke:${ip}`, rateLimit: 20 });
+    if (error || !context) return error ?? NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    if (!context.organizationId) {
+        return NextResponse.json({ error: "No organization context" }, { status: 403 });
+    }
+
+    const serviceClient = getServiceRoleClient();
+    if (!serviceClient) {
+        return NextResponse.json({ error: "Secure storage is not configured" }, { status: 503 });
+    }
+
+    let body: unknown = null;
+    try {
+        body = await request.json();
+    } catch {
+        return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const invitationId = typeof body === "object" && body !== null && "invitationId" in body
+        ? (body as { invitationId?: unknown }).invitationId
+        : null;
+    if (typeof invitationId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(invitationId)) {
+        return NextResponse.json({ error: "Valid invitationId is required" }, { status: 400 });
+    }
+
+    const inviter = await findProfile(serviceClient, context.user.id);
+    if (!inviter) return NextResponse.json({ error: "Active organization membership required" }, { status: 403 });
+    const membership = await serviceClient
+        .from("organization_members")
+        .select("role_name")
+        .eq("organization_id", context.organizationId)
+        .eq("user_id", inviter.id)
+        .eq("is_active", true)
+        .maybeSingle();
+    const inviterRole = membership.error ? null : (membership.data?.role_name as string | undefined);
+    if (!inviterRole) return NextResponse.json({ error: "Active organization membership required" }, { status: 403 });
+
+    const existing = await serviceClient
+        .from("organization_invitations")
+        .select("id,role_name,status")
+        .eq("id", invitationId)
+        .eq("organization_id", context.organizationId)
+        .maybeSingle();
+    if (existing.error) return NextResponse.json({ error: "Unable to verify invitation" }, { status: 503 });
+    if (!existing.data) return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
+    if (existing.data.status !== "pending") {
+        return NextResponse.json({ error: "Only pending invitations can be revoked" }, { status: 409 });
+    }
+
+    const gate = canGrantInvite(inviterRole, String(existing.data.role_name ?? ""));
+    if (!gate.ok) return NextResponse.json({ error: "Insufficient permission to revoke this invitation" }, { status: 403 });
+
+    const revoked = await serviceClient
+        .from("organization_invitations")
+        .update({ status: "revoked", updated_at: new Date().toISOString() })
+        .eq("id", invitationId)
+        .eq("organization_id", context.organizationId)
+        .eq("status", "pending")
+        .select("id,status")
+        .maybeSingle();
+    if (revoked.error) return NextResponse.json({ error: "Invitation revocation failed" }, { status: 503 });
+    if (!revoked.data) return NextResponse.json({ error: "Invitation is no longer pending" }, { status: 409 });
+
+    return NextResponse.json(
+        { invitation: { id: revoked.data.id, status: revoked.data.status } },
+        { status: 200, headers: { "Cache-Control": "no-store" } },
+    );
+}
+
 export async function POST(request: Request) {
     const ip = getClientIp(request);
     const { context, error } = await secureApiRoute(request, { rateLimitKey: `org-invites-write:${ip}`, rateLimit: 20 });
