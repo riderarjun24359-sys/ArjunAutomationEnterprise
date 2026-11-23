@@ -6,8 +6,6 @@ import { verifyRazorpayWebhookSignature } from "@/src/lib/razorpay-payments";
 import { opsLog, enqueueAlert } from "@/src/lib/ops-monitoring";
 import {
     createSupabaseIdempotencyStore,
-    extractRazorpaySettlementRef,
-    extractStripeSettlementRef,
     parseRazorpayWebhookEvent,
     parseWebhookEvent,
     resolveWebhookDedupe,
@@ -15,7 +13,6 @@ import {
     type WebhookEventRef,
 } from "@/src/lib/webhook-idempotency";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
-import { attemptReconciliation } from "@/src/modules/finance/lib/reconciliation";
 
 /**
  * Unified payment webhook receiver — verifies the provider signature,
@@ -139,40 +136,15 @@ export async function POST(request: Request) {
         id: event.eventId,
     });
 
-    // Read-only reconciliation attempt: match the settlement against open
-    // invoices and report the outcome. State never changes here — a `matched`
-    // outcome is a candidate for HUMAN confirmation in the finance module,
-    // never proof of settlement on its own.
-    let reconciliation: unknown = { attempted: false, reason: "secure storage unconfigured" };
-    if (serviceClient) {
-        try {
-            const raw = JSON.parse(payload) as unknown;
-            const ref = provider === "razorpay" ? extractRazorpaySettlementRef(raw) : extractStripeSettlementRef(raw);
-            reconciliation = await attemptReconciliation(
-                { provider, eventId: event.eventId, eventType: event.eventType, reference: ref.reference, amountMinor: ref.amountMinor, currency: ref.currency },
-                async () => {
-                    const { data, error } = await serviceClient
-                        .from("invoices")
-                        .select("id,number,total,amount_paid,currency,status,organization_id")
-                        .limit(500);
-                    if (error) throw new Error(error.message);
-                    return ((data ?? []) as Array<Record<string, unknown>>).map((row) => ({
-                        id: String(row.id),
-                        number: String(row.number ?? ""),
-                        total: Number(row.total ?? 0),
-                        amountPaid: Number(row.amount_paid ?? 0),
-                        currency: typeof row.currency === "string" ? row.currency : null,
-                        status: String(row.status ?? ""),
-                        organizationId: typeof row.organization_id === "string" ? row.organization_id : null,
-                    }));
-                },
-            );
-            opsLog("info", "Payment webhook reconciliation attempted", "api/payments/webhook", { eventId: event.eventId, reconciliation });
-        } catch (e) {
-            reconciliation = { attempted: false, reason: e instanceof Error ? e.message : String(e) };
-            opsLog("error", "Payment webhook reconciliation failed", "api/payments/webhook", { error: e instanceof Error ? e.message : String(e) });
-        }
-    }
+    // Provider-to-tenant account mapping is not configured. Never scan every
+    // tenant's invoices with the service role: invoice references can collide,
+    // and returning a matched invoice could expose another customer's record.
+    // Webhook receipt remains durable/idempotent; finance reconciliation is
+    // deliberately manual until a verified tenant mapping is implemented.
+    const reconciliation = {
+        attempted: false,
+        reason: "tenant-scoped provider account mapping is not configured; manual reconciliation required",
+    };
 
     return NextResponse.json(
         { received: true, provider, type: event.eventType, dedupe, fulfillment: "manual-reconciliation", reconciliation },
