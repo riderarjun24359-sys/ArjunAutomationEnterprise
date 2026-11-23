@@ -32,6 +32,7 @@ pass("export:createEmptyLiveOperationsStats", kpiSrc.includes("export function c
 pass("export:fetchLiveOperationsStats", liveSrc.includes("export async function fetchLiveOperationsStats"));
 pass("service:uses-live-fetch", serviceSrc.includes("loadOrganizationOperationsData") || serviceSrc.includes("fetchLiveOperationsStats"));
 pass("service:uses-kpi-builder", serviceSrc.includes("buildLiveOperationsKpis"));
+pass("revenue:unverified-balance-hidden", liveSrc.includes("balance amount not verified") && !liveSrc.includes("formatInr(outstanding)"));
 
 const kpiLabels = ["Total Clients", "Active Projects", "Open Tasks", "CRM Leads", "Revenue Summary"];
 for (const label of kpiLabels) {
@@ -79,6 +80,7 @@ const filled = buildLiveOperationsKpis({
 });
 if (filled[0].value !== "12") throw new Error("client count wrong");
 if (filled[4].value !== "Not verified") throw new Error("unverified revenue must remain hidden");
+if (!filled[4].detail.includes("Not payment-verified")) throw new Error("revenue KPI must explain missing settlement verification");
 console.log("RUNTIME_OK");
 `,
 );
