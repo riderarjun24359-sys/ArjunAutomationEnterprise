@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { authServerService } from "@/src/services/auth.server";
 import { hasPermission, type PermissionKey } from "@/src/config/permissions";
 import type { UserRole } from "@/src/constants/roles";
@@ -232,24 +233,33 @@ export async function secureApiRoute(
         };
     }
 
-    // CSRF protection for state-changing requests.
-    const csrf = assertCsrfSafe(request);
-    if (!csrf.ok) {
-        return { context: null, error: csrf.error };
-    }
-
     if (options.allowPublic && options.publicApiKeyEnv) {
         const expected = process.env[options.publicApiKeyEnv];
         const provided = request.headers.get("x-platform-key");
-        if (expected && provided === expected) {
-            return {
-                context: {
-                    user: { id: "platform-lead", email: "leads@platform.local", fullName: "Platform Lead Intake", role: "admin" },
-                    organizationId: process.env.PLATFORM_ORGANIZATION_ID ?? null,
-                },
-                error: null,
-            };
+        if (expected && provided) {
+            const expectedBytes = Buffer.from(expected, "utf8");
+            const providedBytes = Buffer.from(provided, "utf8");
+            if (
+                expectedBytes.length === providedBytes.length &&
+                timingSafeEqual(expectedBytes, providedBytes)
+            ) {
+                // A dedicated API key is not an ambient browser credential;
+                // server-to-server callers do not need browser Origin headers.
+                return {
+                    context: {
+                        user: { id: "platform-lead", email: "leads@platform.local", fullName: "Platform Lead Intake", role: "admin" },
+                        organizationId: process.env.PLATFORM_ORGANIZATION_ID ?? null,
+                    },
+                    error: null,
+                };
+            }
         }
+    }
+
+    // Cookie-authenticated browser requests still require same-origin proof.
+    const csrf = assertCsrfSafe(request);
+    if (!csrf.ok) {
+        return { context: null, error: csrf.error };
     }
 
     const requireValidSession = options.requireValidSession !== false;
