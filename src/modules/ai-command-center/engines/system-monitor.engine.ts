@@ -13,14 +13,14 @@ export function computeSystemHealth(input: {
 }
 
 export function buildSystemAlerts(input: {
-    systemHealth: number;
-    openTickets: number;
-    deliveryHealth: number;
+    systemHealth: number | null;
+    openTickets: number | null;
+    deliveryHealth: number | null;
     productionAlerts?: number;
 }): AccAlert[] {
     const alerts: AccAlert[] = [];
     const now = new Date().toISOString();
-    if (input.systemHealth < 75) {
+    if (input.systemHealth !== null && input.systemHealth < 75) {
         alerts.push({
             id: uid("alert"),
             severity: "critical",
@@ -42,7 +42,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if (input.openTickets > 10) {
+    if (input.openTickets !== null && input.openTickets > 10) {
         alerts.push({
             id: uid("alert"),
             severity: "medium",
@@ -53,7 +53,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if (input.deliveryHealth < 80) {
+    if (input.deliveryHealth !== null && input.deliveryHealth < 80) {
         alerts.push({
             id: uid("alert"),
             severity: "high",
