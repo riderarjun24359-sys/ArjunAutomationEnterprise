@@ -28,7 +28,13 @@ vi.mock("@/src/lib/api-audit", () => ({ logApiAudit: mocks.logApiAudit }));
 import { secureApiRoute, resolveServerIdentity } from "./api-security";
 
 /** Minimal chainable/thenable stand-in for the Supabase query builder. */
-function fakeClient(profile: { id: string } | null, membership: { organization_id: string; role_name: string } | null) {
+function fakeClient(
+    profile: { id: string } | null,
+    membership:
+        | { organization_id: string; role_name: string }
+        | Array<{ organization_id: string; role_name: string }>
+        | null,
+) {
     return {
         from(table: string) {
             const q = {
@@ -36,7 +42,9 @@ function fakeClient(profile: { id: string } | null, membership: { organization_i
                 eq: () => q,
                 order: () => q,
                 limit: async () => ({
-                    data: table === "organization_members" ? (membership ? [membership] : []) : [],
+                    data: table === "organization_members"
+                        ? (Array.isArray(membership) ? membership : membership ? [membership] : [])
+                        : [],
                     error: null,
                 }),
                 maybeSingle: async () => ({
@@ -101,6 +109,29 @@ describe("api-security server-side identity resolution", () => {
 
         const identity = await resolveServerIdentity("auth-2");
         expect(identity).toEqual({ role: "member", organizationId: null });
+    });
+
+    it("fails closed when multiple memberships exist without an explicit tenant selection", async () => {
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-multi" }, [
+            { organization_id: "org-a", role_name: "admin" },
+            { organization_id: "org-b", role_name: "member" },
+        ]));
+
+        const identity = await resolveServerIdentity("auth-multi");
+        expect(identity).toEqual({ role: "member", organizationId: null });
+    });
+
+    it("uses an explicitly requested tenant only when it is in the caller's memberships", async () => {
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient({ id: "prof-multi" }, [
+            { organization_id: "org-a", role_name: "admin" },
+            { organization_id: "org-b", role_name: "member" },
+        ]));
+
+        const allowed = await resolveServerIdentity("auth-multi", "org-b");
+        expect(allowed).toEqual({ role: "member", organizationId: "org-b" });
+
+        const denied = await resolveServerIdentity("auth-multi", "org-outsider");
+        expect(denied).toEqual({ role: "member", organizationId: null });
     });
 
     it("fails closed when the service-role client is unavailable", async () => {
