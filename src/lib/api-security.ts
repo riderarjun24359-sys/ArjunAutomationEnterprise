@@ -143,11 +143,20 @@ export async function resolveServerIdentity(
 }
 
 export function getClientIp(request: Request): string {
-    return (
-        request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-        request.headers.get("x-real-ip") ??
-        "unknown"
-    );
+    // Prefer the single-client address written by the trusted edge proxy.
+    // x-forwarded-for is a client-influenced chain on some origin setups and
+    // must be the last fallback, never the first source of identity.
+    const cloudflareIp = request.headers.get("cf-connecting-ip")?.trim();
+    if (cloudflareIp) return cloudflareIp;
+
+    const realIp = request.headers.get("x-real-ip")?.trim();
+    if (realIp) return realIp;
+
+    const forwarded = request.headers.get("x-forwarded-for")
+        ?.split(",")
+        .map((value) => value.trim())
+        .find(Boolean);
+    return forwarded || "unknown";
 }
 
 /**
