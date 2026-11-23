@@ -6,6 +6,7 @@ export const PERMISSIONS = {
     clientsManage: [USER_ROLES.superAdmin, USER_ROLES.admin, USER_ROLES.manager],
     financeManage: [USER_ROLES.superAdmin, USER_ROLES.admin],
     automationManage: [USER_ROLES.superAdmin, USER_ROLES.admin],
+    integrationManage: [USER_ROLES.superAdmin, USER_ROLES.admin],
     settingsManage: [USER_ROLES.superAdmin, USER_ROLES.admin],
 } as const;
 
