@@ -10,9 +10,9 @@ vi.mock("@/src/lib/supabase-service-role", () => ({ getServiceRoleClient: vi.fn(
 const organizationId = "123e4567-e89b-42d3-a456-426614174000";
 const recommendationId = "123e4567-e89b-42d3-a456-426614174001";
 
-function request(body: unknown) {
+function request(body: unknown, method: "POST" | "PATCH" = "PATCH") {
     return new Request("http://localhost/api/ai-command-center/recommendations", {
-        method: "PATCH",
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
     });
@@ -52,7 +52,7 @@ describe("PATCH /api/ai-command-center/recommendations", () => {
                 priority: "high",
                 status: "pending",
             }],
-        }));
+        }, "POST"));
 
         expect(response.status).toBe(200);
         expect(upsert).toHaveBeenCalledWith(
