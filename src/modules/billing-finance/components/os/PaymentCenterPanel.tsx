@@ -23,7 +23,7 @@ export function PaymentCenterPanel({ items }: { items: PaymentCenterItem[] }) {
                         <div>
                             <p className="font-semibold text-[var(--dos-text-primary)]">{item.accountOrClient}</p>
                             <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">
-                                Currency unverified
+                                {item.currency} · {item.amountUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </p>
                         </div>
                         <Badge
