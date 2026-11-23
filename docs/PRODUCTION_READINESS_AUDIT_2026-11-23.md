@@ -96,3 +96,8 @@ A fresh read-only production snapshot confirms:
 - `202611230120_webhook_idempotency_server_only.sql` is committed but **not yet present in the production migration history**. The current production table still has broad browser table grants protected by its deny-all RLS policy; apply the migration only in an explicitly approved migration window.
 - Supabase Auth leaked-password protection remains disabled and needs an authorized Auth settings change.
 - Vercel deployment remains intentionally on hold pending the user's token recharge; Cloudflare deployment is not configured because its deploy secrets are absent.
+
+
+## Provider-scoped payment event identity
+
+A final payment idempotency review found that the receiver's in-memory key and API logic namespace event IDs by provider, but the original database primary key covered only `event_id`. Migration `202611230130_webhook_idempotency_provider_scope.sql` now changes the durable key to `(provider, event_id)`, aligning database uniqueness with the application contract. It is committed but **not applied to production**. Apply it together with the pending `202611230120_webhook_idempotency_server_only.sql` only in an explicitly approved database migration window.
