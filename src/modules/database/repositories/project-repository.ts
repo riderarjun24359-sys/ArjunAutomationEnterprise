@@ -6,7 +6,7 @@ import type {
     DbProjectMilestone,
     DbProjectTimeEntry,
 } from "@/src/modules/database/types/platform";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 export class ProjectRepository extends BaseRepository<DbProject> {
@@ -86,7 +86,7 @@ export class ProjectRepository extends BaseRepository<DbProject> {
             return [];
         }
 
-        const { data, error } = await client.from(table).select("*").eq("project_id", projectId).order("created_at", { ascending: false });
+        const organizationId = getSelectedOrganizationId();\n        if (!organizationId) return [];\n        const parent = await client.from(this.table).select("id").eq("id", projectId).eq("organization_id", organizationId).maybeSingle();\n        if (parent.error || !parent.data) return [];\n        const { data, error } = await client.from(table).select("*").eq("project_id", projectId).order("created_at", { ascending: false });
         mapRepositoryError(error, `Failed to list ${table}`);
         return (data ?? []) as T[];
     }
