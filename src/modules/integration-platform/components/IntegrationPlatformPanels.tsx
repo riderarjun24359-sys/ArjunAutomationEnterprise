@@ -376,8 +376,8 @@ export function ApiKeysPanel({ data }: { data: IntegrationPlatformData }) {
             <Card hover>
                 <SectionHeader title="Create API key" description="Issue a new organization-scoped integration credential" />
                 <form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createApiKey(v))}>
-                    <IntegrationHubSelect data={data} {...form.register("integrationHubId")} />
-                    <input {...form.register("keyName")} placeholder="Key name (e.g. production-sync)" className={inputClass} />
+                    <IntegrationHubSelect required data={data} {...form.register("integrationHubId")} />
+                    <input required minLength={2} maxLength={64} {...form.register("keyName")} placeholder="Key name (e.g. production-sync)" className={inputClass} />
                     <select {...form.register("apiVersion")} className={inputClass}>{API_VERSION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
                     <p className="text-xs text-slate-500">Only organization admins can issue or revoke keys. Save the secret immediately; it cannot be recovered later.</p>
                     <SaveButton loading={form.formState.isSubmitting} label="Issue API key" />
