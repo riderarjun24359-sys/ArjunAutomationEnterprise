@@ -94,7 +94,7 @@ export class CustomerSuccessGlobalOpsService {
             deliveryHealth,
             customerHealth,
             revenueOverview: {
-                mrr: renewals.reduce((s, r) => s + r.amount / 12, 0),
+                mrr: 0, // No provider-verified recurring payment ledger is connected yet.
                 openInvoices: business.openInvoices,
                 renewalsDue: renewals.filter((r) => r.status !== "renewed" && r.status !== "churned").length,
             },
