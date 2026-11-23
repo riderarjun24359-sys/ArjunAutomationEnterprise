@@ -178,7 +178,7 @@ export function buildFinanceExecutiveWidgets(input: {
 }): FinanceExecutiveWidgets {
     const billed = input.invoices.reduce((s, i) => s + i.totalUsd, 0);
     const paid = input.invoices.reduce((s, i) => s + i.amountPaidUsd, 0);
-    const collectionRate = billed <= 0 ? 100 : clampScore((paid / billed) * 100);
+    const collectionRate = input.revenue.revenueVerified && billed > 0 ? clampScore((paid / billed) * 100) : 0;
 
     return {
         revenueVerified: input.revenue.revenueVerified,
