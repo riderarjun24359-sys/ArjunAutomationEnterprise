@@ -34,6 +34,8 @@ function isCompletedTask(status: string): boolean {
 }
 
 export function buildRevenueTrend(_data: OrganizationOperationsData, _now = new Date()): ExecutiveChartPoint[] {
+    void _data;
+    void _now;
     // Payments/invoice balances are not a signed settlement ledger. Do not chart
     // them as collected revenue until the Razorpay event-to-invoice mapping exists.
     return [];
