@@ -1,4 +1,5 @@
-import { getClientIp, secureApiRoute, apiError, apiSuccess, logApiAudit } from "@/src/lib/api-security";
+import { NextResponse } from "next/server";
+import { getClientIp, secureApiRoute, apiError, logApiAudit } from "@/src/lib/api-security";
 import { supabaseServer } from "@/src/lib/supabase-server";
 import { validateSignedUrlRequest } from "@/src/lib/storage-security";
 import { measureAsync, opsLog } from "@/src/lib/ops-monitoring";
@@ -50,12 +51,12 @@ export async function POST(request: Request) {
             metadata: { bucket: validated.bucket, path: validated.path, expiresIn: validated.expiresIn },
         });
 
-        return apiSuccess({
+        return NextResponse.json({
             bucket: validated.bucket,
             path: validated.path,
             expiresIn: validated.expiresIn,
             signedUrl: result.data.signedUrl,
-        });
+        }, { headers: { "Cache-Control": "no-store, max-age=0", Pragma: "no-cache" } });
     } catch (err) {
         opsLog("error", "Signed URL exception", "api/storage/signed-url", { message: err instanceof Error ? err.message : "unknown" });
         return apiError("Signed URL request failed", 500);
