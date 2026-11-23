@@ -1,10 +1,14 @@
-import { secureApiRoute, apiError, apiSuccess, logApiAudit } from "@/src/lib/api-security";
+import { getClientIp, secureApiRoute, apiError, apiSuccess, logApiAudit } from "@/src/lib/api-security";
 import { supabaseServer } from "@/src/lib/supabase-server";
 import { validateSignedUrlRequest } from "@/src/lib/storage-security";
 import { measureAsync, opsLog } from "@/src/lib/ops-monitoring";
 
 export async function POST(request: Request) {
-    const { context, error } = await secureApiRoute(request, { rateLimit: 40, rateLimitKey: "storage-signed-url" });
+    const ip = getClientIp(request);
+    const { context, error } = await secureApiRoute(request, {
+        rateLimit: 40,
+        rateLimitKey: `storage-signed-url:${ip}`,
+    });
     if (error) return error;
     if (!context?.organizationId) {
         return apiError("Organization context required", 403);
