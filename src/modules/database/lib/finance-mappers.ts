@@ -188,12 +188,12 @@ export const buildFinanceDashboardStats = (input: {
     const approvedExpenses = input.expenses.filter((expense) => expense.status === "approved" || expense.status === "reimbursed").reduce((sum, expense) => sum + expense.amount, 0);
 
     return {
-        paidRevenue: formatMoney(paidRevenue),
-        outstandingReceivables: formatMoney(outstanding),
+        paidRevenue: "Not verified",
+        outstandingReceivables: "Not verified",
         overdueInvoices: overdueCount,
         totalExpenses: formatMoney(expenseTotal),
         approvedExpenses: formatMoney(approvedExpenses),
-        netPosition: formatMoney(paidRevenue - approvedExpenses),
+        netPosition: "Not verified",
         openEstimates: input.estimates.filter((estimate) => estimate.status === "sent" || estimate.status === "draft").length,
         activeRecurring: input.recurringInvoices.filter((item) => item.isActive).length,
         paymentCount: input.payments.length,
@@ -220,20 +220,18 @@ export const buildFinanceReportSummary = (input: {
     const totalExpenses = input.expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
     return {
-        totalRevenue: formatMoney(totalRevenue),
-        totalCollected: formatMoney(totalCollected),
+        totalRevenue: "Not verified",
+        totalCollected: "Not verified",
         totalExpenses: formatMoney(totalExpenses),
-        grossMargin: formatMoney(totalCollected - totalExpenses),
-        revenueByClient: Object.entries(revenueByClient)
-            .map(([client, amount]) => ({ client, amount: formatMoney(amount) }))
-            .sort((a, b) => b.amount.localeCompare(a.amount)),
+        grossMargin: "Not verified",
+        revenueByClient: [],
         expensesByCategory: Object.entries(expensesByCategory)
             .map(([category, amount]) => ({ category, amount: formatMoney(amount) }))
             .sort((a, b) => b.amount.localeCompare(a.amount)),
         agingBuckets: [
-            { label: "Current", amount: formatMoney(input.invoices.filter((invoice) => invoice.status === "sent").reduce((sum, invoice) => sum + invoice.balanceDue, 0)) },
-            { label: "Paid", amount: formatMoney(input.invoices.filter((invoice) => invoice.status === "paid").reduce((sum, invoice) => sum + invoice.total, 0)) },
-            { label: "Draft", amount: formatMoney(input.invoices.filter((invoice) => invoice.status === "draft").reduce((sum, invoice) => sum + invoice.total, 0)) },
+            { label: "Current", amount: "Not verified" },
+            { label: "Paid", amount: "Not verified" },
+            { label: "Draft", amount: "Not verified" },
         ],
     };
 };
