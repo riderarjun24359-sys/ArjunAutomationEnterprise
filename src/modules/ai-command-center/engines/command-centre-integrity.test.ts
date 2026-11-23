@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAgentStatuses } from "./health-monitoring.engine";
+import { buildAgentStatuses, computeClientHealth } from "./health-monitoring.engine";
 import { buildRevenueSummary } from "./executive-analytics.engine";
 import { buildRecommendations } from "./recommendation.engine";
 import { withinJarvisCallingWindow } from "@/src/modules/ai-sales-lead-engine/services/jarvis-calling-window";
@@ -10,6 +10,11 @@ describe("Command Centre trust guarantees", () => {
         expect(agents.length).toBeGreaterThan(0);
         expect(agents.every((agent) => agent.status === "unknown")).toBe(true);
         expect(agents.every((agent) => agent.healthScore === 0 && agent.lastActivity === "")).toBe(true);
+    });
+
+    it("does not invent a healthy client score when the customer-health source is missing", () => {
+        expect(computeClientHealth({ activeClients: 0 })).toBe(0);
+        expect(computeClientHealth({ activeClients: 25 })).toBe(0);
     });
 
     it("does not fabricate MRR from client counts", () => {
