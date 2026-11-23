@@ -71,49 +71,32 @@ test.describe("Homepage responsive rendering", () => {
 });
 
 test.describe("Primary customer journey", () => {
-    test("homepage → primary CTA → contact → validation → honest result", async ({ page }) => {
+    test("homepage → WhatsApp CTA → contact form → honest result", async ({ page }) => {
         await page.goto("/", { waitUntil: "networkidle" });
+        await page.getByRole("link", { name: "Chat on WhatsApp" }).click();
+        await expect(page).toHaveURL(/#contact$/);
 
-        // Primary hero CTA routes to contact.
-        await page.getByRole("link", { name: /book a demo/i }).first().click();
-        await expect(page).toHaveURL(/\/contact/);
-
-        const form = page.locator('form[aria-label="Contact form"]');
+        const form = page.locator("form.contact-form");
         await expect(form).toBeVisible();
-
-        // Required browser validation must block an incomplete submit.
-        await form.locator('button[type="submit"]').click();
-        await expect(page).toHaveURL(/\/contact/);
-
-        const consent = form.locator('input[name="consent"]');
         await form.locator('input[name="name"]').fill("Redesign Verification");
-        await form.locator('input[name="email"]').fill("redesign-verify@example.com");
-        await consent.check();
+        await form.locator('input[name="phone"]').fill("9876543210");
+        await form.locator('select[name="business"]').selectOption({ label: "Other local business" });
+        await form.locator('textarea[name="message"]').fill("Testing the enquiry form.");
         await form.locator('button[type="submit"]').click();
 
-        await expect
-            .poll(
-                async () =>
-                    page.url().includes("/thank-you")
-                        ? "navigated"
-                        : (await form.locator('[role="alert"]').count()) > 0
-                          ? "errored"
-                          : "pending",
-                { timeout: 15_000 },
-            )
-            .not.toBe("pending");
-
-        if (page.url().includes("/thank-you")) return;
-        await expect(form.locator('[role="alert"]')).toBeVisible();
+        // No WhatsApp number is configured in the public source; the form
+        // must disclose that nothing was sent or stored.
+        await expect(form.getByRole("status")).toContainText("replace [MY_NUMBER]");
     });
 
-    test("services index links to a service detail page", async ({ page }) => {
-        await page.goto("/services", { waitUntil: "networkidle" });
-        const firstService = page.locator('a[href^="/services/"]').first();
-        await expect(firstService).toBeVisible();
-        await firstService.click();
-        await expect(page).toHaveURL(/\/services\/[a-z0-9-]+/);
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    test("service cards link to the correct in-page sections", async ({ page }) => {
+        await page.goto("/#services", { waitUntil: "networkidle" });
+        await expect(page.locator("#service-schools")).toBeVisible();
+        await expect(page.locator("#service-whatsapp")).toBeVisible();
+        await expect(page.locator("#service-websites")).toBeVisible();
+        await expect(page.locator('#service-schools a[href="#school-software"]')).toBeVisible();
+        await expect(page.locator('#service-whatsapp a[href="#contact"]')).toBeVisible();
+        await expect(page.locator('#service-websites a[href="#pricing"]')).toBeVisible();
     });
 });
 
@@ -122,11 +105,10 @@ test.describe("Navigation", () => {
         await page.setViewportSize({ width: 390, height: 844 });
         await page.goto("/", { waitUntil: "networkidle" });
 
-        const summary = page.locator("details summary").first();
-        await summary.click();
+        await page.getByRole("button", { name: "Open navigation" }).click();
         const mobileNav = page.getByRole("navigation", { name: "Mobile navigation" });
         await expect(mobileNav).toBeVisible();
-        for (const label of ["About", "Services", "Pricing", "Contact"]) {
+        for (const label of ["Services", "School Software", "Demos", "Pricing", "Contact"]) {
             await expect(mobileNav.getByRole("link", { name: label, exact: true })).toBeVisible();
         }
         await page.screenshot({ path: join(SHOTS, "mobile-nav-390.png") });
@@ -138,12 +120,12 @@ test.describe("Navigation", () => {
         const nav = page.getByRole("navigation", { name: "Main navigation" });
         await expect(nav).toBeVisible();
         await nav.getByRole("link", { name: "Services", exact: true }).click();
-        await expect(page).toHaveURL(/\/services$/);
+        await expect(page).toHaveURL(/#services$/);
     });
 
     test("keyboard focus is visible on the primary CTA", async ({ page }) => {
         await page.goto("/", { waitUntil: "networkidle" });
-        const cta = page.getByRole("link", { name: "Book a Demo" }).first();
+        const cta = page.getByRole("link", { name: "Chat on WhatsApp" }).first();
         await cta.focus();
         const outlineVisible = await cta.evaluate((el) => {
             const s = getComputedStyle(el);
@@ -158,7 +140,7 @@ test.describe("Runtime health", () => {
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(String(e)));
 
-        for (const path of ["/", "/services", "/services/platform-implementation", "/contact"]) {
+        for (const path of ["/", "/#services", "/#school-software", "/#contact"]) {
             await page.goto(path, { waitUntil: "networkidle" });
             await expect(page.locator("body")).toBeVisible();
         }
