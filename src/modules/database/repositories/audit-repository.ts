@@ -7,7 +7,8 @@ export class AuditRepository extends BaseRepository<AuditLog> {
 
     async list(query: RepositoryQuery = {}): Promise<AuditLog[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return [];
         }
 
@@ -15,11 +16,12 @@ export class AuditRepository extends BaseRepository<AuditLog> {
         let request = client
             .from(this.table)
             .select("*")
+            .eq("organization_id", organizationId)
             .order(normalized.orderBy, { ascending: normalized.orderDirection === "asc" })
             .range(normalized.offset, normalized.offset + normalized.limit - 1);
 
-        if (query.filters?.organization_id) {
-            request = request.eq("organization_id", String(query.filters.organization_id));
+        if (query.filters?.organization_id && query.filters.organization_id !== organizationId) {
+            return [];
         }
 
         const { data, error } = await request;
@@ -29,7 +31,8 @@ export class AuditRepository extends BaseRepository<AuditLog> {
 
     async create(input: Omit<AuditLog, "id" | "created_at">): Promise<AuditLog | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || input.organization_id !== organizationId) {
             return null;
         }
 
