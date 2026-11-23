@@ -20,6 +20,12 @@ const agentEngine = read("src/modules/ai-command-center/engines/health-monitorin
 check("agent availability requires a real heartbeat", agentEngine.includes('status: "unknown"') && !agentEngine.includes("input.systemHealth - i * 2"));
 check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
 check("global operations does not synthesize client health or renewals", !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildDefaultSuccessPlans") && !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildRenewals"));
+const globalOpsBridges = read("src/modules/customer-success-global-ops/integrations/platform-bridges.ts");
+check("Global Operations support failure is not 100% SLA", !globalOpsBridges.includes("slaCompliance: 100"));
+check("Global Operations delivery failure is not 100% quality", !globalOpsBridges.includes("qualityPassRate: 100"));
+check("Global Operations exposes unavailable upstream integrations", read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("integrationIssues") && read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Integrations needing attention"));
+check("support dashboard cannot silently turn missing org context into zero-ticket health", read("src/modules/support/services/support.service.ts").includes("Unable to resolve organization context for support dashboard"));
+
 
 const revenueEngine = read("src/modules/ai-command-center/engines/executive-analytics.engine.ts");
 const revenueUi = read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx");
