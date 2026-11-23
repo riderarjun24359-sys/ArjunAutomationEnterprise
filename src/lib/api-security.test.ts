@@ -34,6 +34,7 @@ function fakeClient(
         | { organization_id: string; role_name: string }
         | Array<{ organization_id: string; role_name: string }>
         | null,
+    organizationStatus = "active",
 ) {
     return {
         from(table: string) {
@@ -48,7 +49,9 @@ function fakeClient(
                     error: null,
                 }),
                 maybeSingle: async () => ({
-                    data: table === "user_profiles" ? profile : membership,
+                    data: table === "user_profiles" ? profile
+                        : table === "organizations" ? { status: organizationStatus }
+                        : membership,
                     error: null,
                 }),
             };
@@ -132,6 +135,17 @@ describe("api-security server-side identity resolution", () => {
 
         const denied = await resolveServerIdentity("auth-multi", "org-outsider");
         expect(denied).toEqual({ role: "member", organizationId: null });
+    });
+
+    it("fails closed when the selected organization is suspended", async () => {
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient(
+            { id: "prof-suspended" },
+            { organization_id: "org-suspended", role_name: "admin" },
+            "suspended",
+        ));
+
+        const identity = await resolveServerIdentity("auth-suspended");
+        expect(identity).toEqual({ role: "member", organizationId: null });
     });
 
     it("fails closed when the service-role client is unavailable", async () => {
