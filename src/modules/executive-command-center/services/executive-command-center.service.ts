@@ -39,12 +39,14 @@ function buildBrief(
     const opsLine =
         stats.source === "supabase"
             ? ` Ops pulse: ${stats.totalClients} clients, ${stats.activeProjects} active projects, ${stats.openTasks} open tasks.`
-            : "";
+            : ` Operational data unavailable: ${stats.integrationIssues.join(", ") || "check organization database access"}.`;
     return {
         title: `Executive brief — ${org}`,
         summary: top.length
-            ? `Today requires attention on ${top.length} priority area${top.length === 1 ? "" : "s"}: ${top.map((t) => t.title).join("; ")}.${opsLine}`
-            : `All systems nominal. Monitor growth opportunities and client lifecycle signals.${opsLine}`,
+            ? `Today requires attention on ${top.length} priority area${top.length === 1 ? "" : "s"}: ${top.map((t) => t.title).join("; ")}.${stats.source === "fallback" ? " Operational data is incomplete." : ""}${opsLine}`
+            : stats.source === "fallback"
+                ? `Live operational data is unavailable. Do not interpret fallback metrics as healthy status.${opsLine}`
+                : `No high-priority alerts were found in the loaded operational records. This is not a provider heartbeat check.${opsLine}`,
         generatedAt: new Date().toISOString(),
         priorities: top.map((t) => t.title),
     };
@@ -130,11 +132,11 @@ export class ExecutiveCommandCenterService {
         }));
         const notifications = mergeNotifications(liveStats.notifications, attentionNotifications);
         const modules = buildIntelligenceModules(signals);
-        const unifiedScore = Math.round(
-            (eip.overallIntelligenceScore + aix.avgAiConfidenceScore + aix.businessScore + eip.businessHealthScore) / 4,
-        );
+        const unifiedScore = liveStats.source === "supabase"
+            ? Math.round((eip.overallIntelligenceScore + aix.avgAiConfidenceScore + aix.businessScore + eip.businessHealthScore) / 4)
+            : 0;
         const widgets = buildExecutiveDashboardWidgets({
-            data: opsData,
+            data: liveStats.source === "supabase" ? opsData : null,
             liveStats,
             unifiedScore,
             customerSuccess: csSnapshot?.executiveWidgets ?? null,
@@ -146,7 +148,7 @@ export class ExecutiveCommandCenterService {
 
         return {
             organizationName: overview.organization?.name ?? "Enterprise workspace",
-            source: liveStats.source === "supabase" || overview.source === "supabase" ? "supabase" : overview.source,
+            source: liveStats.source,
             unifiedScore,
             attentionToday,
             risks,
