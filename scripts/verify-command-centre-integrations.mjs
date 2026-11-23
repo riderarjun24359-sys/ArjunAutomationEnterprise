@@ -18,6 +18,8 @@ check("production failure is not reported as 90% health", !bridges.includes("ove
 
 const agentEngine = read("src/modules/ai-command-center/engines/health-monitoring.engine.ts");
 check("agent availability requires a real heartbeat", agentEngine.includes('status: "unknown"') && !agentEngine.includes("input.systemHealth - i * 2"));
+check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
+check("global operations does not synthesize client health or renewals", !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildDefaultSuccessPlans") && !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildRenewals"));
 
 const revenueEngine = read("src/modules/ai-command-center/engines/executive-analytics.engine.ts");
 const revenueUi = read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx");
