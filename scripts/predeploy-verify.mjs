@@ -25,16 +25,16 @@ process.env.SKIP_TSC = "1";
 process.env.SKIP_LINT = "1";
 
 const prod = spawnVerify(root, "scripts/verify-production.mjs");
-pass("chain:production_verify", prod.status === 0, prod.status !== 0 ? "failed" : "ok");
+pass("chain:production_verify", prod.status === 0, prod.status !== 0 ? `${prod.stdout || ""}\n${prod.stderr || ""}`.trim().slice(0, 3000) : "ok");
 
 const readiness = spawnVerify(root, "scripts/verify-production-readiness.mjs");
-pass("chain:production_readiness", readiness.status === 0, readiness.status !== 0 ? "failed" : "ok");
+pass("chain:production_readiness", readiness.status === 0, readiness.status !== 0 ? `${readiness.stdout || ""}\n${readiness.stderr || ""}`.trim().slice(0, 3000) : "ok");
 
 const golive = spawnVerify(root, "scripts/verify-go-live.mjs");
-pass("chain:go_live", golive.status === 0, golive.status !== 0 ? "failed" : "ok");
+pass("chain:go_live", golive.status === 0, golive.status !== 0 ? `${golive.stdout || ""}\n${golive.stderr || ""}`.trim().slice(0, 3000) : "ok");
 
 const rls = spawnVerify(root, "scripts/verify-rls-isolation.mjs");
-pass("chain:rls_isolation", rls.status === 0, rls.status !== 0 ? "failed" : "ok");
+pass("chain:rls_isolation", rls.status === 0, rls.status !== 0 ? `${rls.stdout || ""}\n${rls.stderr || ""}`.trim().slice(0, 3000) : "ok");
 
 const failed = results.filter((r) => !r.pass);
 console.log(`predeploy:verify ${results.filter((r) => r.pass).length}/${results.length}`);

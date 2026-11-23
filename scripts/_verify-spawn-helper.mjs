@@ -25,10 +25,18 @@ export function runLint(root) {
 }
 
 export function spawnVerify(root, scriptRel) {
-    return spawnSync(process.execPath, [join(root, scriptRel)], {
+    const result = spawnSync(process.execPath, [join(root, scriptRel)], {
         cwd: root,
         encoding: "utf8",
         timeout: 600_000,
         env: process.env,
     });
+    // Verification chains must preserve the first failing check's diagnostics.
+    // Otherwise a parent verifier reports only "failed", hiding the real cause.
+    if (result.status !== 0) {
+        process.stderr.write(`\\n[verify-chain] ${scriptRel} exited with status ${result.status ?? "unknown"}\\n`);
+        if (result.stdout) process.stderr.write(result.stdout);
+        if (result.stderr) process.stderr.write(result.stderr);
+    }
+    return result;
 }

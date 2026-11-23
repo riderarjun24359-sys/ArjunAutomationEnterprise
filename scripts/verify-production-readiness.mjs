@@ -99,4 +99,9 @@ for (const r of results) {
 if (failed.length > 0) process.exit(1);
 
 const chain = spawnVerify(root, "scripts/verify-delivery-engine.mjs");
-if (chain.status !== 0) process.exit(chain.status ?? 1);
+if (chain.status !== 0) {
+    console.error("Delivery Engine verification failed; nested diagnostics follow:");
+    console.error(chain.stdout || "");
+    console.error(chain.stderr || "");
+    process.exit(chain.status ?? 1);
+}

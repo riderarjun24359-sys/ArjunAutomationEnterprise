@@ -51,10 +51,11 @@ const AUTH5 = "00000000-0000-4000-8000-0000000000c5";
 // Supabase-compatible auth stub: uid()/role() read the request JWT claims.
 const authStub = `
 create schema if not exists auth;
-do $$ begin
+do $roles$ begin
   if not exists (select 1 from pg_roles where rolname = 'anon') then create role anon; end if;
   if not exists (select 1 from pg_roles where rolname = 'authenticated') then create role authenticated; end if;
-end $$;
+  if not exists (select 1 from pg_roles where rolname = 'service_role') then create role service_role; end if;
+end $roles$;
 create or replace function auth.uid() returns uuid language sql stable as $fn$
   select (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')::uuid;
 $fn$;
@@ -235,11 +236,13 @@ await expectRows(
 );
 await resetRole();
 
-// Positive control: a genuinely new user may still found a memberless org.
+// Browser sessions cannot create memberships directly. Organization provisioning
+// is performed server-side with the service-role credential; this prevents a
+// caller from bypassing the invitation/provisioning workflow.
 await asAuth(AUTH3);
-await expectOk(
+await expectError(
     `insert into public.organization_members (organization_id, user_id, role_name, is_active) values ('${ORG3}', '${PROF3}', 'founder', true)`,
-    "membership: first-run founder self-join allowed",
+    "membership: direct authenticated self-insert denied",
 );
 await resetRole();
 
@@ -322,17 +325,19 @@ await expectRows("select id from public.organization_members", 0, "reads: member
 await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: memberless user cannot read other profile");
 await resetRole();
 
-// Platform admin (active super_admin membership) retains cross-org visibility.
+// The final production lockdown intentionally applies tenant boundaries even
+// to a super_admin membership at the browser/RLS layer. Cross-tenant support
+// operations must use audited server-side service-role APIs.
 await asAuth(AUTH4);
-await expectRows(`select id from public.organizations where id = '${ORG2}'`, 1, "reads: platform admin sees other org");
-await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 1, "reads: platform admin sees other profile");
+await expectRows(`select id from public.organizations where id = '${ORG2}'`, 0, "reads: platform admin cannot bypass tenant boundary");
+await expectRows(`select id from public.user_profiles where id = '${PROF2}'`, 0, "reads: platform admin cannot read another tenant profile");
 await resetRole();
 
 // --- 202610120004: module-table tenant reads --------------------------------
 // One representative table per enabled module family. AUTH1 founds ORG1 only.
 // Same-tenant positive reads must work (dashboards were inert under full deny);
-// cross-tenant SELECT/INSERT/UPDATE must fail; memberless sees nothing; the
-// platform admin keeps cross-org visibility.
+// cross-tenant SELECT/INSERT/UPDATE must fail; memberless and platform-admin
+// browser sessions cannot bypass the tenant boundary.
 const MODULE_TABLES = [
     { tbl: "csg_success_plans", col: "title", evil: "'Plan Evil'", insCols: "title", insVals: "'Evil'" },
     { tbl: "de_blueprints", col: "name", evil: "'BP Evil'", insCols: "blueprint_key, name, category", insVals: "'evil', 'Evil', 'web'" },

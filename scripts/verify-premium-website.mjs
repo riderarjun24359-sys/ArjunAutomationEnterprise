@@ -161,15 +161,20 @@ pass("marketing:imports_premium_css", marketingLayoutSource.includes("premium.cs
 pass("marketing:display_font", marketingLayoutSource.includes("Inter") || marketingLayoutSource.includes("--font-display"));
 
 const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
-// Enterprise AI-automation homepage hero (headline text is line-wrapped in JSX, so match stable fragments)
+// Current homepage positioning and primary conversion path. Keep these checks
+// tied to the live marketing page rather than the retired PremiumHomePage copy.
 pass(
-    "page:hero_ai_automation_headline",
-    pageSource.includes("<h1") &&
-        pageSource.includes("AI Automation Platform") &&
-        pageSource.includes("Automate the work"),
+    "page:hero_business_problem_headline",
+    pageSource.includes("<h1") && pageSource.includes("Stop losing work in the gaps between your tools."),
 );
-pass("page:hero_primary_cta_demo", pageSource.includes("Book a Demo") && pageSource.includes('href={MARKETING_ROUTES.contact}'));
-pass("page:hero_secondary_cta_solutions", pageSource.includes("Explore Solutions") && pageSource.includes('href={MARKETING_ROUTES.solutions}'));
+pass(
+    "page:hero_primary_cta_discovery",
+    pageSource.includes("Request a Free 20-Min Call") && pageSource.includes('href="/contact"'),
+);
+pass(
+    "page:hero_secondary_cta_pricing",
+    pageSource.includes("See Pricing") && pageSource.includes('href="/pricing"'),
+);
 // The school-specific positioning moved to its own route (the h1 is rendered
 // by PremiumPageShell, so match the page's title source instead of the tag).
 const schoolPageSource = readSafe(join(root, "app", "(marketing)", "school-erp", "page.tsx"));
@@ -182,7 +187,15 @@ pass("page:metadata", pageSource.includes("export const metadata"));
 pass("page:JsonLd", pageSource.includes("MarketingStructuredData") || pageSource.includes("JsonLd"));
 
 pass("page:about_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "about", "page.tsx")).includes("PremiumPageShell"));
-pass("page:services_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "services", "page.tsx")).includes("PremiumPageShell"));
+const servicesPageSource = readSafe(join(root, "app", "(marketing)", "services", "page.tsx"));
+pass(
+    "page:services_current_layout_and_content",
+    servicesPageSource.includes("MarketingBreadcrumbs") &&
+        servicesPageSource.includes("What we build") &&
+        servicesPageSource.includes("Custom Business Websites") &&
+        servicesPageSource.includes("AI & Workflow Automations") &&
+        servicesPageSource.includes("Custom Portals, CRM & School ERP"),
+);
 pass("page:contact_PremiumPageShell", readSafe(join(root, "app", "(marketing)", "contact", "page.tsx")).includes("PremiumPageShell"));
 
 pass("layout:dynamic_ssr_false", readSafe(join(premiumRoot, "PremiumHomePage.tsx")).includes("TrustConversionModule") || layoutSource.includes("ssr: false"));

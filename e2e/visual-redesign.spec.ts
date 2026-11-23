@@ -74,8 +74,8 @@ test.describe("Primary customer journey", () => {
     test("homepage → primary CTA → contact → validation → honest result", async ({ page }) => {
         await page.goto("/", { waitUntil: "networkidle" });
 
-        // Primary hero CTA routes to contact.
-        await page.getByRole("link", { name: /book free consultation/i }).first().click();
+        // Current homepage primary CTA routes to the contact form.
+        await page.getByRole("link", { name: /request a free 20-min call/i }).first().click();
         await expect(page).toHaveURL(/\/contact/);
 
         const form = page.locator('form[aria-label="Contact form"]');
@@ -107,13 +107,22 @@ test.describe("Primary customer journey", () => {
         await expect(form.locator('[role="alert"]')).toBeVisible();
     });
 
-    test("services index links to a service detail page", async ({ page }) => {
+    test("services index exposes the three scoped service sections", async ({ page }) => {
         await page.goto("/services", { waitUntil: "networkidle" });
-        const firstService = page.locator('a[href^="/services/"]').first();
-        await expect(firstService).toBeVisible();
-        await firstService.click();
-        await expect(page).toHaveURL(/\/services\/[a-z0-9-]+/);
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+        await expect(page.getByRole("heading", { level: 1 })).toContainText("Practical digital systems");
+        for (const [id, title] of [
+            ["websites", "Custom Business Websites"],
+            ["automations", "AI & Workflow Automations"],
+            ["portals", "Custom Portals, CRM & School ERP"],
+        ] as const) {
+            const section = page.locator(`#${id}`);
+            await expect(section).toBeVisible();
+            await expect(section.getByRole("heading", { level: 2, name: title })).toBeVisible();
+        }
+
+        await page.goto("/services#automations", { waitUntil: "networkidle" });
+        await expect(page).toHaveURL(/\/services#automations$/);
+        await expect(page.locator("#automations")).toBeVisible();
     });
 });
 
@@ -143,7 +152,9 @@ test.describe("Navigation", () => {
 
     test("keyboard focus is visible on the primary CTA", async ({ page }) => {
         await page.goto("/", { waitUntil: "networkidle" });
-        const cta = page.getByRole("link", { name: "Book Free Consultation" }).first();
+        const cta = page.getByRole("link", { name: /request a free 20-min call/i }).first();
+        // Establish keyboard navigation modality before focusing the CTA.
+        await page.keyboard.press("Tab");
         await cta.focus();
         const outlineVisible = await cta.evaluate((el) => {
             const s = getComputedStyle(el);
