@@ -57,6 +57,7 @@ export async function POST(request: Request) {
             signedUrl: result.data.signedUrl,
         });
     } catch (err) {
-        return apiError(err instanceof Error ? err.message : "Signed URL failed", 500);
+        opsLog("error", "Signed URL exception", "api/storage/signed-url", { message: err instanceof Error ? err.message : "unknown" });
+        return apiError("Signed URL request failed", 500);
     }
 }
