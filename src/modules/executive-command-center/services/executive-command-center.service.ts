@@ -92,12 +92,15 @@ export class ExecutiveCommandCenterService {
     }
 
     private async buildSnapshot(authUserId: string, email: string, fullName?: string | null): Promise<ExecutiveCommandCenterSnapshot> {
+        const operationsPromise = loadOrganizationOperationsData(authUserId, email, fullName)
+            .then((data) => ({ data, error: false }))
+            .catch(() => ({ data: null, error: true }));
         const [
             overview,
             eip,
             aix,
             business,
-            opsData,
+            operationsResult,
             csSnapshot,
             financeSnapshot,
             hrmsSnapshot,
@@ -108,7 +111,7 @@ export class ExecutiveCommandCenterService {
             fetchEipStats(authUserId, email, fullName),
             fetchAixStats(authUserId, email, fullName),
             fetchBusinessPlatformDashboard(authUserId, email, fullName).catch(() => null),
-            loadOrganizationOperationsData(authUserId, email, fullName).catch(() => null),
+            operationsPromise,
             customerSuccessOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             billingFinanceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
             hrmsWorkforceOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
@@ -116,9 +119,10 @@ export class ExecutiveCommandCenterService {
             securityCenterOsService.getSnapshot(authUserId, email, fullName).catch(() => null),
         ]);
 
+        const opsData = operationsResult.data;
         const liveStats = opsData
             ? buildLiveOperationsStatsFromData(opsData)
-            : createEmptyLiveOperationsStats(opsData === null ? "no_organization" : "error");
+            : createEmptyLiveOperationsStats(operationsResult.error ? "error" : "no_organization");
 
         const signals: ExecutiveRawSignals = { overview, eip, aix, business, liveStats };
         const attentionToday = runPriorityEngine(signals);
