@@ -7,9 +7,9 @@ import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes
 import { buildMetadata } from "@/src/lib/seo";
 
 const PAGE = {
-    title: "About Arjun Automation",
+    title: "About Arjun Automations",
     description:
-        "Learn about Arjun Automation, a founder-led software and automation studio based in Balanagar, Secunderabad, building practical websites, workflows and business portals.",
+        "Learn about Arjun Automations, a founder-led software and automation business helping small businesses across India with affordable websites, workflows and practical business tools.",
     path: MARKETING_ROUTES.about,
 };
 
@@ -63,7 +63,7 @@ export default function AboutPage() {
             />
             <PremiumPageShell
                 title="Practical software, built around the way your business works."
-                description="Arjun Automation is a founder-led software and automation studio based in Balanagar, Secunderabad. We work with businesses that want clearer digital experiences and less repetitive operational work."
+                description="Arjun Automations is a founder-led software and automation business based in Telangana and serving businesses across India. Our aim is to make useful technology accessible to local shops, traders, clinics, schools, workshops and growing teams — including businesses in towns and villages."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
