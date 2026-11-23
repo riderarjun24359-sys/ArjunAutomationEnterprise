@@ -14,9 +14,10 @@ export async function fetchBusinessSnapshot(ctx: AccContext) {
             openInvoices: dash.openInvoices,
             pendingAi: dash.pendingAiRecommendations,
             leads: dash.leadsCount,
+            available: true,
         };
     } catch {
-        return { activeClients: 0, activeProjects: 0, openInvoices: 0, pendingAi: 0, leads: 0 };
+        return { activeClients: 0, activeProjects: 0, openInvoices: 0, pendingAi: 0, leads: 0, available: false };
     }
 }
 
@@ -29,9 +30,10 @@ export async function fetchSupportSnapshot(ctx: AccContext) {
             supportHealth: Math.round((stats.slaCompliance + (stats.avgSatisfaction > 0 ? (stats.avgSatisfaction / 5) * 100 : 85)) / 2),
             incidents: stats.openEscalations,
             knowledgeArticles: stats.knowledgeArticles,
+            available: true,
         };
     } catch {
-        return { openTickets: 0, slaCompliance: 0, supportHealth: 0, incidents: 0, knowledgeArticles: 0 };
+        return { openTickets: 0, slaCompliance: 0, supportHealth: 0, incidents: 0, knowledgeArticles: 0, available: false };
     }
 }
 
@@ -42,9 +44,10 @@ export async function fetchDeliverySnapshot(ctx: AccContext) {
             activeEngagements: dash.activeEngagements,
             qualityPassRate: dash.qualityPassRate,
             pendingAi: dash.pendingAiRecommendations,
+            available: true,
         };
     } catch {
-        return { activeEngagements: 0, qualityPassRate: 0, pendingAi: 0 };
+        return { activeEngagements: 0, qualityPassRate: 0, pendingAi: 0, available: false };
     }
 }
 
@@ -58,9 +61,10 @@ export async function fetchGlobalOpsSnapshot(ctx: AccContext) {
             renewalsDue: dash.revenueOverview.renewalsDue,
             mrr: dash.revenueOverview.mrr,
             escalations: dash.escalations.length,
+            available: true,
         };
     } catch {
-        return { customerHealth: 0, deliveryHealth: 0, supportHealth: 0, renewalsDue: 0, mrr: 0, escalations: 0 };
+        return { customerHealth: 0, deliveryHealth: 0, supportHealth: 0, renewalsDue: 0, mrr: 0, escalations: 0, available: false };
     }
 }
 
@@ -71,8 +75,9 @@ export async function fetchProductionSnapshot(ctx: AccContext) {
             overallScore: snapshot.ctoAudit.overallScore,
             alerts: snapshot.ctoAudit.systemAlerts.length,
             platformHealth: snapshot.ctoAudit.platformHealth,
+            available: true,
         };
     } catch {
-        return { overallScore: 0, alerts: 1, platformHealth: 0 };
+        return { overallScore: 0, alerts: 1, platformHealth: 0, available: false };
     }
 }
