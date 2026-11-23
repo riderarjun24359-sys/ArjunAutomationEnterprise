@@ -1,5 +1,5 @@
 import type { DbTask, DbTaskLabel } from "@/src/modules/database/types/platform";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 export class TaskRepository extends BaseRepository<DbTask> {
@@ -89,7 +89,7 @@ export class TaskRepository extends BaseRepository<DbTask> {
             return [];
         }
 
-        const { data, error } = await client.from("task_label_assignments").select("task_id, label_id").in("task_id", taskIds);
+        const organizationId = getSelectedOrganizationId();\n        if (!organizationId) return [];\n        const { data, error } = await client.from("task_label_assignments").select("task_id, label_id").in("task_id", taskIds);
         mapRepositoryError(error, "Failed to list task label assignments");
         return (data ?? []) as Array<{ task_id: string; label_id: string }>;
     }
@@ -100,13 +100,13 @@ export class TaskRepository extends BaseRepository<DbTask> {
             return;
         }
 
-        await client.from("task_label_assignments").delete().eq("task_id", taskId);
+        const organizationId = getSelectedOrganizationId();\n        if (!organizationId) return;\n        const parent = await client.from("tasks").select("id").eq("id", taskId).eq("organization_id", organizationId).maybeSingle();\n        if (parent.error || !parent.data) return;\n        await client.from("task_label_assignments").delete().eq("task_id", taskId);
 
         if (labelIds.length === 0) {
             return;
         }
 
-        const { error } = await client.from("task_label_assignments").insert(labelIds.map((labelId) => ({ task_id: taskId, label_id: labelId })));
+        const { data: labels, error: labelsError } = await client.from("task_labels").select("id").eq("organization_id", organizationId).in("id", labelIds);\n        if (labelsError || (labels ?? []).length !== labelIds.length) return;\n        const { error } = await client.from("task_label_assignments").insert(labelIds.map((labelId) => ({ task_id: taskId, label_id: labelId })));
         mapRepositoryError(error, "Failed to set task label assignments");
     }
 }
