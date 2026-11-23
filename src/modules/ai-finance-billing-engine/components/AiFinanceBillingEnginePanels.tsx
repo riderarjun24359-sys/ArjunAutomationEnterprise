@@ -240,7 +240,7 @@ export function InvoiceCenterPanel({
                             <div className="mt-3 space-y-2 rounded-[var(--dos-radius-md)] border border-[var(--dos-border)] bg-[var(--dos-surface-tertiary)] p-4 text-sm text-[var(--dos-text-secondary)]">
                                 <p className="text-base font-semibold text-[var(--dos-text-primary)]">Invoice {preview.number}</p>
                                 <p>Client: {preview.clientLabel}</p>
-                                <p>Status: {preview.status}</p>
+                                <p>Status: {preview.status} · settlement not verified</p>
                                 <p>Issue: {preview.issueDate}</p>
                                 <p>Due: {preview.dueDate || "—"}</p>
                                 <p>Tax: {moneyLabel(preview.taxAmount, preview.currency)}</p>
@@ -297,7 +297,7 @@ export function PaymentCenterPanel({ payments }: { payments: PaymentCenter }) {
                             r.kind,
                             r.method,
                             moneyLabel(r.amount),
-                            r.status,
+                            `${r.status} · settlement not verified`,
                             r.reference || r.failureReason || "—",
                         ])}
                         empty="No payment timeline"
