@@ -84,8 +84,11 @@ export function validateSignedUrlRequest(input: {
     const path = (input.path || "").trim();
     const expiresIn = input.expiresIn ?? 300;
 
-    if (!bucket || bucket.includes("..")) {
-        return { ok: false, error: "Invalid bucket", bucket, path, expiresIn };
+    // Signed URLs are restricted to the dedicated tenant-upload bucket.
+    // Accepting arbitrary bucket names here could expose unrelated/private
+    // storage namespaces even when the object path has an organization prefix.
+    if (bucket !== DEFAULT_STORAGE_BUCKET) {
+        return { ok: false, error: "Bucket is not allowed", bucket, path, expiresIn };
     }
     if (!path || path.includes("..") || path.startsWith("/")) {
         return { ok: false, error: "Invalid object path", bucket, path, expiresIn };
