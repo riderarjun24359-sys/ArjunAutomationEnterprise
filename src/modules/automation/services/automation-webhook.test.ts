@@ -65,7 +65,7 @@ describe("automation webhooks", () => {
         mocks.actionsList.mockResolvedValue([]);
         mocks.webhooksList.mockResolvedValue([]);
         mocks.webhookUpdate.mockResolvedValue(null);
-        vi.stubGlobal("fetch", vi.fn(async () => ({ status: 200 })));
+        vi.stubGlobal("fetch", vi.fn(async () => ({ status: 200, json: async () => ({ ok: true, attempts: 1, responseStatus: 204 }) })));
     });
 
     afterEach(() => {
@@ -94,37 +94,34 @@ describe("automation webhooks", () => {
         await expect(automationService.setWebhookActive("u", "e", "wh-x", false)).rejects.toThrow(/not found in your organization/);
     });
 
-    it("runWorkflow delivers a named webhook and persists the delivery row", async () => {
-        mocks.webhooksList.mockResolvedValue([hookRow]);
+    it("runWorkflow delegates named webhook delivery to the authenticated server boundary", async () => {
         mocks.actionsList.mockResolvedValue([{ id: "a1", step_order: 1, action_type: "webhook", config: { webhookName: "crm", event: "lead.created", payload: { id: 7 } } }]);
 
         await automationService.runWorkflow("u", "e", "w1");
-        // runWorkflow returns the re-read execution row (mock-static), so the
-        // worker outcome is asserted on the persisted update instead.
         expect(mocks.executionUpdate).toHaveBeenCalledWith("e1", expect.objectContaining({ status: "completed" }));
 
         const fetchMock = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
         expect(fetchMock).toHaveBeenCalledTimes(1);
-        const [url, init] = fetchMock.mock.calls[0] as unknown as [string, { headers: Record<string, string>; body: string; signal: unknown }];
-        expect(url).toBe("https://hooks.example.com/events");
-        expect(init.headers["x-aaos-signature"]).toMatch(/^t=\d+,v1=[0-9a-f]{64}$/);
-        expect(init.headers["x-idempotency-key"]).toBe("e1:1");
-        expect(JSON.parse(init.body)).toMatchObject({ event: "lead.created", payload: { id: 7 } });
-
-        expect(mocks.deliveryCreate).toHaveBeenCalledWith(
-            "org-1",
-            expect.objectContaining({ event: "lead.created", target_host: "hooks.example.com", status: "delivered", attempts: 1, response_status: 200, idempotency_key: "e1:1" }),
-        );
+        const [url, init] = fetchMock.mock.calls[0] as unknown as [string, { method: string; headers: Record<string, string>; body: string }];
+        expect(url).toBe("/api/automation/webhooks/deliver");
+        expect(init.method).toBe("POST");
+        expect(init.headers["content-type"]).toBe("application/json");
+        expect(JSON.parse(init.body)).toMatchObject({
+            webhookName: "crm",
+            event: "lead.created",
+            payload: { id: 7 },
+            idempotencyKey: "e1:1",
+        });
     });
 
-    it("runWorkflow fails clearly for unknown webhook names", async () => {
-        mocks.webhooksList.mockResolvedValue([]);
-        mocks.actionsList.mockResolvedValue([{ id: "a1", step_order: 1, action_type: "webhook", config: { webhookName: "ghost" } }]);
+    it("records a failed execution when the server rejects an unknown webhook", async () => {
+        mocks.actionsList.mockResolvedValue([{ id: "a1", step_order: 1, action_type: "webhook", config: { webhookName: "ghost", event: "lead.created", payload: {} } }]);
+        vi.stubGlobal("fetch", vi.fn(async () => ({ status: 404, json: async () => ({ error: "Unknown or inactive webhook" }) })));
 
         await automationService.runWorkflow("u", "e", "w1");
         expect(mocks.executionUpdate).toHaveBeenCalledWith("e1", expect.objectContaining({ status: "failed" }));
         expect(mocks.deliveryCreate).not.toHaveBeenCalled();
         const fetchMock = globalThis.fetch as unknown as ReturnType<typeof vi.fn>;
-        expect(fetchMock).not.toHaveBeenCalled();
+        expect(fetchMock).toHaveBeenCalledWith("/api/automation/webhooks/deliver", expect.objectContaining({ method: "POST" }));
     });
 });
