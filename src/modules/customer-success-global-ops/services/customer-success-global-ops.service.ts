@@ -1,9 +1,8 @@
 import { resolveOrganizationContext } from "@/src/modules/database/lib/organization-context";
 import { productionLog } from "@/src/lib/production-logger";
 import { csgRepository } from "../customer-success-global-ops-repository";
-import { buildOnboardingSessions } from "../engines/client-onboarding.engine";
 import { generateAiRecommendations, generateImprovementBacklog } from "../engines/continuous-improvement.engine";
-import { buildSatisfactionTrend, computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
+import { computeCsatAverage, computeNpsScore } from "../engines/customer-feedback.engine";
 import { computeHealthScores } from "../engines/customer-success-os.engine";
 import { classifyLiveQueue, computeSupportHealth } from "../engines/global-support-center.engine";
 import { computeDeliveryHealth } from "../engines/service-delivery-control.engine";
@@ -67,7 +66,7 @@ export class CustomerSuccessGlobalOpsService {
         ].filter((item): item is string => Boolean(item));
         const renewals = storedRenewals;
         const escalations = storedEscalations;
-        const onboardingSessions = buildOnboardingSessions(business.activeClients, storedOnboarding);
+        const onboardingSessions = storedOnboarding;
         const deliveryMilestones = storedMilestones;
         const deliveryHealth = delivery.available
             ? (deliveryMilestones.length
@@ -77,7 +76,9 @@ export class CustomerSuccessGlobalOpsService {
         const feedback = storedFeedback;
         const csatAverage = computeCsatAverage(feedback);
         const npsScore = computeNpsScore(feedback);
-        const supportHealth = support.available ? computeSupportHealth(support) : 0;
+        const supportHealth = support.available && (support.openTickets > 0 || support.avgSatisfaction > 0)
+            ? computeSupportHealth(support)
+            : 0;
         const queue = classifyLiveQueue(tickets);
 
         const improvementBacklog = storedImprovements.length
@@ -118,7 +119,7 @@ export class CustomerSuccessGlobalOpsService {
             csatAverage,
             npsScore,
             improvementBacklog,
-            satisfactionTrend: buildSatisfactionTrend(csatAverage, npsScore),
+            satisfactionTrend: [], // No historical satisfaction ledger is available; never synthesize a trend.
             integrationIssues,
         };
 
