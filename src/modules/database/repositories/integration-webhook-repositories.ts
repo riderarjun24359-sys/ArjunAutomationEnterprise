@@ -6,7 +6,7 @@ export interface DbIntegrationWebhook {
     organization_id: string;
     name: string;
     url: string;
-    /** HMAC signing secret. Readable by org members under RLS (org trust boundary); never echoed to clients except through delivery. */
+    /** Server-only HMAC signing secret. Never select this column in browser code. */
     secret: string;
     allowed_hosts: string[];
     is_active: boolean;
@@ -64,7 +64,7 @@ abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
             .update({ ...patch, organization_id: organizationId, updated_at: new Date().toISOString() })
             .eq("id", id)
             .eq("organization_id", organizationId)
-            .select()
+            .select(this.safeColumns ?? "*")
             .single();
         mapRepositoryError(error, `Failed to update ${this.table}`);
         return (data ?? null) as T | null;
