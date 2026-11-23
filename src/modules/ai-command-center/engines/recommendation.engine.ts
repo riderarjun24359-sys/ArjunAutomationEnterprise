@@ -1,5 +1,4 @@
 import type { AccDecision, AccRecommendation } from "../types";
-import { uid } from "./engine-utils";
 
 export function buildRecommendations(input: {
     decisions: AccDecision[];
@@ -10,8 +9,23 @@ export function buildRecommendations(input: {
     pendingAi: number;
 }): AccRecommendation[] {
     const now = new Date().toISOString();
+    const stableId = (engineKey: string, title: string) => {
+        const source = `${engineKey}:${title}`;
+        const hash = (seed: number) => {
+            let value = seed >>> 0;
+            for (let i = 0; i < source.length; i += 1) {
+                value = Math.imul(value ^ source.charCodeAt(i), 16777619) >>> 0;
+            }
+            return value.toString(16).padStart(8, "0");
+        };
+        const a = hash(2166136261);
+        const b = hash(2246822519);
+        const c = hash(3266489917);
+        const d = hash(668265263);
+        return `${a}-${b.slice(0, 4)}-5${c.slice(1, 4)}-a${d.slice(1, 4)}-${a}${b.slice(0, 4)}`;
+    };
     const recs: AccRecommendation[] = input.decisions.slice(0, 4).map((d) => ({
-        id: uid("rec"),
+        id: stableId("aiDecision", d.summary),
         engineKey: "aiDecision" as const,
         title: d.summary,
         detail: d.rationale,
@@ -23,7 +37,7 @@ export function buildRecommendations(input: {
 
     if (input.systemHealth < 85) {
         recs.push({
-            id: uid("rec"),
+            id: stableId("systemMonitor", "Run production readiness health check"),
             engineKey: "systemMonitor",
             title: "Run production readiness health check",
             detail: `System health ${input.systemHealth}% — validate circuit breakers and backups.`,
@@ -35,7 +49,7 @@ export function buildRecommendations(input: {
     }
     if (input.pendingAi > 0) {
         recs.push({
-            id: uid("rec"),
+            id: stableId("recommendation", "Clear pending AI lifecycle recommendations"),
             engineKey: "recommendation",
             title: "Clear pending AI lifecycle recommendations",
             detail: `${input.pendingAi} pending AI items across business/delivery modules.`,
@@ -47,7 +61,7 @@ export function buildRecommendations(input: {
     }
     if (input.clientHealth >= 85 && input.supportHealth >= 85 && input.deliveryHealth >= 85) {
         recs.push({
-            id: uid("rec"),
+            id: stableId("executiveAnalytics", "Publish weekly executive operations brief"),
             engineKey: "executiveAnalytics",
             title: "Publish weekly executive operations brief",
             detail: "Health signals are strong — capture wins for leadership briefing.",

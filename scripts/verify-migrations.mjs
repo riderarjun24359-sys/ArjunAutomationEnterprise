@@ -1192,6 +1192,32 @@ const migrationFiles = readdirSync(migrationsDir)
     .filter((file) => file.endsWith(".sql"))
     .sort();
 
+// Supabase migration history keys migrations by their leading timestamp.
+// Two files with the same timestamp are ambiguous even when their names differ.
+const migrationVersions = new Map();
+const duplicateVersions = [];
+for (const file of migrationFiles) {
+    const match = /^(\d{8,14})_/.exec(file);
+    if (!match) {
+        console.error(`FAIL: Migration filename has no valid timestamp prefix: ${file}`);
+        process.exit(1);
+    }
+    const version = match[1];
+    const previous = migrationVersions.get(version);
+    if (previous) {
+        duplicateVersions.push({ version, files: [previous, file] });
+    } else {
+        migrationVersions.set(version, file);
+    }
+}
+if (duplicateVersions.length > 0) {
+    console.error("FAIL: Duplicate Supabase migration versions detected:");
+    for (const duplicate of duplicateVersions) {
+        console.error(`  - ${duplicate.version}: ${duplicate.files.join(", ")}`);
+    }
+    process.exit(1);
+}
+
 if (migrationFiles.length === 0) {
     console.error("FAIL: No migration files found.");
     process.exit(1);

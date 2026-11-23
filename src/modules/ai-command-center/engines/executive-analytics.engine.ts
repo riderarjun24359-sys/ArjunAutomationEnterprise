@@ -9,7 +9,8 @@ export function buildRevenueSummary(input: {
     mrrEstimate?: number;
 }): RevenueSummary {
     return {
-        mrr: input.mrrEstimate ?? Math.max(0, input.activeClients * 2500),
+        mrr: input.mrrEstimate ?? 0,
+        mrrVerified: false,
         openInvoices: input.openInvoices,
         renewalsDue: input.renewalsDue,
         activeClients: input.activeClients,

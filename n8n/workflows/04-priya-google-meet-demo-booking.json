@@ -1,0 +1,344 @@
+{
+  "name": "Priya - Google Calendar 20-Minute Demo Booking",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "priya-demo-booking",
+        "responseMode": "responseNode",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        220,
+        360
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000001",
+      "name": "Demo Booking Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "[CREATE_N8N_HEADER_AUTH_CREDENTIAL]",
+          "name": "Priya Demo Booking Bearer"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const input = $input.first().json.body ?? $input.first().json;\nconst start = new Date(input.startAt);\nif (Number.isNaN(start.getTime())) throw new Error(\"Invalid startAt\");\nconst end = new Date(start.getTime() + 20 * 60 * 1000);\nconst timeMax = new Date(start.getTime() + 3 * 60 * 60 * 1000);\nreturn [{ json: {\n  leadId: input.leadId,\n  leadName: input.leadName || \"Prospect\",\n  companyName: input.companyName || \"\",\n  attendeeEmail: input.attendeeEmail || \"\",\n  attendeePhone: input.attendeePhone || \"\",\n  startAt: start.toISOString(),\n  endAt: end.toISOString(),\n  timeMin: start.toISOString(),\n  timeMax: timeMax.toISOString(),\n  timeZone: \"Asia/Kolkata\"\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        360
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000002",
+      "name": "Prepare IST Calendar Window"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "timeMin",
+              "value": "={{$json.timeMin}}"
+            },
+            {
+              "name": "timeMax",
+              "value": "={{$json.timeMax}}"
+            },
+            {
+              "name": "singleEvents",
+              "value": "true"
+            },
+            {
+              "name": "orderBy",
+              "value": "startTime"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 8000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        700,
+        360
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000003",
+      "name": "Read Google Calendar Events",
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "[CREATE_GOOGLE_OAUTH2_CREDENTIAL]",
+          "name": "Google Calendar OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const request = $(\"Prepare IST Calendar Window\").first().json;\nconst response = $input.first().json;\nconst events = Array.isArray(response.items) ? response.items : [];\nconst start = new Date(request.startAt);\nconst end = new Date(request.endAt);\nfunction overlaps(candidateStart, candidateEnd, event) {\n  const eventStart = new Date(event.start?.dateTime || event.start?.date).getTime();\n  const eventEnd = new Date(event.end?.dateTime || event.end?.date).getTime();\n  return Number.isFinite(eventStart) && Number.isFinite(eventEnd) &&\n    candidateStart.getTime() < eventEnd && candidateEnd.getTime() > eventStart;\n}\nconst available = !events.some(event => overlaps(start, end, event));\nconst alternatives = [];\nif (!available) {\n  for (let offset = 30; offset <= 180 && alternatives.length < 2; offset += 15) {\n    const candidateStart = new Date(start.getTime() + offset * 60000);\n    const candidateEnd = new Date(candidateStart.getTime() + 20 * 60000);\n    if (!events.some(event => overlaps(candidateStart, candidateEnd, event))) {\n      alternatives.push(candidateStart.toISOString());\n    }\n  }\n}\nreturn [{ json: { ...request, available, alternatives } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        360
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000004",
+      "name": "Find Available 20-Minute Slots"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.available}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1200,
+        360
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000005",
+      "name": "Requested Slot Available?"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleOAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "conferenceDataVersion",
+              "value": "1"
+            },
+            {
+              "name": "sendUpdates",
+              "value": "all"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { summary: 'ArjunAutomations Demo — ' + $json.leadName, description: '20-minute ArjunAutomations discovery and product demo.\\nCompany: ' + $json.companyName + '\\nLead ID: ' + $json.leadId, start: { dateTime: $json.startAt, timeZone: 'Asia/Kolkata' }, end: { dateTime: $json.endAt, timeZone: 'Asia/Kolkata' }, attendees: $json.attendeeEmail ? [{ email: $json.attendeeEmail }] : [], conferenceData: { createRequest: { requestId: $execution.id.toString(), conferenceSolutionKey: { type: 'hangoutsMeet' } } } } }}",
+        "options": {
+          "timeout": 8000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        240
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000006",
+      "name": "Create Google Meet Calendar Event",
+      "credentials": {
+        "googleOAuth2Api": {
+          "id": "[CREATE_GOOGLE_OAUTH2_CREDENTIAL]",
+          "name": "Google Calendar OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const event = $input.first().json;\nconst meetLink = event.hangoutLink || event.conferenceData?.entryPoints?.find(point => point.entryPointType === \"video\")?.uri || \"\";\nreturn [{ json: { status: \"booked\", eventId: event.id || \"\", meetLink, startAt: event.start?.dateTime || \"\", endAt: event.end?.dateTime || \"\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        240
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000007",
+      "name": "Format Booking Confirmation"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1940,
+        240
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000008",
+      "name": "Return Booked Demo"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const result = $input.first().json;\nreturn [{ json: { status: \"busy\", available: false, alternatives: result.alternatives || [], message: \"Requested Google Calendar slot is busy.\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        480
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000009",
+      "name": "Format Alternative Slots"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1700,
+        480
+      ],
+      "id": "6ebd87e7-2c6d-4d4d-9a1c-000000000010",
+      "name": "Return Alternative Slots"
+    }
+  ],
+  "connections": {
+    "Demo Booking Request": {
+      "main": [
+        [
+          {
+            "node": "Prepare IST Calendar Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare IST Calendar Window": {
+      "main": [
+        [
+          {
+            "node": "Read Google Calendar Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Google Calendar Events": {
+      "main": [
+        [
+          {
+            "node": "Find Available 20-Minute Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Available 20-Minute Slots": {
+      "main": [
+        [
+          {
+            "node": "Requested Slot Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Requested Slot Available?": {
+      "main": [
+        [
+          {
+            "node": "Create Google Meet Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Alternative Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Meet Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Format Booking Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Booking Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Return Booked Demo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Alternative Slots": {
+      "main": [
+        [
+          {
+            "node": "Return Alternative Slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "versionId": "6ebd87e7-2c6d-4d4d-9a1c-000000000011",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

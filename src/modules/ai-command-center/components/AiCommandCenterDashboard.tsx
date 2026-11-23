@@ -32,7 +32,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
 
                 <Section title="Revenue Summary">
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">${Math.round(dash.revenue.mrr).toLocaleString()}</p></div>
+                        <div><p className="text-[var(--dos-text-secondary)]">MRR</p><p className="text-xl font-bold">{dash.revenue.mrrVerified ? `₹${Math.round(dash.revenue.mrr).toLocaleString("en-IN")}` : "Not verified"}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Active clients</p><p className="text-xl font-bold">{dash.revenue.activeClients}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Open invoices</p><p className="text-xl font-bold">{dash.revenue.openInvoices}</p></div>
                         <div><p className="text-[var(--dos-text-secondary)]">Renewals due</p><p className="text-xl font-bold">{dash.revenue.renewalsDue}</p></div>
@@ -65,9 +65,9 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                         <div key={agent.key} className="rounded-lg border border-[var(--dos-border)] p-3">
                             <div className="flex items-center justify-between gap-2">
                                 <p className="text-sm font-medium">{agent.label}</p>
-                                <Badge variant={agent.status === "degraded" ? "error" : agent.status === "processing" ? "warning" : "info"}>{agent.status}</Badge>
+                                <Badge variant={agent.status === "degraded" ? "error" : agent.status === "processing" ? "warning" : agent.status === "unknown" ? "default" : "info"}>{agent.status}</Badge>
                             </div>
-                            <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">{agent.healthScore}% health</p>
+                            <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">{agent.status === "unknown" ? "No heartbeat" : `${agent.healthScore}% health`}</p>
                         </div>
                     ))}
                 </div>
@@ -92,6 +92,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                 </Section>
 
                 <Section title="AI Recommendations">
+                    {data.actionError ? <p role="alert" className="text-sm text-red-500">{data.actionError}</p> : null}
                     {dash.recommendations.slice(0, 8).map((rec) => (
                         <div key={rec.id} className="rounded-lg border border-[var(--dos-border)] p-3 text-sm">
                             <div className="flex flex-wrap gap-2">

@@ -1,0 +1,80 @@
+{
+  "name": "Jarvis - Verified Hot Lead and Payment Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jarvis-verified-event",
+        "responseMode": "onReceived",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        300
+      ],
+      "id": "5dac76d6-1b5c-4c3c-9db3-000000000001",
+      "name": "Verified Business Event",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "[CREATE_HEADER_AUTH_CREDENTIAL]",
+          "name": "Jarvis Verified Event Secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://[ARJUN_OS_HOST]/api/ai-sales/jarvis/call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer [PRIYA_JARVIS_DISPATCH_SECRET]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { triggerReason: $json.body?.triggerReason || 'verified_business_event', idempotencyKey: $json.body?.idempotencyKey || $json.body?.eventId || '' } }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        300
+      ],
+      "id": "5dac76d6-1b5c-4c3c-9db3-000000000002",
+      "name": "Call Jarvis"
+    }
+  ],
+  "connections": {
+    "Verified Business Event": {
+      "main": [
+        [
+          {
+            "node": "Call Jarvis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata"
+  },
+  "versionId": "5dac76d6-1b5c-4c3c-9db3-000000000003",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
