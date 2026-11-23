@@ -144,7 +144,7 @@ export function buildRevenueDashboard(
     payments: PaymentCenterItem[],
 ): RevenueDashboardMetrics {
     // Legacy BRV USD snapshots/amounts and unlinked finance records are not verified INR settlements.
-    // Keep operational counts, but fail closed for all revenue values until exact invoice/deal reconciliation exists.
+    // Keep operational counts, but fail closed for all revenue values until Razorpay settlements are reconciled to exact INR invoices and deals.
     const failedPaymentCount = payments.filter((p) => isFailedPayment(p.status)).length;
     const collectionCasesOpen = data.collectionCases.filter((c) => !["closed", "resolved", "won"].includes(c.status.toLowerCase())).length;
 
