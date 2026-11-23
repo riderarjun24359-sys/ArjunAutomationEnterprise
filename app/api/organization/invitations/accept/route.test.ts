@@ -152,6 +152,25 @@ describe("invitation accept flow", () => {
         expect(db.rows("organization_members")).toHaveLength(0);
     });
 
+    it("does not accept invitations into suspended organizations", async () => {
+        seedInvite(db);
+        db.seed("organizations", [{ id: "org-a", name: "Org A", slug: "org-a", status: "suspended" }]);
+        db.seed("user_profiles", [{ id: "prof-mate", auth_user_id: "auth-mate", email: "mate@test.dev" }]);
+        signedInAs("mate@test.dev", "auth-mate");
+
+        const res = await POST_ACCEPT(
+            new Request("http://localhost/accept", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ invitationId: "11111111-1111-4111-8111-111111111111" }),
+            }),
+        );
+
+        expect(res.status).toBe(409);
+        expect(db.rows("organization_members")).toHaveLength(0);
+        expect(db.rows("organization_invitations")[0].status).toBe("pending");
+    });
+
     it("replayed accept creates nothing and partial marking is reported", async () => {
         seedInvite(db);
         db.seed("user_profiles", [{ id: "prof-mate", auth_user_id: "auth-mate", email: "mate@test.dev" }]);
