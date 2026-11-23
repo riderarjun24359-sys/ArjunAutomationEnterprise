@@ -29,9 +29,9 @@ export function InvoiceCenterPanel({ items }: { items: InvoiceCenterItem[] }) {
                         </Badge>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-secondary)]">
-                        <span>Total: Currency unverified</span>
-                        <span>Due: Currency unverified</span>
-                        <span>Paid: Currency unverified</span>
+                        <span>Total: {item.currency} {item.totalUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span>Due: {item.currency} {item.amountDueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span>Paid: {item.currency} {item.amountPaidUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         <span>Source {item.source}</span>
                         <span>Status {item.status}</span>
                         <span>
