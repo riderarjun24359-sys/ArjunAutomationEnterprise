@@ -13,7 +13,7 @@ import { buildMetadata } from "@/src/lib/seo";
 const PAGE = {
     title: "Pricing",
     description:
-        "Clear starting prices for custom websites, workflow automation, business portals and ongoing support from Arjun Automation in Hyderabad.",
+        "Affordable starting prices for websites, WhatsApp automation and practical business software for small businesses across India.",
     path: MARKETING_ROUTES.pricing,
 };
 
@@ -38,8 +38,8 @@ export default function PricingPage() {
                 breadcrumbs={breadcrumbs}
             />
             <PremiumPageShell
-                title="Straightforward pricing. A clearly agreed scope."
-                description="Starting prices for common project types. Your written quotation will confirm the exact features, timeline, deliverables and payment milestones before work begins."
+                title="Technology that fits your business and budget."
+                description="Simple starting packages for shops, traders, clinics, schools, service providers and growing businesses in cities, towns and villages. Every price is shown in Indian rupees."
             >
                 <MarketingBreadcrumbs items={breadcrumbs} />
 
@@ -50,7 +50,7 @@ export default function PricingPage() {
                                 One-time project pricing
                             </h2>
                             <p className="mt-3 text-slate-600">
-                                These are starting prices, not fixed quotes for every requirement. Final cost depends on the agreed scope, integrations, content and complexity.
+                                These are affordable starting packages with a limited, clearly listed scope. Tell us what your business needs and we will suggest only what is useful — no unnecessary modules.
                             </p>
                         </div>
 
@@ -94,7 +94,7 @@ export default function PricingPage() {
                                 Optional monthly support
                             </h2>
                             <p className="mt-3 text-slate-600">
-                                Support is optional and starts after handover. Choose it when you want ongoing maintenance or help improving the system.
+                                Monthly support is optional. Choose it if you want help with routine updates and keeping your website or agreed workflows running.
                             </p>
                         </div>
                         <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -136,7 +136,7 @@ export default function PricingPage() {
                         </div>
                         <div>
                             <h2 className="text-xl font-semibold text-slate-900">
-                                Costs quoted separately when applicable
+                                Third-party costs, if needed
                             </h2>
                             <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
                                 <li>Domain registration, hosting, cloud infrastructure and backups</li>
@@ -147,7 +147,7 @@ export default function PricingPage() {
                             </ul>
                         </div>
                         <p className="text-sm leading-6 text-slate-600 lg:col-span-2">
-                            These charges depend on the provider, account and actual usage. Where possible, third-party services are set up in your organisation&apos;s own accounts so you retain control. We will identify expected recurring costs in the proposal; they are not silently included in the project fee.
+                            We will explain any domain, hosting, WhatsApp provider or usage-based charges before work begins. You can start with a simple website or workflow without paying for services your business does not need.
                         </p>
                     </section>
 
