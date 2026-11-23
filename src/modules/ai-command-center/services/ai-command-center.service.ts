@@ -113,6 +113,9 @@ export class AiCommandCenterService {
             pendingApprovals: recommendations.filter((r) => r.priority === "high" || r.priority === "critical").length,
         });
         const agentHealth = computeAgentHealth(agents);
+        if (agents.every((agent) => agent.status === "unknown")) {
+            integrationIssues.push("Agent heartbeats (not connected)");
+        }
         const alerts = buildSystemAlerts({
             systemHealth: production.available ? systemHealth : null,
             openTickets: support.available ? support.openTickets : null,
