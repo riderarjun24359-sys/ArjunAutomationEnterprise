@@ -31,6 +31,7 @@ export interface InvoiceCenterItem {
     accountOrClient: string;
     clientId: string | null;
     totalUsd: number;
+    currency: string;
     amountDueUsd: number;
     amountPaidUsd: number;
     status: string;
