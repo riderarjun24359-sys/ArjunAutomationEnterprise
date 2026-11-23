@@ -22,7 +22,7 @@ if (migrationFiles.length === 0) {
 
 const versions = new Map();
 const migrations = migrationFiles.map((file) => {
-    const match = file.match(/^(\\d{8,14})[_-]/);
+    const match = file.match(/^(\d{8,14})[_-]/);
     if (!match) throw new Error(`Invalid migration filename: ${file}`);
     if (versions.has(match[1])) {
         throw new Error(`Duplicate migration version ${match[1]}: ${versions.get(match[1])}, ${file}`);
@@ -69,7 +69,7 @@ try {
     const applied = new Map(rows.map((row) => [row.version, row]));
 
     for (const migration of migrations) {
-        const version = migration.file.match(/^(\\d{8,14})[_-]/)[1];
+        const version = migration.file.match(/^(\d{8,14})[_-]/)[1];
         const previous = applied.get(version);
 
         if (previous) {
