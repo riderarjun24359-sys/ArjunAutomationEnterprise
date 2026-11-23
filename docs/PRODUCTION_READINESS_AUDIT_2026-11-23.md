@@ -83,3 +83,16 @@ A fresh read-only production snapshot confirms:
 - Supabase Security Advisor now reports one security warning: leaked-password protection is disabled in Supabase Auth. This requires an authorized Auth configuration change and is not changed by a SQL migration.
 - Performance Advisor reports 631 foreign keys without covering indexes. The live snapshot's leading candidates have zero estimated rows and mostly 32–64 kB table sizes; do not bulk-create hundreds of indexes on an empty/low-usage database. Reassess after real workload statistics accumulate.
 - The webhook delivery server-only grant migration and internal table deny migration are present in the applied migration history.
+
+## Payment webhook reliability hardening
+
+- Payment webhook request bodies are now streamed with a 256 KiB hard limit; oversized or invalid UTF-8 payloads are rejected before signature parsing.
+- A signed payment event is no longer acknowledged with HTTP 200 when durable idempotency storage is missing or fails. The endpoint returns retryable HTTP 503 with `Retry-After: 60`, preventing a provider from treating an unrecorded receipt as successful.
+- The bounded in-memory idempotency fallback remains available as a diagnostic/degraded decision path, but is not sufficient to acknowledge a payment event.
+- The CI tenant-isolation assertion was corrected: webhook configuration tables have server-only mutation grants, so cross-tenant browser UPDATE is rejected at the SQL privilege layer (permission denied), not merely filtered to zero rows. The verification now expects denial.
+
+## Outstanding production controls
+
+- `202611230120_webhook_idempotency_server_only.sql` is committed but **not yet present in the production migration history**. The current production table still has broad browser table grants protected by its deny-all RLS policy; apply the migration only in an explicitly approved migration window.
+- Supabase Auth leaked-password protection remains disabled and needs an authorized Auth settings change.
+- Vercel deployment remains intentionally on hold pending the user's token recharge; Cloudflare deployment is not configured because its deploy secrets are absent.
