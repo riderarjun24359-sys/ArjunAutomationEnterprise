@@ -118,13 +118,23 @@ export function useOrganization() {
         };
     }, [user, selectedOrganizationId]);
 
-    const selectOrganization = (organizationId: string) => {\n        const allowed = memberships.some((membership) => membership.organizationId === organizationId && membership.status === "active");\n        if (!allowed) return;\n        window.localStorage.setItem("aae:selected-organization", organizationId);\n        setSelectedOrganizationId(organizationId);\n    };\n\n    const revokeInvitation = async (invitationId: string): Promise<boolean> => {
+    const selectOrganization = (organizationId: string) => {
+        const allowed = memberships.some((membership) => membership.organizationId === organizationId && membership.status === "active");
+        if (!allowed) return;
+        window.localStorage.setItem("aae:selected-organization", organizationId);
+        setSelectedOrganizationId(organizationId);
+    };
+
+    const revokeInvitation = async (invitationId: string): Promise<boolean> => {
         setInvitationActionError(null);
         setRevokingInvitationId(invitationId);
         try {
             const response = await fetch("/api/organization/invitations", {
                 method: "DELETE",
-                headers: {\n                    "Content-Type": "application/json",\n                    ...(selectedOrganizationId ? { "x-organization-id": selectedOrganizationId } : {}),\n                },
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(selectedOrganizationId ? { "x-organization-id": selectedOrganizationId } : {}),
+                },
                 body: JSON.stringify({ invitationId }),
                 cache: "no-store",
             });
