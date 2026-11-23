@@ -24,7 +24,6 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { buildProductionHealthReport } from "@/src/lib/production-health";
 import { EXECUTABLE_ACTIONS, runLocalWorkflow } from "../lib/local-worker";
-import { validateWebhookTarget } from "../lib/webhook-action";
 import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
 import { taskService } from "@/src/modules/tasks/services/task.service";
 import type {
@@ -38,14 +37,6 @@ import type {
     WorkflowExecution,
     WorkflowTemplate,
 } from "@/src/modules/automation/types";
-
-function hostOf(rawUrl: string): string {
-    try {
-        return new URL(rawUrl).hostname.toLowerCase().replace(/\.$/, "");
-    } catch {
-        return "";
-    }
-}
 
 export class AutomationService {
     private async getContext(authUserId: string, email: string, fullName?: string | null) {
@@ -326,16 +317,16 @@ export class AutomationService {
     async getWebhooks(authUserId: string, email: string, fullName?: string | null) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) return [];
-        const rows = await databaseService.integrationWebhooks.listByOrganization(context.organizationId);
-        return rows.map((row) => ({
-            id: row.id,
-            name: row.name,
-            url: row.url,
-            allowedHosts: row.allowed_hosts,
-            isActive: row.is_active,
-            hasSecret: typeof row.secret === "string" && row.secret.length > 0,
-            createdAt: row.created_at,
-        }));
+        const response = await fetch("/api/automation/webhooks", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store",
+        });
+        const result = await response.json().catch(() => null) as { error?: string; webhooks?: Array<Record<string, unknown>> } | null;
+        if (!response.ok || !Array.isArray(result?.webhooks)) {
+            throw new Error(result?.error ?? "Unable to load organization webhooks");
+        }
+        return result.webhooks;
     }
 
     async createWebhook(
@@ -346,35 +337,39 @@ export class AutomationService {
     ) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const name = input.name.trim();
-        const url = input.url.trim();
-        if (!name) throw new Error("Webhook name is required");
-        if (input.secret.length < 16) throw new Error("Webhook secret must be at least 16 characters");
-        const hosts = (input.allowedHosts ?? []).map((h) => h.trim().toLowerCase()).filter(Boolean);
-        const checked = validateWebhookTarget(url, hosts.length ? hosts : [hostOf(url)]);
-        if (!checked.ok) throw new Error(checked.error ?? "Invalid webhook target");
-        const created = await databaseService.integrationWebhooks.createForOrganization(context.organizationId, {
-            name,
-            url,
-            secret: input.secret,
-            allowed_hosts: hosts.length ? hosts : [checked.host as string],
+        const response = await fetch("/api/automation/webhooks", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(input),
         });
-        if (!created) throw new Error("Failed to create webhook");
+        const result = await response.json().catch(() => null) as { error?: string; webhook?: { id: string; name: string } } | null;
+        if (!response.ok || !result?.webhook) {
+            throw new Error(result?.error ?? "Failed to create webhook");
+        }
         await databaseService.automationLogs.create(
-            buildAutomationLogPayload(context.organizationId, `Webhook "${name}" registered`, "info", null),
+            buildAutomationLogPayload(context.organizationId, `Webhook "${result.webhook.name}" registered`, "info", null),
         );
-        return { id: created.id, name: created.name };
+        return result.webhook;
     }
 
     async setWebhookActive(authUserId: string, email: string, id: string, isActive: boolean, fullName?: string | null) {
         const context = await this.getContext(authUserId, email, fullName);
         if (!context) throw new Error("Unable to resolve organization context");
-        const updated = await databaseService.integrationWebhooks.updateForOrganization(context.organizationId, id, { is_active: isActive });
-        if (!updated) throw new Error("Webhook not found in your organization");
+        const response = await fetch("/api/automation/webhooks", {
+            method: "PATCH",
+            credentials: "same-origin",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ id, isActive }),
+        });
+        const result = await response.json().catch(() => null) as { error?: string; webhook?: { id: string; name: string; is_active: boolean } } | null;
+        if (!response.ok || !result?.webhook) {
+            throw new Error(result?.error ?? "Webhook not found in your organization");
+        }
         await databaseService.automationLogs.create(
-            buildAutomationLogPayload(context.organizationId, `Webhook "${updated.name}" ${isActive ? "enabled" : "disabled"}`, "info", null),
+            buildAutomationLogPayload(context.organizationId, `Webhook "${result.webhook.name}" ${isActive ? "enabled" : "disabled"}`, "info", null),
         );
-        return { id: updated.id, isActive: updated.is_active };
+        return { id: result.webhook.id, isActive: result.webhook.is_active };
     }
 
     async getDeliveries(authUserId: string, email: string, fullName?: string | null, limit = 50) {
