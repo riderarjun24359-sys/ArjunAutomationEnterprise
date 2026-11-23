@@ -1,11 +1,11 @@
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { Card } from "@/src/design-os/components/Card";
 
 interface StatCardProps {
     title: string;
     value: string;
     detail: string;
-    trend: "up" | "down";
+    trend: "up" | "down" | "flat";
     tone?: "default" | "accent";
 }
 
@@ -19,8 +19,8 @@ export function StatCard({ title, value, detail, trend, tone = "default" }: Stat
                     <p className="text-sm font-medium text-[var(--dos-text-secondary)]">{title}</p>
                     <p className="mt-2 text-3xl font-semibold text-[var(--dos-text-primary)]">{value}</p>
                 </div>
-                <div className={`rounded-[var(--dos-radius-2xl)] p-2 ${trend === "up" ? "bg-[var(--dos-success-muted)] text-[var(--dos-success)]" : "bg-[var(--dos-error-muted)] text-[var(--dos-error)]"}`}>
-                    {trend === "up" ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownRight className="h-5 w-5" />}
+                <div className={`rounded-[var(--dos-radius-2xl)] p-2 ${trend === "up" ? "bg-[var(--dos-success-muted)] text-[var(--dos-success)]" : trend === "down" ? "bg-[var(--dos-error-muted)] text-[var(--dos-error)]" : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"}`}>
+                    {trend === "up" ? <ArrowUpRight className="h-5 w-5" /> : trend === "down" ? <ArrowDownRight className="h-5 w-5" /> : <Minus className="h-5 w-5" />}
                 </div>
             </div>
             <p className="mt-4 text-sm text-[var(--dos-text-secondary)]">{detail}</p>
