@@ -9,7 +9,21 @@ export function buildRecommendations(input: {
     pendingAi: number;
 }): AccRecommendation[] {
     const now = new Date().toISOString();
-    const stableId = (engineKey: string, title: string) => `rec-${engineKey}-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48)}`;
+    const stableId = (engineKey: string, title: string) => {
+        const source = `${engineKey}:${title}`;
+        const hash = (seed: number) => {
+            let value = seed >>> 0;
+            for (let i = 0; i < source.length; i += 1) {
+                value = Math.imul(value ^ source.charCodeAt(i), 16777619) >>> 0;
+            }
+            return value.toString(16).padStart(8, "0");
+        };
+        const a = hash(2166136261);
+        const b = hash(2246822519);
+        const c = hash(3266489917);
+        const d = hash(668265263);
+        return `${a}-${b.slice(0, 4)}-5${c.slice(1, 4)}-a${d.slice(1, 4)}-${a}${b.slice(0, 4)}`;
+    };
     const recs: AccRecommendation[] = input.decisions.slice(0, 4).map((d) => ({
         id: stableId("aiDecision", d.summary),
         engineKey: "aiDecision" as const,
