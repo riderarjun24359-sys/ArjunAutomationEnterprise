@@ -59,7 +59,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                         <Badge variant="info">{dash.supportSla.openTickets} open</Badge>
                         <Badge variant={dash.supportSla.slaCompliance >= 90 ? "success" : "warning"}>SLA {dash.supportSla.slaCompliance}%</Badge>
                         <Badge variant="default">Health {dash.supportSla.supportHealth}%</Badge>
-                        <Badge variant={dash.supportSla.incidents > 0 ? "error" : "success"}>{dash.supportSla.incidents} incidents</Badge>
+                        <Badge variant={hasIssue("support") ? "warning" : dash.supportSla.incidents > 0 ? "error" : "success"}>{hasIssue("support") ? "Incidents not available" : `${dash.supportSla.incidents} incidents`}</Badge>
                     </div>
                 </Section>
 
