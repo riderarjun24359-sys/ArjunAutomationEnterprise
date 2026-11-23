@@ -70,3 +70,6 @@ The shared repositories updated include automation, billing revenue, integration
 - INR and currency-unverified finance invoices/payments remain visible in their source-currency transaction lists, but are excluded from USD collected, outstanding, monthly revenue, account ranking, and collection-rate calculations.
 - USD totals are not converted or combined with INR. No FX rate is inferred.
 - This is a source-level correction only. No tests/builds were run and no production database/deployment changes were made.
+
+- Commit `303851a8610e96ca3d7d7f5a53ee574d50b4e4da` adds streaming byte-limit enforcement to the server-side webhook delivery endpoint. The request is capped at 64 KiB while reading, including chunked requests that omit or misstate Content-Length.
+- The webhook destination still needs a dedicated DNS-pinning egress proxy to fully close DNS-rebinding risk; this remains an explicit production limitation.
