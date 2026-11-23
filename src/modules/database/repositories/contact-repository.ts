@@ -1,5 +1,5 @@
 import type { DbContact } from "@/src/modules/database/types/platform";
-import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import { BaseRepository, type RepositoryQuery } from "@/src/modules/database/repositories/base-repository";
 
 export class ContactRepository extends BaseRepository<DbContact> {
