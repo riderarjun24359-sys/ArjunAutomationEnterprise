@@ -6,7 +6,7 @@ export function buildRecommendations(input: {
     clientHealth: number | null;
     supportHealth: number | null;
     deliveryHealth: number | null;
-    pendingAi: number;
+    pendingAi: number | null;
     organizationId?: string | null;
 }): AccRecommendation[] {
     const now = new Date().toISOString();
@@ -48,7 +48,7 @@ export function buildRecommendations(input: {
             createdAt: now,
         });
     }
-    if (input.pendingAi > 0) {
+    if (input.pendingAi !== null && input.pendingAi > 0) {
         recs.push({
             id: stableId("recommendation", "Clear pending AI lifecycle recommendations"),
             engineKey: "recommendation",
