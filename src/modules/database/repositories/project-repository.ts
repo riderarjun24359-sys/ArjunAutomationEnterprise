@@ -14,7 +14,7 @@ export class ProjectRepository extends BaseRepository<DbProject> {
 
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbProject[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        if (!client || getSelectedOrganizationId() !== organizationId) {
             return [];
         }
 
@@ -32,18 +32,20 @@ export class ProjectRepository extends BaseRepository<DbProject> {
 
     async getById(id: string): Promise<DbProject | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return null;
         }
 
-        const { data, error } = await client.from(this.table).select("*").eq("id", id).maybeSingle();
+        const { data, error } = await client.from(this.table).select("*").eq("id", id).eq("organization_id", organizationId).maybeSingle();
         mapRepositoryError(error, "Failed to get project");
         return (data as DbProject | null) ?? null;
     }
 
     async create(payload: Partial<DbProject>): Promise<DbProject | null> {
         const client = getRepositoryClient();
-        if (!client) return null;
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || payload.organization_id !== organizationId) return null;
         const { data, error } = await client.from(this.table).insert(payload).select("*").maybeSingle();
         mapRepositoryError(error, "Failed to create project");
         return (data as DbProject | null) ?? null;
@@ -51,11 +53,12 @@ export class ProjectRepository extends BaseRepository<DbProject> {
 
     async listByClientId(clientId: string): Promise<DbProject[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return [];
         }
 
-        const { data, error } = await client.from(this.table).select("*").eq("client_id", clientId).order("updated_at", { ascending: false });
+        const { data, error } = await client.from(this.table).select("*").eq("client_id", clientId).eq("organization_id", organizationId).order("updated_at", { ascending: false });
         mapRepositoryError(error, "Failed to list projects by client");
         return (data ?? []) as DbProject[];
     }
