@@ -7,7 +7,7 @@ export class ClientRepository extends BaseRepository<DbClient> {
 
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbClient[]> {
         const client = getRepositoryClient();
-        if (!client) {
+        if (!client || getSelectedOrganizationId() !== organizationId) {
             return [];
         }
 
@@ -25,11 +25,12 @@ export class ClientRepository extends BaseRepository<DbClient> {
 
     async getById(id: string): Promise<DbClient | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return null;
         }
 
-        const { data, error } = await client.from(this.table).select("*").eq("id", id).maybeSingle();
+        const { data, error } = await client.from(this.table).select("*").eq("id", id).eq("organization_id", organizationId).maybeSingle();
         mapRepositoryError(error, "Failed to get client");
         return (data as DbClient | null) ?? null;
     }
@@ -70,7 +71,8 @@ export class ClientRepository extends BaseRepository<DbClient> {
 
     async create(input: Record<string, unknown>): Promise<DbClient | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || input.organization_id !== organizationId) {
             return null;
         }
 
@@ -81,22 +83,24 @@ export class ClientRepository extends BaseRepository<DbClient> {
 
     async update(id: string, input: Record<string, unknown>): Promise<DbClient | null> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId || (input.organization_id !== undefined && input.organization_id !== organizationId)) {
             return null;
         }
 
-        const { data, error } = await client.from(this.table).update(input).eq("id", id).select("*").maybeSingle();
+        const { data, error } = await client.from(this.table).update({ ...input, organization_id: organizationId }).eq("id", id).eq("organization_id", organizationId).select("*").maybeSingle();
         mapRepositoryError(error, "Failed to update client");
         return (data as DbClient | null) ?? null;
     }
 
     async delete(id: string): Promise<boolean> {
         const client = getRepositoryClient();
-        if (!client) {
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) {
             return false;
         }
 
-        const { error } = await client.from(this.table).delete().eq("id", id);
+        const { error } = await client.from(this.table).delete().eq("id", id).eq("organization_id", organizationId);
         mapRepositoryError(error, "Failed to delete client");
         return !error;
     }
