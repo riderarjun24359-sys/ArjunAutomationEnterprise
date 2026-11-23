@@ -29,13 +29,14 @@ export interface DbIntegrationDelivery {
 }
 
 abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
+    protected safeColumns?: string;
     async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<T[]> {
         const client = getRepositoryClient();
         if (!client || getSelectedOrganizationId() !== organizationId) return [];
         const normalized = this.buildQuery(query);
         const { data, error } = await client
             .from(this.table)
-            .select("*")
+            .select(this.safeColumns ?? "*")
             .eq("organization_id", organizationId)
             .order(normalized.orderBy, { ascending: normalized.orderDirection === "asc" })
             .range(normalized.offset, normalized.offset + normalized.limit - 1);
@@ -49,7 +50,7 @@ abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
         const { data, error } = await client
             .from(this.table)
             .insert({ ...input, organization_id: organizationId })
-            .select()
+            .select(this.safeColumns)
             .single();
         mapRepositoryError(error, `Failed to create ${this.table}`);
         return (data ?? null) as T | null;
@@ -72,8 +73,15 @@ abstract class OrgIntegrationRepository<T> extends BaseRepository<T> {
 
 export class IntegrationWebhookRepository extends OrgIntegrationRepository<DbIntegrationWebhook> {
     protected table = "integration_webhooks";
+
+    // The signing secret is server-only. Browser reads and mutation responses
+    // must never project it, even for users who belong to the organization.
+    protected readonly safeColumns =
+        "id,organization_id,name,url,allowed_hosts,is_active,created_at,updated_at";
 }
 
 export class IntegrationDeliveryRepository extends OrgIntegrationRepository<DbIntegrationDelivery> {
     protected table = "integration_deliveries";
+    protected readonly safeColumns =
+        "id,organization_id,webhook_id,event,target_host,status,attempts,response_status,error,idempotency_key,created_at";
 }
