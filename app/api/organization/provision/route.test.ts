@@ -90,6 +90,47 @@ describe("POST /api/organization/provision", () => {
         expect(db.rows("organization_members")).toHaveLength(1);
     });
 
+    it("fails closed instead of choosing the first of multiple memberships", async () => {
+        authed();
+        db.seed("user_profiles", [{ id: "profile-1", auth_user_id: "auth-u1", email: "founder@test.dev" }]);
+        db.seed("organizations", [
+            { id: "org-a", name: "Org A", slug: "org-a", status: "active" },
+            { id: "org-b", name: "Org B", slug: "org-b", status: "active" },
+        ]);
+        db.seed("organization_members", [
+            { id: "m-a", organization_id: "org-a", user_id: "profile-1", role_name: "founder", is_active: true },
+            { id: "m-b", organization_id: "org-b", user_id: "profile-1", role_name: "member", is_active: true },
+        ]);
+
+        const status = await GET(new Request("http://localhost/api/organization/provision"));
+        expect(status.status).toBe(409);
+        expect((await status.json()).code).toBe("ORGANIZATION_SELECTION_REQUIRED");
+
+        const provision = await POST(post({ name: "Must Not Create" }));
+        expect(provision.status).toBe(409);
+        expect(db.rows("organizations")).toHaveLength(2);
+    });
+
+    it("uses only the explicitly selected organization for an existing multi-tenant member", async () => {
+        authState.current = { context: { ...CTX, organizationId: "org-b" }, error: null };
+        db.seed("user_profiles", [{ id: "profile-1", auth_user_id: "auth-u1", email: "founder@test.dev" }]);
+        db.seed("organizations", [
+            { id: "org-a", name: "Org A", slug: "org-a", status: "active" },
+            { id: "org-b", name: "Org B", slug: "org-b", status: "active" },
+        ]);
+        db.seed("organization_members", [
+            { id: "m-a", organization_id: "org-a", user_id: "profile-1", role_name: "founder", is_active: true },
+            { id: "m-b", organization_id: "org-b", user_id: "profile-1", role_name: "member", is_active: true },
+        ]);
+
+        const res = await POST(post({ name: "Must Not Create" }));
+        expect(res.status).toBe(200);
+        const body = await res.json();
+        expect(body.organization.id).toBe("org-b");
+        expect(body.membership.roleName).toBe("member");
+        expect(db.rows("organizations")).toHaveLength(2);
+    });
+
     it("answers 409 when the slug is taken by another tenant", async () => {
         db.seed("organizations", [{ id: "org-taken", name: "Taken", slug: "taken", status: "active" }]);
         db.seed("organization_members", [{ id: "m1", organization_id: "org-taken", user_id: "someone", role_name: "founder", is_active: true }]);
