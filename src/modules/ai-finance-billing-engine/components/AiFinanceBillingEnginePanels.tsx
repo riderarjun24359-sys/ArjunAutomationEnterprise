@@ -227,7 +227,7 @@ export function InvoiceCenterPanel({
                         rows={filtered.map((r) => [
                             r.number,
                             r.clientLabel,
-                            r.status,
+                            `${r.status} · not reconciled`,
                             moneyLabel(r.total, r.currency),
                             r.dueDate || "—",
                             "Preview",
