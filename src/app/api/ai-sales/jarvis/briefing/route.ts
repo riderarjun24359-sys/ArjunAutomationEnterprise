@@ -34,6 +34,7 @@ export async function GET(request: Request) {
 
     const organizationId = secured.context.organizationId;
     const { start, end } = istDayBounds();
+    const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60_000).toISOString().slice(0, 10);
 
     const [
         newLeads,
@@ -43,6 +44,7 @@ export async function GET(request: Request) {
         activeDeals,
         followupsDue,
         overdueFollowups,
+        candidatePayments,
     ] = await Promise.all([
         client.from("sales_leads").select("id", { count: "exact", head: true })
             .eq("organization_id", organizationId).gte("created_at", start).lt("created_at", end),
@@ -62,13 +64,41 @@ export async function GET(request: Request) {
         client.from("ai_sales_followups").select("id", { count: "exact", head: true })
             .eq("organization_id", organizationId).eq("status", "pending")
             .lt("due_at", new Date().toISOString()),
+        client.from("payments")
+            .select("amount, reference, payment_date, invoice:invoices!inner(currency)")
+            .eq("organization_id", organizationId)
+            .eq("method", "razorpay")
+            .in("status", ["completed", "paid", "succeeded"])
+            .gte("payment_date", weekStart),
     ]);
 
-    const queryErrors = [newLeads, callsAttempted, callsConnected, demosBooked, activeDeals, followupsDue, overdueFollowups]
+    const queryErrors = [newLeads, callsAttempted, callsConnected, demosBooked, activeDeals, followupsDue, overdueFollowups, candidatePayments]
         .filter((result) => result.error);
     if (queryErrors.length) {
         return NextResponse.json({ error: "One or more live sales metrics could not be loaded" }, { status: 500 });
     }
+
+    const candidateRows = candidatePayments.data ?? [];
+    const razorpayEventIds = candidateRows
+        .map((payment) => typeof payment.reference === "string" && payment.reference.trim()
+            ? "payment.captured:" + payment.reference.trim()
+            : null)
+        .filter((eventId): eventId is string => Boolean(eventId));
+    const verifiedEvents = razorpayEventIds.length
+        ? await client.from("webhook_idempotency").select("event_id")
+            .eq("provider", "razorpay").in("event_id", razorpayEventIds)
+        : { data: [], error: null };
+    if (verifiedEvents.error) {
+        return NextResponse.json({ error: "Verified Razorpay settlement metrics could not be loaded" }, { status: 500 });
+    }
+    const verifiedEventSet = new Set((verifiedEvents.data ?? []).map((event) => event.event_id));
+    const weeklyRevenueInr = candidateRows.reduce((total, payment) => {
+        const invoice = Array.isArray(payment.invoice) ? payment.invoice[0] : payment.invoice;
+        const eventId = typeof payment.reference === "string" ? "payment.captured:" + payment.reference.trim() : "";
+        return invoice?.currency === "INR" && verifiedEventSet.has(eventId)
+            ? total + Number(payment.amount ?? 0)
+            : total;
+    }, 0);
 
     const urgentCount = overdueFollowups.count ?? 0;
     const urgentHighlight = urgentCount > 0
@@ -81,8 +111,8 @@ export async function GET(request: Request) {
         timezone: "Asia/Kolkata",
         as_of: new Date().toISOString(),
         mrr_inr: null,
-        weekly_revenue_inr: null,
-        revenue_status: "not_reported_until_verified_billing_source_is_connected",
+        weekly_revenue_inr: Math.round(weeklyRevenueInr * 100) / 100,
+        revenue_status: "verified_razorpay_captured_payments_only_mrr_not_available",
         new_leads_today: newLeads.count ?? 0,
         calls_attempted_today: callsAttempted.count ?? 0,
         calls_connected_today: callsConnected.count ?? 0,
