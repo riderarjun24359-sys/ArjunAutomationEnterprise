@@ -48,6 +48,13 @@ export async function POST(request: Request) {
     const meetingId = clean(body.meetingId, 80);
     const nextActionAt = typeof body.nextActionAt === "string" ? new Date(body.nextActionAt) : null;
 
+    if (requestedStage === "won") {
+        return NextResponse.json({
+            error: "Won is locked until a signed Razorpay payment event is reconciled to this deal and invoice.",
+            code: "verified_payment_mapping_required",
+        }, { status: 409 });
+    }
+
     if (!leadId || !Object.hasOwn(TRANSITIONS, requestedStage) && requestedStage !== "demo_booked") {
         return NextResponse.json({ error: "A CRM lead ID and allowed pipeline stage are required" }, { status: 400 });
     }
