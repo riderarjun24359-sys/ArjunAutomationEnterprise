@@ -21,7 +21,41 @@ export function useAiCommandCenter() {
         setLoading(true);
         try {
             const data = await aiCommandCenterService.getDashboard(ctx);
-            setDashboard(data);
+            let hydrated = data;
+            try {
+                const syncResponse = await fetch("/api/ai-command-center/recommendations", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json", Accept: "application/json" },
+                    body: JSON.stringify({ recommendations: data.recommendations }),
+                });
+                const syncResult = await syncResponse.json() as { error?: string };
+                if (!syncResponse.ok) throw new Error(syncResult.error || "Could not save Command Centre recommendations");
+
+                const savedResponse = await fetch("/api/ai-command-center/recommendations", {
+                    method: "GET",
+                    credentials: "include",
+                    headers: { Accept: "application/json" },
+                    cache: "no-store",
+                });
+                const savedResult = await savedResponse.json() as {
+                    error?: string;
+                    recommendations?: Array<{ id: string; status: AccRecommendation["status"] }>;
+                };
+                if (!savedResponse.ok) throw new Error(savedResult.error || "Could not load saved recommendation states");
+                const savedStatuses = new Map((savedResult.recommendations ?? []).map((item) => [item.id, item.status]));
+                hydrated = {
+                    ...data,
+                    recommendations: data.recommendations.map((item) => ({
+                        ...item,
+                        status: savedStatuses.get(item.id) ?? item.status,
+                    })),
+                };
+                setActionError(null);
+            } catch (error) {
+                setActionError(error instanceof Error ? error.message : "Recommendation storage is unavailable");
+            }
+            setDashboard(hydrated);
         } finally {
             setLoading(false);
         }
