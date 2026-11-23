@@ -70,8 +70,8 @@ export const COMPANY_PROFILE = {
      */
     legalName: envString("NEXT_PUBLIC_COMPANY_LEGAL_NAME") ?? "ArjunAutomations",
     /** Short trading name used in headings and logo lockups. */
-    tradingName: "Arjun Automation",
-    tagline: "Enterprise automation, delivered as a working system.",
+    tradingName: "Arjun Automations",
+    tagline: "Practical websites, automation and business software for every Indian business.",
 
     emails: {
         sales: "sales@arjunautomations.com",
