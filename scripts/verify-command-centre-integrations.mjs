@@ -27,6 +27,7 @@ check("Command Centre alerts and automations accept missing source metrics", rea
 check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
 check("Command Centre renders unavailable KPI values as unavailable", read("src/modules/ai-command-center/components/AiCommandCenterPage.tsx").includes("Not available") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Partial data"));
 check("Global Operations renders unavailable health and business metrics as unavailable", read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Not available"));
+check("Global Operations panels do not render unavailable health as zero percent", read("src/modules/customer-success-global-ops/components/GlobalOperationsPanels.tsx").includes('hasIssue("support health") ? "Not available"'));
 
 check("global operations does not synthesize client health or renewals", !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildDefaultSuccessPlans") && !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildRenewals"));
 const globalOpsBridges = read("src/modules/customer-success-global-ops/integrations/platform-bridges.ts");
