@@ -42,7 +42,7 @@ export class AiCommandCenterService {
             fetchProductionSnapshot(ctx),
         ]);
 
-        const deliveryHealth = globalOps.deliveryHealth || delivery.qualityPassRate;
+        const deliveryHealth = globalOps.deliveryHealth ?? delivery.qualityPassRate;
         const systemHealth = computeSystemHealth({
             productionScore: production.overallScore,
             platformHealth: production.platformHealth,
