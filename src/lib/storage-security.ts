@@ -132,7 +132,7 @@ export function validateFileContent(mime: string, bytes: Uint8Array): boolean {
         case "text/csv":
             try {
                 const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-                return !text.includes("\\u0000");
+                return !text.includes("\u0000");
             } catch {
                 return false;
             }
