@@ -27,7 +27,7 @@ export async function fetchSupportSnapshot(ctx: AccContext) {
         return {
             openTickets: stats.openTickets,
             slaCompliance: stats.slaCompliance,
-            supportHealth: Math.round((stats.slaCompliance + (stats.avgSatisfaction > 0 ? (stats.avgSatisfaction / 5) * 100 : 85)) / 2),
+            supportHealth: Math.round((stats.slaCompliance + (stats.avgSatisfaction > 0 ? (stats.avgSatisfaction / 5) * 100 : 0)) / 2),
             incidents: stats.openEscalations,
             knowledgeArticles: stats.knowledgeArticles,
             available: true,
