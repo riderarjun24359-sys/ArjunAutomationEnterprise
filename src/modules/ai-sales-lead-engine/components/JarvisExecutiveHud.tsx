@@ -126,10 +126,16 @@ export function JarvisExecutiveHud() {
                     </p>
                 </div>
                 <div className="text-right">
-                    <p className="text-xs text-[var(--dos-text-tertiary)]">Verified MRR</p>
+                    <p className="text-xs text-[var(--dos-text-tertiary)]">Verified Razorpay revenue · 7 days</p>
                     <p className="mt-1 text-lg font-semibold tabular-nums text-[var(--dos-text-primary)]">
-                        {data?.mrr_inr === null || data?.mrr_inr === undefined
+                        {data?.weekly_revenue_inr === null || data?.weekly_revenue_inr === undefined
                             ? "Not connected"
+                            : "₹" + data.weekly_revenue_inr.toLocaleString("en-IN")}
+                    </p>
+                    <p className="mt-2 text-xs text-[var(--dos-text-tertiary)]">Verified MRR</p>
+                    <p className="mt-1 text-sm font-semibold tabular-nums text-[var(--dos-text-primary)]">
+                        {data?.mrr_inr === null || data?.mrr_inr === undefined
+                            ? "Not available"
                             : "₹" + data.mrr_inr.toLocaleString("en-IN")}
                     </p>
                     <p className="mt-1 text-[11px] text-[var(--dos-text-tertiary)]">Updated {lastUpdated}</p>
