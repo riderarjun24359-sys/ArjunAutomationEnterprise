@@ -41,10 +41,22 @@ const membership = (org: string, user: string, active = true) => ({
     is_active: active,
 });
 
+const browserStorage = new Map<string, string>();
+
 describe("organization context bootstrap", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        if (typeof window !== "undefined") window.localStorage.removeItem("aae:selected-organization");
+        browserStorage.clear();
+        if (typeof window !== "undefined") {
+            Object.defineProperty(window, "localStorage", {
+                configurable: true,
+                value: {
+                    getItem: (key: string) => browserStorage.get(key) ?? null,
+                    setItem: (key: string, value: string) => browserStorage.set(key, value),
+                    removeItem: (key: string) => browserStorage.delete(key),
+                },
+            });
+        }
         mocks.organizationsGetById.mockResolvedValue({ id: "org-1", status: "active" });
     });
 
