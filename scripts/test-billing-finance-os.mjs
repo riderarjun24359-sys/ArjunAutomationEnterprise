@@ -58,10 +58,26 @@ pass("builder:invoices", buildersSrc.includes("export function buildInvoiceCente
 pass("builder:payments", buildersSrc.includes("export function buildPaymentCenter"));
 pass("builder:revenue", buildersSrc.includes("export function buildRevenueDashboard"));
 pass("builder:widgets", buildersSrc.includes("export function buildFinanceExecutiveWidgets"));
+const revenuePanel = readFileSync(join(mod, "components/os/RevenueDashboardPanel.tsx"), "utf8");
+const paymentPanel = readFileSync(join(mod, "components/os/PaymentCenterPanel.tsx"), "utf8");
+const invoicePanel = readFileSync(join(mod, "components/os/InvoiceCenterPanel.tsx"), "utf8");
+const subscriptionPanel = readFileSync(join(mod, "components/os/SubscriptionManagementPanel.tsx"), "utf8");
+const financePage = readFileSync(join(mod, "pages/BillingFinanceOsPage.tsx"), "utf8");
+const financeWidgets = readFileSync(join(root, "src/modules/executive-command-center/components/FinanceExecutiveWidgetsPanel.tsx"), "utf8");
+pass("revenue:explicit-verification-gate", buildersSrc.includes("revenueVerified: false") && buildersSrc.includes("Razorpay settlements"));
+pass("revenue:legacy-usd-not-calculated", !buildersSrc.includes("mrrFromSubs") && !buildersSrc.includes("latestMrr?.mrr_usd") && !buildersSrc.includes("total_outstanding_usd"));
+pass("revenue:dashboard-gated", revenuePanel.includes("if (!revenue.revenueVerified)"));
+pass("revenue:ecc-widgets-gated", financeWidgets.includes("if (!widgets.revenueVerified)"));
+pass("revenue:no-dollar-symbols-in-panels", !/\$/.test([revenuePanel, paymentPanel, invoicePanel, subscriptionPanel, financePage, financeWidgets].join("\n")));
+pass("revenue:payment-amount-hidden", paymentPanel.includes("Amount not verified"));
+pass("revenue:invoice-amount-hidden", invoicePanel.includes("Total not verified") && invoicePanel.includes("Due not verified"));
+pass("revenue:subscription-mrr-hidden", subscriptionPanel.includes("MRR not verified") && subscriptionPanel.includes("ARR not verified"));
+
 pass("builder:snapshot", buildersSrc.includes("export function buildBillingFinanceSnapshot"));
 
 const aiSrc = readFileSync(join(mod, "ai/ai-finance-assistant.ts"), "utf8");
 pass("ai:daily-summary", aiSrc.includes("dailySummary"));
+pass("ai:unverified-revenue-disclosed", aiSrc.includes("MRR not verified") && aiSrc.includes("amount not verified"));
 pass("ai:executive-summary", aiSrc.includes("executiveSummary"));
 
 function money(n) {
