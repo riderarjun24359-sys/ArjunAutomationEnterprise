@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     if (typeof rawInput !== "string" || rawInput.trim().length === 0) {
         return NextResponse.json({ error: "rawInput is required" }, { status: 400 });
     }
+    if (rawInput.length > 2000) {
+        return NextResponse.json({ error: "rawInput exceeds 2000 characters" }, { status: 413 });
+    }
 
     const response = await aiOrchestrationService.interpretIntent(
         context.user.id,
