@@ -5,23 +5,12 @@ import { loadOrganizationOperationsData } from "./organization-operations-data.s
 
 export { createEmptyLiveOperationsStats } from "./build-live-operations-kpis";
 
-function parseMoney(value: string | number | null | undefined): number {
-    if (typeof value === "number") return Number.isFinite(value) ? value : 0;
-    if (!value) return 0;
-    const n = Number(String(value).replace(/[^0-9.-]/g, ""));
-    return Number.isFinite(n) ? n : 0;
-}
-
-function formatCurrency(amount: number, currency = "INR"): string {
-    try {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    } catch {
-        return `₹${Math.round(amount).toLocaleString()}`;
-    }
+function formatInr(amount: number): string {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0,
+    }).format(amount);
 }
 
 function isActiveProject(status: string): boolean {
@@ -59,7 +48,6 @@ export function buildLiveOperationsStatsFromData(data: OrganizationOperationsDat
         salesLeads,
         crmLeads,
         invoices,
-        payments,
         audits,
         activities,
         organizationId,
@@ -76,35 +64,25 @@ export function buildLiveOperationsStatsFromData(data: OrganizationOperationsDat
     const openTasks = tasks.filter((t) => isOpenTask(t.status)).length;
     const crmLeadsCount = Math.max(salesLeads.length, crmLeads.length);
 
-    const paidFromPayments = payments.reduce((sum, p) => sum + Number(p.amount ?? 0), 0);
-    const paidFromInvoices = invoices.reduce((sum, inv) => sum + Number(inv.amount_paid ?? 0), 0);
-    const collected = Math.max(paidFromPayments, paidFromInvoices);
-    const openInvoices = invoices.filter((inv) => isOpenInvoice(inv.status));
+    // Invoice balances are not proof of collected revenue. Until signed Razorpay
+    // captured events are reconciled to invoices, report collected revenue as unverified.
+    const inrInvoices = invoices.filter((invoice) => invoice.currency === "INR");
+    const openInvoices = inrInvoices.filter((invoice) => isOpenInvoice(invoice.status));
     const outstanding = openInvoices.reduce(
-        (sum, inv) => sum + Math.max(0, Number(inv.total ?? 0) - Number(inv.amount_paid ?? 0)),
+        (sum, invoice) => sum + Math.max(0, Number(invoice.total ?? 0) - Number(invoice.amount_paid ?? 0)),
         0,
     );
-    const currency = invoices[0]?.currency ?? "INR";
 
     const revenue: RevenueSummaryLive = {
-        collected,
+        collected: 0,
         outstanding,
         openInvoiceCount: openInvoices.length,
-        invoiceCount: invoices.length,
-        currency,
-        label: formatCurrency(collected, currency),
-        detail:
-            invoices.length === 0 && payments.length === 0
-                ? "No invoice data yet"
-                : `${openInvoices.length} open · ${formatCurrency(outstanding, currency)} outstanding`,
+        invoiceCount: inrInvoices.length,
+        currency: "INR",
+        verified: false,
+        label: "Not verified",
+        detail: `Razorpay settlement verification is not connected · ${openInvoices.length} open · ${formatInr(outstanding)} outstanding`,
     };
-
-    const clientRevenueHint = clients.reduce((sum, c) => sum + parseMoney(c.revenue), 0);
-    if (collected === 0 && clientRevenueHint > 0) {
-        revenue.collected = clientRevenueHint;
-        revenue.label = formatCurrency(clientRevenueHint, currency);
-        revenue.detail = `${clients.length} clients · CRM revenue signal`;
-    }
 
     const notifications = [
         ...activities.slice(0, 8).map((a) => ({
@@ -134,9 +112,10 @@ export function buildLiveOperationsStatsFromData(data: OrganizationOperationsDat
         crmLeads: crmLeadsCount,
         revenue,
         notifications,
-        source: "supabase",
+        source: data.integrationIssues.length ? "fallback" : "supabase",
         fetchedAt,
         organizationId,
+        integrationIssues: data.integrationIssues,
     };
 }
 
