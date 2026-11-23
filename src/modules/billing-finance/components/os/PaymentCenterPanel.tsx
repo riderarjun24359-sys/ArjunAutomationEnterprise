@@ -26,16 +26,8 @@ export function PaymentCenterPanel({ items }: { items: PaymentCenterItem[] }) {
                                 Amount not verified (currency/settlement mapping pending)
                             </p>
                         </div>
-                        <Badge
-                            variant={
-                                ["paid", "succeeded", "success", "completed", "captured"].includes(item.status.toLowerCase())
-                                    ? "success"
-                                    : ["failed", "declined", "error"].includes(item.status.toLowerCase())
-                                      ? "error"
-                                      : "warning"
-                            }
-                        >
-                            {item.status}
+                        <Badge variant="warning">
+                            {item.status} · settlement not verified
                         </Badge>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--dos-text-secondary)]">
