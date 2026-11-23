@@ -25,6 +25,15 @@ check("Global Operations support failure is not 100% SLA", !globalOpsBridges.inc
 check("Global Operations delivery failure is not 100% quality", !globalOpsBridges.includes("qualityPassRate: 100"));
 check("Global Operations exposes unavailable upstream integrations", read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("integrationIssues") && read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Integrations needing attention"));
 check("support dashboard cannot silently turn missing org context into zero-ticket health", read("src/modules/support/services/support.service.ts").includes("Unable to resolve organization context for support dashboard"));
+check("support SLA is zero when there are no measurable tickets", read("src/modules/database/lib/support-mappers.ts").includes("slaTotal > 0 ? Math.round((slaMet / slaTotal) * 100) : 0"));
+const globalOpsService = read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts");
+const globalOpsEngine = read("src/modules/customer-success-global-ops/engines/continuous-improvement.engine.ts");
+check("Global Operations does not synthesize onboarding sessions", !globalOpsService.includes("buildOnboardingSessions("));
+check("Global Operations does not synthesize satisfaction history", globalOpsService.includes("satisfactionTrend: []") && !globalOpsService.includes("buildSatisfactionTrend("));
+check("Global Operations does not claim nominal without real health data", !globalOpsEngine.includes("Operations nominal"));
+check("Global Operations does not create generic empty-evidence improvement items", !globalOpsEngine.includes("Auto-generated continuous improvement item"));
+check("Global Operations trust regression tests exist", existsSync(join(root, "src/modules/customer-success-global-ops/engines/trust-integrity.test.ts")));
+
 
 
 const revenueEngine = read("src/modules/ai-command-center/engines/executive-analytics.engine.ts");
