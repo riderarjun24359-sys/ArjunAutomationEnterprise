@@ -74,9 +74,10 @@ async function resolveOrganizationContextUncached(
     }
 
     const refreshedMemberships = await databaseService.memberships.getByUser(profile.id);
+    // Never borrow a role from another tenant. If this organization has no
+    // matching membership, treat the role as unknown and fail closed.
     const membershipRole =
         refreshedMemberships.find((membership) => membership.organization_id === organizationId)?.role_name ??
-        refreshedMemberships[0]?.role_name ??
         null;
 
     await ensurePlatformFounderRole(email, profile.id, organizationId, membershipRole);
