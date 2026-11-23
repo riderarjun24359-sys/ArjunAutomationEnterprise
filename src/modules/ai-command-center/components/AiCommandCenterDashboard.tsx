@@ -92,6 +92,7 @@ export function AiCommandCenterDashboard({ data }: { data: AiCommandCenterData }
                 </Section>
 
                 <Section title="AI Recommendations">
+                    {data.actionError ? <p role="alert" className="text-sm text-red-500">{data.actionError}</p> : null}
                     {dash.recommendations.slice(0, 8).map((rec) => (
                         <div key={rec.id} className="rounded-lg border border-[var(--dos-border)] p-3 text-sm">
                             <div className="flex flex-wrap gap-2">
