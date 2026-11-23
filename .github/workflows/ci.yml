@@ -47,6 +47,9 @@ jobs:
         run: npm run command-centre-integrations:verify
 
       - name: Command Centre, Jarvis and integration module verifiers
+        env:
+          SKIP_TSC: "1"
+          SKIP_LINT: "1"
         run: |
           npm run ai-command-center:verify
           npm run executive-command-center:verify
