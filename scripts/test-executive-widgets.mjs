@@ -128,6 +128,7 @@ const liveStats = {
 const insights = buildAiExecutiveInsights({ liveStats, charts, unifiedScore: 70 });
 if (insights.length === 0) throw new Error("insights empty");
 if (!insights.some((i) => i.priority === "P1" || i.priority === "P2")) throw new Error("priority missing");
+if (insights.some((i) => i.id === "insight-outstanding")) throw new Error("unverified invoice balance must not create a revenue insight");
 
 console.log("RUNTIME_OK");
 `,
