@@ -25,7 +25,10 @@ async function authorize(request: Request) {
 
 export async function GET(request: Request) {
     const auth = await authorize(request);
-    if (auth.error || !auth.client || !auth.organizationId) return auth.error;
+    if (auth.error) return auth.error;
+    if (!auth.client || !auth.organizationId) {
+        return NextResponse.json({ error: "Command Centre storage is unavailable" }, { status: 503 });
+    }
     const { data, error } = await auth.client
         .from("acc_recommendations")
         .select("id, status")
@@ -37,7 +40,10 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     const auth = await authorize(request);
-    if (auth.error || !auth.client || !auth.organizationId) return auth.error;
+    if (auth.error) return auth.error;
+    if (!auth.client || !auth.organizationId) {
+        return NextResponse.json({ error: "Command Centre storage is unavailable" }, { status: 503 });
+    }
 
     let body: unknown;
     try {
@@ -92,7 +98,10 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
     const auth = await authorize(request);
-    if (auth.error || !auth.client || !auth.organizationId) return auth.error;
+    if (auth.error) return auth.error;
+    if (!auth.client || !auth.organizationId) {
+        return NextResponse.json({ error: "Command Centre storage is unavailable" }, { status: 503 });
+    }
 
     let body: unknown;
     try {
