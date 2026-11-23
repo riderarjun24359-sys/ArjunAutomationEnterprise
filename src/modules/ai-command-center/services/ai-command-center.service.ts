@@ -79,13 +79,23 @@ export class AiCommandCenterService {
             openInvoices: business.openInvoices,
             renewalsDue: globalOps.renewalsDue,
         });
-        const recommendations = buildRecommendations({
+        const generatedRecommendations = buildRecommendations({
             decisions,
             systemHealth,
             clientHealth,
             supportHealth: supportSla.supportHealth,
             deliveryHealth,
             pendingAi: deliveryStatus.pendingAi,
+        });
+        const orgId = await this.getOrgId(ctx);
+        const savedRecommendations = orgId ? await aiCommandCenterRepository.listRecommendations(orgId).catch(() => []) : [];
+        const recommendations = generatedRecommendations.map((recommendation) => {
+            const saved = savedRecommendations.find(
+                (item) => item.engineKey === recommendation.engineKey && item.title === recommendation.title,
+            );
+            return saved
+                ? { ...recommendation, id: saved.id, status: saved.status, createdAt: saved.createdAt }
+                : recommendation;
         });
         const automations = buildAutomations({
             openTickets: support.openTickets,
@@ -111,7 +121,6 @@ export class AiCommandCenterService {
             deliveryHealth,
         ]);
 
-        const orgId = await this.getOrgId(ctx);
         if (orgId) {
             void aiCommandCenterRepository.logAudit(orgId, "dashboard_load", "AI Command Center dashboard loaded");
             void aiCommandCenterRepository.persistHealthSnapshot(orgId, {
@@ -147,6 +156,16 @@ export class AiCommandCenterService {
             overallScore,
             fetchedAt: new Date().toISOString(),
         };
+    }
+
+    async persistRecommendationStatus(
+        ctx: AccContext,
+        id: string,
+        status: AccRecommendation["status"],
+    ): Promise<void> {
+        const orgId = await this.getOrgId(ctx);
+        if (!orgId) throw new Error("Unable to resolve organization context");
+        await aiCommandCenterRepository.updateRecommendationStatus(orgId, id, status);
     }
 
     acceptRecommendation(recommendations: AccRecommendation[], id: string): AccRecommendation[] {
