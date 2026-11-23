@@ -61,6 +61,9 @@ check("Jarvis route uses shared calling-window policy", read("src/app/api/ai-sal
 check("deal Won remains blocked until verified payment mapping", read("src/app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
 check("authenticated recommendation route has unit tests", existsSync(join(root, "src/app/api/ai-command-center/recommendations/route.test.ts")));
 check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
+check("Vapi webhook authentication and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/vapi/route.test.ts")));
+check("Retell webhook HMAC and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/retell/route.test.ts")));
+
 const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
 check("Jarvis weekly revenue requires signed captured Razorpay event and INR invoice", jarvisBriefing.includes("payment.captured:") && jarvisBriefing.includes('invoice?.currency === "INR"') && jarvisBriefing.includes('mrr_inr: null'));
 check("Jarvis revenue remains hidden until Razorpay webhook is configured", jarvisBriefing.includes("RAZORPAY_WEBHOOK_SECRET") && jarvisBriefing.includes("razorpay_webhook_not_configured_mrr_not_available"));
