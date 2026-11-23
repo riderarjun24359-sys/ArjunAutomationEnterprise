@@ -63,7 +63,7 @@ check("Global Operations does not display unverified renewal amounts as currency
 
 const repository = read("src/modules/ai-command-center/repository/ai-command-center-repository.ts");
 const hook = read("src/modules/ai-command-center/hooks/useAiCommandCenter.ts");
-const actionRoute = read("src/app/api/ai-command-center/recommendations/route.ts");
+const actionRoute = read("app/api/ai-command-center/recommendations/route.ts");
 check("recommendation refresh preserves stored decisions", repository.includes("ignoreDuplicates: true"));
 check("recommendation IDs are stable", read("src/modules/ai-command-center/engines/recommendation.engine.ts").includes("const stableId"));
 check("recommendation actions use authenticated API", hook.includes("/api/ai-command-center/recommendations"));
@@ -72,15 +72,15 @@ check("recommendation action API scopes updates to organization", actionRoute.in
 
 const jarvis = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-window.ts");
 check("Jarvis excludes Sunday and enforces 08:00-21:00 IST", jarvis.includes('values.weekday !== "Sun"') && jarvis.includes("hour >= 8 && hour < 21"));
-check("Jarvis route uses shared calling-window policy", read("src/app/api/ai-sales/jarvis/call/route.ts").includes("withinJarvisCallingWindow"));
-check("deal Won remains blocked until verified payment mapping", read("src/app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
-check("authenticated recommendation route has unit tests", existsSync(join(root, "src/app/api/ai-command-center/recommendations/route.test.ts")));
+check("Jarvis route uses shared calling-window policy", read("app/api/ai-sales/jarvis/call/route.ts").includes("withinJarvisCallingWindow"));
+check("deal Won remains blocked until verified payment mapping", read("app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
+check("authenticated recommendation route has unit tests", existsSync(join(root, "app/api/ai-command-center/recommendations/route.test.ts")));
 check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
-check("Vapi webhook authentication and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/vapi/route.test.ts")));
-check("Retell webhook HMAC and event normalization tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/retell/route.test.ts")));
-check("WhatsApp Meta HMAC and delivery-status webhook tests exist", existsSync(join(root, "src/app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
+check("Vapi webhook authentication and event normalization tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/vapi/route.test.ts")));
+check("Retell webhook HMAC and event normalization tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/retell/route.test.ts")));
+check("WhatsApp Meta HMAC and delivery-status webhook tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
 
-const jarvisBriefing = read("src/app/api/ai-sales/jarvis/briefing/route.ts");
+const jarvisBriefing = read("app/api/ai-sales/jarvis/briefing/route.ts");
 check("Jarvis hides collected revenue until verified Razorpay payment-to-invoice mapping exists", jarvisBriefing.includes("weekly_revenue_inr: null") && jarvisBriefing.includes("payment_to_invoice_mapping_required") && jarvisBriefing.includes("mrr_inr: null"));
 check("Jarvis revenue remains hidden until Razorpay webhook is configured", jarvisBriefing.includes("RAZORPAY_WEBHOOK_SECRET") && jarvisBriefing.includes("razorpay_webhook_not_configured_mrr_not_available"));
 const workflowFiles = [
