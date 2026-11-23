@@ -35,8 +35,11 @@ abstract class OrgAnalyticsRepository<T> extends BaseRepository<T> {
 
     async create(input: Record<string, unknown>): Promise<T | null> {
         const client = getRepositoryClient();
-        if (!client) return null;
-
+        const organizationId = getSelectedOrganizationId();
+        const dashboardId = typeof input.dashboard_id === "string" ? input.dashboard_id : null;
+        if (!client || !organizationId || !dashboardId) return null;
+        const parent = await client.from("analytics_dashboards").select("id").eq("id", dashboardId).eq("organization_id", organizationId).maybeSingle();
+        if (parent.error || !parent.data) return null;
         const { data, error } = await client.from(this.table).insert(input).select("*").maybeSingle();
         mapRepositoryError(error, `Failed to create ${this.table}`);
         return (data as T | null) ?? null;
