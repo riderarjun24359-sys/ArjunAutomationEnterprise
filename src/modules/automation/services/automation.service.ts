@@ -24,7 +24,7 @@ import { resolveOrganizationContext } from "@/src/modules/database/lib/organizat
 import { databaseService } from "@/src/modules/database/services/database-service";
 import { buildProductionHealthReport } from "@/src/lib/production-health";
 import { EXECUTABLE_ACTIONS, runLocalWorkflow } from "../lib/local-worker";
-import { executeWebhookStep, validateWebhookTarget } from "../lib/webhook-action";
+import { validateWebhookTarget } from "../lib/webhook-action";
 import { aiOrchestrationService } from "@/src/modules/ai-orchestration/services/ai-orchestration.service";
 import { taskService } from "@/src/modules/tasks/services/task.service";
 import type {
@@ -45,14 +45,6 @@ function hostOf(rawUrl: string): string {
     } catch {
         return "";
     }
-}
-
-async function hmacSha256Hex(secret: string, raw: string): Promise<string> {
-    const subtle = globalThis.crypto?.subtle;
-    if (!subtle) throw new Error("WebCrypto is unavailable in this runtime; cannot sign webhook delivery");
-    const key = await subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-    const signature = await subtle.sign("HMAC", key, new TextEncoder().encode(raw));
-    return [...new Uint8Array(signature)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export class AutomationService {
@@ -265,69 +257,33 @@ export class AutomationService {
                     await databaseService.automationLogs.create(buildAutomationLogPayload(context.organizationId, message, level, workflowId, execution.id));
                 },
                 deliverWebhook: async (hookInput) => {
-                    let url = hookInput.url;
-                    let secret = "";
-                    let allowedHosts: string[] = [];
-                    let webhookId: string | null = null;
-                    if (hookInput.webhookName) {
-                        const rows = await databaseService.integrationWebhooks.listByOrganization(context.organizationId);
-                        const match = rows.find((r) => r.name === hookInput.webhookName && r.is_active);
-                        if (!match) throw new Error(`Unknown or inactive webhook '${hookInput.webhookName}'`);
-                        url = match.url;
-                        secret = typeof match.secret === "string" ? match.secret : "";
-                        if (!secret) {
-                            throw new Error("Webhook signing secret is unavailable in this client context; delivery was blocked safely");
-                        }
-                        allowedHosts = match.allowed_hosts?.length ? match.allowed_hosts : [hostOf(match.url)];
-                        webhookId = match.id;
-                    } else if (url) {
-                        allowedHosts = [hostOf(url)];
+                    if (!hookInput.webhookName) {
+                        throw new Error("Direct webhook URLs are disabled; configure an organization webhook first");
                     }
-                    const result = await executeWebhookStep({
-                        dispatch: {
-                            url,
+                    const response = await fetch("/api/automation/webhooks/deliver", {
+                        method: "POST",
+                        headers: { "content-type": "application/json" },
+                        body: JSON.stringify({
+                            webhookName: hookInput.webhookName,
                             event: hookInput.event,
                             payload: hookInput.payload,
                             idempotencyKey: hookInput.idempotencyKey,
-                            allowedHosts,
                             timeoutMs: hookInput.timeoutMs,
-                        },
-                        sign: (raw) => hmacSha256Hex(secret, raw),
-                        fetchFn: (fetchUrl, init) =>
-                            fetch(fetchUrl, { method: init.method, headers: init.headers, body: init.body, signal: init.signal }).then(
-                                async (res) => ({ status: res.status }),
-                            ),
-                        delaysMs: [500, 2000],
+                        }),
                     });
-                    if (result.attempts.length > 0) {
-                        try {
-                            await databaseService.integrationDeliveries.createForOrganization(context.organizationId, {
-                                webhook_id: webhookId,
-                                event: hookInput.event,
-                                target_host: hostOf(url),
-                                status: result.ok ? "delivered" : "failed",
-                                attempts: result.attempts.length,
-                                response_status: result.responseStatus,
-                                error: result.error ?? "",
-                                idempotency_key: hookInput.idempotencyKey,
-                            });
-                        } catch (logError) {
-                            await databaseService.automationLogs.create(
-                                buildAutomationLogPayload(
-                                    context.organizationId,
-                                    `Delivery log write failed: ${logError instanceof Error ? logError.message : String(logError)}`,
-                                    "warn",
-                                    workflowId,
-                                    execution.id,
-                                ),
-                            );
-                        }
+                    const result = await response.json().catch(() => ({})) as {
+                        ok?: boolean;
+                        attempts?: number;
+                        responseStatus?: number | null;
+                        error?: string | null;
+                    };
+                    if (!response.ok || !result.ok) {
+                        throw new Error(result.error || `Webhook delivery failed (HTTP ${response.status})`);
                     }
                     return {
-                        ok: result.ok,
-                        attempts: Math.max(1, result.attempts.length),
-                        responseStatus: result.responseStatus,
-                        error: result.error,
+                        ok: true,
+                        attempts: Math.max(1, Number(result.attempts ?? 1)),
+                        responseStatus: result.responseStatus ?? null,
                     };
                 },
                 now: () => Date.now(),
