@@ -35,7 +35,15 @@ export async function GET(request: Request) {
         return NextResponse.json({ organization: null, membership: null, needsProvisioning: true }, { status: 200 });
     }
     const memberships = await listMemberships(serviceClient, profile.id);
-    const membership = memberships[0] ?? null;
+    if (memberships.length > 1 && !context.organizationId) {
+        return NextResponse.json(
+            { error: "Organization selection required", code: "ORGANIZATION_SELECTION_REQUIRED" },
+            { status: 409, headers: { "Cache-Control": "no-store" } },
+        );
+    }
+    const membership = context.organizationId
+        ? memberships.find((item) => item.organization_id === context.organizationId) ?? null
+        : memberships[0] ?? null;
     if (!membership) {
         return NextResponse.json({ organization: null, membership: null, needsProvisioning: true }, { status: 200 });
     }
@@ -101,7 +109,15 @@ export async function POST(request: Request) {
     // Idempotency: a caller that already belongs anywhere keeps that tenant —
     // retries and double-submits never create a second organization.
     const existing = await listMemberships(serviceClient, profile.id);
-    const current = existing[0] ?? null;
+    if (existing.length > 1 && !context.organizationId) {
+        return NextResponse.json(
+            { error: "Organization selection required", code: "ORGANIZATION_SELECTION_REQUIRED" },
+            { status: 409, headers: { "Cache-Control": "no-store" } },
+        );
+    }
+    const current = context.organizationId
+        ? existing.find((item) => item.organization_id === context.organizationId) ?? null
+        : existing[0] ?? null;
     if (current) {
         const org = await getOrganization(serviceClient, current.organization_id);
         return NextResponse.json(
@@ -152,7 +168,16 @@ export async function POST(request: Request) {
             // Lost a slug/ membership race after the org row was created: the
             // caller is a member now — return that instead of failing.
             const retry = await listMemberships(serviceClient, profile.id);
-            const won = retry[0] ?? null;
+            const won = context.organizationId
+                ? retry.find((item) => item.organization_id === context.organizationId) ?? null
+                : retry.length === 1 ? retry[0] : null;
+            if (retry.length > 1 && !context.organizationId) {
+                await serviceClient.from("organizations").delete().eq("id", org.id);
+                return NextResponse.json(
+                    { error: "Organization selection required", code: "ORGANIZATION_SELECTION_REQUIRED" },
+                    { status: 409, headers: { "Cache-Control": "no-store" } },
+                );
+            }
             if (won) {
                 const wonOrg = await getOrganization(serviceClient, won.organization_id);
                 await serviceClient.from("organizations").delete().eq("id", org.id);
