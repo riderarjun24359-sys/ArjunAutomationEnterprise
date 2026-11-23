@@ -2,10 +2,10 @@ import type { AccDecision, AccRecommendation } from "../types";
 
 export function buildRecommendations(input: {
     decisions: AccDecision[];
-    systemHealth: number;
-    clientHealth: number;
-    supportHealth: number;
-    deliveryHealth: number;
+    systemHealth: number | null;
+    clientHealth: number | null;
+    supportHealth: number | null;
+    deliveryHealth: number | null;
     pendingAi: number;
     organizationId?: string | null;
 }): AccRecommendation[] {
@@ -36,7 +36,7 @@ export function buildRecommendations(input: {
         createdAt: now,
     }));
 
-    if (input.systemHealth < 85) {
+    if (input.systemHealth !== null && input.systemHealth < 85) {
         recs.push({
             id: stableId("systemMonitor", "Run production readiness health check"),
             engineKey: "systemMonitor",
@@ -60,7 +60,7 @@ export function buildRecommendations(input: {
             createdAt: now,
         });
     }
-    if (input.clientHealth >= 85 && input.supportHealth >= 85 && input.deliveryHealth >= 85) {
+    if (input.clientHealth !== null && input.supportHealth !== null && input.deliveryHealth !== null && input.clientHealth >= 85 && input.supportHealth >= 85 && input.deliveryHealth >= 85) {
         recs.push({
             id: stableId("executiveAnalytics", "Publish weekly executive operations brief"),
             engineKey: "executiveAnalytics",
