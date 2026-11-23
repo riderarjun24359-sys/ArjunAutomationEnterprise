@@ -101,3 +101,8 @@ A fresh read-only production snapshot confirms:
 ## Provider-scoped payment event identity
 
 A final payment idempotency review found that the receiver's in-memory key and API logic namespace event IDs by provider, but the original database primary key covered only `event_id`. Migration `202611230130_webhook_idempotency_provider_scope.sql` now changes the durable key to `(provider, event_id)`, aligning database uniqueness with the application contract. It is committed but **not applied to production**. Apply it together with the pending `202611230120_webhook_idempotency_server_only.sql` only in an explicitly approved database migration window.
+
+
+## AI intent fallback safety
+
+The command-palette intent endpoint remains intentionally unavailable (HTTP 501) until the async model-result contract is implemented. Its service previously enqueued an orchestration task but discarded the result, creating work that could never satisfy the request. The service now returns the documented fallback without enqueuing an orphan task, and the endpoint rejects inputs longer than 2,000 characters. Local deterministic command/entity search remains the supported behavior; AI interpretation is still not claimed as implemented.
