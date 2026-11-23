@@ -89,7 +89,12 @@ export class TaskRepository extends BaseRepository<DbTask> {
             return [];
         }
 
-        const organizationId = getSelectedOrganizationId();\n        if (!organizationId) return [];\n        const { data, error } = await client.from("task_label_assignments").select("task_id, label_id").in("task_id", taskIds);
+        const organizationId = getSelectedOrganizationId();
+        if (!organizationId) return [];
+        const { data: ownedTasks, error: ownershipError } = await client.from("tasks").select("id").eq("organization_id", organizationId).in("id", taskIds);
+        if (ownershipError || !ownedTasks?.length) return [];
+        const ownedTaskIds = ownedTasks.map((task) => task.id);
+        const { data, error } = await client.from("task_label_assignments").select("task_id, label_id").in("task_id", ownedTaskIds);
         mapRepositoryError(error, "Failed to list task label assignments");
         return (data ?? []) as Array<{ task_id: string; label_id: string }>;
     }
@@ -100,13 +105,19 @@ export class TaskRepository extends BaseRepository<DbTask> {
             return;
         }
 
-        const organizationId = getSelectedOrganizationId();\n        if (!organizationId) return;\n        const parent = await client.from("tasks").select("id").eq("id", taskId).eq("organization_id", organizationId).maybeSingle();\n        if (parent.error || !parent.data) return;\n        await client.from("task_label_assignments").delete().eq("task_id", taskId);
+        const organizationId = getSelectedOrganizationId();
+        if (!organizationId) return;
+        const parent = await client.from("tasks").select("id").eq("id", taskId).eq("organization_id", organizationId).maybeSingle();
+        if (parent.error || !parent.data) return;
+        await client.from("task_label_assignments").delete().eq("task_id", taskId);
 
         if (labelIds.length === 0) {
             return;
         }
 
-        const { data: labels, error: labelsError } = await client.from("task_labels").select("id").eq("organization_id", organizationId).in("id", labelIds);\n        if (labelsError || (labels ?? []).length !== labelIds.length) return;\n        const { error } = await client.from("task_label_assignments").insert(labelIds.map((labelId) => ({ task_id: taskId, label_id: labelId })));
+        const { data: labels, error: labelsError } = await client.from("task_labels").select("id").eq("organization_id", organizationId).in("id", labelIds);
+        if (labelsError || (labels ?? []).length !== labelIds.length) return;
+        const { error } = await client.from("task_label_assignments").insert(labelIds.map((labelId) => ({ task_id: taskId, label_id: labelId })));
         mapRepositoryError(error, "Failed to set task label assignments");
     }
 }
