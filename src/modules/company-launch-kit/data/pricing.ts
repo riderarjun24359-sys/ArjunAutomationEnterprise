@@ -139,7 +139,7 @@ export const PROJECT_PRICING = [
         numericPrice: 7999,
         qualifier: "Starts from",
         summary: "A focused, custom website built to explain your offer and capture enquiries.",
-        features: ["5–7 custom pages", "Mobile-responsive layouts", "SEO foundations and page metadata", "WhatsApp and enquiry capture"],
+        features: ["1–3 essential pages", "Mobile-friendly design", "Call and WhatsApp buttons", "Basic Google search setup"],
     },
     {
         id: "automation-sprint",
@@ -148,7 +148,7 @@ export const PROJECT_PRICING = [
         numericPrice: 9999,
         qualifier: "Starts from",
         summary: "Automate one or two repetitive workflows using the tools you already have.",
-        features: ["1–2 agreed core workflows", "Lead intake and routing", "WhatsApp or email follow-ups", "Team alerts and basic reporting"],
+        features: ["One clearly defined workflow", "Enquiry capture in a spreadsheet", "Automatic WhatsApp or email notification", "Setup and simple handover"],
     },
     {
         id: "growth-platform",
@@ -157,7 +157,7 @@ export const PROJECT_PRICING = [
         numericPrice: 24999,
         qualifier: "Starts from",
         summary: "A connected website, workflow automation and a tailored customer or team portal.",
-        features: ["Custom website", "Multi-step workflow automation", "AI integrations where appropriate", "Custom CRM or client portal"],
+        features: ["Up to 5 agreed website pages or screens", "Simple enquiry or customer records", "Up to 2 agreed automations", "Basic reports and team access"],
         highlighted: true,
     },
     {
@@ -167,7 +167,7 @@ export const PROJECT_PRICING = [
         numericPrice: 49999,
         qualifier: "Starts from",
         summary: "A scoped business system for complex operations and role-based teams.",
-        features: ["Custom ERP or CRM modules", "Role-based access design", "Agreed data migration", "Integration and go-live planning"],
+        features: ["Custom modules based on your process", "Staff login and access levels", "Agreed reports and records", "Integration and launch support"],
     },
 ] as const;
 
