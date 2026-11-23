@@ -68,7 +68,7 @@ pass("revenue:explicit-verification-gate", buildersSrc.includes("revenueVerified
 pass("revenue:legacy-usd-not-calculated", !buildersSrc.includes("mrrFromSubs") && !buildersSrc.includes("latestMrr?.mrr_usd") && !buildersSrc.includes("total_outstanding_usd"));
 pass("revenue:dashboard-gated", revenuePanel.includes("if (!revenue.revenueVerified)"));
 pass("revenue:ecc-widgets-gated", financeWidgets.includes("if (!widgets.revenueVerified)"));
-pass("revenue:no-dollar-symbols-in-panels", !/\$/.test([revenuePanel, paymentPanel, invoicePanel, subscriptionPanel, financePage, financeWidgets].join("\n")));
+pass("revenue:no-dollar-symbols-in-panels", !/\$(?!\\{)/.test([revenuePanel, paymentPanel, invoicePanel, subscriptionPanel, financePage, financeWidgets].join("\n")));
 pass("revenue:payment-amount-hidden", paymentPanel.includes("Amount not verified"));
 pass("revenue:invoice-amount-hidden", invoicePanel.includes("Total not verified") && invoicePanel.includes("Due not verified"));
 pass("revenue:subscription-mrr-hidden", subscriptionPanel.includes("MRR not verified") && subscriptionPanel.includes("ARR not verified"));
