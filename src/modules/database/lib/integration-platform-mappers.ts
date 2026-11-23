@@ -548,7 +548,7 @@ export const buildApiKeyPayload = (organizationId: string, input: CreateApiKeyIn
     organization_id: organizationId,
     hub_id: input.integrationHubId,
     key_name: input.keyName ?? "",
-    key_prefix: input.keyPrefix ?? "",
+    key_prefix: "",
     api_version: input.apiVersion ?? "v1",
 });
 
