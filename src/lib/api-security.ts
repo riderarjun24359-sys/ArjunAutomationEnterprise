@@ -121,6 +121,17 @@ export async function resolveServerIdentity(
             return { role: "member", organizationId: null };
         }
 
+        // Membership alone is insufficient: suspended or inactive tenants
+        // must not retain API access through an otherwise-active membership.
+        const organization = await client
+            .from("organizations")
+            .select("status")
+            .eq("id", selected.organization_id)
+            .maybeSingle();
+        if (organization.error || !organization.data || organization.data.status !== "active") {
+            return { role: "member", organizationId: null };
+        }
+
         const role = selected.role_name
             ? (ROLE_ALIASES[selected.role_name] ?? "member")
             : "member";
