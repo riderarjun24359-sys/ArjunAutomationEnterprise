@@ -297,7 +297,7 @@ export const buildSupportDashboardStats = (input: {
         resolvedTickets,
         avgSatisfaction: avgRating,
         activeAgents: input.agents.length,
-        slaCompliance: slaTotal > 0 ? Math.round((slaMet / slaTotal) * 100) : 100,
+        slaCompliance: slaTotal > 0 ? Math.round((slaMet / slaTotal) * 100) : 0,
         knowledgeArticles: input.articles.filter((a) => a.status === "published").length,
         openEscalations: input.escalationRules.filter((r) => r.isActive).length,
     };
