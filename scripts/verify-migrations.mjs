@@ -1239,5 +1239,23 @@ for (const file of migrationFiles) {
     }
 }
 
+const applyScript = readFileSync(join(root, "scripts", "apply-migrations.mjs"), "utf8");
+const applyPreflight = applyScript.indexOf("const migrationVersionErrors");
+const databaseConnect = applyScript.indexOf("await client.connect()");
+const firstApply = applyScript.indexOf("await client.query(sql)");
+if (
+    applyPreflight < 0 ||
+    databaseConnect < 0 ||
+    firstApply < 0 ||
+    applyPreflight > databaseConnect ||
+    applyPreflight > firstApply ||
+    !applyScript.includes("Duplicate migration version") ||
+    !applyScript.includes("Invalid migration timestamp prefix")
+) {
+    console.error("FAIL: Direct migration apply must reject invalid or duplicate versions before database connection or SQL execution.");
+    process.exit(1);
+}
+console.log("PASS: Direct migration apply rejects invalid and duplicate versions before database access.");
+
 console.log(`PASS: ${migrationFiles.length} migration files validated.`);
 console.log(`PASS: All ${requiredTables.length} required tables are present.`);
