@@ -147,7 +147,7 @@ export default function PricingPage() {
                             </ul>
                         </div>
                         <p className="text-sm leading-6 text-slate-600 lg:col-span-2">
-                            These charges depend on the provider, account and actual usage. Where possible, third-party services are set up in your organisation's own accounts so you retain control. We will identify expected recurring costs in the proposal; they are not silently included in the project fee.
+                            These charges depend on the provider, account and actual usage. Where possible, third-party services are set up in your organisation&apos;s own accounts so you retain control. We will identify expected recurring costs in the proposal; they are not silently included in the project fee.
                         </p>
                     </section>
 
