@@ -60,17 +60,24 @@ export class CustomerSuccessGlobalOpsService {
         const customerHealth = healthScores.length
             ? Math.round(healthScores.reduce((s, h) => s + h.score, 0) / healthScores.length)
             : 0;
+        const integrationIssues = [
+            business.available ? null : "Business Platform",
+            support.available ? null : "Support",
+            delivery.available ? null : "Delivery Engine",
+        ].filter((item): item is string => Boolean(item));
         const renewals = storedRenewals;
         const escalations = storedEscalations;
         const onboardingSessions = buildOnboardingSessions(business.activeClients, storedOnboarding);
         const deliveryMilestones = storedMilestones;
-        const deliveryHealth = deliveryMilestones.length
-            ? computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones)
-            : delivery.qualityPassRate;
+        const deliveryHealth = delivery.available
+            ? (deliveryMilestones.length
+                ? computeDeliveryHealth(delivery.qualityPassRate, deliveryMilestones)
+                : delivery.qualityPassRate)
+            : 0;
         const feedback = storedFeedback;
         const csatAverage = computeCsatAverage(feedback);
         const npsScore = computeNpsScore(feedback);
-        const supportHealth = computeSupportHealth(support);
+        const supportHealth = support.available ? computeSupportHealth(support) : 0;
         const queue = classifyLiveQueue(tickets);
 
         const improvementBacklog = storedImprovements.length
@@ -112,6 +119,7 @@ export class CustomerSuccessGlobalOpsService {
             npsScore,
             improvementBacklog,
             satisfactionTrend: buildSatisfactionTrend(csatAverage, npsScore),
+            integrationIssues,
         };
 
         dashboard.aiRecommendations = generateAiRecommendations(dashboard);
