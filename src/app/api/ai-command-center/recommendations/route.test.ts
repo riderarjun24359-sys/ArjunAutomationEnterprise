@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
 import { secureApiRoute } from "@/src/lib/api-security";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
-import { PATCH } from "./route";
+import { GET, PATCH, POST } from "./route";
 
 vi.mock("@/src/lib/api-security", () => ({ secureApiRoute: vi.fn() }));
 vi.mock("@/src/lib/supabase-service-role", () => ({ getServiceRoleClient: vi.fn() }));
@@ -35,6 +35,53 @@ describe("PATCH /api/ai-command-center/recommendations", () => {
         const response = await PATCH(request({ id: recommendationId, status: "accepted" }));
         expect(response.status).toBe(401);
         expect(getServiceRoleClient).not.toHaveBeenCalled();
+    });
+
+    it("syncs generated recommendations with server-derived organization scope", async () => {
+        const upsert = vi.fn().mockResolvedValue({ error: null });
+        const client = { from: vi.fn().mockReturnValue({ upsert }) };
+        vi.mocked(getServiceRoleClient).mockReturnValue(client as never);
+
+        const response = await POST(request({
+            recommendations: [{
+                id: recommendationId,
+                engineKey: "systemMonitor",
+                title: "Check integration health",
+                detail: "A provider is unavailable",
+                confidence: 0.9,
+                priority: "high",
+                status: "pending",
+            }],
+        }));
+
+        expect(response.status).toBe(200);
+        expect(upsert).toHaveBeenCalledWith(
+            [expect.objectContaining({
+                id: recommendationId,
+                organization_id: organizationId,
+                status: "pending",
+                confidence: 90,
+            })],
+            { onConflict: "id", ignoreDuplicates: true },
+        );
+    });
+
+    it("loads saved recommendation statuses for the authenticated organization", async () => {
+        const query = {
+            eq: vi.fn().mockReturnThis(),
+            limit: vi.fn().mockResolvedValue({
+                data: [{ id: recommendationId, status: "dismissed" }],
+                error: null,
+            }),
+        };
+        const client = { from: vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue(query) }) };
+        vi.mocked(getServiceRoleClient).mockReturnValue(client as never);
+
+        const response = await GET(new Request("http://localhost/api/ai-command-center/recommendations"));
+        const body = await response.json() as { recommendations?: Array<{ id: string; status: string }> };
+        expect(response.status).toBe(200);
+        expect(body.recommendations?.[0]).toEqual({ id: recommendationId, status: "dismissed" });
+        expect(query.eq).toHaveBeenCalledWith("organization_id", organizationId);
     });
 
     it("persists an accepted action within the authenticated organization", async () => {
