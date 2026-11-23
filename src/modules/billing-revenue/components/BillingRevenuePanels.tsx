@@ -173,7 +173,7 @@ export function ProrationRecordsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create proration record" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createProrationRecord(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("prorationKey")} placeholder="Proration key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -211,7 +211,7 @@ export function PaymentAttemptsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create payment attempt" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createPaymentAttempt(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("attemptKey")} placeholder="Attempt key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <select {...form.register("paymentStatus")} className={inputClass}>{PAYMENT_STATUS_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select>
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
@@ -231,7 +231,7 @@ export function RefundsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create refund" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createRefund(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("refundKey")} placeholder="Refund key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -250,7 +250,7 @@ export function WalletBalancesPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create wallet balance" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createWalletBalance(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("walletKey")} placeholder="Wallet key" className={inputClass} />
-                <input type="number" step="any" {...form.register("balanceUsd", { valueAsNumber: true })} placeholder="Balance INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("balanceUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -307,7 +307,7 @@ export function DeferredRevenuesPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create deferred revenue" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createDeferredRevenue(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("recordKey")} placeholder="Record key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -326,7 +326,7 @@ export function RevenueRecognitionsPanel({ data }: { data: BillingRevenueData })
             <Card hover><SectionHeader title="Create revenue recognition" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createRevenueRecognition(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("recognitionKey")} placeholder="Recognition key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -345,7 +345,7 @@ export function InvoicesPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create invoice" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createInvoice(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("invoiceKey")} placeholder="Invoice key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -364,7 +364,7 @@ export function CreditNotesPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create credit note" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createCreditNote(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("noteKey")} placeholder="Note key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -383,7 +383,7 @@ export function DebitNotesPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create debit note" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createDebitNote(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("noteKey")} placeholder="Note key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -421,7 +421,7 @@ export function OutstandingBalancesPanel({ data }: { data: BillingRevenueData })
             <Card hover><SectionHeader title="Create outstanding balance" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createOutstandingBalance(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("balanceKey")} placeholder="Balance key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -476,7 +476,7 @@ export function WriteOffsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create write-off" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createWriteOff(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("writeOffKey")} placeholder="Write-off key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -532,7 +532,7 @@ export function CashFlowRecordsPanel({ data }: { data: BillingRevenueData }) {
             <Card hover><SectionHeader title="Create cash flow record" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createCashFlowRecord(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("recordKey")} placeholder="Record key" className={inputClass} />
-                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Amount INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("amountUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -625,7 +625,7 @@ export function RevenueProjectionsPanel({ data }: { data: BillingRevenueData }) 
             <Card hover><SectionHeader title="Create revenue projection" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createRevenueProjection(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("projectionKey")} placeholder="Projection key" className={inputClass} />
-                <input type="number" step="any" {...form.register("projectedRevenueUsd", { valueAsNumber: true })} placeholder="Projected revenue INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("projectedRevenueUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -643,8 +643,8 @@ export function FinanceMetricsPanel({ data }: { data: BillingRevenueData }) {
             </div></Card>
             <Card hover><SectionHeader title="Create finance metric" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createFinanceMetric(v))}>
                 <input {...form.register("metricsKey")} placeholder="Metrics key" className={inputClass} />
-                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="MRR INR" className={inputClass} />
-                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="ARR INR" className={inputClass} />
+                <input type="number" step="any" {...form.register("mrrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
+                <input type="number" step="any" {...form.register("arrUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
@@ -681,7 +681,7 @@ export function ExpansionContractionsPanel({ data }: { data: BillingRevenueData 
             <Card hover><SectionHeader title="Create expansion & contraction" description="Add a new record" /><form className="mt-6 grid gap-4" onSubmit={form.handleSubmit(async (v) => data.createExpansionContraction(v))}>
                 <BillingAccountSelect data={data} {...form.register("billingAccountId")} />
                 <input {...form.register("recordKey")} placeholder="Record key" className={inputClass} />
-                <input type="number" step="any" {...form.register("expansionUsd", { valueAsNumber: true })} placeholder="Expansion USD" className={inputClass} />
+                <input type="number" step="any" {...form.register("expansionUsd", { valueAsNumber: true })} placeholder="Disabled — legacy currency mapping requires INR migration" disabled className={inputClass} />
                 <SaveButton loading={form.formState.isSubmitting} label="Create" />
             </form></Card>
         </div>
