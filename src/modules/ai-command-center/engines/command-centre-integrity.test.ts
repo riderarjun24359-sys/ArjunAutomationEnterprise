@@ -31,10 +31,13 @@ describe("Command Centre trust guarantees", () => {
             supportHealth: 40,
             deliveryHealth: 40,
             pendingAi: 1,
+            organizationId: "org-a",
         };
         const first = buildRecommendations(input);
         const second = buildRecommendations(input);
+        const otherTenant = buildRecommendations({ ...input, organizationId: "org-b" });
         expect(first.map((item) => item.id)).toEqual(second.map((item) => item.id));
+        expect(first.map((item) => item.id)).not.toEqual(otherTenant.map((item) => item.id));
         expect(first.every((item) => /^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-a[0-9a-f]{3}-[0-9a-f]{12}$/i.test(item.id))).toBe(true);
     });
 });
