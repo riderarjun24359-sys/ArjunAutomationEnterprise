@@ -44,6 +44,7 @@ export function buildAgentStatuses(_input: {
     pendingApprovals?: number;
     systemHealth: number;
 }): AccAgentStatus[] {
+    void _input;
     // System health is not proof that an individual agent or provider is online.
     // Until each agent reports a heartbeat, expose an explicit unknown state.
     return ACC_AGENT_KEYS.map((key) => ({
