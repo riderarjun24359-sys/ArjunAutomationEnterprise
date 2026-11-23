@@ -94,7 +94,44 @@ export class IntgAccountingConnectorRepository extends OrgIntgRepository<DbIntgA
 export class IntgAccountingSyncStatusRepository extends OrgIntgRepository<DbIntgAccountingSyncStatus> { protected table = "intg_accounting_sync_status"; }
 export class IntgExportMappingRepository extends OrgIntgRepository<DbIntgExportMapping> { protected table = "intg_export_mappings"; }
 export class IntgAccountingExportRepository extends OrgIntgRepository<DbIntgAccountingExport> { protected table = "intg_accounting_exports"; }
-export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> { protected table = "intg_api_keys"; }
+export class IntgApiKeyRepository extends OrgIntgRepository<DbIntgApiKey> {
+    protected table = "intg_api_keys";
+
+    // Never use select("*") for API credentials: key_hash is a server-only
+    // verifier and must not be sent to browser sessions. The matching
+    // migration grants authenticated users column-level SELECT only for this
+    // safe metadata projection; RLS continues to enforce organization scope.
+    private readonly safeColumns =
+        "id,organization_id,hub_id,key_name,key_prefix,api_version,expires_at,last_used_at,status,created_at,updated_at";
+
+    async listByOrganization(organizationId: string, query: RepositoryQuery = {}): Promise<DbIntgApiKey[]> {
+        const client = getRepositoryClient();
+        if (!client || getSelectedOrganizationId() !== organizationId) return [];
+        const normalized = this.buildQuery(query);
+        const { data, error } = await client
+            .from(this.table)
+            .select(this.safeColumns)
+            .eq("organization_id", organizationId)
+            .order(normalized.orderBy, { ascending: normalized.orderDirection === "asc" })
+            .range(normalized.offset, normalized.offset + normalized.limit - 1);
+        mapRepositoryError(error, `Failed to list ${this.table}`);
+        return (data ?? []) as DbIntgApiKey[];
+    }
+
+    async getById(id: string): Promise<DbIntgApiKey | null> {
+        const client = getRepositoryClient();
+        const organizationId = getSelectedOrganizationId();
+        if (!client || !organizationId) return null;
+        const { data, error } = await client
+            .from(this.table)
+            .select(this.safeColumns)
+            .eq("id", id)
+            .eq("organization_id", organizationId)
+            .maybeSingle();
+        mapRepositoryError(error, `Failed to get ${this.table}`);
+        return (data as DbIntgApiKey | null) ?? null;
+    }
+}
 export class IntgApiScopeRepository extends OrgIntgRepository<DbIntgApiScope> { protected table = "intg_api_scopes"; }
 export class IntgRateLimitRepository extends OrgIntgRepository<DbIntgRateLimit> { protected table = "intg_rate_limits"; }
 export class IntgApiUsageRepository extends OrgIntgRepository<DbIntgApiUsage> { protected table = "intg_api_usage"; }
