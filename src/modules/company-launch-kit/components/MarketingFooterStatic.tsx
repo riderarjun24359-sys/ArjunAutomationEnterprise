@@ -25,14 +25,14 @@ export function MarketingFooterStatic() {
                 <div>
                     <Link href="/" className="inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                         <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-sm font-bold text-white">AA</span>
-                        <span className="text-lg font-bold tracking-tight text-white">Arjun Automation</span>
+                        <span className="text-lg font-bold tracking-tight text-white">Arjun Automations</span>
                     </Link>
                     <p className="mt-5 max-w-md text-sm leading-7 text-slate-400">
-                        AI Workflows, Custom Websites &amp; Business Portals — Built in Hyderabad.
+                        Affordable websites, WhatsApp automation and practical business software for shops and businesses across India.
                     </p>
                     <address className="mt-5 flex flex-col gap-3 text-sm not-italic text-slate-400">
                         <a className="w-fit transition hover:text-white" href={`mailto:${COMPANY_PROFILE.emails.sales}`}>{COMPANY_PROFILE.emails.sales}</a>
-                        <a className="w-fit transition hover:text-white" href={`tel:${COMPANY_PROFILE.phoneE164 ?? "+917337027357"}`}>+91 73370 27357</a>
+                        <a className="w-fit transition hover:text-white" href={`tel:${COMPANY_PROFILE.phoneE164 ?? "+917337027357"}`}>{COMPANY_PROFILE.phoneDisplay ?? "+91 73370 27357"}</a>
                         <span>{address}</span>
                     </address>
                 </div>
@@ -53,7 +53,7 @@ export function MarketingFooterStatic() {
             </div>
             <div className="border-t border-slate-800">
                 <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-5 py-5 text-xs text-slate-500 sm:px-8 sm:flex-row sm:items-center sm:justify-between">
-                    <p>© 2026 Arjun Automation. All rights reserved.</p>
+                    <p>© 2026 Arjun Automations. All rights reserved.</p>
                     <p>Balanagar, Secunderabad, Telangana, India</p>
                 </div>
             </div>
