@@ -19,7 +19,7 @@ const tabs = [
 ];
 
 export function OrganizationPage() {
-    const { organizations, workspaces, members, invitations, loading } = useOrganization();
+    const { organizations, workspaces, members, invitations, loading, revokeInvitation, revokingInvitationId, invitationActionError } = useOrganization();
     const [activeTab, setActiveTab] = useState<(typeof ORGANIZATION_TABS)[keyof typeof ORGANIZATION_TABS]>(ORGANIZATION_TABS.overview);
 
     if (loading) {
@@ -179,6 +179,9 @@ export function OrganizationPage() {
                         {activeTab === ORGANIZATION_TABS.invitations ? (
                             <Card hover>
                                 <SectionHeader title="Invitation queue" description="Pending and accepted invites" />
+                                {invitationActionError ? (
+                                    <p role="alert" className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-900 dark:bg-rose-950/30 dark:text-rose-300">{invitationActionError}</p>
+                                ) : null}
                                 <div className="mt-6 space-y-3">
                                     {invitations.map((invitation) => (
                                         <div key={invitation.id} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 dark:border-slate-800">
@@ -186,7 +189,14 @@ export function OrganizationPage() {
                                                 <p className="font-medium">{invitation.email}</p>
                                                 <p className="text-sm text-slate-500 dark:text-slate-400">{invitation.roleName} • expires {invitation.expiresAt}</p>
                                             </div>
-                                            <span className="rounded-full border border-slate-200 px-3 py-1 text-sm dark:border-slate-700">{invitation.status}</span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="rounded-full border border-slate-200 px-3 py-1 text-sm dark:border-slate-700">{invitation.status}</span>
+                                                {invitation.status === "pending" ? (
+                                                    <button type="button" onClick={() => void revokeInvitation(invitation.id)} disabled={revokingInvitationId !== null} className="rounded-xl border border-rose-200 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-900 dark:text-rose-300 dark:hover:bg-rose-950/40" aria-label={"Revoke invitation for " + invitation.email}>
+                                                        {revokingInvitationId === invitation.id ? "Revoking…" : "Revoke"}
+                                                    </button>
+                                                ) : null}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
