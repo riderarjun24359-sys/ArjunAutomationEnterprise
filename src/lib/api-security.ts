@@ -85,9 +85,9 @@ export async function resolveServerIdentity(
         }
 
         // A requested tenant is accepted only after it is found in this
-        // authenticated user's active memberships. When no tenant header is
-        // supplied, retain the first-membership default for legacy callers;
-        // the organization UI still needs an explicit tenant selector.
+        // authenticated user's active memberships. Without an explicit tenant,
+        // a single active membership is unambiguous; multiple memberships are
+        // rejected below until the UI supplies an explicit organization choice.
         const memberships = await client
             .from("organization_members")
             .select("organization_id,role_name")
