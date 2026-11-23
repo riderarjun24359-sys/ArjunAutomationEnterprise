@@ -55,7 +55,7 @@ for (const file of migrationFiles) {
     else versions.set(match[1], file);
 }
 check("migration timestamps are unique", duplicates.length === 0);
-check("final identity RLS migration is ordered after Priya migrations", existsSync(join(migrationDir, "202611230010_rls_identity_grants_and_admin_lookup.sql")) && !existsSync(join(migrationDir, "202611230001_rls_identity_grants_and_admin_lookup.sql")));
+check("final identity RLS migration is ordered after Priya migrations", existsSync(join(migrationDir, "202611230011_rls_identity_grants_and_admin_lookup.sql")) && !existsSync(join(migrationDir, "202611230001_rls_identity_grants_and_admin_lookup.sql")));
 check("Command Centre integrity unit tests exist", existsSync(join(root, "src/modules/ai-command-center/engines/command-centre-integrity.test.ts")));
 
 const failures = checks.filter((item) => !item.ok);
