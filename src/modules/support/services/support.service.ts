@@ -332,6 +332,8 @@ export class SupportService {
     }
 
     async getDashboardStats(authUserId: string, email: string, fullName?: string | null): Promise<SupportDashboardStats> {
+        const context = await this.getContext(authUserId, email, fullName);
+        if (!context) throw new Error("Unable to resolve organization context for support dashboard");
         const [tickets, ratings, agents, articles, escalationRules] = await Promise.all([
             this.getTickets(authUserId, email, fullName),
             this.getSatisfactionRatings(authUserId, email, fullName),
