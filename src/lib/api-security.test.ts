@@ -77,6 +77,24 @@ describe("api-security server-side identity resolution", () => {
         expect(context?.user.id).toBe("auth-1");
     });
 
+    it("allows a valid server API key without a browser Origin header", async () => {
+        process.env.TEST_PLATFORM_API_KEY = "test-secret-key";
+        const serverRequest = new Request("https://example.test/api/lead", {
+            method: "POST",
+            headers: { "x-platform-key": "test-secret-key" },
+            body: JSON.stringify({ name: "Lead" }),
+        });
+
+        const { context, error } = await secureApiRoute(serverRequest, {
+            allowPublic: true,
+            publicApiKeyEnv: "TEST_PLATFORM_API_KEY",
+        });
+
+        expect(error).toBeNull();
+        expect(context?.user.id).toBe("platform-lead");
+        delete process.env.TEST_PLATFORM_API_KEY;
+    });
+
     it("fails closed to member/no-org when there is no profile", async () => {
         authenticatedAs("auth-2");
         mocks.getServiceRoleClient.mockReturnValue(fakeClient(null, null));
