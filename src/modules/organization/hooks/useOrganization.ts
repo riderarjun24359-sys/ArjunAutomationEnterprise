@@ -3,6 +3,18 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/src/store/auth.store";
 import { organizationService } from "@/src/modules/organization/services/organization.service";
+function persistOrganizationSelection(organizationId: string | null): void {
+    if (typeof window === "undefined") return;
+    if (organizationId) {
+        persistOrganizationSelection(organizationId);
+        const secure = window.location.protocol === "https:" ? "; Secure" : "";
+        document.cookie = `aae_selected_organization=${encodeURIComponent(organizationId)}; Path=/; SameSite=Lax; Max-Age=31536000${secure}`;
+    } else {
+        window.localStorage.removeItem("aae:selected-organization");
+        document.cookie = "aae_selected_organization=; Path=/; SameSite=Lax; Max-Age=0";
+    }
+}
+
 import type {
     OrganizationInvitationSummary,
     OrganizationMembershipSummary,
@@ -61,8 +73,7 @@ export function useOrganization() {
                     (availableMemberships.length === 1 && availableMemberships[0].status === "active"
                         ? availableMemberships[0].organizationId
                         : null);
-                if (nextSelection) window.localStorage.setItem("aae:selected-organization", nextSelection);
-                else window.localStorage.removeItem("aae:selected-organization");
+                persistOrganizationSelection(nextSelection);
                 if (!cancelled) {
                     setMemberships(availableMemberships);
                     setSelectedOrganizationId(nextSelection);
