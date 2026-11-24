@@ -110,6 +110,16 @@ describe("writeConsent", () => {
         expect(readConsent()?.analytics).toBe("denied");
     });
 
+    it("keeps the visitor choice for the current page when localStorage is blocked", () => {
+        Object.defineProperty(window, "localStorage", {
+            configurable: true,
+            get() { throw new Error("storage blocked"); },
+        });
+        writeConsent("reject");
+        expect(readConsent()?.analytics).toBe("denied");
+        installMemoryStorage();
+    });
+
     it("maps onto Consent Mode v2 signals", () => {
         expect(consentSignals(DEFAULT_CONSENT).analytics_storage).toBe("denied");
         expect(consentSignals({ ...DEFAULT_CONSENT, analytics: "granted" } as never).analytics_storage).toBe("granted");
