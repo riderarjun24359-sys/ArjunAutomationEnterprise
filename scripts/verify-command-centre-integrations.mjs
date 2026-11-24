@@ -77,5 +77,5 @@ check("Jarvis call idempotency is unique per organization", jarvisMigration.incl
 
 const failures = checks.filter((item) => !item.ok);
 for (const item of checks) console.log(`${item.ok ? "PASS" : "FAIL"} ${item.name}`);
-console.log(`\\nIntegration guardrails: ${checks.length - failures.length}/${checks.length} passed`);
+console.log(`\nIntegration guardrails: ${checks.length - failures.length}/${checks.length} passed`);
 process.exit(failures.length ? 1 : 0);
