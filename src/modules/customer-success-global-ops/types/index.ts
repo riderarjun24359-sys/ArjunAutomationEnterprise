@@ -122,5 +122,5 @@ export interface GlobalOperationsDashboard {
     improvementBacklog: ImprovementItem[];
     satisfactionTrend: Array<{ period: string; csat: number; nps: number }>;
     /** Integration failures detected by the Global Operations data adapters. */
-    integrationIssues: string[];
+    integrationIssues?: string[];
 }
