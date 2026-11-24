@@ -179,7 +179,7 @@ function WorkflowDiagram() {
     ];
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.35)] sm:p-7">
+        <div className="aa-workflow-panel rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.35)] sm:p-7">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Example workflow</p>
@@ -193,7 +193,7 @@ function WorkflowDiagram() {
             <div className="mt-6 grid gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center">
                 {stages.map((stage, index) => (
                     <div key={stage.number} className="contents">
-                        <div className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="aa-workflow-step min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold tabular-nums text-slate-400">{stage.number}</span>
                                 <stage.icon aria-hidden="true" className="h-5 w-5 text-blue-700" />
@@ -236,8 +236,9 @@ export default function HomePage() {
             />
 
             {/* 1. Hero */}
-            <section className="relative isolate overflow-hidden border-b border-slate-800 bg-[#071426] text-white">
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_78%_22%,rgba(59,130,246,0.28),transparent_42%),radial-gradient(ellipse_at_8%_92%,rgba(14,165,233,0.14),transparent_38%),linear-gradient(135deg,#071426_0%,#0b1d36_55%,#101c3b_100%)]" />
+            <section className="aa-home-hero relative isolate overflow-hidden border-b border-slate-800 bg-[#071426] text-white">
+                <div aria-hidden="true" className="aa-hero-atmosphere pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_78%_22%,rgba(59,130,246,0.28),transparent_42%),radial-gradient(ellipse_at_8%_92%,rgba(14,165,233,0.14),transparent_38%),linear-gradient(135deg,#071426_0%,#0b1d36_55%,#101c3b_100%)]" />
+                <ParticleField className="pointer-events-none absolute inset-0 h-full w-full opacity-70" count={54} />
                 <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:py-28">
                     <div>
                         <p className="inline-flex items-center gap-2 rounded-full border border-blue-300/30 bg-blue-400/10 px-4 py-2 text-xs font-semibold tracking-wide text-blue-100 shadow-sm shadow-blue-950/20 sm:text-sm">
