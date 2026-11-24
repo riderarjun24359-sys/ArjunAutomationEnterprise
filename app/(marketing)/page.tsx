@@ -235,17 +235,17 @@ export default function HomePage() {
             />
 
             {/* 1. Hero */}
-            <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.08),transparent_48%)]" />
-                <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:py-24">
+            <section className="relative isolate overflow-hidden border-b border-slate-800 bg-[#071426] text-white">
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_78%_22%,rgba(59,130,246,0.28),transparent_42%),radial-gradient(ellipse_at_8%_92%,rgba(14,165,233,0.14),transparent_38%),linear-gradient(135deg,#071426_0%,#0b1d36_55%,#101c3b_100%)]" />
+                <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-5 py-20 sm:px-8 sm:py-24 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:py-28">
                     <div>
-                        <p className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-800 sm:text-sm">
+                        <p className="inline-flex items-center gap-2 rounded-full border border-blue-300/30 bg-blue-400/10 px-4 py-2 text-xs font-semibold tracking-wide text-blue-100 shadow-sm shadow-blue-950/20 sm:text-sm">
                             Hyderabad &amp; Secunderabad · AI Automation &amp; Custom Software Studio
                         </p>
-                        <h1 className="mt-6 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-slate-950 sm:text-5xl lg:text-[3.65rem]">
+                        <h1 className="mt-7 max-w-3xl text-4xl font-bold leading-[1.04] tracking-[-0.04em] text-white sm:text-5xl lg:text-[4.15rem]">
                             Stop losing work in the gaps between your tools.
                         </h1>
-                        <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+                        <p className="mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
                             Whether you run a shop in a village, a trading business in a town, a clinic, a school or a growing company, we make practical technology affordable. Get a professional website, WhatsApp follow-ups or simple software to manage everyday work — with clear pricing in Indian rupees.
                         </p>
                         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -256,10 +256,10 @@ export default function HomePage() {
                                 See Pricing
                             </Link>
                         </div>
-                        <div className="mt-9 flex flex-wrap gap-x-5 gap-y-3 border-t border-slate-200 pt-6">
+                        <div className="mt-10 flex flex-wrap gap-x-5 gap-y-3 border-t border-white/15 pt-7">
                             {["Small-business friendly pricing", "Clear INR quotations", "Direct founder support", "Serving businesses across India"].map((item) => (
-                                <span key={item} className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 sm:text-sm">
-                                    <Check aria-hidden="true" className="h-4 w-4 text-blue-700" />{item}
+                                <span key={item} className="inline-flex items-center gap-2 text-xs font-medium text-slate-300 sm:text-sm">
+                                    <Check aria-hidden="true" className="h-4 w-4 text-cyan-300" />{item}
                                 </span>
                             ))}
                         </div>
