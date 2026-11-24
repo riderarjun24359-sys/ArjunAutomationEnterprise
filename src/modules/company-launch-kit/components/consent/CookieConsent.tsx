@@ -35,8 +35,8 @@ export function CookieConsent() {
         <>
             {showBanner ? (
                 <div role="dialog" aria-modal="true" aria-labelledby="cookie-consent-title" aria-describedby="cookie-consent-body"
-                    className="fixed inset-x-2 bottom-[4.75rem] z-[60] border border-slate-200 bg-white shadow-xl sm:inset-x-4 sm:bottom-4 sm:rounded-2xl">
-                    <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:py-6">
+                    className="fixed inset-x-3 bottom-[5.25rem] z-[80] rounded-2xl border border-slate-200/90 bg-white/95 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.32)] backdrop-blur-xl sm:inset-x-6 sm:bottom-6">
+                    <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-7 sm:py-6">
                         <div className="min-w-0">
                             <h2 id="cookie-consent-title" className="text-sm font-semibold text-slate-950">We use cookies</h2>
                             <p id="cookie-consent-body" className="mt-1.5 max-w-2xl text-sm leading-relaxed text-slate-600">
