@@ -1,4 +1,5 @@
 name: Cloudflare Production Deploy
+# Re-trigger production deployment after Cloudflare credentials were configured.
 
 on:
   workflow_dispatch:
