@@ -26,5 +26,15 @@
     "images": {
       "binding": "IMAGES"
     }
-  }
+  },
+  "routes": [
+    {
+      "pattern": "arjunautomations.com/*",
+      "zone_name": "arjunautomations.com"
+    },
+    {
+      "pattern": "www.arjunautomations.com/*",
+      "zone_name": "arjunautomations.com"
+    }
+  ]
 }
