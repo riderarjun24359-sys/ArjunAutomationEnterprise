@@ -110,6 +110,27 @@ describe("writeConsent", () => {
         expect(readConsent()?.analytics).toBe("denied");
     });
 
+    it("dismisses the banner when reads work but localStorage writes are blocked", () => {
+        const readableStorage = window.localStorage;
+        Object.defineProperty(window, "localStorage", {
+            configurable: true,
+            get() {
+                return {
+                    getItem: (key: string) => readableStorage.getItem(key),
+                    setItem() { throw new Error("storage writes blocked"); },
+                    removeItem: (key: string) => readableStorage.removeItem(key),
+                    clear: () => readableStorage.clear(),
+                    key: (index: number) => readableStorage.key(index),
+                    get length() { return readableStorage.length; },
+                } as Storage;
+            },
+        });
+
+        writeConsent("reject");
+        expect(readConsent()?.analytics).toBe("denied");
+        expect(readConsent()?.marketing).toBe("denied");
+    });
+
     it("keeps the visitor choice for the current page when localStorage is blocked", () => {
         Object.defineProperty(window, "localStorage", {
             configurable: true,
