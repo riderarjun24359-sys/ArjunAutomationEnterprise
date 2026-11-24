@@ -131,7 +131,6 @@ export async function createPriyaOutboundCall(
                 call_purpose: input.variables.call_purpose,
                 preferred_language: input.variables.preferred_language ?? "auto",
                 call_event_id: callEventId,
-                phone_number: input.phoneNumber,
                 agent: "priya",
             },
         });
