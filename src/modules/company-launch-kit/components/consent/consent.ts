@@ -48,7 +48,16 @@ export function readConsent(): ConsentState | null {
         return memoryFallback;
     }
 
-    if (raw === cache.raw) return cache.value;
+    if (raw === cache.raw) {
+        // localStorage may be readable while writes are blocked. In that case
+        // raw stays null and the in-memory choice must win over the null cache.
+        if (raw === null && memoryFallback) return memoryFallback;
+        return cache.value;
+    }
+
+    // A previously persisted choice was externally cleared (e.g. browser
+    // site-data reset). Do not keep an obsolete in-memory decision alive.
+    if (raw === null) memoryFallback = null;
 
     let value: ConsentState | null = null;
     if (raw) {
