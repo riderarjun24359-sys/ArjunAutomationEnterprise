@@ -18,6 +18,7 @@ import {
 import { MarketingStructuredData } from "@/src/modules/company-launch-kit/components/MarketingStructuredData";
 import { buildFaqJsonLd, buildMetadata } from "@/src/lib/seo";
 import { PROJECT_PRICING } from "@/src/modules/company-launch-kit/data/pricing";
+import { ParticleField } from "@/src/modules/company-launch-kit/components/premium/ui/ParticleField";
 
 const PAGE = {
     title: "Affordable Websites, Automation & Business Software Across India",
