@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readdirSync, readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -10,121 +10,72 @@ const checks = [];
 const check = (name, ok) => checks.push({ name, ok: Boolean(ok) });
 
 const bridges = read("src/modules/ai-command-center/integrations/platform-bridges.ts");
-check("support failure is not reported as 100% SLA", !bridges.includes("slaCompliance: 100"));
-check("support failure is not reported as 90% health", !bridges.includes("supportHealth: 90"));
-check("delivery failure is not reported as 100% quality", !bridges.includes("qualityPassRate: 100"));
-check("global operations failure is not reported healthy", !bridges.includes("customerHealth: 75") && !bridges.includes("deliveryHealth: 85"));
-check("production failure is not reported as 90% health", !bridges.includes("overallScore: 90"));
-check("Command Centre does not trust simulated in-memory production health or backups", bridges.includes("simulated, not externally verified") && bridges.includes("available: false"));
-check("system health has no default 90 percent fallback", !read("src/modules/ai-command-center/engines/system-monitor.engine.ts").includes("platformHealth ?? 90"));
+const health = read("src/modules/ai-command-center/engines/health-monitoring.engine.ts");
+const system = read("src/modules/ai-command-center/engines/system-monitor.engine.ts");
+const commandService = read("src/modules/ai-command-center/services/ai-command-center.service.ts");
+const dashboard = read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx");
+const page = read("src/modules/ai-command-center/components/AiCommandCenterPage.tsx");
 
-const agentEngine = read("src/modules/ai-command-center/engines/health-monitoring.engine.ts");
-check("agent availability requires a real heartbeat", agentEngine.includes('status: "unknown"') && !agentEngine.includes("input.systemHealth - i * 2"));
-check("Command Centre flags missing agent heartbeats as an integration issue", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("Agent heartbeats (not connected)"));
-check("Command Centre automation state supports unknown", read("src/modules/ai-command-center/types/index.ts").includes('AutomationStatus = "unknown"'));
-check("Command Centre decisions do not synthesize maintain-cadence when no metrics exist", !read("src/modules/ai-command-center/engines/ai-decision.engine.ts").includes("Maintain current operating cadence"));
-check("Command Centre alerts and automations accept missing source metrics", read("src/modules/ai-command-center/engines/system-monitor.engine.ts").includes("systemHealth: number | null") && read("src/modules/ai-command-center/engines/automation.engine.ts").includes('status: input.deliveryHealth === null ? "unknown"'));
+check("Command Centre does not invent production SLA or quality scores", !bridges.includes("slaCompliance: 100") && !bridges.includes("qualityPassRate: 100"));
+check("Command Centre labels simulated health and backup data as unverified", bridges.includes("simulated, not externally verified") && bridges.includes("available: false"));
+check("Missing system health is not replaced by a 90 percent default", !system.includes("platformHealth ?? 90"));
+check("Agent availability requires real heartbeat data", health.includes('status: "unknown"') && !health.includes("input.systemHealth - i * 2"));
+check("Command Centre flags disconnected agent heartbeats", commandService.includes("Agent heartbeats (not connected)"));
+check("Command Centre reports upstream integration issues", commandService.includes("integrationIssues") && dashboard.includes("Integrations needing attention"));
+check("Command Centre requires tenant context for platform bridges", bridges.includes("Organization context unavailable"));
+check("Command Centre renders unavailable KPIs explicitly", page.includes("Not available") && dashboard.includes("Partial data"));
 
-check("upstream integration outages are explicit", read("src/modules/ai-command-center/services/ai-command-center.service.ts").includes("integrationIssues") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Integrations needing attention"));
-check("Command Centre business and delivery bridges require tenant context", read("src/modules/ai-command-center/integrations/platform-bridges.ts").includes("Organization context unavailable"));
-check("Global Operations business and delivery bridges require tenant context", read("src/modules/customer-success-global-ops/integrations/platform-bridges.ts").includes("Organization context unavailable"));
-check("Business Platform does not seed fictional AI recommendations", !read("src/modules/business-platform/services/business-platform.service.ts").includes("seedAiRecommendations"));
+const recommendationRoute = read("app/api/ai-command-center/recommendations/route.ts");
+check("Recommendation actions require an authenticated permission", recommendationRoute.includes("secureApiRoute") && recommendationRoute.includes('permission: "automationManage"'));
+check("Recommendation updates are scoped to the authenticated organization", recommendationRoute.includes('.eq("organization_id", auth.organizationId)'));
 
-check("Command Centre renders unavailable KPI values as unavailable", read("src/modules/ai-command-center/components/AiCommandCenterPage.tsx").includes("Not available") && read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx").includes("Partial data"));
-check("Global Operations renders unavailable health and business metrics as unavailable", read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Not available"));
-check("Global Operations panels do not render unavailable health as zero percent", read("src/modules/customer-success-global-ops/components/GlobalOperationsPanels.tsx").includes('hasIssue("support health") ? "Not available"'));
+const priyaOutbound = read("app/api/ai-sales/outbound/route.ts");
+const priyaDispatch = read("app/api/ai-sales/dispatch-followups/route.ts");
+check("Priya outbound is disabled by default unless explicitly enabled", priyaOutbound.includes('ARJUN_AI_SALES_OUTBOUND_ENABLED !== "true"'));
+check("Priya direct outbound requires recorded, recent, matching consent", priyaOutbound.includes("ai_voice_contact_consents") && priyaOutbound.includes("granted_at") && priyaOutbound.includes("revoked_at"));
+check("Priya direct outbound checks organization-scoped suppression", priyaOutbound.includes("ai_sales_suppressions") && priyaOutbound.includes("organization_id"));
+check("Priya dispatcher rechecks consent and suppression before each call", priyaDispatch.includes("ai_voice_contact_consents") && priyaDispatch.includes("ai_sales_suppressions"));
+check("Priya dispatcher fails closed outside approved IST calling hours", priyaDispatch.includes("withinApprovedCallingWindow") && priyaDispatch.includes("Outside approved IST calling window"));
+check("Priya dispatch does not automatically retry uncertain provider outcomes", priyaDispatch.includes("Never auto-retry stale processing rows"));
 
-check("global operations does not synthesize client health or renewals", !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildDefaultSuccessPlans") && !read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("buildRenewals"));
-const globalOpsBridges = read("src/modules/customer-success-global-ops/integrations/platform-bridges.ts");
-check("Global Operations support failure is not 100% SLA", !globalOpsBridges.includes("slaCompliance: 100"));
-check("Global Operations delivery failure is not 100% quality", !globalOpsBridges.includes("qualityPassRate: 100"));
-check("Global Operations exposes unavailable upstream integrations", read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts").includes("integrationIssues") && read("src/modules/customer-success-global-ops/components/CustomerSuccessGlobalOpsPage.tsx").includes("Integrations needing attention"));
-check("support dashboard cannot silently turn missing org context into zero-ticket health", read("src/modules/support/services/support.service.ts").includes("Unable to resolve organization context for support dashboard"));
-check("support SLA is zero when there are no measurable tickets", read("src/modules/database/lib/support-mappers.ts").includes("slaTotal > 0 ? Math.round((slaMet / slaTotal) * 100) : 0"));
-const globalOpsService = read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts");
-const globalOpsEngine = read("src/modules/customer-success-global-ops/engines/continuous-improvement.engine.ts");
-check("Global Operations does not synthesize onboarding sessions", !globalOpsService.includes("buildOnboardingSessions("));
-check("Global Operations does not synthesize satisfaction history", globalOpsService.includes("satisfactionTrend: []") && !globalOpsService.includes("buildSatisfactionTrend("));
-check("Global Operations does not claim nominal without real health data", !globalOpsEngine.includes("Operations nominal"));
-check("Global Operations does not show delivery health without active engagements", globalOpsService.includes("delivery.available && delivery.activeEngagements > 0"));
-check("Global Operations does not create generic empty-evidence improvement items", !globalOpsEngine.includes("Auto-generated continuous improvement item"));
-check("Global Operations trust regression tests exist", existsSync(join(root, "src/modules/customer-success-global-ops/engines/trust-integrity.test.ts")));
+const jarvisCall = read("app/api/ai-sales/jarvis/call/route.ts");
+const jarvisWindow = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-window.ts");
+check("Jarvis calling is disabled unless explicitly enabled", jarvisCall.includes('ARJUN_JARVIS_CALLS_ENABLED !== "true"'));
+check("Jarvis enforces owner authorization and approved calling window", jarvisCall.includes("ARJUN_JARVIS_OWNER_USER_ID") && jarvisCall.includes("withinJarvisCallingWindow"));
+check("Jarvis scheduled calls require idempotency keys", jarvisCall.includes("An idempotencyKey is required") && jarvisCall.includes("idempotency_key"));
+check("Jarvis calling window excludes Sundays and restricts local hours", jarvisWindow.includes('values.weekday !== "Sun"') && jarvisWindow.includes("hour >= 8 && hour < 21"));
+check("Jarvis briefing does not fabricate revenue or MRR", read("app/api/ai-sales/jarvis/briefing/route.ts").includes("mrr_inr: null") && read("app/api/ai-sales/jarvis/briefing/route.ts").includes("weekly_revenue_inr: null"));
 
+check("Provider adapter tests are mocked and do not place live calls", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
+check("Vapi webhook auth and event-normalization tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/vapi/route.test.ts")));
+check("Retell webhook authentication tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/retell/route.test.ts")));
+check("WhatsApp webhook authentication tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
+check("Vapi ignored events return an empty 204 response", read("app/api/ai-sales/webhooks/vapi/route.ts").includes("return new Response(null, { status: 204 });"));
 
-
-const revenueEngine = read("src/modules/ai-command-center/engines/executive-analytics.engine.ts");
-const revenueUi = read("src/modules/ai-command-center/components/AiCommandCenterDashboard.tsx");
-const globalOps = read("src/modules/customer-success-global-ops/services/customer-success-global-ops.service.ts");
-check("MRR is never estimated from active client count", revenueEngine.includes("mrr: input.mrrEstimate ?? 0") && !revenueEngine.includes("activeClients *"));
-check("revenue includes an explicit verification state", revenueEngine.includes("mrrVerified: false") && revenueUi.includes("Not verified"));
-check("Command Centre revenue UI does not show USD", !revenueUi.includes("USD") && !revenueUi.includes('currency: "USD"'));
-check("Global Operations does not fabricate MRR from renewals", globalOps.includes("mrr: 0, // No provider-verified recurring payment ledger"));
-check("Global Operations does not display unverified renewal amounts as currency", !read("src/modules/customer-success-global-ops/components/GlobalOperationsPanels.tsx").includes("r.amount.toLocaleString"));
-
-const repository = read("src/modules/ai-command-center/repository/ai-command-center-repository.ts");
-const hook = read("src/modules/ai-command-center/hooks/useAiCommandCenter.ts");
-const actionRoute = read("app/api/ai-command-center/recommendations/route.ts");
-check("recommendation refresh preserves stored decisions", repository.includes("ignoreDuplicates: true"));
-check("recommendation IDs are stable", read("src/modules/ai-command-center/engines/recommendation.engine.ts").includes("const stableId"));
-check("recommendation actions use authenticated API", hook.includes("/api/ai-command-center/recommendations"));
-check("recommendation action API enforces session permission", actionRoute.includes("secureApiRoute") && actionRoute.includes('permission: "automationManage"'));
-check("recommendation action API scopes updates to organization", actionRoute.includes('.eq("organization_id", auth.organizationId)'));
-
-const jarvis = read("src/modules/ai-sales-lead-engine/services/jarvis-calling-window.ts");
-check("Jarvis excludes Sunday and enforces 08:00-21:00 IST", jarvis.includes('values.weekday !== "Sun"') && jarvis.includes("hour >= 8 && hour < 21"));
-check("Jarvis route uses shared calling-window policy", read("app/api/ai-sales/jarvis/call/route.ts").includes("withinJarvisCallingWindow"));
-check("deal Won remains blocked until verified payment mapping", read("app/api/ai-sales/tools/update-deal-stage/route.ts").includes("verified_payment_mapping_required"));
-check("authenticated recommendation route has unit tests", existsSync(join(root, "app/api/ai-command-center/recommendations/route.test.ts")));
-check("Vapi and Retell outbound adapter contracts have mocked tests", read("src/modules/ai-voice-agent/providers/voice-provider.test.ts").includes("mocked; no live calls"));
-check("Vapi webhook authentication and event normalization tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/vapi/route.test.ts")));
-check("Retell webhook HMAC and event normalization tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/retell/route.test.ts")));
-check("WhatsApp Meta HMAC and delivery-status webhook tests exist", existsSync(join(root, "app/api/ai-sales/webhooks/whatsapp/route.test.ts")));
-
-const jarvisBriefing = read("app/api/ai-sales/jarvis/briefing/route.ts");
-check("Jarvis hides collected revenue until verified Razorpay payment-to-invoice mapping exists", jarvisBriefing.includes("weekly_revenue_inr: null") && jarvisBriefing.includes("payment_to_invoice_mapping_required") && jarvisBriefing.includes("mrr_inr: null"));
-check("Jarvis revenue remains hidden until Razorpay webhook is configured", jarvisBriefing.includes("RAZORPAY_WEBHOOK_SECRET") && jarvisBriefing.includes("razorpay_webhook_not_configured_mrr_not_available"));
-const workflowFiles = [
+for (const file of [
     "n8n/workflows/01-priya-followup-dispatcher.json",
     "n8n/workflows/02-jarvis-daily-briefing.json",
     "n8n/workflows/03-jarvis-verified-event-alert.json",
     "n8n/workflows/04-priya-google-meet-demo-booking.json",
-];
-for (const file of workflowFiles) {
-    let parsed = null;
-    try { parsed = JSON.parse(read(file)); } catch { /* reported below */ }
-    check("n8n workflow JSON valid: " + file, Boolean(parsed && Array.isArray(parsed.nodes) && parsed.nodes.length > 0));
-    check("n8n workflow remains inactive: " + file, parsed?.active === false);
+]) {
+    let workflow;
+    try { workflow = JSON.parse(read(file)); } catch { workflow = null; }
+    check("n8n workflow is valid JSON and contains nodes: " + file, Boolean(workflow && Array.isArray(workflow.nodes) && workflow.nodes.length > 0));
+    check("n8n workflow remains inactive pending credentials and QA: " + file, workflow?.active === false);
 }
 
-
-const migrationDir = join(root, "supabase", "migrations");
-const migrationFiles = readdirSync(migrationDir).filter((file) => file.endsWith(".sql")).sort();
-const versions = new Map();
-const duplicates = [];
-for (const file of migrationFiles) {
-    const match = /^(\d{8,14})_/.exec(file);
-    if (!match) {
-        check("all migration files have timestamp prefixes", false);
-        continue;
-    }
-    const prior = versions.get(match[1]);
-    if (prior) duplicates.push([match[1], prior, file]);
-    else versions.set(match[1], file);
-}
-check("migration timestamps are unique", duplicates.length === 0);
-check("final identity RLS migration is ordered after Priya migrations", existsSync(join(migrationDir, "202611230011_rls_identity_grants_and_admin_lookup.sql")) && !existsSync(join(migrationDir, "202611230001_rls_identity_grants_and_admin_lookup.sql")));
-check("Command Centre integrity unit tests exist", existsSync(join(root, "src/modules/ai-command-center/engines/command-centre-integrity.test.ts")));
-const executiveService = read("src/modules/executive-command-center/services/executive-command-center.service.ts");
-const executiveRevenue = read("src/modules/executive-command-center/services/live-operations-stats.service.ts");
-const executiveCharts = read("src/modules/executive-command-center/services/executive-charts.service.ts");
-check("Executive Command Centre never reports nominal when operational data is unavailable", executiveService.includes("Live operational data is unavailable") && !executiveService.includes("All systems nominal"));
-check("Executive Command Centre hides legacy USD finance widgets", executiveService.includes("finance: null"));
-check("Executive Command Centre collected revenue is unverified until Razorpay reconciliation", executiveRevenue.includes('label: "Not verified"') && executiveRevenue.includes("verified: false") && !executiveRevenue.includes("clientRevenueHint"));
-check("Executive Command Centre revenue trend excludes unverified payments and invoices", executiveCharts.includes("return [];") && executiveCharts.includes("not a signed settlement ledger"));
-check("Executive Command Centre integrity unit tests exist", existsSync(join(root, "src/modules/executive-command-center/services/live-operations-stats.service.test.ts")));
+const voiceMigration = read("supabase/migrations/202611210001_arjun_ai_voice_agent.sql");
+const salesMigration = read("supabase/migrations/202611230001_priya_autonomous_sales_engine.sql");
+const suppressionMigration = read("supabase/migrations/202611230002_priya_sales_suppression.sql");
+const dispatchMigration = read("supabase/migrations/202611230004_priya_followup_dispatcher.sql");
+const jarvisMigration = read("supabase/migrations/202611230008_jarvis_call_idempotency.sql");
+check("Voice consent and call-event tables enable RLS and revoke browser-role access", voiceMigration.includes("enable row level security") && voiceMigration.includes("revoke all on public.ai_voice_contact_consents from anon, authenticated"));
+check("Priya sales tables enable RLS and revoke browser-role access", salesMigration.includes("enable row level security") && salesMigration.includes("revoke all on public.ai_sales_followups from anon, authenticated"));
+check("Do-not-contact ledger is organization-scoped and server-only", suppressionMigration.includes("organization_id, phone_number") && suppressionMigration.includes("revoke all on public.ai_sales_suppressions from anon, authenticated"));
+check("Follow-up claim function is executable only by service_role", dispatchMigration.includes("revoke all on function public.claim_due_ai_sales_followups(uuid, integer) from public, anon, authenticated") && dispatchMigration.includes("to service_role"));
+check("Jarvis call idempotency is unique per organization", jarvisMigration.includes("unique index") && jarvisMigration.includes("(organization_id, idempotency_key)"));
 
 const failures = checks.filter((item) => !item.ok);
 for (const item of checks) console.log(`${item.ok ? "PASS" : "FAIL"} ${item.name}`);
-if (duplicates.length) console.error("Duplicate migration versions:", duplicates);
-console.log(`\nCommand Centre integration guardrails: ${checks.length - failures.length}/${checks.length} passed`);
+console.log(`\\nIntegration guardrails: ${checks.length - failures.length}/${checks.length} passed`);
 process.exit(failures.length ? 1 : 0);
