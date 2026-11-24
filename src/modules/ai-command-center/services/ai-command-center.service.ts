@@ -48,7 +48,7 @@ export class AiCommandCenterService {
             support.available ? null : "Support",
             delivery.available ? null : "Delivery Engine",
             globalOps.available ? null : "Customer Success Global Operations",
-            ...(globalOps.integrationIssues ?? []).map((item) => `Global Operations: ${item}`),
+            ...(globalOps.integrationIssues ?? []).map((item: string) => `Global Operations: ${item}`),
             production.available ? null : "Production Readiness",
         ].filter((item): item is string => Boolean(item));
         const customerHealthAvailable = !integrationIssues.some((item) => item.toLowerCase().includes("customer health"));
