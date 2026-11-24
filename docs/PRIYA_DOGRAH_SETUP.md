@@ -64,11 +64,10 @@ For outbound workflows, add an HTTP tool/node early in the connected-call path n
 ```json
 {
   "callEventId": "{{initial_context.call_event_id}}",
-  "workflowRunId": "{{workflow_run_id}}",
-  "phoneNumber": "{{initial_context.phone_number}}"
+  "workflowRunId": "{{workflow_run_id}}"
 }
 ```
-- This changes only the matching, pre-created outbound call event from queued to connected. If it fails, the workflow must not claim that CRM tracking is active.
+- This changes only the matching, pre-created outbound call event from queued to connected, matched by the call-event UUID, organization and Dograh workflow run ID. The destination phone number is deliberately kept out of Dograh initial context and is not sent to this endpoint. If it fails, the workflow must not claim that CRM tracking is active.
 
 Add an HTTP tool named `record_requested_callback_consent`:
 - URL: `https://YOUR-ARJUN-APP-HOST/api/ai-sales/tools/record-consent`
