@@ -18,6 +18,17 @@ describe("Vapi Priya webhook", () => {
         expect(response.status).toBe(401);
     });
 
+    it("returns an empty 204 for unrelated provider events", async () => {
+        vi.stubEnv("VAPI_PRIYA_WEBHOOK_SECRET", "expected-secret");
+        const response = await POST(new Request("http://localhost/api/ai-sales/webhooks/vapi", {
+            method: "POST",
+            headers: { "x-vapi-secret": "expected-secret" },
+            body: JSON.stringify({ message: { type: "assistant-request" } }),
+        }));
+        expect(response.status).toBe(204);
+        expect(await response.text()).toBe("");
+    });
+
     it("authenticates and forwards a normalized inbound lifecycle event", async () => {
         vi.stubEnv("VAPI_PRIYA_WEBHOOK_SECRET", "expected-secret");
         vi.stubEnv("PRIYA_SALES_WEBHOOK_SECRET", "internal-secret");
