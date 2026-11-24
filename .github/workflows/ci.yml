@@ -2,7 +2,7 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, integration/command-centre-priya-jarvis-clean]
   push:
     branches: [main]
   workflow_dispatch:
