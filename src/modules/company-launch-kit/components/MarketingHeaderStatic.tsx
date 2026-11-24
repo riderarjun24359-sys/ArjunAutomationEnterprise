@@ -18,9 +18,8 @@ export function MarketingHeaderStatic() {
     return (
         <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
             <div className="mx-auto flex min-h-[76px] w-full max-w-7xl items-center justify-between gap-5 px-5 sm:px-8">
-                <Link href="/" aria-label="Arjun Automations home" className="flex shrink-0 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-                    <BrandLogo variant="horizontal" priority className="max-h-9 w-auto" />
-                    <span className="text-base font-bold tracking-tight text-slate-950 sm:text-lg">Arjun Automations</span>
+                <Link href="/" aria-label="Arjun Automations home" className="flex min-w-0 shrink-0 items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                    <BrandLogo variant="horizontal" priority className="h-10 w-auto max-w-[min(15rem,52vw)] object-contain sm:h-11" />
                 </Link>
 
                 <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:flex">
