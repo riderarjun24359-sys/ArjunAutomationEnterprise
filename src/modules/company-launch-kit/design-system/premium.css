@@ -408,3 +408,158 @@
         transform: none !important;
     }
 }
+
+
+/* ==================================================================
+   2026 cinematic electric-blue public website system
+   Scoped to the marketing surface; authenticated app shell is untouched.
+   ================================================================== */
+.premium-theme {
+    --aa-ink: #061326;
+    --aa-panel: rgba(11, 31, 58, .78);
+    --aa-panel-strong: rgba(12, 39, 72, .92);
+    --aa-line: rgba(111, 190, 255, .19);
+    --aa-cyan: #39d8ff;
+    --aa-blue: #287bff;
+    --aa-muted: #a8c2df;
+    background: var(--aa-ink);
+    color: #f4f9ff;
+}
+.aa-page-content {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    min-height: 60vh;
+    color: #f4f9ff;
+    background:
+      radial-gradient(ellipse 75% 30% at 50% 0%, rgba(0,132,255,.16), transparent 70%),
+      linear-gradient(180deg, #061326 0%, #081a32 55%, #061326 100%);
+}
+.aa-page-content::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    opacity: .24;
+    background-image: linear-gradient(rgba(108,177,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(108,177,255,.08) 1px, transparent 1px);
+    background-size: 58px 58px;
+    mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+.aa-site-header {
+    background: rgba(5, 18, 36, .82) !important;
+    border-color: rgba(119,190,255,.16) !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,.16);
+    backdrop-filter: blur(22px);
+}
+.aa-site-header a { color: #e8f4ff; }
+.aa-site-header nav a:hover { background: rgba(42,139,255,.13) !important; color: #7de5ff !important; }
+.aa-site-header details nav {
+    background: #0a1e38 !important;
+    border-color: var(--aa-line) !important;
+    box-shadow: 0 24px 70px rgba(0,0,0,.45) !important;
+}
+.aa-home-hero { min-height: min(820px, calc(100svh - 72px)); }
+.aa-hero-atmosphere { animation: aa-aurora-drift 18s ease-in-out infinite alternate; }
+.aa-workflow-panel {
+    position: relative;
+    overflow: hidden;
+    color: #edf7ff;
+    border-color: rgba(125,202,255,.3) !important;
+    background: linear-gradient(145deg, rgba(12,43,77,.82), rgba(5,20,42,.86)) !important;
+    box-shadow: 0 30px 100px -42px rgba(0,153,255,.52), inset 0 1px rgba(255,255,255,.12) !important;
+    backdrop-filter: blur(24px);
+    animation: aa-panel-float 8s ease-in-out infinite;
+}
+.aa-workflow-panel::after {
+    content: "";
+    position: absolute;
+    inset: -60% -20%;
+    pointer-events: none;
+    background: linear-gradient(110deg, transparent 40%, rgba(76,211,255,.08) 50%, transparent 60%);
+    transform: translateX(-35%);
+    animation: aa-sheen 9s ease-in-out infinite;
+}
+.aa-workflow-panel h2, .aa-workflow-panel p { color: inherit; }
+.aa-workflow-panel .text-slate-500 { color: #a7c4e4 !important; }
+.aa-workflow-panel .text-slate-950, .aa-workflow-panel .text-slate-900 { color: #f4f9ff !important; }
+.aa-workflow-panel .border-slate-100 { border-color: rgba(143,198,245,.18) !important; }
+.aa-workflow-step {
+    position: relative;
+    z-index: 1;
+    border-color: rgba(116,190,255,.2) !important;
+    background: linear-gradient(145deg, rgba(21,65,111,.68), rgba(8,31,59,.78)) !important;
+    transition: transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s, box-shadow .35s;
+}
+.aa-workflow-step:hover {
+    transform: translateY(-6px);
+    border-color: rgba(75,215,255,.65) !important;
+    box-shadow: 0 14px 38px rgba(0,145,255,.18);
+}
+.aa-workflow-step svg { color: #5ce2ff !important; }
+.aa-page-content .bg-white,
+.aa-page-content .bg-slate-50,
+.aa-page-content .bg-slate-100 {
+    background: linear-gradient(145deg, rgba(14,39,70,.92), rgba(8,27,52,.92)) !important;
+    border-color: var(--aa-line);
+    color: #eff7ff;
+}
+.aa-page-content .text-slate-950,
+.aa-page-content .text-slate-900,
+.aa-page-content .text-slate-800,
+.aa-page-content .text-slate-700 { color: #edf6ff !important; }
+.aa-page-content .text-slate-600,
+.aa-page-content .text-slate-500,
+.aa-page-content .text-slate-400 { color: var(--aa-muted) !important; }
+.aa-page-content .border-slate-200,
+.aa-page-content .border-slate-300,
+.aa-page-content .border-slate-100 { border-color: var(--aa-line) !important; }
+.aa-page-content .bg-blue-50,
+.aa-page-content .bg-blue-50\/50 { background: rgba(28,116,231,.16) !important; }
+.aa-page-content .text-blue-700,
+.aa-page-content .text-blue-800 { color: #72dfff !important; }
+.aa-page-content a.bg-blue-600,
+.aa-page-content button.bg-blue-600 {
+    background: linear-gradient(105deg, #1268ef, #078fdc) !important;
+    box-shadow: 0 10px 28px rgba(0,125,255,.24);
+}
+.aa-page-content a.bg-blue-600:hover,
+.aa-page-content button.bg-blue-600:hover { filter: brightness(1.12); }
+.aa-page-content input,
+.aa-page-content textarea,
+.aa-page-content select {
+    color: #f2f8ff;
+    background: rgba(4,19,38,.72);
+    border-color: rgba(125,190,245,.28);
+}
+.aa-page-content input::placeholder,
+.aa-page-content textarea::placeholder { color: #829dbb; }
+.aa-page-content :focus-visible { outline-color: #54dfff; }
+.aa-page-content article,
+.aa-page-content aside,
+.aa-page-content [class*="rounded-2xl"][class*="border"] {
+    transition: border-color .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.2,.8,.2,1);
+}
+.aa-page-content article:hover,
+.aa-page-content aside:hover {
+    border-color: rgba(71,190,255,.42);
+    box-shadow: 0 18px 55px -35px rgba(0,145,255,.34);
+}
+.aa-page-content section { scroll-margin-top: 6rem; }
+.aa-page-content .bg-slate-900,
+.aa-page-content .bg-slate-950 { background: #041020 !important; }
+@keyframes aa-aurora-drift {
+  0% { background-position: 0% 0%, 0% 0%; filter: hue-rotate(0deg); }
+  100% { background-position: 100% 80%, 0% 0%; filter: hue-rotate(12deg); }
+}
+@keyframes aa-panel-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes aa-sheen { 0%,55% { transform: translateX(-45%); opacity: 0; } 70% { opacity: 1; } 100% { transform: translateX(45%); opacity: 0; } }
+@media (max-width: 640px) {
+  .aa-home-hero { min-height: auto; }
+  .aa-workflow-panel { animation: none; }
+  .aa-page-content::before { background-size: 38px 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aa-hero-atmosphere, .aa-workflow-panel, .aa-workflow-panel::after { animation: none !important; }
+  .aa-workflow-step, .aa-page-content article, .aa-page-content aside { transition: none !important; }
+}
