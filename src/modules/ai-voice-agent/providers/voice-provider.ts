@@ -74,7 +74,7 @@ async function createDograhCall(input: {
     initialContext: Record<string, string>;
 }): Promise<OutboundVoiceCallResult> {
     const apiKey = requiredEnv("DOGRAH_API_KEY");
-    const baseUrl = (process.env.DOGRAH_API_URL ?? "http://localhost:8000").trim().replace(/\\/+$/, "");
+    const baseUrl = (process.env.DOGRAH_API_URL ?? "http://localhost:8000").trim().replace(/\/+$/, "");
     const workflowUuid = input.workflowUuid.trim();
     if (!workflowUuid) throw new Error("Missing server configuration: Dograh workflow UUID");
 
@@ -84,7 +84,7 @@ async function createDograhCall(input: {
         initial_context: input.initialContext,
     };
     if (telephonyConfigId) {
-        if (!/^\\d+$/.test(telephonyConfigId)) {
+        if (!/^\d+$/.test(telephonyConfigId)) {
             throw new Error("Invalid server configuration: DOGRAH_TELEPHONY_CONFIGURATION_ID");
         }
         payload.telephony_configuration_id = Number(telephonyConfigId);
