@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { COMPANY_PROFILE, formatAddress } from "@/src/config/company-profile";
+import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 
 const NAV_LINKS = [
     { label: "Services", href: "/services" },
@@ -24,11 +25,10 @@ export function MarketingFooterStatic() {
             <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-14 sm:px-8 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] lg:gap-16 lg:py-16">
                 <div>
                     <Link href="/" className="inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
-                        <span aria-hidden="true" className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-sm font-bold text-white">AA</span>
-                        <span className="text-lg font-bold tracking-tight text-white">Arjun Automations</span>
+                        <BrandLogo variant="horizontal" className="h-10 w-auto max-w-[15rem] brightness-0 invert" />
                     </Link>
                     <p className="mt-5 max-w-md text-sm leading-7 text-slate-400">
-                        Affordable websites, WhatsApp automation and practical business software for shops and businesses across India.
+                        Practical websites, AI and WhatsApp automation, and custom business software for shops, traders, clinics, schools and growing teams across India.
                     </p>
                     <address className="mt-5 flex flex-col gap-3 text-sm not-italic text-slate-400">
                         <a className="w-fit transition hover:text-white" href={`mailto:${COMPANY_PROFILE.emails.sales}`}>{COMPANY_PROFILE.emails.sales}</a>
