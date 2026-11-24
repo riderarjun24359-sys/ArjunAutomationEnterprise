@@ -11,8 +11,8 @@ export type AlertSeverity = "low" | "medium" | "high" | "critical";
 export type AlertStatus = "open" | "acknowledged" | "resolved";
 export type RecommendationStatus = "pending" | "accepted" | "dismissed" | "executed";
 export type DecisionStatus = "proposed" | "approved" | "rejected" | "executed";
-export type AutomationStatus = "idle" | "running" | "succeeded" | "failed";
-export type AgentStatus = "idle" | "active" | "processing" | "degraded";
+export type AutomationStatus = "unknown" | "idle" | "running" | "succeeded" | "failed";
+export type AgentStatus = "unknown" | "idle" | "active" | "processing" | "degraded";
 
 export interface AccAlert {
     id: string;
@@ -64,6 +64,7 @@ export interface AccAgentStatus {
 
 export interface RevenueSummary {
     mrr: number;
+    mrrVerified: boolean;
     openInvoices: number;
     renewalsDue: number;
     activeClients: number;
@@ -96,5 +97,6 @@ export interface AiCommandCenterDashboard {
     decisions: AccDecision[];
     automations: AccAutomation[];
     overallScore: number;
+    integrationIssues: string[];
     fetchedAt: string;
 }

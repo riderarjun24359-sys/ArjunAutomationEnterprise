@@ -8,6 +8,7 @@ import { PageTransition } from "@/src/design-os/motion/components/PageTransition
 import { SkeletonLoader } from "@/src/design-os/motion/components/SkeletonLoader";
 import { ASLE_TAB_LIST, ASLE_TABS, ASLE_THEME, type AsleTab } from "../constants";
 import { useAiSalesLeadEngine } from "../hooks/useAiSalesLeadEngine";
+import { JarvisExecutiveHud } from "./JarvisExecutiveHud";
 import {
     AnalyticsPanel,
     AutomationIntegrationsPanel,
@@ -80,6 +81,8 @@ export function AiSalesLeadEnginePage() {
                     <span className="text-xs text-[var(--dos-text-tertiary)]">Fetched {snapshot.fetchedAt}</span>
                 </div>
             </div>
+
+            <JarvisExecutiveHud />
 
             {error ? (
                 <Card>

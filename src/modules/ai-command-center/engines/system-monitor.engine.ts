@@ -7,20 +7,20 @@ export function computeSystemHealth(input: {
     openErrors?: number;
     openAlerts?: number;
 }): number {
-    const base = input.productionScore ?? input.platformHealth ?? 90;
+    const base = input.productionScore ?? input.platformHealth ?? 0;
     const penalty = (input.openErrors ?? 0) * 3 + (input.openAlerts ?? 0) * 4;
     return clampScore(base - penalty);
 }
 
 export function buildSystemAlerts(input: {
-    systemHealth: number;
-    openTickets: number;
-    deliveryHealth: number;
-    productionAlerts?: number;
+    systemHealth: number | null;
+    openTickets: number | null;
+    deliveryHealth: number | null;
+    productionAlerts?: number | null;
 }): AccAlert[] {
     const alerts: AccAlert[] = [];
     const now = new Date().toISOString();
-    if (input.systemHealth < 75) {
+    if (input.systemHealth !== null && input.systemHealth < 75) {
         alerts.push({
             id: uid("alert"),
             severity: "critical",
@@ -31,7 +31,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if ((input.productionAlerts ?? 0) > 0) {
+    if (input.productionAlerts !== null && input.productionAlerts !== undefined && input.productionAlerts > 0) {
         alerts.push({
             id: uid("alert"),
             severity: "high",
@@ -42,7 +42,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if (input.openTickets > 10) {
+    if (input.openTickets !== null && input.openTickets > 10) {
         alerts.push({
             id: uid("alert"),
             severity: "medium",
@@ -53,7 +53,7 @@ export function buildSystemAlerts(input: {
             createdAt: now,
         });
     }
-    if (input.deliveryHealth < 80) {
+    if (input.deliveryHealth !== null && input.deliveryHealth < 80) {
         alerts.push({
             id: uid("alert"),
             severity: "high",

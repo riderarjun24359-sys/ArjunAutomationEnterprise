@@ -2,16 +2,16 @@ import type { AccDecision } from "../types";
 import { uid } from "./engine-utils";
 
 export function proposeDecisions(input: {
-    clientHealth: number;
-    supportSla: number;
-    deliveryHealth: number;
-    openInvoices: number;
-    renewalsDue: number;
+    clientHealth: number | null;
+    supportSla: number | null;
+    deliveryHealth: number | null;
+    openInvoices: number | null;
+    renewalsDue: number | null;
 }): AccDecision[] {
     const now = new Date().toISOString();
     const decisions: AccDecision[] = [];
 
-    if (input.clientHealth < 75) {
+    if (input.clientHealth !== null && input.clientHealth < 75) {
         decisions.push({
             id: uid("dec"),
             decisionType: "customer_recovery",
@@ -22,7 +22,7 @@ export function proposeDecisions(input: {
             createdAt: now,
         });
     }
-    if (input.supportSla < 90) {
+    if (input.supportSla !== null && input.supportSla < 90) {
         decisions.push({
             id: uid("dec"),
             decisionType: "support_rebalance",
@@ -33,7 +33,7 @@ export function proposeDecisions(input: {
             createdAt: now,
         });
     }
-    if (input.deliveryHealth < 85) {
+    if (input.deliveryHealth !== null && input.deliveryHealth < 85) {
         decisions.push({
             id: uid("dec"),
             decisionType: "delivery_quality_gate",
@@ -44,7 +44,7 @@ export function proposeDecisions(input: {
             createdAt: now,
         });
     }
-    if (input.renewalsDue > 0) {
+    if (input.renewalsDue !== null && input.renewalsDue > 0) {
         decisions.push({
             id: uid("dec"),
             decisionType: "renewal_focus",
@@ -55,24 +55,13 @@ export function proposeDecisions(input: {
             createdAt: now,
         });
     }
-    if (input.openInvoices > 5) {
+    if (input.openInvoices !== null && input.openInvoices > 5) {
         decisions.push({
             id: uid("dec"),
             decisionType: "collections",
             summary: "Escalate overdue invoice collections",
             rationale: `${input.openInvoices} open invoices impact cash-flow forecast.`,
             confidence: 0.82,
-            status: "proposed",
-            createdAt: now,
-        });
-    }
-    if (decisions.length === 0) {
-        decisions.push({
-            id: uid("dec"),
-            decisionType: "maintain_cadence",
-            summary: "Maintain current operating cadence",
-            rationale: "All primary health signals are within acceptable ranges.",
-            confidence: 0.8,
             status: "proposed",
             createdAt: now,
         });

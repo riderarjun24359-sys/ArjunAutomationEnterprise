@@ -1,10 +1,10 @@
-import { getRepositoryClient, getSelectedOrganizationId, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
+import { getRepositoryClient, mapRepositoryError } from "@/src/modules/database/lib/repository-client";
 import type { AccAlert, AccAutomation, AccDecision, AccRecommendation } from "../types";
 
 export class AiCommandCenterRepository {
     async listAlerts(orgId: string): Promise<AccAlert[]> {
         const client = getRepositoryClient();
-        if (!client || getSelectedOrganizationId() !== orgId) return [];
+        if (!client) return [];
         const { data, error } = await client
             .from("acc_alerts")
             .select("*")
@@ -25,7 +25,7 @@ export class AiCommandCenterRepository {
 
     async persistAlert(orgId: string, alert: AccAlert): Promise<void> {
         const client = getRepositoryClient();
-        if (!client || getSelectedOrganizationId() !== orgId) return;
+        if (!client) return;
         const { error } = await client.from("acc_alerts").upsert({
             id: alert.id,
             organization_id: orgId,
@@ -40,7 +40,7 @@ export class AiCommandCenterRepository {
 
     async listRecommendations(orgId: string): Promise<AccRecommendation[]> {
         const client = getRepositoryClient();
-        if (!client || getSelectedOrganizationId() !== orgId) return [];
+        if (!client) return [];
         const { data, error } = await client
             .from("acc_recommendations")
             .select("*")
@@ -60,24 +60,6 @@ export class AiCommandCenterRepository {
         }));
     }
 
-    async updateRecommendationStatus(
-        orgId: string,
-        recommendationId: string,
-        status: AccRecommendation["status"],
-    ): Promise<void> {
-        const client = getRepositoryClient();
-        if (!client || getSelectedOrganizationId() !== orgId) throw new Error("Organization context mismatch or recommendation storage unavailable");
-        const { data, error } = await client
-            .from("acc_recommendations")
-            .update({ status, updated_at: new Date().toISOString() })
-            .eq("organization_id", orgId)
-            .eq("id", recommendationId)
-            .select("id")
-            .maybeSingle();
-        mapRepositoryError(error, "updateRecommendationStatus");
-        if (!data) throw new Error("Recommendation not found in this organization");
-    }
-
     async persistRecommendation(orgId: string, rec: AccRecommendation): Promise<void> {
         const client = getRepositoryClient();
         if (!client) return;
@@ -91,7 +73,7 @@ export class AiCommandCenterRepository {
             priority: rec.priority,
             status: rec.status,
             updated_at: new Date().toISOString(),
-        });
+        }, { onConflict: "id", ignoreDuplicates: true });
         mapRepositoryError(error, "persistRecommendation");
     }
 
