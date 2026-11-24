@@ -39,7 +39,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { triggerReason: $json.body?.triggerReason || 'verified_business_event', idempotencyKey: $json.body?.idempotencyKey || $json.body?.eventId || '' } }}",
+        "jsonBody": "={{ { triggerReason: $json.body?.triggerReason || 'verified_business_event', idempotencyKey: $json.body?.idempotencyKey || $json.body?.eventId || ('verified-event-' + $execution.id) } }}",
         "options": {
           "timeout": 30000
         }
