@@ -15,7 +15,7 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
                 Skip to main content
             </a>
             <MarketingHeaderStatic />
-            <main id="main-content" className="min-h-[60vh] pb-16 sm:pb-0">
+            <main id="main-content" className="aa-page-content min-h-[60vh] pb-16 sm:pb-0">
                 {children}
             </main>
             <MarketingFooterStatic />
