@@ -186,6 +186,7 @@ export async function POST(request: Request) {
         await client.from("ai_voice_call_events")
             .update({
                 provider_attempt_id: call.providerCallId,
+                ...(call.provider === "dograh" ? { interaction_id: call.providerCallId } : {}),
                 updated_at: new Date().toISOString(),
             })
             .eq("id", callEventId)
