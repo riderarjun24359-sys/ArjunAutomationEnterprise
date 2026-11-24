@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { MarketingFooterStatic } from "@/src/modules/company-launch-kit/components/MarketingFooterStatic";
 import { MarketingHeaderStatic } from "@/src/modules/company-launch-kit/components/MarketingHeaderStatic";
 import { WhatsAppFloat } from "@/src/modules/company-launch-kit/components/WhatsAppFloat";
-import { CookieConsent } from "@/src/modules/company-launch-kit/components/consent/CookieConsent";
 import { MobileBottomBar } from "@/src/modules/company-launch-kit/components/MobileBottomBar";
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
@@ -21,7 +20,6 @@ export function MarketingLayout({ children }: { children: ReactNode }) {
             <MarketingFooterStatic />
             <WhatsAppFloat />
             <MobileBottomBar />
-            <CookieConsent />
         </div>
     );
 }
