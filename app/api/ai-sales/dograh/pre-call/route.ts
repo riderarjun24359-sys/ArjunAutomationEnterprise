@@ -16,6 +16,9 @@ function authorized(request: Request): boolean {
 
 export async function POST(request: Request) {
     if (!authorized(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (process.env.ARJUN_VOICE_INBOUND_ENABLED !== "true") {
+        return NextResponse.json({ error: "Priya inbound calling is disabled" }, { status: 503 });
+    }
     const organizationId = process.env.ARJUN_VOICE_ORGANIZATION_ID?.trim();
     if (!organizationId || !/^[0-9a-f-]{36}$/i.test(organizationId)) {
         return NextResponse.json({ error: "Voice organization is not configured" }, { status: 503 });
@@ -71,10 +74,22 @@ export async function POST(request: Request) {
             })
             .select("id")
             .single();
-        if (error || !data) {
+        if (error?.code === "23505") {
+            const { data: raced, error: raceLookupError } = await client
+                .from("ai_voice_call_events")
+                .select("id")
+                .eq("organization_id", organizationId)
+                .eq("provider_attempt_id", runId)
+                .maybeSingle();
+            if (raceLookupError || !raced) {
+                return NextResponse.json({ error: "Could not reconcile duplicate inbound call" }, { status: 500 });
+            }
+            callEventId = raced.id as string;
+        } else if (error || !data) {
             return NextResponse.json({ error: "Could not register inbound call" }, { status: 500 });
+        } else {
+            callEventId = data.id as string;
         }
-        callEventId = data.id as string;
     }
 
     return NextResponse.json({
