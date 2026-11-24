@@ -100,10 +100,10 @@ export const COMPANY_PROFILE = {
      * NEXT_PUBLIC_COMPANY_ADDRESS_STREET and friends.
      */
     address: {
-        street: envString("NEXT_PUBLIC_COMPANY_ADDRESS_STREET") ?? "Balanagar",
-        city: envString("NEXT_PUBLIC_COMPANY_CITY") ?? "Secunderabad",
-        region: envString("NEXT_PUBLIC_COMPANY_REGION") ?? "Telangana",
-        postalCode: envString("NEXT_PUBLIC_COMPANY_POSTAL_CODE") ?? "500042",
+        street: envString("NEXT_PUBLIC_COMPANY_ADDRESS_STREET") ?? "",
+        city: envString("NEXT_PUBLIC_COMPANY_CITY") ?? "",
+        region: envString("NEXT_PUBLIC_COMPANY_REGION") ?? "",
+        postalCode: envString("NEXT_PUBLIC_COMPANY_POSTAL_CODE") ?? "",
         country: envString("NEXT_PUBLIC_COMPANY_COUNTRY") ?? "India",
         countryCode: envString("NEXT_PUBLIC_COMPANY_COUNTRY_CODE") ?? "IN",
     } as CompanyAddress,
