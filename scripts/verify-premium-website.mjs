@@ -165,7 +165,7 @@ const pageSource = readSafe(join(root, "app", "(marketing)", "page.tsx"));
 // tied to the live marketing page rather than the retired PremiumHomePage copy.
 pass(
     "page:hero_business_problem_headline",
-    pageSource.includes("<h1") && pageSource.includes("Stop losing work in the gaps between your tools."),
+    pageSource.includes("<h1") && pageSource.includes("The gaps between your tools."),
 );
 pass(
     "page:hero_primary_cta_discovery",
