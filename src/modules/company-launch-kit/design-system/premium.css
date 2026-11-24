@@ -591,3 +591,31 @@
 @media (prefers-reduced-motion: reduce) {
   .aa-page-content .aa-reveal-on-scroll { animation: none !important; }
 }
+
+.aa-page-intro {
+  background:
+    radial-gradient(ellipse 65% 150% at 90% 10%, rgba(0,142,255,.22), transparent 62%),
+    linear-gradient(120deg, #07162b 0%, #0b2342 58%, #102e56 100%) !important;
+  border-color: rgba(109,190,255,.18) !important;
+}
+.aa-page-intro::after {
+  content: "";
+  position: absolute;
+  width: 28rem;
+  height: 28rem;
+  right: -8rem;
+  top: -16rem;
+  border: 1px solid rgba(98,206,255,.18);
+  border-radius: 50%;
+  box-shadow: 0 0 0 38px rgba(98,206,255,.035), 0 0 0 76px rgba(98,206,255,.025), 0 0 90px rgba(0,132,255,.18);
+  pointer-events: none;
+}
+.aa-page-intro h1 { color: #f5faff !important; text-shadow: 0 8px 40px rgba(0,0,0,.25); }
+.aa-page-intro p { color: #b6cee8 !important; }
+@supports (animation-timeline: view()) {
+  .aa-page-content article, .aa-page-content aside {
+    animation: aa-scroll-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+}
