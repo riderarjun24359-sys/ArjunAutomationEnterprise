@@ -45,7 +45,7 @@ export async function POST(request: Request) {
         : {};
     const eventType = clean(message.type, 80);
     if (!["status-update", "end-of-call-report"].includes(eventType)) {
-        return NextResponse.json({ success: true, ignored: true }, { status: 204 });
+        return new Response(null, { status: 204 });
     }
 
     const call = message.call && typeof message.call === "object"
