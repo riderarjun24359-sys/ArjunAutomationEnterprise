@@ -97,6 +97,86 @@ describe("provider-neutral voice adapter contracts (mocked; no live calls)", () 
         });
     });
 
+    it("starts a Dograh Priya callback with consent-approved context", async () => {
+        vi.stubEnv("ARJUN_VOICE_PROVIDER", "dograh");
+        vi.stubEnv("DOGRAH_API_URL", "https://voice.example.test/");
+        vi.stubEnv("DOGRAH_API_KEY", "dgr-test-key");
+        vi.stubEnv("DOGRAH_PRIYA_WORKFLOW_UUID", "priya-workflow-uuid");
+        vi.stubEnv("DOGRAH_TELEPHONY_CONFIGURATION_ID", "42");
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ status: "initiated", workflow_run_id: 9876 }),
+        });
+        vi.stubGlobal("fetch", fetchMock);
+
+        const result = await createPriyaOutboundCall({
+            phoneNumber: "+919876543210",
+            variables: {
+                lead_name: "Test Lead",
+                company_name: "Test Company",
+                requirement: "School ERP enquiry",
+                call_purpose: "requested_callback",
+                preferred_language: "te",
+                call_event_id: "dograh-event-001",
+            },
+        });
+
+        expect(result).toEqual({ provider: "dograh", providerCallId: "9876" });
+        expect(fetchMock).toHaveBeenCalledTimes(1);
+        expect(fetchMock.mock.calls[0][0]).toBe("https://voice.example.test/api/v1/public/agent/priya-workflow-uuid");
+        const request = fetchMock.mock.calls[0][1] as RequestInit;
+        expect(new Headers(request.headers).get("X-API-Key")).toBe("dgr-test-key");
+        expect(JSON.parse(String(request.body))).toEqual({
+            phone_number: "+919876543210",
+            initial_context: {
+                lead_name: "Test Lead",
+                company_name: "Test Company",
+                requirement: "School ERP enquiry",
+                call_purpose: "requested_callback",
+                preferred_language: "te",
+                call_event_id: "dograh-event-001",
+                agent: "priya",
+            },
+            telephony_configuration_id: 42,
+        });
+    });
+
+    it("uses the Dograh Jarvis workflow for owner briefings", async () => {
+        vi.stubEnv("ARJUN_VOICE_PROVIDER", "dograh");
+        vi.stubEnv("DOGRAH_API_KEY", "dgr-test-key");
+        vi.stubEnv("DOGRAH_JARVIS_WORKFLOW_UUID", "jarvis-workflow-uuid");
+        const fetchMock = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => ({ workflow_run_id: 9877 }),
+        });
+        vi.stubGlobal("fetch", fetchMock);
+
+        const result = await createJarvisOutboundCall({
+            phoneNumber: "+919876543210",
+            variables: {
+                mrr_inr: "Not available",
+                new_leads_today: 2,
+                demos_booked_today: 1,
+                urgent_highlight: "No urgent items",
+                trigger_reason: "requested test",
+                call_event_id: "jarvis-dograh-001",
+            },
+        });
+
+        expect(result).toEqual({ provider: "dograh", providerCallId: "9877" });
+        expect(fetchMock.mock.calls[0][0]).toBe("http://localhost:8000/api/v1/public/agent/jarvis-workflow-uuid");
+        const request = fetchMock.mock.calls[0][1] as RequestInit;
+        expect(JSON.parse(String(request.body))).toMatchObject({
+            phone_number: "+919876543210",
+            initial_context: {
+                mrr_inr: "Not available",
+                new_leads_today: "2",
+                demos_booked_today: "1",
+                agent: "jarvis",
+            },
+        });
+    });
+
     it("fails closed when provider credentials are missing", async () => {
         vi.stubEnv("ARJUN_VOICE_PROVIDER", "vapi");
         vi.stubEnv("VAPI_PRIVATE_KEY", "");

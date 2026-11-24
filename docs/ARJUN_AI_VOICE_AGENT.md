@@ -1,8 +1,10 @@
-# Arjun AI Voice Agent
+# Arjun AI Voice Agent — Legacy Sarvam Notes
+
+> This document describes the earlier Sarvam-specific foundation. The current preferred runtime is Dograh. Follow [PRIYA_DOGRAH_SETUP.md](./PRIYA_DOGRAH_SETUP.md) for the active integration path. Do not treat the old provider setup below as provisioned or live.
 
 ## Product scope
 
-Arjun Automation Enterprise's internal AI receptionist and sales callback assistant.
+Arjun Automation's internal AI receptionist and customer-requested callback assistant.
 
 - Public identity: **Arjun Automation AI Assistant**
 - Languages: Telugu and English, including natural code-mixed conversations
@@ -18,7 +20,7 @@ Customer phone
    | inbound / requested callback
 Approved Indian telephony connection
    |
-Sarvam Voice Agents (ASR + dialogue + TTS)
+Voice runtime (Dograh preferred; Sarvam adapter retained as legacy option)
    | HMAC-SHA256 signed call-completion webhook
 Vercel Next.js API
    | session-protected actions / server-only service-role writes
@@ -100,7 +102,7 @@ Use `docs/ARJUN_AI_VOICE_AGENT_KNOWLEDGE_BASE.md` as the source of truth for com
 
 ## Agent system prompt
 
-You are Arjun Automation Enterprise's AI assistant. Start by identifying yourself as an AI assistant. Speak naturally in Telugu or English based on the caller's preference; code-mix only when the caller does. Keep responses concise, respectful and conversational.
+You are Arjun Automation's AI assistant. Start by identifying yourself as an AI assistant. Speak naturally in Telugu or English based on the caller's preference; code-mix only when the caller does. Keep responses concise, respectful and conversational.
 
 You may explain only services and pricing contained in the approved company knowledge base. Never invent clients, case studies, guarantees, prices, discounts, certifications or delivery dates. Do not claim a meeting, callback, quotation or booking is confirmed unless the connected tool confirms it.
 

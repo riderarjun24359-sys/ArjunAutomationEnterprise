@@ -18,7 +18,7 @@ Website / inbound calls / WhatsApp / manually qualified leads
           Priya Sales Orchestrator (server)
               |          |          |
          Voice adapter  Quote tool  Consent ledger
-          Vapi/Retell     INR floor   Opt-in / revoke
+          Vapi/Retell/Dograh     INR floor   Opt-in / revoke
               |          |          |
               +----------+----------+
                          |
@@ -28,7 +28,7 @@ Website / inbound calls / WhatsApp / manually qualified leads
               Jarvis executive reporting
 ```
 
-The existing Sarvam adapter remains available for the earlier foundation. Set `ARJUN_VOICE_PROVIDER=vapi` or `retell` to select the new provider-neutral outbound adapter.
+The existing Sarvam adapter remains available for the earlier foundation. Set `ARJUN_VOICE_PROVIDER=vapi`, `retell`, or `dograh` to select the provider-neutral outbound adapter. Dograh is the preferred self-hosted option when its server, workflow UUIDs, API key, and telephony configuration are ready.
 
 ## API routes added
 

@@ -65,7 +65,7 @@ export async function fetchGlobalOpsSnapshot(ctx: AccContext) {
             renewalsDue: dash.revenueOverview.renewalsDue,
             mrr: dash.revenueOverview.mrr,
             escalations: dash.escalations.length,
-            available: dash.integrationIssues.length === 0,
+            available: (dash.integrationIssues ?? []).length === 0,
             integrationIssues: dash.integrationIssues,
         };
     } catch {
