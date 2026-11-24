@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { COMPANY_PROFILE, formatAddress } from "@/src/config/company-profile";
+import { COMPANY_PROFILE } from "@/src/config/company-profile";
 import { BrandLogo } from "@/src/modules/brand-os/components/BrandLogo";
 
 const NAV_LINKS = [
@@ -18,8 +18,6 @@ const LEGAL_LINKS = [
 ] as const;
 
 export function MarketingFooterStatic() {
-    const address = formatAddress() ?? "Balanagar, Secunderabad, Telangana 500042, India";
-
     return (
         <footer className="border-t border-slate-800 bg-slate-950 pb-16 text-slate-300 sm:pb-0">
             <div className="mx-auto grid w-full max-w-7xl gap-12 px-5 py-14 sm:px-8 md:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] lg:gap-16 lg:py-16">
@@ -33,7 +31,6 @@ export function MarketingFooterStatic() {
                     <address className="mt-5 flex flex-col gap-3 text-sm not-italic text-slate-400">
                         <a className="w-fit transition hover:text-white" href={`mailto:${COMPANY_PROFILE.emails.sales}`}>{COMPANY_PROFILE.emails.sales}</a>
                         <a className="w-fit transition hover:text-white" href={`tel:${COMPANY_PROFILE.phoneE164 ?? "+917337027357"}`}>{COMPANY_PROFILE.phoneDisplay ?? "+91 73370 27357"}</a>
-                        <span>{address}</span>
                     </address>
                 </div>
 
@@ -54,7 +51,6 @@ export function MarketingFooterStatic() {
             <div className="border-t border-slate-800">
                 <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-5 py-5 text-xs text-slate-500 sm:px-8 sm:flex-row sm:items-center sm:justify-between">
                     <p>© 2026 Arjun Automations. All rights reserved.</p>
-                    <p>Balanagar, Secunderabad, Telangana, India</p>
                 </div>
             </div>
         </footer>
