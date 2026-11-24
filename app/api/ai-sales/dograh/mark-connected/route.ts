@@ -1,7 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
-import { isValidIndianE164 } from "@/src/modules/ai-voice-agent/providers/voice-provider";
 
 export const runtime = "nodejs";
 
@@ -30,9 +29,8 @@ export async function POST(request: Request) {
 
     const callEventId = typeof body.callEventId === "string" ? body.callEventId.trim() : "";
     const workflowRunId = String(body.workflowRunId ?? "").trim();
-    const phoneNumber = typeof body.phoneNumber === "string" ? body.phoneNumber.trim() : "";
-    if (!/^[0-9a-f-]{36}$/i.test(callEventId) || !workflowRunId || !isValidIndianE164(phoneNumber)) {
-        return NextResponse.json({ error: "Valid call event, workflow run and +91 caller number are required" }, { status: 400 });
+    if (!/^[0-9a-f-]{36}$/i.test(callEventId) || !workflowRunId || workflowRunId.length > 120) {
+        return NextResponse.json({ error: "Valid call event and workflow run are required" }, { status: 400 });
     }
 
     const client = getServiceRoleClient();
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
         .eq("id", callEventId)
         .eq("organization_id", organizationId)
         .eq("provider_attempt_id", workflowRunId)
-        .eq("phone_number", phoneNumber)
         .in("status", ["queued", "connected"])
         .select("id")
         .maybeSingle();
