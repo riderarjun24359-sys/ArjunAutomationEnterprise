@@ -245,7 +245,7 @@ export default function HomePage() {
                             Hyderabad &amp; Secunderabad · AI Automation &amp; Custom Software Studio
                         </p>
                         <h1 className="mt-7 max-w-3xl text-4xl font-bold leading-[1.04] tracking-[-0.04em] text-white sm:text-5xl lg:text-[4.15rem]">
-                            Stop losing work in the gaps between your tools.
+                            The gaps between your tools.
                         </h1>
                         <p className="mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
                             Whether you run a shop in a village, a trading business in a town, a clinic, a school or a growing company, we make practical technology affordable. Get a professional website, WhatsApp follow-ups or simple software to manage everyday work — with clear pricing in Indian rupees.
