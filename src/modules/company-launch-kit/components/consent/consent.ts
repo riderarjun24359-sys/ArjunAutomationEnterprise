@@ -71,6 +71,8 @@ export function consentSignals(state: ConsentState): Record<string, ConsentDecis
 }
 
 /** Reads the stored decision. Returns null when absent or unreadable. */
+let memoryConsent: ConsentState | null = null;
+
 export function readConsent(): ConsentState | null {
     // MANDATORY CACHE: `getConsentSnapshot` is consumed by `useSyncExternalStore`,
     // which re-renders whenever two consecutive calls return different objects
@@ -83,9 +85,11 @@ export function readConsent(): ConsentState | null {
     try {
         raw = window.localStorage.getItem(CONSENT_STORAGE_KEY);
     } catch {
-        // Private mode / storage disabled — same path as "no decision yet".
-        raw = null;
+        // Storage can be blocked in private browsing or embedded webviews.
+        // Keep the visitor decision in memory so the banner still dismisses.
+        return memoryConsent;
     }
+    if (raw === null && memoryConsent) return memoryConsent;
     if (raw === cache.raw) return cache.value;
 
     let value: ConsentState | null = null;
@@ -126,10 +130,13 @@ export function writeConsent(decision: "accept" | "reject"): ConsentState {
         marketing: granted ? "granted" : "denied",
         decidedAt: new Date().toISOString(),
     };
+    memoryConsent = state;
     try {
-        window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(state));
+        const raw = JSON.stringify(state);
+        window.localStorage.setItem(CONSENT_STORAGE_KEY, raw);
+        cache = { raw, value: state };
     } catch {
-        // Non-fatal: the decision still applies to this page view.
+        // Non-fatal: readConsent() falls back to this in-memory decision.
     }
     emitConsentChange();
     return state;
