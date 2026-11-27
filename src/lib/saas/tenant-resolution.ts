@@ -1,5 +1,3 @@
-import "server-only";
-
 import { resolveTenantHost } from "@/src/lib/saas/tenant-host";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
