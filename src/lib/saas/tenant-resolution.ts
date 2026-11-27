@@ -1,27 +1,28 @@
 import { resolveTenantHost } from "@/src/lib/saas/tenant-host";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
-export interface VerifiedTenantContext {
+export interface VerifiedTenantDomainContext {
     organizationId: string;
     organizationName: string;
     organizationSlug: string;
-    profileId: string;
-    roleName: string;
     hostname: string;
 }
 
+export interface VerifiedTenantContext extends VerifiedTenantDomainContext {
+    profileId: string;
+    roleName: string;
+}
+
 /**
- * Resolve a tenant from the incoming hostname and the authenticated identity.
- * A hostname is never sufficient on its own: the domain must be verified,
- * the organization must be active, and the caller must have an active
- * membership in that exact organization.
+ * Resolve only a verified, active tenant hostname. A hostname by itself is
+ * never authorization; subdomain slugs must match the organization's
+ * canonical slug and custom domains must have a verified domain record.
  */
-export async function resolveVerifiedTenantContext(
+export async function resolveVerifiedTenantDomainContext(
     request: Request,
-    authUserId: string,
-): Promise<VerifiedTenantContext | null> {
+): Promise<VerifiedTenantDomainContext | null> {
     const client = getServiceRoleClient();
-    if (!client || !authUserId.trim()) return null;
+    if (!client) return null;
 
     let hostname = "";
     try {
@@ -52,8 +53,6 @@ export async function resolveVerifiedTenantContext(
         verification_status: string;
     };
 
-    // For platform subdomains, ensure the hostname slug still matches the
-    // organization's canonical slug. This prevents stale/misassigned mappings.
     const organizationResult = await client
         .from("organizations")
         .select("id, name, slug, status")
@@ -68,22 +67,49 @@ export async function resolveVerifiedTenantContext(
         slug: string;
         status: string;
     };
+
     if (host.kind === "tenant-subdomain" && organization.slug !== host.slug) {
         return null;
     }
+
+    return {
+        organizationId: organization.id,
+        organizationName: organization.name,
+        organizationSlug: organization.slug,
+        hostname: host.hostname,
+    };
+}
+
+/**
+ * Resolve a verified tenant hostname for an authenticated member. The
+ * hostname must be verified, the organization active, and the caller an
+ * active member of that exact organization.
+ */
+export async function resolveVerifiedTenantContext(
+    request: Request,
+    authUserId: string,
+): Promise<VerifiedTenantContext | null> {
+    if (!authUserId.trim()) return null;
+
+    const client = getServiceRoleClient();
+    if (!client) return null;
+
+    const domain = await resolveVerifiedTenantDomainContext(request);
+    if (!domain) return null;
 
     const profileResult = await client
         .from("user_profiles")
         .select("id")
         .eq("auth_user_id", authUserId)
         .maybeSingle();
-    if (profileResult.error || !profileResult.data) return null;
 
+    if (profileResult.error || !profileResult.data) return null;
     const profileId = (profileResult.data as { id: string }).id;
+
     const membershipResult = await client
         .from("organization_members")
         .select("role_name")
-        .eq("organization_id", organization.id)
+        .eq("organization_id", domain.organizationId)
         .eq("user_id", profileId)
         .eq("is_active", true)
         .maybeSingle();
@@ -92,11 +118,8 @@ export async function resolveVerifiedTenantContext(
 
     const roleName = (membershipResult.data as { role_name?: string }).role_name ?? "viewer";
     return {
-        organizationId: organization.id,
-        organizationName: organization.name,
-        organizationSlug: organization.slug,
+        ...domain,
         profileId,
         roleName,
-        hostname: host.hostname,
     };
 }
