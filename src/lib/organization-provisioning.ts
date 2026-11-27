@@ -70,9 +70,19 @@ export const slugRule = z
 
 const orgNameRule = z.string().trim().min(1, "organization name is required").max(120);
 
+export const SAAS_PRODUCT_KEYS = ["school", "retail", "clinic", "business", "automation"] as const;
+export type SaasProductKey = (typeof SAAS_PRODUCT_KEYS)[number];
+
+export const selectedProductsSchema = z
+    .array(z.enum(SAAS_PRODUCT_KEYS))
+    .min(1, "select at least one product")
+    .max(SAAS_PRODUCT_KEYS.length)
+    .default([...SAAS_PRODUCT_KEYS]);
+
 export const provisionInputSchema = z.object({
     name: orgNameRule,
     slug: z.string().trim().max(60).optional(),
+    products: selectedProductsSchema,
 });
 
 export type ProvisionInput = z.infer<typeof provisionInputSchema>;
