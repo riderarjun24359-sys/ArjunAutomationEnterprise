@@ -74,6 +74,10 @@ describe("POST /api/organization/provision", () => {
         expect(body.membership.roleName).toBe("founder");
         expect(db.rows("organizations")).toHaveLength(1);
         expect(db.rows("organization_members")).toHaveLength(1);
+        expect(db.rows("organization_products")).toHaveLength(5);
+        expect(db.rows("organization_domains")).toHaveLength(1);
+        expect(db.rows("organization_domains")[0].hostname).toBe("acme-operations.arjunautomations.com");
+        expect(db.rows("organization_domains")[0].verification_status).toBe("pending");
         expect(db.rows("user_profiles")).toHaveLength(1);
     });
 
@@ -146,6 +150,18 @@ describe("POST /api/organization/provision", () => {
         const res = await POST(post({ name: "Acme" }));
         expect(res.status).toBe(500);
         expect(db.rows("organizations")).toHaveLength(0);
+    });
+
+
+    it("rolls back the tenant if product activation fails", async () => {
+        authed();
+        db.failOn({ table: "organization_products", op: "insert", error: { code: "500", message: "catalog unavailable" } });
+        const res = await POST(post({ name: "Acme" }));
+        expect(res.status).toBe(500);
+        expect(db.rows("organizations")).toHaveLength(0);
+        expect(db.rows("organization_members")).toHaveLength(0);
+        expect(db.rows("organization_products")).toHaveLength(0);
+        expect(db.rows("organization_domains")).toHaveLength(0);
     });
 
     it("GET status reports real membership state", async () => {
