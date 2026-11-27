@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getClientIp, secureApiRoute } from "@/src/lib/api-security";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import { RESERVED_SUBDOMAINS } from "@/src/lib/saas/tenant-host";
 import { opsLog } from "@/src/lib/ops-monitoring";
 import {
     provisionInputSchema,
@@ -86,6 +87,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Invalid input", detail: slugResult.error }, { status: 400 });
     }
     const slug = slugResult.slug;
+    if (RESERVED_SUBDOMAINS.has(slug)) {
+        return NextResponse.json({ error: "This subdomain name is reserved" }, { status: 400 });
+    }
     const name = input.data.name.trim();
     const authUserId = context.user.id;
     const email = context.user.email;
