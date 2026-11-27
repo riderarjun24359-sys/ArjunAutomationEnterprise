@@ -35,10 +35,6 @@
     {
       "pattern": "www.arjunautomations.com/*",
       "zone_name": "arjunautomations.com"
-    },
-    {
-      "pattern": "*.arjunautomations.com/*",
-      "zone_name": "arjunautomations.com"
     }
   ]
 }
