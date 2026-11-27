@@ -14,6 +14,15 @@ import { ProgressIndicator } from "@/src/design-os/motion/components/ProgressInd
 import { INVITABLE_ROLES, canGrantInvite } from "@/src/lib/organization-provisioning";
 
 type ServerOrg = { id: string; name: string; slug: string; status: string } | null;
+
+const SAAS_PRODUCTS = [
+    { key: "school", name: "School Management", detail: "Admissions, students, attendance and fees" },
+    { key: "retail", name: "Retail & POS", detail: "Products, inventory, billing and sales" },
+    { key: "clinic", name: "Clinic Management", detail: "Patients, appointments and follow-ups" },
+    { key: "business", name: "Business Management", detail: "CRM, jobs, invoices and operations" },
+    { key: "automation", name: "AI Automation", detail: "WhatsApp, workflows and AI agents" },
+] as const;
+type SaasProductKey = (typeof SAAS_PRODUCTS)[number]["key"];
 type ServerTeam = { id: string; name: string; slug: string };
 type ServerInvite = { id: string; email: string; roleName: string; status: string; expiresAt: string | null };
 type MyInvite = ServerInvite & { organization: { name: string; slug: string } | null };
@@ -39,6 +48,7 @@ export function OnboardingWizard() {
     const [myInvites, setMyInvites] = useState<MyInvite[]>([]);
     const [orgName, setOrgName] = useState("");
     const [orgSlug, setOrgSlug] = useState("");
+    const [selectedProducts, setSelectedProducts] = useState<SaasProductKey[]>(SAAS_PRODUCTS.map((product) => product.key));
     const [teamName, setTeamName] = useState("");
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteRole, setInviteRole] = useState("member");
@@ -194,7 +204,7 @@ export function OnboardingWizard() {
             const res = await fetch("/api/organization/provision", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
-                body: JSON.stringify({ name: orgName, slug: orgSlug || undefined }),
+                body: JSON.stringify({ name: orgName, slug: orgSlug || undefined, products: selectedProducts }),
             });
             const { ok, status, body } = await readJson(res);
             if (ok) {
@@ -327,7 +337,31 @@ export function OnboardingWizard() {
                                 placeholder="acme-operations"
                             />
                         </label>
-                        <Button type="button" disabled={busy || !orgName.trim()} onClick={() => void provision()}>
+                        <div className="space-y-3">
+                            <div>
+                                <p className="text-sm font-medium text-[var(--dos-text-primary)]">Choose products for this organization</p>
+                                <p className="mt-1 text-xs text-[var(--dos-text-tertiary)]">All five are selected by default. You can start with one or enable all.</p>
+                            </div>
+                            <div className="grid gap-2 sm:grid-cols-2">
+                                {SAAS_PRODUCTS.map((product) => (
+                                    <label key={product.key} className="flex cursor-pointer items-start gap-3 rounded-[var(--dos-radius-lg)] border border-[var(--dos-border)] p-3">
+                                        <input
+                                            type="checkbox"
+                                            className="mt-1"
+                                            checked={selectedProducts.includes(product.key)}
+                                            onChange={(event) => setSelectedProducts((current) => event.target.checked
+                                                ? [...current, product.key]
+                                                : current.filter((key) => key !== product.key))}
+                                        />
+                                        <span>
+                                            <span className="block text-sm font-medium text-[var(--dos-text-primary)]">{product.name}</span>
+                                            <span className="mt-1 block text-xs text-[var(--dos-text-secondary)]">{product.detail}</span>
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                        <Button type="button" disabled={busy || !orgName.trim() || selectedProducts.length === 0} onClick={() => void provision()}>
                             Create organization
                         </Button>
                         <p className="text-xs text-[var(--dos-text-tertiary)]">
