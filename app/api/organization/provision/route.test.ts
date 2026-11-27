@@ -61,6 +61,7 @@ describe("POST /api/organization/provision", () => {
         authed();
         await expect((await POST(post({ name: "" }))).status).toBe(400);
         await expect((await POST(post({ name: "Acme", slug: "BAD SLUG!!" }))).status).toBe(400);
+        await expect((await POST(post({ name: "API", slug: "api" }))).status).toBe(400);
         await expect((await POST(post({}))).status).toBe(400);
     });
 
