@@ -1,0 +1,141 @@
+name: Cloudflare Wildcard DNS Canary
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/cloudflare-wildcard-dns-canary.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-wildcard-dns-canary
+  cancel-in-progress: false
+
+jobs:
+  enable-wildcard-dns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Add proxied wildcard DNS with host verification and automatic rollback
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          : "${CLOUDFLARE_API_TOKEN:?Missing CLOUDFLARE_API_TOKEN}"
+          API="https://api.cloudflare.com/client/v4"
+          headers=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          created_id=""
+          success=false
+          rollback() {
+            if [ -n "$created_id" ] && [ "$success" != "true" ]; then
+              echo "::warning::Canary failed; deleting only the wildcard DNS record created by this run."
+              curl -sS -X DELETE "$API/zones/$zone_id/dns_records/$created_id" "${headers[@]}" -o "$tmp/rollback.json" || true
+              python3 - "$tmp/rollback.json" <<'PY'
+          import json,sys
+          try:
+              d=json.load(open(sys.argv[1]))
+              print("Wildcard rollback API success:", d.get("success", False))
+          except Exception:
+              print("Wildcard rollback response could not be parsed.")
+          PY
+            fi
+          }
+          trap 'rollback; rm -rf "$tmp"' EXIT
+
+          code="$(curl -sS -o "$tmp/zones.json" -w '%{http_code}' "$API/zones?name=arjunautomations.com&per_page=50" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot read Cloudflare zone (HTTP $code)."; exit 1; }
+          zone_id="$(python3 - "$tmp/zones.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          z=next((x for x in d.get("result",[]) if x.get("name")=="arjunautomations.com"),None)
+          print(z.get("id","") if z else "")
+          PY
+          )"
+          [ -n "$zone_id" ] || { echo "::error::Zone not found."; exit 1; }
+
+          code="$(curl -sS -o "$tmp/routes.json" -w '%{http_code}' "$API/zones/$zone_id/workers/routes" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot inspect Worker routes (HTTP $code)."; exit 1; }
+          python3 - "$tmp/routes.json" <<'PY'
+          import json,sys
+          routes=json.load(open(sys.argv[1])).get("result",[])
+          ok=any(r.get("pattern")=="*.arjunautomations.com/*" and r.get("script")=="arjunautomationenterprise" for r in routes)
+          if not ok:
+              raise SystemExit("Expected wildcard Worker route is not deployed; DNS unchanged.")
+          print("Wildcard Worker route verified.")
+          PY
+
+          code="$(curl -sS -o "$tmp/dns.json" -w '%{http_code}' "$API/zones/$zone_id/dns_records?name=%2A.arjunautomations.com&per_page=50" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot inspect wildcard DNS (HTTP $code)."; exit 1; }
+          existing="$(python3 - "$tmp/dns.json" <<'PY'
+          import json,sys
+          records=json.load(open(sys.argv[1])).get("result",[])
+          print(len([r for r in records if r.get("name")=="*.arjunautomations.com"]))
+          PY
+          )"
+          [ "$existing" = "0" ] || { echo "::error::Wildcard DNS already exists; refusing to overwrite or change it."; exit 1; }
+
+          code="$(curl -sS -o "$tmp/ssl.json" -w '%{http_code}' "$API/zones/$zone_id/settings/ssl" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot verify SSL mode."; exit 1; }
+          ssl="$(python3 - "$tmp/ssl.json" <<'PY'
+          import json,sys
+          print(json.load(open(sys.argv[1])).get("result",{}).get("value","unknown"))
+          PY
+          )"
+          case "$ssl" in full|strict) echo "SSL mode verified: $ssl";; *) echo "::error::Unsafe SSL mode: $ssl"; exit 1;; esac
+
+          python3 - "$tmp/create.json" <<'PY'
+          import json,sys
+          json.dump({"type":"CNAME","name":"*","content":"arjunautomations.com","ttl":1,"proxied":True},open(sys.argv[1],"w"))
+          PY
+          code="$(curl -sS -X POST -o "$tmp/create-result.json" -w '%{http_code}' "$API/zones/$zone_id/dns_records" "${headers[@]}" --data-binary @"$tmp/create.json")"
+          if [ "$code" != "200" ] || ! python3 - "$tmp/create-result.json" "$tmp/id" <<'PY'
+          import json,sys
+          try:
+              d=json.load(open(sys.argv[1]))
+              if not d.get("success") or not d.get("result",{}).get("id"): raise ValueError()
+              open(sys.argv[2],"w").write(d["result"]["id"])
+          except Exception:
+              raise SystemExit(1)
+          PY
+          then
+            echo "::error::Could not create wildcard DNS record (HTTP $code)."
+            exit 1
+          fi
+          created_id="$(cat "$tmp/id")"
+          echo "Created only the proxied wildcard CNAME. Existing apex, www, and email DNS records were not edited."
+
+          canary="tenant-dns-canary-${GITHUB_RUN_ID}.arjunautomations.com"
+          tenant_ok=false
+          for attempt in $(seq 1 12); do
+            status="$(curl -k -sS --connect-timeout 5 --max-time 15 -o "$tmp/tenant-body" -w '%{http_code}' "https://$canary/" || true)"
+            if [ "$status" = "404" ] && grep -q "Tenant domain not found" "$tmp/tenant-body"; then
+              echo "Tenant hostname reached the Worker and failed closed as expected (HTTP 404)."
+              tenant_ok=true
+              break
+            fi
+            echo "Tenant canary attempt $attempt: HTTP $status; waiting for DNS/edge propagation."
+            sleep 5
+          done
+          [ "$tenant_ok" = "true" ] || { echo "::error::Tenant host did not fail closed as expected."; exit 1; }
+
+          admin_status="$(curl -k -sS --connect-timeout 5 --max-time 15 -o "$tmp/admin-body" -w '%{http_code}' https://admin.arjunautomations.com/ || true)"
+          [ "$admin_status" = "404" ] || { echo "::error::Reserved admin hostname should return 404, got $admin_status."; exit 1; }
+          echo "Reserved admin hostname correctly returns HTTP 404."
+
+          for host in arjunautomations.com www.arjunautomations.com; do
+            status="$(curl -k -sS -L --connect-timeout 5 --max-time 20 -o "$tmp/public-body" -w '%{http_code}' "https://$host/" || true)"
+            size="$(wc -c < "$tmp/public-body" 2>/dev/null || echo 0)"
+            [ "$status" = "200" ] && [ "$size" -gt 1000 ] || { echo "::error::Existing public host $host failed health check (HTTP $status, $size bytes)."; exit 1; }
+            echo "https://$host/ -> HTTP 200 ($size bytes)."
+          done
+
+          success=true
+          echo "SUCCESS: wildcard DNS is active; tenant canary fails closed; reserved host is blocked; apex and www remain healthy."
+          echo "No existing email DNS record was changed."
