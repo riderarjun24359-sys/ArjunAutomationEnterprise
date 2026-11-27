@@ -65,20 +65,23 @@ describe("POST /api/organization/provision", () => {
         await expect((await POST(post({}))).status).toBe(400);
     });
 
-    it("provisions an organization + founder membership with 201", async () => {
+    it("provisions an organization + founder membership with all products and a verified platform subdomain", async () => {
         authed();
         const res = await POST(post({ name: "Acme Operations" }));
         expect(res.status).toBe(201);
-        const body = (await res.json()) as { organization: { slug: string }; membership: { roleName: string }; provisioned: boolean };
+        const body = (await res.json()) as { organization: { slug: string }; membership: { roleName: string }; domain: { hostname: string; verificationStatus: string }; provisioned: boolean };
         expect(body.provisioned).toBe(true);
         expect(body.organization.slug).toBe("acme-operations");
         expect(body.membership.roleName).toBe("founder");
+        expect(body.domain.hostname).toBe("acme-operations.arjunautomations.com");
+        expect(body.domain.verificationStatus).toBe("verified");
         expect(db.rows("organizations")).toHaveLength(1);
         expect(db.rows("organization_members")).toHaveLength(1);
         expect(db.rows("organization_products")).toHaveLength(5);
         expect(db.rows("organization_domains")).toHaveLength(1);
         expect(db.rows("organization_domains")[0].hostname).toBe("acme-operations.arjunautomations.com");
-        expect(db.rows("organization_domains")[0].verification_status).toBe("pending");
+        expect(db.rows("organization_domains")[0].verification_status).toBe("verified");
+        expect(db.rows("organization_domains")[0].verified_at).toBeTruthy();
         expect(db.rows("user_profiles")).toHaveLength(1);
     });
 
