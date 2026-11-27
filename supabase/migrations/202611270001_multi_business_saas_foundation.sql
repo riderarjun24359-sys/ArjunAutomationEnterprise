@@ -67,6 +67,15 @@ ALTER TABLE public.saas_product_catalog ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.organization_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.organization_domains ENABLE ROW LEVEL SECURITY;
 
+-- Explicit browser-role grants: RLS policies below further restrict SELECT.
+-- No anonymous access and no browser-side writes to these platform tables.
+REVOKE ALL ON TABLE public.saas_product_catalog FROM anon, authenticated;
+REVOKE ALL ON TABLE public.organization_products FROM anon, authenticated;
+REVOKE ALL ON TABLE public.organization_domains FROM anon, authenticated;
+GRANT SELECT ON TABLE public.saas_product_catalog TO authenticated;
+GRANT SELECT ON TABLE public.organization_products TO authenticated;
+GRANT SELECT ON TABLE public.organization_domains TO authenticated;
+
 DROP POLICY IF EXISTS saas_product_catalog_read ON public.saas_product_catalog;
 CREATE POLICY saas_product_catalog_read ON public.saas_product_catalog
   FOR SELECT TO authenticated USING (is_active = true);
