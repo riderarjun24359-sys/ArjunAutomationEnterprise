@@ -191,8 +191,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
     }
 
-    const productKeys = ["school", "retail", "clinic", "business", "automation"] as const;
-    for (const productKey of productKeys) {
+    for (const productKey of input.data.products) {
         const product = await serviceClient
             .from("organization_products")
             .insert({ organization_id: org.id, product_key: productKey, status: "active", settings: {} })
