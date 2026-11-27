@@ -121,8 +121,6 @@ jobs:
 
           if [ "$success" != "true" ]; then
             echo "::error::www health check failed; restoring the original DNS proxy setting."
-            curl -sS -X PUT "$API/zones/$zone_id/dns_records/$record_id" "${headers[@]}" \
-              --data-binary @"$update_file" -o /dev/null >/dev/null || true
             python3 - "$record_name" "$record_type" "$record_content" "$record_ttl" > "$update_file" <<'PY'
           import json,sys
           name,typ,content,ttl=sys.argv[1:]
