@@ -1,0 +1,135 @@
+name: Cloudflare WWW Proxy Canary
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-www-proxy-canary
+  cancel-in-progress: false
+
+jobs:
+  enable-www-proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Enable Cloudflare proxy for www with automatic rollback
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          : "${CLOUDFLARE_API_TOKEN:?Missing CLOUDFLARE_API_TOKEN}"
+          API="https://api.cloudflare.com/client/v4"
+          headers=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")
+          zone_file="$(mktemp)"
+          dns_file="$(mktemp)"
+          routes_file="$(mktemp)"
+          update_file="$(mktemp)"
+          health_file="$(mktemp)"
+          trap 'rm -f "$zone_file" "$dns_file" "$routes_file" "$update_file" "$health_file"' EXIT
+
+          code="$(curl -sS -o "$zone_file" -w '%{http_code}' "$API/zones?name=arjunautomations.com&per_page=50" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot read Cloudflare zone (HTTP $code)."; exit 1; }
+          zone_id="$(python3 - "$zone_file" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          z=next((x for x in d.get("result",[]) if x.get("name")=="arjunautomations.com"),None)
+          print(z.get("id","") if z else "")
+          PY
+          )"
+          [ -n "$zone_id" ] || { echo "::error::Zone not found."; exit 1; }
+
+          code="$(curl -sS -o "$routes_file" -w '%{http_code}' "$API/zones/$zone_id/workers/routes" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot verify Worker routes (HTTP $code)."; exit 1; }
+          python3 - "$routes_file" <<'PY'
+          import json,sys
+          routes=json.load(open(sys.argv[1])).get("result",[])
+          ok=any(r.get("pattern")=="www.arjunautomations.com/*" and r.get("script")=="arjunautomationenterprise" for r in routes)
+          if not ok:
+              print("Expected www Worker route is not installed.")
+              sys.exit(1)
+          print("Expected www Worker route verified.")
+          PY
+
+          code="$(curl -sS -o "$dns_file" -w '%{http_code}' "$API/zones/$zone_id/dns_records?name=www.arjunautomations.com&type=CNAME&per_page=20" "${headers[@]}")"
+          [ "$code" = "200" ] || { echo "::error::Cannot read www DNS record (HTTP $code)."; exit 1; }
+          record_count="$(python3 - "$dns_file" <<'PY'
+          import json,sys
+          print(len(json.load(open(sys.argv[1])).get("result",[])))
+          PY
+          )"
+          [ "$record_count" = "1" ] || { echo "::error::Expected exactly one www CNAME record; found $record_count. No changes made."; exit 1; }
+
+          readarray -t record_data < <(python3 - "$dns_file" <<'PY'
+          import json,sys
+          r=json.load(open(sys.argv[1]))["result"][0]
+          print(r["id"])
+          print(r["name"])
+          print(r["type"])
+          print(r["content"])
+          print(r.get("ttl",1))
+          print("true" if r.get("proxied") else "false")
+          PY
+          )
+          record_id="${record_data[0]}"
+          record_name="${record_data[1]}"
+          record_type="${record_data[2]}"
+          record_content="${record_data[3]}"
+          record_ttl="${record_data[4]}"
+          original_proxy="${record_data[5]}"
+
+          if [ "$original_proxy" = "true" ]; then
+            echo "www is already proxied; no DNS change required."
+            exit 0
+          fi
+
+          python3 - "$record_name" "$record_type" "$record_content" "$record_ttl" > "$update_file" <<'PY'
+          import json,sys
+          name,typ,content,ttl=sys.argv[1:]
+          print(json.dumps({"type":typ,"name":name,"content":content,"ttl":int(ttl),"proxied":True}))
+          PY
+
+          code="$(curl -sS -X PUT -o "$zone_file" -w '%{http_code}' "$API/zones/$zone_id/dns_records/$record_id" "${headers[@]}" --data-binary @"$update_file")"
+          if [ "$code" != "200" ] || ! python3 - "$zone_file" <<'PY'
+          import json,sys
+          try: sys.exit(0 if json.load(open(sys.argv[1])).get("success") else 1)
+          except Exception: sys.exit(1)
+          PY
+          then
+            echo "::error::Cloudflare did not accept the www proxy change (HTTP $code)."
+            exit 1
+          fi
+          echo "www DNS proxy enabled. Testing the live Worker route."
+
+          success=false
+          for attempt in $(seq 1 8); do
+            status="$(curl -sS --connect-timeout 5 --max-time 15 -o "$health_file" -w '%{http_code}' https://www.arjunautomations.com/ || true)"
+            size="$(wc -c < "$health_file" 2>/dev/null || echo 0)"
+            echo "Canary attempt $attempt: HTTP $status, response bytes $size"
+            if [ "$status" = "200" ] && [ "$size" -gt 1000 ]; then
+              success=true
+              break
+            fi
+            sleep 5
+          done
+
+          if [ "$success" != "true" ]; then
+            echo "::error::www health check failed; restoring the original DNS proxy setting."
+            python3 - "$record_name" "$record_type" "$record_content" "$record_ttl" > "$update_file" <<'PY'
+          import json,sys
+          name,typ,content,ttl=sys.argv[1:]
+          print(json.dumps({"type":typ,"name":name,"content":content,"ttl":int(ttl),"proxied":False}))
+          PY
+            curl -sS -X PUT "$API/zones/$zone_id/dns_records/$record_id" "${headers[@]}" \
+              --data-binary @"$update_file" -o /dev/null
+            exit 1
+          fi
+
+          echo "SUCCESS: www is proxied through Cloudflare and returns HTTP 200."
+          echo "Only www CNAME proxy status was changed. Apex and all email records were untouched."
