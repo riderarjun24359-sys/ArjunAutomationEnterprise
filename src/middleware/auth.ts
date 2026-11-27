@@ -177,6 +177,10 @@ export async function authMiddleware(request: NextRequest) {
     const supabaseContext = createSupabaseMiddlewareClient(request);
 
     if (!supabaseContext) {
+        if (isTenantSubdomain) {
+            return new NextResponse("Tenant authentication unavailable", { status: 503 });
+        }
+
         if (isProtectedRoute) {
             const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
             signInUrl.searchParams.set("redirectTo", pathname);
