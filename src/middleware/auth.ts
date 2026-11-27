@@ -165,7 +165,7 @@ export async function authMiddleware(request: NextRequest) {
     if (isTenantSubdomain) {
         const verifiedDomain = await resolveVerifiedTenantDomainContext(request);
         if (!verifiedDomain) {
-            return new NextResponse("Tenant domain not found", { status: 404 });
+            return new NextResponse("Tenant domain not found", { status: 404, headers: { "Cache-Control": "no-store" } });
         }
     }
 
@@ -209,13 +209,19 @@ export async function authMiddleware(request: NextRequest) {
 
         const tenant = await resolveVerifiedTenantContext(request, user.id);
         if (!tenant) {
-            const denied = new NextResponse("Tenant access denied", { status: 404 });
+            const denied = new NextResponse("Tenant access denied", { status: 404, headers: { "Cache-Control": "no-store" } });
             response.cookies.getAll().forEach((cookie) => denied.cookies.set(cookie));
             return denied;
         }
 
         // Overwrite any client-supplied organization header with the tenant
         // resolved from the verified hostname and authenticated membership.
+        if (pathname === "/") {
+            const redirect = NextResponse.redirect(new URL(ROUTES.dashboard, request.nextUrl.origin));
+            response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+            return redirect;
+        }
+
         const tenantHeaders = new Headers(request.headers);
         tenantHeaders.set("x-organization-id", tenant.organizationId);
         tenantHeaders.set("x-tenant-id", tenant.organizationId);
