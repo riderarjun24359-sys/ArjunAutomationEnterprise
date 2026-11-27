@@ -115,12 +115,13 @@ export function OnboardingWizard() {
         };
     }, [applyState, fetchState]);
 
-    // Already provisioned: onboarding is done — hand off to the dashboard.
+    // Existing organizations can go straight to the dashboard. A newly created
+    // organization stays in this wizard so workspace, invitations and setup can finish.
     useEffect(() => {
-        if (!loading && !loadError && org) {
+        if (!loading && !loadError && org && step === 0) {
             router.replace(ROUTES.dashboard);
         }
-    }, [loading, loadError, org, router]);
+    }, [loading, loadError, org, step, router]);
 
     const progress = useMemo(() => Math.round(((step + 1) / ONBOARDING_STEPS.length) * 100), [step]);
 
@@ -159,12 +160,12 @@ export function OnboardingWizard() {
         );
     }
 
-    if (org) {
+    if (org && step === 0) {
         return (
             <div className="mx-auto max-w-3xl space-y-6">
                 <Card>
                     <p className="text-sm text-[var(--dos-text-primary)]">
-                        {org.name} is ready — taking you to your dashboard.
+                        {org.name} is already set up — taking you to your dashboard.
                     </p>
                 </Card>
             </div>
@@ -196,7 +197,10 @@ export function OnboardingWizard() {
                 body: JSON.stringify({ name: orgName, slug: orgSlug || undefined }),
             });
             const { ok, status, body } = await readJson(res);
-            if (ok) return null;
+            if (ok) {
+                setStep(1);
+                return null;
+            }
             if (status === 409) return "That organization slug is taken — try another.";
             return String(body.detail ?? body.error ?? "Provisioning failed.");
         });
@@ -261,6 +265,15 @@ export function OnboardingWizard() {
                 <Card>
                     <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                         {actionError}
+                    </p>
+                </Card>
+            ) : null}
+
+            {org ? (
+                <Card>
+                    <p className="text-sm font-medium text-[var(--dos-text-primary)]">{org.name} is created</p>
+                    <p className="mt-1 text-sm text-[var(--dos-text-secondary)]">
+                        Your workspace address: <span className="font-medium">{org.slug}.arjunautomations.com</span>
                     </p>
                 </Card>
             ) : null}
@@ -387,7 +400,9 @@ export function OnboardingWizard() {
                 {step === 3 ? (
                     <div className="space-y-4">
                         <ul className="space-y-2 text-sm">
-                            <li className="text-[var(--dos-text-primary)]">Organization provisioned — this page only appears once it is.</li>
+                            <li className="text-[var(--dos-text-primary)]">
+                                {org ? `Organization ready: ${org.name}.` : "Organization setup is not complete yet."}
+                            </li>
                             <li className="text-[var(--dos-text-primary)]">
                                 {teams.length > 0 ? `${teams.length} workspace(s) ready.` : "No workspace yet (optional)."}
                             </li>
