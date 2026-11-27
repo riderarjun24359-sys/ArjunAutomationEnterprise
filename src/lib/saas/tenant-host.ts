@@ -13,7 +13,7 @@ export type TenantHostResolution =
   | { kind: "unknown-host"; hostname: string };
 
 function normalizeHostname(input: string): string {
-  return input.trim().toLowerCase().replace(/\\.$/, "").split(":")[0] ?? "";
+  return input.trim().toLowerCase().replace(/\.$/, "").split(":")[0] ?? "";
 }
 
 /**
