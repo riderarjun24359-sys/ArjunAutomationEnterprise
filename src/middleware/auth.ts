@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ROUTES } from "@/src/constants/routes";
 import { MARKETING_ROUTES } from "@/src/modules/company-launch-kit/config/routes";
 import { createSupabaseMiddlewareClient } from "@/src/lib/supabase-middleware";
+import { resolveTenantHost, SAAS_ROOT_DOMAIN } from "@/src/lib/saas/tenant-host";
+import { resolveVerifiedTenantContext, resolveVerifiedTenantDomainContext } from "@/src/lib/saas/tenant-resolution";
 
 const publicMarketingRoutes = [
     MARKETING_ROUTES.home,
@@ -144,7 +146,30 @@ export async function authMiddleware(request: NextRequest) {
         pathname.startsWith("/portfolio/") ||
         pathname.startsWith("/blog/");
 
-    if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute) {
+    const hostname = request.nextUrl.hostname.toLowerCase().replace(/\\.$/, "");
+    const hostResolution = resolveTenantHost(hostname);
+    const isTenantSubdomain = hostResolution.kind === "tenant-subdomain";
+    const isReservedPlatformHost =
+        hostResolution.kind === "reserved" && hostResolution.subdomain !== "www";
+    const isInvalidPlatformSubdomain =
+        hostResolution.kind === "unknown-host" && hostname.endsWith(`.${SAAS_ROOT_DOMAIN}`);
+
+    // Reserved platform hosts (api, admin, auth, mail, etc.) must never be
+    // mistaken for customer tenants when wildcard DNS is enabled.
+    if (isReservedPlatformHost || isInvalidPlatformSubdomain) {
+        return new NextResponse("Not Found", { status: 404 });
+    }
+
+    // A tenant hostname is usable only after its domain record is verified
+    // and its organization is active. Pending or unknown tenant hosts fail closed.
+    if (isTenantSubdomain) {
+        const verifiedDomain = await resolveVerifiedTenantDomainContext(request);
+        if (!verifiedDomain) {
+            return new NextResponse("Tenant domain not found", { status: 404, headers: { "Cache-Control": "no-store" } });
+        }
+    }
+
+    if (isPublicMarketingRoute && !isProtectedRoute && !isAuthRoute && !isTenantSubdomain) {
         // Forward proxy-injected nonce/CSP request headers to the Next.js renderer.
         return NextResponse.next({ request: { headers: request.headers } });
     }
@@ -152,6 +177,10 @@ export async function authMiddleware(request: NextRequest) {
     const supabaseContext = createSupabaseMiddlewareClient(request);
 
     if (!supabaseContext) {
+        if (isTenantSubdomain) {
+            return new NextResponse("Tenant authentication unavailable", { status: 503 });
+        }
+
         if (isProtectedRoute) {
             const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
             signInUrl.searchParams.set("redirectTo", pathname);
@@ -167,6 +196,49 @@ export async function authMiddleware(request: NextRequest) {
     const {
         data: { user },
     } = await supabase.auth.getUser();
+
+    if (isTenantSubdomain) {
+        if (!user) {
+            if (isAuthRoute) return response;
+            const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
+            signInUrl.searchParams.set("redirectTo", pathname);
+            const redirect = NextResponse.redirect(signInUrl);
+            response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+            return redirect;
+        }
+
+        const tenant = await resolveVerifiedTenantContext(request, user.id);
+        if (!tenant) {
+            const denied = new NextResponse("Tenant access denied", { status: 404, headers: { "Cache-Control": "no-store" } });
+            response.cookies.getAll().forEach((cookie) => denied.cookies.set(cookie));
+            return denied;
+        }
+
+        // Overwrite any client-supplied organization header with the tenant
+        // resolved from the verified hostname and authenticated membership.
+        if (pathname === "/") {
+            const redirect = NextResponse.redirect(new URL(ROUTES.dashboard, request.nextUrl.origin));
+            response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+            return redirect;
+        }
+
+        const tenantHeaders = new Headers(request.headers);
+        tenantHeaders.set("x-organization-id", tenant.organizationId);
+        tenantHeaders.set("x-tenant-id", tenant.organizationId);
+        tenantHeaders.set("x-tenant-slug", tenant.organizationSlug);
+        tenantHeaders.set("x-tenant-role", tenant.roleName);
+        tenantHeaders.set("x-tenant-hostname", tenant.hostname);
+
+        if (isAuthRoute && pathname !== ROUTES.auth.callback) {
+            const redirect = NextResponse.redirect(new URL(ROUTES.dashboard, request.nextUrl.origin));
+            response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+            return redirect;
+        }
+
+        const tenantResponse = NextResponse.next({ request: { headers: tenantHeaders } });
+        response.cookies.getAll().forEach((cookie) => tenantResponse.cookies.set(cookie));
+        return tenantResponse;
+    }
 
     if (isProtectedRoute && !user) {
         const signInUrl = new URL(ROUTES.auth.signIn, request.nextUrl.origin);
