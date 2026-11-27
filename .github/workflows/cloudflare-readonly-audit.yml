@@ -132,4 +132,4 @@ jobs:
             echo "https://$host/ -> $status"
           done
 
-          echo "Read-only audit complete. No DNS records or Worker routes were changed."
+          echo "Read-only audit complete. Origin reachability and SSL were checked. No DNS records or Worker routes were changed."
