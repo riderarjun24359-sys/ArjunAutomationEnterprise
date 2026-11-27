@@ -2,6 +2,9 @@ name: Cloudflare Read-only DNS and Worker Route Audit
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
