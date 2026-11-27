@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getClientIp, secureApiRoute } from "@/src/lib/api-security";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import { RESERVED_SUBDOMAINS } from "@/src/lib/saas/tenant-host";
 import { opsLog } from "@/src/lib/ops-monitoring";
 import {
     provisionInputSchema,
@@ -86,6 +87,9 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Invalid input", detail: slugResult.error }, { status: 400 });
     }
     const slug = slugResult.slug;
+    if (RESERVED_SUBDOMAINS.has(slug)) {
+        return NextResponse.json({ error: "This subdomain name is reserved" }, { status: 400 });
+    }
     const name = input.data.name.trim();
     const authUserId = context.user.id;
     const email = context.user.email;
@@ -198,6 +202,44 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
     }
 
+    // Provision the complete Arjun Automation catalog for a new tenant.
+    // Products are activated server-side; no browser role can write entitlements.
+    const productKeys = ["school", "retail", "clinic", "business", "automation"] as const;
+    for (const productKey of productKeys) {
+        const product = await serviceClient
+            .from("organization_products")
+            .insert({ organization_id: org.id, product_key: productKey, status: "active", settings: {} })
+            .select("*")
+            .maybeSingle();
+        if (product.error || !product.data) {
+            await cleanupCreatedOrganization(serviceClient, org.id);
+            opsLog("error", "Organization provisioning failed", "api/organization/provision", { reason: "product_activation_failed" });
+            return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
+        }
+    }
+
+    // Reserve the platform hostname. It remains pending until wildcard DNS
+    // and the Cloudflare Worker route are verified; the resolver fails closed.
+    const domain = await serviceClient
+        .from("organization_domains")
+        .insert({
+            organization_id: org.id,
+            hostname: `${slug}.arjunautomations.com`,
+            domain_type: "subdomain",
+            verification_status: "pending",
+            is_primary: true,
+        })
+        .select("*")
+        .maybeSingle();
+    if (domain.error || !domain.data) {
+        await cleanupCreatedOrganization(serviceClient, org.id);
+        if (domain.error?.code === "23505") {
+            return NextResponse.json({ error: "Organization hostname is already reserved" }, { status: 409 });
+        }
+        opsLog("error", "Organization provisioning failed", "api/organization/provision", { reason: "domain_reservation_failed" });
+        return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
+    }
+
     opsLog("info", "Organization provisioned", "api/organization/provision", { organizationId: org.id });
     return NextResponse.json(
         {
@@ -236,4 +278,12 @@ async function countMembers(serviceClient: ServiceClient, organizationId: string
     // On read failure assume non-empty: never grant founder when emptiness is unverified.
     if (res.error || !Array.isArray(res.data)) return 1;
     return res.data.length;
+}
+
+async function cleanupCreatedOrganization(serviceClient: ServiceClient, organizationId: string): Promise<void> {
+    // Best-effort rollback for the rows created by this request.
+    await serviceClient.from("organization_products").delete().eq("organization_id", organizationId);
+    await serviceClient.from("organization_domains").delete().eq("organization_id", organizationId);
+    await serviceClient.from("organization_members").delete().eq("organization_id", organizationId);
+    await serviceClient.from("organizations").delete().eq("id", organizationId);
 }
