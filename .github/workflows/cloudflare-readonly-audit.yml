@@ -1,0 +1,100 @@
+name: Cloudflare Read-only DNS and Worker Route Audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-readonly-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check Cloudflare API access and inspect arjunautomations.com
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Missing CLOUDFLARE_API_TOKEN secret."
+            exit 1
+          fi
+
+          headers=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json")
+          zones_file="$(mktemp)"
+          dns_file="$(mktemp)"
+          routes_file="$(mktemp)"
+          trap 'rm -f "$zones_file" "$dns_file" "$routes_file"' EXIT
+
+          zone_http="$(curl -sS -o "$zones_file" -w '%{http_code}' "${CF_API:=https://api.cloudflare.com/client/v4}/zones?name=arjunautomations.com&per_page=50" "${headers[@]}")"
+          echo "Zone lookup HTTP: $zone_http"
+          if [ "$zone_http" != "200" ]; then
+            python3 - "$zones_file" <<'PY'
+          import json,sys
+          try:
+              d=json.load(open(sys.argv[1]))
+              for e in d.get("errors",[]): print("Cloudflare API:",e.get("code"),e.get("message"))
+          except Exception: print("Cloudflare returned a non-JSON response.")
+          PY
+            echo "Audit cannot continue: token may not have Zone Read permission."
+            exit 0
+          fi
+
+          zone_id="$(python3 - "$zones_file" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          z=next((x for x in d.get("result",[]) if x.get("name")=="arjunautomations.com"),None)
+          print(z.get("id","") if z else "")
+          PY
+          )"
+          if [ -z "$zone_id" ]; then
+            echo "Zone arjunautomations.com was not found for this token."
+            exit 0
+          fi
+          echo "Zone found: arjunautomations.com"
+
+          dns_http="$(curl -sS -o "$dns_file" -w '%{http_code}' "${CF_API:=https://api.cloudflare.com/client/v4}/zones/$zone_id/dns_records?per_page=500" "${headers[@]}")"
+          echo "DNS records HTTP: $dns_http"
+          if [ "$dns_http" = "200" ]; then
+            python3 - "$dns_file" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print("DNS records (content values intentionally hidden):")
+          for r in d.get("result",[]):
+              print(" -",r.get("type"),r.get("name"),"proxied="+str(r.get("proxied")),"ttl="+str(r.get("ttl")))
+          PY
+          else
+            python3 - "$dns_file" <<'PY'
+          import json,sys
+          try:
+              for e in json.load(open(sys.argv[1])).get("errors",[]): print("Cloudflare API:",e.get("code"),e.get("message"))
+          except Exception: print("DNS records unavailable.")
+          PY
+          fi
+
+          routes_http="$(curl -sS -o "$routes_file" -w '%{http_code}' "${CF_API:=https://api.cloudflare.com/client/v4}/zones/$zone_id/workers/routes" "${headers[@]}")"
+          echo "Worker routes HTTP: $routes_http"
+          if [ "$routes_http" = "200" ]; then
+            python3 - "$routes_file" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print("Worker routes:")
+          for r in d.get("result",[]):
+              print(" -",r.get("pattern"),"->",r.get("script"))
+          PY
+          else
+            python3 - "$routes_file" <<'PY'
+          import json,sys
+          try:
+              for e in json.load(open(sys.argv[1])).get("errors",[]): print("Cloudflare API:",e.get("code"),e.get("message"))
+          except Exception: print("Worker routes unavailable.")
+          PY
+          fi
+
+          echo "Read-only audit complete. No DNS records or Worker routes were changed."
