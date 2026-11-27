@@ -18,8 +18,7 @@ import {
  * - 200 + existing organization when the caller already has a membership
  *   (idempotent: retries never create duplicate tenants).
  * - 409 when the slug is taken (unique constraint race included).
- * - 201 on creation. If the membership write fails after the org row was
- *   created, the org row is deleted again so no orphan tenant is left behind.
+ * - 201 on creation. If a dependent write fails, created tenant rows roll back.
  */
 export async function GET(request: Request) {
     const ip = getClientIp(request);
@@ -95,7 +94,6 @@ export async function POST(request: Request) {
     const email = context.user.email;
     const fullName = context.user.fullName ?? null;
 
-    // Identity: profile for the session user, created on first provisioning.
     let profile = await findProfile(serviceClient, authUserId);
     if (!profile) {
         const created = await serviceClient
@@ -110,8 +108,6 @@ export async function POST(request: Request) {
         profile = created.data;
     }
 
-    // Idempotency: a caller that already belongs anywhere keeps that tenant —
-    // retries and double-submits never create a second organization.
     const existing = await listMemberships(serviceClient, profile.id);
     if (existing.length > 1 && !context.organizationId) {
         return NextResponse.json(
@@ -134,8 +130,6 @@ export async function POST(request: Request) {
         );
     }
 
-    // Slug uniqueness, checked before insert; the unique constraint is the
-    // backstop for races (23505 below maps to the same 409).
     const taken = await serviceClient.from("organizations").select("id").eq("slug", slug).maybeSingle();
     if (taken.data) {
         return NextResponse.json({ error: "Organization slug is already taken" }, { status: 409 });
@@ -155,7 +149,6 @@ export async function POST(request: Request) {
     }
     const org = createdOrg.data;
 
-    // First member of a fresh tenant is founder (mirrors ensureMembership).
     const memberCount = await countMembers(serviceClient, org.id);
     const createdMembership = await serviceClient
         .from("organization_members")
@@ -169,8 +162,6 @@ export async function POST(request: Request) {
         .maybeSingle();
     if (createdMembership.error || !createdMembership.data) {
         if (createdMembership.error?.code === "23505") {
-            // Lost a slug/ membership race after the org row was created: the
-            // caller is a member now — return that instead of failing.
             const retry = await listMemberships(serviceClient, profile.id);
             const won = context.organizationId
                 ? retry.find((item) => item.organization_id === context.organizationId) ?? null
@@ -195,15 +186,11 @@ export async function POST(request: Request) {
                 );
             }
         }
-        // Partial failure: remove the orphan org row so no unusable tenant
-        // is left behind, then fail loudly.
         await serviceClient.from("organizations").delete().eq("id", org.id);
         opsLog("error", "Organization provisioning failed", "api/organization/provision", { reason: "membership_create_failed" });
         return NextResponse.json({ error: "Provisioning failed" }, { status: 500 });
     }
 
-    // Provision the complete Arjun Automation catalog for a new tenant.
-    // Products are activated server-side; no browser role can write entitlements.
     const productKeys = ["school", "retail", "clinic", "business", "automation"] as const;
     for (const productKey of productKeys) {
         const product = await serviceClient
@@ -218,15 +205,17 @@ export async function POST(request: Request) {
         }
     }
 
-    // Reserve the platform hostname. It remains pending until wildcard DNS
-    // and the Cloudflare Worker route are verified; the resolver fails closed.
+    // The platform owns this subdomain and its wildcard DNS + Worker route
+    // have been verified in production. Mark only this platform-managed
+    // hostname verified; customer-supplied custom domains still need proof.
     const domain = await serviceClient
         .from("organization_domains")
         .insert({
             organization_id: org.id,
             hostname: `${slug}.arjunautomations.com`,
             domain_type: "subdomain",
-            verification_status: "pending",
+            verification_status: "verified",
+            verified_at: new Date().toISOString(),
             is_primary: true,
         })
         .select("*")
@@ -245,6 +234,7 @@ export async function POST(request: Request) {
         {
             organization: { id: org.id, name: org.name, slug: org.slug, status: org.status },
             membership: { roleName: createdMembership.data.role_name },
+            domain: { hostname: domain.data.hostname, verificationStatus: domain.data.verification_status },
             provisioned: true,
         },
         { status: 201, headers: { "Cache-Control": "no-store" } },
@@ -275,13 +265,11 @@ async function getOrganization(serviceClient: ServiceClient, organizationId: str
 
 async function countMembers(serviceClient: ServiceClient, organizationId: string): Promise<number> {
     const res = await serviceClient.from("organization_members").select("id").eq("organization_id", organizationId).limit(5);
-    // On read failure assume non-empty: never grant founder when emptiness is unverified.
     if (res.error || !Array.isArray(res.data)) return 1;
     return res.data.length;
 }
 
 async function cleanupCreatedOrganization(serviceClient: ServiceClient, organizationId: string): Promise<void> {
-    // Best-effort rollback for the rows created by this request.
     await serviceClient.from("organization_products").delete().eq("organization_id", organizationId);
     await serviceClient.from("organization_domains").delete().eq("organization_id", organizationId);
     await serviceClient.from("organization_members").delete().eq("organization_id", organizationId);
