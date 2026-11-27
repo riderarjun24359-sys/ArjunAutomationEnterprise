@@ -100,4 +100,36 @@ jobs:
           PY
           fi
 
+          ssl_file="$(mktemp)"
+          curl -sS -o "$ssl_file" -w 'SSL setting HTTP: %{http_code}\n' "${CF_API:=https://api.cloudflare.com/client/v4}/zones/$zone_id/settings/ssl" "${headers[@]}"
+          python3 - "$ssl_file" <<'PY'
+          import json,sys
+          try:
+              d=json.load(open(sys.argv[1]))
+              print("Cloudflare SSL mode:",d.get("result",{}).get("value","unknown"))
+          except Exception: print("Cloudflare SSL mode unavailable.")
+          PY
+          rm -f "$ssl_file"
+
+          echo "Origin HTTPS reachability checks (IP values hidden):"
+          python3 - "$dns_file" <<'PY' > /tmp/arjun-origin-checks
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          for r in d.get("result",[]):
+              if r.get("type")=="A" and r.get("name")=="arjunautomations.com":
+                  print(r.get("content",""))
+          PY
+          while IFS= read -r ip; do
+            [ -n "$ip" ] || continue
+            status="$(curl -k -sS --connect-timeout 5 --max-time 12 --resolve "arjunautomations.com:443:$ip" -o /dev/null -w '%{http_code}' https://arjunautomations.com/ || true)"
+            echo "Apex origin HTTPS response: $status"
+          done < /tmp/arjun-origin-checks
+          rm -f /tmp/arjun-origin-checks
+
+          echo "Public HTTPS checks:"
+          for host in arjunautomations.com www.arjunautomations.com; do
+            status="$(curl -k -sS --connect-timeout 5 --max-time 12 -o /dev/null -w '%{http_code}' "https://$host/" || true)"
+            echo "https://$host/ -> $status"
+          done
+
           echo "Read-only audit complete. No DNS records or Worker routes were changed."
