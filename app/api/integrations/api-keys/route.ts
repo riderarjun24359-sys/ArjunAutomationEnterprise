@@ -11,6 +11,7 @@ const KEY_NAME_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9 ._-]{1,63}$/;
 export async function POST(request: Request) {
     const { context, error } = await secureApiRoute(request, {
         permission: "integrationManage",
+        product: "automation",
         rateLimitKey: `integration-api-key-create:${getClientIp(request)}`,
         rateLimit: 10,
     });
