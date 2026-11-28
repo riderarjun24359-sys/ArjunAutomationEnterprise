@@ -34,7 +34,7 @@ LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = pg_catalog
-AS $
+AS $$
   SELECT EXISTS (
     SELECT 1
     FROM public.organization_members om
@@ -43,7 +43,7 @@ AS $
       AND om.is_active = true
       AND om.role_name = ANY(p_allowed_roles)
   );
-$;
+$$;
 
 REVOKE ALL ON FUNCTION private.has_organization_role(uuid, text[]) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION private.has_organization_role(uuid, text[]) TO authenticated, service_role;
@@ -236,7 +236,7 @@ RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = pg_catalog
-AS $
+AS $$
 BEGIN
   IF p_organization_id IS NULL THEN
     RAISE EXCEPTION 'organization_id is required';
@@ -270,7 +270,7 @@ BEGIN
   ON CONFLICT (organization_id, product_key)
   DO UPDATE SET status = 'active', updated_at = now();
 END;
-$;
+$$;
 
 REVOKE ALL ON FUNCTION public.set_organization_products(uuid, text[]) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.set_organization_products(uuid, text[]) TO service_role;
