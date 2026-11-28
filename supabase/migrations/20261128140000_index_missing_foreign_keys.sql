@@ -3,7 +3,6 @@
 -- Inventory at 2026-11-28: Supabase Advisor reported 632 missing FK indexes.
 -- Two additional FK columns had only partial indexes, which do not protect
 -- every referencing row; those receive full indexes as well.
--- The production catalog showed all affected tables below 64 KiB at audit time.
 -- IF NOT EXISTS makes this safe to retry if an index was created manually.
 
 DO $$
@@ -13,7 +12,7 @@ DECLARE
     created_count INTEGER := 0;
 BEGIN
     FOR fk IN
-        SELECT
+        SELECT DISTINCT
             n.nspname AS schema_name,
             t.relname AS table_name,
             a.attname AS column_name,
@@ -26,19 +25,18 @@ BEGIN
           AND n.nspname = 'public'
           AND cardinality(c.conkey) = 1
           AND t.relkind IN ('r', 'p')
-        GROUP BY n.nspname, t.relname, a.attname, a.attnum
-        HAVING NOT EXISTS (
-            SELECT 1
-            FROM pg_index i
-            JOIN pg_class index_rel ON index_rel.oid = i.indexrelid
-            JOIN pg_am am ON am.oid = index_rel.relam
-            WHERE i.indrelid = t.oid
-              AND i.indisvalid
-              AND i.indisready
-              AND i.indpred IS NULL
-              AND am.amname = 'btree'
-              AND i.indkey[0] = a.attnum
-        )
+          AND NOT EXISTS (
+              SELECT 1
+              FROM pg_index i
+              JOIN pg_class index_rel ON index_rel.oid = i.indexrelid
+              JOIN pg_am am ON am.oid = index_rel.relam
+              WHERE i.indrelid = t.oid
+                AND i.indisvalid
+                AND i.indisready
+                AND i.indpred IS NULL
+                AND am.amname = 'btree'
+                AND i.indkey[0] = a.attnum
+          )
         ORDER BY n.nspname, t.relname, a.attname
     LOOP
         index_name := 'fk_' || left(fk.table_name, 38) || '_' ||
