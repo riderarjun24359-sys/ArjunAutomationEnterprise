@@ -2,7 +2,7 @@
 -- A tenant membership alone must not grant access to modules it has not enabled.
 BEGIN;
 
-CREATE OR REPLACE FUNCTION public.has_active_organization_product(
+CREATE OR REPLACE FUNCTION private.has_active_organization_product(
   p_organization_id uuid,
   p_product_key text
 )
@@ -10,7 +10,7 @@ RETURNS boolean
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog
 AS $$
   SELECT EXISTS (
     SELECT 1
@@ -21,9 +21,9 @@ AS $$
   );
 $$;
 
-REVOKE ALL ON FUNCTION public.has_active_organization_product(uuid, text) FROM PUBLIC;
-REVOKE ALL ON FUNCTION public.has_active_organization_product(uuid, text) FROM anon;
-GRANT EXECUTE ON FUNCTION public.has_active_organization_product(uuid, text) TO authenticated;
+GRANT USAGE ON SCHEMA private TO authenticated, service_role;
+REVOKE ALL ON FUNCTION private.has_active_organization_product(uuid, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION private.has_active_organization_product(uuid, text) TO authenticated, service_role;
 
 -- Direct organization_id tables: replace membership-only policies with
 -- membership + active product entitlement policies.
@@ -86,22 +86,22 @@ BEGIN
     LOOP
       EXECUTE format('DROP POLICY IF EXISTS %I_select ON public.%I', tbl, tbl);
       EXECUTE format(
-        'CREATE POLICY %I_select ON public.%I FOR SELECT USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, %L))',
+        'CREATE POLICY %I_select ON public.%I FOR SELECT USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, %L))',
         tbl, tbl, product_key
       );
       EXECUTE format('DROP POLICY IF EXISTS %I_insert ON public.%I', tbl, tbl);
       EXECUTE format(
-        'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, %L))',
+        'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, %L))',
         tbl, tbl, product_key
       );
       EXECUTE format('DROP POLICY IF EXISTS %I_update ON public.%I', tbl, tbl);
       EXECUTE format(
-        'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, %L)) WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, %L))',
+        'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, %L)) WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, %L))',
         tbl, tbl, product_key, product_key
       );
       EXECUTE format('DROP POLICY IF EXISTS %I_delete ON public.%I', tbl, tbl);
       EXECUTE format(
-        'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, %L))',
+        'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, %L))',
         tbl, tbl, product_key
       );
     END LOOP;
@@ -130,23 +130,23 @@ BEGIN
 
     EXECUTE format('DROP POLICY IF EXISTS %I_select ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND public.has_active_organization_product(p.organization_id, %L)))',
+      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L)))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_insert ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND public.has_active_organization_product(p.organization_id, %L)))',
+      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L)))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_update ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND public.has_active_organization_product(p.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND public.has_active_organization_product(p.organization_id, %L)))',
+      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L)))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail',
       parent_table, parent_id_column, 'retail'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_delete ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND public.has_active_organization_product(p.organization_id, %L)))',
+      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L)))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail'
     );
   END LOOP;
@@ -161,22 +161,22 @@ BEGIN
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I_select ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND public.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
       tbl, tbl, 'automation'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_insert ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND public.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
       tbl, tbl, 'automation'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_update ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND public.has_active_organization_product(w.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND public.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
       tbl, tbl, 'automation', 'automation'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_delete ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND public.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
       tbl, tbl, 'automation'
     );
   END LOOP;
@@ -185,22 +185,22 @@ END $$;
 -- Business Platform tables use a single FOR ALL policy each.
 DROP POLICY IF EXISTS business_consultations_org_access ON public.business_consultations;
 CREATE POLICY business_consultations_org_access ON public.business_consultations FOR ALL
-  USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'))
-  WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'));
+  USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'))
+  WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'));
 
 DROP POLICY IF EXISTS business_proposals_org_access ON public.business_proposals;
 CREATE POLICY business_proposals_org_access ON public.business_proposals FOR ALL
-  USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'))
-  WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'));
+  USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'))
+  WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'));
 
 DROP POLICY IF EXISTS business_lifecycle_events_org_access ON public.business_lifecycle_events;
 CREATE POLICY business_lifecycle_events_org_access ON public.business_lifecycle_events FOR ALL
-  USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'))
-  WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'));
+  USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'))
+  WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'));
 
 DROP POLICY IF EXISTS business_ai_recommendations_org_access ON public.business_ai_recommendations;
 CREATE POLICY business_ai_recommendations_org_access ON public.business_ai_recommendations FOR ALL
-  USING (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'))
-  WITH CHECK (public.is_organization_member(organization_id) AND public.has_active_organization_product(organization_id, 'business'));
+  USING (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'))
+  WITH CHECK (public.is_organization_member(organization_id) AND private.has_active_organization_product(organization_id, 'business'));
 
 COMMIT;
