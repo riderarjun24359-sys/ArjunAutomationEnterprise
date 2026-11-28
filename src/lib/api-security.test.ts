@@ -35,6 +35,7 @@ function fakeClient(
         | Array<{ organization_id: string; role_name: string }>
         | null,
     organizationStatus = "active",
+    productEnabled = true,
 ) {
     return {
         from(table: string) {
@@ -42,6 +43,7 @@ function fakeClient(
                 select: () => q,
                 eq: () => q,
                 order: () => q,
+                in: () => q,
                 limit: async () => ({
                     data: table === "organization_members"
                         ? (Array.isArray(membership) ? membership : membership ? [membership] : [])
@@ -51,6 +53,7 @@ function fakeClient(
                 maybeSingle: async () => ({
                     data: table === "user_profiles" ? profile
                         : table === "organizations" ? { status: organizationStatus }
+                        : table === "organization_products" ? (productEnabled ? { id: "product-row" } : null)
                         : membership,
                     error: null,
                 }),
@@ -185,6 +188,35 @@ describe("api-security server-side identity resolution", () => {
         const adminAttempt = await secureApiRoute(request, { permission: "financeManage" });
         expect(adminAttempt.error).toBeNull();
         expect(adminAttempt.context?.user.role).toBe("admin");
+    });
+
+    it("allows a route only when the selected organization has the requested product", async () => {
+        authenticatedAs("auth-product");
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient(
+            { id: "prof-product" },
+            { organization_id: "org-product", role_name: "admin" },
+            "active",
+            true,
+        ));
+
+        const allowed = await secureApiRoute(request, { product: "automation" });
+        expect(allowed.error).toBeNull();
+        expect(allowed.context?.organizationId).toBe("org-product");
+    });
+
+    it("denies product routes when the organization has no active/trial entitlement", async () => {
+        authenticatedAs("auth-no-product");
+        mocks.getServiceRoleClient.mockReturnValue(fakeClient(
+            { id: "prof-no-product" },
+            { organization_id: "org-no-product", role_name: "admin" },
+            "active",
+            false,
+        ));
+
+        const denied = await secureApiRoute(request, { product: "school" });
+        expect(denied.context).toBeNull();
+        expect(denied.error?.status).toBe(403);
+        expect(await denied.error?.json()).toMatchObject({ code: "PRODUCT_NOT_ENABLED", product: "school" });
     });
 
     it("ignores an unknown role value and fails closed to member", async () => {
