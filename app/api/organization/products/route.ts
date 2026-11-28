@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getClientIp, logApiAudit, secureApiRoute } from "@/src/lib/api-security";
 import { selectedProductsSchema } from "@/src/lib/organization-provisioning";
+import { hasPermission } from "@/src/config/permissions";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
 const PRODUCT_KEYS = ["school", "retail", "clinic", "business", "automation"] as const;
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
         .filter((key): key is (typeof PRODUCT_KEYS)[number] => PRODUCT_KEYS.includes(key));
 
     return NextResponse.json(
-        { products: [...new Set(enabledProducts)] },
+        { products: [...new Set(enabledProducts)], canManage: hasPermission(context.user.role, "settingsManage") },
         { status: 200, headers: { "Cache-Control": "no-store, private" } },
     );
 }
