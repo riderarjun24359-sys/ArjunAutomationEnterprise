@@ -6,6 +6,7 @@ import type { UserRole } from "@/src/constants/roles";
 import { checkRateLimit } from "@/src/modules/security-center/engine/api-security-engine";
 import { logApiAudit } from "@/src/lib/api-audit";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
+import type { SaasProductKey } from "@/src/lib/organization-provisioning";
 
 export interface ApiSecurityContext {
     user: { id: string; email: string; fullName: string | null; role: UserRole };
@@ -16,6 +17,8 @@ export interface ApiSecurityContext {
 
 export interface SecureApiOptions {
     permission?: PermissionKey;
+    /** Require an active/trial entitlement for this organization product. */
+    product?: SaasProductKey;
     rateLimitKey?: string;
     rateLimit?: number;
     allowPublic?: boolean;
@@ -263,6 +266,23 @@ export function assertCsrfSafe(request: Request): { ok: true } | { ok: false; er
     return { ok: true };
 }
 
+async function hasOrganizationProductAccess(organizationId: string, product: SaasProductKey): Promise<boolean> {
+    try {
+        const client = getServiceRoleClient();
+        if (!client) return false;
+        const result = await client
+            .from("organization_products")
+            .select("id")
+            .eq("organization_id", organizationId)
+            .eq("product_key", product)
+            .in("status", ["trial", "active"])
+            .maybeSingle();
+        return !result.error && Boolean(result.data);
+    } catch {
+        return false;
+    }
+}
+
 export async function secureApiRoute(
     request: Request,
     options: SecureApiOptions = {},
@@ -341,6 +361,24 @@ export async function secureApiRoute(
                 context: null,
                 error: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
             };
+        }
+
+        if (options.product) {
+            if (!organizationId || !(await hasOrganizationProductAccess(organizationId, options.product))) {
+                await logApiAudit({
+                    action: "api_forbidden",
+                    userId: user.id,
+                    organizationId: organizationId ?? undefined,
+                    metadata: { product: options.product, path: new URL(request.url).pathname, reason: "product_not_enabled" },
+                });
+                return {
+                    context: null,
+                    error: NextResponse.json(
+                        { error: "This product is not enabled for your organization", code: "PRODUCT_NOT_ENABLED", product: options.product },
+                        { status: 403, headers: { "Cache-Control": "no-store" } },
+                    ),
+                };
+            }
         }
 
         return {
