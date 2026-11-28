@@ -18,14 +18,23 @@ import { resolveNavigationContext } from "@/src/design-os/navigation/navigation-
 
 const PRODUCT_ROUTE_ACCESS: Record<string, string> = {
     [ROUTES.businessPlatform]: "business",
+    [ROUTES.crm]: "business",
+    [ROUTES.projects]: "business",
+    [ROUTES.clients]: "business",
+    [ROUTES.finance]: "business",
+    [ROUTES.sales]: "business",
     [ROUTES.school]: "school",
     [ROUTES.hospital]: "clinic",
     [ROUTES.retail]: "retail",
+    [ROUTES.restaurant]: "retail",
     [ROUTES.inventory]: "retail",
     [ROUTES.automation]: "automation",
     [ROUTES.aiAutomationEngine]: "automation",
     [ROUTES.integrationPlatform]: "automation",
     [ROUTES.integrationHub]: "automation",
+    [ROUTES.workflowEngine]: "automation",
+    [ROUTES.communicationHub]: "automation",
+    [ROUTES.enterpriseIntegrations]: "automation",
 };
 
 interface PremiumSidebarProps {
