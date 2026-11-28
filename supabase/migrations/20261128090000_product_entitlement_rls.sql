@@ -153,7 +153,7 @@ BEGIN
 
     EXECUTE format('DROP POLICY IF EXISTS %I_select ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin''])))',
+      'CREATE POLICY %I_select ON public.%I FOR SELECT USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L)))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_insert ON public.%I', policy_name, policy_name);
@@ -163,13 +163,13 @@ BEGIN
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_update ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin''])))',
+      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin'']))) WITH CHECK (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin''])))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail',
       parent_table, parent_id_column, 'retail'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_delete ON public.%I', policy_name, policy_name);
     EXECUTE format(
-      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin''])))',
+      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.%I p WHERE p.id = %I AND public.is_organization_member(p.organization_id) AND private.has_active_organization_product(p.organization_id, %L) AND private.has_organization_role(p.organization_id, ARRAY[''manager'',''admin'',''founder'',''owner'',''super_admin''])))',
       policy_name, policy_name, parent_table, parent_id_column, 'retail'
     );
   END LOOP;
