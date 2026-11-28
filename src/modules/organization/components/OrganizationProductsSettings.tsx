@@ -11,6 +11,7 @@ const PRODUCTS = [
 ] as const;
 
 type ProductKey = (typeof PRODUCTS)[number]["key"];
+type ProductAccessResponse = { products?: unknown; canManage?: boolean; error?: string };
 
 export function OrganizationProductsSettings() {
     const [selected, setSelected] = useState<ProductKey[]>([]);
@@ -21,25 +22,31 @@ export function OrganizationProductsSettings() {
     const [notice, setNotice] = useState<string | null>(null);
 
     const load = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch("/api/organization/products", { cache: "no-store" });
-            const body = await response.json() as { products?: unknown; canManage?: boolean; error?: string };
-            if (!response.ok) throw new Error(body.error ?? "Could not load product access.");
-            const products = Array.isArray(body.products)
-                ? body.products.filter((value): value is ProductKey => PRODUCTS.some((product) => product.key === value))
-                : [];
-            setSelected(products);
-            setCanManage(body.canManage === true);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Could not load product access.");
-        } finally {
-            setLoading(false);
-        }
+        const response = await fetch("/api/organization/products", { cache: "no-store" });
+        const body = await response.json() as ProductAccessResponse;
+        if (!response.ok) throw new Error(body.error ?? "Could not load product access.");
+        const products = Array.isArray(body.products)
+            ? body.products.filter((value): value is ProductKey => PRODUCTS.some((product) => product.key === value))
+            : [];
+        return { products, canManage: body.canManage === true };
     }, []);
 
-    useEffect(() => { void load(); }, [load]);
+    useEffect(() => {
+        let active = true;
+        void load()
+            .then(({ products, canManage: manageable }) => {
+                if (!active) return;
+                setSelected(products);
+                setCanManage(manageable);
+            })
+            .catch((err: unknown) => {
+                if (active) setError(err instanceof Error ? err.message : "Could not load product access.");
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+        return () => { active = false; };
+    }, [load]);
 
     function toggle(product: ProductKey, checked: boolean) {
         setSelected((current) => checked
@@ -64,8 +71,10 @@ export function OrganizationProductsSettings() {
             });
             const body = await response.json() as { error?: string };
             if (!response.ok) throw new Error(body.error ?? "Could not save product access.");
+            const updated = await load();
+            setSelected(updated.products);
+            setCanManage(updated.canManage);
             setNotice("Product access updated successfully.");
-            await load();
         } catch (err) {
             setError(err instanceof Error ? err.message : "Could not save product access.");
         } finally {
