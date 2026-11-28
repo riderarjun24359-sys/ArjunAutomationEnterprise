@@ -266,7 +266,7 @@ export function assertCsrfSafe(request: Request): { ok: true } | { ok: false; er
     return { ok: true };
 }
 
-async function hasOrganizationProductAccess(organizationId: string, product: SaasProductKey): Promise<boolean> {
+export async function hasOrganizationProductAccess(organizationId: string, product: SaasProductKey): Promise<boolean> {
     try {
         const client = getServiceRoleClient();
         if (!client) return false;
