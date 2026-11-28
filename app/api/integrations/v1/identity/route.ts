@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { validateIntegrationApiKey } from "@/src/lib/integration-api-keys";
-import { getClientIp } from "@/src/lib/api-security";
+import { getClientIp, hasOrganizationProductAccess } from "@/src/lib/api-security";
 import { checkRateLimit } from "@/src/modules/security-center/engine/api-security-engine";
 import { getServiceRoleClient } from "@/src/lib/supabase-service-role";
 
@@ -24,6 +24,13 @@ export async function GET(request: Request) {
     const identity = await validateIntegrationApiKey(match[1]);
     if (!identity) {
         return NextResponse.json({ error: "Invalid, revoked, expired, or inactive API key" }, { status: 401 });
+    }
+
+    if (!(await hasOrganizationProductAccess(identity.organizationId, "automation"))) {
+        return NextResponse.json(
+            { error: "This product is not enabled for the organization", code: "PRODUCT_NOT_ENABLED" },
+            { status: 403, headers: { "Cache-Control": "no-store" } },
+        );
     }
 
     const rate = await checkRateLimit(`integration-key:${identity.apiKeyId}`, 120, 60_000);
