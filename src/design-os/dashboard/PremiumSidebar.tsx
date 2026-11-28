@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { m } from "framer-motion";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { shellNavigation } from "@/src/config/shell-navigation";
+import { ROUTES } from "@/src/constants/routes";
 import { navigationContextMap } from "@/src/config/navigation-context";
 import { NavLink } from "@/src/components/layout/NavLink";
 import { appConfig } from "@/src/config/app";
@@ -13,6 +15,27 @@ import { useExecutiveShellStore } from "@/src/store/executive.store";
 import { useReducedMotion } from "@/src/design-os/motion/hooks/useReducedMotion";
 import { staggerContainer } from "@/src/design-os/motion/variants";
 import { resolveNavigationContext } from "@/src/design-os/navigation/navigation-context-engine";
+
+const PRODUCT_ROUTE_ACCESS: Record<string, string> = {
+    [ROUTES.businessPlatform]: "business",
+    [ROUTES.crm]: "business",
+    [ROUTES.projects]: "business",
+    [ROUTES.clients]: "business",
+    [ROUTES.finance]: "business",
+    [ROUTES.sales]: "business",
+    [ROUTES.school]: "school",
+    [ROUTES.hospital]: "clinic",
+    [ROUTES.retail]: "retail",
+    [ROUTES.restaurant]: "retail",
+    [ROUTES.inventory]: "retail",
+    [ROUTES.automation]: "automation",
+    [ROUTES.aiAutomationEngine]: "automation",
+    [ROUTES.integrationPlatform]: "automation",
+    [ROUTES.integrationHub]: "automation",
+    [ROUTES.workflowEngine]: "automation",
+    [ROUTES.communicationHub]: "automation",
+    [ROUTES.enterpriseIntegrations]: "automation",
+};
 
 interface PremiumSidebarProps {
     onNavigate?: () => void;
@@ -25,10 +48,36 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
     const reduced = useReducedMotion();
     const pathname = usePathname();
     const snapshot = useExecutiveShellStore((s) => s.snapshot);
+    const [enabledProducts, setEnabledProducts] = useState<Set<string> | null>(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch("/api/organization/products", { cache: "no-store" })
+            .then(async (response) => {
+                if (!response.ok) throw new Error("Product access unavailable");
+                const payload = await response.json() as { products?: unknown };
+                const products = Array.isArray(payload.products)
+                    ? payload.products.filter((value): value is string => typeof value === "string")
+                    : [];
+                if (!cancelled) setEnabledProducts(new Set(products));
+            })
+            .catch(() => {
+                if (!cancelled) setEnabledProducts(new Set());
+            });
+        return () => { cancelled = true; };
+    }, []);
+
+    const authorizedNavigation = useMemo(
+        () => shellNavigation.filter((item) => {
+            const requiredProduct = PRODUCT_ROUTE_ACCESS[item.href];
+            return !requiredProduct || Boolean(enabledProducts?.has(requiredProduct));
+        }),
+        [enabledProducts],
+    );
 
     const { persistent, contextual, library } = resolveNavigationContext({
         currentPath: pathname,
-        authorizedNavigation: shellNavigation,
+        authorizedNavigation,
         explicitRelationships: navigationContextMap,
         snapshot: {
             runningAutomations: snapshot?.runningAutomations ?? 0,
@@ -51,7 +100,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                     {sidebarOpen ? (
                         <>
                             <p className="truncate text-sm font-semibold text-[var(--dos-text-primary)]">{appConfig.name}</p>
-                            <p className="truncate text-xs text-[var(--dos-text-tertiary)] uppercase tracking-widest">Enterprise OS</p>
+                            <p className="truncate text-xs text-[var(--dos-text-tertiary)] uppercase tracking-widest">Business workspace</p>
                         </>
                     ) : (
                         <div />

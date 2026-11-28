@@ -63,6 +63,7 @@ export const shellNavigation: ShellNavigationItem[] = [
     { label: "Business Platform", href: ROUTES.businessPlatform, description: "Unified client lifecycle: leads, consultation, proposals, delivery", icon: Network, section: "primary" },
     { label: "Delivery Engine", href: ROUTES.deliveryEngine, description: "Internal delivery execution: blueprints, pipelines, quality, and AI-assisted build acceleration", icon: PackageCheck, section: "primary" },
     { label: "Organization", href: ROUTES.organization, description: "Governance and workspaces", icon: Building2, section: "primary" },
+    { label: "Products & Access", href: ROUTES.organizationProducts, description: "Choose enabled products and manage organization access", icon: Layers, section: "primary" },
     { label: "CRM", href: ROUTES.crm, description: "Client and revenue operations", icon: BriefcaseBusiness, section: "primary" },
     { label: "Projects", href: ROUTES.projects, description: "Delivery and execution", icon: BarChart3, section: "primary" },
     { label: "Tasks", href: ROUTES.tasks, description: "Operational execution", icon: CheckSquare, section: "primary" },

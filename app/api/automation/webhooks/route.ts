@@ -46,6 +46,7 @@ async function readBoundedJson(request: Request): Promise<unknown | null> {
 function authorized(request: Request, action: string) {
     return secureApiRoute(request, {
         permission: "integrationManage",
+        product: "automation",
         rateLimitKey: `automation-webhooks:${action}:${getClientIp(request)}`,
         rateLimit: action === "read" ? 60 : 20,
     });
