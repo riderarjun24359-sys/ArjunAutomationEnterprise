@@ -225,4 +225,54 @@ BEGIN
   END LOOP;
 END $$;
 
+-- Allow organization administrators to change their own enabled product set
+-- through the authenticated server API. The function is service-role only;
+-- the API performs session, organization-membership, and role validation.
+CREATE OR REPLACE FUNCTION public.set_organization_products(
+  p_organization_id uuid,
+  p_product_keys text[]
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog
+AS $
+BEGIN
+  IF p_organization_id IS NULL THEN
+    RAISE EXCEPTION 'organization_id is required';
+  END IF;
+  IF p_product_keys IS NULL OR cardinality(p_product_keys) < 1 THEN
+    RAISE EXCEPTION 'at least one product must remain enabled';
+  END IF;
+  IF EXISTS (
+    SELECT 1
+    FROM unnest(p_product_keys) AS requested(product_key)
+    WHERE requested.product_key NOT IN ('school','retail','clinic','business','automation')
+  ) THEN
+    RAISE EXCEPTION 'unknown product key';
+  END IF;
+  IF cardinality(p_product_keys) <> (
+    SELECT count(DISTINCT requested.product_key)::integer
+    FROM unnest(p_product_keys) AS requested(product_key)
+  ) THEN
+    RAISE EXCEPTION 'duplicate product keys are not allowed';
+  END IF;
+
+  UPDATE public.organization_products
+  SET status = 'suspended', updated_at = now()
+  WHERE organization_id = p_organization_id
+    AND status IN ('trial','active')
+    AND NOT (product_key = ANY(p_product_keys));
+
+  INSERT INTO public.organization_products (organization_id, product_key, status, settings)
+  SELECT p_organization_id, requested.product_key, 'active', '{}'::jsonb
+  FROM unnest(p_product_keys) AS requested(product_key)
+  ON CONFLICT (organization_id, product_key)
+  DO UPDATE SET status = 'active', updated_at = now();
+END;
+$;
+
+REVOKE ALL ON FUNCTION public.set_organization_products(uuid, text[]) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.set_organization_products(uuid, text[]) TO service_role;
+
 COMMIT;
