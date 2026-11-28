@@ -25,6 +25,10 @@ describe("organization provisioning contracts", () => {
 
     it("validates provision/team inputs", () => {
         expect(provisionInputSchema.safeParse({ name: "Acme" }).success).toBe(true);
+        expect(provisionInputSchema.parse({ name: "Acme" }).products).toEqual(["school", "retail", "clinic", "business", "automation"]);
+        expect(provisionInputSchema.parse({ name: "Acme", products: ["school", "clinic"] }).products).toEqual(["school", "clinic"]);
+        expect(provisionInputSchema.safeParse({ name: "Acme", products: [] }).success).toBe(false);
+        expect(provisionInputSchema.safeParse({ name: "Acme", products: ["unknown"] }).success).toBe(false);
         expect(provisionInputSchema.safeParse({ name: "" }).success).toBe(false);
         expect(provisionInputSchema.safeParse({}).success).toBe(false);
         expect(teamInputSchema.safeParse({ name: "Ops" }).success).toBe(true);

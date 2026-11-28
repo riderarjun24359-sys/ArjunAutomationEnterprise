@@ -85,6 +85,14 @@ describe("POST /api/organization/provision", () => {
         expect(db.rows("user_profiles")).toHaveLength(1);
     });
 
+    it("activates only the products explicitly selected by the organization", async () => {
+        authed();
+        const res = await POST(post({ name: "School Demo", products: ["school"] }));
+        expect(res.status).toBe(201);
+        expect(db.rows("organization_products")).toHaveLength(1);
+        expect(db.rows("organization_products")[0].product_key).toBe("school");
+    });
+
     it("is idempotent: retrying returns the existing tenant without duplicating", async () => {
         authed();
         const first = await POST(post({ name: "Acme Operations" }));
