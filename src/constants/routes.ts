@@ -12,6 +12,7 @@ export const ROUTES = {
     onboarding: "/onboarding",
     dashboard: "/dashboard",
     organization: "/organization",
+    organizationProducts: "/organization/products",
     crm: "/crm",
     customerOs: "/customer-os",
     projects: "/projects",
