@@ -189,17 +189,17 @@ BEGIN
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_insert ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_insert ON public.%I FOR INSERT WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L) AND private.has_organization_role(w.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin'']))))',
       tbl, tbl, 'automation'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_update ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L))) WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_update ON public.%I FOR UPDATE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L) AND private.has_organization_role(w.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin''])))) WITH CHECK (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L) AND private.has_organization_role(w.organization_id, ARRAY[''member'',''manager'',''admin'',''founder'',''owner'',''super_admin'']))))',
       tbl, tbl, 'automation', 'automation'
     );
     EXECUTE format('DROP POLICY IF EXISTS %I_delete ON public.%I', tbl, tbl);
     EXECUTE format(
-      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L)))',
+      'CREATE POLICY %I_delete ON public.%I FOR DELETE USING (EXISTS (SELECT 1 FROM public.workflows w WHERE w.id = workflow_id AND public.is_organization_member(w.organization_id) AND private.has_active_organization_product(w.organization_id, %L) AND private.has_organization_role(w.organization_id, ARRAY[''manager'',''admin'',''founder'',''owner'',''super_admin'']))))',
       tbl, tbl, 'automation'
     );
   END LOOP;
