@@ -91,7 +91,7 @@ export function PremiumSidebar({ onNavigate, className }: PremiumSidebarProps) {
                     {sidebarOpen ? (
                         <>
                             <p className="truncate text-sm font-semibold text-[var(--dos-text-primary)]">{appConfig.name}</p>
-                            <p className="truncate text-xs text-[var(--dos-text-tertiary)] uppercase tracking-widest">Enterprise OS</p>
+                            <p className="truncate text-xs text-[var(--dos-text-tertiary)] uppercase tracking-widest">Business workspace</p>
                         </>
                     ) : (
                         <div />
